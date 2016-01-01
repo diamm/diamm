@@ -1,0 +1,58 @@
+[
+  {
+    "model": "diamm_data.OrganizationType",
+    "pk": 1,
+    "fields": {
+      "name": "Unspecified"
+    }
+  },
+  {
+    "model": "diamm_data.OrganizationType",
+    "pk": 2,
+    "fields": {
+      "name": "Church"
+    }
+  },
+  {
+    "model": "diamm_data.OrganizationType",
+    "pk": 3,
+    "fields": {
+      "name": "Cathedral"
+    }
+  },
+  {
+    "model": "diamm_data.OrganizationType",
+    "pk": 4,
+    "fields": {
+      "name": "Chapel"
+    }
+  },
+  {
+    "model": "diamm_data.OrganizationType",
+    "pk": 5,
+    "fields": {
+      "name": "Monastery, Abbey, or Priory"
+    }
+  },
+  {
+    "model": "diamm_data.OrganizationType",
+    "pk": 6,
+    "fields": {
+      "name": "Workshop"
+    }
+  },
+  {
+    "model": "diamm_data.OrganizationType",
+    "pk": 7,
+    "fields": {
+      "name": "Family"
+    }
+  },
+  {
+    "model": "diamm_data.OrganizationType",
+    "pk": 8,
+    "fields": {
+      "name": "Court"
+    }
+  }
+]

@@ -1,0 +1,6 @@
+denv
+diamm.iml
+__pycache__/*
+.DS_Store
+*.pyc
+diamm/diamm_data/migrations/*
