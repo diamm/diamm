@@ -1,7 +1,98 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="8f548899-fc77-4565-a180-08855cacc0b9" name="Default" comment="" />
+    <list default="true" id="8f548899-fc77-4565-a180-08855cacc0b9" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/watcherTasks.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/admin/data/source_person.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/helpers/solr_helpers.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/management/commands/empty_solr.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/management/commands/reindex_all.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/renderers/html_renderer.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/serializers/catalogue/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/serializers/catalogue/source.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/serializers/search/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/serializers/search/archive.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/serializers/search/composition.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/serializers/search/person.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/serializers/search/source.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/serializers/website/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/serializers/website/archive.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/serializers/website/city.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/serializers/website/composition.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/serializers/website/country.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/serializers/website/person.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/serializers/website/source.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/signals/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/signals/archive_signals.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/signals/person_signals.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/signals/source_signals.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/static/js/app.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/static/js/components/search.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/static/js/settings.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/templates/catalogue/source/source_detail_edit.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/templates/index.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/templates/website/archive/archive_detail.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/templates/website/archive/archive_list.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/templates/website/city/city_detail.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/templates/website/city/city_list.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/templates/website/composition/composition_detail.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/templates/website/composition/composition_list.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/templates/website/country/country_detail.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/templates/website/country/country_list.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/templates/website/person/person_detail.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/templates/website/person/person_list.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/templates/website/search/search.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/templates/website/source/source_detail.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/templates/website/source/source_list.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/views/catalogue/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/views/catalogue/source.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/views/home.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/views/website/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/views/website/archive.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/views/website/city.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/views/website/composition.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/views/website/country.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/views/website/person.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/views/website/search.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diamm/views/website/source.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/diamm/admin/__init__.py" afterPath="$PROJECT_DIR$/diamm/admin/__init__.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/diamm/admin/data/archive.py" afterPath="$PROJECT_DIR$/diamm/admin/data/archive.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/diamm/admin/data/bibliography.py" afterPath="$PROJECT_DIR$/diamm/admin/data/bibliography.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/diamm/admin/data/geographic_area.py" afterPath="$PROJECT_DIR$/diamm/admin/data/geographic_area.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/diamm/admin/data/organization.py" afterPath="$PROJECT_DIR$/diamm/admin/data/organization.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/diamm/admin/data/person.py" afterPath="$PROJECT_DIR$/diamm/admin/data/person.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/diamm/admin/data/source.py" afterPath="$PROJECT_DIR$/diamm/admin/data/source.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/diamm/diamm_data/apps.py" afterPath="$PROJECT_DIR$/diamm/diamm_data/apps.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/diamm/management/commands/convert_legacy_data.py" afterPath="$PROJECT_DIR$/diamm/management/commands/convert_legacy_data.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/diamm/management/helpers/migrate_archive.py" afterPath="$PROJECT_DIR$/diamm/management/helpers/migrate_archive.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/diamm/management/helpers/migrate_bibliography.py" afterPath="$PROJECT_DIR$/diamm/management/helpers/migrate_bibliography.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/diamm/management/helpers/migrate_people.py" afterPath="$PROJECT_DIR$/diamm/management/helpers/migrate_people.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/diamm/management/helpers/migrate_regions.py" afterPath="$PROJECT_DIR$/diamm/management/helpers/migrate_regions.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/diamm/management/helpers/migrate_source.py" afterPath="$PROJECT_DIR$/diamm/management/helpers/migrate_source.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/diamm/models/__init__.py" afterPath="$PROJECT_DIR$/diamm/models/__init__.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/diamm/models/data/archive.py" afterPath="$PROJECT_DIR$/diamm/models/data/archive.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/diamm/models/data/archive_note.py" afterPath="$PROJECT_DIR$/diamm/models/data/archive_note.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/diamm/models/data/bibliography.py" afterPath="$PROJECT_DIR$/diamm/models/data/bibliography.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/diamm/models/data/bibliography_author_role.py" afterPath="$PROJECT_DIR$/diamm/models/data/bibliography_author_role.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/diamm/models/data/bibliography_publication.py" afterPath="$PROJECT_DIR$/diamm/models/data/bibliography_publication.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/diamm/models/data/bibliography_type.py" afterPath="$PROJECT_DIR$/diamm/models/data/bibliography_type.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/diamm/models/data/geographic_area.py" afterPath="$PROJECT_DIR$/diamm/models/data/geographic_area.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/diamm/models/data/organization.py" afterPath="$PROJECT_DIR$/diamm/models/data/organization.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/diamm/models/data/person.py" afterPath="$PROJECT_DIR$/diamm/models/data/person.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/diamm/models/data/person_note.py" afterPath="$PROJECT_DIR$/diamm/models/data/person_note.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/diamm/models/data/source.py" afterPath="$PROJECT_DIR$/diamm/models/data/source.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/diamm/models/data/source_copyist.py" afterPath="$PROJECT_DIR$/diamm/models/data/source_copyist.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/diamm/models/data/source_identifier.py" afterPath="$PROJECT_DIR$/diamm/models/data/source_identifier.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/diamm/models/data/source_note.py" afterPath="$PROJECT_DIR$/diamm/models/data/source_note.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/diamm/models/data/source_url.py" afterPath="$PROJECT_DIR$/diamm/models/data/source_url.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/diamm/models/migrate/legacy_archive.py" afterPath="$PROJECT_DIR$/diamm/models/migrate/legacy_archive.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/diamm/models/migrate/models-other.py" afterPath="$PROJECT_DIR$/diamm/models/migrate/models-other.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/diamm/settings.py" afterPath="$PROJECT_DIR$/diamm/settings.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/diamm/urls.py" afterPath="$PROJECT_DIR$/diamm/urls.py" />
+    </list>
     <ignored path="diamm.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path="$PROJECT_DIR$/out/" />
@@ -17,53 +108,187 @@
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
   </component>
+  <component name="DjangoConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)">
+    <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
+  </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FavoritesManager">
     <favorites_list name="diamm" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="vertical" split-proportion="0.66233766">
+    <splitter split-orientation="vertical" split-proportion="0.5074627">
       <split-first>
-        <leaf>
-          <file leaf-file-name="bibliography_author.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/diamm/models/data/bibliography_author.py">
+        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+          <file leaf-file-name="urls.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/diamm/urls.py">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
-                  <caret line="6" column="44" selection-start-line="6" selection-start-column="44" selection-end-line="6" selection-end-column="44" />
+                  <caret line="21" column="49" selection-start-line="21" selection-start-column="49" selection-end-line="21" selection-end-column="49" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="search.html" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/diamm/templates/website/search/search.html">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="image_type.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/diamm/models/data/image_type.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="organization.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/diamm/admin/data/organization.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
                   <folding>
-                    <marker date="1451603083000" expanded="true" signature="86:166" placeholder="..." />
+                    <element signature="e#0#32#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="bibliography_author_role.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/diamm/models/data/bibliography_author_role.py">
+          <file leaf-file-name="person.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/diamm/admin/data/person.py">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
-                  <caret line="34" column="28" selection-start-line="34" selection-start-column="28" selection-end-line="34" selection-end-column="28" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="legacy_bibliography.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/diamm/models/migrate/legacy_bibliography.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0">
-                  <caret line="5" column="14" selection-start-line="5" selection-start-column="4" selection-end-line="5" selection-end-column="14" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="bibliography_type.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/diamm/models/data/bibliography_type.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0">
-                  <caret line="6" column="27" selection-start-line="6" selection-start-column="27" selection-end-line="6" selection-end-column="27" />
+                  <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
                   <folding>
-                    <marker date="1451603286000" expanded="true" signature="84:146" placeholder="..." />
+                    <element signature="e#0#32#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="source_provenance.py" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/diamm/models/data/source_provenance.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.15254237">
+                  <caret line="9" column="0" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="source_note.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/diamm/models/data/source_note.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="search.js" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/diamm/static/js/components/search.js">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="search.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/diamm/views/website/search.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="9" column="0" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+                  <folding>
+                    <element signature="e#0#35#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="image.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/diamm/models/data/image.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="41" column="68" selection-start-line="41" selection-start-column="68" selection-end-line="41" selection-end-column="68" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-first>
+      <split-second>
+        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+          <file leaf-file-name="migrate_archive.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/diamm/management/helpers/migrate_archive.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="92" column="0" selection-start-line="75" selection-start-column="0" selection-end-line="92" selection-end-column="0" />
+                  <folding>
+                    <element signature="e#0#32#0" expanded="true" />
+                    <marker date="1452527785000" expanded="true" signature="2354:2382" placeholder="SELECT MAX(i..." />
+                    <marker date="1452527785000" expanded="true" signature="2354:2401" placeholder="SELECT MAX(i..." />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="migrate_genre.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/diamm/management/helpers/migrate_genre.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="39" column="36" selection-start-line="24" selection-start-column="0" selection-end-line="39" selection-end-column="36" />
+                  <folding>
+                    <element signature="e#0#23#0" expanded="true" />
+                    <marker date="1452528080000" expanded="true" signature="618:663" placeholder="SELECT MAX(i..diamm_data_genre..." />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="migrate_language.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/diamm/management/helpers/migrate_language.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="27" column="49" selection-start-line="27" selection-start-column="49" selection-end-line="27" selection-end-column="49" />
+                  <folding>
+                    <element signature="e#0#23#0" expanded="true" />
+                    <marker date="1452528128000" expanded="true" signature="655:703" placeholder="SELECT MAX(i..diamm_data_language..." />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="migrate_person_roles.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/diamm/management/helpers/migrate_person_roles.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="57" column="0" selection-start-line="57" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
+                  <folding>
+                    <element signature="e#0#23#0" expanded="true" />
+                    <marker date="1452528270000" expanded="true" signature="1723:1767" placeholder="SELECT MAX(i..diamm_data_role..." />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="migrate_regions.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/diamm/management/helpers/migrate_regions.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+                  <folding>
+                    <element signature="e#0#55#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -73,180 +298,60 @@
             <entry file="file://$PROJECT_DIR$/diamm/management/helpers/migrate_bibliography.py">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
-                  <caret line="174" column="41" selection-start-line="174" selection-start-column="41" selection-end-line="174" selection-end-column="41" />
+                  <caret line="251" column="0" selection-start-line="251" selection-start-column="0" selection-end-line="251" selection-end-column="0" />
                   <folding>
-                    <element signature="e#0#71#0" expanded="true" />
+                    <element signature="e#0#23#0" expanded="true" />
+                    <marker date="1452528618000" expanded="true" signature="7582:7640" placeholder="SELECT MAX(i..diamm_data_bibliographyauthor..." />
+                    <marker date="1452528618000" expanded="true" signature="7953:8005" placeholder="SELECT MAX(i..diamm_data_bibliography..." />
                   </folding>
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="convert_legacy_data.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/diamm/management/commands/convert_legacy_data.py">
+          <file leaf-file-name="migrate_source_provenance.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/diamm/management/helpers/migrate_source_provenance.py">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
-                  <caret line="18" column="38" selection-start-line="18" selection-start-column="38" selection-end-line="18" selection-end-column="38" />
+                  <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
                   <folding>
-                    <element signature="e#0#51#0" expanded="true" />
+                    <element signature="e#0#80#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="bibliography_publication.py" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/diamm/models/data/bibliography_publication.py">
+          <file leaf-file-name="migrate_image.py" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/diamm/management/helpers/migrate_image.py">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
-                  <caret line="30" column="42" selection-start-line="30" selection-start-column="42" selection-end-line="30" selection-end-column="42" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="models-other.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/diamm/models/migrate/models-other.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="-1.2222222">
-                  <caret line="170" column="0" selection-start-line="170" selection-start-column="0" selection-end-line="182" selection-end-column="42" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="legacy_bibliography_source.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/diamm/models/migrate/legacy_bibliography_source.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0">
-                  <caret line="16" column="34" selection-start-line="16" selection-start-column="34" selection-end-line="16" selection-end-column="34" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="legacy_author_bibliography.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/diamm/models/migrate/legacy_author_bibliography.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0">
-                  <caret line="4" column="19" selection-start-line="4" selection-start-column="4" selection-end-line="4" selection-end-column="19" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-first>
-      <split-second>
-        <leaf>
-          <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/diamm/models/__init__.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0">
-                  <caret line="32" column="68" selection-start-line="32" selection-start-column="68" selection-end-line="32" selection-end-column="68" />
+                  <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
                   <folding>
-                    <element signature="e#0#59#0" expanded="true" />
+                    <element signature="e#0#57#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="bibliography.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/diamm/models/data/bibliography.py">
+          <file leaf-file-name="migrate_source_relationship.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/diamm/management/helpers/migrate_source_relationship.py">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
-                  <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
-                  <folding>
-                    <element signature="e#0#28#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="source.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/diamm/models/data/source.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0">
-                  <caret line="55" column="80" selection-start-line="55" selection-start-column="80" selection-end-line="55" selection-end-column="80" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="source.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/diamm/admin/data/source.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0">
-                  <caret line="19" column="36" selection-start-line="19" selection-start-column="36" selection-end-line="19" selection-end-column="36" />
-                  <folding>
-                    <element signature="e#0#9#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="source_bibliography.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/diamm/models/data/source_bibliography.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0">
-                  <caret line="11" column="29" selection-start-line="11" selection-start-column="29" selection-end-line="11" selection-end-column="29" />
-                  <folding>
-                    <marker date="1451605852000" expanded="true" signature="70:397" placeholder="..." />
-                    <marker date="1451605852000" expanded="true" signature="86:176" placeholder="..." />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="migrate_source_bibliography.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/diamm/management/helpers/migrate_source_bibliography.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0">
-                  <caret line="26" column="27" selection-start-line="26" selection-start-column="27" selection-end-line="26" selection-end-column="27" />
-                  <folding>
-                    <element signature="e#0#84#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="archive.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/diamm/admin/data/archive.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0">
-                  <caret line="25" column="72" selection-start-line="25" selection-start-column="72" selection-end-line="25" selection-end-column="72" />
+                  <caret line="52" column="85" selection-start-line="52" selection-start-column="85" selection-end-line="52" selection-end-column="85" />
                   <folding>
                     <element signature="e#0#32#0" expanded="true" />
+                    <marker date="1452529338000" expanded="true" signature="1889:1951" placeholder="SELECT MAX(i..diamm_data_sourcerelationshiptype..." />
                   </folding>
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="archive.py" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/diamm/models/data/archive.py">
+          <file leaf-file-name="migrate_source_copyists.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/diamm/management/helpers/migrate_source_copyists.py">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
-                  <caret line="2" column="51" selection-start-line="2" selection-start-column="51" selection-end-line="2" selection-end-column="51" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/diamm/models/migrate/models.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="-0.7777778">
-                  <caret line="171" column="0" selection-start-line="171" selection-start-column="0" selection-end-line="171" selection-end-column="0" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="bibliography.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/diamm/admin/data/bibliography.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0">
-                  <caret line="10" column="13" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
+                  <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
                   <folding>
-                    <element signature="e#0#32#0" expanded="true" />
+                    <element signature="e#0#74#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -259,9 +364,14 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="HTML File" />
+        <option value="JavaScript File" />
         <option value="Python Script" />
       </list>
     </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GradleLocalSettings">
     <option name="externalProjectsViewState">
@@ -271,57 +381,57 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/diamm/management/helpers/utilities.py" />
-        <option value="$PROJECT_DIR$/diamm/models/data/archive_note.py" />
-        <option value="$PROJECT_DIR$/diamm/models/migrate/legacy_archive.py" />
-        <option value="$PROJECT_DIR$/diamm/management/helpers/migrate_archive.py" />
-        <option value="$PROJECT_DIR$/diamm/management/helpers/migrate_regions.py" />
-        <option value="$PROJECT_DIR$/diamm/models/data/source_note.py" />
-        <option value="$PROJECT_DIR$/diamm/models/data/source_identifier.py" />
-        <option value="$PROJECT_DIR$/diamm/models/data/source_url.py" />
-        <option value="$PROJECT_DIR$/diamm/models/migrate/legacy_source.py" />
-        <option value="$PROJECT_DIR$/diamm/models/data/person_note.py" />
-        <option value="$PROJECT_DIR$/diamm/models/migrate/legacy_composer.py" />
-        <option value="$PROJECT_DIR$/diamm/models/migrate/legacy_copyist.py" />
-        <option value="$PROJECT_DIR$/diamm/models/data/organization_type.py" />
-        <option value="$PROJECT_DIR$/diamm/fixtures/organization_types.json" />
-        <option value="$PROJECT_DIR$/diamm/models/data/relationship.py" />
-        <option value="$PROJECT_DIR$/diamm/models/migrate/legacy_person.py" />
-        <option value="$PROJECT_DIR$/diamm/management/helpers/migrate_people.py" />
-        <option value="$PROJECT_DIR$/diamm/models/migrate/legacy_source_copyist.py" />
-        <option value="$PROJECT_DIR$/diamm/settings.py" />
-        <option value="$PROJECT_DIR$/diamm/admin/data/geographic_area.py" />
-        <option value="$PROJECT_DIR$/diamm/admin/data/organization.py" />
-        <option value="$PROJECT_DIR$/diamm/admin/data/person.py" />
-        <option value="$PROJECT_DIR$/diamm/management/helpers/migrate_source.py" />
         <option value="$PROJECT_DIR$/diamm/models/data/archive.py" />
-        <option value="$PROJECT_DIR$/diamm/models/data/geographic_area.py" />
-        <option value="$PROJECT_DIR$/diamm/models/data/organization.py" />
-        <option value="$PROJECT_DIR$/diamm/models/data/person.py" />
-        <option value="$PROJECT_DIR$/diamm/models/data/source_copyist.py" />
-        <option value="$PROJECT_DIR$/diamm/management/helpers/migrate_source_copyists.py" />
-        <option value="$PROJECT_DIR$/diamm/admin/__init__.py" />
-        <option value="$PROJECT_DIR$/diamm/models/migrate/legacy_bibliography.py" />
-        <option value="$PROJECT_DIR$/diamm/models/data/bibliography_publication_info.py" />
-        <option value="$PROJECT_DIR$/diamm/models/migrate/models.py" />
-        <option value="$PROJECT_DIR$/diamm/models/migrate/legacy_author.py" />
-        <option value="$PROJECT_DIR$/diamm/models/migrate/models-other.py" />
-        <option value="$PROJECT_DIR$/diamm/models/migrate/legacy_author_bibliography.py" />
-        <option value="$PROJECT_DIR$/diamm/models/data/bibliography_author_role.py" />
-        <option value="$PROJECT_DIR$/diamm/models/data/bibliography_author.py" />
-        <option value="$PROJECT_DIR$/diamm/models/data/bibliography_type.py" />
-        <option value="$PROJECT_DIR$/diamm/models/migrate/legacy_bibliography_source.py" />
-        <option value="$PROJECT_DIR$/diamm/models/__init__.py" />
-        <option value="$PROJECT_DIR$/diamm/management/helpers/migrate_source_bibliography.py" />
-        <option value="$PROJECT_DIR$/diamm/models/data/source_bibliography.py" />
-        <option value="$PROJECT_DIR$/diamm/models/data/source.py" />
-        <option value="$PROJECT_DIR$/diamm/admin/data/source.py" />
+        <option value="$PROJECT_DIR$/diamm/serializers/website/archive.py" />
+        <option value="$PROJECT_DIR$/diamm/serializers/website/person.py" />
+        <option value="$PROJECT_DIR$/diamm/templates/website/person/person_detail.html" />
+        <option value="$PROJECT_DIR$/diamm/templates/website/composition/composition_detail.html" />
+        <option value="$PROJECT_DIR$/diamm/serializers/website/composition.py" />
+        <option value="$PROJECT_DIR$/diamm/serializers/website/source.py" />
+        <option value="$PROJECT_DIR$/diamm/templates/website/source/source_detail.html" />
+        <option value="$PROJECT_DIR$/diamm/serializers/website/city.py" />
+        <option value="$PROJECT_DIR$/diamm/templates/website/city/city_detail.html" />
+        <option value="$PROJECT_DIR$/diamm/models/data/composition.py" />
+        <option value="$PROJECT_DIR$/diamm/admin/data/geographic_area.py" />
+        <option value="$PROJECT_DIR$/diamm/admin/data/item.py" />
+        <option value="$PROJECT_DIR$/diamm/models/data/composition_composer.py" />
+        <option value="$PROJECT_DIR$/diamm/serializers/search/search_serializer.py" />
+        <option value="$PROJECT_DIR$/diamm/diamm_data/apps.py" />
+        <option value="$PROJECT_DIR$/diamm/settings.py" />
+        <option value="$PROJECT_DIR$/diamm/signals/source_signals.py" />
+        <option value="$PROJECT_DIR$/diamm/signals/archive_signals.py" />
+        <option value="$PROJECT_DIR$/diamm/management/helpers/migrate_archive.py" />
+        <option value="$PROJECT_DIR$/diamm/management/helpers/migrate_source.py" />
+        <option value="$PROJECT_DIR$/diamm/management/helpers/migrate_composition.py" />
+        <option value="$PROJECT_DIR$/diamm/management/helpers/migrate_genre.py" />
+        <option value="$PROJECT_DIR$/diamm/management/helpers/migrate_language.py" />
+        <option value="$PROJECT_DIR$/diamm/management/helpers/migrate_person_roles.py" />
         <option value="$PROJECT_DIR$/diamm/management/helpers/migrate_bibliography.py" />
-        <option value="$PROJECT_DIR$/diamm/management/commands/convert_legacy_data.py" />
-        <option value="$PROJECT_DIR$/diamm/admin/data/bibliography.py" />
-        <option value="$PROJECT_DIR$/diamm/models/data/bibliography.py" />
-        <option value="$PROJECT_DIR$/diamm/models/data/bibliography_publication.py" />
-        <option value="$PROJECT_DIR$/diamm/admin/data/archive.py" />
+        <option value="$PROJECT_DIR$/diamm/management/helpers/migrate_source_relationship.py" />
+        <option value="$PROJECT_DIR$/diamm/serializers/search/archive.py" />
+        <option value="$PROJECT_DIR$/diamm/helpers/solr_helpers.py" />
+        <option value="$PROJECT_DIR$/diamm/management/commands/empty_solr.py" />
+        <option value="$PROJECT_DIR$/diamm/serializers/search/source.py" />
+        <option value="$PROJECT_DIR$/diamm/admin/data/composition.py" />
+        <option value="$PROJECT_DIR$/diamm/admin/data/source.py" />
+        <option value="$PROJECT_DIR$/diamm/models/data/source_provenance.py" />
+        <option value="$PROJECT_DIR$/diamm/models/data/source.py" />
+        <option value="$PROJECT_DIR$/diamm/models/data/person_note.py" />
+        <option value="$PROJECT_DIR$/diamm/management/helpers/migrate_people.py" />
+        <option value="$PROJECT_DIR$/diamm/serializers/search/person.py" />
+        <option value="$PROJECT_DIR$/diamm/signals/person_signals.py" />
+        <option value="$PROJECT_DIR$/diamm/signals/__init__.py" />
+        <option value="$PROJECT_DIR$/diamm/models/data/person.py" />
+        <option value="$PROJECT_DIR$/diamm/management/commands/reindex_all.py" />
+        <option value="$PROJECT_DIR$/diamm/serializers/search/composition.py" />
+        <option value="$PROJECT_DIR$/diamm/templates/base.html" />
+        <option value="$PROJECT_DIR$/diamm/static/js/config.js" />
+        <option value="$PROJECT_DIR$/diamm/static/js/settings.js" />
+        <option value="$PROJECT_DIR$/diamm/static/js/app.js" />
+        <option value="$PROJECT_DIR$/diamm/static/js/components/search.js" />
+        <option value="$PROJECT_DIR$/diamm/views/website/search.py" />
+        <option value="$PROJECT_DIR$/diamm/urls.py" />
+        <option value="$PROJECT_DIR$/diamm/templates/website/search/search.html" />
       </list>
     </option>
   </component>
@@ -331,8 +441,8 @@
     <detection-done>true</detection-done>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="width" value="1440" />
-    <option name="height" value="900" />
+    <option name="width" value="1920" />
+    <option name="height" value="1200" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -341,7 +451,7 @@
     <OptionsSetting value="true" id="Update" />
     <OptionsSetting value="true" id="Status" />
     <OptionsSetting value="true" id="Edit" />
-    <ConfirmationsSetting value="0" id="Add" />
+    <ConfirmationsSetting value="2" id="Add" />
     <ConfirmationsSetting value="0" id="Remove" />
   </component>
   <component name="ProjectView">
@@ -359,7 +469,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
@@ -407,47 +516,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="renderers" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="diamm" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="diamm" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="diamm" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
               <option name="myItemId" value="models" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="diamm" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="diamm" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="diamm" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="models" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="migrate" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -527,11 +596,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="management" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="commands" />
+              <option name="myItemId" value="helpers" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -549,7 +614,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="fixtures" />
+              <option name="myItemId" value="diamm_data" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -596,6 +661,7 @@
         </subPane>
       </pane>
       <pane id="Scope" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -609,12 +675,20 @@
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
-    <property name="settings.editor.selected.configurable" value="configurable.group.build" />
+    <property name="settings.editor.selected.configurable" value="Settings.JavaScript" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="js-jscs-nodeInterpreter" value="/usr/local/bin/node" />
     <property name="js-jscs-package" value="/usr/local/lib/node_modules/jscs" />
     <property name="FullScreen" value="true" />
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/diamm/settings.py" />
+    <property name="SearchEverywhereHistoryKey" value="(&#9;null&#9;null" />
+    <property name="JavaScriptPreferStrict" value="false" />
+    <property name="JavaScriptWeakerCompletionTypeGuess" value="true" />
   </component>
   <component name="PsiViewer.ProjectComponent">
     <option name="HIGHLIGHT" value="false" />
@@ -626,6 +700,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/diamm/serializers" />
       <recent name="$PROJECT_DIR$/diamm" />
     </key>
   </component>
@@ -972,6 +1047,11 @@
       <method />
     </configuration>
     <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
+      <node-options />
+      <gulpfile />
+      <tasks />
+      <arguments />
+      <envs />
       <method />
     </configuration>
     <configuration default="true" type="js.build_tools.npm" factoryName="npm">
@@ -1116,40 +1196,42 @@
       <created>1450697991882</created>
       <option name="number" value="Default" />
       <updated>1450697991882</updated>
-      <workItem from="1450697996247" duration="68505000" />
+      <workItem from="1450697996247" duration="156534000" />
+      <workItem from="1452415531179" duration="70287000" />
+      <workItem from="1452689267970" duration="1458000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="68505000" />
+    <option name="totallyTimeSpent" value="228279000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1440" height="900" extended-state="0" />
+    <frame x="0" y="0" width="1920" height="1200" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
-      <window_info id="PsiViewer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23631841" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22317597" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="PsiViewer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33830845" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16613418" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.329602" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -1164,9 +1246,9 @@
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23631841" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17381974" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22317597" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="7" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -1195,188 +1277,254 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/diamm/wsgi.py">
+    <entry file="file://$PROJECT_DIR$/diamm/signals/source_signals.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="59" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/management/helpers/utilities.py">
+    <entry file="file://$PROJECT_DIR$/diamm/management/helpers/migrate_composition.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <caret line="101" column="18" selection-start-line="101" selection-start-column="18" selection-end-line="101" selection-end-column="18" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/models/data/archive_note.py">
+    <entry file="file://$PROJECT_DIR$/diamm/management/helpers/migrate_source.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="8" column="23" selection-start-line="8" selection-start-column="23" selection-end-line="8" selection-end-column="23" />
-          <folding>
-            <marker date="1451057081000" expanded="true" signature="63:456" placeholder="..." />
-            <marker date="1451057081000" expanded="true" signature="79:112" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/management/helpers/migrate_archive.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="13" column="31" selection-start-line="13" selection-start-column="31" selection-end-line="13" selection-end-column="31" />
-          <folding>
-            <element signature="e#0#61#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/models/migrate/legacy_archive.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="78" column="35" selection-start-line="78" selection-start-column="35" selection-end-line="78" selection-end-column="35" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/models/migrate/legacy_source.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-2.886121">
-          <caret line="16" column="62" selection-start-line="16" selection-start-column="62" selection-end-line="16" selection-end-column="62" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/models/data/source_url.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.74733096">
-          <caret line="10" column="42" selection-start-line="10" selection-start-column="42" selection-end-line="10" selection-end-column="42" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/management/helpers/migrate_regions.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6725979">
-          <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/models/data/person_note.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="14" column="18" selection-start-line="14" selection-start-column="18" selection-end-line="14" selection-end-column="18" />
-          <folding>
-            <marker date="1451240297000" expanded="true" signature="113:586" placeholder="..." />
-            <marker date="1451240297000" expanded="true" signature="129:162" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/models/data/source_note.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="16" column="17" selection-start-line="16" selection-start-column="17" selection-end-line="16" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/models/migrate/legacy_composer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="3" column="59" selection-start-line="3" selection-start-column="59" selection-end-line="3" selection-end-column="59" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/models/migrate/legacy_copyist.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="6" column="20" selection-start-line="6" selection-start-column="4" selection-end-line="6" selection-end-column="20" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/models/data/organization_type.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="10" column="37" selection-start-line="10" selection-start-column="37" selection-end-line="10" selection-end-column="37" />
-          <folding>
-            <marker date="1451481301000" expanded="true" signature="68:241" placeholder="..." />
-            <marker date="1451481301000" expanded="true" signature="84:117" placeholder="..." />
-            <marker date="1451481301000" expanded="true" signature="202:241" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/fixtures/organization_types.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-39.2">
-          <caret line="56" column="3" selection-start-line="56" selection-start-column="3" selection-end-line="56" selection-end-column="3" />
-          <folding>
-            <marker date="1451482078000" expanded="true" signature="0:920" placeholder="[...]" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/models/migrate/legacy_person.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="6" column="20" selection-start-line="6" selection-start-column="4" selection-end-line="6" selection-end-column="20" />
-          <folding />
+          <caret line="157" column="0" selection-start-line="141" selection-start-column="0" selection-end-line="157" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/diamm/models/data/source_identifier.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="33" column="43" selection-start-line="33" selection-start-column="43" selection-end-line="33" selection-end-column="43" />
+          <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/helpers/solr_helpers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="24" column="34" selection-start-line="24" selection-start-column="34" selection-end-line="24" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/fixtures/image_file_types.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="4" column="38" selection-start-line="4" selection-start-column="15" selection-end-line="4" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/management/commands/convert_legacy_data.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/management/commands/empty_solr.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="10" column="27" selection-start-line="10" selection-start-column="27" selection-end-line="10" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/models/migrate/legacy_item_image.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="2" column="21" selection-start-line="2" selection-start-column="21" selection-end-line="2" selection-end-column="21" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/models/migrate/legacy_source_copyist.py">
+    <entry file="file://$PROJECT_DIR$/diamm/models/data/source_bibliography.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="6" column="20" selection-start-line="6" selection-start-column="4" selection-end-line="6" selection-end-column="20" />
-          <folding />
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/admin/data/composition.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="14" column="51" selection-start-line="14" selection-start-column="51" selection-end-line="14" selection-end-column="51" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/admin/data/source.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="71" column="69" selection-start-line="71" selection-start-column="69" selection-end-line="71" selection-end-column="69" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/models/data/source.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="69" column="0" selection-start-line="65" selection-start-column="0" selection-end-line="69" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/models/data/person_note.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="7" column="4" selection-start-line="7" selection-start-column="4" selection-end-line="10" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/diamm/management/helpers/migrate_people.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="18" column="17" selection-start-line="18" selection-start-column="17" selection-end-line="18" selection-end-column="17" />
+          <caret line="50" column="31" selection-start-line="50" selection-start-column="31" selection-end-line="50" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/signals/archive_signals.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="14" column="50" selection-start-line="0" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/signals/person_signals.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="13" column="17" selection-start-line="13" selection-start-column="17" selection-end-line="13" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/signals/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="2" column="35" selection-start-line="2" selection-start-column="35" selection-end-line="2" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/models/data/person.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="48" column="20" selection-start-line="48" selection-start-column="20" selection-end-line="48" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/serializers/search/archive.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="46" column="0" selection-start-line="36" selection-start-column="0" selection-end-line="46" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/serializers/search/source.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="24" column="35" selection-start-line="24" selection-start-column="35" selection-end-line="24" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/serializers/search/person.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="46" column="50" selection-start-line="46" selection-start-column="50" selection-end-line="46" selection-end-column="50" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/models/data/composition.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="25" column="29" selection-start-line="25" selection-start-column="29" selection-end-line="25" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/management/commands/reindex_all.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="81" column="34" selection-start-line="81" selection-start-column="34" selection-end-line="81" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/models/data/composition_composer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="17" column="38" selection-start-line="17" selection-start-column="38" selection-end-line="17" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/serializers/search/composition.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="34" column="54" selection-start-line="34" selection-start-column="54" selection-end-line="34" selection-end-column="54" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/templates/base.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-4.9">
+          <caret line="19" column="32" selection-start-line="19" selection-start-column="32" selection-end-line="19" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/static/js/config.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="1" column="13" selection-start-line="1" selection-start-column="13" selection-end-line="1" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/static/js/jspm_packages/npm/whatwg-fetch@0.10.1/fetch.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/static/js/settings.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/static/js/app.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="17" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="21" column="49" selection-start-line="21" selection-start-column="49" selection-end-line="21" selection-end-column="49" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/settings.py">
+    <entry file="file://$PROJECT_DIR$/diamm/templates/website/search/search.html">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="42" column="19" selection-start-line="42" selection-start-column="19" selection-end-line="42" selection-end-column="19" />
+          <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/admin/data/geographic_area.py">
+    <entry file="file://$PROJECT_DIR$/diamm/models/data/image_type.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="28" column="39" selection-start-line="28" selection-start-column="39" selection-end-line="28" selection-end-column="39" />
-          <folding>
-            <element signature="e#0#32#0" expanded="false" />
-          </folding>
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/diamm/admin/data/organization.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="7" column="42" selection-start-line="7" selection-start-column="42" selection-end-line="7" selection-end-column="42" />
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#0#32#0" expanded="false" />
+            <element signature="e#0#32#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1384,37 +1532,149 @@
     <entry file="file://$PROJECT_DIR$/diamm/admin/data/person.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="4" column="51" selection-start-line="4" selection-start-column="51" selection-end-line="4" selection-end-column="51" />
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#32#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/models/data/source_provenance.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.15254237">
+          <caret line="9" column="0" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/models/data/geographic_area.py">
+    <entry file="file://$PROJECT_DIR$/diamm/models/data/source_note.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="38" column="33" selection-start-line="38" selection-start-column="33" selection-end-line="38" selection-end-column="33" />
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/static/js/components/search.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/views/website/search.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="9" column="0" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
           <folding>
-            <element signature="e#0#28#0" expanded="false" />
+            <element signature="e#0#35#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/models/data/person.py">
+    <entry file="file://$PROJECT_DIR$/diamm/models/data/image.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="21" column="33" selection-start-line="21" selection-start-column="33" selection-end-line="21" selection-end-column="33" />
+          <caret line="41" column="68" selection-start-line="41" selection-start-column="68" selection-end-line="41" selection-end-column="68" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/management/helpers/migrate_archive.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="92" column="0" selection-start-line="75" selection-start-column="0" selection-end-line="92" selection-end-column="0" />
           <folding>
-            <element signature="e#0#28#0" expanded="false" />
+            <element signature="e#0#32#0" expanded="true" />
+            <marker date="1452527785000" expanded="true" signature="2354:2382" placeholder="SELECT MAX(i..." />
+            <marker date="1452527785000" expanded="true" signature="2354:2401" placeholder="SELECT MAX(i..." />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/models/data/organization.py">
+    <entry file="file://$PROJECT_DIR$/diamm/management/helpers/migrate_genre.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="14" column="33" selection-start-line="14" selection-start-column="33" selection-end-line="14" selection-end-column="33" />
+          <caret line="39" column="36" selection-start-line="24" selection-start-column="0" selection-end-line="39" selection-end-column="36" />
           <folding>
-            <element signature="e#0#28#0" expanded="false" />
+            <element signature="e#0#23#0" expanded="true" />
+            <marker date="1452528080000" expanded="true" signature="618:663" placeholder="SELECT MAX(i..diamm_data_genre..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/management/helpers/migrate_language.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="27" column="49" selection-start-line="27" selection-start-column="49" selection-end-line="27" selection-end-column="49" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+            <marker date="1452528128000" expanded="true" signature="655:703" placeholder="SELECT MAX(i..diamm_data_language..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/management/helpers/migrate_person_roles.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="57" column="0" selection-start-line="57" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+            <marker date="1452528270000" expanded="true" signature="1723:1767" placeholder="SELECT MAX(i..diamm_data_role..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/management/helpers/migrate_regions.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#55#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/management/helpers/migrate_bibliography.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="251" column="0" selection-start-line="251" selection-start-column="0" selection-end-line="251" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+            <marker date="1452528618000" expanded="true" signature="7582:7640" placeholder="SELECT MAX(i..diamm_data_bibliographyauthor..." />
+            <marker date="1452528618000" expanded="true" signature="7953:8005" placeholder="SELECT MAX(i..diamm_data_bibliography..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/management/helpers/migrate_source_provenance.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#80#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/management/helpers/migrate_image.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#57#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diamm/management/helpers/migrate_source_relationship.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="52" column="85" selection-start-line="52" selection-start-column="85" selection-end-line="52" selection-end-column="85" />
+          <folding>
+            <element signature="e#0#32#0" expanded="true" />
+            <marker date="1452529338000" expanded="true" signature="1889:1951" placeholder="SELECT MAX(i..diamm_data_sourcerelationshiptype..." />
           </folding>
         </state>
       </provider>
@@ -1422,237 +1682,100 @@
     <entry file="file://$PROJECT_DIR$/diamm/management/helpers/migrate_source_copyists.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="42" column="0" selection-start-line="42" selection-start-column="0" selection-end-line="42" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/models/data/source_copyist.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="24" column="77" selection-start-line="24" selection-start-column="77" selection-end-line="24" selection-end-column="77" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/admin/multidb_admin.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="9" column="20" selection-start-line="9" selection-start-column="20" selection-end-line="9" selection-end-column="20" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/management/helpers/migrate_source.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="73" column="37" selection-start-line="73" selection-start-column="37" selection-end-line="73" selection-end-column="37" />
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#0#9#0" expanded="false" />
+            <element signature="e#0#74#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/models/migrate/legacy_author.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="3" column="13" selection-start-line="3" selection-start-column="13" selection-end-line="3" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/models/migrate/legacy_author_bibliography.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="4" column="19" selection-start-line="4" selection-start-column="4" selection-end-line="4" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/admin/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="6" column="0" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#47#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/models/data/bibliography_author.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="6" column="44" selection-start-line="6" selection-start-column="44" selection-end-line="6" selection-end-column="44" />
-          <folding>
-            <marker date="1451603083000" expanded="true" signature="86:166" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/models/data/bibliography_type.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="6" column="27" selection-start-line="6" selection-start-column="27" selection-end-line="6" selection-end-column="27" />
-          <folding>
-            <marker date="1451603286000" expanded="true" signature="84:146" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/models/migrate/models-other.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-1.2222222">
-          <caret line="170" column="0" selection-start-line="170" selection-start-column="0" selection-end-line="182" selection-end-column="42" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/models/migrate/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.7777778">
-          <caret line="171" column="0" selection-start-line="171" selection-start-column="0" selection-end-line="171" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/models/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="32" column="68" selection-start-line="32" selection-start-column="68" selection-end-line="32" selection-end-column="68" />
-          <folding>
-            <element signature="e#0#59#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/management/helpers/migrate_source_bibliography.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="26" column="27" selection-start-line="26" selection-start-column="27" selection-end-line="26" selection-end-column="27" />
-          <folding>
-            <element signature="e#0#84#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/models/data/source_bibliography.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="11" column="29" selection-start-line="11" selection-start-column="29" selection-end-line="11" selection-end-column="29" />
-          <folding>
-            <marker date="1451605852000" expanded="true" signature="70:397" placeholder="..." />
-            <marker date="1451605852000" expanded="true" signature="86:176" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/models/data/source.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="55" column="80" selection-start-line="55" selection-start-column="80" selection-end-line="55" selection-end-column="80" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/admin/data/source.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="19" column="36" selection-start-line="19" selection-start-column="36" selection-end-line="19" selection-end-column="36" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/models/migrate/legacy_bibliography_source.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="16" column="34" selection-start-line="16" selection-start-column="34" selection-end-line="16" selection-end-column="34" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/models/migrate/legacy_bibliography.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="5" column="14" selection-start-line="5" selection-start-column="4" selection-end-line="5" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/management/helpers/migrate_bibliography.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="174" column="41" selection-start-line="174" selection-start-column="41" selection-end-line="174" selection-end-column="41" />
-          <folding>
-            <element signature="e#0#71#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/models/data/bibliography_author_role.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="34" column="28" selection-start-line="34" selection-start-column="28" selection-end-line="34" selection-end-column="28" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/admin/data/bibliography.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="10" column="13" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
-          <folding>
-            <element signature="e#0#32#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/management/commands/convert_legacy_data.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="18" column="38" selection-start-line="18" selection-start-column="38" selection-end-line="18" selection-end-column="38" />
-          <folding>
-            <element signature="e#0#51#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/models/data/bibliography_publication.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="30" column="42" selection-start-line="30" selection-start-column="42" selection-end-line="30" selection-end-column="42" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/models/data/bibliography.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#28#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/admin/data/archive.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="25" column="72" selection-start-line="25" selection-start-column="72" selection-end-line="25" selection-end-column="72" />
-          <folding>
-            <element signature="e#0#32#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/diamm/models/data/archive.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="2" column="51" selection-start-line="2" selection-start-column="51" selection-end-line="2" selection-end-column="51" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ArtifactsStructureConfigurable.UI">
+        <settings>
+          <artifact-editor />
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="FacetStructureConfigurable.UI">
+        <settings>
+          <last-edited>Detection</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="GlobalLibrariesConfigurable.UI">
+        <settings>
+          <last-edited>actionmailer (v4.1.13, RVM: ruby-2.1.4 [muscat]) [gem]</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="JdkListConfigurable.UI">
+        <settings>
+          <last-edited>1.7</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ModuleStructureConfigurable.UI">
+        <settings>
+          <last-edited>diamm</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+                <option value="0.6" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectJDKs.UI">
+        <settings>
+          <last-edited>Python 3.5.0 virtualenv at ~/Documents/code/git/diamm/denv</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.39548022" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectLibrariesConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
   </component>
 </project>

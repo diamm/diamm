@@ -1,14 +1,4 @@
 from django.db import models
-from simple_history.models import HistoricalRecords
-
-# enumerate surface types
-PARCHMENT = 1
-PAPER = 2
-VELLUM = 3
-WOOD = 4
-SLATE = 5
-MIXED = 6
-OTHER = 7
 
 
 class Source(models.Model):
@@ -16,13 +6,23 @@ class Source(models.Model):
         app_label = "diamm_data"
         ordering = ['archive__city__name', 'sort_order']
 
+    # enumerate surface types
+    PARCHMENT = 1
+    PAPER = 2
+    VELLUM = 3
+    WOOD = 4
+    SLATE = 5
+    MIXED = 6
+    OTHER = 7
+
     SURFACE_OPTIONS = (
-        (1, 'Parchment'),
-        (2, 'Paper'),
-        (3, 'Vellum'),
-        (4, 'Wood'),
-        (5, 'Slate'),
-        (6, 'Mixed Paper and Parchment'),
+        (PARCHMENT, 'Parchment'),
+        (PAPER, 'Paper'),
+        (VELLUM, 'Vellum'),
+        (WOOD, 'Wood'),
+        (SLATE, 'Slate'),
+        (MIXED, 'Mixed Paper and Parchment'),
+        (OTHER, 'Other')
     )
 
     id = models.AutoField(primary_key=True)  # migrate old ID
@@ -43,17 +43,30 @@ class Source(models.Model):
 
     format = models.CharField(max_length=255, blank=True, null=True)
     measurements = models.CharField(max_length=512, blank=True, null=True)
-    public = models.BooleanField(default=False)
+    public = models.BooleanField(default=False, help_text="Source Description is Public")
+    public_images = models.BooleanField(default=False, help_text="Source Images are Public")
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    history = HistoricalRecords()
 
     copyists = models.ManyToManyField("diamm_data.Person",
-                                      through="diamm_data.SourceCopyist")
+                                      through="diamm_data.SourceCopyist",
+                                      related_name="sources_copied")
 
     bibliography = models.ManyToManyField("diamm_data.Bibliography",
                                           through="diamm_data.SourceBibliography")
+
+    people = models.ManyToManyField("diamm_data.Person",
+                                    through="diamm_data.SourcePerson",
+                                    related_name="related_sources")
+
+    # inventory = models.ManyToManyField("diamm_data.Composition",
+    #                                    through="diamm_data.Item")
+
+    # provenance = models.ManyToManyField("diamm_data.GeographicArea",
+    #                                     through="diamm_data.SourceProvenance",
+    #                                     through_fields=("source", "country"),
+    #                                     related_name="sources")
 
     # This will be updated automatically whenever a new source is added.
     # Since databases don't do natural sort and instead default to ASCII sort
@@ -64,4 +77,49 @@ class Source(models.Model):
     sort_order = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
-        return "{0}".format(self.name)
+        if self.name:
+            return "{0} ({1})".format(self.shelfmark, self.name)
+        return "{0}".format(self.shelfmark)
+
+    @property
+    def shelfmark(self):
+        # 1 = shelfmark
+        return " ".join([s.identifier for s in self.identifiers.filter(type=1)])
+
+    @property
+    def full_name(self):
+        return self.__str__()
+
+    @property
+    def surface_type(self):
+        if not self.surface:
+            return None
+
+        d = dict(self.SURFACE_OPTIONS)
+        return d[self.surface]
+
+    @property
+    def public_notes(self):
+        return self.notes.exclude(type=99)  # exclude private notes
+
+    @property
+    def composers(self):
+        composer_names = []
+        for item in self.inventory.all():
+            if not item.composition:
+                if item.aggregate_composer:
+                    composer_names.append(item.aggregate_composer.full_name)
+                    continue
+
+            for composer in item.composition.composers.all():
+                composer_names.append(composer.composer_name)
+        return list(set(composer_names))
+
+    @property
+    def compositions(self):
+        composition_names = []
+        for item in self.inventory.all():
+            if not item.composition:
+                continue
+            composition_names.append(item.composition.name)
+        return list(set(composition_names))

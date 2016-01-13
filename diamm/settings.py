@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'diamm',
     'diamm.diamm_data',
     'diamm.diamm_migrate',
-    'simple_history',
+    'reversion',
     'rest_framework',
     'rest_framework.authtoken',
     'django_extensions'
@@ -138,3 +138,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,
+}
+
+SOLR_SERVER = "http://localhost:8983/solr/diamm/"

@@ -1,11 +1,11 @@
 from django.db import models
-from simple_history.models import HistoricalRecords
 
 
 class Bibliography(models.Model):
     class Meta:
         app_label = "diamm_data"
-        verbose_name_plural = "Bibliographies"
+        verbose_name = "Bibliography Entry"
+        verbose_name_plural = "Bibliography Entries"
         ordering = ('authors__last_name',)
 
     title = models.CharField(max_length=1024)
@@ -17,8 +17,6 @@ class Bibliography(models.Model):
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now_add=True)
-
-    history = HistoricalRecords()
 
     def __str__(self):
         return "{0}".format(self.abbreviation)

@@ -16,7 +16,37 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+from rest_framework.routers import SimpleRouter
+
+from diamm.views.home import HomeView
+from diamm.views.website.search import SearchView
+from diamm.views.website.source import SourceList, SourceDetail
+from diamm.views.website.archive import ArchiveList, ArchiveDetail
+from diamm.views.website.city import CityList, CityDetail
+from diamm.views.website.country import CountryList, CountryDetail
+from diamm.views.website.person import PersonList, PersonDetail
+from diamm.views.website.composition import CompositionList, CompositionDetail
+
+
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^$', HomeView.as_view(), name="home"),
+
+    # public website
+    url(r'^search/$', SearchView.as_view(), name="search"),
+    url(r'^sources/$', SourceList.as_view(), name="source-list"),
+    url(r'^sources/(?P<pk>[0-9]+)/$', SourceDetail.as_view(), name="source-detail"),
+    url(r'^archives/$', ArchiveList.as_view(), name="archive-list"),
+    url(r'^archives/(?P<pk>[0-9]+)/$', ArchiveDetail.as_view(), name="archive-detail"),
+    url(r'^cities/$', CityList.as_view(), name="city-list"),
+    url(r'^cities/(?P<pk>[0-9]+)/$', CityDetail.as_view(), name="city-detail"),
+    url(r'^countries/$', CountryList.as_view(), name="country-list"),
+    url(r'^countries/(?P<pk>[0-9]+)/$', CountryDetail.as_view(), name="country-detail"),
+    url(r'^people/$', PersonList.as_view(), name="person-list"),
+    url(r'^people/(?P<pk>[0-9]+)/$', PersonDetail.as_view(), name="person-detail"),
+    url(r'^compositions/$', CompositionList.as_view(), name="composition-list"),
+    url(r'^compositions/(?P<pk>[0-9]+)/$', CompositionDetail.as_view(), name="composition-detail")
+
 ]
+

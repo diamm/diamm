@@ -1,0 +1,77 @@
+[
+  {
+    "model": "diamm_data.ImagePageCondition",
+    "id": 1,
+    "fields": {"condition": "Requires UV"}
+  },
+  {
+    "model": "diamm_data.ImagePageCondition",
+    "id": 2,
+    "fields": {"condition": "Requires Enhancement"}
+  },
+  {
+    "model": "diamm_data.ImagePageCondition",
+    "id": 3,
+    "fields": {"condition": "Palimpsest"}
+  },
+  {
+    "model": "diamm_data.ImagePageCondition",
+    "id": 4,
+    "fields": {"condition": "Offset"}
+  },
+  {
+    "model": "diamm_data.ImagePageCondition",
+    "id": 5,
+    "fields": {"condition": "Badly Damaged"}
+  },
+  {
+    "model": "diamm_data.ImagePageCondition",
+    "id": 6,
+    "fields": {"condition": "Cropped"}
+  },
+  {
+    "model": "diamm_data.ImagePageCondition",
+    "id": 7,
+    "fields": {"condition": "Water stained"}
+  },
+  {
+    "model": "diamm_data.ImagePageCondition",
+    "id": 8,
+    "fields": {"condition": "Show-through"}
+  },
+  {
+    "model": "diamm_data.ImagePageCondition",
+    "id": 9,
+    "fields": {"condition": "Burn-through"}
+  },
+  {
+    "model": "diamm_data.ImagePageCondition",
+    "id": 10,
+    "fields": {"condition": "Good"}
+  },
+  {
+    "model": "diamm_data.ImagePageCondition",
+    "id": 11,
+    "fields": {"condition": "Mild Tweaking"}
+  },
+  {
+    "model": "diamm_data.ImagePageCondition",
+    "id": 12,
+    "fields": {"condition": "Moderate"}
+  },
+  {
+    "model": "diamm_data.ImagePageCondition",
+    "id": 13,
+    "fields": {"condition": "Poor"}
+  },
+  {
+    "model": "diamm_data.ImagePageCondition",
+    "id": 14,
+    "fields": {"condition": "Very Poor"}
+  },
+  {
+    "model": "diamm_data.ImagePageCondition",
+    "id": 15,
+    "fields": {"condition": "Illegible"}
+  }
+]

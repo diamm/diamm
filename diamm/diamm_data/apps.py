@@ -9,3 +9,7 @@ import logging
 class DiammDataAppConfig(AppConfig):
     name = 'diamm.diamm_data'
     verbose_name = 'DIAMM Data'
+
+    def ready(self):
+        print("Diamm Data app is ready!")
+        import diamm.signals

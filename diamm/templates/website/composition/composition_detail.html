@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <h1>{{ content.name }}</h1>
+    <h2>Composers</h2>
+    <ul>
+    {% for composer in content.composers %}
+        <li>
+            <a href="{{ composer.url }}">{{ composer.full_name }} </a>
+            {% if composer.uncertain %}
+            (uncertain)
+            {% endif %}
+        </li>
+    {% endfor %}
+    </ul>
+
+    <h2>Appears in:</h2>
+    <ul>
+    {% for source in content.sources %}
+        <li><a href="{{ source.url }}">{{ source.full_name }}</a></li>
+    {% endfor %}
+    </ul>
+{% endblock %}

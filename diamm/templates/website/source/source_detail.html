@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <h1>{{ content.full_name }}</h1>
+    <h2>Archive</h2>
+    <p><a href="{{ content.archive.url }}">{{ content.archive.name }}</a>, <a href="{{ content.archive.city.url }}">{{ content.archive.city.name }}</a></p>
+    <h2>Identifiers</h2>
+    <ul>
+    {% for identifier in content.identifiers %}
+        <li>
+            <h3>{{ identifier.identifier_type }}</h3>
+            <p>{{ identifier.identifier }}</p>
+        </li>
+    {% endfor %}
+    </ul>
+    <h2>Descriptions</h2>
+    {% for note in content.notes %}
+        <h3>{{ note.note_type }}</h3>
+        <p>{{ note.note|linebreaks }}</p>
+    {% endfor %}
+    <h2>Inventory</h2>
+    <ul>
+    {% for item in content.inventory %}
+        <li>
+            <a href="{{ item.composition.url }}">{{ item.composition.name }}</a>, (
+            {% for composer in item.composition.composers %}
+                <a href="{{ composer.url }}">{{ composer.full_name }}</a>,
+            {% endfor %}
+            )
+        </li>
+    {% endfor %}
+    </ul>
+{% endblock %}

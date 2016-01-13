@@ -1,6 +1,5 @@
 from django.db import models
 from django.conf import settings
-from simple_history.models import HistoricalRecords
 
 class Archive(models.Model):
     class Meta:
@@ -10,7 +9,8 @@ class Archive(models.Model):
     # IDs from the old database to the new database will be maintained
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=512, default="S.N.")
-    city = models.ForeignKey('diamm_data.GeographicArea', blank=True, null=True)
+    city = models.ForeignKey('diamm_data.GeographicArea',
+                             related_name="archives", blank=True, null=True)
     siglum = models.CharField(max_length=64, blank=True, null=True)
     librarian = models.CharField(max_length=255, blank=True, null=True)
     secondary_contact = models.CharField(max_length=255, blank=True, null=True)
@@ -32,11 +32,12 @@ class Archive(models.Model):
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    history = HistoricalRecords()
 
     def __str__(self):
         if self.city:
             return "{0} ({1})".format(self.name, self.city.name)
         return "{0}".format(self.name)
 
-
+    @property
+    def public_notes(self):
+        return self.notes.exclude(type=1)  # exclude private notes.

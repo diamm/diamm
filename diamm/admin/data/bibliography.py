@@ -3,7 +3,7 @@ from diamm.models.data.bibliography import Bibliography
 from diamm.models.data.bibliography_author_role import BibliographyAuthorRole
 from diamm.models.data.bibliography_publication import BibliographyPublication
 from diamm.models.data.source_bibliography import SourceBibliography
-from simple_history.admin import SimpleHistoryAdmin
+from reversion.admin import VersionAdmin
 
 
 class SourceInline(admin.TabularInline):
@@ -20,7 +20,7 @@ class PublicationInline(admin.TabularInline):
     extra = 0
 
 @admin.register(Bibliography)
-class BibliographyAdmin(SimpleHistoryAdmin):
+class BibliographyAdmin(VersionAdmin):
     list_display = ('get_authors', 'title', 'year', 'abbreviation')
     list_filter = ('type__name',)
     search_fields = ('title', 'authors__last_name', 'abbreviation')

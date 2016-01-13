@@ -1,17 +1,13 @@
 import re
+import psycopg2 as psql
+from django.conf import settings
 from diamm.models.migrate.legacy_source import LegacySource
 from diamm.models.data.source import Source
-from diamm.models.data.source import PARCHMENT, PAPER, VELLUM, WOOD, SLATE, MIXED, OTHER
 from diamm.management.helpers.utilities import convert_yn_to_boolean
 from diamm.models.data.archive import Archive
 from diamm.models.data.source_identifier import SourceIdentifier
-from diamm.models.data.source_identifier import SHELFMARK, RISM, CCM, EARP, OLIM
 from diamm.models.data.source_note import SourceNote
-from diamm.models.data.source_note import GENERAL_NOTE, RISM_NOTE, CCM_NOTE, EXTENT_NOTE, PHYSICAL_NOTE
-from diamm.models.data.source_note import BINDING_NOTE, OWNERSHIP_NOTE, WATERMARK_NOTE, LIMINARY_NOTE
-from diamm.models.data.source_note import NOTATION_NOTE, DATE_NOTE, DEDICATION_NOTE, RULING_NOTE, FOLIATION_NOTE, PRIVATE_NOTE
 from diamm.models.data.source_url import SourceURL
-from diamm.models.data.source_url import HOST, ANCILLARY
 from blessings import Terminal
 
 term = Terminal()
@@ -37,17 +33,17 @@ def __migrate_surface(legacy_surface):
         return None
 
     if legacy_surface.lower() == 'parchment':
-        return PARCHMENT
+        return Source.PARCHMENT
     elif legacy_surface.lower() == 'paper':
-        return PAPER
+        return Source.PAPER
     elif legacy_surface.lower() in ('vellum', 'calfskin'):
-        return VELLUM
+        return Source.VELLUM
     elif legacy_surface.lower() in ('wood',):
-        return WOOD
+        return Source.WOOD
     elif legacy_surface.lower() in ('slate',):
-        return SLATE
+        return Source.SLATE
     else:
-        return OTHER
+        return Source.OTHER
 
 
 def migrate_source_to_source(legacy_source):
@@ -80,18 +76,18 @@ def migrate_source_to_source(legacy_source):
 
     sm = {
         'identifier': legacy_source.shelfmark,
-        'type': SHELFMARK,
+        'type': SourceIdentifier.SHELFMARK,
         'source': s
     }
     shelfmark = SourceIdentifier(**sm)
     shelfmark.save()
 
     other_identifiers = [
-        (CCM, legacy_source.ccmabbrev),
-        (RISM, legacy_source.rismabbrev),
-        (RISM, legacy_source.altrismabbrev),
-        (EARP, legacy_source.earpdesignation),
-        (OLIM, legacy_source.olim_text_only)
+        (SourceIdentifier.CCM, legacy_source.ccmabbrev),
+        (SourceIdentifier.RISM, legacy_source.rismabbrev),
+        (SourceIdentifier.RISM, legacy_source.altrismabbrev),
+        (SourceIdentifier.EARP, legacy_source.earpdesignation),
+        (SourceIdentifier.OLIM, legacy_source.olim_text_only)
     ]
 
     for i in other_identifiers:
@@ -113,7 +109,7 @@ def migrate_source_to_source(legacy_source):
                 continue
 
             d = {
-                'type': ANCILLARY,
+                'type': SourceURL.ANCILLARY,
                 'link_text': url_list.group('title'),
                 'link': url_list.group('url'),
                 'source': s
@@ -122,15 +118,15 @@ def migrate_source_to_source(legacy_source):
             surl.save()
 
     notes = [
-        (DATE_NOTE, legacy_source.dateofsource),
-        (DATE_NOTE, legacy_source.datecomments),
-        (RISM_NOTE, legacy_source.description_rism),
-        (PRIVATE_NOTE, legacy_source.notes),
-        (LIMINARY_NOTE, legacy_source.liminarytext),
-        (RULING_NOTE, legacy_source.stavegauge),
-        (GENERAL_NOTE, legacy_source.description_diamm),
-        (CCM_NOTE, legacy_source.description_ccm),
-        (DEDICATION_NOTE, legacy_source.dedicationtext)
+        (SourceNote.DATE_NOTE, legacy_source.dateofsource),
+        (SourceNote.DATE_NOTE, legacy_source.datecomments),
+        (SourceNote.RISM_NOTE, legacy_source.description_rism),
+        (SourceNote.PRIVATE_NOTE, legacy_source.notes),
+        (SourceNote.LIMINARY_NOTE, legacy_source.liminarytext),
+        (SourceNote.RULING_NOTE, legacy_source.stavegauge),
+        (SourceNote.GENERAL_NOTE, legacy_source.description_diamm),
+        (SourceNote.CCM_NOTE, legacy_source.description_ccm),
+        (SourceNote.DEDICATION_NOTE, legacy_source.dedicationtext)
     ]
 
     for n in notes:
@@ -143,6 +139,23 @@ def migrate_source_to_source(legacy_source):
             note = SourceNote(**d)
             note.save()
 
+def update_table():
+    print(term.yellow("\tUpdating the ID sequences for the Django Source Table"))
+    sql_max = "SELECT MAX(id) AS maxid FROM diamm_data_source;"
+    sql_alt = "ALTER SEQUENCE diamm_data_source_id_seq RESTART WITH %s"
+    db = settings.DATABASES['default']
+    conn = psql.connect(database=db['NAME'],
+                        user=db['USER'],
+                        password=db['PASSWORD'],
+                        host=db['HOST'],
+                        port=db['PORT'],
+                        cursor_factory=psql.extras.DictCursor)
+    curs = conn.cursor()
+    curs.execute(sql_max)
+    maxid = curs.fetchone()['maxid']
+    nextid = maxid + 1
+    curs.execute(sql_alt, (nextid,))
+
 
 def migrate():
     print(term.blue('Migrating Sources'))
@@ -151,4 +164,5 @@ def migrate():
     for lsource in legacy_sources:
         migrate_source_to_source(lsource)
 
+    update_table()
     print(term.blue('Done migrating Sources'))

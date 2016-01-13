@@ -21,8 +21,10 @@ class SourceCopyist(models.Model):
         (TEXT_AND_MUSIC, "Text and Music")
     )
 
-    source = models.ForeignKey("diamm_data.Source", on_delete=models.CASCADE)
-    copyist = models.ForeignKey("diamm_data.Person", on_delete=models.CASCADE)
+    source = models.ForeignKey("diamm_data.Source",
+                               on_delete=models.CASCADE)
+    copyist = models.ForeignKey("diamm_data.Person",
+                                on_delete=models.CASCADE)
     uncertain = models.BooleanField(default=False)
     type = models.IntegerField(choices=SOURCE_COPYIST_TYPES, blank=True, null=True)
 

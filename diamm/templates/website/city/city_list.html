@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <h1>City List</h1>
+    <ul>
+    {% for city in content.results %}
+    <li><a href="{{ city.url }}">{{ city.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    {% block head %}
+
+    {% endblock %}
+</head>
+<body>
+    {% block body %}
+
+    {% endblock %}
+
+    <script src="{% static "js/jspm_packages/system.js" %}"></script>
+    <script src="{% static "js/config.js" %}"></script>
+    <script>
+        System.import('app.js');
+    </script>
+    {% block scripts %}
+
+    {% endblock %}
+</body>
+</html>

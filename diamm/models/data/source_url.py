@@ -1,14 +1,15 @@
 from django.db import models
 
-IIIF_MANIFEST = 1
-HOST = 2
-ANCILLARY = 3
 
 class SourceURL(models.Model):
     class Meta:
         app_label = "diamm_data"
         verbose_name = "Source URL"
         verbose_name_plural = "Source URLs"
+
+    IIIF_MANIFEST = 1
+    HOST = 2
+    ANCILLARY = 3
 
     URL_TYPES = (
         (IIIF_MANIFEST, 'IIIF'),

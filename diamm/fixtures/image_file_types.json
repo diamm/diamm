@@ -1,0 +1,68 @@
+[
+  {
+    "model": "diamm_data.ImageType",
+    "id": 1,
+    "fields": {"name": "Primary Image"}
+  },
+  {
+    "model": "diamm_data.ImageType",
+    "id": 2,
+    "fields": {"name": "Colour UV"}
+  },
+  {
+    "model": "diamm_data.ImageType",
+    "id": 3,
+    "fields": {"name": "Watermark"}
+  },
+  {
+    "model": "diamm_data.ImageType",
+    "id": 4,
+    "fields": {"name": "Detail"}
+  },
+  {
+    "model": "diamm_data.ImageType",
+    "id": 5,
+    "fields": {"name": "Grayscale UV"}
+  },
+  {
+    "model": "diamm_data.ImageType",
+    "id": 6,
+    "fields": {"name": "Digitally Enhanced"}
+  },
+  {
+    "model": "diamm_data.ImageType",
+    "id": 7,
+    "fields": {"name": "Levels adjusted"}
+  },
+  {
+    "model": "diamm_data.ImageType",
+    "id": 8,
+    "fields": {"name": "Digitally Restored"}
+  },
+  {
+    "model": "diamm_data.ImageType",
+    "id": 9,
+    "fields": {"name": "Alternate Exposure"}
+  },
+  {
+    "model": "diamm_data.ImageType",
+    "id": 10,
+    "fields": {"name": "Infra-red"}
+  },
+  {
+    "model": "diamm_data.ImageType",
+    "id": 11,
+    "fields": {"name": "Alternate Focus"}
+  },
+  {
+    "model": "diamm_data.ImageType",
+    "id": 12,
+    "fields": {"name": "Alternate Shot"}
+  },
+  {
+    "model": "diamm_data.ImageType",
+    "id": 13,
+    "fields": {"name": "Raking Light"}
+  }
+
+]

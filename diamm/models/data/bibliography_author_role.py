@@ -1,23 +1,23 @@
 from django.db import models
 
-R_AUTHOR = 1
-R_EDITOR = 2
-R_COMPILER = 3
-R_FESTSCHRIFT = 4
-R_COLLABORATOR = 5
-R_INDEXER = 6
-R_LATER_EDITOR = 7
-R_PUBLISHER = 8
-R_REVIEWER = 9
-R_REVISER = 10
-R_SUPERVISOR = 11
-R_TRANSLATOR = 12
-R_COPYIST = 13
-
 
 class BibliographyAuthorRole(models.Model):
     class Meta:
         app_label = "diamm_data"
+
+    R_AUTHOR = 1
+    R_EDITOR = 2
+    R_COMPILER = 3
+    R_FESTSCHRIFT = 4
+    R_COLLABORATOR = 5
+    R_INDEXER = 6
+    R_LATER_EDITOR = 7
+    R_PUBLISHER = 8
+    R_REVIEWER = 9
+    R_REVISER = 10
+    R_SUPERVISOR = 11
+    R_TRANSLATOR = 12
+    R_COPYIST = 13
 
     ROLES = (
         (R_AUTHOR, "Author"),

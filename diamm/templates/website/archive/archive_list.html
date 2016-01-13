@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <h1>Archive List</h1>
+    <ul>
+    {% for archive in content.results %}
+        <li><a href="{{ archive.url }}">{{ archive.name }}</a> ({{ archive.city.name }})</li>
+    {% endfor %}
+    </ul>
+{% endblock %}

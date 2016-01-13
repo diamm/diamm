@@ -1,18 +1,5 @@
 from django.db import models
 
-B_VOLUME_NO = 1
-B_PARENT_TITLE = 2
-B_PUBLISHER = 3
-B_PAGES = 4
-B_UNIVERSITY = 5
-B_DEGREE = 6
-B_CHAPTER = 7
-B_SERIES = 8
-B_URL = 9
-B_URL_ACCESSED = 10
-B_TRANSLATOR = 11
-B_FESTSCHRIFT_FOR = 12
-B_PLACE_PUBLICATION = 13
 
 
 class BibliographyPublication(models.Model):
@@ -29,6 +16,21 @@ class BibliographyPublication(models.Model):
         app_label = "diamm_data"
         verbose_name = "Additional Publication Info"
         verbose_name_plural = "Additional Publication Info"
+
+    B_VOLUME_NO = 1
+    B_PARENT_TITLE = 2
+    B_PUBLISHER = 3
+    B_PAGES = 4
+    B_UNIVERSITY = 5
+    B_DEGREE = 6
+    B_CHAPTER = 7
+    B_SERIES = 8
+    B_URL = 9
+    B_URL_ACCESSED = 10
+    B_TRANSLATOR = 11
+    B_FESTSCHRIFT_FOR = 12
+    B_PLACE_PUBLICATION = 13
+
 
     PUBLICATION_INFO_TYPE = (
         (B_VOLUME_NO, "Volume Number"),

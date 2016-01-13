@@ -4,13 +4,24 @@ from diamm.models.migrate.legacy_country import LegacyCountry
 from diamm.models.migrate.legacy_city import LegacyCity
 from diamm.models.migrate.legacy_composer import LegacyComposer
 from diamm.models.migrate.legacy_copyist import LegacyCopyist
+from diamm.models.migrate.legacy_language import LegacyLanguage
 from diamm.models.migrate.legacy_person import LegacyPerson
 from diamm.models.migrate.legacy_source_copyist import LegacySourceCopyist
 from diamm.models.migrate.legacy_bibliography import LegacyBibliography
 from diamm.models.migrate.legacy_author import LegacyAuthor
 from diamm.models.migrate.legacy_author_bibliography import LegacyAuthorBibliography
 from diamm.models.migrate.legacy_bibliography_source import LegacyBibliographySource
+from diamm.models.migrate.legacy_relationship_type import LegacyRelationshipType
+from diamm.models.migrate.legacy_source_person import LegacySourcePerson
+from diamm.models.migrate.legacy_composition import LegacyComposition
+from diamm.models.migrate.legacy_item import LegacyItem
+from diamm.models.migrate.legacy_image import LegacyImage
+from diamm.models.migrate.legacy_secondary_image import LegacySecondaryImage
+from diamm.models.migrate.legacy_item_image import LegacyItemImage
+from diamm.models.migrate.legacy_provenance import LegacyProvenance
 
+
+from diamm.models.data.legacy_id import LegacyId  # Yes, this belongs here. Used to track old PKs
 from diamm.models.data.source import Source
 from diamm.models.data.source_note import SourceNote
 from diamm.models.data.source_identifier import SourceIdentifier
@@ -20,9 +31,24 @@ from diamm.models.data.archive_note import ArchiveNote
 from diamm.models.data.geographic_area import GeographicArea
 from diamm.models.data.person import Person
 from diamm.models.data.person_note import PersonNote
+from diamm.models.data.person_role import PersonRole
+from diamm.models.data.role import Role
 from diamm.models.data.organization import Organization
 from diamm.models.data.organization_type import OrganizationType
+from diamm.models.data.language import Language
 from diamm.models.data.source_copyist import SourceCopyist
+from diamm.models.data.source_provenance import SourceProvenance
+from diamm.models.data.source_person import SourcePerson
+from diamm.models.data.source_relationship_type import SourceRelationshipType
+from diamm.models.data.composition import Composition
+from diamm.models.data.composition_composer import CompositionComposer
+from diamm.models.data.genre import Genre
+from diamm.models.data.item import Item
+from diamm.models.data.item_note import ItemNote
+from diamm.models.data.image import Image
+from diamm.models.data.image_note import ImageNote
+from diamm.models.data.image_type import ImageType
+from diamm.models.data.image_page_condition import ImagePageCondition
 
 
 from diamm.models.data.bibliography import Bibliography
@@ -31,3 +57,4 @@ from diamm.models.data.bibliography_type import BibliographyType
 from diamm.models.data.bibliography_publication import BibliographyPublication
 from diamm.models.data.bibliography_author_role import BibliographyAuthorRole
 from diamm.models.data.source_bibliography import SourceBibliography
+from diamm.models.data.composition_bibliography import CompositionBibliography

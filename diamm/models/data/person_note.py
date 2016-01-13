@@ -1,13 +1,14 @@
 from django.db import models
 
-BIOGRAPHY = 1
-VARIANT_NAME_NOTE = 2
-DATE_NOTE = 3
-
 
 class PersonNote(models.Model):
     class Meta:
         app_label = "diamm_data"
+
+    BIOGRAPHY = 1
+    VARIANT_NAME_NOTE = 2
+    DATE_NOTE = 3
+
 
     NOTE_TYPES = (
         (BIOGRAPHY, "Biography"),
@@ -17,6 +18,7 @@ class PersonNote(models.Model):
 
     note = models.TextField()
     type = models.IntegerField(choices=NOTE_TYPES)
+    public = models.BooleanField(default=True)
     person = models.ForeignKey('diamm_data.Person',
                                related_name="notes")
     created = models.DateTimeField(auto_now_add=True)

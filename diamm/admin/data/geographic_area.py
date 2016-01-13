@@ -2,8 +2,7 @@ from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
 from diamm.models.data.geographic_area import GeographicArea
-from diamm.models.data.geographic_area import CITY, COUNTRY, STATE, REGION, FICTIONAL
-from simple_history.admin import SimpleHistoryAdmin
+from reversion.admin import VersionAdmin
 
 
 class GeographicAreaTypeListFilter(admin.SimpleListFilter):
@@ -12,11 +11,11 @@ class GeographicAreaTypeListFilter(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         return (
-            (CITY, _('City')),
-            (COUNTRY, _('Country')),
-            (STATE, _('County/Province/State/Canton')),
-            (REGION, _('Region/Cultural area')),
-            (FICTIONAL, _('Fictional/Imaginary'))
+            (GeographicArea.CITY, _('City')),
+            (GeographicArea.COUNTRY, _('Country')),
+            (GeographicArea.STATE, _('County/Province/State/Canton')),
+            (GeographicArea.REGION, _('Region/Cultural area')),
+            (GeographicArea.FICTIONAL, _('Fictional/Imaginary'))
         )
 
     def queryset(self, request, queryset):
@@ -26,7 +25,7 @@ class GeographicAreaTypeListFilter(admin.SimpleListFilter):
 
 
 @admin.register(GeographicArea)
-class GeographicAreaAdmin(SimpleHistoryAdmin, ForeignKeyAutocompleteAdmin):
+class GeographicAreaAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     list_display = ('name', 'area_type', 'get_parent')
     search_fields = ('name',)
     list_filter = (GeographicAreaTypeListFilter,)

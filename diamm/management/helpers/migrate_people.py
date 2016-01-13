@@ -2,7 +2,7 @@ import re
 from diamm.models.migrate.legacy_composer import LegacyComposer
 from diamm.models.migrate.legacy_copyist import LegacyCopyist
 from diamm.models.migrate.legacy_person import LegacyPerson
-from diamm.models.data.person_note import PersonNote, VARIANT_NAME_NOTE, DATE_NOTE, BIOGRAPHY
+from diamm.models.data.person_note import PersonNote
 from diamm.models.data.person import Person
 
 from blessings import Terminal
@@ -48,7 +48,7 @@ def migrate_copyist_to_people(legacy_copyist):
 
     if date_stmt:
         n = {
-            'type': DATE_NOTE,
+            'type': PersonNote.DATE_NOTE,
             'note': date_stmt,
             'person': p
         }
@@ -88,9 +88,9 @@ def migrate_composers_to_people(legacy_composer):
     p.save()
 
     notes = (
-        (VARIANT_NAME_NOTE, legacy_composer.variantspellings),
-        (BIOGRAPHY, legacy_composer.tngentry),
-        (DATE_NOTE, legacy_composer.dates_public)
+        (PersonNote.VARIANT_NAME_NOTE, legacy_composer.variantspellings),
+        (PersonNote.BIOGRAPHY, legacy_composer.tngentry),
+        (PersonNote.DATE_NOTE, legacy_composer.dates_public)
     )
     for n in notes:
         if not n[1]:

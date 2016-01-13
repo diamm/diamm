@@ -65,8 +65,8 @@ class LegacyArchive(models.Model):
     cdschecked = models.TextField(db_column='CDschecked', blank=True, null=True)  # Field name made lowercase.
     fulladdressrunon = models.TextField(blank=True, null=True)
     invoicereceived = models.TextField(blank=True, null=True)
-    alcountrykey = models.ForeignKey("diamm_migrate.LegacyCountry", db_column='alCountryKey', blank=True, null=True)  # Field name made lowercase.
-    alcitykey = models.ForeignKey("diamm_migrate.LegacyCity", db_column='alCityKey', blank=True, null=True)  # Field name made lowercase.
+    alcountrykey = models.IntegerField(db_column='alCountryKey', blank=True, null=True)  # Field name made lowercase.
+    alcitykey = models.IntegerField(db_column='alCityKey', blank=True, null=True)  # Field name made lowercase.
     sourcesfromthisarchive = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
     notes = models.TextField(blank=True, null=True)
     banner_url = models.TextField(db_column='banner_URL', blank=True, null=True)  # Field name made lowercase.

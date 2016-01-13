@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <h1>Source List</h1>
+    <ul>
+    {% for source in content.results %}
+        <li><a href="{{ source.url }}">{{ source.full_name }}</a></li>
+    {% endfor %}
+    </ul>
+{% endblock %}

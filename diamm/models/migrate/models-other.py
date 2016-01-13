@@ -204,15 +204,101 @@ class Composer(models.Model):
 
 
 class Composition(models.Model):
+    attribution_authority = models.TextField(blank=True, null=True)
+    attribution_uncertain = models.TextField(blank=True, null=True)
     compositionkey = models.IntegerField(db_column='compositionKey', primary_key=True)  # Field name made lowercase.
     genre = models.TextField(blank=True, null=True)
     max_number_of_voices = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
     composition_name = models.TextField(blank=True, null=True)
+    composerattribution = models.TextField(db_column='composerAttribution', blank=True, null=True)  # Field name made lowercase.
     isorhythmic = models.TextField(blank=True, null=True)
+    title = models.TextField(db_column='TITLE', blank=True, null=True)  # Field name made lowercase.
+    notesconcordances = models.TextField(blank=True, null=True)
+    concordancescollated = models.TextField(db_column='concordancesCollated', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
         db_table = 'Composition'
+
+
+class CompositioncomposerIs(models.Model):
+    composerkey = models.DecimalField(db_column='composerKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    firstname = models.TextField(blank=True, null=True)
+    date = models.TextField(blank=True, null=True)
+    compositioncomposerkey = models.IntegerField(db_column='compositionComposerKey', primary_key=True)  # Field name made lowercase.
+    composernamebasic = models.TextField(db_column='composerNamebasic', blank=True, null=True)  # Field name made lowercase.
+    compositionkey = models.DecimalField(db_column='compositionKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    attribution_uncertain = models.TextField(blank=True, null=True)
+    notes_attribution = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'CompositionComposer_IS'
+
+
+class Image(models.Model):
+    archive = models.TextField(blank=True, null=True)
+    archivedfilename = models.TextField(blank=True, null=True)
+    availwebsite = models.TextField(blank=True, null=True)
+    bibliography = models.TextField(blank=True, null=True)
+    brightness = models.TextField(blank=True, null=True)
+    captureconditions = models.TextField(blank=True, null=True)
+    capturedevice = models.TextField(blank=True, null=True)
+    cd_dvdcopies = models.TextField(db_column='CD/DVDcopies', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    city = models.TextField(blank=True, null=True)
+    contrast = models.TextField(blank=True, null=True)
+    copyrightstatement = models.TextField(blank=True, null=True)
+    cropping = models.TextField(blank=True, null=True)
+    currentmeasurements = models.TextField(blank=True, null=True)
+    datecreated = models.DateField(db_column='dateCreated', blank=True, null=True)  # Field name made lowercase.
+    datecopied = models.TextField(db_column='dateCopied', blank=True, null=True)  # Field name made lowercase.
+    detailfilename = models.TextField(blank=True, null=True)
+    digitised = models.TextField(blank=True, null=True)
+    eecmno = models.TextField(db_column='EECMno', blank=True, null=True)  # Field name made lowercase.
+    vrauthor = models.TextField(db_column='VRauthor', blank=True, null=True)  # Field name made lowercase.
+    vrdetails = models.TextField(db_column='VRdetails', blank=True, null=True)  # Field name made lowercase.
+    existingimages = models.TextField(blank=True, null=True)
+    fileformat = models.TextField(blank=True, null=True)
+    filename = models.TextField(blank=True, null=True)
+    filters = models.TextField(blank=True, null=True)
+    focus = models.TextField(blank=True, null=True)
+    folio = models.TextField(blank=True, null=True)
+    gamma = models.TextField(blank=True, null=True)
+    id = models.DecimalField(db_column='ID', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    imagekey = models.IntegerField(db_column='imageKey', primary_key=True)  # Field name made lowercase.
+    incipitimagefilename = models.TextField(blank=True, null=True)
+    vrlayers = models.TextField(db_column='VRlayers', blank=True, null=True)  # Field name made lowercase.
+    datemodified = models.DateField(db_column='dateModified', blank=True, null=True)  # Field name made lowercase.
+    nocaptures = models.TextField(db_column='noCaptures', blank=True, null=True)  # Field name made lowercase.
+    notes = models.TextField(blank=True, null=True)
+    photographer = models.TextField(blank=True, null=True)
+    questions = models.TextField(blank=True, null=True)
+    rismimagefilename = models.TextField(db_column='RISMimagefilename', blank=True, null=True)  # Field name made lowercase.
+    source = models.TextField(blank=True, null=True)
+    sourcekey = models.DecimalField(db_column='sourceKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    surfacematerial = models.TextField(db_column='surfaceMaterial', blank=True, null=True)  # Field name made lowercase.
+    tsm = models.TextField(db_column='TSM', blank=True, null=True)  # Field name made lowercase.
+    uv = models.TextField(db_column='UV', blank=True, null=True)  # Field name made lowercase.
+    uvfilename = models.TextField(db_column='UVfilename', blank=True, null=True)  # Field name made lowercase.
+    vrevaluation = models.TextField(db_column='VRevaluation', blank=True, null=True)  # Field name made lowercase.
+    vrfilename = models.TextField(db_column='VRfilename', blank=True, null=True)  # Field name made lowercase.
+    watermarkfilename = models.TextField(blank=True, null=True)
+    rismimagefilename2 = models.TextField(db_column='RISMimagefilename2', blank=True, null=True)  # Field name made lowercase.
+    archiveduvfilename = models.TextField(db_column='archivedUVfilename', blank=True, null=True)  # Field name made lowercase.
+    archiveddetailfilename = models.TextField(blank=True, null=True)
+    archivedwatermarkfilename = models.TextField(blank=True, null=True)
+    archivedvrfilename = models.TextField(db_column='archivedVRfilename', blank=True, null=True)  # Field name made lowercase.
+    watermark = models.TextField(blank=True, null=True)
+    vr = models.TextField(db_column='VR', blank=True, null=True)  # Field name made lowercase.
+    detail = models.TextField(blank=True, null=True)
+    imagetype = models.TextField(blank=True, null=True)
+    orderno = models.DecimalField(db_column='orderNo', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    checked = models.TextField(blank=True, null=True)
+    folio_alt = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'Image'
 
 
 class Item(models.Model):
@@ -236,7 +322,6 @@ class Item(models.Model):
     corrections = models.TextField(blank=True, null=True)
     layout = models.TextField(blank=True, null=True)
     abbrevposn = models.TextField(db_column='abbrevPosn', blank=True, null=True)  # Field name made lowercase.
-    genrekey = models.DecimalField(db_column='genreKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
     altincipitfilename = models.TextField(blank=True, null=True)
     notes = models.TextField(blank=True, null=True)
     copyingstyle = models.TextField(blank=True, null=True)
@@ -266,6 +351,40 @@ class Item(models.Model):
     class Meta:
         managed = False
         db_table = 'Item'
+
+
+class ItemimageIs(models.Model):
+    itemkey = models.DecimalField(db_column='itemKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    imagekey = models.DecimalField(db_column='imageKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    positiononpage = models.TextField(db_column='positiononPage', blank=True, null=True)  # Field name made lowercase.
+    incipitfilename = models.TextField(blank=True, null=True)
+    itemfolio = models.TextField(blank=True, null=True)
+    itemimagekey = models.IntegerField(db_column='itemImageKey', primary_key=True)  # Field name made lowercase.
+    initial = models.TextField(blank=True, null=True)
+    initialcolour = models.TextField(db_column='initialColour', blank=True, null=True)  # Field name made lowercase.
+    decorationcolour = models.TextField(db_column='decorationColour', blank=True, null=True)  # Field name made lowercase.
+    decorationstyle = models.TextField(db_column='decorationStyle', blank=True, null=True)  # Field name made lowercase.
+    imagefolio = models.TextField(blank=True, null=True)
+    imageserial = models.DecimalField(db_column='imageSerial', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'ItemImage_IS'
+
+
+class Secondaryimage(models.Model):
+    secondaryimagekey = models.IntegerField(db_column='secondaryImageKey', primary_key=True)  # Field name made lowercase.
+    imagekey = models.DecimalField(db_column='ImageKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    filename = models.TextField(blank=True, null=True)
+    imagetype = models.TextField(blank=True, null=True)
+    archivefilename = models.TextField(blank=True, null=True)
+    caption = models.TextField(blank=True, null=True)
+    datemodified = models.DateField(blank=True, null=True)
+    notes = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'SecondaryImage'
 
 
 class Source(models.Model):
@@ -328,6 +447,8 @@ class Source(models.Model):
         db_table = 'Source'
 
 
+
+
 class SourceCopyistIs(models.Model):
     sourcekey = models.DecimalField(db_column='sourceKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
     alcopyistkey = models.DecimalField(db_column='alcopyistKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
@@ -338,6 +459,18 @@ class SourceCopyistIs(models.Model):
     class Meta:
         managed = False
         db_table = 'Source_Copyist_IS'
+
+
+class SourcePersonIs(models.Model):
+    sourcekey = models.DecimalField(db_column='sourceKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    alpersonkey = models.DecimalField(db_column='alPersonKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    alpersonrelationshipkey = models.DecimalField(db_column='alPersonRelationshipKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    attribution_uncertain = models.TextField(blank=True, null=True)
+    sourcealpersonkey = models.IntegerField(db_column='sourceAlPersonKey', primary_key=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'Source_Person_IS'
 
 
 class Alaffiliation(models.Model):

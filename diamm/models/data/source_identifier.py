@@ -1,24 +1,23 @@
 from django.db import models
 
 
-SHELFMARK = 1
-RISM = 2
-CCM = 3
-EARP = 4
-OLIM = 5
-
-
 class SourceIdentifier(models.Model):
     class Meta:
         app_label = "diamm_data"
         verbose_name = "Source Identifier"
+        ordering = ('type',)
+    SHELFMARK = 1
+    RISM = 2
+    CCM = 3
+    EARP = 4
+    OLIM = 5
 
     IDENTIFIER_TYPES = (
-        (1, 'Shelfmark'),
-        (2, 'RISM'),
-        (3, 'CCM'),
-        (4, 'EARP'),
-        (5, 'olim (Former shelfmark)')
+        (SHELFMARK, 'Shelfmark'),
+        (RISM, 'RISM'),
+        (CCM, 'CCM'),
+        (EARP, 'EARP'),
+        (OLIM, 'olim (Former shelfmark)')
     )
 
     identifier = models.CharField(max_length=255)
@@ -32,3 +31,8 @@ class SourceIdentifier(models.Model):
 
     def __str__(self):
         return "{0}".format(self.identifier)
+
+    @property
+    def identifier_type(self):
+        d = dict(self.IDENTIFIER_TYPES)
+        return d[self.type]

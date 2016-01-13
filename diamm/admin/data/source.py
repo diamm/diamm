@@ -1,17 +1,28 @@
 import re
 from django.contrib import admin
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
-from diamm.models.data.geographic_area import COUNTRY
 from diamm.models.data.geographic_area import GeographicArea
 from diamm.models.data.source import Source
 from diamm.models.data.source_identifier import SourceIdentifier
-from diamm.models.data.source_identifier import SHELFMARK
 from diamm.models.data.source_note import SourceNote
 from diamm.models.data.source_url import SourceURL
 from diamm.models.data.source_copyist import SourceCopyist
 from diamm.models.data.source_bibliography import SourceBibliography
-from simple_history.admin import SimpleHistoryAdmin
+from diamm.models.data.source_person import SourcePerson
+from diamm.models.data.item import Item
+from reversion.admin import VersionAdmin
 from django.utils.translation import ugettext_lazy as _
+
+
+class InventoryInline(admin.TabularInline):
+    model = Item
+    extra = 0
+    raw_id_fields = ('source', 'composition', 'aggregate_composer')
+
+
+class SourcePersonInline(admin.TabularInline):
+    model = SourcePerson
+    extra = 0
 
 
 class BibliographyInline(admin.TabularInline):
@@ -41,12 +52,32 @@ class URLsInline(admin.TabularInline):
     extra = 0
 
 
+class InventoryFilter(admin.SimpleListFilter):
+    title = _('Inventory')
+    parameter_name = "inventory"
+
+    def lookups(self, request, model_admin):
+        return (
+            ("yes", _("Source has inventory")),
+            ("no", _("Source does not have inventory"))
+        )
+
+    def queryset(self, request, queryset):
+        if not self.value():
+            return queryset
+        val = self.value()
+        if val == "yes":
+            return queryset.filter(inventory__isnull=False).distinct()
+        elif val == "no":
+            return queryset.filter(inventory__isnull=True).distinct()
+
+
 class CountryListFilter(admin.SimpleListFilter):
     title = _('Country')
     parameter_name = 'country'
 
     def lookups(self, request, model_admin):
-        countries = GeographicArea.objects.filter(type=COUNTRY)
+        countries = GeographicArea.objects.filter(type=GeographicArea.COUNTRY)
         return [(c.pk, c.name) for c in countries]
 
     def queryset(self, request, queryset):
@@ -68,7 +99,7 @@ def sort_sources(modeladmin, request, queryset):
         """
         return [__tryint(c) for c in re.split('([0-9]+)', s[1])]
 
-    sources = [(s.pk, s.identifiers.get(type=SHELFMARK).identifier) for s in queryset]
+    sources = [(s.pk, s.identifiers.get(type=SourceIdentifier.SHELFMARK).identifier) for s in queryset]
     sources.sort(key=__alphanum_key)
 
     for i, s in enumerate(sources):
@@ -80,11 +111,12 @@ sort_sources.short_description = "Re-sort Source Order"
 
 
 @admin.register(Source)
-class SourceAdmin(SimpleHistoryAdmin, ForeignKeyAutocompleteAdmin):
+class SourceAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     list_display = ('get_shelfmark', 'name', 'get_city', 'get_archive', 'public')
     search_fields = ('identifiers__identifier', 'name', 'archive__name')
-    inlines = (IdentifiersInline, NotesInline, URLsInline, SourceCopyistInline, BibliographyInline)
-    list_filter = (CountryListFilter,)
+    inlines = (IdentifiersInline, NotesInline, URLsInline, SourceCopyistInline,
+               BibliographyInline, SourcePersonInline, InventoryInline)
+    list_filter = (CountryListFilter, InventoryFilter)
     actions = (sort_sources,)
 
     related_search_fields = {
@@ -92,7 +124,7 @@ class SourceAdmin(SimpleHistoryAdmin, ForeignKeyAutocompleteAdmin):
     }
 
     def get_shelfmark(self, obj):
-        return "{0}".format(obj.identifiers.filter(type=SHELFMARK)[0].identifier)
+        return "{0}".format(obj.identifiers.filter(type=SourceIdentifier.SHELFMARK)[0].identifier)
     get_shelfmark.short_description = "Shelfmark"
 
     def get_city(self, obj):

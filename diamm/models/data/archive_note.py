@@ -5,8 +5,10 @@ class ArchiveNote(models.Model):
     class Meta:
         app_label = "diamm_data"
 
+    PRIVATE = 1
+
     NOTE_TYPES = (
-        (0, 'Private'),
+        (PRIVATE, 'Private'),
     )
 
     type = models.IntegerField(choices=NOTE_TYPES)
