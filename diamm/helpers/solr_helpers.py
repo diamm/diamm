@@ -3,7 +3,7 @@ from django.conf import settings
 
 
 def solr_index(serializer, instance):
-    connection = scorched.SolrInterface(settings.SOLR_SERVER)
+    connection = scorched.SolrInterface(settings.SOLR['SERVER'])
     serialized = serializer(instance)
     data = serialized.data
     q = {'type': data['type'], 'pk': instance.pk}
@@ -18,7 +18,7 @@ def solr_index(serializer, instance):
 
 
 def solr_delete(serializer, instance):
-    connection = scorched.SolrInterface(settings.SOLR_SERVER)
+    connection = scorched.SolrInterface(settings.SOLR['SERVER'])
     serialized = serializer(instance)
     data = serialized.data
     q = {'type': data['type'], 'pk': instance.pk}

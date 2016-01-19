@@ -9,10 +9,10 @@ class CompositionSourceSerializer(serializers.ModelSerializer):
                                               source='source.id',
                                               read_only=True)
 
-    full_name = serializers.ReadOnlyField(source='source.full_name')
+    display_name = serializers.ReadOnlyField(source='source.display_name')
     class Meta:
         model = Item
-        fields = ('url', 'full_name')
+        fields = ('url', 'display_name')
 
 
 class CompositionComposerSerializer(serializers.ModelSerializer):

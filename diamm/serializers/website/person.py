@@ -7,21 +7,24 @@ from diamm.models.data.source_person import SourcePerson
 from diamm.models.data.source_relationship_type import SourceRelationshipType
 from diamm.models.data.archive import Archive
 
+
 class PersonSourceRelationshipTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = SourceRelationshipType
         fields = ('name',)
 
+
 class PersonSourceRelationshipSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedRelatedField(view_name="source-detail",
                                               source="source.id",
                                               read_only=True)
-    shelfmark = serializers.ReadOnlyField(source="source.shelfmark")
+    display_name = serializers.ReadOnlyField(source="source.display_name")
+    archive = serializers.ReadOnlyField(source="source.archive.name")
     relationship_type = PersonSourceRelationshipTypeSerializer()
 
     class Meta:
         model = SourcePerson
-        fields = ('url', 'shelfmark', 'relationship_type')
+        fields = ('url', 'archive', 'display_name', 'relationship_type')
 
 
 class PersonSourceArchiveSerializer(serializers.ModelSerializer):
@@ -34,12 +37,12 @@ class PersonSourceSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedRelatedField(source="source.id",
                                               view_name="source-detail",
                                               read_only=True)
-    shelfmark = serializers.ReadOnlyField(source="source.shelfmark")
+    display_name = serializers.ReadOnlyField(source="source.display_name")
     archive = PersonSourceArchiveSerializer(source="source.archive")
 
     class Meta:
         model = Source
-        fields = ('url', 'shelfmark', 'archive')
+        fields = ('url', 'display_name', 'archive')
 
 
 class PersonCompositionSerializer(serializers.ModelSerializer):

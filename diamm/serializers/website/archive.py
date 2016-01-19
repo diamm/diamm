@@ -14,11 +14,11 @@ class CityArchiveSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class SourceArchiveSerializer(serializers.HyperlinkedModelSerializer):
-    full_name = serializers.ReadOnlyField()
+    display_name = serializers.ReadOnlyField()
 
     class Meta:
         model = Source
-        fields = ('url', 'full_name')
+        fields = ('url', 'display_name')
 
 
 class ArchiveNoteSerializer(serializers.ModelSerializer):

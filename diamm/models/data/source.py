@@ -87,7 +87,7 @@ class Source(models.Model):
         return " ".join([s.identifier for s in self.identifiers.filter(type=1)])
 
     @property
-    def full_name(self):
+    def display_name(self):
         return self.__str__()
 
     @property

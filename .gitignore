@@ -4,3 +4,5 @@ __pycache__/*
 .DS_Store
 *.pyc
 diamm/diamm_data/migrations/*
+diamm/static/stylesheets/styles.css
+diamm/static/stylesheets/styles.css.map

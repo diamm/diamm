@@ -7,11 +7,8 @@ from diamm.models.data.person_note import PersonNote
 
 class PersonSearchSerializer(serializers.ModelSerializer):
     class Meta:
-        search_type = "person"
-        search_view = "person-detail"
         model = Person
         fields = ("id",
-                  "url",
                   "type",
                   "pk",
                   "full_name_s",
@@ -24,7 +21,6 @@ class PersonSearchSerializer(serializers.ModelSerializer):
 
     # TODO: Find some way to refactor these into a base class for DRY
     id = serializers.SerializerMethodField()
-    url = serializers.SerializerMethodField()
     type = serializers.SerializerMethodField()
     pk = serializers.ReadOnlyField()
 
@@ -48,13 +44,8 @@ class PersonSearchSerializer(serializers.ModelSerializer):
         return vnames
 
     def get_type(self, obj):
-        return self.Meta.search_type
+        return self.Meta.model.__name__.lower()
 
     def get_id(self, obj):
         return "{0}".format(uuid.uuid4())
-
-    def get_url(self, obj):
-        return "{0}".format(
-            reverse(self.Meta.search_view, kwargs={'pk': obj.pk})
-        )
 

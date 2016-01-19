@@ -6,6 +6,6 @@ import scorched
 class Command(BaseCommand):
     def handle(self, *args, **options):
         print("Emptying Solr")
-        connection = scorched.SolrInterface(settings.SOLR_SERVER)
+        connection = scorched.SolrInterface(settings.SOLR['SERVER'])
         connection.delete_all()
         connection.commit()

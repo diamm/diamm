@@ -6,12 +6,9 @@ from diamm.models.data.composition import Composition
 
 class CompositionSearchSerializer(serializers.ModelSerializer):
     class Meta:
-        search_type = "composition"
-        search_view = "composition-detail"
         model = Composition
         fields = (
             "id",
-            "url",
             "type",
             "pk",
             "name_s",
@@ -21,7 +18,6 @@ class CompositionSearchSerializer(serializers.ModelSerializer):
 
     # TODO: Find some way to refactor these into a base class for DRY
     id = serializers.SerializerMethodField()
-    url = serializers.SerializerMethodField()
     type = serializers.SerializerMethodField()
     pk = serializers.ReadOnlyField()
 
@@ -38,13 +34,8 @@ class CompositionSearchSerializer(serializers.ModelSerializer):
         return [o.composer.full_name for o in obj.composers.all()]
 
     def get_type(self, obj):
-        return self.Meta.search_type
+        return self.Meta.model.__name__.lower()
 
     def get_id(self, obj):
         return "{0}".format(uuid.uuid4())
-
-    def get_url(self, obj):
-        return "{0}".format(
-            reverse(self.Meta.search_view, kwargs={'pk': obj.pk})
-        )
 

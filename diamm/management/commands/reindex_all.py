@@ -73,12 +73,12 @@ class Command(BaseCommand):
         self._index(objs, 'name', CompositionSearchSerializer)
 
     def handle(self, *args, **kwargs):
-        self.solrconn = scorched.SolrInterface(settings.SOLR_SERVER)
+        self.solrconn = scorched.SolrInterface(settings.SOLR['SERVER'])
 
         with term.fullscreen():
-            # self._index_sources()
-            # self._index_archives()
-            # self._index_people()
+            self._index_sources()
+            self._index_archives()
+            self._index_people()
             self._index_compositions()
             raw_input = input('Done indexing. Press any key to exit.')
 

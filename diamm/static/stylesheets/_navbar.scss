@@ -1,0 +1,26 @@
+$navbar-border-radius: 0 !default;
+$navbar-default-bg: $diamm-black !default;
+$navbar-default-brand-color: $diamm-white !default;
+$navbar-default-color: $diamm-cream !default;
+$navbar-default-link-color: $diamm-white !default;
+
+$navbar-default-brand-color:               $navbar-default-link-color !default;
+$navbar-default-brand-hover-color:         darken($navbar-default-brand-color, 10%) !default;
+$navbar-default-brand-hover-bg:            transparent !default;
+
+$navbar-default-link-hover-color:          darken($navbar-default-brand-color, 10%) !default;
+$navbar-default-link-hover-bg:             transparent !default;
+$navbar-default-link-active-color:         #555 !default;
+$navbar-default-link-active-bg:            darken($navbar-default-bg, 10%) !default;
+$navbar-default-link-disabled-color:       #ccc !default;
+$navbar-default-link-disabled-bg:          transparent !default;
+
+$navbar-margin-bottom: 0 !default;
+
+.diamm-navbar {
+  font-family: $font-family-sans-serif;
+}
+
+.donate-button {
+    background: $diamm-red;
+}

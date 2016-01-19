@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'reversion',
     'rest_framework',
     'rest_framework.authtoken',
-    'django_extensions'
+    'django_extensions',
+    'debug_toolbar'
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -144,4 +145,13 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 20,
 }
 
-SOLR_SERVER = "http://localhost:8983/solr/diamm/"
+SOLR = {
+    'SERVER': "http://localhost:8983/solr/diamm/",
+    'INDEX_TYPES': {
+        'SOURCE': {
+            'type': 'source',
+            'name': 'Source',
+            'view': 'source-detail'
+        }
+    }
+}

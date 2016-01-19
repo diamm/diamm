@@ -1,19 +1,15 @@
 import uuid
-from django.core.urlresolvers import reverse
 from rest_framework import serializers
 from diamm.models.data.source import Source
 
 
 class SourceSearchSerializer(serializers.ModelSerializer):
     class Meta:
-        search_type = "source"
-        search_view = "source-detail"
         model = Source
         fields = ("id",
-                  "url",
                   "type",
                   "pk",
-                  'name_s',
+                  'display_name_s',
                   'archive_s',
                   'surface_type_s',
                   'identifiers_ss',
@@ -21,16 +17,14 @@ class SourceSearchSerializer(serializers.ModelSerializer):
                   'copyists_ss',
                   'start_date_i',
                   'end_date_i',
-                  'composers_ss',
-                  'compositions_ss')
+                  'composers_ss')
 
     # TODO: Find some way to refactor these into a base class for DRY
     id = serializers.SerializerMethodField()
-    url = serializers.SerializerMethodField()
     type = serializers.SerializerMethodField()
     pk = serializers.ReadOnlyField()
 
-    name_s = serializers.ReadOnlyField(source="name")
+    display_name_s = serializers.ReadOnlyField(source="display_name")
     archive_s = serializers.ReadOnlyField(source="archive.name")
     identifiers_ss = serializers.SlugRelatedField(
         source="identifiers",
@@ -57,19 +51,13 @@ class SourceSearchSerializer(serializers.ModelSerializer):
         source="composers",
         child=serializers.CharField()
     )
-    compositions_ss = serializers.ListField(
-        source="compositions",
-        child = serializers.CharField()
-    )
+    # compositions_ss = serializers.ListField(
+    #     source="compositions",
+    #     child=serializers.CharField()
+    # )
 
     def get_type(self, obj):
-        return self.Meta.search_type
+        return self.Meta.model.__name__.lower()
 
     def get_id(self, obj):
         return "{0}".format(uuid.uuid4())
-
-    def get_url(self, obj):
-        return "{0}".format(
-            reverse(self.Meta.search_view, kwargs={'pk': obj.pk})
-        )
-
