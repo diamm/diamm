@@ -5,20 +5,30 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" href="{% static "stylesheets/styles.css" %}" />
     {% block head %}
 
     {% endblock %}
 </head>
 <body>
-    {% block body %}
+    <header>
+        {% include "website/blocks/main_menu.html" %}
+    </header>
 
-    {% endblock %}
+    <div class="container-fluid">
+        <div class="row">
+        {% block body %}{% endblock %}
+        </div>
+    </div>
 
-    <script src="{% static "js/jspm_packages/system.js" %}"></script>
-    <script src="{% static "js/config.js" %}"></script>
-    <script>
-        System.import('app.js');
-    </script>
+    <footer class="footer">
+        <div class="container-fluid">
+            <p>Footer Stuff here.</p>
+        </div>
+    </footer>
+
+    <script type="application/javascript" src="{% static "javascripts/jquery.min.js" %}"></script>
+    <script type="application/javascript" src="{% static "javascripts/bootstrap.min.js" %}"></script>
     {% block scripts %}
 
     {% endblock %}

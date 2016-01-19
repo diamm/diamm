@@ -2,7 +2,7 @@
 
 {% block body %}
     <h1>{{ content.full_name }}</h1>
-
+    {% if content.compositions %}
     <h2>Compositions</h2>
     <ul>
     {% for composition in content.compositions %}
@@ -13,7 +13,7 @@
             <ul>
                 {% for source in composition.sources %}
                     <li>
-                        <a href="{{ source.url }}">{{ source.shelfmark }}</a>,
+                        <a href="{{ source.url }}">{{ source.display_name }}</a>,
                         <a href="{{ source.archive.url }}">{{ source.archive.name }}</a>
                     </li>
                 {% endfor %}
@@ -21,4 +21,9 @@
         </li>
     {% endfor %}
     </ul>
+    {% endif %}
+
+    {% if content.source_relationships %}
+        <h2></h2>
+    {% endif %}
 {% endblock %}

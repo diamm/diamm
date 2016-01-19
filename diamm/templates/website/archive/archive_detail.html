@@ -7,7 +7,7 @@
     <h3>Sources in this Archive</h3>
     <ul>
     {% for source in content.sources %}
-        <li><a href="{{ source.url }}">{{ source.full_name }}</a></li>
+        <li><a href="{{ source.url }}">{{ source.display_name }}</a></li>
     {% endfor %}
     </ul>
 {% endblock %}

@@ -1,0 +1,28 @@
+<nav class="navbar navbar-default diamm-navbar">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="{% url "home" %}">DIAMM</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li>
+                <a href="#">About</a>
+            </li>
+            <li>
+                <a href="{% url "search" %}">Search</a>
+            </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li class="donate-button">
+                <a href="#">
+                    <span class="fa fa-dollar"></span>
+                    Donate
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <span class="fa fa-user"></span> Login
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>

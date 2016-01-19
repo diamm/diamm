@@ -1,5 +1,42 @@
 {% extends "base.html" %}
 
 {% block body %}
-    <h1>Search</h1>
+    {% include "website/blocks/search_box.html" %}
+    <div class="container-fluid">
+        <div class="row type-filter-bar">
+            <div class="col-md-push-1 col-md-11 type-filter">
+                <ul class="list-inline">
+                {% for field, name in content.type_filter.fields.items %}
+                    <li>
+                        <a href="#" class="filter-type" data-field="{{ field }}">{{ name }}</a>
+                    </li>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-push-1 col-md-11">
+            {% if content.results %}
+                <hgroup>
+                    <h4>Search Results</h4>
+                    <p>{{ content.count }} results were found.</p>
+                </hgroup>
+
+                {% for result in content.results %}
+                    <div class="row">
+                        {% if result.type == 'source' %}
+                            {% include 'website/search/results/source.html' %}
+                        {% elif result.type == 'person' %}
+                            {% include 'website/search/results/person.html' %}
+                        {% elif result.type == 'composition' %}
+                            {% include 'website/search/results/composition.html' %}
+                        {% elif result.type == 'archive' %}
+                            {% include 'website/search/results/archive.html' %}
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            </div>
+        </div>
+    </div>
 {% endblock %}
