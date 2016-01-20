@@ -99,11 +99,11 @@ class ArchiveSourceSerializer(serializers.HyperlinkedModelSerializer):
 
 class SourceListSerializer(serializers.HyperlinkedModelSerializer):
     shelfmark = serializers.ReadOnlyField()
-    full_name = serializers.ReadOnlyField()
+    display_name = serializers.ReadOnlyField()
 
     class Meta:
         model = Source
-        fields = ('url', 'name', 'full_name', 'shelfmark')
+        fields = ('url', 'name', 'display_name', 'shelfmark')
 
 
 class SourceDetailSerializer(serializers.HyperlinkedModelSerializer):

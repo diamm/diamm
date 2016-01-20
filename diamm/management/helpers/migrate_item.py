@@ -33,7 +33,7 @@ def migrate_item(entry):
         print(term.magenta('\tCreating aggregate composer entry.'))
         # we have an aggregate entry. An aggregate composition should only
         # have one composer attached.
-        aggregate_composer = orig_composition.composers.all()[0]
+        aggregate_composer = orig_composition.composers.all()[0].composer
     else:
         composition = orig_composition
 

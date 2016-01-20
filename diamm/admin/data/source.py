@@ -99,7 +99,7 @@ def sort_sources(modeladmin, request, queryset):
         """
         return [__tryint(c) for c in re.split('([0-9]+)', s[1])]
 
-    sources = [(s.pk, s.identifiers.get(type=SourceIdentifier.SHELFMARK).identifier) for s in queryset]
+    sources = [(s.pk, s.shelfmark) for s in queryset]
     sources.sort(key=__alphanum_key)
 
     for i, s in enumerate(sources):
@@ -112,7 +112,7 @@ sort_sources.short_description = "Re-sort Source Order"
 
 @admin.register(Source)
 class SourceAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
-    list_display = ('get_shelfmark', 'name', 'get_city', 'get_archive', 'public')
+    list_display = ('shelfmark', 'name', 'get_city', 'get_archive', 'public')
     search_fields = ('identifiers__identifier', 'name', 'archive__name')
     inlines = (IdentifiersInline, NotesInline, URLsInline, SourceCopyistInline,
                BibliographyInline, SourcePersonInline, InventoryInline)
@@ -122,10 +122,6 @@ class SourceAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     related_search_fields = {
         'archive': ('name', 'city__name', 'city__parent__name')
     }
-
-    def get_shelfmark(self, obj):
-        return "{0}".format(obj.identifiers.filter(type=SourceIdentifier.SHELFMARK)[0].identifier)
-    get_shelfmark.short_description = "Shelfmark"
 
     def get_city(self, obj):
         return "{0} ({1})".format(obj.archive.city.name, obj.archive.city.parent.name)
