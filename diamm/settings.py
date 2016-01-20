@@ -43,9 +43,12 @@ INSTALLED_APPS = [
     'reversion',
     'rest_framework',
     'rest_framework.authtoken',
-    'django_extensions',
-    'debug_toolbar'
+    'django_extensions'
 ]
+
+if DEBUG:
+    INSTALLED_APPS += ('debug_toolbar',
+                       'template_profiler_panel')
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
