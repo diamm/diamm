@@ -26,4 +26,8 @@ class SourceDetail(generics.RetrieveAPIView):
     serializer_class = SourceDetailSerializer
 
     def get_queryset(self):
-        return Source.objects.all().select_related('archive').prefetch_related('inventory')
+        # Optimization for retrieving
+        prefetch = ['inventory__composition__composers__composer__notes', 'inventory__notes']
+        queryset = Source.objects.all()
+        queryset = queryset.select_related('archive__city__parent').prefetch_related(*prefetch)
+        return queryset

@@ -2,6 +2,7 @@ from django.db.models import Prefetch
 from rest_framework import generics
 from rest_framework import renderers
 from diamm.models.data.person import Person
+from diamm.models.data.composition import Composition
 from diamm.models.data.composition_composer import CompositionComposer
 from diamm.models.data.source_copyist import SourceCopyist
 from diamm.models.data.source import Source
@@ -24,8 +25,8 @@ class PersonDetail(generics.RetrieveAPIView):
     serializer_class = PersonDetailSerializer
 
     def get_queryset(self):
+        cc_queryset = Composition.objects.all()
         queryset = Person.objects.prefetch_related(
-            'compositions__composition__sources__source__archive__city',
-            'sources_copied__source'
+            Prefetch('compositions__composition__sources__source__archive__city', queryset=cc_queryset)
         )
         return queryset
