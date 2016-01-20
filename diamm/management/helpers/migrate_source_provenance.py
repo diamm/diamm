@@ -38,8 +38,8 @@ def migrate_source_provenance(entry):
             city = GeographicArea.objects.get(legacy_id__name=lid)
         except GeographicArea.DoesNotExist:
             try:
-                print(term.red("\tCity may exist. Checking by name."))
-                city = GeographicArea.objects.get(name=cname)
+                print(term.red("\tCity may not exist. Checking by name {0}, {1}.".format(cname, country.name)))
+                city = GeographicArea.objects.get(name=cname, parent=country)
                 lgid = LegacyId(name=lid)
                 lgid.save()
                 city.legacy_id.add(lgid)

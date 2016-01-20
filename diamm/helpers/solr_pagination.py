@@ -17,6 +17,11 @@ class SolrPaginator:
     """
     def __init__(self, query, request, *args, **kwargs):
         self.query = query
+
+        # inject the type facet. This is hardcoded since it will be present
+        # on every search
+        self.query = query.facet_by('type', mincount=1)
+
         self.request = request
         self.result = None
 
@@ -81,8 +86,21 @@ class SolrPage:
             ('previous', self.previous_url),
             ('current_page', self.number),
             ('total_pages', self.paginator.num_pages),
-            ('results', self.object_list)
+            ('query', self.query_options),
+            ('types', self.type_list),
+            ('results', self.object_list),
         ])
+
+    @property
+    def query_options(self):
+        qp = self.paginator.query.options()
+        if 'q' in qp.keys():
+            return qp['q']
+        return ''
+
+    @property
+    def type_list(self):
+        return self.result.facet_counts.facet_fields['type']
 
     @property
     def object_list(self):
@@ -101,7 +119,6 @@ class SolrPage:
         url = self.paginator.request.build_absolute_uri()
         page_number = self.next_page_number
         return replace_query_param(url, 'page', page_number)
-
 
     @property
     def previous_url(self):

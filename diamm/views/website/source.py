@@ -17,7 +17,6 @@ class SourceList(generics.ListAPIView):
             return Source.objects.filter(public=True)
 
 
-
 class SourceDetail(generics.RetrieveAPIView):
     """
         This is the description.
@@ -27,7 +26,4 @@ class SourceDetail(generics.RetrieveAPIView):
     serializer_class = SourceDetailSerializer
 
     def get_queryset(self):
-        if self.request.user.is_staff:
-            return Source.objects.all()
-        else:
-            return Source.objects.filter(public=True)
+        return Source.objects.all().select_related('archive').prefetch_related('inventory')

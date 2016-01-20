@@ -4,8 +4,22 @@ from diamm.models.data.person_note import PersonNote
 from diamm.models.data.composition_composer import CompositionComposer
 from diamm.models.data.source import Source
 from diamm.models.data.source_person import SourcePerson
+from diamm.models.data.source_copyist import SourceCopyist
 from diamm.models.data.source_relationship_type import SourceRelationshipType
 from diamm.models.data.archive import Archive
+
+
+class PersonSourceCopiedSerializer(serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name='source-detail',
+                                               source='source.id',
+                                               read_only=True)
+
+    display_name = serializers.ReadOnlyField(source="source.display_name")
+    type = serializers.ReadOnlyField()
+
+    class Meta:
+        model = SourceCopyist
+        fields = ('url', 'display_name', 'type')
 
 
 class PersonSourceRelationshipTypeSerializer(serializers.ModelSerializer):
@@ -73,6 +87,7 @@ class PersonDetailSerializer(serializers.HyperlinkedModelSerializer):
     compositions = PersonCompositionSerializer(many=True)
     full_name = serializers.ReadOnlyField()
     source_relationships = PersonSourceRelationshipSerializer(many=True)
+    sources_copied = PersonSourceCopiedSerializer(many=True)
     notes = PersonNoteSerializer(
         source="public_notes",
         many=True
@@ -84,4 +99,5 @@ class PersonDetailSerializer(serializers.HyperlinkedModelSerializer):
                   'full_name',
                   'compositions',
                   'source_relationships',
+                  'sources_copied',
                   'notes')

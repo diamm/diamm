@@ -28,6 +28,7 @@ class Source(models.Model):
     id = models.AutoField(primary_key=True)  # migrate old ID
     archive = models.ForeignKey('diamm_data.Archive', related_name="sources")
     name = models.CharField(max_length=255, blank=True, null=True)
+    shelfmark = models.CharField(max_length=255, blank=True, null=True)
     type = models.CharField(max_length=255, blank=True, null=True)
     surface = models.IntegerField(choices=SURFACE_OPTIONS, blank=True, null=True)
     start_date = models.IntegerField(blank=True, null=True,
@@ -49,9 +50,9 @@ class Source(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
-    copyists = models.ManyToManyField("diamm_data.Person",
-                                      through="diamm_data.SourceCopyist",
-                                      related_name="sources_copied")
+    # copyists = models.ManyToManyField("diamm_data.Person",
+    #                                   through="diamm_data.SourceCopyist",
+    #                                   related_name="sources_copied")
 
     bibliography = models.ManyToManyField("diamm_data.Bibliography",
                                           through="diamm_data.SourceBibliography")
@@ -80,11 +81,6 @@ class Source(models.Model):
         if self.name:
             return "{0} ({1})".format(self.shelfmark, self.name)
         return "{0}".format(self.shelfmark)
-
-    @property
-    def shelfmark(self):
-        # 1 = shelfmark
-        return " ".join([s.identifier for s in self.identifiers.filter(type=1)])
 
     @property
     def display_name(self):

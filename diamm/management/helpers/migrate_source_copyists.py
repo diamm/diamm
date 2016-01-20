@@ -36,6 +36,7 @@ def migrate():
     empty_source_copyist()
 
     sourcecopyists = LegacySourceCopyist.objects.all()
+
     for copyist in sourcecopyists:
         migrate_source_copyists(copyist)
 

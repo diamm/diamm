@@ -6,14 +6,13 @@ class SourceIdentifier(models.Model):
         app_label = "diamm_data"
         verbose_name = "Source Identifier"
         ordering = ('type',)
-    SHELFMARK = 1
+
     RISM = 2
     CCM = 3
     EARP = 4
     OLIM = 5
 
     IDENTIFIER_TYPES = (
-        (SHELFMARK, 'Shelfmark'),
         (RISM, 'RISM'),
         (CCM, 'CCM'),
         (EARP, 'EARP'),

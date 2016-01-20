@@ -6,9 +6,9 @@
         <div class="row type-filter-bar">
             <div class="col-md-push-1 col-md-11 type-filter">
                 <ul class="list-inline">
-                {% for field, name in content.type_filter.fields.items %}
+                {% for type, num in content.types %}
                     <li>
-                        <a href="#" class="filter-type" data-field="{{ field }}">{{ name }}</a>
+                        <a href="#" class="filter-type" data-field="{{ type }}">{{ type | title }} ({{ num }})</a>
                     </li>
                 {% endfor %}
                 </ul>

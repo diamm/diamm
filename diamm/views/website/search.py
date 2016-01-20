@@ -37,13 +37,20 @@ class SearchView(generics.GenericAPIView):
 
     def get(self, request, *args, **kwargs):
         query = request.GET.get('q', None)
+        rtype = request.GET.get('type', None)
 
         if not query:
             return response.Response({})
 
         conn = scorched.SolrInterface(settings.SOLR['SERVER'])
-        data = conn.query(query).boost_relevancy(2, type='source').boost_relevancy(3, type='person')
-        paginator = SolrPaginator(data, request)
+
+        solrq = conn.query(query)
+
+
+        if rtype:
+            solrq = solrq.filter(type=rtype)
+
+        paginator = SolrPaginator(solrq, request)
         page_num = request.GET.get('page', 1)
 
         try:

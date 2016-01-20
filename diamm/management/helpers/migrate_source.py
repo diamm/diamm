@@ -62,6 +62,7 @@ def migrate_source_to_source(legacy_source):
         'id': legacy_source.pk,
         'archive': archive,
         'name': legacy_source.sourcename,
+        'shelfmark': legacy_source.shelfmark,
         'type': legacy_source.sourcetype,
         'surface': surface,
         'start_date': start_date,
@@ -74,13 +75,13 @@ def migrate_source_to_source(legacy_source):
     s = Source(**d)
     s.save()
 
-    sm = {
-        'identifier': legacy_source.shelfmark,
-        'type': SourceIdentifier.SHELFMARK,
-        'source': s
-    }
-    shelfmark = SourceIdentifier(**sm)
-    shelfmark.save()
+    # sm = {
+    #     'identifier': legacy_source.shelfmark,
+    #     'type': SourceIdentifier.SHELFMARK,
+    #     'source': s
+    # }
+    # shelfmark = SourceIdentifier(**sm)
+    # shelfmark.save()
 
     other_identifiers = [
         (SourceIdentifier.CCM, legacy_source.ccmabbrev),
