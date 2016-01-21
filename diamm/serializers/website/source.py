@@ -108,7 +108,7 @@ class SourceListSerializer(serializers.HyperlinkedModelSerializer):
 
 class SourceDetailSerializer(serializers.HyperlinkedModelSerializer):
     shelfmark = serializers.ReadOnlyField()
-    full_name = serializers.ReadOnlyField()
+    display_name = serializers.ReadOnlyField()
     notes = SourceNoteSerializer(
         SourceNote.objects.exclude(type=SourceNote.PRIVATE_NOTE),
         many=True
@@ -130,7 +130,7 @@ class SourceDetailSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url',
                   'name',
                   'archive',
-                  'full_name',
+                  'display_name',
                   'shelfmark',
                   'notes',
                   'identifiers',

@@ -9,6 +9,7 @@ class SourceSearchSerializer(serializers.ModelSerializer):
         fields = ("id",
                   "type",
                   "pk",
+                  'shelfmark_s',
                   'display_name_s',
                   'archive_s',
                   'surface_type_s',

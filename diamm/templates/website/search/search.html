@@ -3,6 +3,7 @@
 {% block body %}
     {% include "website/blocks/search_box.html" %}
     <div class="container-fluid">
+    {% if content.types %}
         <div class="row type-filter-bar">
             <div class="col-md-push-1 col-md-11 type-filter">
                 <ul class="list-inline">
@@ -14,6 +15,7 @@
                 </ul>
             </div>
         </div>
+    {% endif %}
         <div class="row">
             <div class="col-md-push-1 col-md-11">
             {% if content.results %}
