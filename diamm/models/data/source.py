@@ -57,9 +57,9 @@ class Source(models.Model):
     bibliography = models.ManyToManyField("diamm_data.Bibliography",
                                           through="diamm_data.SourceBibliography")
 
-    people = models.ManyToManyField("diamm_data.Person",
-                                    through="diamm_data.SourcePerson",
-                                    related_name="related_sources")
+    # people = models.ManyToManyField("diamm_data.Person",
+    #                                 through="diamm_data.SourcePerson",
+    #                                 related_name="related_sources")
 
     # inventory = models.ManyToManyField("diamm_data.Composition",
     #                                    through="diamm_data.Item")
