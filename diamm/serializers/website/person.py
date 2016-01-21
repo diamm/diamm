@@ -75,24 +75,16 @@ class PersonCompositionSerializer(serializers.ModelSerializer):
 class PersonNoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = PersonNote
-        fields = ('note', 'type')
+        fields = ('note',)
 
 
 class PersonListSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Person
+        fields = ('url', 'full_name')
 
 
 class PersonDetailSerializer(serializers.HyperlinkedModelSerializer):
-    compositions = PersonCompositionSerializer(many=True)
-    full_name = serializers.ReadOnlyField()
-    source_relationships = PersonSourceRelationshipSerializer(many=True)
-    sources_copied = PersonSourceCopiedSerializer(many=True)
-    notes = PersonNoteSerializer(
-        source="public_notes",
-        many=True
-    )
-
     class Meta:
         model = Person
         fields = ('url',
@@ -100,4 +92,18 @@ class PersonDetailSerializer(serializers.HyperlinkedModelSerializer):
                   'compositions',
                   'source_relationships',
                   'sources_copied',
-                  'notes')
+                  'biography',
+                  'dates')
+
+    compositions = PersonCompositionSerializer(many=True)
+    full_name = serializers.ReadOnlyField()
+    source_relationships = PersonSourceRelationshipSerializer(many=True)
+    sources_copied = PersonSourceCopiedSerializer(many=True)
+    biography = serializers.SerializerMethodField()
+    dates = serializers.SerializerMethodField()
+
+    def get_biography(self, obj):
+        return PersonNoteSerializer(obj.notes.filter(type=PersonNote.BIOGRAPHY), many=True).data
+
+    def get_dates(self, obj):
+        return PersonNoteSerializer(obj.notes.filter(type=PersonNote.DATE_NOTE), many=True).data

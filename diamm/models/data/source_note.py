@@ -22,7 +22,6 @@ class SourceNote(models.Model):
     FOLIATION_NOTE = 14
     PRIVATE_NOTE = 99
 
-
     NOTE_TYPES = (
         (GENERAL_NOTE, 'General'),
         (RISM_NOTE, 'RISM'),

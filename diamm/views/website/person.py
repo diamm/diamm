@@ -3,10 +3,7 @@ from rest_framework import generics
 from rest_framework import renderers
 from diamm.models.data.person import Person
 from diamm.models.data.composition import Composition
-from diamm.models.data.composition_composer import CompositionComposer
-from diamm.models.data.source_copyist import SourceCopyist
-from diamm.models.data.source import Source
-from diamm.models.data.item import Item
+from diamm.models.data.person_note import PersonNote
 from diamm.renderers.html_renderer import HTMLRenderer
 from diamm.serializers.website.person import PersonListSerializer, PersonDetailSerializer
 
@@ -27,6 +24,6 @@ class PersonDetail(generics.RetrieveAPIView):
     def get_queryset(self):
         cc_queryset = Composition.objects.all()
         queryset = Person.objects.prefetch_related(
-            Prefetch('compositions__composition__sources__source__archive__city', queryset=cc_queryset)
+            Prefetch('compositions__composition__sources__source__archive__city', queryset=cc_queryset),
         )
         return queryset

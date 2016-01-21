@@ -54,7 +54,3 @@ class Person(models.Model):
     @property
     def full_name(self):
         return self.__str__()
-
-    @property
-    def public_notes(self):
-        return self.notes.filter(public=True)
