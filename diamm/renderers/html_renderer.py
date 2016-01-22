@@ -1,4 +1,5 @@
 from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework.compat import template_render
 
 
 class HTMLRenderer(TemplateHTMLRenderer):
@@ -10,6 +11,7 @@ class HTMLRenderer(TemplateHTMLRenderer):
         2. An explicit .template_name set on this class.
         3. The return result of calling view.get_template_names().
         """
+
         renderer_context = renderer_context or {}
         view = renderer_context['view']
         request = renderer_context['request']
@@ -22,4 +24,4 @@ class HTMLRenderer(TemplateHTMLRenderer):
             template = self.resolve_template(template_names)
 
         context = self.resolve_context({'content': data}, request, response)
-        return template.render(context)
+        return template_render(template, context, request=request)
