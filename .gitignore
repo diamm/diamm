@@ -7,3 +7,4 @@ diamm/diamm_data/migrations/*
 diamm/static/stylesheets/styles.css
 diamm/static/stylesheets/styles.css.map
 solr/data
+diamm/diamm_site/migrations
