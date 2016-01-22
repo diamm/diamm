@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.contenttypes.fields import GenericRelation
 
 
 class Organization(models.Model):
@@ -12,6 +13,10 @@ class Organization(models.Model):
     location = models.ForeignKey("diamm_data.GeographicArea", blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+
+    sources_copied = GenericRelation("diamm_data.SourceCopyist")
+    sources_related = GenericRelation("diamm_data.SourceRelationship")
+    sources_provenance = GenericRelation("diamm_data.SourceProvenance")
 
     def __str__(self):
         return "{0}".format(self.name)

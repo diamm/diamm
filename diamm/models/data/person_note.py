@@ -9,7 +9,6 @@ class PersonNote(models.Model):
     VARIANT_NAME_NOTE = 2
     DATE_NOTE = 3
 
-
     NOTE_TYPES = (
         (BIOGRAPHY, "Biography"),
         (VARIANT_NAME_NOTE, "Variant Name"),

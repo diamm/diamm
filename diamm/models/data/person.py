@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.contenttypes.fields import GenericRelation
 
 
 class Person(models.Model):
@@ -20,6 +21,10 @@ class Person(models.Model):
     legacy_id = models.CharField(max_length=64)
     roles = models.ManyToManyField("diamm_data.Role",
                                    through="diamm_data.PersonRole")
+
+    sources_copied = GenericRelation("diamm_data.SourceCopyist")
+    sources_related = GenericRelation("diamm_data.SourceRelationship")
+    sources_provenance = GenericRelation("diamm_data.SourceProvenance")
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

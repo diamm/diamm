@@ -32,6 +32,23 @@ def migrate_to_organization(modeladmin, request, queryset):
         o = Organization(**d)
         o.save()
 
+        # Check the original entry's relationships and migrate them.
+        source_relationships = entity.sources_related.all()
+        for rel in source_relationships:
+            rel.related_entity = o
+            rel.save()
+
+        source_copyist = entity.sources_copied.all()
+        for rel in source_copyist:
+            rel.copyist = o
+            rel.save()
+
+        source_provenance = entity.sources_provenance.all()
+        for rel in source_provenance:
+            rel.entity = o
+            rel.save()
+
+
         # delete the original entity.
         entity.delete()
 
