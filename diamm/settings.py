@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'diamm',
     'diamm.diamm_data',
     'diamm.diamm_migrate',
+    'diamm.diamm_site',
     'reversion',
     'rest_framework',
     'rest_framework.authtoken',

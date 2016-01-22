@@ -19,6 +19,7 @@ from django.contrib import admin
 from rest_framework.routers import SimpleRouter
 
 from diamm.views.home import HomeView
+from diamm.views.auth import SessionAuth, SessionClose, AccountEmailSent, AccountUpdate
 from diamm.views.website.search import SearchView
 from diamm.views.website.source import SourceList, SourceDetail
 from diamm.views.website.archive import ArchiveList, ArchiveDetail
@@ -32,6 +33,10 @@ from diamm.views.website.composition import CompositionList, CompositionDetail
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', HomeView.as_view(), name="home"),
+    url(r'^login/$', SessionAuth.as_view(), name="login"),
+    url(r'^logout/$', SessionClose.as_view(), name="logout"),
+    url(r'^login/update/$', AccountUpdate.as_view(), name="account-update"),
+    url(r'^login/email-sent/$', AccountEmailSent.as_view(), name="account-email"),
 
     # public website
     url(r'^search/$', SearchView.as_view(), name="search"),

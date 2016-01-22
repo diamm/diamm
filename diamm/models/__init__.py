@@ -1,3 +1,5 @@
+from diamm.models.diamm_user import DIAMMUser
+
 from diamm.models.migrate.legacy_source import LegacySource
 from diamm.models.migrate.legacy_archive import LegacyArchive
 from diamm.models.migrate.legacy_country import LegacyCountry

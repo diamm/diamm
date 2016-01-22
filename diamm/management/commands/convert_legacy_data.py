@@ -16,6 +16,7 @@ from diamm.management.helpers import migrate_composition_bibliography
 from diamm.management.helpers import migrate_item
 from diamm.management.helpers import migrate_image
 from diamm.management.helpers import migrate_source_provenance
+from diamm.management.helpers import migrate_users
 
 from diamm.models.data.image_page_condition import ImagePageCondition
 from diamm.models.data.image_type import ImageType
@@ -46,5 +47,6 @@ class Command(BaseCommand):
         # migrate_bibliography.migrate()
         # migrate_source_bibliography.migrate()
         # migrate_composition_bibliography.migrate()
-        migrate_item.migrate()
-        migrate_image.migrate()
+        # migrate_item.migrate()
+        # migrate_image.migrate()
+        migrate_users.migrate()

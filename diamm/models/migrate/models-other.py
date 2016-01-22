@@ -236,6 +236,19 @@ class CompositioncomposerIs(models.Model):
         db_table = 'CompositionComposer_IS'
 
 
+class Diammuser(models.Model):
+    id = models.IntegerField(primary_key=True)
+    username = models.CharField(max_length=20, blank=True, null=True)
+    displayname = models.CharField(db_column='displayName', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    passwd = models.CharField(max_length=80, blank=True, null=True)
+    email = models.CharField(max_length=80, blank=True, null=True)
+    affiliation = models.CharField(max_length=200, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'DiammUser'
+
+
 class Image(models.Model):
     archive = models.TextField(blank=True, null=True)
     archivedfilename = models.TextField(blank=True, null=True)
@@ -447,6 +460,19 @@ class Source(models.Model):
         db_table = 'Source'
 
 
+class SourceprovenanceIs(models.Model):
+    sourcekey = models.DecimalField(db_column='sourceKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    alprovenancekey = models.DecimalField(db_column='alProvenanceKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    uncertain = models.TextField(blank=True, null=True)
+    city = models.TextField(blank=True, null=True)
+    institution = models.TextField(blank=True, null=True)
+    protectorate = models.TextField(blank=True, null=True)
+    region = models.TextField(blank=True, null=True)
+    sourceprovenancekey = models.IntegerField(db_column='sourceProvenanceKey', primary_key=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'SourceProvenance_IS'
 
 
 class SourceCopyistIs(models.Model):

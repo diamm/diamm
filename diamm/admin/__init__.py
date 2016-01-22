@@ -11,3 +11,4 @@ from diamm.admin.data.composition import CompositionAdmin
 from diamm.admin.data.image import ImageAdmin
 from diamm.admin.data.item import ItemAdmin
 from diamm.admin.data.source_copyist import SourceCopyistAdmin
+from diamm.admin.diamm_user import UserAdmin

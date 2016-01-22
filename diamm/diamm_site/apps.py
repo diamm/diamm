@@ -6,9 +6,9 @@ import logging
 # l.setLevel(logging.DEBUG)
 # l.addHandler(logging.StreamHandler())
 
-class DiammDataAppConfig(AppConfig):
-    name = 'diamm.diamm_data'
-    verbose_name = 'DIAMM Data'
+class DiammSiteAppConfig(AppConfig):
+    name = 'diamm.diamm_site'
+    verbose_name = 'DIAMM Site'
 
     def ready(self):
-        import diamm.signals
+        pass
