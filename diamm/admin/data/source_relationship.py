@@ -1,5 +1,5 @@
 from django.contrib import admin
-from diamm.models.data.source_person import SourceRelationship
+from diamm.models.data.source_relationship import SourceRelationship
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
 
 

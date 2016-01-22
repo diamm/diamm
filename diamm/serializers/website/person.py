@@ -3,7 +3,7 @@ from diamm.models.data.person import Person
 from diamm.models.data.person_note import PersonNote
 from diamm.models.data.composition_composer import CompositionComposer
 from diamm.models.data.source import Source
-from diamm.models.data.source_person import SourcePerson
+from diamm.models.data.source_relationship import SourceRelationship
 from diamm.models.data.source_copyist import SourceCopyist
 from diamm.models.data.source_relationship_type import SourceRelationshipType
 from diamm.models.data.archive import Archive
@@ -37,7 +37,7 @@ class PersonSourceRelationshipSerializer(serializers.ModelSerializer):
     relationship_type = PersonSourceRelationshipTypeSerializer()
 
     class Meta:
-        model = SourcePerson
+        model = SourceRelationship
         fields = ('url', 'archive', 'display_name', 'relationship_type')
 
 

@@ -8,7 +8,7 @@ from diamm.models.data.source_note import SourceNote
 from diamm.models.data.source_url import SourceURL
 from diamm.models.data.source_copyist import SourceCopyist
 from diamm.models.data.source_bibliography import SourceBibliography
-from diamm.models.data.source_person import SourcePerson
+from diamm.models.data.source_relationship import SourceRelationship
 from diamm.models.data.item import Item
 from reversion.admin import VersionAdmin
 from django.utils.translation import ugettext_lazy as _
@@ -20,8 +20,8 @@ class InventoryInline(admin.TabularInline):
     raw_id_fields = ('source', 'composition', 'aggregate_composer')
 
 
-class SourcePersonInline(admin.TabularInline):
-    model = SourcePerson
+class SourceRelationshipInline(admin.TabularInline):
+    model = SourceRelationship
     extra = 0
 
 
@@ -39,12 +39,6 @@ class IdentifiersInline(admin.TabularInline):
 class NotesInline(admin.TabularInline):
     model = SourceNote
     extra = 0
-
-
-class SourceCopyistInline(admin.TabularInline):
-    model = SourceCopyist
-    extra = 0
-    raw_id_fields = ('copyist',)
 
 
 class URLsInline(admin.TabularInline):
@@ -114,8 +108,8 @@ sort_sources.short_description = "Re-sort Source Order"
 class SourceAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     list_display = ('shelfmark', 'name', 'get_city', 'get_archive', 'public')
     search_fields = ('identifiers__identifier', 'name', 'archive__name')
-    inlines = (IdentifiersInline, NotesInline, URLsInline, SourceCopyistInline,
-               BibliographyInline, SourcePersonInline, InventoryInline)
+    inlines = (IdentifiersInline, NotesInline, URLsInline,
+               BibliographyInline, SourceRelationshipInline, InventoryInline)
     list_filter = (CountryListFilter, InventoryFilter)
     actions = (sort_sources,)
 

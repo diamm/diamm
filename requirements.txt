@@ -3,12 +3,16 @@ blessings==1.6
 decorator==4.0.6
 Django==1.9
 django-debug-toolbar==1.4
+django-debug-toolbar-template-profiler==1.0.1
 django-extensions==1.6.1
+django-jinja==2.1.1
 django-reversion==1.10.0
 djangorestframework==3.3.2
 gnureadline==6.3.3
 ipython==4.0.1
 ipython-genutils==0.1.0
+MarkupSafe==0.23
+model-mommy==1.2.6
 path.py==8.1.2
 pexpect==4.0.1
 pickleshare==0.5

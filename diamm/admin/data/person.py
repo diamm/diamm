@@ -2,7 +2,7 @@ from django.contrib import admin
 from diamm.models.data.person import Person
 from diamm.models.data.person_note import PersonNote
 from diamm.models.data.person_role import PersonRole
-from diamm.models.data.source_person import SourcePerson
+from diamm.models.data.source_relationship import SourceRelationship
 from diamm.models.data.organization import Organization
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
 from reversion.admin import VersionAdmin

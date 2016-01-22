@@ -1,4 +1,7 @@
 from django.db import models
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
+
 
 
 class SourceProvenance(models.Model):
@@ -17,9 +20,15 @@ class SourceProvenance(models.Model):
     protectorate = models.ForeignKey("diamm_data.GeographicArea",
                                      related_name="protectorate_sources",
                                      blank=True, null=True)
-
-    organization = models.ForeignKey("diamm_data.Organization", blank=True, null=True)
     uncertain = models.BooleanField(default=False)
     earliest_year = models.IntegerField(blank=True, null=True)
     latest_year = models.IntegerField(blank=True, null=True)
     note = models.TextField(blank=True, null=True)
+
+    # Generic foreign keys to relate to people and organizations.
+    limit = models.Q(app_label='diamm_data', model="person") | models.Q(app_label='diamm_data', model='organization')
+    content_type = models.ForeignKey(ContentType,
+                                     on_delete=models.CASCADE,
+                                     limit_choices_to=limit)
+    object_id = models.PositiveIntegerField()
+    entity = GenericForeignKey()

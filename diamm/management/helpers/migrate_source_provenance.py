@@ -141,7 +141,7 @@ def migrate_source_provenance(entry):
         'city': city,
         'protectorate': protectorate,
         'region': region,
-        'organization': organization,
+        'entity': organization,
         'uncertain': convert_yn_to_boolean(entry.uncertain),
         'note': note
     }

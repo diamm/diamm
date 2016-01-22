@@ -1,5 +1,5 @@
 from diamm.admin.data.source import SourceAdmin
-from diamm.admin.data.source_person import SourcePersonAdmin
+from diamm.admin.data.source_relationship import SourceRelationshipAdmin
 from diamm.admin.data.source_provenance import SourceProvenanceAdmin
 from diamm.admin.data.geographic_area import GeographicAreaAdmin
 from diamm.admin.data.archive import ArchiveAdmin

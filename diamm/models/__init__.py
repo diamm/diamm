@@ -38,7 +38,7 @@ from diamm.models.data.organization_type import OrganizationType
 from diamm.models.data.language import Language
 from diamm.models.data.source_copyist import SourceCopyist
 from diamm.models.data.source_provenance import SourceProvenance
-from diamm.models.data.source_person import SourcePerson
+from diamm.models.data.source_relationship import SourceRelationship
 from diamm.models.data.source_relationship_type import SourceRelationshipType
 from diamm.models.data.composition import Composition
 from diamm.models.data.composition_composer import CompositionComposer
@@ -49,7 +49,6 @@ from diamm.models.data.image import Image
 from diamm.models.data.image_note import ImageNote
 from diamm.models.data.image_type import ImageType
 from diamm.models.data.image_page_condition import ImagePageCondition
-
 
 from diamm.models.data.bibliography import Bibliography
 from diamm.models.data.bibliography_author import BibliographyAuthor

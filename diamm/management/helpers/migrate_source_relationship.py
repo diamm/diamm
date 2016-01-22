@@ -3,7 +3,7 @@ import psycopg2 as psql
 from diamm.models.data.source import Source
 from diamm.models.data.person import Person
 from diamm.models.data.source_relationship_type import SourceRelationshipType
-from diamm.models.data.source_person import SourcePerson
+from diamm.models.data.source_relationship import SourceRelationship
 from diamm.models.migrate.legacy_relationship_type import LegacyRelationshipType
 from diamm.models.migrate.legacy_source_person import LegacySourcePerson
 from diamm.management.helpers.utilities import convert_yn_to_boolean
@@ -14,7 +14,7 @@ term = Terminal()
 
 def empty_source_relationship():
     print(term.magenta('\tEmptying source relationships'))
-    SourcePerson.objects.all().delete()
+    SourceRelationship.objects.all().delete()
     SourceRelationshipType.objects.all().delete()
 
 
@@ -29,7 +29,7 @@ def migrate_relationship_type(entry):
 
 
 def migrate_source_relationship(entry):
-    print(term.green("\tMigrating SR ID {0}".format(entry.pk)))
+    print(term.green("\tMigrating Source Relationship ID {0}".format(entry.pk)))
     source_pk = entry.sourcekey
     source = Source.objects.get(pk=source_pk)
     person_pk = entry.alpersonkey
@@ -41,11 +41,11 @@ def migrate_source_relationship(entry):
 
     d = {
         'source': source,
-        'person': person,
+        'related_entity': person,
         'relationship_type': rtype,
         'uncertain': uncertain
     }
-    sp = SourcePerson(**d)
+    sp = SourceRelationship(**d)
     sp.save()
 
 

@@ -1,5 +1,6 @@
 from django.db import models
-
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 
 class SourceCopyist(models.Model):
     class Meta:
@@ -24,10 +25,17 @@ class SourceCopyist(models.Model):
     source = models.ForeignKey("diamm_data.Source",
                                on_delete=models.CASCADE,
                                related_name="copyists")
-    copyist = models.ForeignKey("diamm_data.Person",
-                                on_delete=models.CASCADE,
-                                related_name="sources_copied")
-
+    # copyist = models.ForeignKey("diamm_data.Person",
+    #                             on_delete=models.CASCADE,
+    #                             related_name="sources_copied")
     uncertain = models.BooleanField(default=False)
     type = models.IntegerField(choices=SOURCE_COPYIST_TYPES, blank=True, null=True)
+
+    # Copyists can be either People or Organizations.
+    limit = models.Q(app_label='diamm_data', model="person") | models.Q(app_label='diamm_data', model='organization')
+    content_type = models.ForeignKey(ContentType,
+                                     on_delete=models.CASCADE,
+                                     limit_choices_to=limit)
+    object_id = models.PositiveIntegerField()
+    copyist = GenericForeignKey()
 
