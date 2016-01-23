@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect
+from rest_framework.reverse import reverse
 from rest_framework import renderers
 from rest_framework import views
 from rest_framework import status
@@ -19,8 +20,8 @@ class SessionAuth(views.APIView):
     renderer_classes = (HTMLRenderer, renderers.JSONRenderer)
 
     def post(self, request, *args, **kwargs):
-        username = request.DATA.get('username', None)
-        password = request.DATA.get('password', None)
+        username = request.data.get('username', None)
+        password = request.data.get('password', None)
 
         if not username:
             return Response({'detail': "You must supply a username"}, status=status.HTTP_401_UNAUTHORIZED)
@@ -32,6 +33,11 @@ class SessionAuth(views.APIView):
         if user is not None:
             if user.is_active:
                 login(request, user)
+
+                # If the user is logging in via the HTML interface, redirect them to their profile page.
+                if isinstance(request.accepted_renderer, HTMLRenderer):
+                    return HttpResponseRedirect(reverse('user-profile', kwargs={'pk': user.pk}))
+                # Otherwise, return the JSON response
                 return Response({'success': True})
             else:
                 # user exists but is not active; forbid them access.

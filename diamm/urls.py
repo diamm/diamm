@@ -20,6 +20,7 @@ from rest_framework.routers import SimpleRouter
 
 from diamm.views.home import HomeView
 from diamm.views.auth import SessionAuth, SessionClose, AccountEmailSent, AccountUpdate
+from diamm.views.user import ProfileView
 from diamm.views.website.search import SearchView
 from diamm.views.website.source import SourceList, SourceDetail
 from diamm.views.website.archive import ArchiveList, ArchiveDetail
@@ -37,6 +38,7 @@ urlpatterns = [
     url(r'^logout/$', SessionClose.as_view(), name="logout"),
     url(r'^login/update/$', AccountUpdate.as_view(), name="account-update"),
     url(r'^login/email-sent/$', AccountEmailSent.as_view(), name="account-email"),
+    url(r'^user/(?P<pk>[0-9]+)/$', ProfileView.as_view(), name="user-profile"),
 
     # public website
     url(r'^search/$', SearchView.as_view(), name="search"),

@@ -8,7 +8,6 @@ class LegacyDiammUser(models.Model):
     email = models.CharField(max_length=80, blank=True, null=True)
     affiliation = models.CharField(max_length=200, blank=True, null=True)
 
-
     class Meta:
         managed = False
         db_table = 'DiammUser'
