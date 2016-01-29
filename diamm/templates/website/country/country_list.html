@@ -1,10 +1,13 @@
 {% extends "base.html" %}
 
 {% block body %}
-    <h1>Country List</h1>
-    <ul>
-    {% for country in content.results %}
-        <li><a href="{{ country.url }}">{{ country.name }}</a></li>
-    {% endfor %}
-    </ul>
+    <div class="col-md-12">
+        <h1>Country List</h1>
+        <ul>
+        {% for country in content.results %}
+            <li><a href="{{ country.url }}">{{ country.name }}</a></li>
+        {% endfor %}
+        </ul>
+        {% include "website/blocks/browse_paginator.html" %}
+    </div>
 {% endblock %}

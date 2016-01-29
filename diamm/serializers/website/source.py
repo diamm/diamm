@@ -86,7 +86,7 @@ class CityArchiveSourceSerializer(serializers.ModelSerializer):
     )
     class Meta:
         model = GeographicArea
-        fields = ('url', 'name')
+        fields = ('url', 'name',)
 
 
 class ArchiveSourceSerializer(serializers.HyperlinkedModelSerializer):
@@ -94,7 +94,7 @@ class ArchiveSourceSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Archive
-        fields = ('url', 'name', 'city')
+        fields = ('url', 'name', 'city', 'siglum')
 
 
 class SourceListSerializer(serializers.HyperlinkedModelSerializer):

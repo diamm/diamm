@@ -5,6 +5,7 @@ from rest_framework.reverse import reverse
 from rest_framework import renderers
 from rest_framework import views
 from rest_framework import status
+from rest_framework import permissions
 from rest_framework.response import Response
 from diamm.renderers.html_renderer import HTMLRenderer
 
@@ -91,6 +92,8 @@ class SessionClose(views.APIView):
     def post(self, request, *args, **kwargs):
         if request.user.is_authenticated():
             logout(request)
+            if isinstance(request.accepted_renderer, HTMLRenderer):
+                return HttpResponseRedirect(reverse("home"))
             return Response({})
         else:
             # unauthenticated users are forbidden from the logout page.

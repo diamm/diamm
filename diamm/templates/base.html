@@ -23,12 +23,19 @@
 
     <footer class="footer">
         <div class="container-fluid">
-            <p>Footer Stuff here.</p>
+            <img src="{% static "images/oxford.png" %}">
+            <img src="{% static "images/bodleian.png" %}">
+            <img src="{% static "images/ba.png" %}">
+            <img src="{% static "images/johnfell.png" %}">
+            <img src="{% static "images/ahrc.png" %}">
         </div>
     </footer>
 
-    <script type="application/javascript" src="{% static "javascripts/jquery.min.js" %}"></script>
-    <script type="application/javascript" src="{% static "javascripts/bootstrap.min.js" %}"></script>
+    <script src="{% static "javascripts/jspm_packages/system.js" %}"></script>
+    <script src="{% static "javascripts/config.js" %}"></script>
+    <script>
+        System.import('{% static "javascripts/main.js" %}');
+    </script>
     {% block scripts %}
 
     {% endblock %}

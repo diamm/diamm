@@ -25,8 +25,7 @@ SECRET_KEY = '@l%t#fyhaahycu$gct^u5ttya69v5n^00y48@)2mngdlel63g+'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['localhost:8000']
 
 # Application definition
 
@@ -71,9 +70,9 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.contrib.auth.context_processors.auth',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
         },
@@ -147,10 +146,16 @@ STATIC_URL = '/static/'
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
+    'DEFAULT_RENDERER_CLASSES': (
+        'diamm.renderers.html_renderer.HTMLRenderer',
+        'drf_ujson.renderers.UJSONRenderer',
+    ),
 }
 
 SOLR = {
     'SERVER': "http://localhost:8983/solr/diamm/",
+    'PAGE_SIZE': 20,
+    'DEFAULT_OPERATOR': 'AND',
     'INDEX_TYPES': {
         'SOURCE': {
             'type': 'source',
@@ -159,3 +164,23 @@ SOLR = {
         }
     }
 }
+
+if DEBUG:
+    SILENCED_SYSTEM_CHECKS = []
+
+DEBUG_TOOLBAR_PANELS = [
+    'debug_toolbar.panels.versions.VersionsPanel',
+    'debug_toolbar.panels.timer.TimerPanel',
+    'template_profiler_panel.panels.template.TemplateProfilerPanel',
+    'debug_toolbar.panels.settings.SettingsPanel',
+    'debug_toolbar.panels.headers.HeadersPanel',
+    'debug_toolbar.panels.request.RequestPanel',
+    'debug_toolbar.panels.sql.SQLPanel',
+    'debug_toolbar.panels.staticfiles.StaticFilesPanel',
+    'debug_toolbar.panels.templates.TemplatesPanel',
+    'debug_toolbar.panels.cache.CachePanel',
+    'debug_toolbar.panels.signals.SignalsPanel',
+    'debug_toolbar.panels.logging.LoggingPanel',
+    'debug_toolbar.panels.redirects.RedirectsPanel',
+    # 'debug_toolbar.panels.profiling.ProfilingPanel'
+]

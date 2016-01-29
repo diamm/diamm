@@ -1,13 +1,9 @@
-from django.conf import settings
 from rest_framework import generics
-from rest_framework import renderers
 from rest_framework import response
+from rest_framework import status
 from diamm.models.data.source import Source
-from diamm.renderers.html_renderer import HTMLRenderer
 from diamm.serializers.website.source import SourceListSerializer
-from diamm.helpers.solr_pagination import SolrPaginator
-from django.core.paginator import EmptyPage, PageNotAnInteger
-import scorched
+from diamm.helpers.solr_pagination import SolrPaginator, SolrResultException
 
 # class Facet:
 #     def serialize(self):
@@ -31,32 +27,37 @@ import scorched
 
 class SearchView(generics.GenericAPIView):
     template_name = "website/search/search.html"
-    renderer_classes = (HTMLRenderer, renderers.JSONRenderer)
     queryset = Source.objects.all()
     serializer_class = SourceListSerializer
 
     def get(self, request, *args, **kwargs):
         query = request.GET.get('q', None)
-        rtype = request.GET.get('type', None)
+        filters = {}
+        sorts = {}
 
         if not query:
             return response.Response({})
 
-        conn = scorched.SolrInterface(settings.SOLR['SERVER'])
-
-        solrq = conn.query(query)
-
-
-        if rtype:
-            solrq = solrq.filter(type=rtype)
-
-        paginator = SolrPaginator(solrq, request)
-        page_num = request.GET.get('page', 1)
+        type_filt = request.GET.get('type', None)
+        if type_filt:
+            # Translate all to a wildcard.
+            if type_filt == "all":
+                type_filt = "*"
+            filters.update({
+                'type': type_filt
+            })
 
         try:
+            page_num = int(request.GET.get('page', 1))
+        except ValueError:
+            page_num = 1
+
+        try:
+            paginator = SolrPaginator(query, filters, sorts, request)
             page = paginator.page(page_num)
-        except PageNotAnInteger:
-            # If an invalid page number was passed in, show the first page of results
-            page = paginator.page()
+        except SolrResultException as e:
+            # We assume that an exception raised by Solr is the result of a bad request by the client,
+            #  so we bubble up a 400 with a message about why it went wrong.
+            return response.Response({'message': repr(e)}, status=status.HTTP_400_BAD_REQUEST)
 
         return response.Response(page.get_paginated_response())

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load staticfiles %}
 
 {% block body %}
     {% include "website/blocks/search_box.html" %}
@@ -6,19 +7,22 @@
     {% if content.types %}
         <div class="row type-filter-bar">
             <div class="col-md-push-1 col-md-11 type-filter">
-                <ul class="list-inline">
-                {% for type, num in content.types %}
+                <ul class="nav nav-pills">
                     <li>
-                        <a href="#" class="filter-type" data-field="{{ type }}">{{ type | title }} ({{ num }})</a>
+                        {% include 'website/search/results/type_links.html' with type="all" params=request.GET %}
+                    </li>
+                {% for type, num in content.types.items %}
+                    <li>
+                        {% include 'website/search/results/type_links.html' with type=type params=request.GET %}
                     </li>
                 {% endfor %}
                 </ul>
             </div>
         </div>
     {% endif %}
+    {% if content.results %}
         <div class="row">
             <div class="col-md-push-1 col-md-11">
-            {% if content.results %}
                 <hgroup>
                     <h4>Search Results</h4>
                     <p>{{ content.count }} results were found.</p>
@@ -37,8 +41,23 @@
                         {% endif %}
                     </div>
                 {% endfor %}
-            {% endif %}
+                {% include "website/blocks/browse_paginator.html" %}
             </div>
         </div>
+    {% else %}
+        {% if request.GET.q %}
+            <p>No results were found.</p>
+        {% else %}
+            <p>Type your search above.</p>
+        {% endif %}
+    {% endif %}
+
     </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        {# The System object is defined in base.html, where JSPM is initialized. #}
+        System.import('{% static "javascripts/search.js" %}');
+    </script>
 {% endblock %}

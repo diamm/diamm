@@ -15,7 +15,7 @@ class SourceSearchSerializer(serializers.ModelSerializer):
                   'surface_type_s',
                   'identifiers_ss',
                   'notes_ss',
-                  'copyists_ss',
+                  # 'copyists_ss',
                   'start_date_i',
                   'end_date_i',
                   'composers_ss')
@@ -25,6 +25,7 @@ class SourceSearchSerializer(serializers.ModelSerializer):
     type = serializers.SerializerMethodField()
     pk = serializers.ReadOnlyField()
 
+    shelfmark_s = serializers.ReadOnlyField(source='shelfmark')
     display_name_s = serializers.ReadOnlyField(source="display_name")
     archive_s = serializers.ReadOnlyField(source="archive.name")
     identifiers_ss = serializers.SlugRelatedField(
@@ -33,12 +34,12 @@ class SourceSearchSerializer(serializers.ModelSerializer):
         read_only=True,
         slug_field="identifier"
     )
-    copyists_ss = serializers.SlugRelatedField(
-        source="copyists",
-        many=True,
-        read_only=True,
-        slug_field="full_name"
-    )
+    # copyists_ss = serializers.SlugRelatedField(
+    #     source="copyists",
+    #     many=True,
+    #     read_only=True,
+    #     slug_field="full_name"
+    # )
     notes_ss = serializers.SlugRelatedField(
         source="public_notes",
         many=True,

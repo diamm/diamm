@@ -54,7 +54,7 @@ class Command(BaseCommand):
 
     def _index_sources(self):
         self.stdout.write(term.blue('Indexing Sources'))
-        objs = Source.objects.filter(public=True)
+        objs = Source.objects.all()
         self._index(objs, 'shelfmark', SourceSearchSerializer)
 
     def _index_archives(self):

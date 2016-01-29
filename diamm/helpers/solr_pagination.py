@@ -1,7 +1,8 @@
 import math
+import pysolr
 from rest_framework.utils.urls import replace_query_param
 from rest_framework.reverse import reverse
-from django.core.paginator import PageNotAnInteger
+from django.conf import settings
 from collections import OrderedDict
 
 
@@ -10,34 +11,53 @@ class SolrResultObject(object):
         self.__dict__.update(entries)
 
 
+class SolrResultException(BaseException):
+    pass
+
+
 class SolrPaginator:
     """
         Takes in a SolrSearch object (pre-execute) and manages
         a paginated list of Solr results.
     """
-    def __init__(self, query, request, *args, **kwargs):
+    def __init__(self, query, filters, sorts, request, *args, **kwargs):
+        # The query is the value of the fulltext q-field.
         self.query = query
-
-        # inject the type facet. This is hardcoded since it will be present
-        # on every search
-        self.query = query.facet_by('type', mincount=1)
-
         self.request = request
         self.result = None
 
-        # Fetch the first page.
+        # qopts are the query options passed to solr.
+        self.qopts = {
+            'q.op': settings.SOLR['DEFAULT_OPERATOR'],
+            'facet': 'true',
+            'facet.field': 'type',
+            'facet.mincount': 0
+        }
+
+        if sorts:
+            self.qopts.update(sorts)
+
+        if filters:
+            fqstring = " ".join(["{0}:{1}".format(k, v) for k, v in filters.items()])
+            self.qopts.update({
+                'fq': fqstring
+            })
+
+        self.solr = pysolr.Solr(settings.SOLR['SERVER'])
+
+        # Fetch the requested page.
         self._fetch_page()
 
     @property
     def page_size(self):
-        return self.query.paginator.rows
+        return settings.SOLR['PAGE_SIZE']
 
     @property
     def count(self):
         if not self.result:
             return 0
 
-        return int(self.result.result.numFound)
+        return int(self.result.hits)
 
     @property
     def num_pages(self):
@@ -53,18 +73,24 @@ class SolrPaginator:
 
     def _fetch_page(self, start=0):
         """Retrieve a new result response from Solr."""
-        self.query.paginator.update(start, 10)
-        self.result = self.query.execute()
+        self.qopts.update({
+            'start': start,
+            'rows': settings.SOLR['PAGE_SIZE']
+        })
+
+        try:
+            self.result = self.solr.search(self.query, **self.qopts)
+        except pysolr.SolrError as e:
+            raise SolrResultException(repr(e))
 
     def page(self, page_num=1):
-        try:
-            page_num = int(page_num)
-        except ValueError:
-            raise PageNotAnInteger
-
-        start = (page_num - 1) * self.page_size
+        """
+            page_num must be an integer. Do not pass in un-coerced request parameters!
+        """
+        # e.g., page 3: ((3 - 1) * 20) + 1, start = 41
+        remainder = 0 if page_num == 1 else 1  # page 1 starts at result 0; page 2 starts at result 11
+        start = ((page_num - 1) * self.page_size) + remainder
         self._fetch_page(start=start)
-
         return SolrPage(self.result, page_num, self)
 
 
@@ -78,7 +104,6 @@ class SolrPage:
         """
             Returns a full response object
         """
-        print(self.paginator.request)
 
         return OrderedDict([
             ('count', self.paginator.count),
@@ -86,25 +111,28 @@ class SolrPage:
             ('previous', self.previous_url),
             ('current_page', self.number),
             ('total_pages', self.paginator.num_pages),
-            ('query', self.query_options),
+            ('query', self.paginator.query),
             ('types', self.type_list),
             ('results', self.object_list),
         ])
 
     @property
-    def query_options(self):
-        qp = self.paginator.query.options()
-        if 'q' in qp.keys():
-            return qp['q']
-        return ''
-
-    @property
     def type_list(self):
-        return self.result.facet_counts.facet_fields['type']
+        # Takes a list of facets ['foo', 1, 'bar', 2] and converts them to
+        # {'foo': 1, 'bar': 2} using some stupid python iterator tricks.
+        facets = self.result.facets['facet_fields']['type']
+        if not facets:
+            return {}
+
+        i = iter(facets)
+        return OrderedDict(sorted(zip(i, i), key=lambda f: f[0]))
 
     @property
     def object_list(self):
-        docs = self.result.result.docs
+        docs = self.result.docs
+
+        # Generate fully qualified URLs for the resources in Solr when the results are returned.
+        # This way we don't have to store the full URL in Solr.
         for obj in docs:
             url = reverse("{0}-detail".format(obj['type']),
                           kwargs={'pk': obj['pk']},

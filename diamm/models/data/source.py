@@ -84,7 +84,7 @@ class Source(models.Model):
 
     @property
     def display_name(self):
-        return self.__str__()
+        return "{0} {1}".format(self.archive.siglum, self.__str__())
 
     @property
     def surface_type(self):

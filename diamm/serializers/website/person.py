@@ -90,14 +90,14 @@ class PersonDetailSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url',
                   'full_name',
                   'compositions',
-                  'source_relationships',
+                  'sources_related',
                   'sources_copied',
                   'biography',
                   'dates')
 
     compositions = PersonCompositionSerializer(many=True)
     full_name = serializers.ReadOnlyField()
-    source_relationships = PersonSourceRelationshipSerializer(many=True)
+    sources_related = PersonSourceRelationshipSerializer(many=True)
     sources_copied = PersonSourceCopiedSerializer(many=True)
     biography = serializers.SerializerMethodField()
     dates = serializers.SerializerMethodField()
