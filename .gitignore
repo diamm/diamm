@@ -8,3 +8,5 @@ diamm/static/stylesheets/styles.css
 diamm/static/stylesheets/styles.css.map
 solr/data
 diamm/diamm_site/migrations
+diamm/static/javascripts/jspm_packages
+diamm/static/javascripts/node_modules

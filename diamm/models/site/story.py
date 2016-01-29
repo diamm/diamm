@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class News(models.Model):
+class Story(models.Model):
     class Meta:
         app_label = "diamm_site"
 

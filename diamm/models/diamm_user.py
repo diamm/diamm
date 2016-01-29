@@ -8,5 +8,6 @@ class DIAMMUser(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     affiliation = models.CharField(max_length=512, blank=True, null=True)
+
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
