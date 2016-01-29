@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'reversion',
     'rest_framework',
     'rest_framework.authtoken',
-    'django_extensions'
+    'django_extensions',
+    'django_jinja'
 ]
 
 if DEBUG:
@@ -64,6 +65,22 @@ MIDDLEWARE_CLASSES = [
 ROOT_URLCONF = 'diamm.urls'
 
 TEMPLATES = [
+    {
+        'BACKEND': 'django_jinja.backend.Jinja2',
+        'APP_DIRS': True,
+        "OPTIONS": {
+            'match_extension': '.jinja2',
+            "context_processors": [
+                "django.contrib.auth.context_processors.auth",
+                "django.template.context_processors.debug",
+                "django.template.context_processors.i18n",
+                "django.template.context_processors.media",
+                "django.template.context_processors.static",
+                "django.template.context_processors.tz",
+                "django.contrib.messages.context_processors.messages",
+            ],
+        }
+    },
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [],
@@ -154,7 +171,7 @@ REST_FRAMEWORK = {
 
 SOLR = {
     'SERVER': "http://localhost:8983/solr/diamm/",
-    'PAGE_SIZE': 20,
+    'PAGE_SIZE': REST_FRAMEWORK['PAGE_SIZE'],
     'DEFAULT_OPERATOR': 'AND',
     'INDEX_TYPES': {
         'SOURCE': {
