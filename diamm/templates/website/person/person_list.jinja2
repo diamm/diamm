@@ -1,0 +1,10 @@
+{% extends "base.jinja2" %}
+
+{% block body %}
+    <h1>Person List</h1>
+    <ul>
+    {% for person in content.results %}
+        <li><a href="{{ person.url }}">{{ person.full_name }}</a></li>
+    {% endfor %}
+    </ul>
+{% endblock %}

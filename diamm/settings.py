@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
+from django_jinja.builtins import DEFAULT_EXTENSIONS
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -26,6 +27,7 @@ SECRET_KEY = '@l%t#fyhaahycu$gct^u5ttya69v5n^00y48@)2mngdlel63g+'
 DEBUG = True
 
 ALLOWED_HOSTS = ['localhost:8000']
+INTERNAL_IPS = ('127.0.0.1',)
 
 # Application definition
 
@@ -78,7 +80,7 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
-            ],
+            ]
         }
     },
     {

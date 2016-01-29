@@ -6,14 +6,14 @@ from diamm.serializers.website.composition import CompositionListSerializer, Com
 
 
 class CompositionList(generics.ListAPIView):
-    template_name = "website/composition/composition_list.html"
+    template_name = "website/composition/composition_list.jinja2"
     renderer_classes = (HTMLRenderer, renderers.JSONRenderer)
     serializer_class = CompositionListSerializer
     queryset = Composition.objects.all()
 
 
 class CompositionDetail(generics.RetrieveAPIView):
-    template_name = "website/composition/composition_detail.html"
+    template_name = "website/composition/composition_detail.jinja2"
     renderer_classes = (HTMLRenderer, renderers.JSONRenderer)
     serializer_class = CompositionDetailSerializer
     queryset = Composition.objects.all()

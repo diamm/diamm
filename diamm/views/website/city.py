@@ -6,14 +6,14 @@ from diamm.serializers.website.city import CityDetailSerializer, CityListSeriali
 
 
 class CityList(generics.ListAPIView):
-    template_name = "website/city/city_list.html"
+    template_name = "website/city/city_list.jinja2"
     renderer_classes = (HTMLRenderer, renderers.JSONRenderer)
     serializer_class = CityListSerializer
     queryset = GeographicArea.objects.filter(type=GeographicArea.CITY)
 
 
 class CityDetail(generics.RetrieveAPIView):
-    template_name = "website/city/city_detail.html"
+    template_name = "website/city/city_detail.jinja2"
     renderer_classes = (HTMLRenderer, renderers.JSONRenderer)
     serializer_class = CityDetailSerializer
     queryset = GeographicArea.objects.filter(type=GeographicArea.CITY)

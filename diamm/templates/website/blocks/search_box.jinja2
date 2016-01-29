@@ -1,0 +1,12 @@
+<div class="form-group search-box">
+    <div class="container">
+        <div class="row">
+            <form action="{{ url('search') }}" method="get">
+            <div class="col-md-8 col-md-offset-2 input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
+                    <input type="search" class="form-control input-lg" placeholder="Search" name="q" {% if content.query %}value="{{ content.query }}"{% endif %} />
+            </div>
+            </form>
+        </div>
+    </div>
+</div>

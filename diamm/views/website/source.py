@@ -6,7 +6,7 @@ from diamm.serializers.website.source import SourceListSerializer, SourceDetailS
 
 
 class SourceList(generics.ListAPIView):
-    template_name = "website/source/source_list.html"
+    template_name = "website/source/source_list.jinja2"
     renderer_classes = (HTMLRenderer, renderers.JSONRenderer)
     serializer_class = SourceListSerializer
 
@@ -21,7 +21,7 @@ class SourceDetail(generics.RetrieveAPIView):
     """
         This is the description.
     """
-    template_name = "website/source/source_detail.html"
+    template_name = "website/source/source_detail.jinja2"
     renderer_classes = (HTMLRenderer, renderers.JSONRenderer)
     serializer_class = SourceDetailSerializer
 

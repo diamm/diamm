@@ -6,13 +6,13 @@ from diamm.serializers.website.person import PersonListSerializer, PersonDetailS
 
 
 class PersonList(generics.ListAPIView):
-    template_name = "website/person/person_list.html"
+    template_name = "website/person/person_list.jinja2"
     queryset = Person.objects.all()
     serializer_class = PersonListSerializer
 
 
 class PersonDetail(generics.RetrieveAPIView):
-    template_name = "website/person/person_detail.html"
+    template_name = "website/person/person_detail.jinja2"
     serializer_class = PersonDetailSerializer
 
     def get_queryset(self):

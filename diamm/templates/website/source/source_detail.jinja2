@@ -1,0 +1,57 @@
+{% extends "base.jinja2" %}
+
+{% block body %}
+    <div class="col-md-12">
+        <h1>{{ content.display_name }}</h1>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            <ul class="nav nav-pills nav-stacked">
+                <li class="active"><a href="#source" data-toggle="tab">Source Info</a></li>
+                <li><a href="#inventory" data-toggle="tab">Source Inventory</a></li>
+                <li><a href="#description" data-toggle="tab">Source Descriptions</a></li>
+                <li><a href="#bibliography" data-toggle="tab">Bibliography</a></li>
+            </ul>
+        </div>
+        <div class="col-md-10 tab-content">
+            <div class="tab-pane active" id="source">
+                <h2>Archive</h2>
+                <p><a href="{{ content.archive.url }}">{{ content.archive.name }}</a>, <a href="{{ content.archive.city.url }}">{{ content.archive.city.name }}</a></p>
+                <h2>Identifiers</h2>
+                <ul>
+                    {% for identifier in content.identifiers %}
+                        <li>
+                            <h3>{{ identifier.identifier_type }}</h3>
+                            <p>{{ identifier.identifier }}</p>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="tab-pane" id="inventory">
+                <h2>Inventory</h2>
+                <ul>
+                    {% for item in content.inventory %}
+                        <li>
+                            <a href="{{ item.composition.url }}">{{ item.composition.name }}</a>, (
+                            {% for composer in item.composition.composers %}
+                                <a href="{{ composer.url }}">{{ composer.full_name }}</a>,
+                            {% endfor %}
+                            )
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="tab-pane" id="description">
+                <h2>Descriptions</h2>
+                {% for note in content.notes %}
+                    <h3>{{ note.note_type }}</h3>
+                    <p>{{ note.note|linebreaks }}</p>
+                {% endfor %}
+            </div>
+            <div class="tab-pane" id="bibliography">
+                <h2>Bibliography</h2>
+                <p>Nothing here yet.</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

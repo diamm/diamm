@@ -1,0 +1,10 @@
+<nav>
+    <ul class="pager">
+        <li class="previous {% if not content.previous %}disabled{% endif %}">
+            <a href="{% if content.previous %}{{ content.previous }}{% else %}#{% endif %}"><span aria-hidden="true">&larr;</span> Previous</a>
+        </li>
+        <li class="next {% if not content.next %}disabled{% endif %}">
+            <a href="{% if content.next %}{{ content.next }}{% else %}#{% endif %}">Next <span aria-hidden="true">&rarr;</span></a>
+        </li>
+    </ul>
+</nav>

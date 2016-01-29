@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{{ static('stylesheets/styles.css') }}" />
+    {% block head %}
+
+    {% endblock %}
+</head>
+<body>
+    <header>
+        {% include "website/blocks/main_menu.jinja2" %}
+    </header>
+
+    <div class="container-fluid">
+        <div class="row">
+        {% block body %}{% endblock %}
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container-fluid">
+            <img src="{{ static('images/oxford.png') }}">
+            <img src="{{ static('images/bodleian.png') }}">
+            <img src="{{ static('images/ba.png') }}">
+            <img src="{{ static('images/johnfell.png') }}">
+            <img src="{{ static('images/ahrc.png') }}">
+        </div>
+    </footer>
+
+    <script src="{{ static('javascripts/jspm_packages/system.js') }}"></script>
+    <script src="{{ static('javascripts/config.js') }}"></script>
+    <script>
+        System.import('{{ static('javascripts/main.js') }}');
+    </script>
+    {% block scripts %}
+
+    {% endblock %}
+</body>
+</html>

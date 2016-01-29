@@ -17,7 +17,7 @@ class SessionAuth(views.APIView):
         403: Users are authenticated (we know who they are) but for some reason they are forbidden. They
         don't get another chance.
     """
-    template_name = "website/auth/login.html"
+    template_name = "website/auth/login.jinja2"
     renderer_classes = (HTMLRenderer, renderers.JSONRenderer)
 
     def post(self, request, *args, **kwargs):

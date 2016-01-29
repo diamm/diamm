@@ -5,7 +5,7 @@ from diamm.renderers.html_renderer import HTMLRenderer
 
 
 class HomeView(views.APIView):
-    template_name = "index.html"
+    template_name = "index.jinja2"
     renderer_classes = (HTMLRenderer, renderers.JSONRenderer)
 
     def get(self, request, *args, **kwargs):

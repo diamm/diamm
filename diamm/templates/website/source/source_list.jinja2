@@ -1,0 +1,10 @@
+{% extends "base.jinja2" %}
+
+{% block body %}
+    <h1>Source List</h1>
+    <ul>
+    {% for source in content.results %}
+        <li><a href="{{ source.url }}">{{ source.display_name }}</a></li>
+    {% endfor %}
+    </ul>
+{% endblock %}

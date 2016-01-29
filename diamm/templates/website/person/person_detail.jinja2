@@ -1,0 +1,46 @@
+{% extends "base.jinja2" %}
+
+{% block body %}
+    <div class="col-md-12">
+        <h1>{{ content.full_name }}</h1>
+    </div>
+
+    <div class="row">
+        <div class="col-md-2">
+            <ul class="nav nav-pills nav-stacked">
+                <li class="active"><a href="#bio" data-toggle="tab">Biography</a></li>
+                <li><a href="#compositions" data-toggle="tab">Compositions</a></li>
+            </ul>
+        </div>
+        <div class="col-md-10 tab-content">
+            <div class="tab-pane active" id="bio">
+                <h2>Biography</h2>
+                {% for note in content.biography %}
+                    {{ note.note | linebreaks }}
+                {% endfor %}
+            </div>
+            <div class="tab-pane" id="compositions">
+            {% if content.compositions %}
+                <h2>Compositions</h2>
+                <ul>
+                    {% for composition in content.compositions %}
+                        <li><a href="{{ composition.url }}">{{ composition.name }} </a>
+                            {% if composition.uncertain %}
+                                (uncertain)
+                            {% endif %}
+                            <ul>
+                                {% for source in composition.sources %}
+                                    <li>
+                                        <a href="{{ source.url }}">{{ source.display_name }}</a>,
+                                        <a href="{{ source.archive.url }}">{{ source.archive.name }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

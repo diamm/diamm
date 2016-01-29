@@ -1,0 +1,13 @@
+<div class="col-md-12">
+    <h4>
+        <span class="label label-success">
+            <span class="fa fa-book"> Source</span>
+        </span>
+        &nbsp;
+        <a href="{{ result.url }}">{{ result.display_name_s }}</a>
+    </h4>
+    {% if result.notes_ss %}
+        <p>{{ result.notes_ss | join("; ") | truncatechars(100) }}</p>
+    {% endif %}
+</div>
+

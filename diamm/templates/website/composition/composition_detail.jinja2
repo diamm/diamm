@@ -1,0 +1,38 @@
+{% extends "base.jinja2" %}
+
+{% block body %}
+    <div class="col-md-12">
+        <h1>{{ content.name }}</h1>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            <ul class="nav nav-pills nav-stacked">
+                <li class="active"><a href="#composers" data-toggle="tab">Composers</a></li>
+                <li><a href="#sources" data-toggle="tab">Sources</a></li>
+            </ul>
+        </div>
+        <div class="col-md-10 tab-content">
+            <div class="tab-pane active" id="composers">
+                <h2>Composers</h2>
+                <ul>
+                {% for composer in content.composers %}
+                    <li>
+                        <a href="{{ composer.url }}">{{ composer.full_name }} </a>
+                        {% if composer.uncertain %}
+                            (uncertain)
+                        {% endif %}
+                    </li>
+                {% endfor %}
+                </ul>
+            </div>
+            <div class="tab-pane" id="sources">
+            <h2>Appears in:</h2>
+            <ul>
+            {% for source in content.sources %}
+                <li><a href="{{ source.url }}">{{ source.display_name }}</a></li>
+            {% endfor %}
+            </ul>
+        </div>
+        </div>
+    </div>
+{% endblock %}
