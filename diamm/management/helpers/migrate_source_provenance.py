@@ -141,10 +141,16 @@ def migrate_source_provenance(entry):
         'city': city,
         'protectorate': protectorate,
         'region': region,
-        'entity': organization,
         'uncertain': convert_yn_to_boolean(entry.uncertain),
         'note': note
     }
+
+    if organization:
+        # Generic Foreign Keys don't like None
+        sp.update({
+            'entity': organization
+        })
+
     spe = SourceProvenance(**sp)
     spe.save()
 

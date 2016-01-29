@@ -25,10 +25,12 @@ class SourceProvenance(models.Model):
     latest_year = models.IntegerField(blank=True, null=True)
     note = models.TextField(blank=True, null=True)
 
-    # Generic foreign keys to relate to people and organizations.
+    # Generic foreign keys to relate to people and organizations. This is optional.
     limit = models.Q(app_label='diamm_data', model="person") | models.Q(app_label='diamm_data', model='organization')
     content_type = models.ForeignKey(ContentType,
                                      on_delete=models.CASCADE,
-                                     limit_choices_to=limit)
-    object_id = models.PositiveIntegerField()
+                                     limit_choices_to=limit,
+                                     blank=True,
+                                     null=True)
+    object_id = models.PositiveIntegerField(blank=True, null=True)
     entity = GenericForeignKey()
