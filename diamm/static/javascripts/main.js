@@ -1,8 +1,18 @@
-function logOut(event)
-{
+import $ from 'jquery';
+import bootstrap from 'twbs/bootstrap';
+import 'fetch';
 
-    event.preventDefault();
+import { logOut } from 'app/auth';
+
+function main()
+{
+    console.log('Initializing JavaScript');
+
+    var logoutElement = document.getElementById('logout-link');
+    if (logoutElement)
+    {
+        logoutElement.addEventListener('click', logOut);
+    }
 }
 
-var logoutElement = document.getElementById('logout-link');
-logoutElement.addEventListener('click', logOut);
+main();

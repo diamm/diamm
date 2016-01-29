@@ -1,3 +1,4 @@
+@import "variables";
 @import "fonts";
 @import "colours";
 @import "navbar";
@@ -13,18 +14,17 @@
 }
 
 .type-filter-bar {
-  background: $diamm-cream;
   border-top: 1px solid darken($diamm-cream, 10%);
   border-bottom: 1px solid darken($diamm-cream, 10%);
-  .type-filter {
-    font-family: $font-family-sans-serif;
-    font-size: $font-size-base + 1;
-
-    ul {
-      margin: 5px 0;
-    }
-
-    li {
-    }
-  }
+  //.type-filter {
+  //  font-family: $font-family-sans-serif;
+  //  font-size: $font-size-base + 1;
+  //
+  //  ul {
+  //    margin: 5px 0;
+  //  }
+  //
+  //  li {
+  //  }
+  //}
 }
