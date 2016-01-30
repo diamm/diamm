@@ -29,17 +29,53 @@
             </div>
             <div class="tab-pane" id="inventory">
                 <h2>Inventory</h2>
-                <ul>
-                    {% for item in content.inventory %}
-                        <li>
-                            <a href="{{ item.composition.url }}">{{ item.composition.name }}</a>, (
-                            {% for composer in item.composition.composers %}
-                                <a href="{{ composer.url }}">{{ composer.full_name }}</a>,
-                            {% endfor %}
-                            )
-                        </li>
-                    {% endfor %}
-                </ul>
+                <table class="table table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Composition</th>
+                            <th>Composers</th>
+                            <th>Folio Start</th>
+                            <th>Folio End</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in content.inventory %}
+                            <tr>
+                            {% if item.aggregate_composer %}
+                                <td colspan="5">Works by <a href="{{ item.aggregate_composer.url }}">{{ item.aggregate_composer.full_name }}</a></td>
+                            {% else %}
+                                <td>
+                                    <a href="{{ item.composition.url }}">{{ item.composition.name }}</a>
+                                </td>
+                                <td>
+                                    {% for composer in item.composition.composers %}
+                                        <a href="{{ composer.url }}">{{ composer.full_name }}</a>
+                                        {% if composer.uncertain %}
+                                            (uncertain)
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {{ item.folio_start }}
+                                </td>
+                                <td>
+                                    {{ item.folio_end }}
+                                </td>
+                            {% endif %}
+                            </tr>
+                            {% if item.notes %}
+                            <tr>
+                                <td colspan="4">
+                                    {% for note in item.notes %}
+                                        <strong>{{ note.note_type }}</strong>
+                                        <p>{{ note.note }}</p>
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
             <div class="tab-pane" id="description">
                 <h2>Descriptions</h2>
