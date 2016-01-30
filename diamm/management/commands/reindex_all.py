@@ -12,6 +12,8 @@ from diamm.models.data.person import Person
 from diamm.serializers.search.person import PersonSearchSerializer
 from diamm.models.data.composition import Composition
 from diamm.serializers.search.composition import CompositionSearchSerializer
+from diamm.models.data.organization import Organization
+from diamm.serializers.search.organization import OrganizationSearchSerializer
 
 
 term = Terminal()
@@ -71,6 +73,11 @@ class Command(BaseCommand):
         self.stdout.write(term.blue("Indexing Compositions"))
         objs = Composition.objects.all()
         self._index(objs, 'name', CompositionSearchSerializer)
+
+    def _index_organizations(self):
+        self.stdout.wirte(term.blue("Indexing Organizations"))
+        objs = Organization.objects.all()
+        self._index(objs, 'name', OrganizationSearchSerializer)
 
     def handle(self, *args, **kwargs):
         self.solrconn = scorched.SolrInterface(settings.SOLR['SERVER'])
