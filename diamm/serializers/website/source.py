@@ -43,7 +43,7 @@ class AggregateComposerSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Person
-        fields = ('full_name',)
+        fields = ('url', 'full_name')
 
 
 class SourceItemSerializer(serializers.ModelSerializer):
