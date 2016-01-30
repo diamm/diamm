@@ -13,8 +13,9 @@ term = Terminal()
 
 
 def empty_composition():
-    print(term.magenta("\tEmptying composition tables"))
+    print(term.magenta("\tEmptying composition composer tables"))
     CompositionComposer.objects.all().delete()
+    print(term.magenta("\tEmptying composition tables"))
     Composition.objects.all().delete()
 
 
@@ -29,8 +30,10 @@ def attempt_genre_matching(legacy_genre):
             newgenres.append(ng[0])
     return newgenres
 
+
 def migrate_composition(entry):
     print(term.green("\tMigrating composition ID {0}".format(entry.pk)))
+
     if entry.genre:
         genres = attempt_genre_matching(entry.genre)
     else:
@@ -49,13 +52,23 @@ def migrate_composition(entry):
 
 
 def attach_composers_to_composition(entry):
+    # Skip the special compositions.
+    if entry.compositionkey in (0, 69332, 888888, 999999, 54681, 69558, 79920):
+        return None
+
     print(term.green("\tAttaching composer {0} to composition {1} with PK {2}".format(entry.composerkey, entry.compositionkey, entry.pk)))
+    composition_pk = entry.compositionkey
+    composition = Composition.objects.get(pk=composition_pk)
+
+    # Set the composition to anonymous if the composer is anonymous.
+    if entry.composerkey == 0:
+        composition.anonymous = True
+        composition.save()
+        return None
+
     composer_pk = entry.composerkey
     composer_lookup = "legacy_composer.{0}".format(int(composer_pk))
     composer = Person.objects.get(legacy_id=composer_lookup)
-
-    composition_pk = entry.compositionkey
-    composition = Composition.objects.get(pk=composition_pk)
 
     uncertain = convert_yn_to_boolean(entry.attribution_uncertain)
     notes = entry.notes_attribution
@@ -89,11 +102,14 @@ def update_table():
     curs.execute(sql_alt, (nextid,))
 
 
-
 def migrate():
     print(term.blue("Migrating Compositions"))
     empty_composition()
     for entry in LegacyComposition.objects.all():
+        # Skip the "this source has not been inventoried" composition.
+        # 69332 = "See description for inventory"
+        if entry.pk in (0, 69332, 888888, 999999, 69558, 79920, 54681):
+            continue
         migrate_composition(entry)
 
     for entry in LegacyCompositionComposer.objects.all():

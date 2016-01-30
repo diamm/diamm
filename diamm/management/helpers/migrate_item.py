@@ -20,16 +20,28 @@ def __clear_aggregate_compositions():
 
 def migrate_item(entry):
     print(term.green("\tMigrating composition {0} in source {1} with Item ID {2}".format(entry.compositionkey,
-                                                                                    entry.sourcekey,
-                                                                                    entry.pk)))
+                                                                                         entry.sourcekey,
+                                                                                         entry.pk)))
     source_pk = entry.sourcekey
     source = Source.objects.get(pk=source_pk)
+
+    # This is a special 'composition' that says that it's a post-1550 source.
+    # If that's the case, we'll skip adding this composition to the source
+    # and simply set a flag on the source that no inventory has been provided.
+    if entry.compositionkey == 0:
+        print(term.red('\t\tMarking the inventory as not provided.'))
+        source.inventory_provided = False
+        source.save()
 
     composition = None
     aggregate_composer = None
     composition_pk = entry.compositionkey
-    orig_composition = Composition.objects.get(pk=composition_pk)
-    if orig_composition.name == "works by":
+    orig_composition = None
+
+    if composition_pk not in (0, 69332, 54681, 69558, 79920, 888888, 999999):
+        orig_composition = Composition.objects.get(pk=composition_pk)
+
+    if orig_composition and orig_composition.name == "works by":
         print(term.magenta('\tCreating aggregate composer entry.'))
         # we have an aggregate entry. An aggregate composition should only
         # have one composer attached.

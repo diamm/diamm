@@ -71,6 +71,10 @@ def migrate_person_to_people(legacy_person):
 
 def migrate_composers_to_people(legacy_composer):
     print(term.green("\tMigrating composer ID {0}".format(legacy_composer.pk)))
+    if legacy_composer.pk == 0:
+        print(term.red('\tSkipping Anonymous Composer!'))
+        return None
+
     earliest = legacy_composer.date_floruit_earliest.strip(' ') if legacy_composer.date_floruit_earliest else None
     latest = legacy_composer.date_floruit_latest.strip(' ') if legacy_composer.date_floruit_latest else None
     earliest_year = int(earliest) if earliest else None
@@ -111,6 +115,8 @@ def migrate():
 
     composers = LegacyComposer.objects.all()
     for composer in composers:
+        if composer.id == 999999:
+            continue
         migrate_composers_to_people(composer)
 
     copyists = LegacyCopyist.objects.all()
