@@ -6,10 +6,10 @@ from diamm.helpers.solr_helpers import solr_delete, solr_index
 
 
 @receiver(post_save, sender=Composition)
-def index_archive(sender, instance, created, **kwargs):
+def index_composition(sender, instance, created, **kwargs):
     solr_index(CompositionSearchSerializer, instance)
 
 
 @receiver(post_delete, sender=Composition)
-def delete_archive(sender, instance, **kwargs):
+def delete_composition(sender, instance, **kwargs):
     solr_delete(CompositionSearchSerializer, instance)
