@@ -31,6 +31,8 @@ class Source(models.Model):
     shelfmark = models.CharField(max_length=255, blank=True, null=True)
     type = models.CharField(max_length=255, blank=True, null=True)
     surface = models.IntegerField(choices=SURFACE_OPTIONS, blank=True, null=True)
+    inventory_provided = models.BooleanField(default=False)
+
     start_date = models.IntegerField(blank=True, null=True,
                                      help_text="""Enter the start year as a four digit integer. If
                                      the precise year is not known, enter it rounding DOWN to the closest
