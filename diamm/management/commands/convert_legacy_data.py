@@ -22,9 +22,28 @@ from diamm.models.data.image_page_condition import ImagePageCondition
 from diamm.models.data.image_type import ImageType
 from diamm.models.data.organization_type import OrganizationType
 
+from django.db.models import signals
+from diamm.models.data.source import Source
+from diamm.models.data.person import Person
+from diamm.models.data.composition import Composition
+from diamm.models.data.archive import Archive
+from diamm.signals.source_signals import index_source, delete_source
+from diamm.signals.person_signals import index_person, delete_person
+from diamm.signals.archive_signals import index_archive, delete_archive
+from diamm.signals.composition_signals import index_composition, delete_composition
+
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
+        signals.post_save.disconnect(index_source, sender=Source)
+        signals.post_save.disconnect(index_person, sender=Person)
+        signals.post_save.disconnect(index_archive, sender=Archive)
+        signals.post_save.disconnect(index_composition, sender=Composition)
+        signals.post_delete.disconnect(delete_source, sender=Source)
+        signals.post_delete.disconnect(delete_person, sender=Person)
+        signals.post_delete.disconnect(delete_archive, sender=Archive)
+        signals.post_delete.disconnect(delete_composition, sender=Composition)
+
         # print("Emptying Fixture tables")
         # ImagePageCondition.objects.all().delete()
         # ImageType.objects.all().delete()
@@ -43,10 +62,10 @@ class Command(BaseCommand):
         # migrate_source_copyists.migrate()
         # migrate_source_provenance.migrate()
         # migrate_source_relationship.migrate()
-        # migrate_composition.migrate()
+        migrate_composition.migrate()
         # migrate_bibliography.migrate()
         # migrate_source_bibliography.migrate()
         # migrate_composition_bibliography.migrate()
-        # migrate_item.migrate()
+        migrate_item.migrate()
         # migrate_image.migrate()
-        migrate_users.migrate()
+        # migrate_users.migrate()
