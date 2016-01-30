@@ -9,6 +9,7 @@ class Composition(models.Model):
     name = models.CharField(max_length=1024)
     legacy_genre = models.CharField(max_length=512, blank=True, null=True,
                                     help_text="Stores the legacy value for the genre field.")
+    anonymous = models.BooleanField(default=False)
     genres = models.ManyToManyField("diamm_data.Genre")
 
     # composers = models.ManyToManyField("diamm_data.Person",
