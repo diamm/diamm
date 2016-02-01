@@ -5,16 +5,17 @@
     <div class="container-fluid">
     {% if content.types %}
         <div class="row type-filter-bar">
-            <div class="col-md-push-1 col-md-11 type-filter">
+            <div class="col-md-push-1 col-md-10 type-filter">
+                <span class="filter-label">Filter by: </span>
                 <ul class="nav nav-pills">
                     <li>
-                        {% with type="all", params=request.GET %}
+                        {% with type="all", count=content.count, params=request.GET %}
                         {% include 'website/search/results/type_links.jinja2' %}
                         {% endwith %}
                     </li>
                 {% for type, num in content.types.items() %}
                     <li>
-                        {% with type=type, params=request.GET %}
+                        {% with type=type, count=num, params=request.GET %}
                         {% include 'website/search/results/type_links.jinja2' %}
                         {% endwith %}
                     </li>
@@ -25,25 +26,16 @@
     {% endif %}
     {% if content.results %}
         <div class="row">
-            <div class="col-md-push-1 col-md-11">
-                <hgroup>
-                    <h4>Search Results</h4>
-                    <p>{{ content.count }} results were found.</p>
-                </hgroup>
-
+            <div class="col-md-push-1 col-md-10">
                 {% for result in content.results %}
-                    <div class="row">
-                        {% if result.type == 'source' %}
-                            {% include 'website/search/results/source.jinja2' %}
-                        {% elif result.type == 'person' %}
-                            {% include 'website/search/results/person.jinja2' %}
-                        {% elif result.type == 'composition' %}
-                            {% include 'website/search/results/composition.jinja2' %}
-                        {% elif result.type == 'archive' %}
-                            {% include 'website/search/results/archive.jinja2' %}
-                        {% endif %}
+                    <div class="row search-result">
+                        {% include 'website/search/results/result.jinja2' %}
                     </div>
                 {% endfor %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
                 {% include "website/blocks/browse_paginator.jinja2" %}
             </div>
         </div>

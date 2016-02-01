@@ -1,0 +1,8 @@
+{% extends "base.jinja2" %}
+
+{% block body %}
+    <div class="container-fluid">
+        <h1>{{ content.title }}</h1>
+        {{ content.body | markdown | safe }}
+    </div>
+{% endblock %}

@@ -1,6 +1,11 @@
+from diamm.admin.site.story import StoryAdmin
+from diamm.admin.site.tag import TagAdmin
+from diamm.admin.site.cover_image import CoverImageAdmin
+
 from diamm.admin.data.source import SourceAdmin
 from diamm.admin.data.source_relationship import SourceRelationshipAdmin
 from diamm.admin.data.source_provenance import SourceProvenanceAdmin
+from diamm.admin.data.source_note import SourceNoteAdmin
 from diamm.admin.data.geographic_area import GeographicAreaAdmin
 from diamm.admin.data.archive import ArchiveAdmin
 from diamm.admin.data.genre import GenreAdmin

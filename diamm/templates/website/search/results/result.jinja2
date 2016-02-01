@@ -1,0 +1,55 @@
+{% macro icon_mapping(result_type) %}
+    {% set icon_mapping = {'source': 'fa-book',
+                           'archive': 'fa-university',
+                           'organization': 'fa-users',
+                           'person': 'fa-user',
+                           'composition': 'fa-music'} %}
+    {% set label_mapping = {'source': 'label-danger',
+                            'archive': 'label-info',
+                            'organization': 'label-warning',
+                            'person': 'label-success',
+                            'composition': 'label-primary'} %}
+    <span class="label {{ label_mapping[result_type] }}"><span class="fa {{ icon_mapping[result_type] }}"> </span></span>
+{% endmacro %}
+
+{% macro item_info(result) %}
+    {% if result.type == 'source' %}
+        {% if result.date_statement_s %}
+         Date: {{ result.date_statement_s }}
+        {% endif %}
+        {% if result.measurements_s %}
+        ; {{ result.measurements_s }}
+        {% endif %}
+        {% if result.composers_ss %}
+        ; {{ result.composers_ss | length }} composer{{ result.composers_ss | pluralize }}
+        {% endif %}
+        {% if result.surface_type_s %}
+        ; {{ result.surface_type_s }}
+        {% endif %}
+    {% endif %}
+{% endmacro %}
+
+
+<div class="panel panel-default search-result">
+    <div class="panel-body">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-9">
+                    <h3 class="search-result-heading">
+                        {{ icon_mapping(result.type) }}
+                        <a href="{{ result.url }}">{{ result.name_s }}</a>
+                    </h3>
+                    <p>{{ item_info(result) }}</p>
+                    {% if result.result_text %}
+                        <p>{{ result.result_text | safe }}</p>
+                    {% endif %}
+                </div>
+                {% if result.type == 'source' %}
+                <div class="col-md-1">
+                    <img src="http://placehold.it/150x200" alt="...">
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

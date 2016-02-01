@@ -115,7 +115,7 @@ def migrate():
 
     composers = LegacyComposer.objects.all()
     for composer in composers:
-        if composer.id == 999999:
+        if composer.pk == 999999:
             continue
         migrate_composers_to_people(composer)
 

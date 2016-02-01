@@ -13,18 +13,30 @@
   margin-bottom: 0;
 }
 
+.search-result {
+  em {
+    background-color: lighten($diamm-red, 30%);
+    font-style: normal;
+    font-weight: bold;
+  }
+
+  h3.search-result-heading {
+    padding: 0 0 10px 0;
+    margin: 0;
+    font-size: 1.1em;
+    font-weight: bold;
+  }
+}
+
 .type-filter-bar {
   border-top: 1px solid darken($diamm-cream, 10%);
   border-bottom: 1px solid darken($diamm-cream, 10%);
-  //.type-filter {
-  //  font-family: $font-family-sans-serif;
-  //  font-size: $font-size-base + 1;
-  //
-  //  ul {
-  //    margin: 5px 0;
-  //  }
-  //
-  //  li {
-  //  }
-  //}
+  margin-bottom: 10px;
+
+  .type-filter {
+    .filter-label {
+      float: left;
+      padding: 10px 15px;
+    }
+  }
 }

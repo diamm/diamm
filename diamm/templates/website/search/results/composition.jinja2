@@ -1,14 +1,14 @@
 <div class="col-md-12">
-    <h4>
+    <p>
         <span class="label label-danger">
             <span class="fa fa-music"> Composition</span>
         </span>
         &nbsp;
         <a href="{{ result.url }}">{{ result.name_s }}</a>
-    </h4>
+    </p>
     <p>
-    {% if result.genres_ss %}
-        {{ result.genres_ss | join:"; " }}
+    {% if result.result_text %}
+        <p>{{ result.result_text | safe }}</p>
     {% endif %}
     </p>
 </div>

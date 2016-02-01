@@ -4,89 +4,94 @@
     <div class="col-md-12">
         <h1>{{ content.display_name }}</h1>
     </div>
-    <div class="row">
-        <div class="col-md-2">
-            <ul class="nav nav-pills nav-stacked">
-                <li class="active"><a href="#source" data-toggle="tab">Source Info</a></li>
-                <li><a href="#inventory" data-toggle="tab">Source Inventory</a></li>
-                <li><a href="#description" data-toggle="tab">Source Descriptions</a></li>
-                <li><a href="#bibliography" data-toggle="tab">Bibliography</a></li>
-            </ul>
-        </div>
-        <div class="col-md-10 tab-content">
-            <div class="tab-pane active" id="source">
-                <h2>Archive</h2>
-                <p><a href="{{ content.archive.url }}">{{ content.archive.name }}</a>, <a href="{{ content.archive.city.url }}">{{ content.archive.city.name }}</a></p>
-                <h2>Identifiers</h2>
-                <ul>
-                    {% for identifier in content.identifiers %}
-                        <li>
-                            <h3>{{ identifier.identifier_type }}</h3>
-                            <p>{{ identifier.identifier }}</p>
-                        </li>
-                    {% endfor %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2">
+                <ul class="nav nav-pills nav-stacked">
+                    <li class="active"><a href="#source" data-toggle="tab">Source Info</a></li>
+                    <li><a href="#inventory" data-toggle="tab">Source Inventory</a></li>
+                    <li><a href="#bibliography" data-toggle="tab">Bibliography</a></li>
                 </ul>
             </div>
-            <div class="tab-pane" id="inventory">
-                <h2>Inventory</h2>
-                <table class="table table-hover table-condensed">
-                    <thead>
-                        <tr>
-                            <th>Composition</th>
-                            <th>Composers</th>
-                            <th>Folio Start</th>
-                            <th>Folio End</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in content.inventory %}
-                            <tr>
-                            {% if item.aggregate_composer %}
-                                <td colspan="5">Works by <a href="{{ item.aggregate_composer.url }}">{{ item.aggregate_composer.full_name }}</a></td>
-                            {% else %}
-                                <td>
-                                    <a href="{{ item.composition.url }}">{{ item.composition.name }}</a>
-                                </td>
-                                <td>
-                                    {% for composer in item.composition.composers %}
-                                        <a href="{{ composer.url }}">{{ composer.full_name }}</a>
-                                        {% if composer.uncertain %}
-                                            (uncertain)
-                                        {% endif %}
-                                    {% endfor %}
-                                </td>
-                                <td>
-                                    {{ item.folio_start }}
-                                </td>
-                                <td>
-                                    {{ item.folio_end }}
-                                </td>
-                            {% endif %}
-                            </tr>
-                            {% if item.notes %}
-                            <tr>
-                                <td colspan="4">
-                                    {% for note in item.notes %}
-                                        <strong>{{ note.note_type }}</strong>
-                                        <p>{{ note.note }}</p>
-                                    {% endfor %}
-                                </td>
-                            </tr>
-                            {% endif %}
+            <div class="col-md-10 tab-content">
+                <div class="tab-pane active" id="source">
+                    <h2>Archive</h2>
+                    <p><a href="{{ content.archive.url }}">{{ content.archive.name }}</a>, <a href="{{ content.archive.city.url }}">{{ content.archive.city.name }}</a></p>
+                    <h3>Identifiers</h3>
+                    <dl>
+                        {% for identifier in content.identifiers %}
+                            <dt>{{ identifier.identifier_type }}</dt>
+                            <dd>{{ identifier.identifier }}</dd>
                         {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            <div class="tab-pane" id="description">
-                <h2>Descriptions</h2>
-                {% for note in content.notes %}
-                    <h3>{{ note.note_type }}</h3>
-                    <p>{{ note.note|linebreaks }}</p>
-                {% endfor %}
-            </div>
-            <div class="tab-pane" id="bibliography">
-                <h2>Bibliography</h2>
-                <p>Nothing here yet.</p>
+                    </dl>
+                    <h3>Descriptions</h3>
+                    {% for note in content.notes %}
+                        <h3>{{ note.note_type }}</h3>
+                        <p>{{ note.note | markdown | safe}}</p>
+                        {% if user.is_staff %}
+                        <a href="/admin/diamm_data/sourcenote/{{ note.pk }}/change/">Edit Note</a>
+                        {% endif %}
+                    {% endfor %}
+
+                </div>
+                <div class="tab-pane" id="inventory">
+                    <h2>Inventory</h2>
+                    <table class="table table-hover table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Composition</th>
+                                <th>Composers</th>
+                                <th>Folio Start</th>
+                                <th>Folio End</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in content.inventory %}
+                                <tr>
+                                {% if item.aggregate_composer %}
+                                    <td colspan="5">Works by <a href="{{ item.aggregate_composer.url }}">{{ item.aggregate_composer.full_name }}</a></td>
+                                {% else %}
+                                    <td>
+                                        <a href="{{ item.composition.url }}">{{ item.composition.name }}</a>
+                                    </td>
+                                    <td>
+                                        {% if item.composition.anonymous %}
+                                            Anonymous / No Composer
+                                        {% else %}
+                                            {% for composer in item.composition.composers %}
+                                                <a href="{{ composer.url }}">{{ composer.full_name }}</a>
+                                                {% if composer.uncertain %}
+                                                    (uncertain)
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {{ item.folio_start }}
+                                    </td>
+                                    <td>
+                                        {{ item.folio_end }}
+                                    </td>
+                                {% endif %}
+                                </tr>
+                                {% if item.notes %}
+                                <tr>
+                                    <td colspan="4">
+                                        {% for note in item.notes %}
+                                            <strong>{{ note.note_type }}</strong>
+                                            <p>{{ note.note }}</p>
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tab-pane" id="bibliography">
+                    <h2>Bibliography</h2>
+                    <p>Nothing here yet.</p>
+                </div>
             </div>
         </div>
     </div>

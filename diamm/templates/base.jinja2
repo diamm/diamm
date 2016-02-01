@@ -7,6 +7,11 @@
     {% block head %}
 
     {% endblock %}
+    <script src="{{ static('javascripts/jspm_packages/system.js') }}"></script>
+    <script src="{{ static('javascripts/config.js') }}"></script>
+    <script>
+        System.import('{{ static('javascripts/main.js') }}');
+    </script>
 </head>
 <body>
     <header>
@@ -29,11 +34,6 @@
         </div>
     </footer>
 
-    <script src="{{ static('javascripts/jspm_packages/system.js') }}"></script>
-    <script src="{{ static('javascripts/config.js') }}"></script>
-    <script>
-        System.import('{{ static('javascripts/main.js') }}');
-    </script>
     {% block scripts %}
 
     {% endblock %}

@@ -31,7 +31,8 @@ class SolrPaginator:
             'q.op': settings.SOLR['DEFAULT_OPERATOR'],
             'facet': 'true',
             'facet.field': 'type',
-            'facet.mincount': 0
+            'facet.mincount': 0,
+            'hl': 'true'
         }
 
         if sorts:
@@ -88,8 +89,8 @@ class SolrPaginator:
             page_num must be an integer. Do not pass in un-coerced request parameters!
         """
         # e.g., page 3: ((3 - 1) * 20) + 1, start = 41
-        remainder = 0 if page_num == 1 else 1  # page 1 starts at result 0; page 2 starts at result 11
-        start = ((page_num - 1) * self.page_size) + remainder
+        # remainder = 0 if page_num == 1 else 1  # page 1 starts at result 0; page 2 starts at result 11
+        start = ((page_num - 1) * self.page_size)
         self._fetch_page(start=start)
         return SolrPage(self.result, page_num, self)
 
@@ -107,10 +108,7 @@ class SolrPage:
 
         return OrderedDict([
             ('count', self.paginator.count),
-            ('next', self.next_url),
-            ('previous', self.previous_url),
-            ('current_page', self.number),
-            ('total_pages', self.paginator.num_pages),
+            ('pagination', self.pagination),
             ('query', self.paginator.query),
             ('types', self.type_list),
             ('results', self.object_list),
@@ -130,7 +128,7 @@ class SolrPage:
     @property
     def object_list(self):
         docs = self.result.docs
-
+        highlights = self.result.highlighting
         # Generate fully qualified URLs for the resources in Solr when the results are returned.
         # This way we don't have to store the full URL in Solr.
         for obj in docs:
@@ -138,7 +136,28 @@ class SolrPage:
                           kwargs={'pk': obj['pk']},
                           request=self.paginator.request)
             obj['url'] = url
+
+            hl = highlights.get(obj['id'], None)
+            if hl:
+                obj['result_text'] = "; ".join(hl['text'])
+
         return docs
+
+    @property
+    def pagination(self):
+        pages = {}
+        for pnum in range(self.paginator.num_pages):
+            url = self.paginator.request.build_absolute_uri()
+            pg_url = replace_query_param(url, 'page', pnum + 1)
+            pages[pnum + 1] = pg_url
+
+        return OrderedDict([
+            ('next', self.next_url),
+            ('previous', self.previous_url),
+            ('current_page', self.number),
+            ('num_pages', self.paginator.num_pages),
+            ('pages', pages)
+        ])
 
     @property
     def next_url(self):

@@ -1,4 +1,5 @@
 from django.db.models import Prefetch
+from django.shortcuts import redirect
 from rest_framework import generics
 from diamm.models.data.person import Person
 from diamm.models.data.composition import Composition
@@ -21,3 +22,9 @@ class PersonDetail(generics.RetrieveAPIView):
             Prefetch('compositions__composition__sources__source__archive__city', queryset=cc_queryset),
         )
         return queryset
+
+
+def legacy_composer_redirect(request, legacy_id):
+    legacy_lookup = "legacy_composer.{0}".format(legacy_id)
+    person = Person.objects.get(legacy_id=legacy_lookup)
+    return redirect('person-detail', pk=person.pk)

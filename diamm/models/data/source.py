@@ -101,6 +101,10 @@ class Source(models.Model):
         return self.notes.exclude(type=99)  # exclude private notes
 
     @property
+    def date_notes(self):
+        return self.public_notes.filter(type=11)
+
+    @property
     def composers(self):
         composer_names = []
         for item in self.inventory.all():
@@ -109,8 +113,9 @@ class Source(models.Model):
                     composer_names.append(item.aggregate_composer.full_name)
                     continue
 
-            for composer in item.composition.composers.all():
-                composer_names.append(composer.composer_name)
+            if item.composition:
+                for composer in item.composition.composers.all():
+                    composer_names.append(composer.composer_name)
         return list(set(composer_names))
 
     @property

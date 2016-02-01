@@ -9,7 +9,7 @@ class CoverImage(models.Model):
 
     caption = models.CharField(max_length=256)
     description = models.TextField()
-    image = models.FileField(os.path.join(settings.UPLOAD_DIR, 'covers'),
+    image = models.FileField(upload_to=os.path.join(settings.UPLOAD_DIR, 'covers'),
                               help_text="Images must be 2000x400 pixels.")
 
     created = models.DateTimeField(auto_now_add=True)

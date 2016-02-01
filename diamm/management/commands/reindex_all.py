@@ -15,9 +15,7 @@ from diamm.serializers.search.composition import CompositionSearchSerializer
 from diamm.models.data.organization import Organization
 from diamm.serializers.search.organization import OrganizationSearchSerializer
 
-
 term = Terminal()
-
 
 class Writer:
     def __init__(self, location):
@@ -75,7 +73,7 @@ class Command(BaseCommand):
         self._index(objs, 'name', CompositionSearchSerializer)
 
     def _index_organizations(self):
-        self.stdout.wirte(term.blue("Indexing Organizations"))
+        self.stdout.write(term.blue("Indexing Organizations"))
         objs = Organization.objects.all()
         self._index(objs, 'name', OrganizationSearchSerializer)
 
@@ -84,8 +82,9 @@ class Command(BaseCommand):
 
         with term.fullscreen():
             self._index_sources()
-            self._index_archives()
-            self._index_people()
-            self._index_compositions()
+            # self._index_archives()
+            # self._index_people()
+            # self._index_organizations()
+            # self._index_compositions()
             raw_input = input('Done indexing. Press any key to exit.')
 

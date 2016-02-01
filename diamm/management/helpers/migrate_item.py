@@ -41,11 +41,41 @@ def migrate_item(entry):
     if composition_pk not in (0, 69332, 54681, 69558, 79920, 888888, 999999):
         orig_composition = Composition.objects.get(pk=composition_pk)
 
-    if orig_composition and orig_composition.name == "works by":
+    # If the composition is a 'filler' one that meant to stand in for one or more
+    # listed but un-named works in the source, we will instead shift the
+    # composer to being an 'aggregate composer' and not join the original 'composition'
+    # to the source.
+    aggregate_composition_note = None
+    if orig_composition and orig_composition.name in ("works by",
+                                                      "1 work",
+                                                      "1 - 3 works",
+                                                      "2 works",
+                                                      "2 + ?1 works",
+                                                      "3 works",
+                                                      "3 work",
+                                                      "4 works",
+                                                      "5 works",
+                                                      "6 work",
+                                                      "6 works",
+                                                      "7 works",
+                                                      "8 works",
+                                                      "9 works",
+                                                      "10 works",
+                                                      "11 works",
+                                                      "11+?1 works",
+                                                      "12 works",
+                                                      "14 works",
+                                                      "18 works",
+                                                      "20 works",
+                                                      "21 works",
+                                                      "30 works",
+                                                      "37 work"):
         print(term.magenta('\tCreating aggregate composer entry.'))
         # we have an aggregate entry. An aggregate composition should only
         # have one composer attached.
         aggregate_composer = orig_composition.composers.all()[0].composer
+        # The aggregate 'composition' will be preserved as a legacy note
+        aggregate_composition_note = orig_composition.name
     else:
         composition = orig_composition
 
@@ -78,6 +108,7 @@ def migrate_item(entry):
         (ItemNote.I_CONCORDANCES, entry.concordances),
         (ItemNote.I_LEGACY_LAYOUT, entry.layout),
         (ItemNote.I_LEGACY_VOICES, entry.novoices),
+        (ItemNote.I_LEGACY_COMPOSITION, aggregate_composition_note)
     )
 
     for nt in note_fields:

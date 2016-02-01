@@ -1,10 +1,23 @@
 <div class="form-group search-box">
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
             <form action="{{ url('search') }}" method="get">
-            <div class="col-md-8 col-md-offset-2 input-group">
-                    <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
+            <div class="col-md-6 col-md-offset-2 col-sm-6 col-sm-offset-0 col-xs-4">
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="fa fa-search"></i></span>
                     <input type="search" class="form-control input-lg" placeholder="Search" name="q" {% if content.query %}value="{{ content.query }}"{% endif %} />
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-2 col-xs-4">
+                <div class="input-group">
+                    <select class="form-control">
+                        <option>Full Text</option>
+                        <option>Shelfmarks</option>
+                        <option>People</option>
+                        <option>Places</option>
+                        <option>Archives</option>
+                    </select>
+                </div>
             </div>
             </form>
         </div>

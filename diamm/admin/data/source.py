@@ -1,17 +1,18 @@
 import re
 from django.contrib import admin
+from django.db import models
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
 from diamm.models.data.geographic_area import GeographicArea
 from diamm.models.data.source import Source
 from diamm.models.data.source_identifier import SourceIdentifier
 from diamm.models.data.source_note import SourceNote
 from diamm.models.data.source_url import SourceURL
-from diamm.models.data.source_copyist import SourceCopyist
 from diamm.models.data.source_bibliography import SourceBibliography
 from diamm.models.data.source_relationship import SourceRelationship
 from diamm.models.data.item import Item
 from reversion.admin import VersionAdmin
 from django.utils.translation import ugettext_lazy as _
+from pagedown.widgets import AdminPagedownWidget
 
 
 class InventoryInline(admin.TabularInline):
@@ -112,6 +113,10 @@ class SourceAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
                BibliographyInline, SourceRelationshipInline, InventoryInline)
     list_filter = (CountryListFilter, InventoryFilter)
     actions = (sort_sources,)
+
+    formfield_overrides = {
+        models.TextField: {'widget': AdminPagedownWidget}
+    }
 
     related_search_fields = {
         'archive': ('name', 'city__name', 'city__parent__name')

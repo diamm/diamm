@@ -27,7 +27,7 @@ class SourceItemCompositionSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Composition
-        fields = ('url', 'name', 'composers')
+        fields = ('url', 'name', 'composers', 'anonymous')
 
 
 class SourceItemNoteSerializer(serializers.ModelSerializer):
@@ -69,7 +69,7 @@ class SourceNoteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SourceNote
-        fields = ('note_type', 'note', 'type')
+        fields = ('note_type', 'note', 'type', 'pk')
 
 
 class SourceIdentifierSerializer(serializers.ModelSerializer):

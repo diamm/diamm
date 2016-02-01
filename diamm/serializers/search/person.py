@@ -11,7 +11,7 @@ class PersonSearchSerializer(serializers.ModelSerializer):
         fields = ("id",
                   "type",
                   "pk",
-                  "full_name_s",
+                  "name_s",
                   "last_name_s",
                   "first_name_s",
                   "role_ss",
@@ -24,7 +24,7 @@ class PersonSearchSerializer(serializers.ModelSerializer):
     type = serializers.SerializerMethodField()
     pk = serializers.ReadOnlyField()
 
-    full_name_s = serializers.ReadOnlyField(source="full_name")
+    name_s = serializers.ReadOnlyField(source="full_name")
     last_name_s = serializers.ReadOnlyField(source="last_name")
     first_name_s = serializers.ReadOnlyField(source="first_name")
     role_ss = serializers.SlugRelatedField(

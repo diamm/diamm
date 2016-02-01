@@ -10,11 +10,13 @@ class SourceSearchSerializer(serializers.ModelSerializer):
                   "type",
                   "pk",
                   'shelfmark_s',
-                  'display_name_s',
+                  'name_s',
                   'archive_s',
                   'surface_type_s',
+                  'date_statement_s',
+                  'measurements_s',
                   'identifiers_ss',
-                  'notes_ss',
+                  'notes_txt',
                   # 'copyists_ss',
                   'start_date_i',
                   'end_date_i',
@@ -26,21 +28,23 @@ class SourceSearchSerializer(serializers.ModelSerializer):
     pk = serializers.ReadOnlyField()
 
     shelfmark_s = serializers.ReadOnlyField(source='shelfmark')
-    display_name_s = serializers.ReadOnlyField(source="display_name")
+    name_s = serializers.ReadOnlyField(source="display_name")
     archive_s = serializers.ReadOnlyField(source="archive.name")
+    measurements_s = serializers.ReadOnlyField(source='measurements')
     identifiers_ss = serializers.SlugRelatedField(
         source="identifiers",
         many=True,
         read_only=True,
         slug_field="identifier"
     )
+
     # copyists_ss = serializers.SlugRelatedField(
     #     source="copyists",
     #     many=True,
     #     read_only=True,
     #     slug_field="full_name"
     # )
-    notes_ss = serializers.SlugRelatedField(
+    notes_txt = serializers.SlugRelatedField(
         source="public_notes",
         many=True,
         read_only=True,
@@ -48,6 +52,7 @@ class SourceSearchSerializer(serializers.ModelSerializer):
     )
     start_date_i = serializers.IntegerField(source="start_date")
     end_date_i = serializers.IntegerField(source="end_date")
+    date_statement_s = serializers.SerializerMethodField()
     surface_type_s = serializers.ReadOnlyField(source="surface_type")
     composers_ss = serializers.ListField(
         source="composers",
@@ -57,6 +62,9 @@ class SourceSearchSerializer(serializers.ModelSerializer):
     #     source="compositions",
     #     child=serializers.CharField()
     # )
+
+    def get_date_statement_s(self, obj):
+        return "; ".join([n.note for n in obj.date_notes.all()])
 
     def get_type(self, obj):
         return self.Meta.model.__name__.lower()

@@ -16,6 +16,7 @@ class ItemNote(models.Model):
     # higher numbers are for legacy notes, not to be used going forward
     I_LEGACY_LAYOUT = 50
     I_LEGACY_VOICES = 51
+    I_LEGACY_COMPOSITION = 52
 
     NOTE_TYPE = (
         ("Current", (
@@ -29,7 +30,8 @@ class ItemNote(models.Model):
         ),),
         ("Legacy", (
          (I_LEGACY_LAYOUT, "Layout"),
-         (I_LEGACY_VOICES, "Voices")
+         (I_LEGACY_VOICES, "Voices"),
+         (I_LEGACY_COMPOSITION, "Aggregate Composition Title")
         ),)
     )
 
