@@ -13,6 +13,7 @@ class SourceSearchSerializer(serializers.ModelSerializer):
                   'name_s',
                   'archive_s',
                   'surface_type_s',
+                  'source_type_s',
                   'date_statement_s',
                   'measurements_s',
                   'identifiers_ss',
@@ -54,6 +55,7 @@ class SourceSearchSerializer(serializers.ModelSerializer):
     end_date_i = serializers.IntegerField(source="end_date")
     date_statement_s = serializers.SerializerMethodField()
     surface_type_s = serializers.ReadOnlyField(source="surface_type")
+    source_type_s = serializers.ReadOnlyField(source="type")
     composers_ss = serializers.ListField(
         source="composers",
         child=serializers.CharField()
