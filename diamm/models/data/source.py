@@ -29,9 +29,14 @@ class Source(models.Model):
     archive = models.ForeignKey('diamm_data.Archive', related_name="sources")
     name = models.CharField(max_length=255, blank=True, null=True)
     shelfmark = models.CharField(max_length=255, blank=True, null=True)
-    type = models.CharField(max_length=255, blank=True, null=True)
+    type = models.CharField(max_length=255, blank=True, null=True, help_text="""A brief description of the source,
+                                                                             e.g, 'chant book with added polyphony'""")
     surface = models.IntegerField(choices=SURFACE_OPTIONS, blank=True, null=True)
-    inventory_provided = models.BooleanField(default=False)
+    inventory_provided = models.BooleanField(default=False, help_text="""Use this checkbox to
+                                             mark whether DIAMM has provided an inventory for this
+                                             source. Note that if there are items attached to this source
+                                             they will still appear, but there will be a note on the source
+                                             record stating that DIAMM has not provided an inventory.""")
 
     start_date = models.IntegerField(blank=True, null=True,
                                      help_text="""Enter the start year as a four digit integer. If
