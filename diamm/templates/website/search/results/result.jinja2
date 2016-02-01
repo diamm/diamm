@@ -14,18 +14,12 @@
 
 {% macro item_info(result) %}
     {% if result.type == 'source' %}
-        {% if result.date_statement_s %}
-         Date: {{ result.date_statement_s }}
-        {% endif %}
-        {% if result.measurements_s %}
-        ; {{ result.measurements_s }}
-        {% endif %}
-        {% if result.composers_ss %}
-        ; {{ result.composers_ss | length }} composer{{ result.composers_ss | pluralize }}
-        {% endif %}
-        {% if result.surface_type_s %}
-        ; {{ result.surface_type_s }}
-        {% endif %}
+        {% set source_description = [result.source_type_s, result.date_statement_s, result.measurements_s] %}
+        {% for desc in source_description %}
+            {% if desc %}
+                {{ desc | capitalize }};
+            {% endif %}
+        {% endfor %}
     {% endif %}
 {% endmacro %}
 
