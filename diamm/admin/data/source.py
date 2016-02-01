@@ -107,6 +107,8 @@ sort_sources.short_description = "Re-sort Source Order"
 
 @admin.register(Source)
 class SourceAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
+    view_on_site = True
+    save_on_top = True
     list_display = ('shelfmark', 'name', 'get_city', 'get_archive', 'public')
     search_fields = ('identifiers__identifier', 'name', 'archive__name')
     inlines = (IdentifiersInline, NotesInline, URLsInline,
