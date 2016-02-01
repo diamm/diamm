@@ -59,10 +59,7 @@
                                             Anonymous / No Composer
                                         {% else %}
                                             {% for composer in item.composition.composers %}
-                                                <a href="{{ composer.url }}">{{ composer.full_name }}</a>
-                                                {% if composer.uncertain %}
-                                                    (uncertain)
-                                                {% endif %}
+                                                <a href="{{ composer.url }}">{% if composer.uncertain %}?{% endif %}{{ composer.full_name }}</a>
                                             {% endfor %}
                                         {% endif %}
                                     </td>
