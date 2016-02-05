@@ -20,6 +20,15 @@
 
     <jmx/>
 
+    <!-- auto-generate UUIDs when a document is indexed -->
+    <updateRequestProcessorChain name="uuid" default="true">
+        <processor class="solr.UUIDUpdateProcessorFactory">
+            <str name="fieldName">id</str>
+        </processor>
+        <processor class="solr.LogUpdateProcessorFactory" />
+        <processor class="solr.RunUpdateProcessorFactory" />
+    </updateRequestProcessorChain>
+
     <updateHandler class="solr.DirectUpdateHandler2">
         <updateLog>
             <str name="dir">${solr.ulog.dir:}</str>

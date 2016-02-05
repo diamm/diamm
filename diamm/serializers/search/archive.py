@@ -1,4 +1,3 @@
-import uuid
 from django.core.urlresolvers import reverse
 from rest_framework import serializers
 from diamm.models.data.archive import Archive
@@ -7,8 +6,7 @@ from diamm.models.data.archive import Archive
 class ArchiveSearchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Archive
-        fields = ("id",
-                  "type",
+        fields = ("type",
                   "pk",
                   "sources_ss",
                   "city_s",
@@ -17,7 +15,6 @@ class ArchiveSearchSerializer(serializers.ModelSerializer):
                   "siglum_s")
 
     # TODO: Find some way to refactor these into a base class for DRY
-    id = serializers.SerializerMethodField()
     type = serializers.SerializerMethodField()
     pk = serializers.ReadOnlyField()
 
@@ -34,6 +31,3 @@ class ArchiveSearchSerializer(serializers.ModelSerializer):
 
     def get_type(self, obj):
         return self.Meta.model.__name__.lower()
-
-    def get_id(self, obj):
-        return "{0}".format(uuid.uuid4())

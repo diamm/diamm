@@ -1,4 +1,3 @@
-import uuid
 from rest_framework import serializers
 from diamm.models.data.source import Source
 
@@ -6,8 +5,7 @@ from diamm.models.data.source import Source
 class SourceSearchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Source
-        fields = ("id",
-                  "type",
+        fields = ("type",
                   "pk",
                   'shelfmark_s',
                   'name_s',
@@ -21,10 +19,10 @@ class SourceSearchSerializer(serializers.ModelSerializer):
                   # 'copyists_ss',
                   'start_date_i',
                   'end_date_i',
-                  'composers_ss')
+                  'composers_ss',
+                  '_childDocuments_')
 
     # TODO: Find some way to refactor these into a base class for DRY
-    id = serializers.SerializerMethodField()
     type = serializers.SerializerMethodField()
     pk = serializers.ReadOnlyField()
 
@@ -70,6 +68,3 @@ class SourceSearchSerializer(serializers.ModelSerializer):
 
     def get_type(self, obj):
         return self.Meta.model.__name__.lower()
-
-    def get_id(self, obj):
-        return "{0}".format(uuid.uuid4())

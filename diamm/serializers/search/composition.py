@@ -1,4 +1,3 @@
-import uuid
 from django.core.urlresolvers import reverse
 from rest_framework import serializers
 from diamm.models.data.composition import Composition
@@ -8,7 +7,6 @@ class CompositionSearchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Composition
         fields = (
-            "id",
             "type",
             "pk",
             "name_s",
@@ -17,7 +15,6 @@ class CompositionSearchSerializer(serializers.ModelSerializer):
         )
 
     # TODO: Find some way to refactor these into a base class for DRY
-    id = serializers.SerializerMethodField()
     type = serializers.SerializerMethodField()
     pk = serializers.ReadOnlyField()
 
@@ -35,7 +32,4 @@ class CompositionSearchSerializer(serializers.ModelSerializer):
 
     def get_type(self, obj):
         return self.Meta.model.__name__.lower()
-
-    def get_id(self, obj):
-        return "{0}".format(uuid.uuid4())
 

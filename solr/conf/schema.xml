@@ -2,7 +2,7 @@
 <schema name="diamm" version="1.5">
     <field name="_version_" type="long" indexed="true" stored="true" />
     <field name="_root_" type="string" indexed="true" stored="false" />
-    <field name="id" type="string" indexed="true" stored="true" required="true" multiValued="false" />
+    <field name="id" type="uuid" indexed="true" stored="true" required="true" multiValued="false" />
     <field name="type" type="string" indexed="true" stored="true" required="true" multiValued="false" />
     <field name="pk" type="int" indexed="true" stored="true" required="true"/>
     <field name="url" type="string" indexed="false" stored="true" />
@@ -37,6 +37,7 @@
     <copyField source="siglum_s" dest="text" />
 
     <!-- field definitions -->
+    <fieldType name="uuid" class="solr.UUIDField" indexed="true" />
     <fieldType name="string" class="solr.StrField" sortMissingLast="true" />
     <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true" />
     <fieldType name="int" class="solr.TrieIntField" precisionStep="0" positionIncrementGap="0" />

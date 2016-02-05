@@ -1,4 +1,3 @@
-import uuid
 from django.core.urlresolvers import reverse
 from rest_framework import serializers
 from diamm.models.data.person import Person
@@ -8,8 +7,7 @@ from diamm.models.data.person_note import PersonNote
 class PersonSearchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Person
-        fields = ("id",
-                  "type",
+        fields = ("type",
                   "pk",
                   "name_s",
                   "last_name_s",
@@ -20,7 +18,6 @@ class PersonSearchSerializer(serializers.ModelSerializer):
                   "variant_names_ss")
 
     # TODO: Find some way to refactor these into a base class for DRY
-    id = serializers.SerializerMethodField()
     type = serializers.SerializerMethodField()
     pk = serializers.ReadOnlyField()
 
@@ -45,7 +42,4 @@ class PersonSearchSerializer(serializers.ModelSerializer):
 
     def get_type(self, obj):
         return self.Meta.model.__name__.lower()
-
-    def get_id(self, obj):
-        return "{0}".format(uuid.uuid4())
 
