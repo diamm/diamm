@@ -1,10 +1,9 @@
+from rest_framework.reverse import reverse
 from rest_framework import serializers
 from diamm.models.data.source import Source
 from diamm.models.data.source_note import SourceNote
 from diamm.models.data.source_identifier import SourceIdentifier
 from diamm.models.data.archive import Archive
-from diamm.models.data.item import Item
-from diamm.models.data.item_note import ItemNote
 from diamm.models.data.composition import Composition
 from diamm.models.data.person import Person
 from diamm.models.data.composition_composer import CompositionComposer
@@ -30,12 +29,12 @@ class SourceItemCompositionSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'name', 'composers', 'anonymous')
 
 
-class SourceItemNoteSerializer(serializers.ModelSerializer):
-    note_type = serializers.ReadOnlyField()
-
-    class Meta:
-        model = ItemNote
-        fields = ('note_type', 'type', 'note')
+# class SourceItemNoteSerializer(serializers.ModelSerializer):
+#     note_type = serializers.ReadOnlyField()
+#
+#     class Meta:
+#         model = ItemNote
+#         fields = ('note_type', 'type', 'note')
 
 
 class AggregateComposerSerializer(serializers.HyperlinkedModelSerializer):
@@ -46,22 +45,67 @@ class AggregateComposerSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'full_name')
 
 
-class SourceItemSerializer(serializers.ModelSerializer):
-    composition = SourceItemCompositionSerializer()
-    item_type = serializers.ReadOnlyField()
-    notes = SourceItemNoteSerializer(
-        many=True
-    )
-    aggregate_composer = AggregateComposerSerializer()
-
+class SourceItemSerializer(serializers.Serializer):
+    """
+        This serializer deals with Solr results instead of results
+        from the database.
+    """
     class Meta:
-        model = Item
-        fields = ('composition',
-                  'item_type',
+        fields = ('pk',
+                  'url',
+                  'composition',
+                  # 'item_type',
                   'folio_start',
                   'folio_end',
-                  'notes',
-                  'aggregate_composer')
+                  'composers')
+
+    url = serializers.SerializerMethodField()
+    composition = serializers.ReadOnlyField(
+        source="composition_s"
+    )
+    composers = serializers.SerializerMethodField(
+        source="composers_ssni"
+    )
+    folio_start = serializers.ReadOnlyField(
+        source="folio_start_s"
+    )
+    folio_end = serializers.ReadOnlyField(
+        source="folio_end_s"
+    )
+
+    def get_url(self, obj):
+        return reverse('composition-detail', kwargs={'pk': obj['composition_i']}, request=self.context['request'])
+
+    def get_composers(self, obj):
+        composers = obj.get('composers_ssni')
+        if not composers:
+            return []
+
+        out = []
+        try:
+            req = self.context['request']
+        except KeyError:
+            raise
+
+        for composer in composers:
+            # Unpack the composer values. See the Item Search Serializer for more info.
+            full_name, pk, uncertain = composer.split("|")
+            print(pk)
+
+            url = None
+            if pk:
+                url = reverse('person-detail', kwargs={"pk": int(pk)}, request=req)
+
+            # cast the value of uncertain to a boolean. Will handle both false and empty values
+            uncertain = True if uncertain == "True" else False
+
+            out.append({
+                'url': url,
+                'full_name': full_name,
+                'uncertain': uncertain
+            })
+
+        return out
 
 
 class SourceNoteSerializer(serializers.ModelSerializer):
@@ -98,36 +142,18 @@ class ArchiveSourceSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class SourceListSerializer(serializers.HyperlinkedModelSerializer):
-    shelfmark = serializers.ReadOnlyField()
-    display_name = serializers.ReadOnlyField()
-
     class Meta:
         model = Source
         fields = ('url', 'name', 'display_name', 'shelfmark')
 
+    display_name = serializers.ReadOnlyField()
+
 
 class SourceDetailSerializer(serializers.HyperlinkedModelSerializer):
-    shelfmark = serializers.ReadOnlyField()
-    display_name = serializers.ReadOnlyField()
-    notes = SourceNoteSerializer(
-        SourceNote.objects.exclude(type=SourceNote.PRIVATE_NOTE),
-        many=True
-    )
-    identifiers = SourceIdentifierSerializer(
-        many=True
-    )
-
-    surface_type = serializers.ReadOnlyField()
-    archive = ArchiveSourceSerializer()
-    inventory = SourceItemSerializer(many=True)
-    notes = SourceNoteSerializer(
-        source="public_notes",
-        many=True
-    )
-
     class Meta:
         model = Source
-        fields = ('url',
+        fields = ('pk',
+                  'url',
                   'name',
                   'archive',
                   'display_name',
@@ -136,4 +162,24 @@ class SourceDetailSerializer(serializers.HyperlinkedModelSerializer):
                   'identifiers',
                   'surface',
                   'surface_type',
+                  'date_statement',
+                  'type',
                   'inventory')
+
+    notes = SourceNoteSerializer(
+        source="public_notes",
+        many=True,
+        required=False
+    )
+    identifiers = SourceIdentifierSerializer(
+        many=True,
+        required=False
+    )
+    archive = ArchiveSourceSerializer(
+        required=False
+    )
+    inventory = SourceItemSerializer(
+        source="solr_inventory",
+        many=True,
+        required=False
+    )

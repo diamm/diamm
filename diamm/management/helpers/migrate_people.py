@@ -19,7 +19,7 @@ def migrate_copyist_to_people(legacy_copyist):
     legacy_id = "legacy_copyist.{0}".format(legacy_copyist.pk)
     name_search = re.compile(r'(?P<copyist_name>[\w0-9\. ]+(\(\?\))?)( (\(|\[)((?P<dates>(b\.|d\.|ca\.|fl\.)?[0-9\?;,\.\-ca ]+)|= (?P<alias>[a-zA-Z ]+)|or (?P<alias2>[a-zA-Z]+)|alias \"(?P<alias3>[a-zA-Z]+)\"|(?P<ctitle>(Scribe|workshop) [a-zA-Z- ]+)(\)|\]))|$)', re.UNICODE)
     name = re.search(name_search, legacy_copyist.copyistname)
-    fullname = name.group("copyist_name")
+    fullname = name.group("copyist_name") if name else legacy_copyist.copyistname
     articles = ['del', 'de', 'von', 'da', 'san']
 
     last_name = ""
@@ -32,7 +32,7 @@ def migrate_copyist_to_people(legacy_copyist):
 
     first_names = " ".join(fullname.split()[:-1])  # choose everything up to the last component
 
-    if name.group('dates'):
+    if name and name.group('dates'):
         date_stmt = name.group('dates')
     else:
         date_stmt = None
@@ -119,8 +119,7 @@ def migrate():
             continue
         migrate_composers_to_people(composer)
 
-    copyists = LegacyCopyist.objects.all()
-    for copyist in copyists:
+    for copyist in LegacyCopyist.objects.all():
         migrate_copyist_to_people(copyist)
 
     people = LegacyPerson.objects.all()

@@ -1,11 +1,11 @@
 from django.db import models
 
 
-class ImagePageCondition(models.Model):
+class PageCondition(models.Model):
     class Meta:
         app_label = "diamm_data"
 
-    # Primary Keys. See fixtures/image_page_conditions.json for initial data
+    # Primary Keys. See fixtures/page_conditions.json for initial data
     REQUIRES_UV = 1
     REQUIRES_ENHANCEMENT = 2
     PALIMPSEST = 3

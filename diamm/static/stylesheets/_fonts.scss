@@ -1,8 +1,6 @@
-@import url(https://fonts.googleapis.com/css?family=PT+Serif:400,400italic,700,700italic|PT+Sans:400,400italic,700,700italic);
+@import url(https://fonts.googleapis.com/css?family=Alegreya:400,400italic,700,700italic|Alegreya+Sans+SC:500,700,400|Alegreya+Sans:400,300,300italic,400italic,500,500italic,700italic,700);
 
-$fa-font-path: "../fonts/font-awesome" !default;
-$font-family-sans-serif: "PT Sans" !default;
-$font-family-serif: "PT Serif" !default;
-$font-family-base: $font-family-sans-serif;
-$font-size-base: 16px !default;
-$headings-font-family: $font-family-sans-serif;
+
+$menu-font: "Alegreya Sans SC", sans-serif;
+$small-caps: $menu-font;
+$sans-serif: "Alegreya Sans", sans-serif;

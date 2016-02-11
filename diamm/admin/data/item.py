@@ -31,22 +31,23 @@ class AggregateComposerListFilter(admin.SimpleListFilter):
 
 @admin.register(Item)
 class ItemAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
-    list_display = ('source', 'get_archive_name',
-                    'get_composition', 'get_composers',
+    list_display = ('get_source', 'get_composition', 'get_composers',
                     'folio_start', 'folio_end')
     search_fields = ("source__name", "source__identifiers__identifier",
                      "composition__name")
     list_filter = (AggregateComposerListFilter,)
+    # filter_horizontal = ['pages']
+    # exclude = ("pages",)
 
     related_search_fields = {
-        "source": ("identifiers__identifier", "name"),
         "composition": ("name",),
-        "aggregate_composer": ("last_name",)
+        "aggregate_composer": ("last_name",),
+        "source": ("shelfmark",),
     }
 
-    def get_archive_name(self, obj):
-        return "{0} ({1})".format(obj.source.archive.name, obj.source.archive.city.name)
-    get_archive_name.short_description = "archive"
+    def get_source(self, obj):
+        return "{0}".format(obj.source.display_name)
+    get_source.short_description = "source"
 
     def get_composers(self, obj):
         if obj.composition:
@@ -61,3 +62,8 @@ class ItemAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
         return "Works by {0}".format(obj.aggregate_composer.full_name)
     get_composition.short_description = "composition"
     get_composition.admin_order_field = "composition__name"
+
+    def get_queryset(self, request):
+        qset = super(ItemAdmin, self).get_queryset(request)
+        qset = qset.select_related('source__archive', 'composition').prefetch_related('pages')
+        return qset

@@ -27,8 +27,6 @@ from diamm.helpers.solr_pagination import SolrPaginator, SolrResultException
 
 class SearchView(generics.GenericAPIView):
     template_name = "website/search/search.jinja2"
-    queryset = Source.objects.all()
-    serializer_class = SourceListSerializer
 
     def get(self, request, *args, **kwargs):
         query = request.GET.get('q', None)

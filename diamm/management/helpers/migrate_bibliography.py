@@ -15,10 +15,12 @@ term = Terminal()
 
 
 def empty_bibliography():
+    print(term.red("\tEmptying Bibliography Tables"))
     Bibliography.objects.all().delete()
     BibliographyAuthor.objects.all().delete()
     BibliographyType.objects.all().delete()
     BibliographyAuthorRole.objects.all().delete()
+    print(term.red("\tDone Emptying tables"))
 
 
 def populate_btypes():
@@ -145,8 +147,8 @@ def migrate_author(legacy):
     print(term.green('\tMigrating Author ID {0}'.format(legacy.pk)))
     d = {
         'id': legacy.pk,
-        'last_name': legacy.lastname,
-        'first_name': legacy.firstname
+        'last_name': legacy.lastname.strip(),
+        'first_name': legacy.firstname.strip() if legacy.firstname else None
     }
     ba = BibliographyAuthor(**d)
     ba.save()
@@ -170,6 +172,11 @@ def migrate_bibliography(legacy):
     b = Bibliography(**d)
     b.save()
 
+    if type.pk == BibliographyType.JOURNAL:
+        __create_new_publication_entry(legacy.journal, BibliographyPublication.B_PARENT_TITLE, b)
+    elif type.pk == BibliographyType.CHAPTER_IN_BOOK:
+        __create_new_publication_entry(legacy.booktitle, BibliographyPublication.B_PARENT_TITLE, b)
+
     if legacy.url:
         __create_new_publication_entry(legacy.url, BibliographyPublication.B_URL, b)
     if legacy.publisher:
@@ -189,16 +196,61 @@ def migrate_bibliography(legacy):
     if legacy.placepublication:
         __create_new_publication_entry(legacy.placepublication, BibliographyPublication.B_PLACE_PUBLICATION, b)
 
+    # Add any authors we may not know about. Here there be dragons.
+    __get_or_create_people(legacy.author1surname, legacy.author1firstname, b, BibliographyAuthorRole.R_AUTHOR, 1)
+    __get_or_create_people(legacy.author2surname, legacy.author2firstname, b, BibliographyAuthorRole.R_AUTHOR, 2)
+    __get_or_create_people(legacy.author3surname, legacy.author3firstname, b, BibliographyAuthorRole.R_AUTHOR, 3)
+    __get_or_create_people(legacy.author4surname, legacy.author4firstname, b, BibliographyAuthorRole.R_AUTHOR, 4)
+    __get_or_create_people(legacy.editor1surname, legacy.editor1firstname, b, BibliographyAuthorRole.R_EDITOR, 1)
+    __get_or_create_people(legacy.editor2surname, legacy.editor2firstname, b, BibliographyAuthorRole.R_EDITOR, 2)
+    __get_or_create_people(legacy.editor3surname, legacy.editor3firstname, b, BibliographyAuthorRole.R_EDITOR, 3)
+    __get_or_create_people(legacy.editor4surname, legacy.editor4firstname, b, BibliographyAuthorRole.R_EDITOR, 4)
+
+
+def __get_or_create_people(surname, firstname, bibliography, role, position):
+    if surname and firstname:
+        # clean up any trailing spaces to reduce false positives
+        surname = surname.strip()
+        firstname = firstname.strip()
+
+        # weed out anything that already exists and bail if it does.
+        if BibliographyAuthor.objects.filter(last_name=surname, first_name=firstname).exists():
+            return None
+
+        print(term.red("\t\tCreating a possibly spurious record for {0} {1}".format(firstname, surname)))
+        person, created = BibliographyAuthor.objects.get_or_create(last_name=surname, first_name=firstname)
+        if created:
+            __light_attach_author(bibliography, person, role, position)
+
+
+def __light_attach_author(bibliography, author, role, position):
+    d = {
+        'bibliography_author': author,
+        'bibliography_entry': bibliography,
+        'role': role,
+        'position': position
+    }
+    bar = BibliographyAuthorRole(**d)
+    bar.save()
+
 
 def attach_author_to_bibliography(entry):
+    print(term.green("\tAttaching author {0} to bibliography {1}".format(entry.alauthorkey, entry.bibliographykey)))
     author = BibliographyAuthor.objects.get(pk=entry.alauthorkey)
     bibliography = Bibliography.objects.get(pk=entry.bibliographykey)
     role = __determine_person_role(entry)
 
+    exists = BibliographyAuthorRole.objects.filter(bibliography_author=author, bibliography_entry=bibliography, role=role).exists()
+    if exists:
+        # Don't re-attach this record if it already exists.
+        print(term.red("\t\tThis author relationship already exists. Bailing."))
+        return None
+
     d = {
         'bibliography_author': author,
-        'bibliography': bibliography,
-        'role': role
+        'bibliography_entry': bibliography,
+        'role': role,
+        'position': 1   #  Authors listed here are assumed to be in first position...
     }
     bar = BibliographyAuthorRole(**d)
     bar.save()
@@ -249,7 +301,6 @@ def migrate():
         attach_author_to_bibliography(entry)
 
     update_table()
-
     print(term.blue("Done migrating Bibliography Entries"))
 
 

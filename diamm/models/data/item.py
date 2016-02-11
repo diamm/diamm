@@ -4,7 +4,7 @@ from django.db import models
 class Item(models.Model):
     class Meta:
         app_label = "diamm_data"
-        ordering = ("source__sort_order", "folio_start")
+        ordering = ("folio_start",)
 
     L_SCORE = 1
     L_PARTS = 2
@@ -20,6 +20,8 @@ class Item(models.Model):
 
     source = models.ForeignKey('diamm_data.Source',
                                related_name="inventory")
+
+    pages = models.ManyToManyField("diamm_data.Page")
 
     composition = models.ForeignKey("diamm_data.Composition",
                                     related_name="sources",
@@ -50,9 +52,10 @@ class Item(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        if not self.composition:
-            return "{0}".format(self.source.shelfmark)
-        return "{0} ({1})".format(self.composition.name, self.source.shelfmark)
+        if self.composition:
+            return "{0}".format(self.composition.name)
+        else:
+            return "Works in {0}".format(self.source.display_name)
 
     @property
     def item_type(self):

@@ -1,0 +1,53 @@
+<div class="tab-panel row" id="details">
+    <div class="eleven columns">
+        <div class="source-description">
+            <table class="source-details">
+                <tr>
+                    <th>Archive</th>
+                    <td>
+                        <a href="{{ content.archive.url }}">{{ content.archive.name }}</a>,
+                        {{ content.archive.city.name }} ({{ content.archive.siglum }})
+                    </td>
+                </tr>
+                <tr>
+                    <th>Shelfmark</th>
+                    <td>
+                        {{ content.shelfmark }} {% if content.name %}<em>&ldquo;{{ content.name }}&rdquo;</em>{% endif %}
+                    </td>
+                </tr>
+                {% if content.surface_type %}
+                    <tr>
+                        <th>Surface</th>
+                        <td>{{ content.surface_type }}</td>
+                    </tr>
+                {% endif %}
+                {% if content.identifiers %}
+                    <tr>
+                        <th>Other Identifiers</th>
+                        <td>
+                            <ul class="other-identifiers">
+                                {% for identifier in content.identifiers %}
+                                    <li><strong>{{ identifier.identifier_type }}:</strong> {{ identifier.identifier }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                {% endif %}
+            </table>
+            {% if content.notes %}
+                {% for note in content.notes %}
+                    <h4>{{ note.note_type }}</h4>
+                    {{ note.note | markdown | safe }}
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+    <div class="five columns">
+        <img src="http://placehold.it/350x450" class="u-full-width"/>
+        <h4>Private Notes</h4>
+        <p>Private stuff goes here.</p>
+        <h4>Public Notes</h4>
+        <p>Public stuff goes here.</p>
+        <p style="text-align: right; font-style: italic;">Old so-and-so.</p>
+    </div>
+</div>

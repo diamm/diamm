@@ -4,6 +4,7 @@ from django.db import models
 class BibliographyAuthorRole(models.Model):
     class Meta:
         app_label = "diamm_data"
+        ordering = ("position",)
 
     R_AUTHOR = 1
     R_EDITOR = 2
@@ -35,6 +36,9 @@ class BibliographyAuthorRole(models.Model):
         (R_COPYIST, "Copyist")
     )
 
-    bibliography_author = models.ForeignKey('diamm_data.BibliographyAuthor')
-    bibliography = models.ForeignKey("diamm_data.Bibliography")
+    bibliography_author = models.ForeignKey('diamm_data.BibliographyAuthor',
+                                            related_name="bibliography_entries")
+    bibliography_entry = models.ForeignKey("diamm_data.Bibliography",
+                                           related_name="authors")
     role = models.IntegerField(choices=ROLES)
+    position = models.IntegerField(default=1, help_text="""The position of this author in the author list.""")

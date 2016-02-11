@@ -1,0 +1,29 @@
+<div class="tab-panel row" id="inventory">
+    <h2>Inventory</h2>
+    <div class="sixteen columns">
+        <table>
+            <thead>
+            <tr>
+                <th>Composition</th>
+                <th>Composer</th>
+                <th>Folio Start</th>
+                <th>Folio End</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in content.inventory %}
+                <tr>
+                    <td><a href="{{ item.url }}">{{ item.composition }}</a></td>
+                    <td>
+                        {% for composer in item.composers %}
+                            {{ "?" if composer.uncertain else "" }}<a href="{{ composer.url }}">{{ composer.full_name }}</a>
+                        {% endfor %}
+                    </td>
+                    <td>{{ item.folio_start }}</td>
+                    <td>{{ item.folio_end }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

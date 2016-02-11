@@ -1,26 +1,70 @@
-$navbar-border-radius: 0 !default;
-$navbar-default-bg: $diamm-black !default;
-$navbar-default-brand-color: $diamm-white !default;
-$navbar-default-color: $diamm-cream !default;
-$navbar-default-link-color: $diamm-white !default;
+.navbar {
+  background: $diamm-white;
+  border-bottom: 3px double $diamm-black;
+  margin-bottom: 1rem;
+  &:before,
+  &:after {
+    content: " "; // 1
+    display: table; // 2
+  }
+  &:after {
+    clear: both;
+  }
+  li {
+    margin-bottom: 0;
+  }
 
-$navbar-default-brand-color:               $navbar-default-link-color !default;
-$navbar-default-brand-hover-color:         darken($navbar-default-brand-color, 10%) !default;
-$navbar-default-brand-hover-bg:            transparent !default;
+  .navbar-brand {
+    z-index: 10;
+    padding-right: 1rem;
+    height: 40px;
+    overflow: visible;
+    li {
+      margin-right: 1em;
+      a {
+        margin: 0;
+        padding: 0;
+        &:hover, &:focus {
+          background: none;
+          color: unset;
+        }
+      }
+    }
+  }
 
-$navbar-default-link-hover-color:          darken($navbar-default-brand-color, 10%) !default;
-$navbar-default-link-hover-bg:             transparent !default;
-$navbar-default-link-active-color:         #555 !default;
-$navbar-default-link-active-bg:            darken($navbar-default-bg, 10%) !default;
-$navbar-default-link-disabled-color:       #ccc !default;
-$navbar-default-link-disabled-bg:          transparent !default;
+  .navbar-list {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    a {
+      color: $diamm-black;
+      text-decoration: none;
+      padding: 0.6rem 1rem;
+      font-size: 1.2rem;
+      font-family: $menu-font;
+      font-weight: bold;
+      font-variant: all-small-caps;
+      text-transform: lowercase;
+      display: flex;
+      align-items: flex-start;
+      &:hover, &:focus {
+        border-bottom: none;
+        background: $diamm-red;
+        color: $diamm-white;
+      }
+    }
+    .navbar-highlight {
+      background: $diamm-red;
+      a {
+        color: $diamm-white;
+        &:hover, &:focus {
+          background: $diamm-black;
+        }
+      }
+    }
+  }
 
-$navbar-margin-bottom: 0 !default;
-
-.diamm-navbar {
-  font-family: $font-family-sans-serif;
-}
-
-.donate-button {
-    background: $diamm-red;
 }

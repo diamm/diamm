@@ -9,16 +9,9 @@ from diamm.models.data.source_note import SourceNote
 from diamm.models.data.source_url import SourceURL
 from diamm.models.data.source_bibliography import SourceBibliography
 from diamm.models.data.source_relationship import SourceRelationship
-from diamm.models.data.item import Item
 from reversion.admin import VersionAdmin
 from django.utils.translation import ugettext_lazy as _
 from pagedown.widgets import AdminPagedownWidget
-
-
-class InventoryInline(admin.TabularInline):
-    model = Item
-    extra = 0
-    raw_id_fields = ('source', 'composition', 'aggregate_composer')
 
 
 class SourceRelationshipInline(admin.TabularInline):
@@ -81,40 +74,17 @@ class CountryListFilter(admin.SimpleListFilter):
         return queryset.filter(archive__city__parent__pk=self.value())
 
 
-def sort_sources(modeladmin, request, queryset):
-    def __tryint(s):
-        try:
-            return int(s)
-        except:
-            return s
-
-    def __alphanum_key(s):
-        """ Turn a string into a list of string and number chunks.
-            "z23a" -> ["z", 23, "a"]
-        """
-        return [__tryint(c) for c in re.split('([0-9]+)', s[1])]
-
-    sources = [(s.pk, s.shelfmark) for s in queryset]
-    sources.sort(key=__alphanum_key)
-
-    for i, s in enumerate(sources):
-        pk = s[0]
-        source = Source.objects.get(pk=pk)
-        source.sort_order = i
-        source.save()
-sort_sources.short_description = "Re-sort Source Order"
-
 
 @admin.register(Source)
 class SourceAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     view_on_site = True
     save_on_top = True
     list_display = ('shelfmark', 'name', 'get_city', 'get_archive', 'public')
-    search_fields = ('identifiers__identifier', 'name', 'archive__name')
+    search_fields = ('identifiers__identifier', 'name', 'archive__name', 'shelfmark')
     inlines = (IdentifiersInline, NotesInline, URLsInline,
-               BibliographyInline, SourceRelationshipInline, InventoryInline)
+               BibliographyInline, SourceRelationshipInline)
     list_filter = (CountryListFilter, InventoryFilter)
-    actions = (sort_sources,)
+    # actions = (sort_sources,)
 
     formfield_overrides = {
         models.TextField: {'widget': AdminPagedownWidget}

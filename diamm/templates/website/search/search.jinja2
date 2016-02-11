@@ -1,29 +1,33 @@
 {% extends "base.jinja2" %}
 
-{% block body %}
+{% block fullwidth %}
     {% include "website/blocks/search_box.jinja2" %}
-    <div class="container-fluid">
-    {% if content.types %}
-        <div class="row type-filter-bar">
-            <div class="col-md-push-1 col-md-10 type-filter">
-                <span class="filter-label">Filter by: </span>
-                <ul class="nav nav-pills">
-                    <li>
-                        {% with type="all", count=content.count, params=request.GET %}
-                        {% include 'website/search/results/type_links.jinja2' %}
-                        {% endwith %}
-                    </li>
-                {% for type, num in content.types.items() %}
-                    <li>
-                        {% with type=type, count=num, params=request.GET %}
-                        {% include 'website/search/results/type_links.jinja2' %}
-                        {% endwith %}
-                    </li>
-                {% endfor %}
-                </ul>
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        {% if content.types %}
+            <div class="row type-filter-bar">
+                <div class="col-md-push-1 col-md-10 type-filter">
+                    <span class="filter-label">Filter by: </span>
+                    <ul class="nav nav-pills">
+                        <li>
+                            {% with type="all", count=content.count, params=request.GET %}
+                            {% include 'website/search/results/type_links.jinja2' %}
+                            {% endwith %}
+                        </li>
+                    {% for type, num in content.types.items() %}
+                        <li>
+                            {% with type=type, count=num, params=request.GET %}
+                            {% include 'website/search/results/type_links.jinja2' %}
+                            {% endwith %}
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>
             </div>
-        </div>
-    {% endif %}
+        {% endif %}
+    </div>
     {% if content.results %}
         <div class="row">
             <div class="col-md-push-1 col-md-10">
@@ -51,8 +55,4 @@
 {% endblock %}
 
 {% block scripts %}
-    <script>
-        {# The System object is defined in base.html, where JSPM is initialized. #}
-        System.import('{{ static("javascripts/search.js") }}');
-    </script>
 {% endblock %}

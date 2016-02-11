@@ -45,7 +45,7 @@ def migrate_source_provenance(entry):
                 city.legacy_id.add(lgid)
                 city.save()
             except GeographicArea.DoesNotExist:
-                print(term.red("\tCity {0} does not exist. Attempting to create."))
+                print(term.red("\tCity {0} does not exist. Attempting to create.".format(cname)))
                 d = {
                     'type': GeographicArea.CITY,
                     'name': cname,

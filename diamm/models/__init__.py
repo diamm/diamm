@@ -49,11 +49,12 @@ from diamm.models.data.composition import Composition
 from diamm.models.data.composition_composer import CompositionComposer
 from diamm.models.data.genre import Genre
 from diamm.models.data.item import Item
-from diamm.models.data.item_note import ItemNote
+from diamm.models.data.page import Page
+from diamm.models.data.page_note import PageNote
+from diamm.models.data.page_condition import PageCondition
 from diamm.models.data.image import Image
 from diamm.models.data.image_note import ImageNote
 from diamm.models.data.image_type import ImageType
-from diamm.models.data.image_page_condition import ImagePageCondition
 
 from diamm.models.data.bibliography import Bibliography
 from diamm.models.data.bibliography_author import BibliographyAuthor

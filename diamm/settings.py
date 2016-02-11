@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
+from diamm.settings_local import *
 from django_jinja.builtins import DEFAULT_EXTENSIONS
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)

@@ -1,10 +1,16 @@
 from django.db import models
+from django.conf import settings
+import pysolr
 
 
 class Source(models.Model):
     class Meta:
         app_label = "diamm_data"
         ordering = ['archive__city__name', 'sort_order']
+
+    HELP_INVENTORY = """Use this checkbox to mark whether DIAMM has provided an inventory for this
+    source. Note that if there are items attached to this source they will still appear, but there will be a note on
+    the source record stating that DIAMM has not provided an inventory."""
 
     # enumerate surface types
     PARCHMENT = 1
@@ -32,11 +38,7 @@ class Source(models.Model):
     type = models.CharField(max_length=255, blank=True, null=True, help_text="""A brief description of the source,
                                                                              e.g, 'chant book with added polyphony'""")
     surface = models.IntegerField(choices=SURFACE_OPTIONS, blank=True, null=True)
-    inventory_provided = models.BooleanField(default=False, help_text="""Use this checkbox to
-                                             mark whether DIAMM has provided an inventory for this
-                                             source. Note that if there are items attached to this source
-                                             they will still appear, but there will be a note on the source
-                                             record stating that DIAMM has not provided an inventory.""")
+    inventory_provided = models.BooleanField(default=False, help_text=HELP_INVENTORY)
 
     start_date = models.IntegerField(blank=True, null=True,
                                      help_text="""Enter the start year as a four digit integer. If
@@ -48,6 +50,8 @@ class Source(models.Model):
                                    precise year is not known, enter it rounding UP to the
                                    closest decade, and then century. Examples: 1456, 1460, 1500.
                                    """)
+    date_statement = models.CharField(max_length=512, blank=True, null=True)
+    cover_image_url = models.URLField(blank=True, null=True, help_text="""A IIIF Image URL to the cover image used for the source view""")
 
     format = models.CharField(max_length=255, blank=True, null=True)
     measurements = models.CharField(max_length=512, blank=True, null=True)
@@ -131,3 +135,29 @@ class Source(models.Model):
                 continue
             composition_names.append(item.composition.name)
         return list(set(composition_names))
+
+    # Fetches results for a source from Solr. Much quicker than hitting up postgres
+    # and sorts correctly too!
+    @property
+    def solr_inventory(self):
+        connection = pysolr.Solr(settings.SOLR['SERVER'])
+        fq = ['type:item', 'source_i:{0}'.format(self.pk)]
+        # Set rows to an extremely high number so we get all of the item records in one go.
+        item_results = connection.search("*:*", fq=fq, sort="folio_start_ans asc", rows=10000)
+        if item_results.docs:
+            return item_results.docs
+        else:
+            return []
+
+    @property
+    def solr_bibliography(self):
+        connection = pysolr.Solr(settings.SOLR['SERVER'])
+        fq = ['type:bibliography', 'source_i:{0}'.format(self.pk)]
+        bibliography_results = connection.search("*:*", fq=fq, sort="", rows=10000)
+        if bibliography_results.docs:
+            return bibliography_results.docs
+        else:
+            return []
+
+
+

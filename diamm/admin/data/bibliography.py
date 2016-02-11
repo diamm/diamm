@@ -19,6 +19,7 @@ class PublicationInline(admin.TabularInline):
     model = BibliographyPublication
     extra = 0
 
+
 @admin.register(Bibliography)
 class BibliographyAdmin(VersionAdmin):
     list_display = ('get_authors', 'title', 'year', 'abbreviation')
@@ -28,11 +29,14 @@ class BibliographyAdmin(VersionAdmin):
 
     def get_authors(self, obj):
         authors = obj.authors.all()
+        if not authors:
+            return "[No Author]"
+
         if len(authors) > 2:
-            authlist = ", ".join([a.full_name for a in authors[:2]])
+            authlist = ", ".join([a.bibliography_author.full_name for a in authors[:2]])
             return "{0} et al.".format(authlist)
         else:
-            authlist = ", ".join([a.full_name for a in authors])
+            authlist = ", ".join([a.bibliography_author.full_name for a in authors])
             return "{0}".format(authlist)
     get_authors.short_description = "Authors"
 

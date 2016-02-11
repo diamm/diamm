@@ -23,21 +23,21 @@ class SourceNote(models.Model):
     PRIVATE_NOTE = 99
 
     NOTE_TYPES = (
-        (GENERAL_NOTE, 'General'),
-        (RISM_NOTE, 'RISM'),
-        (CCM_NOTE, 'CCM'),
-        (EXTENT_NOTE, 'Extent'),
-        (PHYSICAL_NOTE, 'Physical Description'),
-        (BINDING_NOTE, 'Binding'),
-        (OWNERSHIP_NOTE, 'Ownership'),
-        (WATERMARK_NOTE, 'Watermark'),
-        (LIMINARY_NOTE, 'Liminary'),
-        (NOTATION_NOTE, 'Notation'),
-        (DATE_NOTE, 'Date'),
-        (DEDICATION_NOTE, 'Dedication'),
-        (RULING_NOTE, 'Ruling'),
-        (FOLIATION_NOTE, 'Foliation'),
-        (PRIVATE_NOTE, 'Private')
+        (GENERAL_NOTE, 'General Description'),
+        (RISM_NOTE, 'RISM Description'),
+        (CCM_NOTE, 'Census Catalogue of Music Description'),
+        (EXTENT_NOTE, 'Extent Note'),
+        (PHYSICAL_NOTE, 'Physical Description Note'),
+        (BINDING_NOTE, 'Binding Note'),
+        (OWNERSHIP_NOTE, 'Ownership Note'),
+        (WATERMARK_NOTE, 'Watermark Note'),
+        (LIMINARY_NOTE, 'Liminary Note'),
+        (NOTATION_NOTE, 'Notation Note'),
+        (DATE_NOTE, 'Date Note'),
+        (DEDICATION_NOTE, 'Dedication Note'),
+        (RULING_NOTE, 'Ruling Note'),
+        (FOLIATION_NOTE, 'Foliation Note'),
+        (PRIVATE_NOTE, 'Private Note')
     )
 
     type = models.IntegerField(choices=NOTE_TYPES)

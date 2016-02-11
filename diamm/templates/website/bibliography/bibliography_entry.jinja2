@@ -1,0 +1,72 @@
+{% macro person_entry(people, editors) %}
+    {% for person_rel in people %}
+        {% set person = person_rel.bibliography_author %}
+        {% if loop.index == 1 %}
+            {# first or only person -#}
+            {{ person.last_name }}{% if person.first_name %}, {{ person.first_name }}{% endif %}{% if loop.length > 1 %}, {% elif not editors %}. {% endif %}
+        {% elif loop.length > 1 and loop.last %}
+            {# final person -#}
+ and {{ person.first_name }} {{ person.last_name }}{% if not editors %}.{% endif %}
+        {% else %}
+            {# all others -#}
+            {{ person.first_name | default("") }} {{ person.last_name }}{% if loop.length > 1 %}, {% endif %}
+        {% endif %}
+    {% endfor %}
+    {% if editors and people | length > 1 %}
+ (eds.)
+    {% elif editors %}
+ (ed.)
+    {% endif %}
+{% endmacro %}
+
+{% macro authors(authors) %}
+    {# main entry -#}
+    {% set authors = content.authors.filter(role=1) -%}
+    {% set editors = content.authors.filter(role=2) -%}
+    {% if authors -%}
+        {{ person_entry(authors, False) }}
+    {% elif editors -%}
+        {{ person_entry(editors, True) }}
+    {% else -%}
+        [No Author]
+    {%- endif %}
+{% endmacro -%}
+
+{% macro year(year) %}
+{{ year | default('n.d') }}.
+{% endmacro %}
+
+{% macro first_title(content) %}
+    {# journal, book, or festschrift -#}
+    {% if content.type.pk in (6, 2, 5) -%}
+    <em>{{ content.title }}.</em>
+    {% else %}
+    {# journal article, book chapter, dissertation -#}
+    {{ content.title }}.
+    {% endif -%}
+{% endmacro %}
+
+{% macro other_titles(content) %}
+    {# journal, book chapter #}
+    {% if content.type.pk in (1, 3) %}
+    {# 2 = parent title #}
+    <em>{{ content.publication_info.get(type=2).entry }}.</em>
+    {% endif %}
+{% endmacro %}
+
+{% macro editors(content) %}
+    {% set authors = content.authors.filter(role=1) -%}
+    {% set editors = content.authors.filter(role=2) %}
+    {% if authors | length > 0 and editors %}
+        {# here we assume that if we have authors, we can put the editors later.
+        If we don't have authors, then the editors will have already been listed -#}
+        {% set editors = content.authors.filter(role=2) %}
+        {{ person_entry(editors, True) }}
+    {% endif %}
+{% endmacro %}
+
+{% macro publication_info(content) %}
+
+{% endmacro %}
+
+{{ authors(content) }} {{ year(content.year) }} {{ first_title(content) }} {{ other_titles(content) }} {{ editors(content) }}

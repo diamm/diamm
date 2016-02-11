@@ -1,76 +1,76 @@
 [
   {
-    "model": "diamm_data.ImagePageCondition",
+    "model": "diamm_data.PageCondition",
     "id": 1,
     "fields": {"condition": "Requires UV"}
   },
   {
-    "model": "diamm_data.ImagePageCondition",
+    "model": "diamm_data.PageCondition",
     "id": 2,
     "fields": {"condition": "Requires Enhancement"}
   },
   {
-    "model": "diamm_data.ImagePageCondition",
+    "model": "diamm_data.PageCondition",
     "id": 3,
     "fields": {"condition": "Palimpsest"}
   },
   {
-    "model": "diamm_data.ImagePageCondition",
+    "model": "diamm_data.PageCondition",
     "id": 4,
     "fields": {"condition": "Offset"}
   },
   {
-    "model": "diamm_data.ImagePageCondition",
+    "model": "diamm_data.PageCondition",
     "id": 5,
     "fields": {"condition": "Badly Damaged"}
   },
   {
-    "model": "diamm_data.ImagePageCondition",
+    "model": "diamm_data.PageCondition",
     "id": 6,
     "fields": {"condition": "Cropped"}
   },
   {
-    "model": "diamm_data.ImagePageCondition",
+    "model": "diamm_data.PageCondition",
     "id": 7,
     "fields": {"condition": "Water stained"}
   },
   {
-    "model": "diamm_data.ImagePageCondition",
+    "model": "diamm_data.PageCondition",
     "id": 8,
     "fields": {"condition": "Show-through"}
   },
   {
-    "model": "diamm_data.ImagePageCondition",
+    "model": "diamm_data.PageCondition",
     "id": 9,
     "fields": {"condition": "Burn-through"}
   },
   {
-    "model": "diamm_data.ImagePageCondition",
+    "model": "diamm_data.PageCondition",
     "id": 10,
     "fields": {"condition": "Good"}
   },
   {
-    "model": "diamm_data.ImagePageCondition",
+    "model": "diamm_data.PageCondition",
     "id": 11,
     "fields": {"condition": "Mild Tweaking"}
   },
   {
-    "model": "diamm_data.ImagePageCondition",
+    "model": "diamm_data.PageCondition",
     "id": 12,
     "fields": {"condition": "Moderate"}
   },
   {
-    "model": "diamm_data.ImagePageCondition",
+    "model": "diamm_data.PageCondition",
     "id": 13,
     "fields": {"condition": "Poor"}
   },
   {
-    "model": "diamm_data.ImagePageCondition",
+    "model": "diamm_data.PageCondition",
     "id": 14,
     "fields": {"condition": "Very Poor"}
   },
   {
-    "model": "diamm_data.ImagePageCondition",
+    "model": "diamm_data.PageCondition",
     "id": 15,
     "fields": {"condition": "Illegible"}
   }

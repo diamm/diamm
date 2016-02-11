@@ -1,6 +1,5 @@
 from diamm.models.migrate.legacy_item import LegacyItem
 from diamm.models.data.item import Item
-from diamm.models.data.item_note import ItemNote
 from diamm.models.data.source import Source
 from diamm.models.data.composition import Composition
 from blessings import Terminal
@@ -102,25 +101,25 @@ def migrate_item(entry):
     it = Item(**d)
     it.save()
 
-    note_fields = (
-        (ItemNote.I_GENERAL_NOTE, entry.notes),
-        (ItemNote.I_COPYING_STYLE, entry.copyingstyle),
-        (ItemNote.I_CONCORDANCES, entry.concordances),
-        (ItemNote.I_LEGACY_LAYOUT, entry.layout),
-        (ItemNote.I_LEGACY_VOICES, entry.novoices),
-        (ItemNote.I_LEGACY_COMPOSITION, aggregate_composition_note)
-    )
-
-    for nt in note_fields:
-        if not nt[1]:
-            continue
-        d = {
-            'type': nt[0],
-            'note': nt[1],
-            'item': it
-        }
-        itn = ItemNote(**d)
-        itn.save()
+    # note_fields = (
+    #     (ItemNote.I_GENERAL_NOTE, entry.notes),
+    #     (ItemNote.I_COPYING_STYLE, entry.copyingstyle),
+    #     (ItemNote.I_CONCORDANCES, entry.concordances),
+    #     (ItemNote.I_LEGACY_LAYOUT, entry.layout),
+    #     (ItemNote.I_LEGACY_VOICES, entry.novoices),
+    #     (ItemNote.I_LEGACY_COMPOSITION, aggregate_composition_note)
+    # )
+    #
+    # for nt in note_fields:
+    #     if not nt[1]:
+    #         continue
+    #     d = {
+    #         'type': nt[0],
+    #         'note': nt[1],
+    #         'item': it
+    #     }
+    #     itn = ItemNote(**d)
+    #     itn.save()
 
 
 def migrate():

@@ -32,7 +32,6 @@ from diamm.views.website.composition import CompositionList, CompositionDetail
 from diamm.views.website.story import StoryDetail
 
 
-
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', HomeView.as_view(), name="home"),
@@ -48,6 +47,7 @@ urlpatterns = [
 
     url(r'^sources/$', SourceList.as_view(), name="source-list"),
     url(r'^sources/(?P<pk>[0-9]+)/$', SourceDetail.as_view(), name="source-detail"),
+
     url(r'^archives/$', ArchiveList.as_view(), name="archive-list"),
     url(r'^archives/(?P<pk>[0-9]+)/$', ArchiveDetail.as_view(), name="archive-detail"),
     url(r'^cities/$', CityList.as_view(), name="city-list"),
@@ -60,7 +60,6 @@ urlpatterns = [
     url(r'^organizations/(?P<pk>[0-9]+)/$', OrganizationDetail.as_view(), name="organization-detail"),
     url(r'^composers/(?P<legacy_id>[0-9]+)/$', legacy_composer_redirect),
     url(r'^compositions/$', CompositionList.as_view(), name="composition-list"),
-    url(r'^compositions/(?P<pk>[0-9]+)/$', CompositionDetail.as_view(), name="composition-detail")
-
+    url(r'^compositions/(?P<pk>[0-9]+)/$', CompositionDetail.as_view(), name="composition-detail"),
 ]
 

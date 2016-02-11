@@ -1,42 +1,76 @@
+@import "skeleton/skeleton";
+@import "font-awesome/font-awesome";
 @import "variables";
 @import "fonts";
-@import "colours";
+@import "colors";
 @import "navbar";
-@import "bootstrap";
-@import "font-awesome";
-@import "header";
 @import "footer";
+@import "edit";
+@import "front";
+@import "source";
+@import "search";
+@import "debug";
 
-.search-box {
-  padding: 1em 0;
-  background: $diamm-cream;
-  margin-bottom: 0;
+html {
+  height: 100%;
+  font-size: 1.125em;
 }
 
-.search-result {
-  em {
-    background-color: lighten($diamm-red, 30%);
-    font-style: normal;
-    font-weight: bold;
-  }
+// Font calculations based on: http://type-scale.com/?size=18&scale=1.414&text=A%20Visual%20Type%20Scale&webfont=Libre+Baskerville&font-family=Alegreya%20Sans&font-weight=400&font-family-headers=&font-weight-headers=inherit&background-color=white&font-color=%23333
 
-  h3.search-result-heading {
-    padding: 0 0 10px 0;
-    margin: 0;
-    font-size: 1.1em;
-    font-weight: bold;
+body {
+  line-height: 1.45;
+  font-weight: 400;
+  font-family: "Alegreya Sans", Helvetica, Arial, sans-serif;
+  color: $diamm-black;
+
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  color: $diamm-lt-blue;
+  text-decoration: none;
+  box-sizing: border-box;
+  &:hover {
+    color: $diamm-dk-blue;
+    border-bottom: 1px solid $diamm-dk-blue;
   }
 }
 
-.type-filter-bar {
-  border-top: 1px solid darken($diamm-cream, 10%);
-  border-bottom: 1px solid darken($diamm-cream, 10%);
-  margin-bottom: 10px;
+p {
+  font-family: "Alegreya", serif;
+  margin-bottom: 1.3em;
+}
 
-  .type-filter {
-    .filter-label {
-      float: left;
-      padding: 10px 15px;
-    }
-  }
+h1, h2, h3, h4 {
+  margin: 1.414em 0 0.5em;
+  font-weight: inherit;
+  line-height: 1.2;
+}
+
+h1 {
+  margin-top: 0;
+  font-size: 2.441em;
+}
+
+h2 {font-size: 1.953em;}
+
+h3 {font-size: 1.563em;}
+
+h4 {font-size: 1.25em;}
+
+small, .font_small {font-size: 0.8em;}
+
+.container {
+  flex: 1 0 auto;
+}
+
+.pull-right {
+  float: right !important;
+}
+
+.pull-left {
+  float: left !important;
 }

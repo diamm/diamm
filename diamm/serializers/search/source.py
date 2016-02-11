@@ -8,6 +8,7 @@ class SourceSearchSerializer(serializers.ModelSerializer):
         fields = ("type",
                   "pk",
                   'shelfmark_s',
+                  'shelfmark_ans',
                   'name_s',
                   'archive_s',
                   'surface_type_s',
@@ -16,17 +17,17 @@ class SourceSearchSerializer(serializers.ModelSerializer):
                   'measurements_s',
                   'identifiers_ss',
                   'notes_txt',
-                  # 'copyists_ss',
                   'start_date_i',
                   'end_date_i',
-                  'composers_ss',
-                  '_childDocuments_')
+                  'composers_ss')
 
     # TODO: Find some way to refactor these into a base class for DRY
     type = serializers.SerializerMethodField()
     pk = serializers.ReadOnlyField()
 
     shelfmark_s = serializers.ReadOnlyField(source='shelfmark')
+    # Alphanumeric sort field for shelfmarks.
+    shelfmark_ans = serializers.ReadOnlyField(source="shelfmark")
     name_s = serializers.ReadOnlyField(source="display_name")
     archive_s = serializers.ReadOnlyField(source="archive.name")
     measurements_s = serializers.ReadOnlyField(source='measurements')
@@ -37,12 +38,6 @@ class SourceSearchSerializer(serializers.ModelSerializer):
         slug_field="identifier"
     )
 
-    # copyists_ss = serializers.SlugRelatedField(
-    #     source="copyists",
-    #     many=True,
-    #     read_only=True,
-    #     slug_field="full_name"
-    # )
     notes_txt = serializers.SlugRelatedField(
         source="public_notes",
         many=True,
@@ -58,10 +53,6 @@ class SourceSearchSerializer(serializers.ModelSerializer):
         source="composers",
         child=serializers.CharField()
     )
-    # compositions_ss = serializers.ListField(
-    #     source="compositions",
-    #     child=serializers.CharField()
-    # )
 
     def get_date_statement_s(self, obj):
         return "; ".join([n.note for n in obj.date_notes.all()])

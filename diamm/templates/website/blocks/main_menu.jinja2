@@ -1,4 +1,21 @@
-<nav class="navbar navbar-default diamm-navbar">
+<nav role="navigation" class="navbar">
+    <ul class="navbar-list navbar-brand pull-left">
+        <li>
+            <a href="{{ url('home') }}"><img src="{{ static('images/diammlogo.png') }}" /></a>
+        </li>
+    </ul>
+    <ul class="navbar-list pull-left">
+        <li class="navbar-item"><a href="#">About</a></li>
+        <li class="navbar-item"><a href="{{ url('search') }}">Search</a></li>
+        <li class="navbar-item"><a href="#">Browse</a></li>
+    </ul>
+    <ul class="navbar-list pull-right">
+        <li class="navbar-item navbar-highlight"><a href="#">Donate</a></li>
+        <li class="navbar-item"><a href="#">Login</a></li>
+    </ul>
+</nav>
+
+{# <nav class="navbar navbar-default diamm-navbar">
     <div class="container-fluid">
         <div class="navbar-header">
             <a class="navbar-brand" href="{{ url("home") }}">DIAMM</a>
@@ -44,7 +61,6 @@
                     <li>
                         <a href="{{ url("user-profile", pk=request.user.id) }}">User Profile</a>
                     </li>
-                    <li class="divider"></li>
                     <li><a href="#" id="logout-link">Logout</a></li>
                 </ul>
             </li>
@@ -57,4 +73,4 @@
             {% endif %}
         </ul>
     </div>
-</nav>
+</nav> #}

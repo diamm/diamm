@@ -67,6 +67,7 @@ def migrate_source_to_source(legacy_source):
         'surface': surface,
         'start_date': start_date,
         'end_date': end_date,
+        'date_statement': legacy_source.dateofsource,
         'format': legacy_source.format,
         'measurements': measurements,
         'public': convert_yn_to_boolean(legacy_source.webpermission)
@@ -119,7 +120,6 @@ def migrate_source_to_source(legacy_source):
             surl.save()
 
     notes = [
-        (SourceNote.DATE_NOTE, legacy_source.dateofsource),
         (SourceNote.DATE_NOTE, legacy_source.datecomments),
         (SourceNote.RISM_NOTE, legacy_source.description_rism),
         (SourceNote.PRIVATE_NOTE, legacy_source.notes),

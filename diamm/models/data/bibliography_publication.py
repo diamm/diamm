@@ -49,4 +49,10 @@ class BibliographyPublication(models.Model):
 
     entry = models.CharField(max_length=2048)
     type = models.IntegerField(choices=PUBLICATION_INFO_TYPE)
-    bibliography = models.ForeignKey("diamm_data.Bibliography")
+    bibliography = models.ForeignKey("diamm_data.Bibliography",
+                                     related_name="publication_info")
+
+    @property
+    def publication_type(self):
+        d = dict(self.PUBLICATION_INFO_TYPE)
+        return d[self.type]

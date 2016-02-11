@@ -16,4 +16,4 @@ class BibliographyAuthor(models.Model):
 
     @property
     def full_name(self):
-        return str(self)
+        return str(self.__str__())

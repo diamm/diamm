@@ -3,6 +3,7 @@ from diamm.admin.site.tag import TagAdmin
 from diamm.admin.site.cover_image import CoverImageAdmin
 
 from diamm.admin.data.source import SourceAdmin
+from diamm.admin.data.page import PageAdmin
 from diamm.admin.data.source_relationship import SourceRelationshipAdmin
 from diamm.admin.data.source_provenance import SourceProvenanceAdmin
 from diamm.admin.data.source_note import SourceNoteAdmin
@@ -12,6 +13,7 @@ from diamm.admin.data.genre import GenreAdmin
 from diamm.admin.data.person import PersonAdmin
 from diamm.admin.data.organization import OrganizationAdmin
 from diamm.admin.data.bibliography import BibliographyAdmin
+from diamm.admin.data.bibliography_author import BibliographyAuthorAdmin
 from diamm.admin.data.composition import CompositionAdmin
 from diamm.admin.data.image import ImageAdmin
 from diamm.admin.data.item import ItemAdmin
