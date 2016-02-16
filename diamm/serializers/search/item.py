@@ -3,7 +3,8 @@ import serpy
 
 class ItemSearchSerializer(serpy.Serializer):
     """
-        In testing, Serpy is twice as fast as DRF so we use it here since this is index-time performance-sensitive.
+        In testing, Serpy is twice as fast as DRF so we use it here
+        since this is index-time performance-sensitive.
     """
     type = serpy.MethodField()
     pk = serpy.IntField()
@@ -16,6 +17,7 @@ class ItemSearchSerializer(serpy.Serializer):
     )
 
     composition_s = serpy.MethodField()
+    composition_i = serpy.MethodField()
 
     folio_start_s = serpy.StrField(
         attr="folio_start",
@@ -38,6 +40,11 @@ class ItemSearchSerializer(serpy.Serializer):
 
     def get_type(self, obj):
         return obj.__class__.__name__.lower()
+
+    def get_composition_i(self, obj):
+        if obj.composition:
+            return obj.composition.pk
+        return None
 
     def get_composition_s(self, obj):
         if obj.composition:

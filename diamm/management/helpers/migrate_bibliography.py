@@ -172,7 +172,7 @@ def migrate_bibliography(legacy):
     b = Bibliography(**d)
     b.save()
 
-    if type.pk == BibliographyType.JOURNAL:
+    if type.pk == BibliographyType.JOURNAL_ARTICLE and legacy.journal:
         __create_new_publication_entry(legacy.journal, BibliographyPublication.B_PARENT_TITLE, b)
     elif type.pk == BibliographyType.CHAPTER_IN_BOOK:
         __create_new_publication_entry(legacy.booktitle, BibliographyPublication.B_PARENT_TITLE, b)
@@ -195,6 +195,12 @@ def migrate_bibliography(legacy):
         __create_new_publication_entry(legacy.page, BibliographyPublication.B_PAGES, b)
     if legacy.placepublication:
         __create_new_publication_entry(legacy.placepublication, BibliographyPublication.B_PLACE_PUBLICATION, b)
+    if legacy.novolumes:
+        __create_new_publication_entry(legacy.novolumes, BibliographyPublication.B_NUMBER_OF_VOLUMES, b)
+
+    # If the series title was chosen as the main title, skip it.
+    if legacy.seriestitle and title != legacy.seriestitle:
+        __create_new_publication_entry(legacy.seriestitle, BibliographyPublication.B_SERIES, b)
 
     # Add any authors we may not know about. Here there be dragons.
     __get_or_create_people(legacy.author1surname, legacy.author1firstname, b, BibliographyAuthorRole.R_AUTHOR, 1)
@@ -255,8 +261,7 @@ def attach_author_to_bibliography(entry):
     bar = BibliographyAuthorRole(**d)
     bar.save()
 
-
-def update_table():
+def update_author_table():
     print(term.yellow("\tUpdating the ID sequences for the Django Bibliography Tables"))
     db = settings.DATABASES['default']
     conn = psql.connect(database=db['NAME'],
@@ -274,14 +279,23 @@ def update_table():
     nextid = maxid + 1
     curs.execute(sql_alt_auth, (nextid,))
 
+def update_table():
+    print(term.yellow("\tUpdating the ID sequences for the Django Bibliography Tables"))
+    db = settings.DATABASES['default']
+    conn = psql.connect(database=db['NAME'],
+                        user=db['USER'],
+                        password=db['PASSWORD'],
+                        host=db['HOST'],
+                        port=db['PORT'],
+                        cursor_factory=psql.extras.DictCursor)
+    curs = conn.cursor()
     print(term.yellow("\t\tUpdating Bibliography Table Sequence"))
     sql_max_bibl = "SELECT MAX(id) AS maxid FROM diamm_data_bibliography;"
     sql_alt_bibl = "ALTER SEQUENCE diamm_data_bibliography_id_seq RESTART WITH %s"
     curs.execute(sql_max_bibl)
     maxid = curs.fetchone()['maxid']
     nextid = maxid + 1
-    curs.execute(sql_alt_auth, (nextid,))
-
+    curs.execute(sql_alt_bibl, (nextid,))
 
 def migrate():
     print(term.blue("Migrating Bibliography Entries"))
@@ -292,15 +306,21 @@ def migrate():
     for author in authors:
         migrate_author(author)
 
+    update_author_table()
+
     entries = LegacyBibliography.objects.all()
     for entry in entries:
         migrate_bibliography(entry)
+
+    # Since we may have added new authors to the author table in the bibliography
+    # migration, we will update the keys again.
+    update_author_table()
+    update_table()
 
     biblauthors = LegacyAuthorBibliography.objects.all()
     for entry in biblauthors:
         attach_author_to_bibliography(entry)
 
-    update_table()
     print(term.blue("Done migrating Bibliography Entries"))
 
 

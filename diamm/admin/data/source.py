@@ -80,7 +80,7 @@ class SourceAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     view_on_site = True
     save_on_top = True
     list_display = ('shelfmark', 'name', 'get_city', 'get_archive', 'public')
-    search_fields = ('identifiers__identifier', 'name', 'archive__name', 'shelfmark')
+    search_fields = ('identifiers__identifier', 'name', 'archive__name', 'archive__siglum', 'shelfmark')
     inlines = (IdentifiersInline, NotesInline, URLsInline,
                BibliographyInline, SourceRelationshipInline)
     list_filter = (CountryListFilter, InventoryFilter)

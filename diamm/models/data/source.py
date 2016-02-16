@@ -151,13 +151,26 @@ class Source(models.Model):
 
     @property
     def solr_bibliography(self):
+        # Grab a list of the ids for this record
+        ids = self.bibliography.values_list('id', flat=True).order_by('authors__bibliography_author__last_name').distinct()
+        id_list = ",".join([str(x) for x in ids])
         connection = pysolr.Solr(settings.SOLR['SERVER'])
-        fq = ['type:bibliography', 'source_i:{0}'.format(self.pk)]
-        bibliography_results = connection.search("*:*", fq=fq, sort="", rows=10000)
+        fq = ['type:bibliography', "{!terms f=pk}"+id_list]
+        bibliography_results = connection.search("*:*", fq=fq, sort="authors_s asc", rows=10000)
         if bibliography_results.docs:
             return bibliography_results.docs
         else:
             return []
 
+    @property
+    def solr_pages(self):
+        # List the pages from their Solr records
+        connection = pysolr.Solr(settings.SOLR['SERVER'])
+        fq = ['type:page', 'source_i:{0}'.format(self.pk)]
+        page_results = connection.search("*:*", fq=fq, sort="numeration_ans asc", rows=10000)
+        if page_results.docs:
+            return page_results.docs
+        else:
+            return []
 
 

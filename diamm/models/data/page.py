@@ -10,7 +10,9 @@ class Page(models.Model):
         app_label = "diamm_data"
         ordering = ["source__shelfmark", "numeration"]
 
-    source = models.ForeignKey("diamm_data.Source", related_name="pages")
+    source = models.ForeignKey("diamm_data.Source",
+                               related_name="pages")
+
     numeration = models.CharField(max_length=64, help_text="""The folio or page number. If there are many different systems in use,
                                                            choose one and put the others in the note field.""")
     legacy_id = models.CharField(max_length=64, blank=True, null=True)
@@ -20,3 +22,7 @@ class Page(models.Model):
 
     def __str__(self):
         return "{0}".format(self.numeration)
+
+    @property
+    def public_images(self):
+        return self.images.filter(public=True)

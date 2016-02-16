@@ -7,6 +7,7 @@ from diamm.models.data.page_condition import PageCondition
 from diamm.models.migrate.legacy_image import LegacyImage
 from diamm.models.migrate.legacy_secondary_image import LegacySecondaryImage
 from diamm.models.migrate.legacy_item_image import LegacyItemImage
+from diamm.management.helpers.utilities import convert_yn_to_boolean
 from blessings import Terminal
 
 term = Terminal()
@@ -104,10 +105,12 @@ def determine_image_type(entry):
 
 
 def determine_filename(entry):
-    if entry.filename and entry.filename not in ('not photographed', 'applytolibrary', 'librarydigitized'):
+    if entry.filename and entry.filename not in ('not photographed', 'not_photographed', 'notphotographed', 'applytolibrary', 'librarydigitized'):
         return entry.filename
-    elif entry.archivedfilename:
+    elif hasattr(entry, 'archivedfilename') and entry.archivedfilename is not None:
         return entry.archivedfilename
+    elif hasattr(entry, 'archivefilename') and entry.archivefilename is not None:
+        return entry.archivefilename
     else:
         print(term.red("\tCould not determine filename for image {0}".format(entry.pk)))
         return None
@@ -128,13 +131,16 @@ def convert_image(entry):
     p.save()
 
     filename = determine_filename(entry)
+
     if filename:
         # create an image record.
         print(term.green("\t\tCreating an Image record for Image {0} ({1})".format(entry.pk, filename)))
+        available = convert_yn_to_boolean(entry.availwebsite)
         imtype = ImageType.objects.get(pk=ImageType.PRIMARY)
 
         imd = {
             'page': p,
+            'public': available,
             'type': imtype,
             'legacy_filename': filename,
             'legacy_id': 'legacy_image.{0}'.format(int(entry.pk))
@@ -148,6 +154,10 @@ def convert_image(entry):
 
 def convert_secondary_image(entry):
     print(term.green("\tMigrating secondary image {0}".format(entry.pk)))
+    filename = determine_filename(entry)
+    if not filename:
+        return None
+
     orig_image_pk = "legacy_image.{0}".format(int(entry.imagekey))
     orig_image = Image.objects.get(legacy_id=orig_image_pk)
     page = orig_image.page
@@ -156,9 +166,10 @@ def convert_secondary_image(entry):
 
     imd = {
         "legacy_id": "legacy_secondary_image.{0}".format(int(entry.pk)),
-        "legacy_filename": entry.filename,
+        "legacy_filename": filename,
         "page": page,
-        "type": imtype
+        "type": imtype,
+        "public": orig_image.public
     }
     im = Image(**imd)
     im.save()

@@ -19,7 +19,8 @@ class SourceSearchSerializer(serializers.ModelSerializer):
                   'notes_txt',
                   'start_date_i',
                   'end_date_i',
-                  'composers_ss')
+                  'composers_ss',
+                  'cover_image_url_sni')
 
     # TODO: Find some way to refactor these into a base class for DRY
     type = serializers.SerializerMethodField()
@@ -46,16 +47,14 @@ class SourceSearchSerializer(serializers.ModelSerializer):
     )
     start_date_i = serializers.IntegerField(source="start_date")
     end_date_i = serializers.IntegerField(source="end_date")
-    date_statement_s = serializers.SerializerMethodField()
+    date_statement_s = serializers.ReadOnlyField(source="date_statement")
+    cover_image_url_sni = serializers.ReadOnlyField(source="cover_image_url")
     surface_type_s = serializers.ReadOnlyField(source="surface_type")
     source_type_s = serializers.ReadOnlyField(source="type")
     composers_ss = serializers.ListField(
         source="composers",
         child=serializers.CharField()
     )
-
-    def get_date_statement_s(self, obj):
-        return "; ".join([n.note for n in obj.date_notes.all()])
 
     def get_type(self, obj):
         return self.Meta.model.__name__.lower()

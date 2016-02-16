@@ -1,6 +1,10 @@
+.site-header {
+  z-index: 10;
+}
+
 .navbar {
   background: $diamm-white;
-  border-bottom: 3px double $diamm-black;
+  border-bottom: 3px double $diamm-med-grey;
   margin-bottom: 1rem;
   &:before,
   &:after {

@@ -27,7 +27,10 @@ SECRET_KEY = '@l%t#fyhaahycu$gct^u5ttya69v5n^00y48@)2mngdlel63g+'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost:8000']
+ALLOWED_HOSTS = [
+    'localhost:8000',
+    'alpha.diamm.ac.uk'
+]
 INTERNAL_IPS = ('127.0.0.1',)
 
 # Application definition
@@ -73,6 +76,9 @@ TEMPLATES = [
         'BACKEND': 'django_jinja.backend.Jinja2',
         'APP_DIRS': True,
         "OPTIONS": {
+            'trim_blocks': True,
+            'autoescape': True,
+            'lstrip_blocks': True,
             'match_extension': '.jinja2',
             "context_processors": [
                 "django.contrib.auth.context_processors.auth",
@@ -163,6 +169,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
+
+JINJA2_ENVIRONMENT_OPTIONS = {
+    'trim_blocks': True,
+    'autoescape': True,
+    'lstrip_blocks': True
+}
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',

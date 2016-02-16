@@ -1,5 +1,8 @@
 <div class="tab-panel row" id="details">
     <div class="sixteen columns">
-
+        <h4>Bibliography</h4>
+        {% for entry in content.bibliography %}
+            <p>{{ entry.prerendered | safe }}</p>
+        {% endfor %}
     </div>
 </div>

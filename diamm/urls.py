@@ -15,14 +15,14 @@ Including another URLconf
     3. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
 from django.conf.urls import url
+from django.views.generic import TemplateView
 from django.contrib import admin
-from rest_framework.routers import SimpleRouter
 
 from diamm.views.home import HomeView
 from diamm.views.auth import SessionAuth, SessionClose, AccountEmailSent, AccountUpdate
 from diamm.views.user import ProfileView
 from diamm.views.website.search import SearchView
-from diamm.views.website.source import SourceList, SourceDetail
+from diamm.views.website.source import SourceList, SourceDetail, SourceManifest
 from diamm.views.website.archive import ArchiveList, ArchiveDetail
 from diamm.views.website.city import CityList, CityDetail
 from diamm.views.website.country import CountryList, CountryDetail
@@ -33,6 +33,7 @@ from diamm.views.website.story import StoryDetail
 
 
 urlpatterns = [
+    url(r'^search.xml$', TemplateView.as_view(template_name='opensearch.jinja2', content_type="application/opensearchdescription+xml"), name='opensearch'),
     url(r'^admin/', admin.site.urls),
     url(r'^$', HomeView.as_view(), name="home"),
     url(r'^login/$', SessionAuth.as_view(), name="login"),
@@ -47,6 +48,8 @@ urlpatterns = [
 
     url(r'^sources/$', SourceList.as_view(), name="source-list"),
     url(r'^sources/(?P<pk>[0-9]+)/$', SourceDetail.as_view(), name="source-detail"),
+    url(r'^sources/(?P<pk>[0-9]+)/manifest/$', SourceManifest.as_view(), name="source-manifest"),
+
 
     url(r'^archives/$', ArchiveList.as_view(), name="archive-list"),
     url(r'^archives/(?P<pk>[0-9]+)/$', ArchiveDetail.as_view(), name="archive-detail"),

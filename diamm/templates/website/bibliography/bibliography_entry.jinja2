@@ -1,72 +1,145 @@
-{% macro person_entry(people, editors) %}
-    {% for person_rel in people %}
-        {% set person = person_rel.bibliography_author %}
-        {% if loop.index == 1 %}
+{%- macro person_entry(people, editors) %}
+    {%- for person_rel in people -%}
+        {% set person = person_rel.bibliography_author -%}
+        {%- if loop.index == 1 -%}
             {# first or only person -#}
             {{ person.last_name }}{% if person.first_name %}, {{ person.first_name }}{% endif %}{% if loop.length > 1 %}, {% elif not editors %}. {% endif %}
-        {% elif loop.length > 1 and loop.last %}
+        {%- elif loop.length > 1 and loop.last -%}
             {# final person -#}
  and {{ person.first_name }} {{ person.last_name }}{% if not editors %}.{% endif %}
-        {% else %}
+        {%- else -%}
             {# all others -#}
             {{ person.first_name | default("") }} {{ person.last_name }}{% if loop.length > 1 %}, {% endif %}
-        {% endif %}
-    {% endfor %}
-    {% if editors and people | length > 1 %}
- (eds.)
-    {% elif editors %}
- (ed.)
-    {% endif %}
-{% endmacro %}
-
-{% macro authors(authors) %}
-    {# main entry -#}
-    {% set authors = content.authors.filter(role=1) -%}
-    {% set editors = content.authors.filter(role=2) -%}
-    {% if authors -%}
-        {{ person_entry(authors, False) }}
-    {% elif editors -%}
-        {{ person_entry(editors, True) }}
-    {% else -%}
-        [No Author]
+        {%- endif %}
+    {%- endfor %}
+    {% if editors and people | length > 1 -%}
+ &nbsp;(eds.)
+    {%- elif editors -%}
+ &nbsp;(ed.)
     {%- endif %}
 {% endmacro -%}
 
-{% macro year(year) %}
-{{ year | default('n.d') }}.
-{% endmacro %}
+{%- macro editors_entry(people) %}
+    {% for person_rel in people -%}
+        {% set person = person_rel.bibliography_author -%}
+        {% if loop.last -%}
+ &nbsp;and {{ person.first_name }} {{ person.last_name }}
+        {%- else -%}
+ {{ person.first_name }} {{ person.last_name }}{% if loop.length > 2 -%}, {%- endif %}
+        {%- endif %}
+    {%- endfor %}
+{% endmacro -%}
 
-{% macro first_title(content) %}
+{%- macro authors(authors) %}
+    {# main entry -#}
+    {% set authors = content.authors.filter(role=1).order_by('position', 'bibliography_author__last_name') -%}
+    {% set editors = content.authors.filter(role=2).order_by('position', 'bibliography_author__last_name') -%}
+    {% if authors -%}
+        {{ person_entry(authors, False) }}
+    {%- elif editors -%}
+        {{ person_entry(editors, True) }}
+    {%- else -%}
+        [No Author]
+    {% endif -%}
+{% endmacro -%}
+
+{%- macro year(year) -%}
+{{ year | default('n.d') }}.
+{%- endmacro -%}
+
+{%- macro first_title(content) %}
     {# journal, book, or festschrift -#}
-    {% if content.type.pk in (6, 2, 5) -%}
+    {%- if content.type.pk in (6, 2, 5) -%}
     <em>{{ content.title }}.</em>
-    {% else %}
+    {%- else -%}
     {# journal article, book chapter, dissertation -#}
     {{ content.title }}.
-    {% endif -%}
-{% endmacro %}
+    {%- endif %}
+{% endmacro -%}
 
-{% macro other_titles(content) %}
+{%- macro other_titles(content) %}
     {# journal, book chapter #}
-    {% if content.type.pk in (1, 3) %}
+    {%- if content.type.pk in (1, 3) %}
     {# 2 = parent title #}
-    <em>{{ content.publication_info.get(type=2).entry }}.</em>
-    {% endif %}
-{% endmacro %}
+        {% set oth_title = content.publication_info.filter(type=2)|first %}
+        {% if oth_title -%}<em>{{ oth_title.entry }},</em>{%- endif %}
+    {% endif -%}
+{% endmacro -%}
 
-{% macro editors(content) %}
+{%- macro editors(content) %}
     {% set authors = content.authors.filter(role=1) -%}
-    {% set editors = content.authors.filter(role=2) %}
-    {% if authors | length > 0 and editors %}
+    {% set editors = content.authors.filter(role=2) -%}
+    {% if authors | length > 0 and editors -%}
         {# here we assume that if we have authors, we can put the editors later.
-        If we don't have authors, then the editors will have already been listed -#}
-        {% set editors = content.authors.filter(role=2) %}
-        {{ person_entry(editors, True) }}
-    {% endif %}
-{% endmacro %}
+        If we don't have authors, then the editors will have already been listed.
+        Mark editor parameter as false so it doesn't spit out 'eds.' at the end. -#}
+        {% set editors = content.authors.filter(role=2) -%}
+        edited by {{ editors_entry(editors) }}
+    {%- endif %}
+{% endmacro -%}
 
-{% macro publication_info(content) %}
+{%- macro pages(content) %}
+    {% set thispg = content.publication_info.filter(type=4)|first -%}
+    {% if thispg -%}{{ thispg.entry }}{% endif -%}
+{% endmacro -%}
 
-{% endmacro %}
+{%- macro series(content)  %}
+    {% set ser = content.publication_info.filter(type=8)|first -%}
+    {% if ser -%}{{ ser.entry }}{%- endif %}
+{% endmacro -%}
 
-{{ authors(content) }} {{ year(content.year) }} {{ first_title(content) }} {{ other_titles(content) }} {{ editors(content) }}
+{%- macro publisher(content) %}
+    {% set place_publication = content.publication_info.filter(type=13)|first -%}
+    {% set publisher = content.publication_info.filter(type=3)|first -%}
+    {% if place_publication and publisher -%}
+        {{ place_publication.entry }}: {{ publisher.entry }}
+    {%- elif place_publication -%}
+        {{ place_publication.entry }}
+    {%- elif publisher -%}
+        {{ publisher.entry }}
+    {%- endif %}
+{% endmacro -%}
+
+{%- macro volumes(content)  %}
+    {% set no_volumes = content.publication_info.filter(type=14)|first -%}
+    {% if no_volumes -%}{{ no_volumes.entry }} vols.{%- endif %}
+{% endmacro -%}
+
+{%- macro degree(content)  %}
+    {% set deg = content.publication_info.filter(type=6)|first -%}
+    {% set uni = content.publication_info.filter(type=5)|first -%}
+    {% if deg and uni -%}
+        {{ deg.entry }}, {{ uni.entry }}
+    {%- elif deg -%}
+        {{ deg.entry }}
+    {%- elif uni -%}
+        {{ uni.entry }}
+    {%- endif %}
+{% endmacro -%}
+
+{%- macro publication_info(content) %}
+    {% if content.type.pk == 1 -%}
+        {# journal #}
+        {% set volume_no = content.publication_info.filter(type=1)|first -%}
+        {% if volume_no -%}{{ volume_no.entry }}:&nbsp;{% endif -%}{{ pages(content) }}.
+    {% elif content.type.pk in (2, 3, 5, 6) -%}
+        {# book #}
+        {% set pg = pages(content) -%}
+        {% set eds = editors(content) -%}
+        {% set pub = publisher(content) -%}
+        {% set vols = volumes(content) -%}
+        {% set ser = series(content) -%}
+
+        {% if ser -%}{{ ser }}.&nbsp;{%- endif  %}
+        {% if eds -%}{{ eds }},{%- endif %}
+        {% if vols -%}{{ vols }}{%- endif %}
+        {% if pg -%}{{ pg }}.{%- endif %}
+        {% if pub -%}&nbsp;{{ pub }}.{%- endif %}
+    {% elif content.type.pk == 4 -%}
+        {# dissertation #}
+        {% set deg = degree(content) -%}
+        {% if deg -%}{{ deg }}.{%- endif %}
+    {%- endif %}
+{% endmacro -%}
+
+{{ authors(content) }} {{ year(content.year) }} {{ first_title(content) }} {{ other_titles(content) }} {{ publication_info(content) }}

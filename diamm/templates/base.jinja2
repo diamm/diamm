@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="search" href="{{ request.scheme }}://{{ request.get_host() }}{{ url('opensearch') }}" type="application/opensearchdescription+xml" title="DIAMM"/>
     {% block title %}
     <title>Digital Image Archive of Medieval Music :: Home</title>
     {% endblock %}
@@ -10,9 +11,7 @@
     {% endblock %}
 </head>
 <body>
-    <header>
-        {% include "website/blocks/main_menu.jinja2" %}
-    </header>
+    {% include "website/blocks/header.jinja2" %}
 
     {% block fullwidth %}
     {% endblock %}

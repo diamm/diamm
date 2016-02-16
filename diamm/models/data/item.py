@@ -21,7 +21,8 @@ class Item(models.Model):
     source = models.ForeignKey('diamm_data.Source',
                                related_name="inventory")
 
-    pages = models.ManyToManyField("diamm_data.Page")
+    pages = models.ManyToManyField("diamm_data.Page",
+                                   related_name="items")
 
     composition = models.ForeignKey("diamm_data.Composition",
                                     related_name="sources",

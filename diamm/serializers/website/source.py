@@ -45,6 +45,35 @@ class AggregateComposerSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'full_name')
 
 
+class SourceBibliographySerializer(serializers.Serializer):
+    class Meta:
+        fields = ('pk',
+                  'prerendered')
+
+    pk = serializers.ReadOnlyField()
+    prerendered = serializers.ReadOnlyField(
+        source='prerendered_sni'
+    )
+
+class SourcePageSerializer(serializers.Serializer):
+    class Meta:
+        fields = ('pk',
+                  'type',
+                  'numeration',
+                  'image_urls')
+
+    numeration = serializers.ReadOnlyField(
+        source='numeration_s'
+    )
+    image_urls = serializers.SerializerMethodField()
+
+    def get_image_urls(self, obj):
+        if 'image_urls_ss' in obj:
+            return obj['image_urls_ss']
+        else:
+            return []
+
+
 class SourceItemSerializer(serializers.Serializer):
     """
         This serializer deals with Solr results instead of results
@@ -59,6 +88,7 @@ class SourceItemSerializer(serializers.Serializer):
                   'folio_end',
                   'composers')
 
+    # NB: URL to the composition, not the Item.
     url = serializers.SerializerMethodField()
     composition = serializers.ReadOnlyField(
         source="composition_s"
@@ -74,7 +104,10 @@ class SourceItemSerializer(serializers.Serializer):
     )
 
     def get_url(self, obj):
-        return reverse('composition-detail', kwargs={'pk': obj['composition_i']}, request=self.context['request'])
+        if 'composition_i' in obj:
+            return reverse('composition-detail', kwargs={'pk': obj['composition_i']}, request=self.context['request'])
+        else:
+            return None
 
     def get_composers(self, obj):
         composers = obj.get('composers_ssni')
@@ -164,7 +197,10 @@ class SourceDetailSerializer(serializers.HyperlinkedModelSerializer):
                   'surface_type',
                   'date_statement',
                   'type',
-                  'inventory')
+                  'inventory',
+                  'bibliography',
+                  'cover_image_url',
+                  'pages')
 
     notes = SourceNoteSerializer(
         source="public_notes",
@@ -180,6 +216,16 @@ class SourceDetailSerializer(serializers.HyperlinkedModelSerializer):
     )
     inventory = SourceItemSerializer(
         source="solr_inventory",
+        many=True,
+        required=False
+    )
+    bibliography = SourceBibliographySerializer(
+        source="solr_bibliography",
+        many=True,
+        required=False
+    )
+    pages = SourcePageSerializer(
+        source="solr_pages",
         many=True,
         required=False
     )

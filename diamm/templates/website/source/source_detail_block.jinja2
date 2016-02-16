@@ -43,7 +43,9 @@
         </div>
     </div>
     <div class="five columns">
-        <img src="http://placehold.it/350x450" class="u-full-width"/>
+        {% if content.cover_image_url %}
+            <img src="{{ content.cover_image_url }}/full/350,/0/default.jpg" class="u-full-width"/>
+        {% endif %}
         <h4>Private Notes</h4>
         <p>Private stuff goes here.</p>
         <h4>Public Notes</h4>

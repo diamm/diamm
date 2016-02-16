@@ -41,6 +41,7 @@ class LegacyBibliography(models.Model):
     url = models.TextField(blank=True, null=True)
     abstract = models.TextField(blank=True, null=True)
     creationdate = models.DateField(blank=True, null=True)
+    novolumes = models.TextField(db_column='noVolumes', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False

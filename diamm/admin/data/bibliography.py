@@ -24,7 +24,7 @@ class PublicationInline(admin.TabularInline):
 class BibliographyAdmin(VersionAdmin):
     list_display = ('get_authors', 'title', 'year', 'abbreviation')
     list_filter = ('type__name',)
-    search_fields = ('title', 'authors__last_name', 'abbreviation')
+    search_fields = ('title', 'authors__bibliography_author__last_name', 'abbreviation')
     inlines = (AuthorsInline, PublicationInline)
 
     def get_authors(self, obj):

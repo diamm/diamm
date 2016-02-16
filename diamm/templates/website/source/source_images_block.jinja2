@@ -1,8 +1,19 @@
 <div class="tab-panel row" id="images">
-    <div class="five columns">
-        <h4>Info</h4>
-    </div>
-
-    <div class="eleven columns" style="background:#aaa; height: 700px;">
+    <div class="sixteen columns">
+        <table>
+            <tbody>
+                {% for page in content.pages %}
+                    <tr>
+                    <td>
+                        {{ loop.index }}
+                        {% for image in page.image_urls %}
+                            <img src="{{ image }}/full/150,/0/default.jpg" />
+                        {% endfor %}
+                        {{ page.numeration }}
+                    </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>

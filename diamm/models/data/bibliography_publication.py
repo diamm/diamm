@@ -30,6 +30,7 @@ class BibliographyPublication(models.Model):
     B_TRANSLATOR = 11
     B_FESTSCHRIFT_FOR = 12
     B_PLACE_PUBLICATION = 13
+    B_NUMBER_OF_VOLUMES = 14
 
 
     PUBLICATION_INFO_TYPE = (
@@ -44,7 +45,8 @@ class BibliographyPublication(models.Model):
         (B_URL_ACCESSED, "URL Accessed Date"),
         (B_TRANSLATOR, "Translator Statement"),
         (B_FESTSCHRIFT_FOR, "Festschrift Dedicatee"),
-        (B_PLACE_PUBLICATION, "Place of Publication")
+        (B_PLACE_PUBLICATION, "Place of Publication"),
+        (B_NUMBER_OF_VOLUMES, "Number of Volumes in Series")
     )
 
     entry = models.CharField(max_length=2048)

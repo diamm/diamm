@@ -12,6 +12,7 @@
     <!-- _id fields are for model PKs -->
     <dynamicField name="*_id" type="int" indexed="true" stored="true" />
     <dynamicField name="*_i" type="int" indexed="true" stored="true" />
+    <dynamicField name="*_ii" type="int" indexed="true" stored="true" multiValued="true" />
     <dynamicField name="*_s" type="string" indexed="true" stored="true" />
     <dynamicField name="*_ss" type="string" indexed="true" stored="true" multiValued="true" />
     <dynamicField name="*_t" type="text_general" indexed="true" stored="true" />

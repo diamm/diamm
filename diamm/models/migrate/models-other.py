@@ -122,6 +122,18 @@ class BiblcompositionIs(models.Model):
         db_table = 'BiblComposition_IS'
 
 
+class BiblitemIs(models.Model):
+    itemkey = models.DecimalField(db_column='itemKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    bibliographykey = models.DecimalField(db_column='bibliographyKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    notes = models.TextField(blank=True, null=True)
+    biblabbrev = models.TextField(db_column='biblAbbrev', blank=True, null=True)  # Field name made lowercase.
+    bibliographyitemkey = models.IntegerField(db_column='bibliographyItemKey', primary_key=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'BiblItem_IS'
+
+
 class Bibliography(models.Model):
     bibliographykey = models.IntegerField(db_column='bibliographyKey', primary_key=True)  # Field name made lowercase.
     biblabbrev = models.TextField(db_column='biblAbbrev', blank=True, null=True)  # Field name made lowercase.
@@ -145,6 +157,7 @@ class Bibliography(models.Model):
     dissertation = models.TextField(blank=True, null=True)
     university = models.TextField(blank=True, null=True)
     degree = models.TextField(blank=True, null=True)
+    novolumes = models.TextField(db_column='noVolumes', blank=True, null=True)  # Field name made lowercase.
     editor2surname = models.TextField(db_column='Editor2Surname', blank=True, null=True)  # Field name made lowercase.
     editor2firstname = models.TextField(db_column='Editor2Firstname', blank=True, null=True)  # Field name made lowercase.
     editor1firstname = models.TextField(db_column='Editor1Firstname', blank=True, null=True)  # Field name made lowercase.
@@ -473,6 +486,16 @@ class SourceprovenanceIs(models.Model):
     class Meta:
         managed = False
         db_table = 'SourceProvenance_IS'
+
+
+class SourcesetIs(models.Model):
+    sourcekey = models.DecimalField(db_column='sourceKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    setkey = models.DecimalField(db_column='setKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    sourcesetkey = models.IntegerField(db_column='sourceSetKey', primary_key=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'SourceSet_IS'
 
 
 class SourceCopyistIs(models.Model):

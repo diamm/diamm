@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.conf import settings
-import scorched
+import pysolr
 from blessings import Terminal
 import progressbar
 
@@ -14,6 +14,12 @@ from diamm.models.data.composition import Composition
 from diamm.serializers.search.composition import CompositionSearchSerializer
 from diamm.models.data.organization import Organization
 from diamm.serializers.search.organization import OrganizationSearchSerializer
+from diamm.models.data.bibliography import Bibliography
+from diamm.serializers.search.bibliography import BibliographySearchSerializer
+from diamm.models.data.item import Item
+from diamm.serializers.search.item import ItemSearchSerializer
+from diamm.models.data.page import Page
+from diamm.serializers.search.page import PageSearchSerializer
 
 term = Terminal()
 
@@ -35,9 +41,14 @@ class Command(BaseCommand):
         docs = []
         for i, obj in enumerate(objects):
             pbar.update(i)
+            if not name_field:
+                name = "Object {0}".format(obj.pk)
+            else:
+                name = getattr(obj, name_field)
+
             self.stdout.write('{0} {1}: {2}'.format(term.blue('Indexing'),
                                                     term.green(obj.__class__.__name__),
-                                                    term.yellow(getattr(obj, name_field))))
+                                                    term.yellow(name)))
             data = serializer(obj).data
             docs.append(data)
 
@@ -46,7 +57,6 @@ class Command(BaseCommand):
             # indexing quite quick.
             if i % 100 == 0:
                 self.solrconn.add(docs)
-                self.solrconn.commit()
                 del docs
                 docs = []
 
@@ -56,6 +66,11 @@ class Command(BaseCommand):
         self.stdout.write(term.blue('Indexing Sources'))
         objs = Source.objects.all()
         self._index(objs, 'shelfmark', SourceSearchSerializer)
+
+    def _index_inventories(self):
+        self.stdout.write(term.blue('Indexing Inventories'))
+        objs = Item.objects.all()
+        self._index(objs, '', ItemSearchSerializer)
 
     def _index_archives(self):
         self.stdout.write(term.blue('Indexing Archives'))
@@ -77,14 +92,27 @@ class Command(BaseCommand):
         objs = Organization.objects.all()
         self._index(objs, 'name', OrganizationSearchSerializer)
 
+    def _index_bibliography(self):
+        self.stdout.write(term.blue("Indexing Bibliography"))
+        objs = Bibliography.objects.all()
+        self._index(objs, 'title', BibliographySearchSerializer)
+
+    def _index_pages(self):
+        self.stdout.write(term.blue("Indexing Pages"))
+        objs = Page.objects.all()
+        self._index(objs, 'numeration', PageSearchSerializer)
+
     def handle(self, *args, **kwargs):
-        self.solrconn = scorched.SolrInterface(settings.SOLR['SERVER'])
+        self.solrconn = pysolr.Solr(settings.SOLR['SERVER'])
 
         with term.fullscreen():
-            self._index_sources()
+            # self._index_sources()
+            # self._index_inventories()
             # self._index_archives()
             # self._index_people()
             # self._index_organizations()
             # self._index_compositions()
+            # self._index_bibliography()
+            self._index_pages()
             raw_input = input('Done indexing. Press any key to exit.')
 
