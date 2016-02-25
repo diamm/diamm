@@ -15,7 +15,7 @@ class ItemSearchSerializer(serpy.Serializer):
     source_s = serpy.StrField(
         attr="source.display_name"
     )
-
+    pages_ii = serpy.MethodField()
     composition_s = serpy.MethodField()
     composition_i = serpy.MethodField()
 
@@ -40,6 +40,12 @@ class ItemSearchSerializer(serpy.Serializer):
 
     def get_type(self, obj):
         return obj.__class__.__name__.lower()
+
+    def get_pages_ii(self, obj):
+        if obj.pages.count() > 0:
+            return list(obj.pages.all().values_list('pk', flat=True))
+        else:
+            return []
 
     def get_composition_i(self, obj):
         if obj.composition:

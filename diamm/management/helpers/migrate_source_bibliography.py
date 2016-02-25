@@ -1,3 +1,4 @@
+from diamm.management.helpers.utilities import convert_yn_to_boolean
 from diamm.models.migrate.legacy_bibliography_source import LegacyBibliographySource
 from diamm.models.data.bibliography import Bibliography
 from diamm.models.data.source import Source
@@ -19,12 +20,14 @@ def migrate_source_bibliography(entry):
     bibliography_pk = entry.bibliographykey
     bibliography = Bibliography.objects.get(pk=bibliography_pk)
     notes = entry.notes if entry.notes != 'none' else None  # enter None if the text value is 'none'
+    primarystudy = convert_yn_to_boolean(entry.primarystudy)
 
     d = {
         'source': source,
         'bibliography': bibliography,
         'notes': notes,
-        'pages': entry.page
+        'pages': entry.page,
+        'primary_study': primarystudy
     }
 
     sb = SourceBibliography(**d)

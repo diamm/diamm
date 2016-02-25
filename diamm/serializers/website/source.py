@@ -48,12 +48,14 @@ class AggregateComposerSerializer(serializers.HyperlinkedModelSerializer):
 class SourceBibliographySerializer(serializers.Serializer):
     class Meta:
         fields = ('pk',
-                  'prerendered')
+                  'prerendered',
+                  'primary_study')
 
     pk = serializers.ReadOnlyField()
     prerendered = serializers.ReadOnlyField(
         source='prerendered_sni'
     )
+    primary_study = serializers.ReadOnlyField()
 
 class SourcePageSerializer(serializers.Serializer):
     class Meta:
@@ -123,9 +125,8 @@ class SourceItemSerializer(serializers.Serializer):
         for composer in composers:
             # Unpack the composer values. See the Item Search Serializer for more info.
             full_name, pk, uncertain = composer.split("|")
-            print(pk)
-
             url = None
+
             if pk:
                 url = reverse('person-detail', kwargs={"pk": int(pk)}, request=req)
 
@@ -200,7 +201,8 @@ class SourceDetailSerializer(serializers.HyperlinkedModelSerializer):
                   'inventory',
                   'bibliography',
                   'cover_image_url',
-                  'pages')
+                  'pages',
+                  'manifest_url')
 
     notes = SourceNoteSerializer(
         source="public_notes",
@@ -228,4 +230,14 @@ class SourceDetailSerializer(serializers.HyperlinkedModelSerializer):
         source="solr_pages",
         many=True,
         required=False
+    )
+    manifest_url = serializers.HyperlinkedIdentityField(
+        view_name="source-manifest",
+        source="pk",
+        read_only=True
+    )
+    cover_image_url = serializers.HyperlinkedRelatedField(
+        view_name="image-serve-info",
+        source="cover_image.pk",
+        read_only=True
     )

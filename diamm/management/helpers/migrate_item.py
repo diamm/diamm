@@ -96,6 +96,7 @@ def migrate_item(entry):
         'layout': layout,
         # 'num_voices': entry.novoices  # TODO: Fix this in Filemaker to be Integers...
         'legacy_position_ms': entry.positionms,
+        'page_order': entry.positionpage
     }
 
     it = Item(**d)

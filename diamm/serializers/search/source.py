@@ -20,7 +20,7 @@ class SourceSearchSerializer(serializers.ModelSerializer):
                   'start_date_i',
                   'end_date_i',
                   'composers_ss',
-                  'cover_image_url_sni')
+                  'cover_image_i')
 
     # TODO: Find some way to refactor these into a base class for DRY
     type = serializers.SerializerMethodField()
@@ -48,7 +48,9 @@ class SourceSearchSerializer(serializers.ModelSerializer):
     start_date_i = serializers.IntegerField(source="start_date")
     end_date_i = serializers.IntegerField(source="end_date")
     date_statement_s = serializers.ReadOnlyField(source="date_statement")
-    cover_image_url_sni = serializers.ReadOnlyField(source="cover_image_url")
+    cover_image_i = serializers.ReadOnlyField(
+        source="cover_image.pk"
+    )
     surface_type_s = serializers.ReadOnlyField(source="surface_type")
     source_type_s = serializers.ReadOnlyField(source="type")
     composers_ss = serializers.ListField(

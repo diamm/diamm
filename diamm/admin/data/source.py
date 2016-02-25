@@ -91,7 +91,8 @@ class SourceAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     }
 
     related_search_fields = {
-        'archive': ('name', 'city__name', 'city__parent__name')
+        'archive': ('name', 'city__name', 'city__parent__name'),
+        'cover_image': ('location', 'legacy_filename', 'page__numeration')
     }
 
     def get_city(self, obj):

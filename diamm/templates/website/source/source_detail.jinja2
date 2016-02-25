@@ -4,6 +4,10 @@
     <title>Source: {{ content.display_name }}</title>
 {% endblock %}
 
+{% block head %}
+    <link rel="stylesheet" href="{{ static('javascripts/lib/diva.js/css/diva.min.css') }}" />
+{% endblock %}
+
 {% block body %}
     {% if user.is_staff %}
         <div class="row edit-tools">
@@ -23,16 +27,16 @@
         </div>
     </div>
     <div class="row">
-        <div class="sixteen columns source-tabs">
+        <div id="tabs" class="sixteen columns source-tabs">
             <ul>
-                <li><a href="#details">Details</a></li>
-                <li><a href="#inventory">Inventory</a></li>
-                <li><a href="#images">Images</a></li>
-                <li><a href="#bibliography">Bibliography</a></li>
+                <li><a class="tab active" href="#details">Details</a></li>
+                <li><a class="tab" href="#inventory">Inventory</a></li>
+                <li><a class="tab" href="#images">Images</a></li>
+                <li><a class="tab" href="#bibliography">Bibliography</a></li>
             </ul>
         </div>
     </div>
-    <div class="tab-container row">
+    <div id="tab-container" class="row">
         <div class="sixteen columns">
             {% include "website/source/source_detail_block.jinja2" %}
             {% include "website/source/source_inventory_block.jinja2" %}
@@ -40,4 +44,95 @@
             {% include "website/source/source_bibliography_block.jinja2" %}
         </div>
     </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ static('javascripts/lib/jquery/jquery.min.js') }}" type="application/javascript"></script>
+    <script src="{{ static('javascripts/lib/diva.js/js/diva.js') }}" type="application/javascript"></script>
+    <script src="{{ static('javascripts/lib/diva.js/js/utils.js') }}" type="application/javascript"></script>
+    <script src="{{ static('javascripts/lib/iiif-page-data.js') }}" type="application/javascript"></script>
+    <script src="{{ static('javascripts/lib/tabs.js') }}" type="application/javascript"></script>
+    <script type="application/javascript">
+        $(document).ready(function()
+        {
+            $("#tabs").tabs({
+                tabCallbacks: {'#images': function()
+                {
+                    var divaObj = $("#diva-wrapper").data('diva');
+                    if (!divaObj)
+                    {
+                        $('#diva-wrapper').diva({
+                            enableAutoTitle: false,
+                            objectData: "{{ content.manifest_url }}",
+                            enableIIIFPageData: true
+                        });
+                    }
+                }}
+            });
+
+            diva.Events.subscribe("VisiblePageDidChange", function(pageIndex, filename)
+            {
+            });
+
+
+            diva.Events.subscribe('IIIFPageDataDidLoad', function(data)
+            {
+                if (!data)
+                {
+                    return;
+                }
+
+                var itemDisplay = document.getElementById('image-item-listing');
+
+                while (itemDisplay.firstChild)
+                {
+                    itemDisplay.removeChild(itemDisplay.firstChild);
+                }
+
+                var items = data.resources;
+                var docFrag = document.createDocumentFragment();
+
+                for (var i = 0, ilen = items.length; i < ilen; ++i)
+                {
+                    var item = items[i];
+                    var entry = item.resource.chars;
+
+                    var parentDiv = document.createElement("div");
+                    docFrag.appendChild(parentDiv);
+
+                    var compositionPara = document.createElement("p");
+                    var compositionLink = document.createElement("a");
+                    compositionLink.href = entry.composition["@id"];
+                    compositionLink.innerHTML = entry.composition["name"];
+
+                    compositionPara.appendChild(compositionLink);
+                    parentDiv.appendChild(compositionPara);
+
+                    var composers = entry.composers;
+                    for (var j = 0, clen = composers.length; j < clen; j++)
+                    {
+                        var composer = composers[j];
+                        console.log(composer);
+
+                        var composerName = composer["name"];
+
+                        if (composer.uncertain === true)
+                        {
+                            composerName = "?" + composerName;
+                        }
+
+                        var composerPara = document.createElement("p");
+                        var composerLink = document.createElement("a");
+                        composerLink.href = composer["@id"];
+                        composerLink.innerHTML = composerName;
+
+                        composerPara.appendChild(composerLink);
+                        parentDiv.appendChild(composerPara);
+                    }
+                }
+
+                itemDisplay.appendChild(docFrag);
+            });
+        });
+    </script>
 {% endblock %}

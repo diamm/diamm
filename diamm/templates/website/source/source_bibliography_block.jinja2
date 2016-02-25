@@ -1,8 +1,15 @@
-<div class="tab-panel row" id="details">
+<div class="tab-panel row" id="bibliography">
     <div class="sixteen columns">
         <h4>Bibliography</h4>
         {% for entry in content.bibliography %}
-            <p>{{ entry.prerendered | safe }}</p>
+            <p>
+                {% if entry.primary_study %}
+                &Dagger;
+                {% endif %}
+                {{ entry.prerendered | safe }}
+            </p>
         {% endfor %}
+        <hr />
+        <p>&Dagger; <em>denotes primary source study</em></p>
     </div>
 </div>

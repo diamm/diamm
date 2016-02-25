@@ -22,7 +22,7 @@ from diamm.views.home import HomeView
 from diamm.views.auth import SessionAuth, SessionClose, AccountEmailSent, AccountUpdate
 from diamm.views.user import ProfileView
 from diamm.views.website.search import SearchView
-from diamm.views.website.source import SourceList, SourceDetail, SourceManifest
+from diamm.views.website.source import SourceList, SourceDetail, SourceManifest, SourceCanvasDetail, SourceCanvasAnnotationList
 from diamm.views.website.archive import ArchiveList, ArchiveDetail
 from diamm.views.website.city import CityList, CityDetail
 from diamm.views.website.country import CountryList, CountryDetail
@@ -30,6 +30,8 @@ from diamm.views.website.person import PersonList, PersonDetail, legacy_composer
 from diamm.views.website.organization import OrganizationList, OrganizationDetail
 from diamm.views.website.composition import CompositionList, CompositionDetail
 from diamm.views.website.story import StoryDetail
+from diamm.views.website.image import image_serve
+from diamm.views.website.canvas import CanvasData
 
 
 urlpatterns = [
@@ -49,7 +51,8 @@ urlpatterns = [
     url(r'^sources/$', SourceList.as_view(), name="source-list"),
     url(r'^sources/(?P<pk>[0-9]+)/$', SourceDetail.as_view(), name="source-detail"),
     url(r'^sources/(?P<pk>[0-9]+)/manifest/$', SourceManifest.as_view(), name="source-manifest"),
-
+    url(r'^sources/(?P<source_id>[0-9]+)/canvas/(?P<page_id>[0-9]+)/$', SourceCanvasDetail.as_view(), name="source-canvas-detail"),
+    url(r'^sources/(?P<source_id>[0-9]+)/list/(?P<page_id>[0-9]+)/$', SourceCanvasAnnotationList.as_view(), name="source-canvas-annotations"),
 
     url(r'^archives/$', ArchiveList.as_view(), name="archive-list"),
     url(r'^archives/(?P<pk>[0-9]+)/$', ArchiveDetail.as_view(), name="archive-detail"),
@@ -64,5 +67,8 @@ urlpatterns = [
     url(r'^composers/(?P<legacy_id>[0-9]+)/$', legacy_composer_redirect),
     url(r'^compositions/$', CompositionList.as_view(), name="composition-list"),
     url(r'^compositions/(?P<pk>[0-9]+)/$', CompositionDetail.as_view(), name="composition-detail"),
+
+    url(r'^images/(?P<pk>[0-9]+)/(?:(?P<region>.*)/(?P<size>.*)/(?P<rotation>.*)/default\.jpg)$', image_serve, name="image-serve"),
+    url(r'^images/(?P<pk>[0-9]+)/$', image_serve, name="image-serve-info")
 ]
 

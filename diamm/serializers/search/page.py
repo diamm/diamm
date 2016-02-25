@@ -23,7 +23,7 @@ class ImageChildSerializer(serpy.Serializer):
 
     def get_width_i(self, obj):
         if obj.iiif_response_cache:
-            d = ujson.dumps(obj.iiif_response_cache)
+            d = ujson.loads(obj.iiif_response_cache)
             if 'width' in d:
                 return d['width']
             else:
@@ -33,9 +33,9 @@ class ImageChildSerializer(serpy.Serializer):
 
     def get_height_i(self, obj):
         if obj.iiif_response_cache:
-            d = ujson.dumps(obj.iiif_response_cache)
-            if 'width' in d:
-                return d['width']
+            d = ujson.loads(obj.iiif_response_cache)
+            if 'height' in d:
+                return d['height']
             else:
                 return 0
         else:
@@ -67,10 +67,14 @@ class PageSearchSerializer(serpy.Serializer):
     numeration_ans = serpy.StrField(
         attr="numeration"
     )
+    sort_order_i = serpy.IntField(
+        attr="sort_order"
+    )
     source_i = serpy.IntField(
         attr="source.pk"
     )
     items_ii = serpy.MethodField()
+    images_ss = serpy.MethodField()
 
     def get_child_documents(self, obj):
         print('getting child documents')
@@ -78,6 +82,12 @@ class PageSearchSerializer(serpy.Serializer):
     def get_items_ii(self, obj):
         if obj.items.count() > 0:
             return list(obj.items.all().values_list('pk', flat=True))
+        else:
+            return []
+
+    def get_images_ss(self, obj):
+        if obj.images.count() > 0:
+            return list(obj.images.all().values_list('location', flat=True))
         else:
             return []
 

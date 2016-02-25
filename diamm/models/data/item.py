@@ -48,6 +48,7 @@ class Item(models.Model):
 
     legacy_position_ms = models.CharField(max_length=256, blank=True, null=True)  # transfer for ordering, but we should be able to find a better way to do this.
     source_order = models.IntegerField(blank=True, null=True)
+    page_order = models.IntegerField(default=0)
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

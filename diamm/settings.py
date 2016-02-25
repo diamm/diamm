@@ -23,6 +23,7 @@ UPLOAD_DIR = os.path.join(BASE_DIR, 'uploads')
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '@l%t#fyhaahycu$gct^u5ttya69v5n^00y48@)2mngdlel63g+'
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

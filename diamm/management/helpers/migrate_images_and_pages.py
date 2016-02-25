@@ -123,6 +123,7 @@ def convert_image(entry):
 
     d = {
         'numeration': folio,
+        'sort_order': entry.orderno,
         'source': source,
         'legacy_id': "legacy_image.{0}".format(entry.pk)
     }

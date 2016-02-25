@@ -5,4 +5,4 @@ def convert_yn_to_boolean(value):
     elif value == "N":
         return False
     else:
-        return value
+        return False

@@ -51,8 +51,7 @@ class Source(models.Model):
                                    closest decade, and then century. Examples: 1456, 1460, 1500.
                                    """)
     date_statement = models.CharField(max_length=512, blank=True, null=True)
-    cover_image_url = models.URLField(blank=True, null=True, help_text="""A IIIF Image URL to the cover image used for the source view""")
-
+    cover_image = models.ForeignKey("diamm_data.Image", blank=True, null=True)
     format = models.CharField(max_length=255, blank=True, null=True)
     measurements = models.CharField(max_length=512, blank=True, null=True)
     public = models.BooleanField(default=False, help_text="Source Description is Public")
@@ -65,8 +64,8 @@ class Source(models.Model):
     #                                   through="diamm_data.SourceCopyist",
     #                                   related_name="sources_copied")
 
-    bibliography = models.ManyToManyField("diamm_data.Bibliography",
-                                          through="diamm_data.SourceBibliography")
+    # bibliography = models.ManyToManyField("diamm_data.Bibliography",
+    #                                       through="diamm_data.SourceBibliography")
 
     # people = models.ManyToManyField("diamm_data.Person",
     #                                 through="diamm_data.SourcePerson",
@@ -152,15 +151,25 @@ class Source(models.Model):
     @property
     def solr_bibliography(self):
         # Grab a list of the ids for this record
-        ids = self.bibliography.values_list('id', flat=True).order_by('authors__bibliography_author__last_name').distinct()
-        id_list = ",".join([str(x) for x in ids])
+        bibl = self.bibliographies.select_related('bibliography').values_list('bibliography__id', 'primary_study').order_by('bibliography__authors__bibliography_author__last_name').distinct()
+        print(bibl)
+        id_list = ",".join([str(x[0]) for x in bibl])
         connection = pysolr.Solr(settings.SOLR['SERVER'])
         fq = ['type:bibliography', "{!terms f=pk}"+id_list]
         bibliography_results = connection.search("*:*", fq=fq, sort="authors_s asc", rows=10000)
-        if bibliography_results.docs:
-            return bibliography_results.docs
-        else:
+
+        if bibliography_results.hits == 0:
             return []
+
+        mapping = {}
+        for itm in bibl:
+            mapping[itm[0]] = itm[1]
+
+        for res in bibliography_results.docs:
+            if res['pk'] in mapping:
+                res['primary_study'] = mapping[res['pk']]
+
+        return bibliography_results.docs
 
     @property
     def solr_pages(self):

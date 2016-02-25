@@ -45,6 +45,17 @@ def __migrate_surface(legacy_surface):
     else:
         return Source.OTHER
 
+def format_measurements(page_measurements, units):
+    if not page_measurements:
+        return None
+    if page_measurements and not units:
+        return "{0}".format(page_measurements.strip())
+
+    if units and page_measurements.strip().endswith(units):
+        return "{0}".format(page_measurements.strip())
+    else:
+        return "{0} {1}".format(page_measurements.strip(), units)
+
 
 def migrate_source_to_source(legacy_source):
     print(term.green("\tMigrating Source {0} with ID {1}".format(legacy_source.shelfmark, legacy_source.pk)))
@@ -56,7 +67,7 @@ def migrate_source_to_source(legacy_source):
     start_date = __migrate_centuries_to_years(legacy_source.startdate, 1)
     end_date = __migrate_centuries_to_years(legacy_source.enddate)
     units = legacy_source.measurementunits if legacy_source.measurementunits else "mm"
-    measurements = "{0} {1}".format(legacy_source.pagemeasurements, units) if legacy_source.pagemeasurements else None
+    measurements = format_measurements(legacy_source.pagemeasurements, units)
 
     d = {
         'id': legacy_source.pk,
