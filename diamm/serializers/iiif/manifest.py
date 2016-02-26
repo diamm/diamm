@@ -6,10 +6,6 @@
 #    problems with loading insecure content (DIAMM is served over HTTPS, and
 #    most browsers will refuse to cross-load secure and insecure content). This also
 #    simplifies loading images into a canvas.
-
-
-
-
 import serpy
 import pysolr
 from django.conf import settings

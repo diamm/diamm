@@ -81,19 +81,13 @@ def migrate_source_to_source(legacy_source):
         'date_statement': legacy_source.dateofsource,
         'format': legacy_source.format,
         'measurements': measurements,
-        'public': convert_yn_to_boolean(legacy_source.webpermission)
+        'public': True,
+        'public_images': convert_yn_to_boolean(legacy_source.webpermission),
+        'inventory_provided': True  # set this as true now; will be switched later when the inventory is actually imported.
     }
 
     s = Source(**d)
     s.save()
-
-    # sm = {
-    #     'identifier': legacy_source.shelfmark,
-    #     'type': SourceIdentifier.SHELFMARK,
-    #     'source': s
-    # }
-    # shelfmark = SourceIdentifier(**sm)
-    # shelfmark.save()
 
     other_identifiers = [
         (SourceIdentifier.CCM, legacy_source.ccmabbrev),

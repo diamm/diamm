@@ -40,6 +40,28 @@
                     {{ note.note | markdown | safe }}
                 {% endfor %}
             {% endif %}
+
+            {% if content.sets %}
+                <h4>Related Sets</h4>
+                {% for set in content.sets %}
+                    <h5>{{ set.cluster_shelfmark }}</h5>
+                    <p>{{ set.set_type }}</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Source</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for source in set.sources %}
+                            <tr>
+                                <td><a href="{{ source.url }}">{{ source.display_name_s }}</a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% endfor %}
+            {% endif %}
         </div>
     </div>
     <div class="five columns">

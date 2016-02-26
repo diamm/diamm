@@ -34,6 +34,10 @@ class NotesInline(admin.TabularInline):
     model = SourceNote
     extra = 0
 
+    formfield_overrides = {
+        models.TextField: {'widget': AdminPagedownWidget}
+    }
+
 
 class URLsInline(admin.TabularInline):
     model = SourceURL
@@ -74,12 +78,11 @@ class CountryListFilter(admin.SimpleListFilter):
         return queryset.filter(archive__city__parent__pk=self.value())
 
 
-
 @admin.register(Source)
 class SourceAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     view_on_site = True
     save_on_top = True
-    list_display = ('shelfmark', 'name', 'get_city', 'get_archive', 'public')
+    list_display = ('shelfmark', 'name', 'get_city', 'get_archive', 'public', 'public_images')
     search_fields = ('identifiers__identifier', 'name', 'archive__name', 'archive__siglum', 'shelfmark')
     inlines = (IdentifiersInline, NotesInline, URLsInline,
                BibliographyInline, SourceRelationshipInline)

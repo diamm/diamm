@@ -60,31 +60,6 @@ class Source(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
-    # copyists = models.ManyToManyField("diamm_data.Person",
-    #                                   through="diamm_data.SourceCopyist",
-    #                                   related_name="sources_copied")
-
-    # bibliography = models.ManyToManyField("diamm_data.Bibliography",
-    #                                       through="diamm_data.SourceBibliography")
-
-    # people = models.ManyToManyField("diamm_data.Person",
-    #                                 through="diamm_data.SourcePerson",
-    #                                 related_name="related_sources")
-
-    # inventory = models.ManyToManyField("diamm_data.Composition",
-    #                                    through="diamm_data.Item")
-
-    # provenance = models.ManyToManyField("diamm_data.GeographicArea",
-    #                                     through="diamm_data.SourceProvenance",
-    #                                     through_fields=("source", "country"),
-    #                                     related_name="sources")
-
-    # This will be updated automatically whenever a new source is added.
-    # Since databases don't do natural sort and instead default to ASCII sort
-    # this will store the current alphanumeric sort order for all of the MSS
-    # allowing them to be sorted. As a bonus, it can be coupled with other sort
-    # options, e.g., `ordering = ['archive__archivename', 'sort_order']` would sort
-    # first by archive, and then by alphanumeric shelf mark.
     sort_order = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
@@ -115,16 +90,19 @@ class Source(models.Model):
     @property
     def composers(self):
         composer_names = []
-        for item in self.inventory.all():
+        for item in self.inventory.filter(source__id=self.pk).select_related('composition', 'aggregate_composer'):
             if not item.composition:
                 if item.aggregate_composer:
                     composer_names.append(item.aggregate_composer.full_name)
                     continue
-
-            if item.composition:
+            else:
                 for composer in item.composition.composers.all():
                     composer_names.append(composer.composer_name)
-        return list(set(composer_names))
+
+        composer_names = list(set(composer_names))
+        composer_names.sort()
+
+        return composer_names
 
     @property
     def compositions(self):
@@ -152,7 +130,6 @@ class Source(models.Model):
     def solr_bibliography(self):
         # Grab a list of the ids for this record
         bibl = self.bibliographies.select_related('bibliography').values_list('bibliography__id', 'primary_study').order_by('bibliography__authors__bibliography_author__last_name').distinct()
-        print(bibl)
         id_list = ",".join([str(x[0]) for x in bibl])
         connection = pysolr.Solr(settings.SOLR['SERVER'])
         fq = ['type:bibliography', "{!terms f=pk}"+id_list]
@@ -182,4 +159,17 @@ class Source(models.Model):
         else:
             return []
 
+    @property
+    def solr_sets(self):
+        connection = pysolr.Solr(settings.SOLR['SERVER'])
+        fq = ['type:set', 'sources_ii:{0}'.format(self.pk)]
+        fl = ["id", "pk", "cluster_shelfmark_s", "sources_ii", "set_type_s"]
+        sort = ["shelfmark_ans asc"]
+
+        set_results = connection.search("*:*", fq=fq, fl=fl, sort=sort, rows=10000)
+
+        if set_results.hits > 0:
+            return set_results.docs
+        else:
+            return []
 

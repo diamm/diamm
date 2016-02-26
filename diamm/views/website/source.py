@@ -32,9 +32,7 @@ class SourceDetail(generics.RetrieveAPIView):
 
     def get_queryset(self):
         # Optimization for retrieving
-        prefetch = ['inventory__composition__composers__composer__notes',
-                    'inventory', 'notes',
-                    'bibliographies__bibliography']
+        prefetch = ['notes']
         queryset = Source.objects.all()
         queryset = queryset.select_related('archive__city__parent').prefetch_related(*prefetch)
         return queryset
@@ -47,6 +45,9 @@ class SourceManifest(generics.GenericAPIView):
         conn = pysolr.Solr(settings.SOLR['SERVER'])
         res = conn.search("*:*",
                           fq=["type:source", "pk:{0}".format(pk)])
+
+        if res.hits == 0:
+            return response.Response(status=status.HTTP_404_NOT_FOUND)
 
         manifest = SourceManifestSerializer(res.docs[0],
                                             context={"request": request})

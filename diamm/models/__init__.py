@@ -24,6 +24,8 @@ from diamm.models.migrate.legacy_image import LegacyImage
 from diamm.models.migrate.legacy_secondary_image import LegacySecondaryImage
 from diamm.models.migrate.legacy_item_image import LegacyItemImage
 from diamm.models.migrate.legacy_provenance import LegacyProvenance
+from diamm.models.migrate.legacy_set import LegacySet
+from diamm.models.migrate.legacy_source_set import LegacySourceSet
 
 
 from diamm.models.data.legacy_id import LegacyId  # Yes, this belongs here. Used to track old PKs
@@ -55,6 +57,8 @@ from diamm.models.data.page_condition import PageCondition
 from diamm.models.data.image import Image
 from diamm.models.data.image_note import ImageNote
 from diamm.models.data.image_type import ImageType
+from diamm.models.data.set import Set
+from diamm.models.data.set_bibliography import SetBibliography
 
 from diamm.models.data.bibliography import Bibliography
 from diamm.models.data.bibliography_author import BibliographyAuthor

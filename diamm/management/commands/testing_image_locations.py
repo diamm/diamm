@@ -22,8 +22,7 @@ def _image_data_request(location):
 class Command(BaseCommand):
     def handle(self, *args, **options):
         imgs = Image.objects.filter(public=True,
-                                    location__isnull=False,
-                                    iiif_response_cache__isnull=True).only('legacy_filename', 'location')
+                                    location__isnull=True).only('legacy_filename', 'location')
         for img in imgs:
             # all filenames are .jp2
             fn = "{0}.jp2".format(img.legacy_filename)

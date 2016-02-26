@@ -17,6 +17,7 @@ from diamm.management.helpers import migrate_item
 from diamm.management.helpers import migrate_images_and_pages
 from diamm.management.helpers import migrate_source_provenance
 from diamm.management.helpers import migrate_users
+from diamm.management.helpers import migrate_sets
 
 from diamm.models.data.page_condition import PageCondition
 from diamm.models.data.image_type import ImageType
@@ -68,8 +69,14 @@ class Command(BaseCommand):
         # migrate_source_relationship.migrate()
         # migrate_composition.migrate()
         # migrate_bibliography.migrate()
-        migrate_source_bibliography.migrate()
+        # migrate_source_bibliography.migrate()
         # migrate_composition_bibliography.migrate()
         # migrate_item.migrate()
-        # migrate_images_and_pages.migrate()
-        # migrate_users.migrate()
+        migrate_images_and_pages.migrate()
+        migrate_users.migrate()
+        migrate_sets.migrate()
+
+        call_command('testing_image_locations')
+
+        print('reindexing')
+        call_command('reindex_all')

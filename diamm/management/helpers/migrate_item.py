@@ -31,6 +31,8 @@ def migrate_item(entry):
         print(term.red('\t\tMarking the inventory as not provided.'))
         source.inventory_provided = False
         source.save()
+        # Prevent the migration from creating a new item for this record.
+        return None
 
     composition = None
     aggregate_composer = None
@@ -96,7 +98,7 @@ def migrate_item(entry):
         'layout': layout,
         # 'num_voices': entry.novoices  # TODO: Fix this in Filemaker to be Integers...
         'legacy_position_ms': entry.positionms,
-        'page_order': entry.positionpage
+        'page_order': entry.positionpage if entry.positionpage else 0
     }
 
     it = Item(**d)

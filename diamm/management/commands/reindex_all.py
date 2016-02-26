@@ -20,6 +20,8 @@ from diamm.models.data.item import Item
 from diamm.serializers.search.item import ItemSearchSerializer
 from diamm.models.data.page import Page
 from diamm.serializers.search.page import PageSearchSerializer
+from diamm.models.data.set import Set
+from diamm.serializers.search.set import SetSearchSerializer
 
 term = Terminal()
 
@@ -60,59 +62,78 @@ class Command(BaseCommand):
                 del docs
                 docs = []
 
+        # ensure any leftovers are added
+        self.solrconn.add(docs)
         pbar.finish()
 
     def _index_sources(self):
         self.stdout.write(term.blue('Indexing Sources'))
-        objs = Source.objects.all()
+        self.solrconn.delete(q="type:source")
+        objs = Source.objects.all().order_by('pk')
         self._index(objs, 'shelfmark', SourceSearchSerializer)
 
     def _index_inventories(self):
         self.stdout.write(term.blue('Indexing Inventories'))
+        self.solrconn.delete(q="type:item")
         objs = Item.objects.all()
         self._index(objs, '', ItemSearchSerializer)
 
     def _index_archives(self):
         self.stdout.write(term.blue('Indexing Archives'))
+        self.solrconn.delete(q="type:archive")
         objs = Archive.objects.all()
         self._index(objs, 'name', ArchiveSearchSerializer)
 
     def _index_people(self):
         self.stdout.write(term.blue("Indexing People"))
+        self.solrconn.delete(q="type:person")
         objs = Person.objects.all()
         self._index(objs, 'full_name', PersonSearchSerializer)
 
     def _index_compositions(self):
         self.stdout.write(term.blue("Indexing Compositions"))
+        self.solrconn.delete(q="type:composition")
         objs = Composition.objects.all()
         self._index(objs, 'name', CompositionSearchSerializer)
 
     def _index_organizations(self):
         self.stdout.write(term.blue("Indexing Organizations"))
+        self.solrconn.delete(q="type:organization")
         objs = Organization.objects.all()
         self._index(objs, 'name', OrganizationSearchSerializer)
 
     def _index_bibliography(self):
         self.stdout.write(term.blue("Indexing Bibliography"))
+        self.solrconn.delete(q="type:bibliography")
         objs = Bibliography.objects.all()
         self._index(objs, 'title', BibliographySearchSerializer)
 
     def _index_pages(self):
         self.stdout.write(term.blue("Indexing Pages"))
+        self.solrconn.delete(q="type:page")
         objs = Page.objects.all()
         self._index(objs, 'numeration', PageSearchSerializer)
+
+    def _index_sets(self):
+        self.stdout.write(term.blue("Indexing Sets"))
+        self.solrconn.delete(q="type:set")
+        self.solrconn.delete(q="type:child_source")
+        objs = Set.objects.all()
+        self._index(objs, 'cluster_shelfmark', SetSearchSerializer)
 
     def handle(self, *args, **kwargs):
         self.solrconn = pysolr.Solr(settings.SOLR['SERVER'])
 
         with term.fullscreen():
-            # self._index_sources()
-            # self._index_inventories()
-            # self._index_archives()
-            # self._index_people()
-            # self._index_organizations()
-            # self._index_compositions()
-            # self._index_bibliography()
+            self._index_sources()
+            self._index_inventories()
+            self._index_archives()
+            self._index_people()
+            self._index_organizations()
+            self._index_compositions()
+            self._index_bibliography()
             self._index_pages()
+            self._index_sets()
+
             raw_input = input('Done indexing. Press any key to exit.')
 

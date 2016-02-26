@@ -76,9 +76,6 @@ class PageSearchSerializer(serpy.Serializer):
     items_ii = serpy.MethodField()
     images_ss = serpy.MethodField()
 
-    def get_child_documents(self, obj):
-        print('getting child documents')
-
     def get_items_ii(self, obj):
         if obj.items.count() > 0:
             return list(obj.items.all().values_list('pk', flat=True))

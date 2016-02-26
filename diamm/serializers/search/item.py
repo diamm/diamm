@@ -18,6 +18,12 @@ class ItemSearchSerializer(serpy.Serializer):
     pages_ii = serpy.MethodField()
     composition_s = serpy.MethodField()
     composition_i = serpy.MethodField()
+    source_attribution_s = serpy.StrField(
+        attr="source_attribution"
+    )
+    source_incipit_s = serpy.StrField(
+        attr="source_incipit"
+    )
 
     folio_start_s = serpy.StrField(
         attr="folio_start",

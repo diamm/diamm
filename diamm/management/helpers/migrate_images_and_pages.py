@@ -179,6 +179,11 @@ def convert_secondary_image(entry):
 def attach_item_to_page(entry):
     print(term.green("\tAttaching item {0} to image {1} (relationship {2})".format(entry.itemkey, entry.imagekey, entry.pk)))
     item_pk = int(entry.itemkey)
+
+    # These items have an image attached to it, and they shouldn't really. Skip them.
+    if item_pk in (92020,):
+        return None
+
     item = Item.objects.get(pk=item_pk)
 
     image_pk = int(entry.imagekey)

@@ -1,5 +1,11 @@
 <div class="tab-panel row" id="inventory">
     <h2>Inventory</h2>
+    {% if not content.inventory_provided %}
+        <p>
+            <em>As this source dates from after 1550, we have not provided a detailed inventory.
+            If you would like to contribute one, please contact our editorial team.</em>
+        </p>
+    {% endif %}
     <div class="sixteen columns">
         <table>
             <thead>
@@ -13,14 +19,22 @@
             <tbody>
             {% for item in content.inventory %}
                 <tr>
-                    <td><a href="{{ item.url }}">{{ item.composition }}</a></td>
-                    <td>
-                        {% for composer in item.composers %}
-                            {{ "?" if composer.uncertain else "" }}<a href="{{ composer.url }}">{{ composer.full_name }}</a>
-                        {% endfor %}
-                    </td>
-                    <td>{{ item.folio_start }}</td>
-                    <td>{{ item.folio_end }}</td>
+                    {% if item.composition %}
+                        <td><a href="{{ item.url }}">{{ item.composition }}</a></td>
+                        <td>
+                            {% for composer in item.composers %}
+                                {{ "?" if composer.uncertain else "" }}<a href="{{ composer.url }}">{{ composer.full_name }}</a>
+                            {% endfor %}
+                        </td>
+                        <td>{{ item.folio_start }}</td>
+                        <td>{{ item.folio_end }}</td>
+                    {% else %}
+                        <td colspan="4">Works by
+                            {% for composer in item.composers %}
+                                {{ "?" if composer.uncertain else "" }}<a href="{{ composer_url }}">{{ composer.full_name }}</a>
+                            {% endfor %}
+                        </td>
+                    {% endif %}
                 </tr>
             {% endfor %}
             </tbody>

@@ -1,4 +1,3 @@
-from django.core.urlresolvers import reverse
 from rest_framework import serializers
 from diamm.models.data.person import Person
 from diamm.models.data.person_note import PersonNote
