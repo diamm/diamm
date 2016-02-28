@@ -150,6 +150,8 @@ class SourceIdentifierSerializer(ContextSerializer):
 class SourceListSerializer(ContextSerializer):
     pk = serpy.IntField()
     url = serpy.MethodField()
+    display_name = serpy.StrField()
+    shelfmark = serpy.StrField()
 
     def get_url(self, obj):
         return reverse('source-detail',
@@ -176,7 +178,6 @@ class SourceDetailSerializer(ContextSerializer):
     inventory = serpy.MethodField()
     archive = serpy.MethodField()
     sets = serpy.MethodField()
-
 
     bibliography = SourceBibliographySerializer(
         attr="solr_bibliography",
