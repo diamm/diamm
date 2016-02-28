@@ -59,6 +59,11 @@ from diamm.models.data.image_note import ImageNote
 from diamm.models.data.image_type import ImageType
 from diamm.models.data.set import Set
 from diamm.models.data.set_bibliography import SetBibliography
+from diamm.models.data.voice import Voice
+from diamm.models.data.voice_type import VoiceType
+from diamm.models.data.mensuration import Mensuration
+from diamm.models.data.clef import Clef
+from diamm.models.data.text import Text
 
 from diamm.models.data.bibliography import Bibliography
 from diamm.models.data.bibliography_author import BibliographyAuthor
