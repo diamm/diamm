@@ -1,28 +1,7 @@
 from rest_framework import generics
 from rest_framework import response
 from rest_framework import status
-from diamm.models.data.source import Source
-from diamm.serializers.website.source import SourceListSerializer
 from diamm.helpers.solr_pagination import SolrPaginator, SolrResultException
-
-# class Facet:
-#     def serialize(self):
-#         fields = OrderedDict(self.fields)
-#         return {
-#             "name": self.name,
-#             "fields": fields
-#         }
-#
-#
-# class TypeFilterFacet(Facet):
-#     name = "Type"
-#     fields = (
-#         ('all', 'All'),
-#         (settings.SOLR_SOURCE_TYPE, 'Source'),
-#         ('person', 'Person'),
-#         ('composition', 'Composition'),
-#         ('place', 'Place'),
-#     )
 
 
 class SearchView(generics.GenericAPIView):
