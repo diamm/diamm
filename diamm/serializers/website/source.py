@@ -46,6 +46,12 @@ class SourceBibliographySerializer(ContextDictSerializer):
         attr="prerendered_sni"
     )
     primary_study = serpy.BoolField()
+    pages = serpy.StrField(
+        required=False
+    )
+    notes = serpy.StrField(
+        required=False
+    )
 
 
 class SourceInventorySerializer(ContextDictSerializer):
@@ -138,6 +144,10 @@ class SourceNoteSerializer(ContextSerializer):
     note_type = serpy.StrField()
 
 
+class SourceNotationsSerializer(ContextSerializer):
+    name = serpy.StrField()
+
+
 class SourceIdentifierSerializer(ContextSerializer):
     identifier = serpy.StrField()
     type = serpy.IntField()
@@ -185,6 +195,11 @@ class SourceDetailSerializer(ContextSerializer):
     )
     identifiers = SourceIdentifierSerializer(
         attr="identifiers.all",
+        call=True,
+        many=True
+    )
+    notations = SourceNotationsSerializer(
+        attr="notations.all",
         call=True,
         many=True
     )

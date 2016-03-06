@@ -7,6 +7,9 @@
                 &Dagger;
                 {% endif %}
                 {{ entry.prerendered | safe }}
+                {% if entry.pages %}
+                pp. {{ entry.pages }}.
+                {% endif %}
             </p>
         {% endfor %}
         <hr />

@@ -413,6 +413,19 @@ class Secondaryimage(models.Model):
         db_table = 'SecondaryImage'
 
 
+class Set(models.Model):
+    setkey = models.IntegerField(db_column='setKey', primary_key=True)  # Field name made lowercase.
+    clustershelfmark = models.TextField(db_column='clusterShelfMark', blank=True, null=True)  # Field name made lowercase.
+    description = models.TextField(blank=True, null=True)
+    bibliography = models.TextField(blank=True, null=True)
+    settypekey = models.DecimalField(db_column='setTypeKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    g_key = models.DecimalField(db_column='g_Key', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'Set'
+
+
 class Source(models.Model):
     ccmabbrev = models.TextField(db_column='CCMabbrev', blank=True, null=True)  # Field name made lowercase.
     completems = models.TextField(db_column='completeMS', blank=True, null=True)  # Field name made lowercase.
@@ -488,6 +501,14 @@ class SourceprovenanceIs(models.Model):
         db_table = 'SourceProvenance_IS'
 
 
+class SourcesetIs(models.Model):
+    sourcekey = models.DecimalField(db_column='sourceKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    setkey = models.DecimalField(db_column='setKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    sourcesetkey = models.IntegerField(db_column='sourceSetKey', primary_key=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'SourceSet_IS'
 
 
 class SourceCopyistIs(models.Model):
@@ -512,6 +533,50 @@ class SourcePersonIs(models.Model):
     class Meta:
         managed = False
         db_table = 'Source_Person_IS'
+
+
+class Text(models.Model):
+    textkey = models.IntegerField(db_column='textKey', primary_key=True)  # Field name made lowercase.
+    genre = models.TextField(db_column='Genre', blank=True, null=True)  # Field name made lowercase.
+    itemkey = models.DecimalField(db_column='itemKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    voicepart = models.TextField(blank=True, null=True)
+    clef = models.TextField(blank=True, null=True)
+    folios = models.TextField(blank=True, null=True)
+    sourcekey = models.DecimalField(db_column='sourceKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    incipitfilename = models.TextField(blank=True, null=True)
+    positiononpage = models.TextField(db_column='positiononPage', blank=True, null=True)  # Field name made lowercase.
+    imagekey = models.TextField(db_column='imageKey', blank=True, null=True)  # Field name made lowercase.
+    global_field = models.DecimalField(db_column='Global', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase. Field renamed because it was a Python reserved word.
+    orderno = models.DecimalField(db_column='orderNo', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    fulltermtext_authority = models.TextField(db_column='fulltermText_authority', blank=True, null=True)  # Field name made lowercase.
+    alclefkey = models.DecimalField(db_column='alClefKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    alvoicekey = models.DecimalField(db_column='alVoiceKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    editorial_voicepart = models.TextField(blank=True, null=True)
+    g_key = models.DecimalField(db_column='g_Key', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    canon = models.TextField(blank=True, null=True)
+    almensurationkey = models.DecimalField(db_column='alMensurationKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    completelibraryinfo = models.TextField(db_column='completeLibraryInfo', blank=True, null=True)  # Field name made lowercase.
+    fullitemtext_copy = models.TextField(db_column='fullItemText_Copy', blank=True, null=True)  # Field name made lowercase.
+    standardspellingfulltext_copy = models.TextField(db_column='standardspellingFulltext_Copy', blank=True, null=True)  # Field name made lowercase.
+    standardspellingincipit_copy = models.TextField(db_column='standardspellingIncipit_Copy', blank=True, null=True)  # Field name made lowercase.
+    textincipit_copy = models.TextField(db_column='textincipit_Copy', blank=True, null=True)  # Field name made lowercase.
+    languagegathered = models.TextField(db_column='languageGathered', blank=True, null=True)  # Field name made lowercase.
+    mensuration = models.TextField(blank=True, null=True)
+    signature = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'Text'
+
+
+class TextlanguageIs(models.Model):
+    allanguagekey = models.DecimalField(db_column='alLanguageKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    textkey = models.DecimalField(db_column='textKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    textlanguagekey = models.IntegerField(db_column='textLanguageKey', primary_key=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'TextLanguage_IS'
 
 
 class Alaffiliation(models.Model):

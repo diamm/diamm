@@ -23,7 +23,8 @@
                         <td><a href="{{ item.url }}">{{ item.composition }}</a></td>
                         <td>
                             {% for composer in item.composers %}
-                                {{ "?" if composer.uncertain else "" }}<a href="{{ composer.url }}">{{ composer.full_name }}</a>
+                                {{ "? " if composer.uncertain else "" }}<a href="{{ composer.url }}">{{ composer.full_name }}</a>
+                                {%- if not loop.last -%}, {%- endif -%}
                             {% endfor %}
                         </td>
                         <td>{{ item.folio_start }}</td>
@@ -32,6 +33,7 @@
                         <td colspan="4">Works by
                             {% for composer in item.composers %}
                                 {{ "?" if composer.uncertain else "" }}<a href="{{ composer_url }}">{{ composer.full_name }}</a>
+                                {%- if not loop.last -%}, {%- endif -%}
                             {% endfor %}
                         </td>
                     {% endif %}

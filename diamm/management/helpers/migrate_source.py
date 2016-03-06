@@ -2,7 +2,9 @@ import re
 import psycopg2 as psql
 from django.conf import settings
 from diamm.models.migrate.legacy_source import LegacySource
+from diamm.models.migrate.legacy_source_notation import LegacySourceNotation
 from diamm.models.data.source import Source
+from diamm.models.data.notation import Notation
 from diamm.management.helpers.utilities import convert_yn_to_boolean
 from diamm.models.data.archive import Archive
 from diamm.models.data.source_identifier import SourceIdentifier
@@ -44,6 +46,7 @@ def __migrate_surface(legacy_surface):
         return Source.SLATE
     else:
         return Source.OTHER
+
 
 def format_measurements(page_measurements, units):
     if not page_measurements:
@@ -145,6 +148,20 @@ def migrate_source_to_source(legacy_source):
             note = SourceNote(**d)
             note.save()
 
+
+def attach_notation_to_source(entry):
+    print(term.green("\tAttaching notation type {0} to source {1}, entry {2}".format(
+        entry.alnotationtypekey,
+        entry.sourcekey,
+        entry.pk
+    )))
+
+    source = Source.objects.get(pk=int(entry.sourcekey))
+    notation = Notation.objects.get(pk=int(entry.alnotationtypekey))
+    source.notations.add(notation)
+    source.save()
+
+
 def update_table():
     print(term.yellow("\tUpdating the ID sequences for the Django Source Table"))
     sql_max = "SELECT MAX(id) AS maxid FROM diamm_data_source;"
@@ -165,10 +182,14 @@ def update_table():
 
 def migrate():
     print(term.blue('Migrating Sources'))
-    empty_source()
-    legacy_sources = LegacySource.objects.all()
-    for lsource in legacy_sources:
-        migrate_source_to_source(lsource)
+    # empty_source()
 
-    update_table()
+    # for entry in LegacySource.objects.all():
+    #     migrate_source_to_source(entry)
+
+    # update_table()
+
+    for entry in LegacySourceNotation.objects.all():
+        attach_notation_to_source(entry)
+
     print(term.blue('Done migrating Sources'))

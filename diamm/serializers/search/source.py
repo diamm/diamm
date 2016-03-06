@@ -38,6 +38,8 @@ class SourceSearchSerializer(serpy.Serializer):
     )
 
     identifiers_ss = serpy.MethodField()
+    notations_ss = serpy.MethodField()
+
     sets_ii = serpy.MethodField()
     notes_txt = serpy.MethodField()
 
@@ -61,6 +63,12 @@ class SourceSearchSerializer(serpy.Serializer):
     def get_identifiers_ss(self, obj):
         if obj.identifiers.count() > 0:
             return list(obj.identifiers.all().values_list('identifier', flat=True))
+        else:
+            return []
+
+    def get_notations_ss(self, obj):
+        if obj.notations.count() > 0:
+            return list(obj.notations.all().values_list('name', flat=True))
         else:
             return []
 

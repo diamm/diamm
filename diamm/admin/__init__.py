@@ -20,3 +20,5 @@ from diamm.admin.data.item import ItemAdmin
 from diamm.admin.data.source_copyist import SourceCopyistAdmin
 from diamm.admin.diamm_user import UserAdmin
 from diamm.admin.data.set import SetAdmin
+from diamm.admin.data.text import TextAdmin
+from diamm.admin.data.voice import VoiceAdmin

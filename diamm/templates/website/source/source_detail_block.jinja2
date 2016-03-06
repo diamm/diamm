@@ -33,6 +33,18 @@
                         </td>
                     </tr>
                 {% endif %}
+                {% if content.notations %}
+                    <tr>
+                        <th>Notations</th>
+                        <td>
+                            <ul class="other-identifiers">
+                                {% for notation in content.notations %}
+                                    <li>{{ notation.name }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                {% endif %}
             </table>
             {% if content.notes %}
                 {% for note in content.notes %}

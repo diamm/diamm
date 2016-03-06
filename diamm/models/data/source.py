@@ -56,6 +56,7 @@ class Source(models.Model):
     measurements = models.CharField(max_length=512, blank=True, null=True)
     public = models.BooleanField(default=False, help_text="Source Description is Public")
     public_images = models.BooleanField(default=False, help_text="Source Images are Public")
+    notations = models.ManyToManyField("diamm_data.Notation")
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -129,7 +130,7 @@ class Source(models.Model):
     @property
     def solr_bibliography(self):
         # Grab a list of the ids for this record
-        bibl = self.bibliographies.select_related('bibliography').values_list('bibliography__id', 'primary_study').order_by('bibliography__authors__bibliography_author__last_name').distinct()
+        bibl = self.bibliographies.select_related('bibliography').values_list('bibliography__id', 'primary_study', 'pages', 'notes').order_by('bibliography__authors__bibliography_author__last_name').distinct()
         id_list = ",".join([str(x[0]) for x in bibl])
         connection = pysolr.Solr(settings.SOLR['SERVER'])
         fq = ['type:bibliography', "{!terms f=pk}"+id_list]
@@ -140,11 +141,19 @@ class Source(models.Model):
 
         mapping = {}
         for itm in bibl:
-            mapping[itm[0]] = itm[1]
+            additional_info = [
+                itm[1],      # primary study
+                itm[2],      # pages
+                itm[3]       # notes
+            ]
+
+            mapping[itm[0]] = additional_info
 
         for res in bibliography_results.docs:
             if res['pk'] in mapping:
-                res['primary_study'] = mapping[res['pk']]
+                res['primary_study'] = mapping[res['pk']][0]
+                res['pages'] = mapping[res['pk']][1]
+                res['notes'] = mapping[res['pk']][2]
 
         return bibliography_results.docs
 

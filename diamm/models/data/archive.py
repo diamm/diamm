@@ -1,3 +1,4 @@
+import os
 from django.db import models
 from django.conf import settings
 
@@ -27,7 +28,10 @@ class Archive(models.Model):
     telephone = models.CharField(max_length=128, blank=True, null=True)
     website = models.CharField(max_length=1024, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
-    logo = models.FilePathField(settings.UPLOAD_DIR, blank=True, null=True)
+    logo = models.FilePathField(
+            os.path.join(settings.MEDIA_ROOT, 'archives'),
+            blank=True, null=True
+    )
     copyright_statement = models.TextField(blank=True, null=True)
 
     created = models.DateTimeField(auto_now_add=True)

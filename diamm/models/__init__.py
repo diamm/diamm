@@ -26,6 +26,10 @@ from diamm.models.migrate.legacy_item_image import LegacyItemImage
 from diamm.models.migrate.legacy_provenance import LegacyProvenance
 from diamm.models.migrate.legacy_set import LegacySet
 from diamm.models.migrate.legacy_source_set import LegacySourceSet
+from diamm.models.migrate.legacy_clef import LegacyClef
+from diamm.models.migrate.legacy_text import LegacyText
+from diamm.models.migrate.legacy_text_language import LegacyTextLanguage
+from diamm.models.migrate.legacy_notation import LegacyNotation
 
 
 from diamm.models.data.legacy_id import LegacyId  # Yes, this belongs here. Used to track old PKs
@@ -64,6 +68,7 @@ from diamm.models.data.voice_type import VoiceType
 from diamm.models.data.mensuration import Mensuration
 from diamm.models.data.clef import Clef
 from diamm.models.data.text import Text
+from diamm.models.data.notation import Notation
 
 from diamm.models.data.bibliography import Bibliography
 from diamm.models.data.bibliography_author import BibliographyAuthor
