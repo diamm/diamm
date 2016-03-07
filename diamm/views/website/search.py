@@ -16,6 +16,7 @@ class SearchView(generics.GenericAPIView):
             return response.Response({})
 
         type_filt = request.GET.get('type', None)
+
         if type_filt:
             # Translate all to a wildcard.
             if type_filt == "all":

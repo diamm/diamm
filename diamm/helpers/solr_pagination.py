@@ -119,11 +119,15 @@ class SolrPage:
         # Takes a list of facets ['foo', 1, 'bar', 2] and converts them to
         # {'foo': 1, 'bar': 2} using some stupid python iterator tricks.
         facets = self.result.facets['facet_fields']['type']
+
         if not facets:
             return {}
 
         i = iter(facets)
-        return OrderedDict(sorted(zip(i, i), key=lambda f: f[0]))
+        # Since Solr doesn't filter by facet _value_, we remove some of the values that we don't want
+        # to display in the search results.
+        filtered_facets = [k for k in sorted(zip(i, i), key=lambda f: f[0]) if k[0] in settings.SOLR['SEARCH_TYPES']]
+        return OrderedDict(filtered_facets)
 
     @property
     def object_list(self):
@@ -132,6 +136,10 @@ class SolrPage:
         # Generate fully qualified URLs for the resources in Solr when the results are returned.
         # This way we don't have to store the full URL in Solr.
         for obj in docs:
+            # Filter out any result objects that are not of the type we want to display
+            if obj['type'] not in settings.SOLR['SEARCH_TYPES']:
+                continue
+
             url = reverse("{0}-detail".format(obj['type']),
                           kwargs={'pk': obj['pk']},
                           request=self.paginator.request)

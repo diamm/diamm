@@ -62,8 +62,8 @@ def migrate_text_and_voice(entry):
             text.incipit = entry.standardspellingincipit_copy
             text.save()
 
-            v.standard_text = text
-            v.save()
+        v.standard_text = text
+        v.save()
 
 
 def migrate():

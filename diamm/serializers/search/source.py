@@ -13,7 +13,8 @@ class SourceSearchSerializer(serpy.Serializer):
         attr='shelfmark'
     )
     name_s = serpy.StrField(
-        attr="name"
+        attr="name",
+        required=False
     )
     display_name_s = serpy.StrField(
         attr="display_name"
@@ -22,16 +23,20 @@ class SourceSearchSerializer(serpy.Serializer):
         attr="archive.name"
     )
     surface_type_s = serpy.StrField(
-        attr="surface_type"
+        attr="surface_type",
+        required=False
     )
     source_type_s = serpy.StrField(
-        attr="type"
+        attr="type",
+        required=False
     )
     date_statement_s = serpy.StrField(
-        attr="date_statement"
+        attr="date_statement",
+        required=False
     )
     measurements_s = serpy.StrField(
-        attr="measurements"
+        attr="measurements",
+        required=False
     )
     inventory_provided_s = serpy.BoolField(
         attr="inventory_provided"

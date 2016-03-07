@@ -5,44 +5,37 @@
 {% endblock %}
 
 {% block body %}
-    <div class="row">
-        {% if content.types %}
-            <div class="row type-filter-bar">
-                <div class="col-md-push-1 col-md-10 type-filter">
-                    <span class="filter-label">Filter by: </span>
-                    <ul class="nav nav-pills">
-                        <li>
-                            {% with type="all", count=content.count, params=request.GET %}
+    {% if content.types %}
+        <div class="type-filter-bar">
+            <div class="type-filter">
+                <span class="filter-label">Filter by: </span>
+                <ul>
+                    <li>
+                        {# "All" is a special value. #}
+                        {% with type="all", count=content.count, params=request.GET %}
                             {% include 'website/search/results/type_links.jinja2' %}
-                            {% endwith %}
-                        </li>
+                        {% endwith %}
+                    </li>
                     {% for type, num in content.types.items() %}
-                        <li>
-                            {% with type=type, count=num, params=request.GET %}
-                            {% include 'website/search/results/type_links.jinja2' %}
-                            {% endwith %}
-                        </li>
+                    <li>
+                        {% with type=type, count=num, params=request.GET %}
+                        {% include 'website/search/results/type_links.jinja2' %}
+                        {% endwith %}
+                    </li>
                     {% endfor %}
-                    </ul>
-                </div>
+                </ul>
             </div>
-        {% endif %}
-    </div>
+        </div>
+    {% endif %}
+
     {% if content.results %}
-        <div class="row">
-            <div class="col-md-push-1 col-md-10">
-                {% for result in content.results %}
-                    <div class="row search-result">
-                        {% include 'website/search/results/result.jinja2' %}
-                    </div>
-                {% endfor %}
-            </div>
+        {% for result in content.results %}
+        <div class="search-result">
+            {% include 'website/search/results/result.jinja2' %}
         </div>
-        <div class="row">
-            <div class="col-md-12">
-                {% include "website/blocks/browse_paginator.jinja2" %}
-            </div>
-        </div>
+        {% endfor %}
+
+        {% include "website/blocks/browse_paginator.jinja2" %}
     {% else %}
         {% if request.GET.q %}
             <p>No results were found.</p>
@@ -50,8 +43,6 @@
             <p>Type your search above.</p>
         {% endif %}
     {% endif %}
-
-    </div>
 {% endblock %}
 
 {% block scripts %}

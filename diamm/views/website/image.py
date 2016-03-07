@@ -18,7 +18,7 @@ def image_serve(request, pk, region=None, size=None, rotation=None, *args, **kwa
         provide HTTPS, we will get problems with browsers not loading insecure content.
 
         The images are requested via their database PK, but since we don't necessarily
-        want to bother Postgres for this (slow ORM) we'll ask Solr for it.
+        want to bother Postgres for this (slow lookup) we'll ask Solr for it.
     """
     field_list = [
         'location_s'
@@ -41,7 +41,7 @@ def image_serve(request, pk, region=None, size=None, rotation=None, *args, **kwa
     referer = "{0}://{1}".format(request.scheme, request.get_host())
 
     if region and size and rotation:
-        location = "{0}{1}/{2}/{3}/default.jpg".format(location, region, size, rotation)
+        location = "{0}/{1}/{2}/{3}/default.jpg".format(location, region, size, rotation)
 
     r = requests.get(location, stream=True, headers={'referer': referer})
 

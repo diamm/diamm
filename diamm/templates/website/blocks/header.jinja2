@@ -12,7 +12,12 @@
         </ul>
         <ul class="navbar-list pull-right">
             <li class="navbar-item navbar-highlight"><a href="#">Donate</a></li>
-            <li class="navbar-item"><a href="#">Login</a></li>
+
+            {% if user.is_authenticated() %}
+                <li class="navbar-item"><a href="#">Your account</a></li>
+            {% else %}
+                <li class="navbar-item"><a href="{{ url('login') }}">Login</a></li>
+            {% endif %}
         </ul>
     </nav>
 </header>

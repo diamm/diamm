@@ -24,26 +24,18 @@
 {% endmacro %}
 
 
-<div class="panel panel-default search-result">
-    <div class="panel-body">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-9">
-                    <h3 class="search-result-heading">
-                        {{ icon_mapping(result.type) }}
-                        <a href="{{ result.url }}">{{ result.name_s }}</a>
-                    </h3>
-                    <p>{{ item_info(result) }}</p>
-                    {% if result.result_text %}
-                        <p>{{ result.result_text | safe }}</p>
-                    {% endif %}
-                </div>
-                {% if result.type == 'source' %}
-                <div class="col-md-1">
-                    <img src="http://placehold.it/150x200" alt="...">
-                </div>
-                {% endif %}
-            </div>
-        </div>
+<div class="search-result">
+    <h3 class="search-result-heading">
+        {{ icon_mapping(result.type) }}
+        <a href="{{ result.url }}">{{ result.name_s }}</a>
+    </h3>
+    <p>{{ item_info(result) }}</p>
+    {% if result.result_text %}
+        <p>{{ result.result_text | safe }}</p>
+    {% endif %}
+    {% if result.type == 'source' %}
+    <div>
+        <img src="http://placehold.it/150x200">
     </div>
+    {% endif %}
 </div>

@@ -196,7 +196,15 @@ SOLR = {
             'name': 'Source',
             'view': 'source-detail'
         }
-    }
+    },
+    'SEARCH_TYPES': [  # These are the solr types that will be returned in a full-text search.
+        'archive',
+        'source',
+        'person',
+        'organization',
+        'set',
+        'composition'
+    ]
 }
 
 if DEBUG:
