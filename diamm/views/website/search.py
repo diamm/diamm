@@ -1,3 +1,4 @@
+from django.conf import settings
 from rest_framework import generics
 from rest_framework import response
 from rest_framework import status
@@ -15,15 +16,17 @@ class SearchView(generics.GenericAPIView):
         if not query:
             return response.Response({})
 
-        type_filt = request.GET.get('type', None)
+        type_query = request.GET.get('type', None)
 
-        if type_filt:
-            # Translate all to a wildcard.
-            if type_filt == "all":
-                type_filt = "*"
+        if type_query and type_query == "all":
             filters.update({
-                'type': type_filt
+                'type': settings.SOLR['SEARCH_TYPES']
             })
+        elif type_query and type_query in settings.SOLR['SEARCH_TYPES']:
+            filters.update({
+                'type': type_query
+            })
+        # else ignore any invalid type filter settings...
 
         try:
             page_num = int(request.GET.get('page', 1))
