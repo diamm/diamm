@@ -22,6 +22,8 @@ from diamm.models.data.page import Page
 from diamm.serializers.search.page import PageSearchSerializer
 from diamm.models.data.set import Set
 from diamm.serializers.search.set import SetSearchSerializer
+from diamm.models.data.source_provenance import SourceProvenance
+from diamm.serializers.search.provenance import SourceProvenanceSerializer
 
 term = Terminal()
 
@@ -121,19 +123,27 @@ class Command(BaseCommand):
         objs = Set.objects.all()
         self._index(objs, 'cluster_shelfmark', SetSearchSerializer)
 
+    def _index_source_provenance(self):
+        self.stdout.write(term.blue("Indexing Source Provenance"))
+        self.solrconn.delete(q="type:sourceprovenance")
+        objs = SourceProvenance.objects.all()
+        self._index(objs, '', SourceProvenanceSerializer)
+
     def handle(self, *args, **kwargs):
         self.solrconn = pysolr.Solr(settings.SOLR['SERVER'])
 
-        with term.fullscreen():
-            self._index_sources()
-            self._index_inventories()
-            self._index_archives()
-            self._index_people()
-            self._index_organizations()
-            self._index_compositions()
-            self._index_bibliography()
-            self._index_pages()
-            self._index_sets()
+        # with term.fullscreen():
 
-            raw_input = input('Done indexing. Press any key to exit.')
+        # self._index_sources()
+        # self._index_inventories()
+        # self._index_archives()
+        # self._index_people()
+        # self._index_organizations()
+        # self._index_compositions()
+        # self._index_bibliography()
+        # self._index_pages()
+        # self._index_sets()
+        self._index_source_provenance()
+
+        raw_input = input('Done indexing. Press any key to exit.')
 

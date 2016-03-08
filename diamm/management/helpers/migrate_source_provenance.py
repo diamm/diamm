@@ -135,13 +135,20 @@ def migrate_source_provenance(entry):
 
             note = note + " " + entry.protectorate
 
+    uncertain = convert_yn_to_boolean(entry.uncertain)
+
+    # Not all entries that are uncertain are marked as uncertain, so catch the ones that simply have question marks in them
+    # and assume that they are uncertain.
+    if "?" in entry.protectorate or "?" in entry.city or "?" in entry.country or "?" in entry.region:
+        uncertain = True
+
     sp = {
         'source': source,
         'country': country,
         'city': city,
         'protectorate': protectorate,
         'region': region,
-        'uncertain': convert_yn_to_boolean(entry.uncertain),
+        'uncertain': uncertain,
         'note': note
     }
 
