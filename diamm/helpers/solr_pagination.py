@@ -31,7 +31,7 @@ class SolrPaginator:
             'q.op': settings.SOLR['DEFAULT_OPERATOR'],
             'facet': 'true',
             'facet.field': 'type',
-            'facet.mincount': 0,
+            'facet.mincount': 1,
             'hl': 'true'
         }
 
@@ -39,10 +39,26 @@ class SolrPaginator:
             self.qopts.update(sorts)
 
         if filters:
-            fqstring = " ".join(["{0}:{1}".format(k, v) for k, v in filters.items()])
+            fqstring = ""
+            for k, v in filters.items():
+                # If a list is passed in for a field, assume that we want to OR the filters to produce a listing from
+                # all the values; if not, assume it's a restriction.
+                # For example, {type: ['foo', 'bar']} ==> "type:foo OR type:bar"
+                # but {type: 'foo'} ==> 'type:foo'
+                if isinstance(v, list):
+                    fqstring += " OR ".join(["{0}:{1}".format(k, field) for field in v])
+                else:
+                    fqstring += "{0}:{1} ".format(k, v)
+
+            print(fqstring)
             self.qopts.update({
                 'fq': fqstring
             })
+
+            # fqstring = " ".join(["{0}:{1}".format(k, v) for k, v in filters.items()])
+            # self.qopts.update({
+            #     'fq': fqstring
+            # })
 
         self.solr = pysolr.Solr(settings.SOLR['SERVER'])
 
@@ -137,9 +153,6 @@ class SolrPage:
         # This way we don't have to store the full URL in Solr.
         for obj in docs:
             # Filter out any result objects that are not of the type we want to display
-            if obj['type'] not in settings.SOLR['SEARCH_TYPES']:
-                continue
-
             url = reverse("{0}-detail".format(obj['type']),
                           kwargs={'pk': obj['pk']},
                           request=self.paginator.request)
