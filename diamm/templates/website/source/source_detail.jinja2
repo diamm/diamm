@@ -30,22 +30,36 @@
         <div id="tabs" class="sixteen columns source-tabs">
             <ul>
                 <li><a class="tab active" href="#details">Details</a></li>
+
+                {% if content.inventory %}
                 <li><a class="tab" href="#inventory">Inventory</a></li>
+                {% endif %}
+
                 {% if content.public_images %}
                 <li><a class="tab" href="#images">Images</a></li>
                 {% endif %}
+
+                {% if content.bibliography %}
                 <li><a class="tab" href="#bibliography">Bibliography</a></li>
+                {% endif %}
             </ul>
         </div>
     </div>
     <div id="tab-container" class="row">
         <div class="sixteen columns">
             {% include "website/source/source_detail_block.jinja2" %}
+
+            {% if content.inventory %}
             {% include "website/source/source_inventory_block.jinja2" %}
+            {% endif %}
+
             {% if content.public_images %}
             {% include "website/source/source_images_block.jinja2" %}
             {% endif %}
+
+            {% if content.bibliography %}
             {% include "website/source/source_bibliography_block.jinja2" %}
+            {% endif %}
         </div>
     </div>
 {% endblock %}

@@ -26,8 +26,8 @@
 
 <div class="search-result">
     <h3 class="search-result-heading">
-        {{ icon_mapping(result.type) }}
-        <a href="{{ result.url }}">{{ result.name_s }}</a>
+        {#  {{ icon_mapping(result.type) }} #}
+        <a href="{{ result.url }}">{{ result.display_name_s }}</a>
     </h3>
     <p>{{ item_info(result) }}</p>
     {% if result.result_text %}
