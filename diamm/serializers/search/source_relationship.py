@@ -16,7 +16,19 @@ class SourceRelationshipSerializer(serpy.Serializer):
     )
 
     relationship_type_s = serpy.MethodField()
+    related_entity_type_s = serpy.MethodField()
+    related_entity_pk_i = serpy.IntField(
+        attr='related_entity.pk'
+    )
     related_entity_s = serpy.MethodField()
+
+    def get_related_entity_type_s(self, obj):
+        if isinstance(obj.related_entity, Organization):
+            return 'organization'
+        elif isinstance(obj.related_entity, Person):
+            return 'person'
+        else:
+            return None
 
     def get_related_entity_s(self, obj):
         objtype = ""

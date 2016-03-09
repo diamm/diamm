@@ -28,6 +28,9 @@ class SourceProvenanceSerializer(serpy.Serializer):
         attr="latest_year",
         required=False
     )
+    entity_type_s = serpy.MethodField()
+    entity_pk_i = serpy.MethodField()
+
     entity_s = serpy.MethodField()
 
     def get_city_s(self, obj):
@@ -50,6 +53,14 @@ class SourceProvenanceSerializer(serpy.Serializer):
             return obj.protectorate.name
         return None
 
+    def get_entity_type_s(self, obj):
+        if isinstance(obj.entity, Organization):
+            return "organization"
+        elif isinstance(obj.entity, Person):
+            return "person"
+        else:
+            return None
+
     def get_entity_s(self, obj):
         objtype = ""
         name = ""
@@ -64,6 +75,11 @@ class SourceProvenanceSerializer(serpy.Serializer):
             return None
 
         return "{0}|{1}|{2}".format(name, obj.entity.pk, objtype)
+
+    def get_entity_pk_i(self, obj):
+        if obj.entity:
+            return obj.entity.pk
+        return None
 
     def get_type(self, obj):
         return obj.__class__.__name__.lower()
