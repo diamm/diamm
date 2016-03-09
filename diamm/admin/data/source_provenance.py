@@ -6,7 +6,7 @@ from reversion.admin import VersionAdmin
 
 @admin.register(SourceProvenance)
 class SourceProvenanceAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
-    list_display = ('source',)
+    list_display = ('source', 'earliest_year', 'latest_year', 'uncertain')
     search_fields = ('source__name', 'source__identifiers__identifier')
 
     related_search_fields = {

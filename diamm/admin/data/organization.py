@@ -7,6 +7,7 @@ from reversion.admin import VersionAdmin
 @admin.register(Organization)
 class OrganizationAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     list_display = ('name', 'location', 'type')
+    search_fields = ('name',)
 
     related_search_fields = {
         'location': ('name', 'parent__name')

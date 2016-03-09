@@ -23,7 +23,9 @@ from diamm.serializers.search.page import PageSearchSerializer
 from diamm.models.data.set import Set
 from diamm.serializers.search.set import SetSearchSerializer
 from diamm.models.data.source_provenance import SourceProvenance
-from diamm.serializers.search.provenance import SourceProvenanceSerializer
+from diamm.serializers.search.source_provenance import SourceProvenanceSerializer
+from diamm.models.data.source_relationship import SourceRelationship
+from diamm.serializers.search.source_relationship import SourceRelationshipSerializer
 
 term = Terminal()
 
@@ -129,6 +131,12 @@ class Command(BaseCommand):
         objs = SourceProvenance.objects.all()
         self._index(objs, '', SourceProvenanceSerializer)
 
+    def _index_source_relationship(self):
+        self.stdout.write(term.blue("Indexing Source Relationships"))
+        self.solrconn.delete(q="type:sourcerelationship")
+        objs = SourceRelationship.objects.all()
+        self._index(objs, '', SourceRelationshipSerializer)
+
     def handle(self, *args, **kwargs):
         self.solrconn = pysolr.Solr(settings.SOLR['SERVER'])
 
@@ -143,7 +151,8 @@ class Command(BaseCommand):
         # self._index_bibliography()
         # self._index_pages()
         # self._index_sets()
-        self._index_source_provenance()
+        # self._index_source_provenance()
+        self._index_source_relationship()
 
         raw_input = input('Done indexing. Press any key to exit.')
 
