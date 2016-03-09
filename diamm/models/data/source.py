@@ -182,3 +182,27 @@ class Source(models.Model):
         else:
             return []
 
+    @property
+    def solr_provenance(self):
+        connection = pysolr.Solr(settings.SOLR['SERVER'])
+        fq = ['type:sourceprovenance', 'source_i:{0}'.format(self.pk)]
+        sort = ['earliest_year_i asc', 'country_s asc']
+
+        provenance_results = connection.search("*:*", fq=fq, sort=sort, rows=10000)
+
+        if provenance_results.hits > 0:
+            return provenance_results.docs
+        else:
+            return []
+
+    @property
+    def solr_relationships(self):
+        connection = pysolr.Solr(settings.SOLR['SERVER'])
+        fq = ['type:sourcerelationship', 'source_i:{0}'.format(self.pk)]
+        rel_results = connection.search("*:*", fq=fq, rows=10000)
+
+        if rel_results.hits > 0:
+            return rel_results.docs
+        else:
+            return []
+

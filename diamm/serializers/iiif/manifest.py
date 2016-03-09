@@ -91,6 +91,9 @@ class CanvasSerializer(ContextDictSerializer):
         )
 
     def get_images(self, obj):
+        if not '_childDocuments_' in obj:
+            return []
+
         imgs = obj['_childDocuments_']
         context = {
             "source_id": obj["source_i"],
@@ -223,5 +226,4 @@ class SourceManifestSerializer(ContextDictSerializer):
                     "@id": cover_image_url,
                     "profile": "http://iiif.io/api/image/2/level1.json"
                 }
-
             }

@@ -6,6 +6,73 @@ from diamm.serializers.serializers import ContextSerializer, ContextDictSerializ
 from rest_framework.reverse import reverse
 
 
+class SourceRelationshipSerializer(ContextDictSerializer):
+    related_entity = serpy.MethodField()
+    uncertain = serpy.BoolField(
+        attr="uncertain_b"
+    )
+    relationship_type = serpy.StrField(
+        attr="relationship_type_s"
+    )
+
+    def get_related_entity(self, obj):
+        if 'related_entity_s' in obj:
+            name, pk, objtype = obj['related_entity_s'].split("|")
+            url = reverse("{0}-detail".format(objtype),
+                          kwargs={"pk": int(pk)},
+                          request=self.context['request'])
+            return {
+                'name': name,
+                'url': url
+            }
+        else:
+            return None
+
+
+class SourceProvenanceSerializer(ContextDictSerializer):
+    city = serpy.MethodField()
+    country = serpy.MethodField()
+    region = serpy.MethodField()
+    protectorate = serpy.MethodField()
+    entity = serpy.MethodField()
+    uncertain = serpy.BoolField(
+        attr="uncertain_b"
+    )
+
+    def get_city(self, obj):
+        if 'city_s' in obj:
+            return obj['city_s']
+        return None
+
+    def get_country(self, obj):
+        if 'country_s' in obj:
+            return obj['country_s']
+        return None
+
+    def get_region(self, obj):
+        if 'region_s' in obj:
+            return obj['region_s']
+        return None
+
+    def get_protectorate(self, obj):
+        if 'protectorate_s' in obj:
+            return obj['protectorate_s']
+        return None
+
+    def get_entity(self, obj):
+        if 'entity_s' in obj:
+            name, pk, objtype = obj['entity_s'].split("|")
+            url = reverse("{0}-detail".format(objtype),
+                          kwargs={"pk": int(pk)},
+                          request=self.context['request'])
+            return {
+                'name': name,
+                'url': url
+            }
+        else:
+            return None
+
+
 class SourceSetSerializer(ContextDictSerializer):
     cluster_shelfmark = serpy.StrField(
         attr="cluster_shelfmark_s"
@@ -188,6 +255,8 @@ class SourceDetailSerializer(ContextSerializer):
     inventory = serpy.MethodField()
     archive = serpy.MethodField()
     sets = serpy.MethodField()
+    provenance = serpy.MethodField()
+    relationships = serpy.MethodField()
 
     bibliography = SourceBibliographySerializer(
         attr="solr_bibliography",
@@ -240,6 +309,13 @@ class SourceDetailSerializer(ContextSerializer):
 
     def get_sets(self, obj):
         set_res = obj.solr_sets
-        sets = [SourceSetSerializer(s, context={"request": self.context['request'],
+        return [SourceSetSerializer(s, context={"request": self.context['request'],
                                                 "source_id": obj.pk}).data for s in set_res]
-        return sets
+
+    def get_provenance(self, obj):
+        prov_res = obj.solr_provenance
+        return [SourceProvenanceSerializer(s, context={"request": self.context['request']}).data for s in prov_res]
+
+    def get_relationships(self, obj):
+        rel_res = obj.solr_relationships
+        return [SourceRelationshipSerializer(s, context={"request": self.context['request']}).data for s in rel_res]

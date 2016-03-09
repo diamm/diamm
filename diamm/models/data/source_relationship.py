@@ -16,8 +16,6 @@ class SourceRelationship(models.Model):
 
     source = models.ForeignKey("diamm_data.Source",
                                related_name="relationships")
-    # person = models.ForeignKey("diamm_data.Person",
-    #                            related_name="source_relationships")
 
     content_type = models.ForeignKey(ContentType,
                                      on_delete=models.CASCADE,

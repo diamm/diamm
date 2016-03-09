@@ -63,7 +63,7 @@ class SourceProvenanceSerializer(serpy.Serializer):
         else:
             return None
 
-        return "{0}|{1}|{2}".format(name, obj.pk, objtype)
+        return "{0}|{1}|{2}".format(name, obj.entity.pk, objtype)
 
     def get_type(self, obj):
         return obj.__class__.__name__.lower()
