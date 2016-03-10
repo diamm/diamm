@@ -1,5 +1,7 @@
 from django.db import models
+from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
+import pysolr
 
 
 class Person(models.Model):
@@ -59,3 +61,14 @@ class Person(models.Model):
     @property
     def full_name(self):
         return self.__str__()
+
+    @property
+    def solr_relationships(self):
+        connection = pysolr.Solr(settings.SOLR['SERVER'])
+        fq = ['type:sourcerelationship', 'related_entity_type_s:person', 'related_entity_pk_i:{0}'.format(self.pk)]
+        rel_res = connection.search("*:*", fq=fq, rows=1000)
+
+        if rel_res.hits > 0:
+            return rel_res.docs
+        else:
+            return []
