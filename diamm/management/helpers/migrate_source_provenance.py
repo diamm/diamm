@@ -135,36 +135,33 @@ def migrate_source_provenance(entry):
 
             note = note + " " + entry.protectorate
 
-    uncertain = convert_yn_to_boolean(entry.uncertain)
-
-    # Not all entries that are uncertain are marked as uncertain, so catch the ones that simply have question marks in them
-    # and assume that they are uncertain.
-    if "?" in entry.protectorate or "?" in entry.city or "?" in entry.country or "?" in entry.region:
-        uncertain = True
-
     sp = {
         'source': source,
         'country': country,
+        'country_uncertain': convert_yn_to_boolean(entry.uncertain),
         'city': city,
+        'city_uncertain': convert_yn_to_boolean(entry.city_uncertain),
         'protectorate': protectorate,
         'region': region,
-        'uncertain': uncertain,
+        'region_uncertain': convert_yn_to_boolean(entry.region_uncertain),
         'note': note
     }
 
     if organization:
         # Generic Foreign Keys don't like None
         sp.update({
-            'entity': organization
+            'entity': organization,
+            'entity_uncertain': convert_yn_to_boolean(entry.institution_uncertain)
         })
 
     spe = SourceProvenance(**sp)
     spe.save()
 
 
-
 def migrate():
     print(term.blue("Migrating Source Provenance"))
+    empty_source_provenance()
+
     for entry in LegacySourceProvenance.objects.all():
         migrate_source_provenance(entry)
 

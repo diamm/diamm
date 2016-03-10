@@ -35,8 +35,17 @@ class SourceProvenanceSerializer(ContextDictSerializer):
     region = serpy.MethodField()
     protectorate = serpy.MethodField()
     entity = serpy.MethodField()
-    uncertain = serpy.BoolField(
-        attr="uncertain_b"
+    country_uncertain = serpy.BoolField(
+        attr="country_uncertain_b"
+    )
+    city_uncertain = serpy.BoolField(
+        attr="city_uncertain_b"
+    )
+    entity_uncertain = serpy.BoolField(
+        attr="entity_uncertain_b"
+    )
+    region_uncertain = serpy.BoolField(
+        attr="region_uncertain_b"
     )
 
     def get_city(self, obj):

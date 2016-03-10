@@ -16,8 +16,20 @@ class SourceProvenanceSerializer(serpy.Serializer):
     region_s = serpy.MethodField()
     protectorate_s = serpy.MethodField()
 
-    uncertain_b = serpy.BoolField(
-        attr="uncertain",
+    country_uncertain_b = serpy.BoolField(
+        attr="country_uncertain",
+        required=False
+    )
+    city_uncertain_b = serpy.BoolField(
+        attr="city_uncertain",
+        required=False
+    )
+    entity_uncertain_b = serpy.BoolField(
+        attr="entity_uncertain",
+        required=False
+    )
+    region_uncertain_b = serpy.BoolField(
+        attr="region_uncertain",
         required=False
     )
     earliest_year_i = serpy.IntField(
