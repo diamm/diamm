@@ -16,7 +16,7 @@ class Item(models.Model):
 
     AGGREGATE_HELP = """For inventories containing aggregate entries for a composer,
     i.e., 'works by' entries, enter the composer here. (This eliminates the need for relating
-    composers to sources through dummy compositions)"""
+    composers to sources through dummy compositions)."""
 
     source = models.ForeignKey('diamm_data.Source',
                                related_name="inventory")
@@ -32,6 +32,7 @@ class Item(models.Model):
                                            blank=True,
                                            null=True,
                                            help_text=AGGREGATE_HELP)
+
     source_attribution = models.CharField(max_length=1024,
                                           blank=True,
                                           null=True,
