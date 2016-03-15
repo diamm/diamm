@@ -206,3 +206,13 @@ class Source(models.Model):
         else:
             return []
 
+    @property
+    def solr_copyists(self):
+        connection = pysolr.Solr(settings.SOLR['SERVER'])
+        fq = ['type:sourcecopyist', 'source_i:{0}'.format(self.pk)]
+        copyist_results = connection.search("*:*", fq=fq, rows=10000)
+
+        if copyist_results.hits > 0:
+            return copyist_results.docs
+        else:
+            return []
