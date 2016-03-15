@@ -31,6 +31,10 @@ from diamm.models.migrate.legacy_clef import LegacyClef
 from diamm.models.migrate.legacy_text import LegacyText
 from diamm.models.migrate.legacy_text_language import LegacyTextLanguage
 from diamm.models.migrate.legacy_notation import LegacyNotation
+from diamm.models.migrate.legacy_bibliography_item import LegacyBibliographyItem
+from diamm.models.migrate.legacy_cycle_type import LegacyCycleType
+from diamm.models.migrate.legacy_composition_cycle import LegacyCompositionCycle
+from diamm.models.migrate.legacy_composition_cycle_composition import LegacyCompositionCycleComposition
 
 
 from diamm.models.data.legacy_id import LegacyId  # Yes, this belongs here. Used to track old PKs
@@ -70,6 +74,9 @@ from diamm.models.data.mensuration import Mensuration
 from diamm.models.data.clef import Clef
 from diamm.models.data.text import Text
 from diamm.models.data.notation import Notation
+from diamm.models.data.cycle import Cycle
+from diamm.models.data.cycle_type import CycleType
+from diamm.models.data.composition_cycle import CompositionCycle
 
 from diamm.models.data.bibliography import Bibliography
 from diamm.models.data.bibliography_author import BibliographyAuthor
@@ -78,3 +85,4 @@ from diamm.models.data.bibliography_publication import BibliographyPublication
 from diamm.models.data.bibliography_author_role import BibliographyAuthorRole
 from diamm.models.data.source_bibliography import SourceBibliography
 from diamm.models.data.composition_bibliography import CompositionBibliography
+from diamm.models.data.item_bibliography import ItemBibliography
