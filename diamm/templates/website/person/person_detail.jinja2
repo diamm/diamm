@@ -28,14 +28,6 @@
                             {% if composition.uncertain %}
                                 (uncertain)
                             {% endif %}
-                            <ul>
-                                {% for source in composition.sources %}
-                                    <li>
-                                        <a href="{{ source.url }}">{{ source.display_name }}</a>,
-                                        <a href="{{ source.archive.url }}">{{ source.archive.name }}</a>
-                                    </li>
-                                {% endfor %}
-                            </ul>
                         </li>
                     {% endfor %}
                 </ul>
