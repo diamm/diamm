@@ -8,9 +8,11 @@ class Organization(models.Model):
         ordering = ('name',)
 
     name = models.CharField(max_length=1024, default="s.n.")
+    variant_names = models.CharField(max_length=1024, blank=True, null=True)
     type = models.ForeignKey("diamm_data.OrganizationType", default=1)
     legacy_id = models.CharField(max_length=64, blank=True, null=True)
     location = models.ForeignKey("diamm_data.GeographicArea", blank=True, null=True)
+    note = models.TextField(blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
