@@ -4,4 +4,5 @@ from diamm.models.data.set import Set
 
 @admin.register(Set)
 class SetAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('cluster_shelfmark', 'set_type')
+    list_filter = ('type',)

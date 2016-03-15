@@ -17,7 +17,7 @@ class CompositionAdmin(admin.ModelAdmin):
     list_filter = ('anonymous',)
 
     def get_composers(self, obj):
-        c = ", ".join([c.composer.full_name for c in obj.composers.all()])
+        c = "; ".join([c.composer.full_name for c in obj.composers.all()])
         return "{0}".format(c)
     get_composers.short_description = "Composers"
 

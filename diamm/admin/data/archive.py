@@ -22,7 +22,7 @@ class CountryListFilter(admin.SimpleListFilter):
 
 @admin.register(Archive)
 class ArchiveAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
-    list_display = ('name', 'get_city', 'siglum',)
+    list_display = ('name', 'get_city', 'get_country', 'siglum',)
     search_fields = ('name', 'siglum', 'city__name', 'city__parent__name')
     list_filter = (CountryListFilter,)
 
@@ -30,3 +30,13 @@ class ArchiveAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
         return "{0}".format(obj.city.name)
     get_city.short_description = "City"
     get_city.admin_order_field = "city__name"
+
+    def get_country(self, obj):
+        return "{0}".format(obj.city.parent.name)
+    get_country.short_description = "Country"
+    get_country.admin_order_field = "city__parent__name"
+
+    def get_queryset(self, request):
+        qset = super(ArchiveAdmin, self).get_queryset(request)
+        qset = qset.select_related('city__parent')
+        return qset
