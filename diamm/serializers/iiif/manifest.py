@@ -130,7 +130,7 @@ class SourceManifestSerializer(ContextDictSerializer):
         label="@type"
     )
     label = serpy.StrField(
-        attr="name_s"
+        attr="display_name_s"
     )
     metadata = serpy.MethodField()
     see_also = serpy.MethodField(
@@ -186,10 +186,13 @@ class SourceManifestSerializer(ContextDictSerializer):
 
     def get_sequences(self, obj):
         conn = pysolr.Solr(settings.SOLR['SERVER'])
+
+        # image_type_i:1 in the field list transformer childFilter ensures that
+        # only the primary images (type 1) are returned.
         canvas_query = {
             "fq": ["type:page", "source_i:{0}".format(obj['pk'])],
             "fl": ["id", "pk", "source_i", "numeration_s", "items_ii",
-                "[child parentFilter=type:page childFilter=type:image]"
+                "[child parentFilter=type:page childFilter=image_type_i:1 childFilter=type:image]"
             ],
             "sort": "sort_order_i asc, numeration_ans asc",
             "rows": 2000
