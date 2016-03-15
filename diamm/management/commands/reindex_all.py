@@ -26,6 +26,8 @@ from diamm.models.data.source_provenance import SourceProvenance
 from diamm.serializers.search.source_provenance import SourceProvenanceSerializer
 from diamm.models.data.source_relationship import SourceRelationship
 from diamm.serializers.search.source_relationship import SourceRelationshipSerializer
+from diamm.models.data.source_copyist import SourceCopyist
+from diamm.serializers.search.source_copyist import SourceCopyistSearchSerializer
 
 term = Terminal()
 
@@ -98,7 +100,7 @@ class Command(BaseCommand):
         self.stdout.write(term.blue("Indexing Compositions"))
         self.solrconn.delete(q="type:composition")
         objs = Composition.objects.all()
-        self._index(objs, 'name', CompositionSearchSerializer)
+        self._index(objs, 'title', CompositionSearchSerializer)
 
     def _index_organizations(self):
         self.stdout.write(term.blue("Indexing Organizations"))
@@ -137,6 +139,12 @@ class Command(BaseCommand):
         objs = SourceRelationship.objects.all()
         self._index(objs, '', SourceRelationshipSerializer)
 
+    def _index_source_copyists(self):
+        self.stdout.write(term.blue("Indexing Source Copyists"))
+        self.solrconn.delete(q="type:sourcecopyist")
+        objs = SourceCopyist.objects.all()
+        self._index(objs, '', SourceCopyistSearchSerializer)
+
     def handle(self, *args, **kwargs):
         self.solrconn = pysolr.Solr(settings.SOLR['SERVER'])
 
@@ -152,7 +160,8 @@ class Command(BaseCommand):
         # self._index_pages()
         # self._index_sets()
         # self._index_source_provenance()
-        self._index_source_relationship()
+        # self._index_source_relationship()
+        self._index_source_copyists()
 
         raw_input = input('Done indexing. Press any key to exit.')
 
