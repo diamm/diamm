@@ -26,10 +26,13 @@ aggregate_titles = ("works by",
                     "11 works",
                     "11+?1 works",
                     "12 works",
+                    "13 works",
                     "14 works",
                     "18 works",
                     "20 works",
                     "21 works",
+                    "22 works",
+                    "45 works",
                     "30 works",
                     "37 work")
 
