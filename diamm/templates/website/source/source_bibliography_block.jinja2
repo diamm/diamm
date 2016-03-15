@@ -4,11 +4,14 @@
         {% for entry in content.bibliography %}
             <p>
                 {% if entry.primary_study %}
-                &Dagger;
+                <strong> &Dagger;
                 {% endif %}
                 {{ entry.prerendered | safe }}
                 {% if entry.pages %}
                     pp. {{ entry.pages }}.
+                {% endif %}
+                {% if entry.primary_study %}
+                </strong>
                 {% endif %}
             </p>
         {% endfor %}
