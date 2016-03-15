@@ -4,6 +4,7 @@ from django.db import models
 class Cycle(models.Model):
     class Meta:
         app_label = "diamm_data"
+        ordering = ('title',)
 
     title = models.CharField(max_length=256)
     composer = models.ForeignKey("diamm_data.Person", blank=True, null=True)
