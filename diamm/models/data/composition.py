@@ -11,11 +11,6 @@ class Composition(models.Model):
                                     help_text="Stores the legacy value for the genre field.")
     anonymous = models.BooleanField(default=False)
     genres = models.ManyToManyField("diamm_data.Genre")
-
-    # composers = models.ManyToManyField("diamm_data.Person",
-    #                                    through="diamm_data.CompositionComposer",
-    #                                    related_name="compositions")
-
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
