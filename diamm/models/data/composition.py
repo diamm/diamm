@@ -10,7 +10,7 @@ class Composition(models.Model):
     legacy_genre = models.CharField(max_length=512, blank=True, null=True,
                                     help_text="Stores the legacy value for the genre field.")
     anonymous = models.BooleanField(default=False)
-    genres = models.ManyToManyField("diamm_data.Genre")
+    genres = models.ManyToManyField("diamm_data.Genre", blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
