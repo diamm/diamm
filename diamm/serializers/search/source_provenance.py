@@ -10,6 +10,13 @@ class SourceProvenanceSerializer(serpy.Serializer):
     source_i = serpy.IntField(
         attr="source.pk"
     )
+    source_s = serpy.StrField(
+        attr="source.display_name"
+    )
+    # Sort by the source name *with the archive sigla*
+    source_ans = serpy.StrField(
+        attr="source.display_name"
+    )
 
     city_s = serpy.MethodField()
     country_s = serpy.MethodField()
@@ -74,19 +81,12 @@ class SourceProvenanceSerializer(serpy.Serializer):
             return None
 
     def get_entity_s(self, obj):
-        objtype = ""
-        name = ""
-
         if isinstance(obj.entity, Organization):
-            objtype = "organization"
-            name = obj.entity.name
+            return obj.entity.name
         elif isinstance(obj.entity, Person):
-            objtype = "person"
-            name = obj.entity.full_name
+            return obj.entity.full_name
         else:
             return None
-
-        return "{0}|{1}|{2}".format(name, obj.entity.pk, objtype)
 
     def get_entity_pk_i(self, obj):
         if obj.entity:

@@ -10,6 +10,13 @@ class SourceRelationshipSerializer(serpy.Serializer):
     source_i = serpy.IntField(
         attr="source.pk"
     )
+    source_s = serpy.StrField(
+        attr="source.display_name"
+    )
+    # Sort by the source name *with the archive sigla*
+    source_ans = serpy.StrField(
+        attr="source.display_name"
+    )
 
     uncertain_b = serpy.BoolField(
         attr="uncertain"
@@ -31,19 +38,12 @@ class SourceRelationshipSerializer(serpy.Serializer):
             return None
 
     def get_related_entity_s(self, obj):
-        objtype = ""
-        name = ""
-
         if isinstance(obj.related_entity, Organization):
-            objtype = "organization"
-            name = obj.related_entity.name
+            return obj.related_entity.name
         elif isinstance(obj.related_entity, Person):
-            objtype = "person"
-            name = obj.related_entity.full_name
+            return obj.related_entity.full_name
         else:
             return None
-
-        return "{0}|{1}|{2}".format(name, obj.related_entity.pk, objtype)
 
     def get_relationship_type_s(self, obj):
         if obj.relationship_type:

@@ -2,6 +2,22 @@ import serpy
 
 
 class SourceSearchSerializer(serpy.Serializer):
+    """
+        For these search serializers, it is important to note that
+        the field name in the serializer corresponds to the Solr field
+        name, and the underscore suffix creates a dynamic field for that
+        entry. So `shelfmark_s` will supply the `shelfmark_s` field in Solr,
+        using the `_s` suffix to indicate that it is a non-multivalued string.
+
+        To see what each suffix does, you should consult the Solr schema.
+
+        The `_ans` field is a special field that provides alphanumeric sorting for
+        entries. This is critical to proper display of source shelfmarks and other
+        fields that might have mixed number, letter, and punctuation representations.
+        "MS Add. 10" should sort between "MS Add. 9" and "MS Add. 11", which it will not
+         do by default.
+
+    """
     type = serpy.MethodField()
     pk = serpy.IntField()
 
@@ -67,19 +83,19 @@ class SourceSearchSerializer(serpy.Serializer):
 
     def get_identifiers_ss(self, obj):
         if obj.identifiers.count() > 0:
-            return list(obj.identifiers.all().values_list('identifier', flat=True))
+            return list(obj.identifiers.values_list('identifier', flat=True))
         else:
             return []
 
     def get_notations_ss(self, obj):
         if obj.notations.count() > 0:
-            return list(obj.notations.all().values_list('name', flat=True))
+            return list(obj.notations.values_list('name', flat=True))
         else:
             return []
 
     def get_sets_ii(self, obj):
         if obj.sets.count() > 0:
-            return list(obj.sets.all().values_list("pk", flat=True))
+            return list(obj.sets.values_list("pk", flat=True))
         else:
             return []
 

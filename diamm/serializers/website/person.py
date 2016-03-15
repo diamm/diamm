@@ -3,31 +3,63 @@ from rest_framework.reverse import reverse
 from diamm.serializers.serializers import ContextDictSerializer, ContextSerializer
 
 
-class PersonCompositionSerializer(ContextSerializer):
+class PersonSourceCopyistSerializer(ContextDictSerializer):
     url = serpy.MethodField()
-    name = serpy.StrField(
-        attr='composition.name'
+    copyist_type = serpy.StrField(
+        attr="type_s"
     )
+    uncertain = serpy.BoolField(
+        attr="uncertain_b"
+    )
+
+    def get_url(self, obj):
+        return reverse("source-detail",
+                       kwargs={"pk": obj['source_i']},
+                       request=self.context['request'])
+
+
+class PersonSourceRelationshipSerializer(ContextDictSerializer):
+    url = serpy.MethodField()
+    relationship = serpy.StrField(
+        attr="relationship_type_s"
+    )
+    uncertain = serpy.BoolField(
+        attr="uncertain_b"
+    )
+
+    def get_url(self, obj):
+        return reverse('source-detail',
+                       kwargs={"pk": obj["source_i"]},
+                       request=self.context['request'])
+
+
+class PersonCompositionSerializer(ContextDictSerializer):
+    url = serpy.MethodField()
+    title = serpy.StrField(
+        attr='title_s'
+    )
+    uncertain = serpy.BoolField()  # injected in the person model lookup for solr_compositions
     sources = serpy.MethodField()
-    uncertain = serpy.BoolField()
 
     def get_url(self, obj):
         return reverse('composition-detail',
-                       kwargs={"pk": obj.composition.pk},
+                       kwargs={"pk": obj['pk']},
                        request=self.context['request'])
 
     def get_sources(self, obj):
+        if 'sources_ss' not in obj:
+            return []
         sources = []
-        if obj.composition.sources.count() == 0:
-            return None
-        for item in obj.composition.sources.all():
-            s = {
+        for entry in obj['sources_ss']:
+            pk, name = entry.split("|")
+            d = {
                 'url': reverse('source-detail',
-                               kwargs={"pk": item.source.pk},
+                               kwargs={"pk": pk},
                                request=self.context['request']),
-                'display_name': item.source.display_name
+                'name': name
             }
-            sources.append(s)
+            sources.append(d)
+
         return sources
 
 class PersonListSerializer(ContextSerializer):
@@ -37,12 +69,21 @@ class PersonListSerializer(ContextSerializer):
 class PersonDetailSerializer(ContextSerializer):
     url = serpy.MethodField()
     compositions = serpy.MethodField()
+    related_sources = serpy.MethodField()
+    copied_sources = serpy.MethodField()
     full_name = serpy.StrField()
-    earliest_year = serpy.IntField()
-    earliest_year_approximate = serpy.BoolField()
-    latest_year = serpy.IntField()
-    latest_year_approximate = serpy.BoolField()
-    appears_in = serpy.MethodField()
+    earliest_year = serpy.IntField(
+        required=False
+    )
+    earliest_year_approximate = serpy.BoolField(
+        required=False
+    )
+    latest_year = serpy.IntField(
+        required=False
+    )
+    latest_year_approximate = serpy.BoolField(
+        required=False
+    )
 
     def get_url(self, obj):
         return reverse('person-detail',
@@ -50,21 +91,13 @@ class PersonDetailSerializer(ContextSerializer):
                        request=self.context['request'])
 
     def get_compositions(self, obj):
-        return [PersonCompositionSerializer(o, context={'request': self.context['request']}).data for o in obj.compositions.all()]
+        return [PersonCompositionSerializer(o, context={'request': self.context['request']}).data for o in obj.solr_compositions]
 
-    def get_appears_in(self, obj):
-        if obj.item_set.count() == 0:
-            return None
-        sources = []
-        for item in obj.item_set.all():
-            s = {
-                'url': reverse('source-detail',
-                               kwargs={"pk": item.source.pk},
-                               request=self.context['request']),
-                'display_name': item.source.display_name
-            }
-            sources.append(s)
-        return sources
+    def get_related_sources(self, obj):
+        return [PersonSourceRelationshipSerializer(o, context={"request": self.context['request']}).data for o in obj.solr_relationships]
+
+    def get_copied_sources(self, obj):
+        return [PersonSourceCopyistSerializer(o, context={"request": self.context['request']}).data for o in obj.solr_copyist]
 
 
 # from rest_framework import serializers

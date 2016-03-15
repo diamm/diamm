@@ -11,7 +11,10 @@ class CompositionSearchSerializer(serpy.Serializer):
     )
     genres_ss = serpy.MethodField()
     composers_ss = serpy.MethodField()
+    composers_ii = serpy.MethodField()
     voice_text_txt = serpy.MethodField()
+    sources_ss = serpy.MethodField()
+    sources_ii = serpy.MethodField()
 
     def get_type(self, obj):
         return obj.__class__.__name__.lower()
@@ -25,6 +28,21 @@ class CompositionSearchSerializer(serpy.Serializer):
         if obj.composers:
             return [o.composer.full_name for o in obj.composers.all()]
         return []
+
+    def get_composers_ii(self, obj):
+        if obj.composers:
+            return [o.composer.pk for o in obj.composers.all()]
+        return []
+
+    def get_sources_ss(self, obj):
+        if obj.sources.count() == 0:
+            return []
+        return ["{0}|{1}".format(s.source.pk, s.source.display_name) for s in obj.sources.all().only('pk')]
+
+    def get_sources_ii(self, obj):
+        if obj.sources.count() == 0:
+            return []
+        return [s.source.pk for s in obj.sources.all()]
 
     def get_voice_text_txt(self, obj):
         # NB: Sources == Items in this case, since the item is the relationship
