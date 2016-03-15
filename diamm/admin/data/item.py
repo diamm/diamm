@@ -34,7 +34,7 @@ class ItemAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     list_display = ('get_source', 'get_composition', 'get_composers',
                     'folio_start', 'folio_end')
     search_fields = ("source__name", "source__identifiers__identifier",
-                     "composition__title")
+                     "composition__title", "aggregate_composer__last_name")
     list_filter = (AggregateComposerListFilter,)
     # filter_horizontal = ['pages']
     # exclude = ("pages",)
@@ -54,7 +54,7 @@ class ItemAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
             return "{0}".format(obj.composition.composer_names)
         return "{0}".format(obj.aggregate_composer.full_name)
     get_composers.short_description = "composers"
-    get_composers.admin_order_field = 'composition__composers__last_name'
+    get_composers.admin_order_field = 'composition__composers__composer__last_name'
 
     def get_composition(self, obj):
         if obj.composition:
