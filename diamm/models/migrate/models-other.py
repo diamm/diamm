@@ -249,6 +249,31 @@ class CompositioncomposerIs(models.Model):
         db_table = 'CompositionComposer_IS'
 
 
+class Compositioncycle(models.Model):
+    compositioncyclekey = models.IntegerField(db_column='compositionCycleKey', primary_key=True)  # Field name made lowercase.
+    title = models.TextField(blank=True, null=True)
+    title_model_compositionkey = models.DecimalField(db_column='title_model_compositionKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    composerkey = models.DecimalField(db_column='composerKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    composer = models.TextField(blank=True, null=True)
+    alcycletypekey = models.DecimalField(db_column='alCycleTypeKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'CompositionCycle'
+
+
+class Compositioncyclecomposition(models.Model):
+    compositioncyclekey = models.DecimalField(db_column='compositionCycleKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    compositionkey = models.DecimalField(db_column='compositionKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    orderno = models.DecimalField(db_column='orderNo', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    positiontitle = models.TextField(db_column='positionTitle', blank=True, null=True)  # Field name made lowercase.
+    compositioncyclecompositionkey = models.IntegerField(db_column='compositionCycleCompositionKey', primary_key=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'CompositionCycleComposition'
+
+
 class Diammuser(models.Model):
     id = models.IntegerField(primary_key=True)
     username = models.CharField(max_length=20, blank=True, null=True)
@@ -398,6 +423,16 @@ class ItemimageIs(models.Model):
         db_table = 'ItemImage_IS'
 
 
+class NotationsourceIs(models.Model):
+    sourcekey = models.DecimalField(db_column='sourceKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    alnotationtypekey = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    notationsourcekey = models.IntegerField(db_column='notationsourceKey', primary_key=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'NotationSource_IS'
+
+
 class Secondaryimage(models.Model):
     secondaryimagekey = models.IntegerField(db_column='secondaryImageKey', primary_key=True)  # Field name made lowercase.
     imagekey = models.DecimalField(db_column='ImageKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
@@ -495,6 +530,9 @@ class SourceprovenanceIs(models.Model):
     protectorate = models.TextField(blank=True, null=True)
     region = models.TextField(blank=True, null=True)
     sourceprovenancekey = models.IntegerField(db_column='sourceProvenanceKey', primary_key=True)  # Field name made lowercase.
+    institution_uncertain = models.TextField(blank=True, null=True)
+    city_uncertain = models.TextField(blank=True, null=True)
+    region_uncertain = models.TextField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -695,6 +733,14 @@ class Alnotationtype(models.Model):
 class Alperson(models.Model):
     alpersonkey = models.IntegerField(db_column='alPersonKey', primary_key=True)  # Field name made lowercase.
     alaffiliationkey = models.TextField(db_column='alaffiliationKey', blank=True, null=True)  # Field name made lowercase.
+    surname = models.TextField(db_column='Surname', blank=True, null=True)  # Field name made lowercase.
+    firstname = models.TextField(blank=True, null=True)
+    startdate = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    startdate_approx = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    enddate_approx = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    enddate = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    type = models.TextField(blank=True, null=True)
+    aliases = models.TextField(blank=True, null=True)
     fullnameoriginal = models.TextField(db_column='fullNameOriginal', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:

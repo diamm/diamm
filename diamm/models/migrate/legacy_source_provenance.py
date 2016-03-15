@@ -10,6 +10,9 @@ class LegacySourceProvenance(models.Model):
     protectorate = models.TextField(blank=True, null=True)
     region = models.TextField(blank=True, null=True)
     sourceprovenancekey = models.IntegerField(db_column='sourceProvenanceKey', primary_key=True)  # Field name made lowercase.
+    institution_uncertain = models.TextField(blank=True, null=True)
+    city_uncertain = models.TextField(blank=True, null=True)
+    region_uncertain = models.TextField(blank=True, null=True)
 
     class Meta:
         managed = False
