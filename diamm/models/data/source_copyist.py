@@ -25,9 +25,7 @@ class SourceCopyist(models.Model):
     source = models.ForeignKey("diamm_data.Source",
                                on_delete=models.CASCADE,
                                related_name="copyists")
-    # copyist = models.ForeignKey("diamm_data.Person",
-    #                             on_delete=models.CASCADE,
-    #                             related_name="sources_copied")
+
     uncertain = models.BooleanField(default=False)
     type = models.IntegerField(choices=SOURCE_COPYIST_TYPES, blank=True, null=True)
 
@@ -38,4 +36,13 @@ class SourceCopyist(models.Model):
                                      limit_choices_to=limit)
     object_id = models.PositiveIntegerField()
     copyist = GenericForeignKey()
+
+    @property
+    def copyist_type(self):
+        if not self.type:
+            return None
+
+        d = dict(self.SOURCE_COPYIST_TYPES)
+        return d[self.type]
+
 
