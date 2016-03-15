@@ -20,7 +20,7 @@ class SourceURL(models.Model):
     type = models.IntegerField(choices=URL_TYPES)
     link_text = models.CharField(max_length=1024, blank=True, null=True)
     link = models.CharField(max_length=1024)
-    source = models.ForeignKey("diamm_data.Source")
+    source = models.ForeignKey("diamm_data.Source", related_name="links")
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
