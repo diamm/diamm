@@ -23,11 +23,21 @@
     {% endif %}
 {% endmacro %}
 
+{% macro item_name(result) %}
+    {% if result.type == "source" %}
+        {{ result.display_name_s }}
+    {% elif result.type == 'person' %}
+        {{ result.name_s }}
+    {% elif result.type == "composition" %}
+        {{ result.title_s }}
+    {% endif %}
+{% endmacro %}
+
 
 <div class="search-result">
     <h3 class="search-result-heading">
         {#  {{ icon_mapping(result.type) }} #}
-        <a href="{{ result.url }}">{{ result.display_name_s }}</a>
+        <a href="{{ result.url }}">{{ item_name(result) }}</a>
     </h3>
     <p>{{ item_info(result) }}</p>
     {% if result.result_text %}

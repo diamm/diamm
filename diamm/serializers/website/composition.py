@@ -30,7 +30,7 @@ class CompositionListSerializer(serializers.HyperlinkedModelSerializer):
     composers = CompositionComposerSerializer(many=True)
     class Meta:
         model = Composition
-        fields = ('url', 'name', 'composers')
+        fields = ('url', 'title', 'composers')
 
 
 class CompositionDetailSerializer(serializers.HyperlinkedModelSerializer):
@@ -38,4 +38,4 @@ class CompositionDetailSerializer(serializers.HyperlinkedModelSerializer):
     sources = CompositionSourceSerializer(many=True)
     class Meta:
         model = Composition
-        fields = ('url', 'name', 'composers', 'sources')
+        fields = ('url', 'title', 'composers', 'sources')

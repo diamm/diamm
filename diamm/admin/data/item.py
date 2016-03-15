@@ -34,13 +34,13 @@ class ItemAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     list_display = ('get_source', 'get_composition', 'get_composers',
                     'folio_start', 'folio_end')
     search_fields = ("source__name", "source__identifiers__identifier",
-                     "composition__name")
+                     "composition__title")
     list_filter = (AggregateComposerListFilter,)
     # filter_horizontal = ['pages']
     # exclude = ("pages",)
 
     related_search_fields = {
-        "composition": ("name",),
+        "composition": ("title",),
         "aggregate_composer": ("last_name",),
         "source": ("shelfmark",),
     }
@@ -58,10 +58,10 @@ class ItemAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
 
     def get_composition(self, obj):
         if obj.composition:
-            return truncatewords(obj.composition.name, 10)
+            return truncatewords(obj.composition.title, 10)
         return "Works by {0}".format(obj.aggregate_composer.full_name)
     get_composition.short_description = "composition"
-    get_composition.admin_order_field = "composition__name"
+    get_composition.admin_order_field = "composition__title"
 
     def get_queryset(self, request):
         qset = super(ItemAdmin, self).get_queryset(request)

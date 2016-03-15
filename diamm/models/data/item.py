@@ -56,7 +56,7 @@ class Item(models.Model):
 
     def __str__(self):
         if self.composition:
-            return "{0}".format(self.composition.name)
+            return "{0}".format(self.composition.title)
         else:
             return "Works in {0}".format(self.source.display_name)
 

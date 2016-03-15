@@ -39,9 +39,13 @@ def migrate_composition(entry):
     else:
         genres = []
 
+    title = None
+    if entry.composition_name:
+        title = entry.composition_name.strip()
+
     d = {
         'id': entry.pk,
-        'name': entry.composition_name,
+        'title': title,
         'legacy_genre': entry.genre,
     }
 

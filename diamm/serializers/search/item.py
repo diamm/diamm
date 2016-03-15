@@ -60,7 +60,7 @@ class ItemSearchSerializer(serpy.Serializer):
 
     def get_composition_s(self, obj):
         if obj.composition:
-            return obj.composition.name
+            return obj.composition.title
         return None
 
     def get_composers_ssni(self, obj):

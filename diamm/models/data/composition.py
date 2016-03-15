@@ -4,9 +4,9 @@ from django.db import models
 class Composition(models.Model):
     class Meta:
         app_label = "diamm_data"
-        ordering = ('name',)
+        ordering = ('title',)
 
-    name = models.CharField(max_length=1024)
+    title = models.CharField(max_length=1024)
     legacy_genre = models.CharField(max_length=512, blank=True, null=True,
                                     help_text="Stores the legacy value for the genre field.")
     anonymous = models.BooleanField(default=False)
@@ -20,7 +20,7 @@ class Composition(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return "{0}".format(self.name)
+        return "{0}".format(self.title)
 
     @property
     def composer_names(self):

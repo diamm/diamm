@@ -11,8 +11,8 @@ class ComposerInline(admin.TabularInline):
 
 @admin.register(Composition)
 class CompositionAdmin(admin.ModelAdmin):
-    list_display = ('name', 'get_composers', 'get_genres')
-    search_fields = ('name', 'composers__composer__last_name')
+    list_display = ('title', 'get_composers', 'get_genres')
+    search_fields = ('title', 'composers__composer__last_name')
     inlines = (ComposerInline,)
     list_filter = ('anonymous',)
 
