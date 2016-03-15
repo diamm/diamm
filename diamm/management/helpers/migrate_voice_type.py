@@ -14,7 +14,7 @@ def migrate_voice_type(entry):
 
     d = {
         'name': entry.voice,
-        'legacy_id': "voice_{0}".format(int(entry.pk))
+        'legacy_id': "voice.{0}".format(int(entry.pk))
     }
 
     v = VoiceType(**d)

@@ -33,6 +33,7 @@ def migrate_role(entry):
 def attach_person_to_role(entry):
     print(term.green("\tAttaching roles to person with legacy ID {0}".format(entry.pk)))
     new_person = Person.objects.get(legacy_id="legacy_person.{0}".format(int(entry.pk)))
+
     role = Role.objects.get(pk=int(entry.alaffiliationkey))
 
     d = {
@@ -82,7 +83,8 @@ def migrate():
     # we update this now, not at the end. Because we can.
     update_table()
 
-    for entry in LegacyPerson.objects.exclude(alaffiliationkey=0):
+    # NB: Don't try to migrate the organizations.
+    for entry in LegacyPerson.objects.exclude(alaffiliationkey=0).exclude(type='institution'):
         attach_person_to_role(entry)
 
     for entry in LegacyCopyist.objects.exclude(alaffiliationkey=0):

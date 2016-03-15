@@ -15,7 +15,7 @@ def empty_table():
 def update_table():
     print(term.yellow("\tUpdating the ID sequences for the Django Language Table"))
     sql_max = "SELECT MAX(id) AS maxid FROM diamm_data_mensuration;"
-    sql_alt = "ALTER SEQUENCE diamm_data_language_id_seq RESTART WITH %s"
+    sql_alt = "ALTER SEQUENCE diamm_data_mensuration_id_seq RESTART WITH %s"
     db = settings.DATABASES['default']
     conn = psql.connect(database=db['NAME'],
                         user=db['USER'],

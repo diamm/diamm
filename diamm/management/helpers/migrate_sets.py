@@ -32,7 +32,7 @@ def migrate_set(entry):
 def update_table():
     print(term.yellow("\tUpdating the ID sequences for the Django Set Table"))
     sql_max = "SELECT MAX(id) AS maxid FROM diamm_data_set;"
-    sql_alt = "ALTER SEQUENCE diamm_data_genre_id_seq RESTART WITH %s"
+    sql_alt = "ALTER SEQUENCE diamm_data_set_id_seq RESTART WITH %s"
     db = settings.DATABASES['default']
     conn = psql.connect(database=db['NAME'],
                         user=db['USER'],

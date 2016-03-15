@@ -1,5 +1,3 @@
-import psycopg2 as psql
-from django.conf import settings
 from diamm.models.migrate.legacy_diammuser import LegacyDiammUser
 import uuid
 from django.contrib.auth.models import User

@@ -13,13 +13,14 @@ term = Terminal()
 
 
 def empty_table():
-    print(term.red("\tEmptying Text table"))
+    print(term.red("\tEmptying Text and Voice table"))
     Text.objects.all().delete()
+    Voice.objects.all().delete()
 
 
 def migrate_text_and_voice(entry):
     print(term.green("\tMigrating text entry {0}".format(entry.pk)))
-    voice_type = VoiceType.objects.get(legacy_id="voice_{0}".format(int(entry.alvoicekey)))
+    voice_type = VoiceType.objects.get(legacy_id="voice.{0}".format(int(entry.alvoicekey)))
     item = Item.objects.get(pk=int(entry.itemkey))
     mensuration = Mensuration.objects.get(pk=int(entry.almensurationkey))
 
@@ -44,9 +45,9 @@ def migrate_text_and_voice(entry):
         'mensuration': mensuration,
         'clef': clef,
         'voice_text': text,
-        'legacy_id': 'text_{0}'.format(int(entry.pk)),
+        'legacy_id': 'text.{0}'.format(int(entry.pk)),
         'label': entry.voicepart,
-        'position': entry.positionpage
+        'position': entry.positiononpage
     }
 
     v = Voice(**vd)
@@ -55,7 +56,7 @@ def migrate_text_and_voice(entry):
     v.languages.add(*languages)
 
     if entry.standardspellingfulltext_copy:
-        print(term.green("\t\tCreating a standardized text entry."))
+        print(term.green("\t\tCreating or attaching a standardized text entry."))
         text, created = Text.objects.get_or_create(text=entry.standardspellingfulltext_copy)
 
         if created and entry.standardspellingincipit_copy:

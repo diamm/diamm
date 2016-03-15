@@ -1,17 +1,23 @@
 import re
+from diamm.management.helpers.utilities import convert_yn_to_boolean
 from diamm.models.migrate.legacy_composer import LegacyComposer
 from diamm.models.migrate.legacy_copyist import LegacyCopyist
 from diamm.models.migrate.legacy_person import LegacyPerson
+from diamm.models.migrate.legacy_affiliation import LegacyAffiliation
 from diamm.models.data.person_note import PersonNote
 from diamm.models.data.person import Person
+from diamm.models.data.organization import Organization
+from diamm.models.data.organization_type import OrganizationType
+
 
 from blessings import Terminal
 term = Terminal()
 
 
 def empty_people():
-    print(term.magenta("\tEmptying People"))
+    print(term.magenta("\tEmptying People and Organizations"))
     Person.objects.all().delete()
+    Organization.objects.all().delete()
 
 
 def migrate_copyist_to_people(legacy_copyist):
@@ -61,12 +67,32 @@ def migrate_person_to_people(legacy_person):
     legacy_id = "legacy_person.{0}".format(legacy_person.pk)
 
     d = {
-        'last_name': legacy_person.fullnameoriginal,
+        'last_name': legacy_person.surname,
+        'first_name': legacy_person.firstname,
+        'earliest_year': legacy_person.startdate,
+        'earliest_year_approximate': convert_yn_to_boolean(legacy_person.startdate_approx),
+        'latest_year': legacy_person.enddate,
+        'latest_year_approximate': convert_yn_to_boolean(legacy_person.enddate_approx),
         'legacy_id': legacy_id
     }
 
     p = Person(**d)
     p.save()
+
+    notes = (
+        (PersonNote.VARIANT_NAME_NOTE, legacy_person.aliases),
+    )
+
+    for n in notes:
+        if not n[1]:
+            continue
+        d = {
+            'note': n[1],
+            'type': n[0],
+            'person': p
+        }
+        pn = PersonNote(**d)
+        pn.save()
 
 
 def migrate_composers_to_people(legacy_composer):
@@ -109,6 +135,28 @@ def migrate_composers_to_people(legacy_composer):
         pn.save()
 
 
+def migrate_organizations(entry):
+    print(term.green("\tMigrating person record {0} to organization".format(entry.pk)))
+    affiliation_name = None
+    otype = OrganizationType.objects.get(pk=1)
+    legacy_id = "legacy_person.{0}".format(int(entry.pk))
+
+    if entry.alaffiliationkey:
+        affiliation = LegacyAffiliation.objects.get(pk=entry.alaffiliationkey)
+        affiliation_name = affiliation.affiliation
+
+    d = {
+        'name': entry.surname,
+        'note': affiliation_name,
+        'variant_names': entry.aliases,
+        'type': otype,
+        'legacy_id': legacy_id
+    }
+
+    o = Organization(**d)
+    o.save()
+
+
 def migrate():
     print(term.blue("Migrating people"))
     empty_people()
@@ -122,8 +170,12 @@ def migrate():
     for copyist in LegacyCopyist.objects.all():
         migrate_copyist_to_people(copyist)
 
-    people = LegacyPerson.objects.all()
+    people = LegacyPerson.objects.filter(type="person")
     for person in people:
         migrate_person_to_people(person)
+
+    organizations = LegacyPerson.objects.filter(type="institution")
+    for entry in organizations:
+        migrate_organizations(entry)
 
     print(term.blue("Done migrating people"))

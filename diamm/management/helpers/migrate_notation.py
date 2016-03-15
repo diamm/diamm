@@ -27,7 +27,7 @@ def migrate_notation(entry):
 def update_table():
     print(term.yellow("\tUpdating the ID sequences for the Django Notation Table"))
     sql_max = "SELECT MAX(id) AS maxid FROM diamm_data_notation;"
-    sql_alt = "ALTER SEQUENCE diamm_data_language_id_seq RESTART WITH %s"
+    sql_alt = "ALTER SEQUENCE diamm_data_notation_id_seq RESTART WITH %s"
     db = settings.DATABASES['default']
     conn = psql.connect(database=db['NAME'],
                         user=db['USER'],

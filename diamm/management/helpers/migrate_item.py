@@ -1,3 +1,5 @@
+import psycopg2 as psql
+from django.conf import settings
 from diamm.models.migrate.legacy_item import LegacyItem
 from diamm.models.data.item import Item
 from diamm.models.data.source import Source
@@ -6,15 +8,39 @@ from blessings import Terminal
 
 term = Terminal()
 
+aggregate_titles = ("works by",
+                    "1 work",
+                    "1 - 3 works",
+                    "2 works",
+                    "2 + ?1 works",
+                    "3 works",
+                    "3 work",
+                    "4 works",
+                    "5 works",
+                    "6 work",
+                    "6 works",
+                    "7 works",
+                    "8 works",
+                    "9 works",
+                    "10 works",
+                    "11 works",
+                    "11+?1 works",
+                    "12 works",
+                    "14 works",
+                    "18 works",
+                    "20 works",
+                    "21 works",
+                    "30 works",
+                    "37 work")
 
 def empty_items():
     print(term.magenta("\tEmptying item table"))
     Item.objects.all().delete()
 
 
-def __clear_aggregate_compositions():
+def clear_aggregate_compositions():
     print(term.magenta("\tClearing aggregate compositions"))
-    Composition.objects.filter(name="works by").delete()
+    Composition.objects.filter(name__in=aggregate_titles).delete()
 
 
 def migrate_item(entry):
@@ -47,30 +73,7 @@ def migrate_item(entry):
     # composer to being an 'aggregate composer' and not join the original 'composition'
     # to the source.
     aggregate_composition_note = None
-    if orig_composition and orig_composition.name in ("works by",
-                                                      "1 work",
-                                                      "1 - 3 works",
-                                                      "2 works",
-                                                      "2 + ?1 works",
-                                                      "3 works",
-                                                      "3 work",
-                                                      "4 works",
-                                                      "5 works",
-                                                      "6 work",
-                                                      "6 works",
-                                                      "7 works",
-                                                      "8 works",
-                                                      "9 works",
-                                                      "10 works",
-                                                      "11 works",
-                                                      "11+?1 works",
-                                                      "12 works",
-                                                      "14 works",
-                                                      "18 works",
-                                                      "20 works",
-                                                      "21 works",
-                                                      "30 works",
-                                                      "37 work"):
+    if orig_composition and orig_composition.name in aggregate_titles:
         print(term.magenta('\tCreating aggregate composer entry.'))
         # we have an aggregate entry. An aggregate composition should only
         # have one composer attached.
@@ -124,6 +127,23 @@ def migrate_item(entry):
     #     itn = ItemNote(**d)
     #     itn.save()
 
+def update_table():
+    print(term.yellow("\tUpdating the ID sequences for the Django Item Table"))
+    sql_max = "SELECT MAX(id) AS maxid FROM diamm_data_item;"
+    sql_alt = "ALTER SEQUENCE diamm_data_item_id_seq RESTART WITH %s"
+    db = settings.DATABASES['default']
+    conn = psql.connect(database=db['NAME'],
+                        user=db['USER'],
+                        password=db['PASSWORD'],
+                        host=db['HOST'],
+                        port=db['PORT'],
+                        cursor_factory=psql.extras.DictCursor)
+    curs = conn.cursor()
+    curs.execute(sql_max)
+    maxid = curs.fetchone()['maxid']
+    nextid = maxid + 1
+    curs.execute(sql_alt, (nextid,))
+
 
 def migrate():
     print(term.blue("Migrating Items"))
@@ -131,5 +151,6 @@ def migrate():
     for entry in LegacyItem.objects.all():
         migrate_item(entry)
 
-    __clear_aggregate_compositions()
+    clear_aggregate_compositions()
+    update_table()
     print(term.blue("Done migrating items"))

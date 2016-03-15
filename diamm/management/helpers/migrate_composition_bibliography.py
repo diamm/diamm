@@ -31,6 +31,7 @@ def migrate_composition_bibliography(entry):
 
 def migrate():
     print(term.blue("Migrating Composition Bibliographies"))
+    empty_composition_bibliography()
 
     for entry in LegacyBibliographyComposition.objects.all():
         migrate_composition_bibliography(entry)

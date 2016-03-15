@@ -2,6 +2,7 @@ from django.conf import settings
 import psycopg2 as psql
 from diamm.models.data.source import Source
 from diamm.models.data.person import Person
+from diamm.models.data.organization import Organization
 from diamm.models.data.source_relationship_type import SourceRelationshipType
 from diamm.models.data.source_relationship import SourceRelationship
 from diamm.models.migrate.legacy_relationship_type import LegacyRelationshipType
@@ -32,16 +33,22 @@ def migrate_source_relationship(entry):
     print(term.green("\tMigrating Source Relationship ID {0}".format(entry.pk)))
     source_pk = entry.sourcekey
     source = Source.objects.get(pk=source_pk)
-    person_pk = entry.alpersonkey
-    person_lookup = "legacy_person.{0}".format(int(person_pk))
-    person = Person.objects.get(legacy_id=person_lookup)
+
+    ent_pk = entry.alpersonkey
+    entity_lookup = "legacy_person.{0}".format(int(ent_pk))
+
+    try:
+        entity = Person.objects.get(legacy_id=entity_lookup)
+    except Person.DoesNotExist:
+        entity = Organization.objects.get(legacy_id=entity_lookup)
+
     rtype_pk = entry.alpersonrelationshipkey
     rtype = SourceRelationshipType.objects.get(pk=rtype_pk)
     uncertain = convert_yn_to_boolean(entry.attribution_uncertain)
 
     d = {
         'source': source,
-        'related_entity': person,
+        'related_entity': entity,
         'relationship_type': rtype,
         'uncertain': uncertain
     }

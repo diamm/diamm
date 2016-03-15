@@ -182,12 +182,12 @@ def update_table():
 
 def migrate():
     print(term.blue('Migrating Sources'))
-    # empty_source()
+    empty_source()
 
-    # for entry in LegacySource.objects.all():
-    #     migrate_source_to_source(entry)
+    for entry in LegacySource.objects.all():
+        migrate_source_to_source(entry)
 
-    # update_table()
+    update_table()
 
     for entry in LegacySourceNotation.objects.all():
         attach_notation_to_source(entry)
