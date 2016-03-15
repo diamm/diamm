@@ -21,10 +21,16 @@
     <jmx/>
 
     <!-- auto-generate UUIDs when a document is indexed -->
-    <updateRequestProcessorChain name="uuid" default="true">
-        <processor class="solr.UUIDUpdateProcessorFactory">
-            <str name="fieldName">id</str>
-        </processor>
+    <updateProcessor class="solr.UUIDUpdateProcessorFactory" name="uuid">
+        <str name="fieldName">id</str>
+    </updateProcessor>
+
+    <!-- De-duplicate the values in the `text` field to make weighting more accurate. -->
+    <updateProcessor class="solr.UniqFieldsUpdateProcessorFactory" name="dedupe-fulltext">
+        <str name="fieldName">text</str>
+    </updateProcessor>
+
+    <updateRequestProcessorChain name="process" default="true" processor="uuid,dedupe-fulltext">
         <processor class="solr.LogUpdateProcessorFactory" />
         <processor class="solr.RunUpdateProcessorFactory" />
     </updateRequestProcessorChain>
