@@ -66,9 +66,41 @@ class Person(models.Model):
     def solr_relationships(self):
         connection = pysolr.Solr(settings.SOLR['SERVER'])
         fq = ['type:sourcerelationship', 'related_entity_type_s:person', 'related_entity_pk_i:{0}'.format(self.pk)]
-        rel_res = connection.search("*:*", fq=fq, rows=1000)
+        sort = ["source_ans asc"]
+
+        rel_res = connection.search("*:*", fq=fq, sort=sort, rows=10000)
 
         if rel_res.hits > 0:
             return rel_res.docs
+        else:
+            return []
+
+    @property
+    def solr_copyist(self):
+        connection = pysolr.Solr(settings.SOLR['SERVER'])
+        fq = ['type:sourcecopyist', 'copyist_type_s:person', 'copyist_pk_i:{0}'.format(self.pk)]
+        sort = ["source_ans asc"]
+
+        copy_res = connection.search("*:*", fq=fq, sort=sort, rows=10000)
+        if copy_res.hits > 0:
+            return copy_res.docs
+        else:
+            return []
+
+    @property
+    def solr_compositions(self):
+        connection = pysolr.Solr(settings.SOLR['SERVER'])
+        uncertain_ids = self.compositions.filter(uncertain=True).values_list('composition__pk', flat=True)
+        fq = ['type:composition', 'composers_ii:{0}'.format(self.pk)]
+        sort = ['title_s asc']
+        comp_res = connection.search("*:*", fq=fq, sort=sort, rows=10000)
+
+        if comp_res.hits > 0:
+            for res in comp_res.docs:
+                if res['pk'] in uncertain_ids:
+                    res['uncertain'] = True
+                else:
+                    res['uncertain'] = False
+            return comp_res.docs
         else:
             return []
