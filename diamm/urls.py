@@ -26,7 +26,7 @@ from diamm.views.website.source import SourceList, SourceDetail, SourceManifest,
 from diamm.views.website.archive import ArchiveList, ArchiveDetail
 from diamm.views.website.city import CityList, CityDetail
 from diamm.views.website.country import CountryList, CountryDetail
-from diamm.views.website.person import PersonList, PersonDetail, legacy_composer_redirect
+from diamm.views.website.person import PersonDetail, legacy_composer_redirect
 from diamm.views.website.organization import OrganizationList, OrganizationDetail
 from diamm.views.website.composition import CompositionList, CompositionDetail
 from diamm.views.website.story import StoryDetail
@@ -60,7 +60,7 @@ urlpatterns = [
     url(r'^cities/(?P<pk>[0-9]+)/$', CityDetail.as_view(), name="city-detail"),
     url(r'^countries/$', CountryList.as_view(), name="country-list"),
     url(r'^countries/(?P<pk>[0-9]+)/$', CountryDetail.as_view(), name="country-detail"),
-    url(r'^people/$', PersonList.as_view(), name="person-list"),
+    # url(r'^people/$', PersonList.as_view(), name="person-list"),
     url(r'^people/(?P<pk>[0-9]+)/$', PersonDetail.as_view(), name="person-detail"),
     url(r'^organizations/$', OrganizationList.as_view(), name='organization-list'),
     url(r'^organizations/(?P<pk>[0-9]+)/$', OrganizationDetail.as_view(), name="organization-detail"),

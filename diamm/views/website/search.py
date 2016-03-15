@@ -18,7 +18,7 @@ class SearchView(generics.GenericAPIView):
 
         type_query = request.GET.get('type', None)
 
-        if type_query and type_query == "all":
+        if not type_query or type_query == "all":
             filters.update({
                 'type': settings.SOLR['SEARCH_TYPES']
             })

@@ -6,7 +6,7 @@
   {% if type == params.type %}
     <strong>
   {% endif %}
-    {{ type | title }} ({{ count }})
+    {{ type | title }} {% if type != 'all' %}({{ count }}){% endif %}
   {% if type == params.type %}
     </strong>
   {% endif %}

@@ -3,14 +3,14 @@ from django.shortcuts import redirect
 from rest_framework import generics
 from diamm.models.data.person import Person
 from diamm.models.data.composition import Composition
-from diamm.serializers.website.person import PersonListSerializer, PersonDetailSerializer
+from diamm.serializers.website.person import PersonDetailSerializer
 
 
-class PersonList(generics.ListAPIView):
-    template_name = "website/person/person_list.jinja2"
-    queryset = Person.objects.all()
-    serializer_class = PersonListSerializer
-
+# class PersonList(generics.ListAPIView):
+#     template_name = "website/person/person_list.jinja2"
+#     queryset = Person.objects.all()
+#     serializer_class = PersonListSerializer
+#
 
 class PersonDetail(generics.RetrieveAPIView):
     template_name = "website/person/person_detail.jinja2"

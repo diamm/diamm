@@ -4,7 +4,7 @@
     <h1>Composition List</h1>
     <ul>
     {% for composition in content.results %}
-        <li><a href="{{ composition.url }}">{{ composition.name }}</a></li>
+        <li><a href="{{ composition.url }}">{{ composition.title }}</a></li>
     {% endfor %}
     </ul>
 {% endblock %}
