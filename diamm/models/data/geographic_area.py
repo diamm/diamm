@@ -40,8 +40,6 @@ class GeographicArea(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        if self.parent:
-            return "{0} ({1})".format(self.name, self.parent.name)
         return "{0}".format(self.name)
 
     @property
