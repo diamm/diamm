@@ -30,8 +30,6 @@
     <dynamicField name="*_sni" type="string" indexed="false" stored="true" />
     <dynamicField name="*_ssni" type="string" indexed="false" stored="true" multiValued="true" />
 
-
-
     <uniqueKey>id</uniqueKey>
 
     <!-- copyfields go here -->
@@ -45,6 +43,7 @@
     <copyField source="last_name_s" dest="text" />
     <copyField source="variant_names_ss" dest="text" />
     <copyField source="siglum_s" dest="text" />
+    <copyField source="voice_text_txt" dest="text" />
 
     <!-- field definitions -->
     <fieldType name="uuid" class="solr.UUIDField" indexed="true" />
