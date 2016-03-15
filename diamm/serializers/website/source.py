@@ -6,6 +6,23 @@ from diamm.serializers.serializers import ContextSerializer, ContextDictSerializ
 from rest_framework.reverse import reverse
 
 
+class SourceCopyistSerializer(ContextDictSerializer):
+    copyist = serpy.MethodField()
+    uncertain = serpy.BoolField(
+        attr="uncertain_b"
+    )
+    type = serpy.StrField(
+        attr="type_s"
+    )
+    def get_copyist(self, obj):
+        url = reverse('{0}-detail'.format(obj['copyist_type_s']),
+                      kwargs={"pk": int(obj['copyist_pk_i'])},
+                      request=self.context['request'])
+        return {
+            'name': obj['copyist_s'],
+            'url': url
+        }
+
 class SourceRelationshipSerializer(ContextDictSerializer):
     related_entity = serpy.MethodField()
     uncertain = serpy.BoolField(
@@ -17,12 +34,11 @@ class SourceRelationshipSerializer(ContextDictSerializer):
 
     def get_related_entity(self, obj):
         if 'related_entity_s' in obj:
-            name, pk, objtype = obj['related_entity_s'].split("|")
-            url = reverse("{0}-detail".format(objtype),
-                          kwargs={"pk": int(pk)},
+            url = reverse("{0}-detail".format(obj['related_entity_type_s']),
+                          kwargs={"pk": int(obj['related_entity_pk_i'])},
                           request=self.context['request'])
             return {
-                'name': name,
+                'name': obj['related_entity_s'],
                 'url': url
             }
         else:
@@ -96,6 +112,7 @@ class SourceSetSerializer(ContextDictSerializer):
         connection = pysolr.Solr(settings.SOLR['SERVER'])
         fq = ["type:source", "{!terms f=pk}"+source_ids]
 
+        # Filter out the current source from the list of returned sources.
         if 'source_id' in self.context:
             fq.append("-pk:{0}".format(self.context['source_id']))
 
@@ -266,6 +283,7 @@ class SourceDetailSerializer(ContextSerializer):
     sets = serpy.MethodField()
     provenance = serpy.MethodField()
     relationships = serpy.MethodField()
+    copyists = serpy.MethodField()
 
     bibliography = SourceBibliographySerializer(
         attr="solr_bibliography",
@@ -328,3 +346,7 @@ class SourceDetailSerializer(ContextSerializer):
     def get_relationships(self, obj):
         rel_res = obj.solr_relationships
         return [SourceRelationshipSerializer(s, context={"request": self.context['request']}).data for s in rel_res]
+
+    def get_copyists(self, obj):
+        cop_res = obj.solr_copyists
+        return [SourceCopyistSerializer(s, context={"request": self.context['request']}).data for s in cop_res]

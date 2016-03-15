@@ -11,6 +11,9 @@ class PersonSourceCopyistSerializer(ContextDictSerializer):
     uncertain = serpy.BoolField(
         attr="uncertain_b"
     )
+    source = serpy.StrField(
+        attr="source_s"
+    )
 
     def get_url(self, obj):
         return reverse("source-detail",
@@ -25,6 +28,9 @@ class PersonSourceRelationshipSerializer(ContextDictSerializer):
     )
     uncertain = serpy.BoolField(
         attr="uncertain_b"
+    )
+    source = serpy.StrField(
+        attr="source_s"
     )
 
     def get_url(self, obj):
