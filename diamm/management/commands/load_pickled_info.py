@@ -1,13 +1,25 @@
 from django.core.management import BaseCommand
 from diamm.models.data.page import Page
-from diamm.models.migrate.legacy_image import LegacyImage
+from diamm.models.data.image import Image
+import pickle
+import ujson
+import sys
 
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        legacy_images = LegacyImage.objects.all()
-        for image in legacy_images:
-            print("Updating for image {0}".format(image.pk))
-            new_page = Page.objects.get(legacy_id="legacy_image.{0}".format(int(image.pk)))
-            new_page.sort_order = image.orderno
-            new_page.save()
+        with open('urloutput.pickle', 'rb') as f:
+            data = pickle.load(f)
+            for k, v in data.items():
+                print(k)
+                try:
+                    image = Image.objects.get(location=k)
+                except Image.MultipleObjectsReturned:
+                    image = Image.objects.filter(location=k).first()
+
+                if not image:
+                    print("OH NO NO IMAGE FOUND!")
+                    sys.exit(-1)
+
+                image.iiif_response_cache = ujson.dumps(v)
+                image.save()
