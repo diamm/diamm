@@ -43,7 +43,7 @@ def empty_items():
 
 def clear_aggregate_compositions():
     print(term.magenta("\tClearing aggregate compositions"))
-    Composition.objects.filter(name__in=aggregate_titles).delete()
+    Composition.objects.filter(title__in=aggregate_titles).delete()
 
 
 def migrate_item(entry):
@@ -72,17 +72,17 @@ def migrate_item(entry):
         orig_composition = Composition.objects.get(pk=composition_pk)
 
     # If the composition is a 'filler' one that meant to stand in for one or more
-    # listed but un-named works in the source, we will instead shift the
+    # listed but un-titled works in the source, we will instead shift the
     # composer to being an 'aggregate composer' and not join the original 'composition'
     # to the source.
     aggregate_composition_note = None
-    if orig_composition and orig_composition.name in aggregate_titles:
+    if orig_composition and orig_composition.title in aggregate_titles:
         print(term.magenta('\tCreating aggregate composer entry.'))
         # we have an aggregate entry. An aggregate composition should only
         # have one composer attached.
         aggregate_composer = orig_composition.composers.all()[0].composer
         # The aggregate 'composition' will be preserved as a legacy note
-        aggregate_composition_note = orig_composition.name
+        aggregate_composition_note = orig_composition.title
     else:
         composition = orig_composition
 
