@@ -36,11 +36,15 @@ from diamm.models.data.person import Person
 from diamm.models.data.composition import Composition
 from diamm.models.data.archive import Archive
 from diamm.models.data.organization import Organization
+from diamm.models.data.bibliography import Bibliography
+from diamm.models.data.set import Set
 from diamm.signals.source_signals import index_source, delete_source
 from diamm.signals.person_signals import index_person, delete_person
 from diamm.signals.archive_signals import index_archive, delete_archive
 from diamm.signals.composition_signals import index_composition, delete_composition
 from diamm.signals.organization_signals import index_organization, delete_organization
+from diamm.signals.bibliography_signals import index_bibliography, delete_bibliography
+from diamm.signals.set_signals import index_set, delete_set
 
 
 class Command(BaseCommand):
@@ -50,11 +54,15 @@ class Command(BaseCommand):
         signals.post_save.disconnect(index_archive, sender=Archive)
         signals.post_save.disconnect(index_composition, sender=Composition)
         signals.post_save.disconnect(index_organization, sender=Organization)
+        signals.post_save.disconnect(index_bibliography, sender=Bibliography)
+        signals.post_save.disconnect(index_set, sender=Set)
         signals.post_delete.disconnect(delete_source, sender=Source)
         signals.post_delete.disconnect(delete_person, sender=Person)
         signals.post_delete.disconnect(delete_archive, sender=Archive)
         signals.post_delete.disconnect(delete_composition, sender=Composition)
         signals.post_delete.disconnect(delete_organization, sender=Organization)
+        signals.post_delete.disconnect(delete_bibliography, sender=Bibliography)
+        signals.post_delete.disconnect(delete_set, sender=Set)
 
         print("Emptying Fixture tables")
         PageCondition.objects.all().delete()
