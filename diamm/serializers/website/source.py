@@ -86,12 +86,11 @@ class SourceProvenanceSerializer(ContextDictSerializer):
 
     def get_entity(self, obj):
         if 'entity_s' in obj:
-            name, pk, objtype = obj['entity_s'].split("|")
-            url = reverse("{0}-detail".format(objtype),
-                          kwargs={"pk": int(pk)},
+            url = reverse("{0}-detail".format(obj['entity_type_s']),
+                          kwargs={"pk": int(obj['entity_pk_i'])},
                           request=self.context['request'])
             return {
-                'name': name,
+                'name': obj['entity_s'],
                 'url': url
             }
         else:
