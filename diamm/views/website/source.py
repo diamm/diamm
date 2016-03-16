@@ -13,7 +13,6 @@ from diamm.serializers.iiif.annotation_list import AnnotationListSerializer
 
 class SourceList(generics.ListAPIView):
     template_name = "website/source/source_list.jinja2"
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     queryset = Source.objects.all()
 
     # For serializing large lists, we only need the minimal serializer,
@@ -28,7 +27,6 @@ class SourceList(generics.ListAPIView):
 class SourceDetail(generics.RetrieveAPIView):
     template_name = "website/source/source_detail.jinja2"
     serializer_class = SourceDetailSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
         # Optimization for retrieving
