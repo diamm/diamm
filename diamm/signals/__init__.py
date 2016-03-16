@@ -5,3 +5,6 @@ import diamm.signals.composition_signals
 import diamm.signals.organization_signals
 import diamm.signals.bibliography_signals
 import diamm.signals.set_signals
+import diamm.signals.source_copyist_signals
+import diamm.signals.source_provenance_signals
+import diamm.signals.source_relationship_signals
