@@ -26,13 +26,14 @@ SECRET_KEY = '@l%t#fyhaahycu$gct^u5ttya69v5n^00y48@)2mngdlel63g+'
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
-    'localhost:8000',
-    'alpha.diamm.ac.uk'
+    '*'
 ]
-INTERNAL_IPS = ('127.0.0.1',)
+INTERNAL_IPS = (
+    '127.0.0.1'
+)
 
 # Application definition
 
@@ -52,12 +53,9 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'django_extensions',
     'django_jinja',
-    'pagedown'
+    'pagedown',
+    # 'debug_toolbar'
 ]
-
-if DEBUG:
-    INSTALLED_APPS += ('debug_toolbar',
-                       'template_profiler_panel')
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
@@ -209,20 +207,3 @@ SOLR = {
 
 if DEBUG:
     SILENCED_SYSTEM_CHECKS = []
-
-DEBUG_TOOLBAR_PANELS = [
-    'debug_toolbar.panels.versions.VersionsPanel',
-    'debug_toolbar.panels.timer.TimerPanel',
-    'template_profiler_panel.panels.template.TemplateProfilerPanel',
-    'debug_toolbar.panels.settings.SettingsPanel',
-    'debug_toolbar.panels.headers.HeadersPanel',
-    'debug_toolbar.panels.request.RequestPanel',
-    'debug_toolbar.panels.sql.SQLPanel',
-    'debug_toolbar.panels.staticfiles.StaticFilesPanel',
-    'debug_toolbar.panels.templates.TemplatesPanel',
-    'debug_toolbar.panels.cache.CachePanel',
-    'debug_toolbar.panels.signals.SignalsPanel',
-    'debug_toolbar.panels.logging.LoggingPanel',
-    'debug_toolbar.panels.redirects.RedirectsPanel',
-    # 'debug_toolbar.panels.profiling.ProfilingPanel'
-]
