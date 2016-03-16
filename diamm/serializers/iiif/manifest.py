@@ -195,7 +195,7 @@ class SourceManifestSerializer(ContextDictSerializer):
                 "[child parentFilter=type:page childFilter=image_type_i:1 childFilter=type:image]"
             ],
             "sort": "sort_order_i asc, numeration_ans asc",
-            "rows": 2000
+            "rows": 10000
         }
         canvas_res = conn.search("*:*", **canvas_query)
         canvases = [CanvasSerializer(c, context={"request": self.context['request']}).data
