@@ -236,6 +236,15 @@ class SourceNoteSerializer(ContextSerializer):
     note_type = serpy.StrField()
 
 
+class SourceURLSerializer(ContextSerializer):
+    type = serpy.IntField()
+    url_type = serpy.StrField(
+        attr="url_type"
+    )
+    link = serpy.StrField()
+    link_text = serpy.StrField()
+
+
 class SourceNotationsSerializer(ContextSerializer):
     name = serpy.StrField()
 
@@ -269,7 +278,9 @@ class SourceDetailSerializer(ContextSerializer):
     )
     display_name = serpy.StrField()
     shelfmark = serpy.StrField()
-    surface_type = serpy.StrField()
+    surface_type = serpy.StrField(
+        required=False
+    )
     date_statement = serpy.StrField()
     type = serpy.StrField()
     cover_image_url = serpy.MethodField()
@@ -283,6 +294,12 @@ class SourceDetailSerializer(ContextSerializer):
     provenance = serpy.MethodField()
     relationships = serpy.MethodField()
     copyists = serpy.MethodField()
+
+    links = SourceURLSerializer(
+        attr="links.all",
+        call=True,
+        many=True
+    )
 
     bibliography = SourceBibliographySerializer(
         attr="solr_bibliography",
