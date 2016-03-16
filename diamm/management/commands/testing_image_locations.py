@@ -21,21 +21,24 @@ def _image_data_request(location):
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        imgs = Image.objects.filter(public=True,
-                                    location__isnull=False,
-                                    iiif_response_cache__isnull=True).only('legacy_filename', 'location')
+        imgurls = open('imageurls.txt', 'w')
+        imgs = Image.objects.filter(public=True).only('legacy_filename', 'location')
         for img in imgs:
             # all filenames are .jp2
             fn = "{0}.jp2".format(img.legacy_filename)
-            location = urljoin(IIP_SERVER_BASE, fn)
-            img_data = _image_data_request(location)
 
+            location = urljoin(IIP_SERVER_BASE, fn)
             print("{0} ===> {1}".format(fn, location))
             img.location = location
-            if img_data:
-                img.iiif_response_cache = ujson.dumps(img_data)
-            else:
-                img.iiif_response_cache = None
+            # img_data = _image_data_request(location)
+            # if img_data:
+            #     img.iiif_response_cache = ujson.dumps(img_data)
+            # else:
+            #     img.iiif_response_cache = None
             img.save()
+            imgurls.write(location + "\n")
+
+        imgurls.close()
+
 
 
