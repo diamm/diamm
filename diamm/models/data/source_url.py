@@ -27,3 +27,11 @@ class SourceURL(models.Model):
 
     def __str__(self):
         return "{0}".format(self.link_text)
+
+    @property
+    def url_type(self):
+        if not self.type:
+            return None
+
+        d = dict(self.URL_TYPES)
+        return d[self.type]
