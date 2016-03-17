@@ -43,6 +43,8 @@ class ItemSearchSerializer(serpy.Serializer):
     )
 
     composers_ssni = serpy.MethodField()
+    bibliography_ii = serpy.MethodField()
+    bibliography_ss = serpy.MethodField()
 
     def get_type(self, obj):
         return obj.__class__.__name__.lower()
@@ -62,6 +64,11 @@ class ItemSearchSerializer(serpy.Serializer):
         if obj.composition:
             return obj.composition.title
         return None
+
+    def get_bibliography_ii(self, obj):
+        if obj.itembibliography_set.count() > 0:
+            return list(obj.itembibliography_set.values_list('bibliography__pk', flat=True))
+        return []
 
     def get_composers_ssni(self, obj):
         """

@@ -23,6 +23,7 @@ class SourceCopyistSerializer(ContextDictSerializer):
             'url': url
         }
 
+
 class SourceRelationshipSerializer(ContextDictSerializer):
     related_entity = serpy.MethodField()
     uncertain = serpy.BoolField(
@@ -153,6 +154,13 @@ class SourceInventorySerializer(ContextDictSerializer):
     folio_end = serpy.MethodField()
     composition = serpy.MethodField()
     composers = serpy.MethodField()
+    bibliography = serpy.MethodField()
+
+    # @TODO Finish Item Bibliography stuff.
+    def get_bibliography(self, obj):
+        if 'bibliography_ii' not in obj:
+            return None
+
 
     def get_folio_end(self, obj):
         if 'folio_end_s' in obj:
