@@ -36,6 +36,7 @@ aggregate_titles = ("works by",
                     "30 works",
                     "37 work")
 
+
 def empty_items():
     print(term.magenta("\tEmptying item table"))
     Item.objects.all().delete()
@@ -56,7 +57,7 @@ def migrate_item(entry):
     # This is a special 'composition' that says that it's a post-1550 source.
     # If that's the case, we'll skip adding this composition to the source
     # and simply set a flag on the source that no inventory has been provided.
-    if entry.compositionkey == 0:
+    if entry.compositionkey in (0, 79920):
         print(term.red('\t\tMarking the inventory as not provided.'))
         source.inventory_provided = False
         source.save()
