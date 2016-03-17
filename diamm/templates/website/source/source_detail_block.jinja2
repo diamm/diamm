@@ -45,6 +45,12 @@
                         </td>
                     </tr>
                 {% endif %}
+                {% if not content.inventory_provided %}
+                    <tr>
+                        <th>Inventory</th>
+                        <td>Since this source is post-1550, a complete inventory has not been supplied.</td>
+                    </tr>
+                {% endif %}
             </table>
             {% if content.notes %}
                 {% for note in content.notes %}
