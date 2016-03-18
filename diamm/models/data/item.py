@@ -46,7 +46,7 @@ class Item(models.Model):
                                  help_text="Arrangement of pieces on the page")
     folio_start = models.CharField(max_length=256, blank=True, null=True)
     folio_end = models.CharField(max_length=256, blank=True, null=True)
-    num_voices = models.IntegerField(blank=True, null=True)
+    num_voices = models.CharField(max_length=32, blank=True, null=True)
 
     legacy_position_ms = models.CharField(max_length=256, blank=True, null=True)  # transfer for ordering, but we should be able to find a better way to do this.
     source_order = models.IntegerField(blank=True, null=True)

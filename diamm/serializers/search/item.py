@@ -16,6 +16,10 @@ class ItemSearchSerializer(serpy.Serializer):
         attr="source.display_name"
     )
     pages_ii = serpy.MethodField()
+    num_voices_s = serpy.StrField(
+        attr="num_voices",
+        required=False
+    )
     composition_s = serpy.MethodField()
     composition_i = serpy.MethodField()
     source_attribution_s = serpy.StrField(
@@ -44,7 +48,6 @@ class ItemSearchSerializer(serpy.Serializer):
 
     composers_ssni = serpy.MethodField()
     bibliography_ii = serpy.MethodField()
-    bibliography_ss = serpy.MethodField()
 
     def get_type(self, obj):
         return obj.__class__.__name__.lower()

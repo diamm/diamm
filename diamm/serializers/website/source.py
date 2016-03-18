@@ -150,17 +150,22 @@ class SourceBibliographySerializer(ContextDictSerializer):
 class SourceInventorySerializer(ContextDictSerializer):
     pk = serpy.IntField()
     url = serpy.MethodField()
+    num_voices = serpy.MethodField()
     folio_start = serpy.MethodField()
     folio_end = serpy.MethodField()
     composition = serpy.MethodField()
     composers = serpy.MethodField()
     bibliography = serpy.MethodField()
 
+    def get_num_voices(self, obj):
+        if 'num_voices_s' in obj:
+            return obj['num_voices_s']
+        return None
+
     # @TODO Finish Item Bibliography stuff.
     def get_bibliography(self, obj):
         if 'bibliography_ii' not in obj:
             return None
-
 
     def get_folio_end(self, obj):
         if 'folio_end_s' in obj:
