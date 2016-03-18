@@ -1,9 +1,11 @@
+from django.db.models import Q
 from diamm.models.data.source import Source
 from diamm.models.data.image import Image
 from diamm.models.data.item import Item
 from diamm.models.data.image_type import ImageType
 from diamm.models.data.page import Page
 from diamm.models.data.page_condition import PageCondition
+from diamm.models.data.page_note import PageNote
 from diamm.models.migrate.legacy_image import LegacyImage
 from diamm.models.migrate.legacy_secondary_image import LegacySecondaryImage
 from diamm.models.migrate.legacy_item_image import LegacyItemImage
@@ -192,6 +194,25 @@ def attach_item_to_page(entry):
     item.pages.add(page)
     item.save()
 
+    note_fields = (
+        (PageNote.DECORATION_COLOUR, entry.decorationstyle),
+        (PageNote.DECORATION_COLOUR, entry.decorationcolour),
+        (PageNote.INITIAL, entry.initial),
+        (PageNote.INITIAL_COLOUR, entry.initialcolour)
+    )
+
+    for nt in note_fields:
+        if not nt[1]:
+            continue
+
+        d = {
+            'type': nt[0],
+            'note': nt[1],
+            'page': page
+        }
+        pgn = PageNote(**d)
+        pgn.save()
+
 
 def migrate():
     print(term.green("Migrating Images and converting them to Pages"))
@@ -205,3 +226,35 @@ def migrate():
     for entry in LegacyItemImage.objects.all():
         attach_item_to_page(entry)
 
+
+def update_page_notes():
+    PageNote.objects.all().delete()
+    legacy_item_image = LegacyItemImage.objects.filter(Q(decorationstyle__isnull=False) | Q(decorationcolour__isnull=False) | Q(initial__isnull=False) | Q(initialcolour__isnull=False))
+
+    for entry in legacy_item_image:
+        print("Updating entry {0}".format(entry.pk))
+
+        try:
+            page = Page.objects.get(legacy_id="legacy_image.{0}".format(int(entry.imagekey)))
+        except Page.DoesNotExist:
+            print('page could not be found')
+            continue
+
+        note_fields = (
+            (PageNote.DECORATION_COLOUR, entry.decorationstyle),
+            (PageNote.DECORATION_COLOUR, entry.decorationcolour),
+            (PageNote.INITIAL, entry.initial),
+            (PageNote.INITIAL_COLOUR, entry.initialcolour)
+        )
+
+        for nt in note_fields:
+            if not nt[1]:
+                continue
+
+            d = {
+                'type': nt[0],
+                'note': nt[1],
+                'page': page
+            }
+            pgn = PageNote(**d)
+            pgn.save()

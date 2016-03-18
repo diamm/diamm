@@ -1,7 +1,10 @@
 import psycopg2 as psql
 from django.conf import settings
+from django.db.models import Q
 from diamm.models.migrate.legacy_item import LegacyItem
+from diamm.models.migrate.legacy_item_image import LegacyItemImage
 from diamm.models.data.item import Item
+from diamm.models.data.item_note import ItemNote
 from diamm.models.data.source import Source
 from diamm.models.data.composition import Composition
 from blessings import Terminal
@@ -38,7 +41,8 @@ aggregate_titles = ("works by",
 
 
 def empty_items():
-    print(term.magenta("\tEmptying item table"))
+    print(term.magenta("\tEmptying item and notes tables"))
+    ItemNote.objects.all().delete()
     Item.objects.all().delete()
 
 
@@ -103,7 +107,7 @@ def migrate_item(entry):
         'source_attribution': entry.composeroriginal,
         'source_incipit': entry.incipittranscription,
         'layout': layout,
-        # 'num_voices': entry.novoices  # TODO: Fix this in Filemaker to be Integers...
+        'num_voices': entry.novoices,
         'legacy_position_ms': entry.positionms,
         'page_order': entry.positionpage if entry.positionpage else 0
     }
@@ -111,25 +115,35 @@ def migrate_item(entry):
     it = Item(**d)
     it.save()
 
-    # note_fields = (
-    #     (ItemNote.I_GENERAL_NOTE, entry.notes),
-    #     (ItemNote.I_COPYING_STYLE, entry.copyingstyle),
-    #     (ItemNote.I_CONCORDANCES, entry.concordances),
-    #     (ItemNote.I_LEGACY_LAYOUT, entry.layout),
-    #     (ItemNote.I_LEGACY_VOICES, entry.novoices),
-    #     (ItemNote.I_LEGACY_COMPOSITION, aggregate_composition_note)
-    # )
-    #
-    # for nt in note_fields:
-    #     if not nt[1]:
-    #         continue
-    #     d = {
-    #         'type': nt[0],
-    #         'note': nt[1],
-    #         'item': it
-    #     }
-    #     itn = ItemNote(**d)
-    #     itn.save()
+    note_fields = (
+        (ItemNote.GENERAL_NOTE, entry.notes),
+        (ItemNote.COPYING_STYLE, entry.copyingstyle),
+        (ItemNote.CONCORDANCES, entry.concordances),
+        (ItemNote.LAYOUT, entry.layout)
+    )
+
+    for nt in note_fields:
+        if not nt[1]:
+            continue
+        d = {
+            'type': nt[0],
+            'note': nt[1],
+            'item': it
+        }
+        itn = ItemNote(**d)
+        itn.save()
+
+    # Migrate the position note from the item image table.
+    itemimages = LegacyItemImage.objects.filter(pk=entry.pk, positiononpage__isnull=False)
+    for entry in itemimages:
+        d = {
+            'type': ItemNote.POSITION,
+            'note': entry.positiononpage,
+            'item': it
+        }
+        itmn = ItemNote(**d)
+        itmn.save()
+
 
 def update_table():
     print(term.yellow("\tUpdating the ID sequences for the Django Item Table"))
@@ -158,3 +172,69 @@ def migrate():
     clear_aggregate_compositions()
     update_table()
     print(term.blue("Done migrating items"))
+
+
+def update_item_voices():
+    legacy_items = LegacyItem.objects.filter(novoices__isnull=False)
+    for v in legacy_items:
+        print("Updating item {0}".format(v.pk))
+        try:
+            item = Item.objects.get(pk=v.pk)
+        except Item.DoesNotExist:
+            print('This item does not exist')
+            continue
+
+        item.num_voices = v.novoices
+        item.save()
+
+
+def update_item_notes():
+    # Clear all item notes before re-importing.
+    ItemNote.objects.all().delete()
+
+    legacy_items = LegacyItem.objects.filter(Q(notes__isnull=False) | Q(copyingstyle__isnull=False) | \
+                                             Q(concordances__isnull=False) | Q(layout__isnull=False))
+
+    for entry in legacy_items:
+        print("Updating item {0}".format(entry.pk))
+        note_fields = (
+            (ItemNote.GENERAL_NOTE, entry.notes),
+            (ItemNote.COPYING_STYLE, entry.copyingstyle),
+            (ItemNote.CONCORDANCES, entry.concordances),
+            (ItemNote.LAYOUT, entry.layout)
+        )
+
+        try:
+            item = Item.objects.get(pk=entry.pk)
+        except Item.DoesNotExist:
+            print('This item does not exist')
+            continue
+
+        for nt in note_fields:
+            if not nt[1]:
+                continue
+            d = {
+                'type': nt[0],
+                'note': nt[1],
+                'item': item
+            }
+            itn = ItemNote(**d)
+            itn.save()
+
+    for entry in LegacyItemImage.objects.filter(positiononpage__isnull=False):
+        print("Updating item {0}".format(entry.pk))
+        try:
+            item = Item.objects.get(pk=entry.pk)
+        except Item.DoesNotExist:
+            print('This item does not exist')
+            continue
+
+        d = {
+            'type': ItemNote.POSITION,
+            'note': entry.positiononpage,
+            'item': item
+        }
+        itmn = ItemNote(**d)
+        itmn.save()
+
+
