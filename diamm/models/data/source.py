@@ -124,8 +124,7 @@ class Source(models.Model):
         item_results = connection.search("*:*", fq=fq, sort="folio_start_ans asc", rows=10000)
         if item_results.docs:
             return item_results.docs
-        else:
-            return []
+        return []
 
     @property
     def solr_bibliography(self):
@@ -134,7 +133,7 @@ class Source(models.Model):
         id_list = ",".join([str(x[0]) for x in bibl])
         connection = pysolr.Solr(settings.SOLR['SERVER'])
         fq = ['type:bibliography', "{!terms f=pk}"+id_list]
-        bibliography_results = connection.search("*:*", fq=fq, sort="authors_s asc", rows=10000)
+        bibliography_results = connection.search("*:*", fq=fq, sort="year_ans desc, sort_ans asc", rows=10000)
 
         if bibliography_results.hits == 0:
             return []
@@ -165,8 +164,7 @@ class Source(models.Model):
         page_results = connection.search("*:*", fq=fq, sort="numeration_ans asc", rows=10000)
         if page_results.docs:
             return page_results.docs
-        else:
-            return []
+        return []
 
     @property
     def solr_sets(self):
@@ -179,8 +177,7 @@ class Source(models.Model):
 
         if set_results.hits > 0:
             return set_results.docs
-        else:
-            return []
+        return []
 
     @property
     def solr_provenance(self):
@@ -192,8 +189,7 @@ class Source(models.Model):
 
         if provenance_results.hits > 0:
             return provenance_results.docs
-        else:
-            return []
+        return []
 
     @property
     def solr_relationships(self):
@@ -203,8 +199,7 @@ class Source(models.Model):
 
         if rel_results.hits > 0:
             return rel_results.docs
-        else:
-            return []
+        return []
 
     @property
     def solr_copyists(self):
@@ -214,5 +209,4 @@ class Source(models.Model):
 
         if copyist_results.hits > 0:
             return copyist_results.docs
-        else:
-            return []
+        return []

@@ -1,15 +1,17 @@
 {%- macro person_entry(people, editors) %}
     {%- for person_rel in people -%}
-        {% set person = person_rel.bibliography_author -%}
+        {%- set person = person_rel.bibliography_author -%}
+        {%- set personkey = person_rel.bibliography_author.pk -%}
+
         {%- if loop.index == 1 -%}
             {# first or only person -#}
-            {{ person.last_name }}{% if person.first_name %}, {{ person.first_name }}{% endif %}{% if loop.length > 1 %}, {% elif not editors %}. {% endif %}
+            <a href="{{ url('author-detail', pk=personkey) }}">{{ person.last_name }}{% if person.first_name %}, {{ person.first_name.rstrip(".") }}{% endif %}</a>{% if loop.length > 1 %}, {% elif not editors %}. {% endif %}
         {%- elif loop.length > 1 and loop.last -%}
             {# final person -#}
- and {{ person.first_name }} {{ person.last_name }}{% if not editors %}.{% endif %}
+ and <a href="{{ url('author-detail', pk=personkey) }}">{{ person.first_name }} {{ person.last_name }}</a>{% if not editors %}.{% endif %}
         {%- else -%}
             {# all others -#}
-            {{ person.first_name | default("") }} {{ person.last_name }}{% if loop.length > 1 %}, {% endif %}
+            <a href="{{ url('author-detail', pk=personkey) }}">{{ person.first_name | default("") }} {{ person.last_name }}</a>{% if loop.length > 1 %}, {% endif %}
         {%- endif %}
     {%- endfor %}
     {% if editors and people | length > 1 -%}
@@ -22,10 +24,11 @@
 {%- macro editors_entry(people) %}
     {% for person_rel in people -%}
         {% set person = person_rel.bibliography_author -%}
+        {% set personkey = person_rel.bibliography_author.pk %}
         {% if loop.last -%}
- &nbsp;and {{ person.first_name }} {{ person.last_name }}
+ &nbsp;and <a href="{{ url('author-detail', pk=personkey) }}">{{ person.first_name }} {{ person.last_name }}</a>
         {%- else -%}
- {{ person.first_name }} {{ person.last_name }}{% if loop.length > 2 -%}, {%- endif %}
+ <a href="{{ url('author-detail', pk=personkey) }}">{{ person.first_name }} {{ person.last_name }}</a>{% if loop.length > 2 -%}, {% endif %}
         {%- endif %}
     {%- endfor %}
 {% endmacro -%}

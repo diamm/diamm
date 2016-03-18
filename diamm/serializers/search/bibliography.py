@@ -8,11 +8,15 @@ class BibliographySearchSerializer(serpy.Serializer):
     pk = serpy.IntField()
 
     authors_s = serpy.MethodField()
+    authors_ii = serpy.MethodField()
 
     title_s = serpy.StrField(
         attr="title"
     )
     year_s = serpy.StrField(
+        attr="year"
+    )
+    year_ans = serpy.StrField(
         attr="year"
     )
     type_s = serpy.StrField(
@@ -22,6 +26,7 @@ class BibliographySearchSerializer(serpy.Serializer):
         attr="abbreviation"
     )
     prerendered_sni = serpy.MethodField()
+    sort_ans = serpy.MethodField()
 
     def get_type(self, obj):
         return obj.__class__.__name__.lower()
@@ -41,6 +46,16 @@ class BibliographySearchSerializer(serpy.Serializer):
         authors_s = "$".join(["{0}|{1}|{2}".format(n[0], n[1], n[2]) for n in authors])
         return authors_s
 
+    def get_authors_ii(self, obj):
+        if obj.authors.count() > 0:
+            return list(obj.authors.values_list('bibliography_author__pk', flat=True))
+        return None
+
+    def get_sort_ans(self, obj):
+        if obj.authors.count() > 0:
+            return " ".join(list(obj.authors.values_list('bibliography_author__last_name', flat=True)))
+        return None
+
     def get_prerendered_sni(self, obj):
         """
             Pre-renders the citation by passing it through the Jinja template
@@ -49,7 +64,9 @@ class BibliographySearchSerializer(serpy.Serializer):
         """
         template = get_template('website/bibliography/bibliography_entry.jinja2')
         citation = template.template.render(content=obj)
+        # strip out any newlines from the templating process
         citation = re.sub('\n', '', citation)
+        # strip out multiple spaces
         citation = re.sub('\s+', ' ', citation)
         citation = citation.strip()
         return citation

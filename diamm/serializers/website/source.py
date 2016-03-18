@@ -1,9 +1,8 @@
 import serpy
 import pysolr
 from django.conf import settings
-# Hopefully this can be factored out when clarkduvall/serpy#16 is fixed.
-from diamm.serializers.serializers import ContextSerializer, ContextDictSerializer
 from rest_framework.reverse import reverse
+from diamm.serializers.serializers import ContextSerializer, ContextDictSerializer
 
 
 class SourceCopyistSerializer(ContextDictSerializer):
@@ -14,6 +13,7 @@ class SourceCopyistSerializer(ContextDictSerializer):
     type = serpy.StrField(
         attr="type_s"
     )
+
     def get_copyist(self, obj):
         url = reverse('{0}-detail'.format(obj['copyist_type_s']),
                       kwargs={"pk": int(obj['copyist_pk_i'])},
@@ -164,8 +164,18 @@ class SourceInventorySerializer(ContextDictSerializer):
 
     # @TODO Finish Item Bibliography stuff.
     def get_bibliography(self, obj):
-        if 'bibliography_ii' not in obj:
+        connection = pysolr.Solr(settings.SOLR['SERVER'])
+        fq = ["type:itembibliography", "item_i:{0}".format(obj['pk'])]
+        sort = ["prerendered_s asc"]
+        fl = ["pages_s", "prerendered_s", "notes_s"]
+
+        bibliography_res = connection.search("*:*", fq=fq, fl=fl, sort=sort, rows=10000)
+
+        if bibliography_res.hits > 0:
+            return bibliography_res.docs
+        else:
             return None
+
 
     def get_folio_end(self, obj):
         if 'folio_end_s' in obj:

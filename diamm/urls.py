@@ -31,6 +31,7 @@ from diamm.views.website.organization import OrganizationList, OrganizationDetai
 from diamm.views.website.composition import CompositionList, CompositionDetail
 from diamm.views.website.story import StoryDetail
 from diamm.views.website.image import image_serve
+from diamm.views.website.bibliography_author import BibliographyAuthorDetail
 from diamm.views.website.canvas import CanvasData
 
 
@@ -67,6 +68,8 @@ urlpatterns = [
     url(r'^composers/(?P<legacy_id>[0-9]+)/$', legacy_composer_redirect),
     url(r'^compositions/$', CompositionList.as_view(), name="composition-list"),
     url(r'^compositions/(?P<pk>[0-9]+)/$', CompositionDetail.as_view(), name="composition-detail"),
+
+    url(r'^authors/(?P<pk>[0-9]+)/$', BibliographyAuthorDetail.as_view(), name="author-detail"),
 
     url(r'^images/(?P<pk>[0-9]+)/(?:(?P<region>.*)/(?P<size>.*)/(?P<rotation>.*)/default\.jpg)$', image_serve, name="image-serve"),
     url(r'^images/(?P<pk>[0-9]+)/$', image_serve, name="image-serve-info")

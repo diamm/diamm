@@ -1,0 +1,9 @@
+{% extends "base.jinja2" %}
+
+{% block body %}
+    {{ content.last_name }}, {{ content.first_name }}
+
+    {% for entry in content.bibliography %}
+        <p>{{ entry.entry | safe }}</p>
+    {% endfor %}
+{% endblock %}
