@@ -22,7 +22,10 @@ def migrate_text_and_voice(entry):
     print(term.green("\tMigrating text entry {0}".format(entry.pk)))
     voice_type = VoiceType.objects.get(legacy_id="voice.{0}".format(int(entry.alvoicekey)))
     item = Item.objects.get(pk=int(entry.itemkey))
-    mensuration = Mensuration.objects.get(pk=int(entry.almensurationkey))
+    mensuration = None
+    # Skip the 'no designation' mensuration key and favour null for mensuration.
+    if entry.almensurationkey not in (None, 0):
+        mensuration = Mensuration.objects.get(pk=int(entry.almensurationkey))
 
     clef = None
     if int(entry.alclefkey) != 0:

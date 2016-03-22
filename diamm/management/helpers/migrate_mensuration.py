@@ -45,6 +45,10 @@ def migrate():
     print(term.blue("Migrating mensuration signs"))
     empty_table()
     for entry in LegacyMensuration.objects.all():
+        # Skip the 'number library' entry; it's not connected to anything.
+        # Also skip the 'no designation' and favour a null value.
+        if entry.pk in (16, 0):
+            continue
         migrate_mensuration(entry)
 
     update_table()

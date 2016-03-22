@@ -1,9 +1,13 @@
 import re
+import os
 import psycopg2 as psql
 from django.conf import settings
+from django.db.models import Q
+from django.core.files import File
 from diamm.models.migrate.legacy_source import LegacySource
 from diamm.models.migrate.legacy_source_notation import LegacySourceNotation
 from diamm.models.data.source import Source
+from diamm.models.data.source_catalogue_entry import SourceCatalogueEntry
 from diamm.models.data.notation import Notation
 from diamm.management.helpers.utilities import convert_yn_to_boolean
 from diamm.models.data.archive import Archive
@@ -193,3 +197,48 @@ def migrate():
         attach_notation_to_source(entry)
 
     print(term.blue('Done migrating Sources'))
+
+
+def update_rism_images():
+    SourceCatalogueEntry.objects.all().delete()
+
+    print(term.blue("Updating sources with RISM images"))
+
+    fpath = os.path.join(settings.BASE_DIR, 'rism_images')
+
+    for entry in LegacySource.objects.filter(Q(rismimagefilename1__isnull=False) | Q(rismimagefilename2__isnull=False) | Q(rismimagefilename3__isnull=False)):
+        print("Updating rism attachments for source {0}".format(entry.pk))
+        source = Source.objects.get(pk=entry.pk)
+
+        if entry.rismimagefilename1:
+            fn1 = entry.rismimagefilename1.rstrip()
+            fobj = "{0}.png".format(fn1)
+            d = {
+                'order': 1,
+                'entry': fobj,
+                'source': source
+            }
+            sce = SourceCatalogueEntry(**d)
+            sce.save()
+
+        if entry.rismimagefilename2:
+            fn2 = entry.rismimagefilename2.rstrip()
+            fobj = "{0}.png".format(fn2)
+            d = {
+                'order': 2,
+                'entry': fobj,
+                'source': source
+            }
+            sce = SourceCatalogueEntry(**d)
+            sce.save()
+
+        if entry.rismimagefilename3:
+            fn3 = entry.rismimagefilename3.rstrip()
+            fobj = "{0}.png".format(fn3)
+            d = {
+                'order': 3,
+                'entry': fobj,
+                'source': source
+            }
+            sce = SourceCatalogueEntry(**d)
+            sce.save()
