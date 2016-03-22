@@ -12,3 +12,34 @@
   }
 }
 
+.type-filter {
+  font-family: $small-caps;
+  text-transform: lowercase;
+  padding: 0.5rem;
+  border-bottom: 1px solid $diamm-light-grey;
+  span {
+    font-weight: 500;
+    float: left;
+  }
+  ul {
+    margin-bottom: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    li {
+      margin-bottom: 0;
+    }
+    a {
+      &:hover, &:focus {
+        border-bottom: none;
+        font-weight: 500;
+      }
+      display: flex;
+      align-items: flex-start;
+      padding: 0 0.3rem;
+    }
+  }
+}
+
+.search-result {
+}

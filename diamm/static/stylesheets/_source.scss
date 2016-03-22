@@ -28,8 +28,6 @@
 
 .source-description {
   h3, h4 {
-    text-transform: lowercase;
-    font-family: $small-caps;
     font-weight: bold;
     font-size: 1em;
     letter-spacing: normal;
@@ -41,14 +39,15 @@
     width: 100%;
     margin-bottom: 1rem;
     th, td {
-      border-bottom: none;
-      padding: 0;
+      border-bottom: 1px solid $diamm-light-grey;
+      padding: 8px;
+    }
+    th {
+      border-right: 1px solid $diamm-light-grey;
     }
     th {
       vertical-align: top;
       padding-right: 10px;
-      text-transform: lowercase;
-      font-family: $small-caps;
       width: 20%;
     }
     ul, li {
@@ -80,7 +79,7 @@
   }
 }
 
-.other-identifiers {
+.no-style {
   list-style: none;
 }
 
