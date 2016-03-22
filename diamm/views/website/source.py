@@ -30,7 +30,7 @@ class SourceDetail(generics.RetrieveAPIView):
 
     def get_queryset(self):
         # Optimization for retrieving
-        prefetch = ['notes']
+        prefetch = ['notes', 'catalogue_entries']
         queryset = Source.objects.all()
         queryset = queryset.select_related('archive__city__parent').prefetch_related(*prefetch)
         return queryset
