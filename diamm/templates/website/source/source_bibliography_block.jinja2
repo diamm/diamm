@@ -13,6 +13,7 @@
                 {% if entry.primary_study %}
                 </strong>
                 {% endif %}
+                {% if user.is_staff %}<sup><a href="/admin/diamm_data/bibliography/{{ entry.pk }}/change">Edit</a></sup>{% endif %}
             </p>
         {% endfor %}
         <hr />

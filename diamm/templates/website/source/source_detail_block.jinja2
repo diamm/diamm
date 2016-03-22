@@ -25,7 +25,7 @@
                     <tr>
                         <th>Other Identifiers</th>
                         <td>
-                            <ul class="other-identifiers">
+                            <ul class="no-style">
                                 {% for identifier in content.identifiers %}
                                     <li><strong>{{ identifier.identifier_type }}:</strong> {{ identifier.identifier }}</li>
                                 {% endfor %}
@@ -37,7 +37,7 @@
                     <tr>
                         <th>Notations</th>
                         <td>
-                            <ul class="other-identifiers">
+                            <ul class="no-style">
                                 {% for notation in content.notations %}
                                     <li>{{ notation.name }}</li>
                                 {% endfor %}
@@ -51,33 +51,88 @@
                         <td>Since this source is post-1550, a complete inventory has not been supplied.</td>
                     </tr>
                 {% endif %}
+                {% if content.copyists %}
+                    <tr>
+                        <th>Copyists</th>
+                        <td>
+                            <ul class="no-style">
+                                {% for copyist in content.copyists %}
+                                <li>
+                                    <a href="{{ copyist.copyist.url }}">{{ "? " if copyist.uncertain else "" }}{{ copyist.copyist.name }}</a> ({{ copyist.type }})
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                {% endif %}
+                {% if content.relationships %}
+                    <tr>
+                        <th>Relationships</th>
+                        <td>
+                            <ul class="no-style">
+                                {% for relationship in content.relationships %}
+                                <li>
+                                    ({{ relationship.relationship_type }}) <a href="{{ relationship.related_entity.url }}">{{ "? " if relationship.uncertain else "" }}{{ relationship.related_entity.name }}</a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                {% endif %}
+                {% if content.links %}
+                    <tr>
+                        <th>External Links</th>
+                        <td>
+                            <ul class="no-style">
+                                {% for link in content.links %}
+                                <a href="{{ link.link }}">{{ link.link_text }}</a>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                {% endif %}
+                {% if content.provenance %}
+                    <tr>
+                        <th>Provenance</th>
+                        <td>
+                            <ul class="no-style">
+                                {%- for entry in content.provenance -%}
+                                    {%- if entry.entity -%}
+                                        {{ "? " if entity_uncertain else "" }}<a href="{{ entry.entity.url }}">{{ entry.entity.name }}</a>,
+                                    {%- endif -%}
+                                    {%- if entry.protectorate -%}
+                                        {{ "? " if entry.protectorate_uncertain else "" }}{{ entry.protectorate }},
+                                    {%- endif -%}
+                                    {%- if entry.region -%}
+                                        {{ "? " if entry.region_uncertain else "" }}{{ entry.region }},
+                                    {%- endif -%}
+                                    {%- if entry.city -%}
+                                        {{ "? " if entry.city_uncertain else "" }}{{ entry.city }},
+                                    {%- endif -%}
+                                    {%- if entry.country -%}
+                                        {{ "? " if entry.country_uncertain else "" }}{{ entry.country }}
+                                    {%- endif -%}
+                                {%- endfor -%}
+                            </ul>
+                        </td>
+                    </tr>
+                {% endif %}
             </table>
+
+            {% if content.has_images == False and content.public_images == False %}
+                <p>
+                    <strong>DIAMM does not have images of this source.</strong>
+                </p>
+            {% elif content.has_images == True and content.public_images == False %}
+                <p>
+                    <strong>DIAMM has images of this manuscript, but does not yet have permission to put them online.</strong>
+                </p>
+            {% endif %}
+
             {% if content.notes %}
                 {% for note in content.notes %}
                     <h4>{{ note.note_type }}</h4>
                     {{ note.note | markdown | safe }}
-                {% endfor %}
-            {% endif %}
-
-            {% if content.sets %}
-                <h4>Related Sets</h4>
-                {% for set in content.sets %}
-                    <h5>{{ set.cluster_shelfmark }}</h5>
-                    <p>{{ set.set_type }}</p>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Source</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {% for source in set.sources %}
-                            <tr>
-                                <td><a href="{{ source.url }}">{{ source.display_name_s }}</a></td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
                 {% endfor %}
             {% endif %}
         </div>

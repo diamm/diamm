@@ -1,10 +1,12 @@
 <div class="tab-panel row" id="inventory">
     <h2>Inventory</h2>
     <div class="sixteen columns">
+        {% if content.inventory %}
         <table>
             <thead>
             <tr>
                 <th>Composition</th>
+                <th>No. Voices</th>
                 <th>Composer</th>
                 <th>Folio Start</th>
                 <th>Folio End</th>
@@ -15,25 +17,45 @@
                 <tr>
                     {% if item.composition %}
                         <td><a href="{{ item.url }}">{{ item.composition }}</a></td>
+                        <td>{{ item.num_voices }}</td>
                         <td>
                             {% for composer in item.composers %}
-                                {{ "? " if composer.uncertain else "" }}<a href="{{ composer.url }}">{{ composer.full_name }}</a>
+                                {{ "? " if composer.uncertain else "" }}
+                                {% if composer.url %}<a href="{{ composer.url }}">{% endif %}
+                                    {{ composer.full_name }}
+                                {% if composer.url %}</a>{% endif %}
                                 {%- if not loop.last -%}, {%- endif -%}
                             {% endfor %}
                         </td>
                         <td>{{ item.folio_start }}</td>
                         <td>{{ item.folio_end }}</td>
-                    {% else %}
-                        <td colspan="4">Works by
-                            {% for composer in item.composers %}
-                                {{ "?" if composer.uncertain else "" }}<a href="{{ composer_url }}">{{ composer.full_name }}</a>
-                                {%- if not loop.last -%}, {%- endif -%}
-                            {% endfor %}
-                        </td>
-                    {% endif %}
+                   {% endif %}
                 </tr>
+                {% if item.bibliography %}
+                <tr>
+                    <td colspan="5">
+                        {% for entry in item.bibliography %}
+                        <p>{{ entry.prerendered_s | safe }}</p>
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% endif %}
             {% endfor %}
             </tbody>
         </table>
+        {% endif %}
+
+        {% if content.uninventoried %}
+            <h4>Uninventoried Composers</h4>
+            <p>This source features un-inventoried works by:
+                {% for item in content.uninventoried %}
+                    {% for composer in item.composers %}
+                        {{ "? " if composer.uncertain else "" }}<a href="{{ composer.url }}">{{ composer.full_name }}</a>
+                        {%- if not loop.last -%}, {%- endif -%}
+                    {% endfor %}
+                    {%- if not loop.last -%}; {%- endif -%}
+                {% endfor %}
+            </p>
+        {% endif %}
     </div>
 </div>

@@ -4,6 +4,9 @@
     {{ content.last_name }}, {{ content.first_name }}
 
     {% for entry in content.bibliography %}
-        <p>{{ entry.entry | safe }}</p>
+        <p>
+            {{ entry.entry | safe }}
+            {% if user.is_staff %}<sup><a href="/admin/diamm_data/bibliography/{{ entry.pk }}/change">Edit</a></sup>{% endif %}
+        </p>
     {% endfor %}
 {% endblock %}

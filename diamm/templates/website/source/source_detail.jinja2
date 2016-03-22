@@ -31,12 +31,20 @@
             <ul>
                 <li><a class="tab active" href="#details">Details</a></li>
 
-                {% if content.inventory %}
+                {% if content.inventory or content.uninventoried %}
                 <li><a class="tab" href="#inventory">Inventory</a></li>
                 {% endif %}
 
                 {% if content.public_images %}
                 <li><a class="tab" href="#images">Images</a></li>
+                {% endif %}
+
+                {% if content.sets %}
+                    <li><a class="tab" href="#sets">Sets</a></li>
+                {% endif %}
+
+                {% if content.catalogue_entries %}
+                <li><a class="tab" href="#catalogue">Catalogue Entries</a></li>
                 {% endif %}
 
                 {% if content.bibliography %}
@@ -49,12 +57,20 @@
         <div class="sixteen columns">
             {% include "website/source/source_detail_block.jinja2" %}
 
-            {% if content.inventory %}
+            {% if content.inventory or content.uninventoried %}
             {% include "website/source/source_inventory_block.jinja2" %}
             {% endif %}
 
             {% if content.public_images %}
             {% include "website/source/source_images_block.jinja2" %}
+            {% endif %}
+
+            {% if content.sets %}
+            {% include "website/source/source_set_block.jinja2" %}
+            {% endif %}
+
+            {% if content.catalogue_entries %}
+            {% include "website/source/source_catalogue_entries_block.jinja2" %}
             {% endif %}
 
             {% if content.bibliography %}
