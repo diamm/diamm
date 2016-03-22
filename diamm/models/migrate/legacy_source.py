@@ -52,6 +52,9 @@ class LegacySource(models.Model):
     ccmimagefilename1 = models.TextField(db_column='CCMimagefilename1', blank=True, null=True)  # Field name made lowercase.
     ccmimagefilename2 = models.TextField(db_column='CCMimagefilename2', blank=True, null=True)  # Field name made lowercase.
     ccmimagefilename3 = models.TextField(db_column='CCMimagefilename3', blank=True, null=True)  # Field name made lowercase.
+    rismimagefilename1 = models.TextField(db_column='RISMimagefilename1', blank=True, null=True)  # Field name made lowercase.
+    rismimagefilename2 = models.TextField(db_column='RISMimagefilename2', blank=True, null=True)  # Field name made lowercase.
+    rismimagefilename3 = models.TextField(db_column='RISMimagefilename3', blank=True, null=True)  # Field name made lowercase.
     description_author = models.TextField(blank=True, null=True)
     external_urls = models.TextField(db_column='external_URLs', blank=True, null=True)  # Field name made lowercase.
     copyrightstatement = models.TextField(blank=True, null=True)

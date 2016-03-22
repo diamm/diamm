@@ -477,6 +477,9 @@ class Source(models.Model):
     pagemeasurements = models.TextField(db_column='pageMeasurements', blank=True, null=True)  # Field name made lowercase.
     rismccm = models.TextField(db_column='RISMCCM', blank=True, null=True)  # Field name made lowercase.
     rismabbrev = models.TextField(db_column='RISMabbrev', blank=True, null=True)  # Field name made lowercase.
+    rismimagefilename1 = models.TextField(db_column='RISMimagefilename1', blank=True, null=True)  # Field name made lowercase.
+    rismimagefilename2 = models.TextField(db_column='RISMimagefilename2', blank=True, null=True)  # Field name made lowercase.
+    rismimagefilename3 = models.TextField(db_column='RISMimagefilename3', blank=True, null=True)  # Field name made lowercase.
     rismtext = models.TextField(db_column='RISMtext', blank=True, null=True)  # Field name made lowercase.
     shelfmark = models.TextField(db_column='shelfMark', blank=True, null=True)  # Field name made lowercase.
     sourcekey = models.IntegerField(db_column='sourceKey', primary_key=True)  # Field name made lowercase.
