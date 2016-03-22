@@ -32,7 +32,9 @@ class SolrPaginator:
             'facet': 'true',
             'facet.field': 'type',
             'facet.mincount': 1,
-            'hl': 'true'
+            'hl': 'true',
+            'defType': 'edismax',
+            'qf': settings.SOLR['FULLTEXT_QUERYFIELDS']
         }
 
         if sorts:
