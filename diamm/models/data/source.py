@@ -115,13 +115,28 @@ class Source(models.Model):
         return list(set(composition_names))
 
     # Fetches results for a source from Solr. Much quicker than hitting up postgres
-    # and sorts correctly too!
+    # and sorts correctly too! Restricting the composition using [* TO *] means that
+    # only attributed works are retrieved; see solr_appears_in for retrieving the records
+    # where a composer is mentioned but not attached to a composition.
     @property
     def solr_inventory(self):
         connection = pysolr.Solr(settings.SOLR['SERVER'])
-        fq = ['type:item', 'source_i:{0}'.format(self.pk)]
+        fq = ['type:item', 'source_i:{0}'.format(self.pk), 'composition_i:[* TO *]']
         # Set rows to an extremely high number so we get all of the item records in one go.
         item_results = connection.search("*:*", fq=fq, sort="folio_start_ans asc", rows=10000)
+        if item_results.docs:
+            return item_results.docs
+        return []
+
+    # Like solr_inventory, but retrieves only inventory items that do not have a composition attached, i.e., composers
+    #  that appear in a source but are not attached to a particular one.
+    @property
+    def solr_uninventoried(self):
+        connection = pysolr.Solr(settings.SOLR['SERVER'])
+        fq = ['type:item', 'source_i:{0}'.format(self.pk), '-composition_i:[* TO *]']
+        sort = ["composer_ans asc"]
+        # Set rows to an extremely high number so we get all of the item records in one go.
+        item_results = connection.search("*:*", fq=fq, sort=sort, rows=10000)
         if item_results.docs:
             return item_results.docs
         return []
