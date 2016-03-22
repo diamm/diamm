@@ -28,6 +28,8 @@ from diamm.models.data.source_relationship import SourceRelationship
 from diamm.serializers.search.source_relationship import SourceRelationshipSerializer
 from diamm.models.data.source_copyist import SourceCopyist
 from diamm.serializers.search.source_copyist import SourceCopyistSearchSerializer
+from diamm.models.data.item_bibliography import ItemBibliography
+from diamm.serializers.search.item_bibliography import ItemBibliographySearchSerializer
 
 term = Terminal()
 
@@ -145,6 +147,12 @@ class Command(BaseCommand):
         objs = SourceCopyist.objects.all()
         self._index(objs, '', SourceCopyistSearchSerializer)
 
+    def _index_item_bibliographies(self):
+        self.stdout.write(term.blue("Indexing Item Bibliographies"))
+        self.solrconn.delete(q="type:itembibliography")
+        objs = ItemBibliography.objects.all()
+        self._index(objs, "", ItemBibliographySearchSerializer)
+
     def handle(self, *args, **kwargs):
         self.solrconn = pysolr.Solr(settings.SOLR['SERVER'])
 
@@ -152,7 +160,7 @@ class Command(BaseCommand):
 
         # self._index_sources()
         # self._index_inventories()
-        # self._index_archives()
+        self._index_archives()
         # self._index_people()
         # self._index_organizations()
         # self._index_compositions()
@@ -161,7 +169,8 @@ class Command(BaseCommand):
         # self._index_sets()
         # self._index_source_provenance()
         # self._index_source_relationship()
-        self._index_source_copyists()
+        # self._index_source_copyists()
+        # self._index_item_bibliographies()
 
         raw_input = input('Done indexing. Press any key to exit.')
 
