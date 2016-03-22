@@ -5,6 +5,19 @@ from rest_framework.reverse import reverse
 from diamm.serializers.serializers import ContextSerializer, ContextDictSerializer
 
 
+class SourceCatalogueEntrySerializer(ContextSerializer):
+    entry = serpy.MethodField()
+    order = serpy.IntField()
+
+    def get_entry(self, obj):
+        request = self.context['request']
+        return "{0}://{1}/media/rism/catalogue/{2}".format(
+            request.scheme,
+            request.get_host(),
+            obj.entry
+        )
+
+
 class SourceCopyistSerializer(ContextDictSerializer):
     copyist = serpy.MethodField()
     uncertain = serpy.BoolField(
@@ -311,12 +324,15 @@ class SourceDetailSerializer(ContextSerializer):
     inventory_provided = serpy.BoolField()
     public_images = serpy.BoolField()
 
+    has_images = serpy.MethodField()
     inventory = serpy.MethodField()
+    uninventoried = serpy.MethodField()
     archive = serpy.MethodField()
     sets = serpy.MethodField()
     provenance = serpy.MethodField()
     relationships = serpy.MethodField()
     copyists = serpy.MethodField()
+    catalogue_entries = serpy.MethodField()
 
     links = SourceURLSerializer(
         attr="links.all",
@@ -356,13 +372,27 @@ class SourceDetailSerializer(ContextSerializer):
         else:
             return None
 
+    def get_has_images(self, obj):
+        if obj.pages.count() > 0:
+            return True
+        return False
+
     def get_manifest_url(self, obj):
+        # Return None if the document has no public images
+        if not self.get_has_images(obj):
+            return None
         return reverse('source-manifest',
                        kwargs={"pk": obj.pk},
                        request=self.context['request'])
 
     def get_inventory(self, obj):
         items = obj.solr_inventory
+        inventory = [SourceInventorySerializer(i, context={"request": self.context['request']}).data
+                        for i in items]
+        return inventory
+
+    def get_uninventoried(self, obj):
+        items = obj.solr_uninventoried
         inventory = [SourceInventorySerializer(i, context={"request": self.context['request']}).data
                         for i in items]
         return inventory
@@ -389,3 +419,10 @@ class SourceDetailSerializer(ContextSerializer):
     def get_copyists(self, obj):
         cop_res = obj.solr_copyists
         return [SourceCopyistSerializer(s, context={"request": self.context['request']}).data for s in cop_res]
+
+    def get_catalogue_entries(self, obj):
+        if obj.catalogue_entries.count() > 0:
+            return SourceCatalogueEntrySerializer(obj.catalogue_entries.all(),
+                                                  context={"request": self.context['request']},
+                                                  many=True).data
+        return []

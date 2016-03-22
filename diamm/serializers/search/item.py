@@ -23,10 +23,12 @@ class ItemSearchSerializer(serpy.Serializer):
     composition_s = serpy.MethodField()
     composition_i = serpy.MethodField()
     source_attribution_s = serpy.StrField(
-        attr="source_attribution"
+        attr="source_attribution",
+        required=False
     )
     source_incipit_s = serpy.StrField(
-        attr="source_incipit"
+        attr="source_incipit",
+        required=False
     )
 
     folio_start_s = serpy.StrField(
@@ -45,8 +47,8 @@ class ItemSearchSerializer(serpy.Serializer):
         attr="folio_end",
         required=False
     )
-
     composers_ssni = serpy.MethodField()
+    composer_ans = serpy.MethodField()
     bibliography_ii = serpy.MethodField()
 
     def get_type(self, obj):
@@ -92,3 +94,18 @@ class ItemSearchSerializer(serpy.Serializer):
                                            obj.aggregate_composer.pk)]
         else:
             return []
+
+    def get_composer_ans(self, obj):
+        """
+            Gets the first composer and stores it in an alphanumeric sort field so that the results may be sorted
+            by composer. Esp. useful in non-attributed records.
+        """
+        if obj.composition:
+            if not obj.composition.anonymous:
+                return "{0}".format(obj.composition.composers.first().composer.full_name)
+            else:
+                return "Anonymous"
+        elif obj.aggregate_composer:
+            return "{0}".format(obj.aggregate_composer.full_name)
+        else:
+            return None
