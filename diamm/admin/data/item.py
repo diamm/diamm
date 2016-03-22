@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.template.defaultfilters import truncatewords
 from django.utils.translation import ugettext_lazy as _
 from diamm.models.data.item import Item
+from diamm.models.data.item_bibliography import ItemBibliography
 from reversion.admin import VersionAdmin
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
 
@@ -29,6 +30,12 @@ class AggregateComposerListFilter(admin.SimpleListFilter):
             return queryset.filter(aggregate_composer__isnull=False)
 
 
+class BibliographyInline(admin.TabularInline):
+    model = ItemBibliography
+    extra = 0
+    raw_id_fields = ('bibliography',)
+
+
 @admin.register(Item)
 class ItemAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     list_display = ('get_source', 'get_composition', 'get_composers',
@@ -36,6 +43,7 @@ class ItemAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     search_fields = ("source__name", "source__identifiers__identifier",
                      "composition__title", "aggregate_composer__last_name")
     list_filter = (AggregateComposerListFilter,)
+    inlines = (BibliographyInline,)
     # filter_horizontal = ['pages']
     # exclude = ("pages",)
 
@@ -48,6 +56,7 @@ class ItemAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     def get_source(self, obj):
         return "{0}".format(obj.source.display_name)
     get_source.short_description = "source"
+    get_source.admin_order_field = "source__shelfmark"
 
     def get_composers(self, obj):
         if obj.composition:

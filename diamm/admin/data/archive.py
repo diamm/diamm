@@ -1,9 +1,15 @@
 from django.contrib import admin
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
 from diamm.models.data.archive import Archive
+from diamm.models.data.archive_note import ArchiveNote
 from diamm.models.data.geographic_area import GeographicArea
 from reversion.admin import VersionAdmin
 from django.utils.translation import ugettext_lazy as _
+
+
+class ArchiveNoteInline(admin.TabularInline):
+    model = ArchiveNote
+    extra = 0
 
 
 class CountryListFilter(admin.SimpleListFilter):
@@ -25,6 +31,7 @@ class ArchiveAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     list_display = ('name', 'get_city', 'get_country', 'siglum',)
     search_fields = ('name', 'siglum', 'city__name', 'city__parent__name')
     list_filter = (CountryListFilter,)
+    inlines = (ArchiveNoteInline,)
 
     def get_city(self, obj):
         return "{0}".format(obj.city.name)

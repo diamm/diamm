@@ -7,7 +7,7 @@ from pagedown.widgets import AdminPagedownWidget
 
 @admin.register(Text)
 class TextAdmin(VersionAdmin):
-    list_display = ('incipit',)
+    list_display = ('incipit', )
     search_fields = ('incipit', 'text')
 
     formfield_overrides = {

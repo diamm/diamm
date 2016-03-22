@@ -1,0 +1,51 @@
+{% macro icon_mapping(result_type) %}
+    {% set icon_mapping = {'source': 'fa-book',
+                           'archive': 'fa-university',
+                           'organization': 'fa-users',
+                           'person': 'fa-user',
+                           'composition': 'fa-music'} %}
+    {% set label_mapping = {'source': 'label-danger',
+                            'archive': 'label-info',
+                            'organization': 'label-warning',
+                            'person': 'label-success',
+                            'composition': 'label-primary'} %}
+    <span class="label {{ label_mapping[result_type] }}"><span class="fa {{ icon_mapping[result_type] }}"> </span></span>
+{% endmacro %}
+
+{% macro item_info(result) %}
+    {% if result.type == 'source' %}
+        {% set source_description = [result.source_type_s, result.date_statement_s, result.measurements_s] %}
+        {% for desc in source_description %}
+            {% if desc %}
+                {{ desc | capitalize }};
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endmacro %}
+
+{% macro item_name(result) %}
+    {% if result.type == "source" %}
+        {{ result.display_name_s }}
+    {% elif result.type == 'person' %}
+        {{ result.name_s }}
+    {% elif result.type == "composition" %}
+        {{ result.title_s }}
+    {% endif %}
+{% endmacro %}
+
+
+<div class="search-result">
+    <h3 class="search-result-heading">
+        {#  {{ icon_mapping(result.type) }} #}
+        <a href="{{ result.url }}">{{ item_name(result) }}</a>
+    </h3>
+    <p>{{ item_info(result) }}</p>
+    {% if result.result_text %}
+        <p>{{ result.result_text | safe }}</p>
+    {% endif %}
+    {% if result.type == 'source' %}
+    <div>
+        <img src="http://placehold.it/150x200">
+    </div>
+    {% endif %}
+</div>

@@ -4,6 +4,7 @@ from diamm.admin.site.cover_image import CoverImageAdmin
 from diamm.admin.site.contribution import ContributionAdmin
 
 from diamm.admin.data.source import SourceAdmin
+from diamm.admin.data.source_catalogue_entry import SourceCatalogueEntryAdmin
 from diamm.admin.data.page import PageAdmin
 from diamm.admin.data.source_relationship import SourceRelationshipAdmin
 from diamm.admin.data.source_provenance import SourceProvenanceAdmin
@@ -24,3 +25,9 @@ from diamm.admin.data.set import SetAdmin
 from diamm.admin.data.text import TextAdmin
 from diamm.admin.data.voice import VoiceAdmin
 from diamm.admin.data.cycle import CycleAdmin
+from diamm.admin.data.cycle_type import CycleTypeAdmin
+from diamm.admin.data.clef import ClefAdmin
+from diamm.admin.data.image_type import ImageTypeAdmin
+from diamm.admin.data.language import LanguageAdmin
+from diamm.admin.data.mensuration import MensurationAdmin
+

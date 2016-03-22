@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib import admin
 from diamm.models.data.image import Image
+from diamm.models.data.image_note import ImageNote
 from diamm.models.data.page import Page
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
 from reversion.admin import VersionAdmin
@@ -72,6 +73,12 @@ class IIIFDataListFilter(admin.SimpleListFilter):
                     location__isnull=False,
                     iiif_response_cache__isnull=True)
 
+
+class ImageNoteInline(admin.TabularInline):
+    model = ImageNote
+    extra = 0
+
+
 @admin.register(Image)
 class ImageAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     form = ImageAdminForm
@@ -79,6 +86,7 @@ class ImageAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     list_filter = ("type__name", ImageSourceListFilter, IIIFDataListFilter, 'public')
     # filter_horizontal = ('items',)
     search_fields = ('legacy_filename',)
+    inlines = (ImageNoteInline,)
 
     def get_type(self, obj):
         return "{0}".format(obj.type.name)

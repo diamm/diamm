@@ -10,9 +10,11 @@ class SourceInline(admin.TabularInline):
     model = SourceBibliography
     extra = 0
 
+
 class AuthorsInline(admin.TabularInline):
     model = BibliographyAuthorRole
     extra = 0
+    raw_id_fields = ('bibliography_author',)
 
 
 class PublicationInline(admin.TabularInline):
