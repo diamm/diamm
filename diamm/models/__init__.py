@@ -42,6 +42,7 @@ from diamm.models.data.source import Source
 from diamm.models.data.source_note import SourceNote
 from diamm.models.data.source_identifier import SourceIdentifier
 from diamm.models.data.source_url import SourceURL
+from diamm.models.data.source_catalogue_entry import SourceCatalogueEntry
 from diamm.models.data.archive import Archive
 from diamm.models.data.archive_note import ArchiveNote
 from diamm.models.data.geographic_area import GeographicArea
