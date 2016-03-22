@@ -17,6 +17,8 @@ Including another URLconf
 from django.conf.urls import url
 from django.views.generic import TemplateView
 from django.contrib import admin
+from django.conf import settings
+from django.conf.urls.static import static
 
 from diamm.views.home import HomeView
 from diamm.views.auth import SessionAuth, SessionClose, AccountEmailSent, AccountUpdate
@@ -75,3 +77,5 @@ urlpatterns = [
     url(r'^images/(?P<pk>[0-9]+)/$', image_serve, name="image-serve-info")
 ]
 
+if settings.DEBUG is True:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
