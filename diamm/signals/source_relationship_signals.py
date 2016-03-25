@@ -11,7 +11,7 @@ def index_source_relationship(sender, instance, created, **kwargs):
 
 
 @receiver(post_delete, sender=SourceRelationship)
-def delete_source(sender, instance, **kwargs):
+def delete_source_relationship(sender, instance, **kwargs):
     solr_delete(SourceRelationshipSerializer, instance)
 
 
