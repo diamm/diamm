@@ -33,7 +33,8 @@
                 </tr>
                 {% if item.bibliography %}
                 <tr>
-                    <td colspan="5">
+                    <td>&nbsp;</td>
+                    <td colspan="4">
                         {% for entry in item.bibliography %}
                         <p>{{ entry.prerendered_s | safe }}</p>
                         {% endfor %}
