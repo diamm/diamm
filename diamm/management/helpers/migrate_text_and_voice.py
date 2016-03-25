@@ -71,6 +71,14 @@ def migrate_text_and_voice(entry):
 
 
 def migrate():
-    empty_table()
+    # empty_table()
     for entry in LegacyText.objects.all():
+        if entry.pk in (82138, 111695):
+            # bad record attached to an empty item.
+            continue
+        # Skip any previously migrated entries
+        if Voice.objects.filter(legacy_id="text.{0}".format(int(entry.pk))).exists():
+            print("Skipping {0}".format(entry.pk))
+            continue
+
         migrate_text_and_voice(entry)

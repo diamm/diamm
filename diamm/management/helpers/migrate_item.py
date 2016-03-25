@@ -5,6 +5,7 @@ from diamm.models.migrate.legacy_item import LegacyItem
 from diamm.models.migrate.legacy_item_image import LegacyItemImage
 from diamm.models.data.item import Item
 from diamm.models.data.item_note import ItemNote
+from diamm.models.data.item_composer import ItemComposer
 from diamm.models.data.source import Source
 from diamm.models.data.composition import Composition
 from blessings import Terminal
@@ -42,6 +43,7 @@ aggregate_titles = ("works by",
 
 def empty_items():
     print(term.magenta("\tEmptying item and notes tables"))
+    ItemComposer.objects.all().delete()
     ItemNote.objects.all().delete()
     Item.objects.all().delete()
 
@@ -68,29 +70,6 @@ def migrate_item(entry):
         # Prevent the migration from creating a new item for this record.
         return None
 
-    composition = None
-    aggregate_composer = None
-    composition_pk = entry.compositionkey
-    orig_composition = None
-
-    if composition_pk not in (0, 69332, 54681, 69558, 79920, 888888, 999999):
-        orig_composition = Composition.objects.get(pk=composition_pk)
-
-    # If the composition is a 'filler' one that meant to stand in for one or more
-    # listed but un-titled works in the source, we will instead shift the
-    # composer to being an 'aggregate composer' and not join the original 'composition'
-    # to the source.
-    aggregate_composition_note = None
-    if orig_composition and orig_composition.title in aggregate_titles:
-        print(term.magenta('\tCreating aggregate composer entry.'))
-        # we have an aggregate entry. An aggregate composition should only
-        # have one composer attached.
-        aggregate_composer = orig_composition.composers.all()[0].composer
-        # The aggregate 'composition' will be preserved as a legacy note
-        aggregate_composition_note = orig_composition.title
-    else:
-        composition = orig_composition
-
     layout = None
     if layout == "score":
         layout = Item.L_SCORE
@@ -100,8 +79,6 @@ def migrate_item(entry):
     d = {
         'id': entry.pk,
         'source': source,
-        'composition': composition,
-        'aggregate_composer': aggregate_composer,
         'folio_start': entry.folio_start,
         'folio_end': entry.folio_end,
         'source_attribution': entry.composeroriginal,
@@ -114,6 +91,38 @@ def migrate_item(entry):
 
     it = Item(**d)
     it.save()
+
+    composition = None
+    composition_pk = entry.compositionkey
+    orig_composition = None
+
+    if composition_pk not in (0, 69332, 54681, 69558, 79920, 888888, 999999):
+        orig_composition = Composition.objects.get(pk=composition_pk)
+
+    # If the composition is a 'filler' one that meant to stand in for one or more
+    # listed but un-titled works in the source, we will instead shift the
+    # composer to being an 'item composer entry' and not join the original 'composition'
+    # to the source.
+    if orig_composition and orig_composition.title in aggregate_titles:
+        print(term.magenta('\tCreating non-work composer entries.'))
+        # we have an aggregate entry, and iterate through the CompositionComposer objects.
+        for composer in orig_composition.composers.all():
+            # store the original title ("4 works") in a note.
+            note = orig_composition.title
+            if composer.notes:
+                note = "{0}\n{1}".format(note, composer.notes)
+
+            icd = {
+                'item': it,
+                'composer': composer.composer,
+                'note': orig_composition.title,
+                'uncertain': composer.uncertain
+            }
+            ic = ItemComposer(**icd)
+            ic.save()
+    else:
+        it.composition = orig_composition
+        it.save()
 
     note_fields = (
         (ItemNote.GENERAL_NOTE, entry.notes),
