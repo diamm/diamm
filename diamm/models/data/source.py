@@ -91,10 +91,11 @@ class Source(models.Model):
     @property
     def composers(self):
         composer_names = []
-        for item in self.inventory.filter(source__id=self.pk).select_related('composition', 'aggregate_composer'):
+        for item in self.inventory.filter(source__id=self.pk).select_related('composition').prefetch_related('unattributed_composers'):
             if not item.composition:
-                if item.aggregate_composer:
-                    composer_names.append(item.aggregate_composer.full_name)
+                if item.unattributed_composers.count() > 0:
+                    for itcomposer in item.unattributed_composers.all():
+                        composer_names.append(itcomposer.composer.full_name)
                     continue
             else:
                 for composer in item.composition.composers.all():
@@ -108,7 +109,7 @@ class Source(models.Model):
     @property
     def compositions(self):
         composition_names = []
-        for item in self.inventory.all():
+        for item in self.inventory.all().select_related('item'):
             if not item.composition:
                 continue
             composition_names.append(item.composition.name)

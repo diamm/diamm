@@ -88,10 +88,8 @@ class ItemSearchSerializer(serpy.Serializer):
                 return ["{0}|{1}|{2}".format(c.composer.full_name, c.composer.pk, c.uncertain) for c in obj.composition.composers.all()]
             else:
                 return ["Anonymous||"]
-        elif obj.aggregate_composer:
-            # Aggregate composers do not have a truth attached to their certainty.
-            return ["{0}|{1}|False".format(obj.aggregate_composer.full_name,
-                                           obj.aggregate_composer.pk)]
+        elif obj.unattributed_composers.count() > 0:
+            return ["{0}|{1}|{2}".format(c.composer.full_name, c.composer.pk, c.uncertain) for c in obj.unattributed_composers.all()]
         else:
             return []
 
@@ -105,7 +103,7 @@ class ItemSearchSerializer(serpy.Serializer):
                 return "{0}".format(obj.composition.composers.first().composer.full_name)
             else:
                 return "Anonymous"
-        elif obj.aggregate_composer:
-            return "{0}".format(obj.aggregate_composer.full_name)
+        elif obj.unattributed_composers.count() > 0:
+            return "{0}".format(obj.unattributed_composers.first().composer.full_name)
         else:
             return None

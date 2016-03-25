@@ -62,6 +62,7 @@ from diamm.models.data.composition_composer import CompositionComposer
 from diamm.models.data.genre import Genre
 from diamm.models.data.item import Item
 from diamm.models.data.item_note import ItemNote
+from diamm.models.data.item_composer import ItemComposer
 from diamm.models.data.page import Page
 from diamm.models.data.page_note import PageNote
 from diamm.models.data.page_condition import PageCondition
