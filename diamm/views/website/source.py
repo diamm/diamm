@@ -2,7 +2,6 @@ import pysolr
 from django.conf import settings
 from rest_framework import generics
 from rest_framework import status
-from rest_framework import permissions
 from rest_framework import response
 from drf_ujson.renderers import UJSONRenderer
 from diamm.models.data.source import Source
@@ -53,9 +52,13 @@ class SourceManifest(generics.GenericAPIView):
 
 
 class SourceCanvasDetail(generics.GenericAPIView):
+    """
+        The view handler for the IIIF Canvas resolver. Uses Solr to
+         retrieve pre-indexed results for the contents of a page.
+    """
     renderer_classes = (UJSONRenderer,)
 
-    def get(self, request, source_id, page_id, *args, **kwargs):
+    def get(self, request, source_id, page_id):
         page_fields = [
             "id",
             "pk",
@@ -76,7 +79,7 @@ class SourceCanvasDetail(generics.GenericAPIView):
 class SourceCanvasAnnotationList(generics.GenericAPIView):
     renderer_classes = (UJSONRenderer,)
 
-    def get(self, request, source_id, page_id, *args, **kwargs):
+    def get(self, request, source_id, page_id):
         conn = pysolr.Solr(settings.SOLR['SERVER'])
         res = conn.search(
             "*:*",
