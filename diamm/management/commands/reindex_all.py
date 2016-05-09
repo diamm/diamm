@@ -35,6 +35,7 @@ from diamm.serializers.search.voice import VoiceSearchSerializer
 
 term = Terminal()
 
+
 class Writer:
     def __init__(self, location):
         self.location = location
@@ -163,23 +164,20 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         self.solrconn = pysolr.Solr(settings.SOLR['SERVER'])
-
-        # with term.fullscreen():
-
-        # self._index_sources()
-        # self._index_inventories()
-        # self._index_archives()
-        # self._index_people()
-        # self._index_organizations()
-        # self._index_compositions()
-        # self._index_bibliography()
-        # self._index_pages()
-        # self._index_sets()
-        # self._index_voices()
-        # self._index_source_provenance()
-        # self._index_source_relationship()
-        # self._index_source_copyists()
-        # self._index_item_bibliographies()
+        self._index_sources()
+        self._index_inventories()
+        self._index_archives()
+        self._index_people()
+        self._index_organizations()
+        self._index_compositions()
+        self._index_bibliography()
+        self._index_pages()
+        self._index_sets()
+        self._index_voices()
+        self._index_source_provenance()
+        self._index_source_relationship()
+        self._index_source_copyists()
+        self._index_item_bibliographies()
 
         raw_input = input('Done indexing. Press any key to exit.')
 
