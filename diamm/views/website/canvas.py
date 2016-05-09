@@ -48,6 +48,4 @@ class CanvasData(generics.GenericAPIView):
 
         annotation_list = []
 
-
-
         return response.Response({})
