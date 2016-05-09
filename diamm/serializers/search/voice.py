@@ -9,7 +9,6 @@ class VoiceSearchSerializer(serpy.Serializer):
         attr="label",
         required=False
     )
-    voice_name_s = serpy.MethodField()
 
     position_s = serpy.StrField(
         attr="position",
