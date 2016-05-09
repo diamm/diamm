@@ -1,14 +1,20 @@
 <div>
-    <p>
-        <span>
-            <span class="fa fa-music"> Composition</span>
-        </span>
-        &nbsp;
-        <a href="{{ result.url }}">{{ result.name_s }}</a>
+    {% if result.composers_ss %}
+    <p>Composers:
+        {% for composer in result.composers_ss %}
+            {{ composer }}{{ ", " if not loop.last else "" }}
+        {% endfor %}
     </p>
-    <p>
-    {% if result.result_text %}
-        <p>{{ result.result_text | safe }}</p>
+    {% else %}
+    <p>Anonymous</p>
     {% endif %}
+    <p>Appears in {{ result.sources_ii | length }} source{{ result.sources_ii | length | pluralize }}:
+        {% for source in result.sources_ss %}
+            {% set sourcelist = source.split("|") %}
+            <a href="{{ url('source-detail', pk=sourcelist[0]) }}">{{ sourcelist[1] }}</a>{{ ", " if not loop.last else "" }}
+        {% endfor %}
     </p>
+    {% if result.genres_ss %}
+    <p></p>
+    {% endif %}
 </div>

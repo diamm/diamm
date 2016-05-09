@@ -48,15 +48,17 @@
 
         {% if content.uninventoried %}
             <h4>Uninventoried Composers</h4>
-            <p>This source features un-inventoried works by:
-                {% for item in content.uninventoried %}
-                    {% for composer in item.composers %}
-                        {{ "? " if composer.uncertain else "" }}<a href="{{ composer.url }}">{{ composer.full_name }}</a>
-                        {%- if not loop.last -%}, {%- endif -%}
-                    {% endfor %}
-                    {%- if not loop.last -%}; {%- endif -%}
+            <p>This source features un-inventoried works by:</p>
+            <ul>
+            {% for item in content.uninventoried %}
+                <li>
+                {% for composer in item.composers %}
+                    {{ "? " if composer.uncertain else "" }}<a href="{{ composer.url }}">{{ composer.full_name }}</a>
+                    {%- if not loop.last %} / {% endif -%}
                 {% endfor %}
-            </p>
+                </li>
+            {% endfor %}
+            </ul>
         {% endif %}
     </div>
 </div>

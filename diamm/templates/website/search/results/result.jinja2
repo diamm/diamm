@@ -8,6 +8,16 @@
     {% endif %}
 {% endmacro %}
 
+{% macro result_body(result) %}
+    {% if result.type == "composition" %}
+        {% include "website/search/results/composition.jinja2" %}
+    {% endif %}
+{% endmacro %}
+
 <div class="search-result">
-    <h4><a href="{{ result.url }}">{{ result_name(result) }}</a></h4>
+    <h4>
+        <a href="{{ result.url }}">{{ result_name(result) }}</a>
+    </h4>
+    ({{ result.type }})
+    {{ result_body(result) }}
 </div>
