@@ -26,7 +26,7 @@ SECRET_KEY = '@l%t#fyhaahycu$gct^u5ttya69v5n^00y48@)2mngdlel63g+'
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     '*'
@@ -54,7 +54,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'django_jinja',
     'pagedown',
-    # 'debug_toolbar'
+    'debug_toolbar'
 ]
 
 MIDDLEWARE_CLASSES = [
