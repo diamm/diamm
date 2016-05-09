@@ -189,7 +189,6 @@ class SourceInventorySerializer(ContextDictSerializer):
         else:
             return None
 
-
     def get_folio_end(self, obj):
         if 'folio_end_s' in obj:
             return obj['folio_end_s']
