@@ -50,7 +50,8 @@ def migrate_text_and_voice(entry):
         'voice_text': text,
         'legacy_id': 'text.{0}'.format(int(entry.pk)),
         'label': entry.voicepart,
-        'position': entry.positiononpage
+        'position': entry.positiononpage,
+        'sort_order': entry.orderno
     }
 
     v = Voice(**vd)
@@ -72,14 +73,20 @@ def migrate_text_and_voice(entry):
 
 def migrate():
     empty_table()
-    for entry in LegacyText.objects.all():
-        if entry.pk in (82138, 111695):
-            # bad record attached to an empty item.
-            continue
-
+    # exclude bad records attached to an empty item.
+    for entry in LegacyText.objects.exclude(pk__in=(82138, 111695)):
         # Skip any previously migrated entries
         if Voice.objects.filter(legacy_id="text.{0}".format(int(entry.pk))).exists():
             print("Skipping {0}".format(entry.pk))
             continue
 
         migrate_text_and_voice(entry)
+
+
+def update_order_no():
+    for entry in LegacyText.objects.exclude(pk__in=(82138, 111695)):
+        print(term.green("Updating orderno for {0}".format(entry.pk)))
+        new_voice_legacy_id = "text.{0}".format(entry.pk)
+        v = Voice.objects.get(legacy_id=new_voice_legacy_id)
+        v.sort_order = entry.orderno
+        v.save()
