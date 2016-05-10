@@ -2812,8 +2812,9 @@ form {
 
 footer {
   border-top: 3px double #a9acab;
-  background: #ecf0f1;
+  background: transparent;
   height: 100px;
+  align-self: center;
   padding: 1.25rem;
   margin-top: 1rem; }
 
