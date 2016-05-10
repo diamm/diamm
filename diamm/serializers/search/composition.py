@@ -53,10 +53,10 @@ class CompositionSearchSerializer(serpy.Serializer):
         voice_texts = []
         items = obj.sources.all()
         for it in items:
-            if it.voice_set.count() == 0:
+            if it.voices.count() == 0:
                 continue
 
-            voices = it.voice_set.all()
+            voices = it.voices.all()
             for voice in voices:
                 if not voice.voice_text:
                     continue
