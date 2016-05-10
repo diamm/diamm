@@ -37,6 +37,15 @@ div.search-result {
   border-bottom: 1px solid $diamm-light-grey;
 }
 
+nav.center-block.text-center{
+  ul{
+    li{
+      display: inline;
+    }
+  }
+
+}
+
 a {
   color: $diamm-lt-blue;
   text-decoration: none;
