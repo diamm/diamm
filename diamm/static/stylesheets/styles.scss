@@ -12,6 +12,7 @@
 @import "search";
 @import "debug";
 
+
 html {
   height: 100%;
   font-size: 1.125em;
@@ -30,6 +31,12 @@ body {
   flex-direction: column;
 }
 
+div.search-result {
+  padding-left: 1.5em;
+  padding-bottom: 0.5em;
+  border-bottom: 1px solid $diamm-light-grey;
+}
+
 a {
   color: $diamm-lt-blue;
   text-decoration: none;
@@ -43,6 +50,8 @@ a {
 p {
   font-family: "Alegreya", serif;
   margin-bottom: 1.3em;
+  padding-top: 0.5em;
+  padding-left: 0.3em;
 }
 
 h1, h2, h3, h4 {
