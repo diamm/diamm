@@ -24,7 +24,7 @@ class SourceCopyistSerializer(ContextDictSerializer):
         attr="uncertain_b"
     )
     type = serpy.StrField(
-        attr="type_s"
+        attr="type"
     )
 
     def get_copyist(self, obj):
