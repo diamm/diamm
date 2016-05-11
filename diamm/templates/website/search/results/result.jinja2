@@ -17,6 +17,8 @@
 {% macro result_body(result) %}
     {% if result.type == "composition" %}
         {% include "website/search/results/composition.jinja2" %}
+    {% elif result.type == "organization" %}
+        {% include "website/search/results/organization.jinja2" %}
     {% endif %}
 {% endmacro %}
 
