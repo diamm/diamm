@@ -24,6 +24,7 @@ from diamm.views.home import HomeView
 from diamm.views.auth import SessionAuth, SessionClose, AccountEmailSent, AccountUpdate
 from diamm.views.user import ProfileView
 from diamm.views.website.search import SearchView
+from diamm.views.website.set import SetDetail
 from diamm.views.website.source import SourceList, SourceDetail, SourceManifest, SourceCanvasDetail, SourceCanvasAnnotationList
 from diamm.views.website.archive import ArchiveList, ArchiveDetail
 from diamm.views.website.city import CityList, CityDetail
@@ -70,6 +71,8 @@ urlpatterns = [
     url(r'^composers/(?P<legacy_id>[0-9]+)/$', legacy_composer_redirect),
     url(r'^compositions/$', CompositionList.as_view(), name="composition-list"),
     url(r'^compositions/(?P<pk>[0-9]+)/$', CompositionDetail.as_view(), name="composition-detail"),
+
+    url(r'^set/(?P<pk>[0-9]+)/$', SetDetail.as_view(), name="set-detail"),
 
     url(r'^authors/(?P<pk>[0-9]+)/$', BibliographyAuthorDetail.as_view(), name="author-detail"),
 

@@ -5,6 +5,8 @@
         {{ result.name_s }}
     {% elif result.type == "composition" %}
         {{ result.title_s }}
+    {% elif result.type == "set" %}
+        {{ result.cluster_shelfmark_s }}
     {% endif %}
 {% endmacro %}
 
