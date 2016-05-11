@@ -30,8 +30,8 @@
 
     <div class="row">
         <div class="sixteen columns search-results">
-        <p class="result-count">Returned {{ content.count }} results.</p>
         {% if content.results %}
+            <p class="result-count">Returned {{ content.count }} results.</p>
             {% for result in content.results %}
                 {% include 'website/search/results/result.jinja2' %}
             {% endfor %}
