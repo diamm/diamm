@@ -1,6 +1,6 @@
 <div>
     {% if result.composers_ss %}
-    <p>Composers:
+    <p>{{ result.composers_ss | length }} Composer{{ result.composers_ss | length | pluralize }}:
         {% for composer in result.composers_ss %}
             {{ composer }}{{ ", " if not loop.last else "" }}
         {% endfor %}
