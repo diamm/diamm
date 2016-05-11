@@ -2,6 +2,7 @@ import os
 from django.db import models
 from django.conf import settings
 
+
 class Archive(models.Model):
     class Meta:
         app_label = "diamm_data"
