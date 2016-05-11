@@ -47,6 +47,7 @@
     <copyField source="variant_names_ss" dest="text" />
     <copyField source="siglum_s" dest="text" />
     <copyField source="voice_text_txt" dest="text" />
+    <copyField source="cluster_shelfmark_s" dest="text" />
 
     <!-- analyzed fields for boosting from substrings -->
     <copyField source="name_s" dest="source_boost_tns" />
