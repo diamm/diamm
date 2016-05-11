@@ -41,5 +41,17 @@
   }
 }
 
-.search-result {
+.search-results {
+  .result-count {
+    font-family: $sans-serif;
+    color: $diamm-med-grey;
+  }
+  .search-result {
+    .diamm-icon {
+      font-size: 75%;
+      color: $diamm-med-grey;
+      position: relative;
+      top: -2px;
+    }
+  }
 }
