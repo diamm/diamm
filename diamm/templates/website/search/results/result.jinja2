@@ -8,6 +8,12 @@
     {% endif %}
 {% endmacro %}
 
+{% macro result_icon(result) %}
+    {% if result.type == "organization" %}
+        <i class="fa fa-users diamm-icon" aria-hidden="true"></i>
+    {% endif %}
+{% endmacro %}
+
 {% macro result_body(result) %}
     {% if result.type == "composition" %}
         {% include "website/search/results/composition.jinja2" %}
@@ -16,8 +22,7 @@
 
 <div class="search-result">
     <h4>
-        <a href="{{ result.url }}">{{ result_name(result) }}</a>
+        {{ result_icon(result) }} <a href="{{ result.url }}">{{ result_name(result) }}</a>
     </h4>
-    ({{ result.type }})
     {{ result_body(result) }}
 </div>
