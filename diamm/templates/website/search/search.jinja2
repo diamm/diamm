@@ -28,21 +28,26 @@
         </div>
     {% endif %}
 
-    {% if content.results %}
-        {% for result in content.results %}
-        <div class="search-results">
-            {% include 'website/search/results/result.jinja2' %}
-        </div>
-        {% endfor %}
+    <div class="row">
+        <div class="sixteen columns search-results">
+        <p class="result-count">Returned {{ content.count }} results.</p>
+        {% if content.results %}
+            {% for result in content.results %}
+                {% include 'website/search/results/result.jinja2' %}
+            {% endfor %}
 
-        {% include "website/blocks/browse_paginator.jinja2" %}
-    {% else %}
-        {% if request.GET.q %}
-            <p>No results were found.</p>
+            {% include "website/blocks/browse_paginator.jinja2" %}
         {% else %}
-            <p>Type your search above.</p>
+            {% if request.GET.q %}
+                <p>No results were found.</p>
+            {% else %}
+                <p>Type your search above.</p>
+            {% endif %}
         {% endif %}
-    {% endif %}
+        </div>
+    </div>
+
+
 {% endblock %}
 
 {% block scripts %}
