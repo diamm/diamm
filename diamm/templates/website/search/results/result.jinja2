@@ -5,12 +5,8 @@
         {{ result.name_s }}
     {% elif result.type == "composition" %}
         {{ result.title_s }}
-    {% endif %}
-{% endmacro %}
-
-{% macro result_icon(result) %}
-    {% if result.type == "organization" %}
-        <i class="fa fa-users diamm-icon" aria-hidden="true"></i>
+    {% elif result.type == "set" %}
+        {{ result.cluster_shelfmark_s }}
     {% endif %}
 {% endmacro %}
 
@@ -24,7 +20,7 @@
 
 <div class="search-result">
     <h4>
-        {{ result_icon(result) }} <a href="{{ result.url }}">{{ result_name(result) }}</a>
+        <a href="{{ result.url }}">{{ result_name(result) }}</a>
     </h4>
     {{ result_body(result) }}
 </div>
