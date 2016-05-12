@@ -15,12 +15,20 @@
         {% include "website/search/results/composition.jinja2" %}
     {% elif result.type == "organization" %}
         {% include "website/search/results/organization.jinja2" %}
+    {% elif result.type == "source" %}
+        {% include "website/search/results/source.jinja2" %}
+    {% elif result.type == "archive" %}
+        {% include "website/search/results/archive.jinja2" %}
+    {% elif result.type == "person" %}
+        {% include "website/search/results/person.jinja2" %}
+    {% elif result.type == "set" %}
+        {% include "website/search/results/set.jinja2" %}
     {% endif %}
 {% endmacro %}
 
 <div class="search-result">
     <h4>
-        <a href="{{ result.url }}">{{ result_name(result) }}</a>
+        <a href="{{ result.url }}">{{ result_name(result) }}</a> <span class="result-type">{{ result.type | title }}</span>
     </h4>
     {{ result_body(result) }}
 </div>
