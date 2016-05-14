@@ -192,8 +192,7 @@ class SourceManifestSerializer(ContextDictSerializer):
         canvas_query = {
             "fq": ["type:page", "source_i:{0}".format(obj['pk'])],
             "fl": ["id", "pk", "source_i", "numeration_s", "items_ii",
-                "[child parentFilter=type:page childFilter=image_type_i:1 childFilter=type:image]"
-            ],
+                   "[child parentFilter=type:page childFilter=image_type_i:1 childFilter=type:image]"],
             "sort": "sort_order_i asc, numeration_ans asc",
             "rows": 10000
         }
