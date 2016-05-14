@@ -40,7 +40,8 @@ class SourceManifest(generics.GenericAPIView):
     def get(self, request, pk, *args, **kwargs):
         conn = pysolr.Solr(settings.SOLR['SERVER'])
         res = conn.search("*:*",
-                          fq=["type:source", "pk:{0}".format(pk)])
+                          fq=["type:source", "pk:{0}".format(pk), 'public_images_b:true'],
+                          rows=1)
 
         if res.hits == 0:
             return response.Response(status=status.HTTP_404_NOT_FOUND)
