@@ -16,6 +16,7 @@ class Archive(models.Model):
     siglum = models.CharField(max_length=64, blank=True, null=True)
     librarian = models.CharField(max_length=255, blank=True, null=True)
     secondary_contact = models.CharField(max_length=255, blank=True, null=True)
+    former_name = models.CharField(max_length=255, blank=True, null=True)
 
     address_1 = models.TextField(blank=True, null=True)
     address_2 = models.TextField(blank=True, null=True)
