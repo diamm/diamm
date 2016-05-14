@@ -1,20 +1,21 @@
 <div>
     {% if result.composers_ss %}
-    <p>Composers:
+    <p class="upper-info">Composer{{ result.composers_ss | length | pluralize }}:
         {% for composer in result.composers_ss %}
-            {{ composer }}{{ ", " if not loop.last else "" }}
+            {{ composer }}{{ "." if not loop.last else "" }}
         {% endfor %}
     </p>
     {% else %}
-    <p>Anonymous</p>
+    <p class="upper-info">Anonymous </p>
     {% endif %}
-    <p>Appears in {{ result.sources_ii | length }} source{{ result.sources_ii | length | pluralize }}:
-        {% for source in result.sources_ss %}
-            {% set sourcelist = source.split("|") %}
-            <a href="{{ url('source-detail', pk=sourcelist[0]) }}">{{ sourcelist[1] }}</a>{{ ", " if not loop.last else "" }}
-        {% endfor %}
-    </p>
+     <p class="lower-info">Appears in {{ result.sources_ii | length }} source{{ result.sources_ii | length | pluralize }} <br />
+
     {% if result.genres_ss %}
-    <p></p>
+        Genre{{ result.genres_ss | length | pluralize }}:
+        {% for genre in result.genres_ss %}
+            {{ genre }}{{ ", " if not loop.last else "" }}
+        {% endfor %}
+
+    </p>
     {% endif %}
 </div>
