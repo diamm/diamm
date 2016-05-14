@@ -96,26 +96,25 @@ class ServiceSerializer(ContextDictSerializer):
         return voices
 
     def get_folios(self, obj):
-        if not 'pages_ii' in obj:
-            return {}
-
         folios = {}
 
-        folios['start'] = {
-            'label': obj['folio_start_s'],
-            '@id': reverse('source-canvas-detail',
-                           kwargs={"source_id": obj['source_i'],
-                                   "page_id": obj['pages_ii'][0]},
-                           request=self.context['request'])
-        }
+        if 'folio_start_s' in obj:
+            folios['start'] = {
+                'label': obj['folio_start_s'],
+                '@id': reverse('source-canvas-detail',
+                               kwargs={"source_id": obj['source_i'],
+                                       "page_id": obj['pages_ii'][0]},
+                               request=self.context['request'])
+            }
 
-        folios['end'] = {
-            'label': obj['folio_end_s'],
-            '@id': reverse('source-canvas-detail',
-                           kwargs={'source_id': obj['source_i'],
-                                   "page_id": obj['pages_ii'][-1]},
-                           request=self.context['request'])
-        }
+        if 'folio_end_s' in obj:
+            folios['end'] = {
+                'label': obj['folio_end_s'],
+                '@id': reverse('source-canvas-detail',
+                               kwargs={'source_id': obj['source_i'],
+                                       "page_id": obj['pages_ii'][-1]},
+                               request=self.context['request'])
+            }
 
         return folios
 
