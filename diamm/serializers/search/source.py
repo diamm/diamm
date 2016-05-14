@@ -80,6 +80,7 @@ class SourceSearchSerializer(serpy.Serializer):
         attr='cover_image_id',
         required=False
     )
+    public_images_b = serpy.MethodField()
 
     def get_type(self, obj):
         return obj.__class__.__name__.lower()
@@ -107,3 +108,12 @@ class SourceSearchSerializer(serpy.Serializer):
 
     def get_notes_txt(self, obj):
         return list(obj.public_notes.values_list('note', flat=True))
+
+    def get_public_images_b(self, obj):
+        has_images = obj.pages.count() > 0
+        public_images = obj.public_images
+
+        if has_images and public_images:
+            return True
+        else:
+            return False
