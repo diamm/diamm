@@ -223,7 +223,7 @@ class SourceManifestSerializer(ContextDictSerializer):
                                       kwargs={"pk": obj['cover_image_i']},
                                       request=self.context['request'])
             return {
-                "@id": cover_image_url + "full/250,/0/default.jpg",
+                "@id": cover_image_url + "full/{0},/0/default.jpg".format(settings.IIIF['THUMBNAIL_WIDTH']),
                 "service": {
                     "@context": "http://iiif.io/api/image/2/context.json",
                     "@id": cover_image_url,

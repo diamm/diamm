@@ -210,5 +210,9 @@ SOLR = {
     ]
 }
 
+IIIF = {
+    "THUMBNAIL_WIDTH": "250,"   # The constrained width of thumbnail images
+}
+
 if DEBUG:
     SILENCED_SYSTEM_CHECKS = []
