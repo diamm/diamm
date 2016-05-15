@@ -248,21 +248,18 @@ class SourceArchiveSerializer(ContextSerializer):
     url = serpy.MethodField()
     name = serpy.StrField()
     siglum = serpy.StrField()
-    city = serpy.MethodField()
+    city = serpy.StrField(
+        attr='city.name'
+    )
+    country = serpy.StrField(
+        attr='city.parent.name',
+        required=False
+    )
 
     def get_url(self, obj):
         return reverse('archive-detail',
                        kwargs={"pk": obj.pk},
                        request=self.context['request'])
-
-    def get_city(self, obj):
-        city_url = reverse('city-detail',
-                           kwargs={"pk": obj.city_id},
-                           request=self.context['request'])
-        return {
-            'url': city_url,
-            'name': obj.city.name
-        }
 
 
 class SourceNoteSerializer(ContextSerializer):
