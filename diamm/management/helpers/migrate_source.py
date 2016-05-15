@@ -144,7 +144,8 @@ def migrate_source_to_source(legacy_source):
         (SourceNote.RULING_NOTE, legacy_source.stavegauge),
         (SourceNote.GENERAL_NOTE, legacy_source.description_diamm),
         (SourceNote.CCM_NOTE, legacy_source.description_ccm),
-        (SourceNote.DEDICATION_NOTE, legacy_source.dedicationtext)
+        (SourceNote.DEDICATION_NOTE, legacy_source.dedicationtext),
+        (SourceNote.FOLIATION_NOTE, legacy_source.leafnumberingdescription)
     ]
 
     for n in notes:
