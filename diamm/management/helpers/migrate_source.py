@@ -76,12 +76,17 @@ def migrate_source_to_source(legacy_source):
     units = legacy_source.measurementunits if legacy_source.measurementunits else "mm"
     measurements = format_measurements(legacy_source.pagemeasurements, units)
 
+    # Quite a few of these entries have trailing spaces
+    source_type = None
+    if legacy_source.sourcetype:
+        source_type = legacy_source.sourcetype.strip()
+
     d = {
         'id': legacy_source.pk,
         'archive': archive,
         'name': legacy_source.sourcename,
         'shelfmark': legacy_source.shelfmark,
-        'type': legacy_source.sourcetype,
+        'type': source_type,
         'surface': surface,
         'start_date': start_date,
         'end_date': end_date,
@@ -90,7 +95,7 @@ def migrate_source_to_source(legacy_source):
         'measurements': measurements,
         'public': True,
         'public_images': convert_yn_to_boolean(legacy_source.webpermission),
-        'inventory_provided': True  # set this as true now; will be switched later when the inventory is actually imported.
+        'inventory_provided': True  # set this as true at this stage of the import; will be switched later when the inventory is actually imported.
     }
 
     s = Source(**d)
