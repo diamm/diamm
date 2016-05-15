@@ -1,53 +1,56 @@
-from rest_framework import serializers
-from diamm.models.data.archive import Archive
-from diamm.models.data.archive_note import ArchiveNote
-from diamm.models.data.source import Source
-from diamm.models.data.geographic_area import GeographicArea
+import serpy
+from rest_framework.reverse import reverse
+from diamm.serializers.serializers import ContextSerializer
 
 
-class CityArchiveSerializer(serializers.HyperlinkedModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name="city-detail")
+class SourceArchiveSerializer(ContextSerializer):
+    url = serpy.MethodField()
+    display_name = serpy.StrField()
 
-    class Meta:
-        model = GeographicArea
-        fields = ('url', 'name')
-
-
-class SourceArchiveSerializer(serializers.HyperlinkedModelSerializer):
-    display_name = serializers.ReadOnlyField()
-
-    class Meta:
-        model = Source
-        fields = ('url', 'display_name')
+    def get_url(self, obj):
+        return reverse('source-detail',
+                       kwargs={"pk": obj.pk},
+                       request=self.context['request'])
 
 
-class ArchiveNoteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ArchiveNote
-        fields = ('type', 'note')
+class CityArchiveSerializer(ContextSerializer):
+    url = serpy.MethodField()
+    name = serpy.StrField()
+    country = serpy.StrField(
+        attr="parent.name"
+    )
+
+    def get_url(self, obj):
+        return reverse('city-detail',
+                       kwargs={"pk": obj.pk},
+                       request=self.context['request'])
 
 
-class ArchiveListSerializer(serializers.HyperlinkedModelSerializer):
-    city = CityArchiveSerializer()
+class ArchiveDetailSerializer(ContextSerializer):
+    url = serpy.MethodField()
+    sources = serpy.MethodField()
+    city = serpy.MethodField()
+    former_name = serpy.StrField(
+        required=False
+    )
+    siglum = serpy.StrField()
+    website = serpy.StrField()
+    logo = serpy.MethodField()
 
-    class Meta:
-        model = Archive
-        fields = ('url', 'name', 'city')
+    def get_url(self, obj):
+        return reverse('archive-detail',
+                       kwargs={"pk": obj.pk},
+                       request=self.context['request'])
 
+    def get_city(self, obj):
+        return CityArchiveSerializer(obj.city, context={'request': self.context['request']}).data
 
-class ArchiveDetailSerializer(serializers.HyperlinkedModelSerializer):
-    city = CityArchiveSerializer()
-    sources = SourceArchiveSerializer(many=True)
-    # notes = ArchiveNoteSerializer(
-    #     source="public_notes",
-    #     many=True
-    # )
+    def get_sources(self, obj):
+        return SourceArchiveSerializer(obj.sources.all(),
+                                       many=True,
+                                       context={'request': self.context['request']}).data
 
-    class Meta:
-        model = Archive
-        fields = ('url',
-                  'name',
-                  'city',
-                  'sources',
-                  'siglum',
-                  'website')
+    def get_logo(self, obj):
+        if obj.logo:
+            return obj.logo.url
+
