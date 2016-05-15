@@ -1,6 +1,7 @@
 import os
 from django.db import models
 from django.conf import settings
+from diamm.helpers.storage import OverwriteStorage
 
 
 class Archive(models.Model):
@@ -30,8 +31,9 @@ class Archive(models.Model):
     telephone = models.CharField(max_length=128, blank=True, null=True)
     website = models.CharField(max_length=1024, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
-    logo = models.FilePathField(
-            os.path.join(settings.MEDIA_ROOT, 'archives'),
+    logo = models.FileField(
+            upload_to=os.path.join(settings.MEDIA_ROOT, 'archives'),
+            storage=OverwriteStorage(),
             blank=True, null=True
     )
     copyright_statement = models.TextField(blank=True, null=True)
