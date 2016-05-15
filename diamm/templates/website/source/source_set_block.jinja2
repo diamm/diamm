@@ -1,21 +1,23 @@
 <div class="tab-panel row" id="sets">
-    <h3>Related Sets</h3>
-    {% for set in content.sets %}
-        <h4>{{ set.cluster_shelfmark }}</h4>
-        <p>{{ set.set_type }}</p>
-        <table>
-            <thead>
-            <tr>
-                <th>Source</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for source in set.sources %}
+    <div class="sixteen columns source-sets">
+        <h3>Related Sets</h3>
+        {% for set in content.sets %}
+            <h4>{{ set.cluster_shelfmark }}</h4>
+            <p>{{ set.set_type }}</p>
+            <table>
+                <thead>
                 <tr>
-                    <td><a href="{{ source.url }}">{{ source.display_name_s }}</a></td>
+                    <th>Source</th>
                 </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    {% endfor %}
+                </thead>
+                <tbody>
+                {% for source in set.sources %}
+                    <tr>
+                        <td><a href="{{ source.url }}">{{ source.display_name_s }}</a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endfor %}
+    </div>
 </div>
