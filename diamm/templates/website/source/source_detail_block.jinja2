@@ -1,152 +1,152 @@
 <div class="tab-panel row" id="details">
-    <div class="eleven columns">
-        <div class="source-description">
-            <table class="source-details">
+    <div class="eleven columns source-description">
+        <table class="source-details">
+            <tr>
+                <th>Archive</th>
+                <td>
+                    <a href="{{ content.archive.url }}">{{ content.archive.name }}</a>,
+                    {{ content.archive.city }}, {{ content.archive.country }} ({{ content.archive.siglum }})
+                </td>
+            </tr>
+            <tr>
+                <th>Shelfmark</th>
+                <td>
+                    {{ content.shelfmark }} {% if content.name %}<em>&ldquo;{{ content.name }}&rdquo;</em>{% endif %}
+                </td>
+            </tr>
+            {% if content.surface_type %}
                 <tr>
-                    <th>Archive</th>
+                    <th>Surface</th>
+                    <td>{{ content.surface_type }}</td>
+                </tr>
+            {% endif %}
+            {% if content.identifiers %}
+                <tr>
+                    <th>Other Identifiers</th>
                     <td>
-                        <a href="{{ content.archive.url }}">{{ content.archive.name }}</a>,
-                        {{ content.archive.city.name }} ({{ content.archive.siglum }})
+                        <ul class="no-style">
+                            {% for identifier in content.identifiers %}
+                                <li><strong>{{ identifier.identifier_type }}:</strong> {{ identifier.identifier }}</li>
+                            {% endfor %}
+                        </ul>
                     </td>
                 </tr>
+            {% endif %}
+            {% if content.notations %}
                 <tr>
-                    <th>Shelfmark</th>
+                    <th>Notations</th>
                     <td>
-                        {{ content.shelfmark }} {% if content.name %}<em>&ldquo;{{ content.name }}&rdquo;</em>{% endif %}
+                        <ul class="no-style">
+                            {% for notation in content.notations %}
+                                <li>{{ notation.name }}</li>
+                            {% endfor %}
+                        </ul>
                     </td>
                 </tr>
-                {% if content.surface_type %}
-                    <tr>
-                        <th>Surface</th>
-                        <td>{{ content.surface_type }}</td>
-                    </tr>
-                {% endif %}
-                {% if content.identifiers %}
-                    <tr>
-                        <th>Other Identifiers</th>
-                        <td>
-                            <ul class="no-style">
-                                {% for identifier in content.identifiers %}
-                                    <li><strong>{{ identifier.identifier_type }}:</strong> {{ identifier.identifier }}</li>
-                                {% endfor %}
-                            </ul>
-                        </td>
-                    </tr>
-                {% endif %}
-                {% if content.notations %}
-                    <tr>
-                        <th>Notations</th>
-                        <td>
-                            <ul class="no-style">
-                                {% for notation in content.notations %}
-                                    <li>{{ notation.name }}</li>
-                                {% endfor %}
-                            </ul>
-                        </td>
-                    </tr>
-                {% endif %}
-                {% if not content.inventory_provided %}
-                    <tr>
-                        <th>Inventory</th>
-                        <td>Since this source is post-1550, a complete inventory has not been supplied.</td>
-                    </tr>
-                {% endif %}
-                {% if content.copyists %}
-                    <tr>
-                        <th>Copyists</th>
-                        <td>
-                            <ul class="no-style">
-                                {% for copyist in content.copyists %}
-                                <li>
-                                    <a href="{{ copyist.copyist.url }}">{{ "? " if copyist.uncertain else "" }}{{ copyist.copyist.name }}</a> ({{ copyist.type }})
-                                </li>
-                                {% endfor %}
-                            </ul>
-                        </td>
-                    </tr>
-                {% endif %}
-                {% if content.relationships %}
-                    <tr>
-                        <th>Relationships</th>
-                        <td>
-                            <ul class="no-style">
-                                {% for relationship in content.relationships %}
-                                <li>
-                                    ({{ relationship.relationship_type }}) <a href="{{ relationship.related_entity.url }}">{{ "? " if relationship.uncertain else "" }}{{ relationship.related_entity.name }}</a>
-                                </li>
-                                {% endfor %}
-                            </ul>
-                        </td>
-                    </tr>
-                {% endif %}
-                {% if content.links %}
-                    <tr>
-                        <th>External Links</th>
-                        <td>
-                            <ul class="no-style">
-                                {% for link in content.links %}
-                                <li><a href="{{ link.link }}">{{ link.link_text }}</a></li>
-                                {% endfor %}
-                            </ul>
-                        </td>
-                    </tr>
-                {% endif %}
-                {% if content.provenance %}
-                    <tr>
-                        <th>Provenance</th>
-                        <td>
-                            <ul class="no-style">
-                                {%- for entry in content.provenance -%}
-                                <li>
-                                    {%- if entry.entity -%}
-                                        {{ "? " if entity_uncertain else "" }}<a href="{{ entry.entity.url }}">{{ entry.entity.name }}</a>,&nbsp;
-                                    {%- endif -%}
-                                    {%- if entry.protectorate -%}
-                                        {{ "? " if entry.protectorate_uncertain else "" }}{{ entry.protectorate }},&nbsp;
-                                    {%- endif -%}
-                                    {%- if entry.region -%}
-                                        {{ "? " if entry.region_uncertain else "" }}{{ entry.region }},&nbsp;
-                                    {%- endif -%}
-                                    {%- if entry.city -%}
-                                        {{ "? " if entry.city_uncertain else "" }}{{ entry.city }},&nbsp;
-                                    {%- endif -%}
-                                    {%- if entry.country -%}
-                                        {{ "? " if entry.country_uncertain else "" }}{{ entry.country }}
-                                    {%- endif -%}
-                                </li>
-                                {%- endfor -%}
-                            </ul>
-                        </td>
-                    </tr>
-                {% endif %}
-            </table>
-
-            {% if content.has_images == False and content.public_images == False %}
-                <p>
-                    <strong>DIAMM does not have images of this source.</strong>
-                </p>
-            {% elif content.has_images == True and content.public_images == False %}
-                <p>
-                    <strong>DIAMM has images of this manuscript, but does not yet have permission to put them online.</strong>
-                </p>
             {% endif %}
-
-            {% if content.notes %}
-                {% for note in content.notes %}
-                    <h4>{{ note.note_type }}</h4>
-                    {{ note.note | markdown | safe }}
-                {% endfor %}
+            {% if not content.inventory_provided %}
+                <tr>
+                    <th>Inventory</th>
+                    <td>Since this source is post-1550, a complete inventory has not been supplied.</td>
+                </tr>
             {% endif %}
-        </div>
+            {% if content.copyists %}
+                <tr>
+                    <th>Copyists</th>
+                    <td>
+                        <ul class="no-style">
+                            {% for copyist in content.copyists %}
+                            <li>
+                                <a href="{{ copyist.copyist.url }}">{{ "? " if copyist.uncertain else "" }}{{ copyist.copyist.name }}</a> ({{ copyist.type }})
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+            {% endif %}
+            {% if content.relationships %}
+                <tr>
+                    <th>Relationships</th>
+                    <td>
+                        <ul class="no-style">
+                            {% for relationship in content.relationships %}
+                            <li>
+                                ({{ relationship.relationship_type }}) <a href="{{ relationship.related_entity.url }}">{{ "? " if relationship.uncertain else "" }}{{ relationship.related_entity.name }}</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+            {% endif %}
+            {% if content.links %}
+                <tr>
+                    <th>External Links</th>
+                    <td>
+                        <ul class="no-style">
+                            {% for link in content.links %}
+                            <li><a href="{{ link.link }}">{{ link.link_text }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+            {% endif %}
+            {% if content.provenance %}
+                <tr>
+                    <th>Provenance</th>
+                    <td>
+                        <ul class="no-style">
+                            {%- for entry in content.provenance -%}
+                            <li>
+                                {%- if entry.entity -%}
+                                    {{ "? " if entity_uncertain else "" }}<a href="{{ entry.entity.url }}">{{ entry.entity.name }}</a>,&nbsp;
+                                {%- endif -%}
+                                {%- if entry.protectorate -%}
+                                    {{ "? " if entry.protectorate_uncertain else "" }}{{ entry.protectorate }},&nbsp;
+                                {%- endif -%}
+                                {%- if entry.region -%}
+                                    {{ "? " if entry.region_uncertain else "" }}{{ entry.region }},&nbsp;
+                                {%- endif -%}
+                                {%- if entry.city -%}
+                                    {{ "? " if entry.city_uncertain else "" }}{{ entry.city }},&nbsp;
+                                {%- endif -%}
+                                {%- if entry.country -%}
+                                    {{ "? " if entry.country_uncertain else "" }}{{ entry.country }}
+                                {%- endif -%}
+                            </li>
+                            {%- endfor -%}
+                        </ul>
+                    </td>
+                </tr>
+            {% endif %}
+        </table>
+
+        {% if content.has_images == False and content.public_images == False %}
+            <p>
+                <strong>DIAMM does not have images of this source.</strong>
+            </p>
+        {% elif content.has_images == True and content.public_images == False %}
+            <p>
+                <strong>DIAMM has images of this manuscript, but does not yet have permission to put them online.</strong>
+            </p>
+        {% endif %}
+
+        {% if content.notes %}
+            {% for note in content.notes %}
+                <h4>{{ note.note_type }}</h4>
+                {{ note.note | markdown | safe }}
+            {% endfor %}
+        {% endif %}
     </div>
     <div class="five columns">
         {% if content.cover_image_url %}
             <img src="{{ content.cover_image_url }}/full/350,/0/default.jpg" class="u-full-width"/>
         {% endif %}
+        {#
         <h4>Private Notes</h4>
         <p>Private stuff goes here.</p>
         <h4>Public Notes</h4>
         <p>Public stuff goes here.</p>
         <p style="text-align: right; font-style: italic;">Old so-and-so.</p>
+        #}
     </div>
 </div>
