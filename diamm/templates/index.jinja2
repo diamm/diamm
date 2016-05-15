@@ -12,15 +12,36 @@
 
 {% block body %}
     <div class="row">
-        <div class="six columns">
+        <div class="eight columns">
             <h3>News</h3>
+            <h4>Lorem ipsum dolor sit amet</h4>
+            <p>Lorem ipsum dolor sit amet, fugit volutpat his cu, eu omnis libris dissentias duo. Postea eligendi disputationi mei id. Et sed liber invenire efficiendi.</p>
+            <h4>Cum lorem indoctum no</h4>
+            <p>Cum lorem indoctum no, nec te sanctus molestie electram. Qui erant fabellas accusata cu, saepe animal commodo cu qui.</p>
+            <h4>Eu his blandit moderatius</h4>
+            <p>Eu his blandit moderatius, mea graece similique ex. Ut posse impetus labitur pro, ad eos animal aperiam urbanitas. Epicurei hendrerit disputando ex vis.</p>
             {% for story in content.stories %}
                 <h4><a href="{{ story.url }}">{{ story.title }}</a></h4>
                 {{ story.body | markdown | truncatewords(50) | safe }}
             {% endfor %}
         </div>
-        <div class="six columns">
-            <h3>Stuff.</h3>
+        <div class="four columns">
+            <h3>Recent updates</h3>
+            <h4>Lorem ipsum dolor sit amet</h4>
+            <p>Lorem ipsum dolor sit amet, fugit volutpat his cu, eu omnis libris dissentias duo. Postea eligendi disputationi mei id. Et sed liber invenire efficiendi.</p>
+            <h4>Cum lorem indoctum no</h4>
+            <p>Cum lorem indoctum no, nec te sanctus molestie electram. Qui erant fabellas accusata cu, saepe animal commodo cu qui.</p>
+            <h4>Eu his blandit moderatius</h4>
+            <p>Eu his blandit moderatius, mea graece similique ex. Ut posse impetus labitur pro, ad eos animal aperiam urbanitas. Epicurei hendrerit disputando ex vis.</p>
+        </div>
+        <div class="four columns">
+            <h3>Latest Comments</h3>
+            <h4>Lorem ipsum dolor sit amet</h4>
+            <p>Lorem ipsum dolor sit amet, fugit volutpat his cu, eu omnis libris dissentias duo. Postea eligendi disputationi mei id. Et sed liber invenire efficiendi.</p>
+            <h4>Cum lorem indoctum no</h4>
+            <p>Cum lorem indoctum no, nec te sanctus molestie electram. Qui erant fabellas accusata cu, saepe animal commodo cu qui.</p>
+            <h4>Eu his blandit moderatius</h4>
+            <p>Eu his blandit moderatius, mea graece similique ex. Ut posse impetus labitur pro, ad eos animal aperiam urbanitas. Epicurei hendrerit disputando ex vis.</p>
         </div>
     </div>
 {% endblock %}
