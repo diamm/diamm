@@ -3,8 +3,7 @@
 }
 
 .navbar {
-  background: $diamm-white;
-  border-bottom: 3px double $diamm-med-grey;
+  box-shadow: 0px 0px 4px 2px $diamm-med-grey;
   margin-bottom: 1rem;
   &:before,
   &:after {
@@ -49,6 +48,8 @@
       padding: 0.6rem 1rem;
       font-size: 1.2rem;
       font-family: $menu-font;
+      font-weight: bold;
+      -webkit-font-smoothing: antialiased;
       display: flex;
       align-items: flex-start;
       &:hover, &:focus {

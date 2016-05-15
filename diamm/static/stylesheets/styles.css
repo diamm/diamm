@@ -11,6 +11,11 @@
 /* Base files. */
 /*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
 @import url(https://fonts.googleapis.com/css?family=Alegreya:400,400italic,700,700italic|Alegreya+Sans+SC:500,700,400|Alegreya+Sans:400,300,300italic,400italic,500,500italic,700italic,700);
+@import url(https://fonts.googleapis.com/css?family=Merriweather:400,400italic,700,700italic);
+@import url(https://fonts.googleapis.com/css?family=Old+Standard+TT:400,400italic,700);
+@import url(https://fonts.googleapis.com/css?family=Raleway:400,500,600);
+@import url(https://fonts.googleapis.com/css?family=PT+Serif:400,400italic,700,700italic);
+@import url(https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700,700italic);
 html {
   font-family: sans-serif;
   -ms-text-size-adjust: 100%;
@@ -2761,8 +2766,7 @@ form {
   z-index: 10; }
 
 .navbar {
-  background: #ecf0f1;
-  border-bottom: 3px double #a9acab;
+  box-shadow: 0px 0px 4px 2px #a9acab;
   margin-bottom: 1rem; }
   .navbar:before, .navbar:after {
     content: " ";
@@ -2780,7 +2784,8 @@ form {
       margin-right: 1em; }
       .navbar .navbar-brand li a {
         margin: 0;
-        padding: 0; }
+        padding: 0;
+        padding-left: 0.5rem; }
         .navbar .navbar-brand li a:hover, .navbar .navbar-brand li a:focus {
           background: none;
           color: unset; }
@@ -2796,13 +2801,15 @@ form {
       text-decoration: none;
       padding: 0.6rem 1rem;
       font-size: 1.2rem;
-      font-family: "Alegreya Sans", sans-serif;
+      font-family: "PT Sans", sans-serif;
+      font-weight: bold;
+      -webkit-font-smoothing: antialiased;
       display: flex;
       align-items: flex-start; }
       .navbar .navbar-list a:hover, .navbar .navbar-list a:focus {
         border-bottom: none;
         background: #b92025;
-        color: #ecf0f1; }
+        color: white; }
     .navbar .navbar-list .navbar-highlight {
       background: #b92025; }
       .navbar .navbar-list .navbar-highlight a {
@@ -2812,9 +2819,8 @@ form {
 
 footer {
   border-top: 3px double #a9acab;
-  background: transparent;
+  background: white;
   height: 100px;
-  align-self: center;
   padding: 1.25rem;
   margin-top: 1rem; }
 
@@ -2846,9 +2852,12 @@ footer {
   .source-header p {
     margin: 0;
     padding: 0; }
-  .source-header h1 {
+  .source-header h1, .source-header h2 {
     margin: 0;
     padding: 0; }
+  .source-header h2 {
+    font-weight: 400;
+    font-size: 1.3em; }
 
 .source-tabs {
   margin-bottom: 1rem; }
@@ -2863,11 +2872,30 @@ footer {
       margin: 0 1em 0 0;
       padding: 0; }
 
-.source-description h3, .source-description h4 {
+.source-description h3, .source-description h4, .source-bibliography h3, .source-bibliography h4, .source-inventory h3, .source-inventory h4 {
   font-weight: bold;
   font-size: 1em;
   letter-spacing: normal;
   margin-top: 0; }
+
+.source-inventory .source-inventory-header {
+  font-size: 1.125em;
+  font-weight: 600; }
+
+.source-inventory p {
+  padding-top: 0; }
+
+.source-inventory dd {
+  margin-bottom: 1.3em;
+  border-bottom: 1px solid #dddede; }
+  .source-inventory dd table {
+    margin-bottom: 0; }
+  .source-inventory dd th {
+    line-break: strict;
+    vertical-align: top;
+    white-space: nowrap; }
+  .source-inventory dd th, .source-inventory dd td {
+    border-bottom: none; }
 
 .source-description .source-details {
   width: 100%;
@@ -2901,6 +2929,11 @@ footer {
     .source-description dl dd ul {
       margin-bottom: 0; }
 
+.source-bibliography p {
+  margin-bottom: 0.5em;
+  padding-left: 22px;
+  text-indent: -22px; }
+
 .no-style {
   list-style: none; }
 
@@ -2917,8 +2950,8 @@ footer {
       margin-bottom: 0; }
 
 .type-filter {
-  font-family: "Alegreya Sans SC", sans-serif;
-  text-transform: lowercase;
+  font-family: "PT Sans", sans-serif;
+  font-size: 90%;
   padding: 0.5rem;
   border-bottom: 1px solid #dddede; }
   .type-filter span {
@@ -2939,6 +2972,29 @@ footer {
         border-bottom: none;
         font-weight: 500; }
 
+.search-results .result-count {
+  font-family: "PT Sans", sans-serif;
+  color: #a9acab; }
+
+.search-results .search-result .result-type {
+  font-size: 58%;
+  color: #2a2c2b;
+  position: relative;
+  top: -1px; }
+
+.search-results .search-result .upper-info {
+  margin-bottom: 0rem;
+  font-size: 85%;
+  font: "PT Sans", sans-serif; }
+
+.search-results .search-result .lower-info {
+  padding-top: 0rem;
+  font-size: 95%;
+  font: "PT Sans", sans-serif; }
+
+.search-results .search-result h4 {
+  margin-bottom: 0.1rem; }
+
 .debug {
   border: 1px solid #1e1e20; }
 
@@ -2949,11 +3005,20 @@ html {
 body {
   line-height: 1.45;
   font-weight: 400;
-  font-family: "Alegreya Sans", Helvetica, Arial, sans-serif;
+  font-family: "PT Sans", sans-serif;
   color: #1e1e20;
   min-height: 100%;
   display: flex;
-  flex-direction: column; }
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased; }
+
+div.search-result {
+  padding-left: 1.5em;
+  padding-bottom: 0.5em;
+  border-bottom: 1px solid #dddede; }
+
+nav.center-block.text-center ul li {
+  display: inline; }
 
 a {
   color: #0062cc;
@@ -2964,30 +3029,32 @@ a {
     border-bottom: 1px solid #2760b9; }
 
 p {
-  font-family: "Alegreya", serif;
-  margin-bottom: 1.3em; }
+  font-family: "PT Serif", serif;
+  margin-bottom: 1.3em;
+  padding-top: 0.5em;
+  padding-left: 0.3em; }
 
 h1, h2, h3, h4 {
   margin: 1.414em 0 0.5em;
-  font-weight: inherit;
-  line-height: 1.2; }
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: normal; }
 
 h1 {
   margin-top: 0;
-  font-size: 2.441em; }
+  font-size: 1.602em; }
 
 h2 {
-  font-size: 1.953em; }
+  font-size: 1.424em; }
 
 h3 {
-  font-size: 1.563em; }
+  font-size: 1.266em; }
 
 h4 {
-  font-size: 1.25em;
-  letter-spacing: normal; }
+  font-size: 1.125em; }
 
 small, .font_small {
-  font-size: 0.8em; }
+  font-size: 0.889em; }
 
 .container {
   flex: 1 0 auto; }
