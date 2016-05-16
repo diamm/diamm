@@ -1,4 +1,7 @@
+import os
+from django.conf import settings
 from django.db import models
+from diamm.helpers.storage import OverwriteStorage
 
 
 class Item(models.Model):
@@ -43,6 +46,12 @@ class Item(models.Model):
     legacy_position_ms = models.CharField(max_length=256, blank=True, null=True)  # transfer for ordering, but we should be able to find a better way to do this.
     source_order = models.IntegerField(blank=True, null=True)
     page_order = models.IntegerField(default=0)
+
+    incipit = models.FileField(
+        upload_to=os.path.join(settings.MEDIA_ROOT, 'rism', 'incipits'),
+        storage=OverwriteStorage(),
+        blank=True, null=True
+    )
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
