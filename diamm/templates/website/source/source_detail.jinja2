@@ -9,20 +9,15 @@
 {% endblock %}
 
 {% block body %}
-    {% if user.is_staff %}
-        <div class="row edit-tools">
-            <div class="sixteen columns">
-                <ul class="edit-menu">
-                    <li><a href="/admin/diamm_data/source/{{ content.pk }}/change">Edit in Admin</a></li>
-                </ul>
-            </div>
-        </div>
-    {% endif %}
     <div class="row">
         <div class="sixteen columns source-header">
             <h1>
                 {{ content.display_name }}
             </h1>
+            <h2>
+                <a href="{{ content.archive.url }}">{{ content.archive.name }}</a>,
+                {{ content.archive.city }}, {{ content.archive.country }}
+            </h2>
             <p><em>{{ content.type }}, {{ content.date_statement }}</em></p>
         </div>
     </div>

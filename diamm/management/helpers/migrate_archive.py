@@ -1,10 +1,12 @@
 from django.conf import settings
 import psycopg2 as psql
+from django.core.files import File
 from diamm.models.migrate.legacy_archive import LegacyArchive
 from diamm.models.data.archive import Archive
 from diamm.models.data.archive_note import ArchiveNote
 from diamm.models.data.geographic_area import GeographicArea
 import re
+import os
 
 from blessings import Terminal
 
@@ -91,11 +93,27 @@ def update_table():
     curs.execute(sql_alt, (nextid,))
 
 
+def attach_archive_logos():
+    print(term.green("\tAttaching Archive Logos"))
+    archives = Archive.objects.all()
+
+    for archive in archives:
+        print(term.green('\tAttaching logo to {0}'.format(archive.pk)))
+        logofile = "{0}.png".format(archive.pk)
+        logopath = os.path.join(settings.MEDIA_ROOT, 'archives', logofile)
+        logopath_relative = os.path.join('archives', logofile)
+        if os.path.exists(logopath):
+            archive.logo.name = logopath_relative
+            archive.save()
+
+
 def migrate():
     print(term.blue('Migrating archives'))
     empty_archive()
     for entry in LegacyArchive.objects.all():
         migrate_archive_to_archive(entry)
+
+    attach_archive_logos()
 
     update_table()
     print(term.blue('Done Migrating Archives'))

@@ -1,6 +1,7 @@
 <div class="tab-panel row" id="bibliography">
-    <div class="sixteen columns">
-        <h4>Bibliography</h4>
+    <div class="sixteen columns source-bibliography">
+        <h3>Bibliography <small>&Dagger; <em>denotes primary source study</em></small></h3>
+
         {% for entry in content.bibliography %}
             <p>
                 {% if entry.primary_study %}
@@ -16,7 +17,5 @@
                 {% if user.is_staff %}<sup><a href="/admin/diamm_data/bibliography/{{ entry.pk }}/change">Edit</a></sup>{% endif %}
             </p>
         {% endfor %}
-        <hr />
-        <p>&Dagger; <em>denotes primary source study</em></p>
     </div>
 </div>

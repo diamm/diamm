@@ -1,63 +1,56 @@
 <div class="tab-panel row" id="inventory">
-    <h2>Inventory</h2>
-    <div class="sixteen columns">
+    <div class="sixteen columns source-inventory">
+        <h3>Inventory</h3>
+
         {% if content.inventory %}
-        <table>
-            <thead>
-            <tr>
-                <th>Composition</th>
-                <th>No. Voices</th>
-                <th>Composer</th>
-                <th>Folio Start</th>
-                <th>Folio End</th>
-            </tr>
-            </thead>
-            <tbody>
+        <dl>
             {% for item in content.inventory %}
-                <tr>
-                    {% if item.composition %}
-                        <td><a href="{{ item.url }}">{{ item.composition }}</a></td>
+            <dt class="source-inventory-header">
+                <a href="#">{{ item.folio_start }}&ndash;{{ item.folio_end }}</a>: {{ item.composition }},
+                {% for composer in item.composers %}
+                    {{ "?" if composer.uncertain else "" }}
+                    {%- if composer.url %}<a href="{{ composer.url }}">{% endif -%}
+                {{ composer.full_name }}
+                {%- if composer.url -%}</a>{%- endif -%}
+                {%- if not loop.last -%}; {%- endif -%}
+                {% endfor %}
+            </dt>
+            <dd>
+                <table>
+                    {% if item.num_voices %}
+                    <tr>
+                        <th>Number of voices</th>
                         <td>{{ item.num_voices }}</td>
-                        <td>
-                            {% for composer in item.composers %}
-                                {{ "? " if composer.uncertain else "" }}
-                                {% if composer.url %}<a href="{{ composer.url }}">{% endif %}
-                                    {{ composer.full_name }}
-                                {% if composer.url %}</a>{% endif %}
-                                {%- if not loop.last -%}, {%- endif -%}
-                            {% endfor %}
-                        </td>
-                        <td>{{ item.folio_start }}</td>
-                        <td>{{ item.folio_end }}</td>
-                   {% endif %}
-                </tr>
-                {% if item.bibliography %}
-                <tr>
-                    <td>&nbsp;</td>
-                    <td colspan="4">
-                        {% for entry in item.bibliography %}
-                        <p>{{ entry.prerendered_s | safe }}</p>
-                        {% endfor %}
-                    </td>
-                </tr>
-                {% endif %}
+                    </tr>
+                    {% endif %}
+                    {% if item.bibliography %}
+                        <tr>
+                            <th>Bibliography</th>
+                            <td class="source-bibliography">
+                                {% for entry in item.bibliography %}
+                                    <p>{{ entry.prerendered_s | safe }}</p>
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    {% endif %}
+                </table>
+            </dd>
             {% endfor %}
-            </tbody>
-        </table>
+        </dl>
         {% endif %}
 
         {% if content.uninventoried %}
             <h4>Uninventoried Composers</h4>
             <p>This source features un-inventoried works by:</p>
             <ul>
-            {% for item in content.uninventoried %}
-                <li>
-                {% for composer in item.composers %}
-                    {{ "? " if composer.uncertain else "" }}<a href="{{ composer.url }}">{{ composer.full_name }}</a>
-                    {%- if not loop.last %} / {% endif -%}
+                {% for item in content.uninventoried %}
+                    <li>
+                        {% for composer in item.composers %}
+                            {{ "?" if composer.uncertain else "" }}<a href="{{ composer.url }}">{{ composer.full_name }}</a>
+                            {%- if not loop.last %}; {% endif -%}
+                        {% endfor %}
+                    </li>
                 {% endfor %}
-                </li>
-            {% endfor %}
             </ul>
         {% endif %}
     </div>

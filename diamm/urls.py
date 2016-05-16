@@ -25,8 +25,9 @@ from diamm.views.auth import SessionAuth, SessionClose, AccountEmailSent, Accoun
 from diamm.views.user import ProfileView
 from diamm.views.website.search import SearchView
 from diamm.views.website.set import SetDetail
-from diamm.views.website.source import SourceList, SourceDetail, SourceManifest, SourceCanvasDetail, SourceCanvasAnnotationList
-from diamm.views.website.archive import ArchiveList, ArchiveDetail
+from diamm.views.website.source import SourceList, SourceDetail, SourceManifest, SourceCanvasDetail
+from diamm.views.website.source import SourceRangeDetail, SourceItemDetail
+from diamm.views.website.archive import ArchiveDetail
 from diamm.views.website.city import CityList, CityDetail
 from diamm.views.website.country import CountryList, CountryDetail
 from diamm.views.website.person import PersonDetail, legacy_composer_redirect
@@ -55,10 +56,14 @@ urlpatterns = [
     url(r'^sources/$', SourceList.as_view(), name="source-list"),
     url(r'^sources/(?P<pk>[0-9]+)/$', SourceDetail.as_view(), name="source-detail"),
     url(r'^sources/(?P<pk>[0-9]+)/manifest/$', SourceManifest.as_view(), name="source-manifest"),
-    url(r'^sources/(?P<source_id>[0-9]+)/canvas/(?P<page_id>[0-9]+)/$', SourceCanvasDetail.as_view(), name="source-canvas-detail"),
-    url(r'^sources/(?P<source_id>[0-9]+)/list/(?P<page_id>[0-9]+)/$', SourceCanvasAnnotationList.as_view(), name="source-canvas-annotations"),
 
-    url(r'^archives/$', ArchiveList.as_view(), name="archive-list"),
+    # IIIF URIs. These do not necessarily always resolve, but are configured in the URLs so that they can reflect
+    #  the host and protocol of the request.
+    url(r'^sources/(?P<source_id>[0-9]+)/canvas/(?P<page_id>[0-9]+)/$', SourceCanvasDetail.as_view(), name="source-canvas-detail"),
+    url(r'^sources/(?P<source_id>[0-9]+)/range/(?P<item_id>[0-9]+)/$', SourceRangeDetail.as_view(), name="source-range-detail"),
+    url(r'^sources/(?P<source_id>[0-9]+)/item/(?P<item_id>[0-9]+)/$', SourceItemDetail.as_view(), name="source-item-detail"),
+
+    # url(r'^archives/$', ArchiveList.as_view(), name="archive-list"),
     url(r'^archives/(?P<pk>[0-9]+)/$', ArchiveDetail.as_view(), name="archive-detail"),
     url(r'^cities/$', CityList.as_view(), name="city-list"),
     url(r'^cities/(?P<pk>[0-9]+)/$', CityDetail.as_view(), name="city-detail"),

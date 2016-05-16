@@ -7,7 +7,6 @@ from drf_ujson.renderers import UJSONRenderer
 from diamm.models.data.source import Source
 from diamm.serializers.website.source import SourceListSerializer, SourceDetailSerializer
 from diamm.serializers.iiif.manifest import SourceManifestSerializer, CanvasSerializer
-from diamm.serializers.iiif.annotation_list import AnnotationListSerializer
 
 
 class SourceList(generics.ListAPIView):
@@ -41,7 +40,8 @@ class SourceManifest(generics.GenericAPIView):
     def get(self, request, pk, *args, **kwargs):
         conn = pysolr.Solr(settings.SOLR['SERVER'])
         res = conn.search("*:*",
-                          fq=["type:source", "pk:{0}".format(pk)])
+                          fq=["type:source", "pk:{0}".format(pk), 'public_images_b:true'],
+                          rows=1)
 
         if res.hits == 0:
             return response.Response(status=status.HTTP_404_NOT_FOUND)
@@ -76,22 +76,10 @@ class SourceCanvasDetail(generics.GenericAPIView):
         return response.Response(canvas.data)
 
 
-class SourceCanvasAnnotationList(generics.GenericAPIView):
+class SourceRangeDetail(generics.GenericAPIView):
     renderer_classes = (UJSONRenderer,)
 
-    def get(self, request, source_id, page_id):
-        conn = pysolr.Solr(settings.SOLR['SERVER'])
-        res = conn.search(
-            "*:*",
-            fq=["type:item", "source_i:{0}".format(source_id), "pages_ii:{0}".format(page_id)]
-        )
-        context = {
-            "source_id": source_id,
-            "page_id": page_id,
-            "request": request
-        }
-        if res.hits == 0:
-            return response.Response({}, status=status.HTTP_404_NOT_FOUND)
 
-        alist = AnnotationListSerializer(res.docs, context=context)
-        return response.Response(alist.data)
+class SourceItemDetail(generics.GenericAPIView):
+    renderer_classes = (UJSONRenderer,)
+

@@ -52,7 +52,6 @@ class ItemSearchSerializer(serpy.Serializer):
     bibliography_ii = serpy.MethodField()
     voices_ii = serpy.MethodField()
 
-
     def get_type(self, obj):
         return obj.__class__.__name__.lower()
 

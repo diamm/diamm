@@ -3,8 +3,7 @@
         <div class="row">
             <div class="fourteen columns offset-by-two">
                 <form action="{{ url('search') }}" method="get">
-                    <input type="search" autocomplete="on" size="65" placeholder="Search" name="q" {% if content.query %}value="{{ content.query }}"{% endif %} />
-                    <button type="submit" formaction="{{ url('search') }}">Search</button>
+                    <input type="search" class="u-full-width" autocomplete="on" placeholder="Search" name="q" {% if content.query %}value="{{ content.query }}"{% endif %} />
                 </form>
             </div>
         </div>

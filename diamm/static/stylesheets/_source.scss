@@ -4,10 +4,16 @@
     margin: 0;
     padding: 0;
   }
-  h1 {
+  h1, h2 {
     margin: 0;
     padding: 0;
   }
+
+  h2 {
+    font-weight: 400;
+    font-size: 1.3em;
+  }
+
 }
 
 .source-tabs {
@@ -26,7 +32,7 @@
   }
 }
 
-.source-description {
+.source-description, .source-bibliography, .source-inventory {
   h3, h4 {
     font-weight: bold;
     font-size: 1em;
@@ -34,7 +40,34 @@
     margin-top: 0;
 
   }
+}
 
+.source-inventory {
+  .source-inventory-header {
+    font-size: 1.125em;
+    font-weight: 600;
+  }
+  p {
+    padding-top: 0;
+  }
+  dd {
+    margin-bottom: 1.3em;
+    border-bottom: 1px solid $diamm-light-grey;
+    table {
+      margin-bottom: 0;
+    }
+    th {
+      line-break: strict;
+      vertical-align: top;
+      white-space: nowrap;
+    }
+    th, td {
+      border-bottom: none;
+    }
+  }
+}
+
+.source-description {
   .source-details {
     width: 100%;
     margin-bottom: 1rem;
@@ -76,6 +109,14 @@
         margin-bottom: 0;
       }
     }
+  }
+}
+
+.source-bibliography {
+  p {
+    margin-bottom: 0.5em;
+    padding-left: 22px;
+    text-indent: -22px;
   }
 }
 
