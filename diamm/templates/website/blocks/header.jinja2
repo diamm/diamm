@@ -6,7 +6,9 @@
             </li>
         </ul>
         <ul class="navbar-list pull-left">
-            <li class="navbar-item"><a href="#">About</a></li>
+                <li class="navbar-item"><a href="/about/">About</a>
+                    {% include "flatpage_menu.jinja2" %}
+                </li>
             <li class="navbar-item"><a href="{{ url('search') }}">Search</a></li>
         </ul>
         <ul class="navbar-list pull-right">

@@ -1,0 +1,23 @@
+{% set pages = flatpage_about() %}
+
+
+{% for column in pages | slice(5) %}
+    <div class="column">
+        <ul style="list-style-type: none">
+            {% for page in column if "about" in page.url | string %}
+                <li><a href="{{ page.url }}">{{ page.title }}</a>
+                    {% set pages = flatpage_delete(page.title, pages) %}
+                    {% set title = page.title | lower| string | replace(" ", "-") %}
+                    <ul class = "dropdown-content-more" style="list-style-type:square">
+                        {% for page in pages if title in page.url | string %}
+                            <li><a href="{{ page.url }}">{{ page.title }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endfor %}
+
+
+

@@ -14,7 +14,7 @@ Including another URLconf
     2. Import the include() function: from django.conf.urls import url, include
     3. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.views.generic import TemplateView
 from django.contrib import admin
 from django.conf import settings
@@ -36,6 +36,9 @@ from diamm.views.website.composition import CompositionList, CompositionDetail
 from diamm.views.website.story import StoryDetail
 from diamm.views.website.image import image_serve
 from diamm.views.website.bibliography_author import BibliographyAuthorDetail
+from diamm.views.feedback import FeedbackView
+from django.contrib.flatpages import views
+from django_markdown import flatpages
 from diamm.views.website.canvas import CanvasData
 
 
@@ -48,10 +51,16 @@ urlpatterns = [
     url(r'^login/update/$', AccountUpdate.as_view(), name="account-update"),
     url(r'^login/email-sent/$', AccountEmailSent.as_view(), name="account-email"),
     url(r'^user/(?P<pk>[0-9]+)/$', ProfileView.as_view(), name="user-profile"),
+    url(r'^feedback/$', FeedbackView.as_view(), name="feedback"),
 
     # public website
     url(r'^search/$', SearchView.as_view(), name="search"),
     url(r'^news/(?P<pk>[0-9]+)/$', StoryDetail.as_view(), name="story-detail"),
+
+    url(r'^about/', include('django.contrib.flatpages.urls')),
+    url(r'^collaborators/', include('django.contrib.flatpages.urls')),
+    url(r'^technical-overview/', include('django.contrib.flatpages.urls')),
+    url(r'^collaborators/', include('django.contrib.flatpages.urls')),
 
     url(r'^sources/$', SourceList.as_view(), name="source-list"),
     url(r'^sources/(?P<pk>[0-9]+)/$', SourceDetail.as_view(), name="source-detail"),
@@ -81,9 +90,22 @@ urlpatterns = [
 
     url(r'^authors/(?P<pk>[0-9]+)/$', BibliographyAuthorDetail.as_view(), name="author-detail"),
 
+
     url(r'^images/(?P<pk>[0-9]+)/(?:(?P<region>.*)/(?P<size>.*)/(?P<rotation>.*)/default\.jpg)$', image_serve, name="image-serve"),
-    url(r'^images/(?P<pk>[0-9]+)/$', image_serve, name="image-serve-info")
+    url(r'^images/(?P<pk>[0-9]+)/$', image_serve, name="image-serve-info"),
+    url('^markdown/', include('django_markdown.urls')),
+
 ]
 
 if settings.DEBUG is True:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+urlpatterns += [
+
+    url(r'^(?P<url>.*/)$', views.flatpage),
+]
+
+admin.autodiscover()
+flatpages.register()
+urlpatterns += [url(r'^admin/', include(admin.site.urls)), ]
+
