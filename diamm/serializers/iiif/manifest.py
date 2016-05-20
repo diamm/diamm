@@ -254,7 +254,9 @@ class SourceManifestSerializer(ContextDictSerializer):
     related = serpy.MethodField()
     sequences = serpy.MethodField()
     structures = serpy.MethodField()
-    thumbnail = serpy.MethodField()
+    # thumbnail = serpy.MethodField(
+    #     required=False
+    # )
 
     def get_id(self, obj):
         return reverse('source-manifest',
@@ -332,7 +334,7 @@ class SourceManifestSerializer(ContextDictSerializer):
 
     def get_thumbnail(self, obj):
         if not 'cover_image_url_sni' in obj:
-            return {}
+            return None
         else:
             cover_image_url = reverse('image-serve-info',
                                       kwargs={"pk": obj['cover_image_i']},
