@@ -209,6 +209,19 @@ class CanvasSerializer(ContextDictSerializer):
         attr="numeration_s"
     )
     images = serpy.MethodField()
+    width = serpy.MethodField()
+    height = serpy.MethodField()
+
+    def get_width(self, obj):
+        if not '_childDocuments_' in obj:
+            return 0
+        return obj['_childDocuments_'][0]['width_i']
+
+    def get_height(self, obj):
+        if not '_childDocuments_' in obj:
+            return 0
+
+        return obj['_childDocuments_'][0]['height_i']
 
     def get_id(self, obj):
         return reverse(
