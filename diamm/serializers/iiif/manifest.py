@@ -142,7 +142,7 @@ class StructureSerializer(ContextDictSerializer):
         for p in obj['pages_ii']:
             canvas_id = reverse("source-canvas-detail",
                                 kwargs={"source_id": obj['source_i'],
-                                "page_id": p},
+                                        "page_id": p},
                                 request=self.context['request'])
             canvases.append(canvas_id)
 
