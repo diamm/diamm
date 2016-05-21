@@ -261,9 +261,9 @@ class SourceManifestSerializer(ContextDictSerializer):
         attr="display_name_s"
     )
     metadata = serpy.MethodField()
-    see_also = serpy.MethodField(
-        label="seeAlso"
-    )
+    # see_also = serpy.MethodField(
+    #     label="seeAlso"
+    # )
     related = serpy.MethodField()
     sequences = serpy.MethodField()
     structures = serpy.MethodField()
