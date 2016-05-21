@@ -364,8 +364,9 @@ class SourceManifestSerializer(ContextDictSerializer):
     def get_structures(self, obj):
         conn = pysolr.Solr(settings.SOLR['SERVER'])
 
+        # The pages_ii query ensures we retrieve only those records that have images associated with them.
         structure_query = {
-            "fq": ["type:item", "source_i:{0}".format(obj['pk'])],
+            "fq": ["type:item", "source_i:{0}".format(obj['pk']), "pages_ii:[* TO *]"],
             "sort": "folio_start_ans asc",
             "rows": 10000,
         }
