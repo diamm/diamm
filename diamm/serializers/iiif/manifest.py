@@ -142,7 +142,7 @@ class StructureSerializer(ContextDictSerializer):
         for p in obj['pages_ii']:
             canvas_id = reverse("source-canvas-detail",
                                 kwargs={"source_id": obj['source_i'],
-                                "page_id": p},
+                                        "page_id": p},
                                 request=self.context['request'])
             canvases.append(canvas_id)
 
@@ -209,6 +209,19 @@ class CanvasSerializer(ContextDictSerializer):
         attr="numeration_s"
     )
     images = serpy.MethodField()
+    width = serpy.MethodField()
+    height = serpy.MethodField()
+
+    def get_width(self, obj):
+        if not '_childDocuments_' in obj:
+            return 0
+        return obj['_childDocuments_'][0]['width_i']
+
+    def get_height(self, obj):
+        if not '_childDocuments_' in obj:
+            return 0
+
+        return obj['_childDocuments_'][0]['height_i']
 
     def get_id(self, obj):
         return reverse(
@@ -248,13 +261,15 @@ class SourceManifestSerializer(ContextDictSerializer):
         attr="display_name_s"
     )
     metadata = serpy.MethodField()
-    see_also = serpy.MethodField(
-        label="seeAlso"
-    )
+    # see_also = serpy.MethodField(
+    #     label="seeAlso"
+    # )
     related = serpy.MethodField()
     sequences = serpy.MethodField()
     structures = serpy.MethodField()
-    thumbnail = serpy.MethodField()
+    # thumbnail = serpy.MethodField(
+    #     required=False
+    # )
 
     def get_id(self, obj):
         return reverse('source-manifest',
@@ -332,7 +347,7 @@ class SourceManifestSerializer(ContextDictSerializer):
 
     def get_thumbnail(self, obj):
         if not 'cover_image_url_sni' in obj:
-            return {}
+            return None
         else:
             cover_image_url = reverse('image-serve-info',
                                       kwargs={"pk": obj['cover_image_i']},
@@ -349,8 +364,9 @@ class SourceManifestSerializer(ContextDictSerializer):
     def get_structures(self, obj):
         conn = pysolr.Solr(settings.SOLR['SERVER'])
 
+        # The pages_ii query ensures we retrieve only those records that have images associated with them.
         structure_query = {
-            "fq": ["type:item", "source_i:{0}".format(obj['pk'])],
+            "fq": ["type:item", "source_i:{0}".format(obj['pk']), "pages_ii:[* TO *]"],
             "sort": "folio_start_ans asc",
             "rows": 10000,
         }

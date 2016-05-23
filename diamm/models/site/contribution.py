@@ -27,5 +27,10 @@ class Contribution(models.Model):
 
     note = models.TextField()
 
+    # NB: To be filled out by DIAMM staff and used to build the contributions list for each record.
+    completed = models.BooleanField(default=False)
+    summary = models.CharField(help_text="A summary of the change that was contributed by the user. Used to automatically build a contributor's entry for the contribution",
+                               max_length=255, blank=True, null=True)
+
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

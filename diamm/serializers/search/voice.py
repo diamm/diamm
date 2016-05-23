@@ -24,9 +24,9 @@ class VoiceSearchSerializer(serpy.Serializer):
     mensuration_text_s = serpy.MethodField()
 
     clef_s = serpy.MethodField()
-    sort_order_i = serpy.IntField(
-        attr="sort_order"
-    )
+    # sort_order_i = serpy.IntField(
+    #     attr="sort_order"
+    # )
 
     voice_text_s = serpy.StrField(
         attr="voice_text"
