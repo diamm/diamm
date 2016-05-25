@@ -28,6 +28,13 @@ class SearchView(generics.GenericAPIView):
             })
         # else ignore any invalid type filter settings...
 
+        images_query = request.GET.get('images', None)
+
+        if images_query:
+            filters.update({
+                'public_images_b': images_query
+            })
+
         try:
             page_num = int(request.GET.get('page', 1))
         except ValueError:
