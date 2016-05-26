@@ -9,7 +9,7 @@ from django_extensions.admin import ForeignKeyAutocompleteAdmin
 
 @admin.register(Contribution)
 class ContributionAdmin(ForeignKeyAutocompleteAdmin):
-    list_display = ('get_contributor', 'get_entity', 'created')
+    list_display = ('get_contributor', 'get_entity', 'created', 'completed')
     search_fields = ('contributor__last_name', 'contributor__first_name', 'contributor__username')
 
     related_search_fields = {
@@ -31,6 +31,6 @@ class ContributionAdmin(ForeignKeyAutocompleteAdmin):
         elif isinstance(obj.record, Person):
             return "{0} (person)".format(obj.record.full_name)
         elif isinstance(obj.record, Composition):
-            return "{0} (composition)".format(obj.record.name)
+            return "{0} (composition)".format(obj.record.title)
     get_entity.short_description = "entity"
 

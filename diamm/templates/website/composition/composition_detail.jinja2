@@ -13,10 +13,16 @@
         </li>
     {% endfor %}
     </ul>
-    <h2>Appears in:</h2>
+    <h2>Appears in</h2>
     <ul>
     {% for source in content.sources %}
         <li><a href="{{ source.url }}">{{ source.display_name }}</a></li>
     {% endfor %}
     </ul>
+
+    {% set contributions = contribution_sort(content.title) %}
+    {% if contributions %}
+        {% include "website/contribution/contributions_made.jinja2" %}
+    {% endif %}
+    <li><a href="{{ url('contribution') }}">Make a Contribution</a></li>
 {% endblock %}

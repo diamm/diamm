@@ -24,6 +24,8 @@ from diamm.views.home import HomeView
 from diamm.views.auth import SessionAuth, SessionClose, AccountEmailSent, AccountUpdate
 from diamm.views.user import ProfileView
 from diamm.views.website.search import SearchView
+from diamm.views.contribution import MakeContribution, ContributionSubmitted
+from diamm.views.website.contribution import ContributionDetail, ContributionList
 from diamm.views.website.set import SetDetail
 from diamm.views.website.source import SourceList, SourceDetail, SourceManifest, SourceCanvasDetail
 from diamm.views.website.source import SourceRangeDetail, SourceItemDetail
@@ -32,10 +34,10 @@ from diamm.views.website.city import CityList, CityDetail
 from diamm.views.website.country import CountryList, CountryDetail
 from diamm.views.website.person import PersonDetail, legacy_composer_redirect
 from diamm.views.website.organization import OrganizationList, OrganizationDetail
-from diamm.views.website.composition import CompositionList, CompositionDetail
-from diamm.views.website.story import StoryDetail
 from diamm.views.website.image import image_serve
 from diamm.views.website.bibliography_author import BibliographyAuthorDetail
+from diamm.views.website.composition import CompositionList, CompositionDetail
+from diamm.views.website.story import StoryDetail
 from diamm.views.feedback import FeedbackView
 from django.contrib.flatpages import views
 from django_markdown import flatpages
@@ -49,18 +51,25 @@ urlpatterns = [
     url(r'^login/$', SessionAuth.as_view(), name="login"),
     url(r'^logout/$', SessionClose.as_view(), name="logout"),
     url(r'^login/update/$', AccountUpdate.as_view(), name="account-update"),
+    url(r'^feedback/$', FeedbackView.as_view(), name="feedback"),
     url(r'^login/email-sent/$', AccountEmailSent.as_view(), name="account-email"),
     url(r'^user/(?P<pk>[0-9]+)/$', ProfileView.as_view(), name="user-profile"),
-    url(r'^feedback/$', FeedbackView.as_view(), name="feedback"),
 
-    # public website
-    url(r'^search/$', SearchView.as_view(), name="search"),
-    url(r'^news/(?P<pk>[0-9]+)/$', StoryDetail.as_view(), name="story-detail"),
+
 
     url(r'^about/', include('django.contrib.flatpages.urls')),
     url(r'^collaborators/', include('django.contrib.flatpages.urls')),
     url(r'^technical-overview/', include('django.contrib.flatpages.urls')),
     url(r'^collaborators/', include('django.contrib.flatpages.urls')),
+    # public website
+    url(r'^search/$', SearchView.as_view(), name="search"),
+    url(r'^news/(?P<pk>[0-9]+)/$', StoryDetail.as_view(), name="story-detail"),
+    url(r'^contribution/detail/(?P<pk>[0-9]+)/$', ContributionDetail.as_view(), name="contribution-detail"),
+    url(r'^contributions/', ContributionList.as_view(), name="contribution-list"),
+    url(r'^about/', AboutPagesDetail.as_view(), name="aboutpages-detail"),
+    url(r'^contribution/$', MakeContribution.as_view(), name="contribution"),
+    url(r'^contribution/contribution-submitted/$', ContributionSubmitted.as_view(), name="contribution-submitted"),
+
 
     url(r'^sources/$', SourceList.as_view(), name="source-list"),
     url(r'^sources/(?P<pk>[0-9]+)/$', SourceDetail.as_view(), name="source-detail"),
