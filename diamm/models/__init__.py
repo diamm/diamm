@@ -3,6 +3,7 @@ from diamm.models.site.cover_image import CoverImage
 from diamm.models.site.story import Story
 from diamm.models.site.tag import Tag
 from diamm.models.site.contribution import Contribution
+from diamm.models.site.aboutpages import AboutPages
 
 from diamm.models.migrate.legacy_source import LegacySource
 from diamm.models.migrate.legacy_archive import LegacyArchive

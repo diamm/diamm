@@ -34,13 +34,11 @@ from diamm.views.website.city import CityList, CityDetail
 from diamm.views.website.country import CountryList, CountryDetail
 from diamm.views.website.person import PersonDetail, legacy_composer_redirect
 from diamm.views.website.organization import OrganizationList, OrganizationDetail
-from diamm.views.website.image import image_serve
-from diamm.views.website.bibliography_author import BibliographyAuthorDetail
 from diamm.views.website.composition import CompositionList, CompositionDetail
 from diamm.views.website.story import StoryDetail
-from diamm.views.feedback import FeedbackView
-from django.contrib.flatpages import views
-from django_markdown import flatpages
+from diamm.views.website.aboutpages import AboutPagesDetail
+from diamm.views.website.image import image_serve
+from diamm.views.website.bibliography_author import BibliographyAuthorDetail
 from diamm.views.website.canvas import CanvasData
 
 
@@ -51,16 +49,11 @@ urlpatterns = [
     url(r'^login/$', SessionAuth.as_view(), name="login"),
     url(r'^logout/$', SessionClose.as_view(), name="logout"),
     url(r'^login/update/$', AccountUpdate.as_view(), name="account-update"),
-    url(r'^feedback/$', FeedbackView.as_view(), name="feedback"),
     url(r'^login/email-sent/$', AccountEmailSent.as_view(), name="account-email"),
     url(r'^user/(?P<pk>[0-9]+)/$', ProfileView.as_view(), name="user-profile"),
 
 
 
-    url(r'^about/', include('django.contrib.flatpages.urls')),
-    url(r'^collaborators/', include('django.contrib.flatpages.urls')),
-    url(r'^technical-overview/', include('django.contrib.flatpages.urls')),
-    url(r'^collaborators/', include('django.contrib.flatpages.urls')),
     # public website
     url(r'^search/$', SearchView.as_view(), name="search"),
     url(r'^news/(?P<pk>[0-9]+)/$', StoryDetail.as_view(), name="story-detail"),
