@@ -1,0 +1,18 @@
+{% set pages, subpages = aboutpages_list() %}
+
+ <ul class="column">
+     <div>
+         {% for page in pages  %}
+             <li><a href="{{ page.url }}">{{ page }}</a>
+
+                 <ul class="dropdown-content-more">
+                     {% for subpage in subpages if subpage.about_section | string == page.title | string %}
+                         <li><a href="{{ subpage.url }}">{{ subpage }}</a></li>
+                     {% endfor %}
+                 </ul>
+
+             </li>
+         {% endfor %}
+     </div>
+</ul>
+

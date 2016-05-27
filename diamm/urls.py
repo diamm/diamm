@@ -95,19 +95,13 @@ urlpatterns = [
 
     url(r'^images/(?P<pk>[0-9]+)/(?:(?P<region>.*)/(?P<size>.*)/(?P<rotation>.*)/default\.jpg)$', image_serve, name="image-serve"),
     url(r'^images/(?P<pk>[0-9]+)/$', image_serve, name="image-serve-info"),
-    url('^markdown/', include('django_markdown.urls')),
 
 ]
 
 if settings.DEBUG is True:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-urlpatterns += [
-
-    url(r'^(?P<url>.*/)$', views.flatpage),
-]
 
 admin.autodiscover()
-flatpages.register()
 urlpatterns += [url(r'^admin/', include(admin.site.urls)), ]
 
