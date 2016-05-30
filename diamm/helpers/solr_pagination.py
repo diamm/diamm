@@ -125,7 +125,6 @@ class SolrPage:
             ('query', self.paginator.query),
             ('types', self.type_list),
             ('results', self.object_list),
-            ('image_count', self.images_count),
         ])
 
     @property
@@ -141,17 +140,15 @@ class SolrPage:
         # Since Solr doesn't filter by facet _value_, we remove some of the values that we don't want
         # to display in the search results.
         filtered_facets = [k for k in sorted(zip(i, i), key=lambda f: f[0]) if k[0] in settings.SOLR['SEARCH_TYPES']]
-        return OrderedDict(filtered_facets)
 
-    @property
-    def images_count(self):
-        image_count = self.result.facets['facet_fields']['public_images_b']
-        if not image_count:
-            return 0
-        i = image_count.index('true') + 1 if 'true' in image_count else None
-        if i:
-            return image_count[i]
-        return 0 
+        image_count = self.result.facets['facet_fields'].get('public_images_b')
+        if image_count:
+            # if there are items with images (i.e. public_images_b is true)
+            # image_count will contain a list item 'true' followed by the number of items with images
+            i = image_count.index('true') + 1 if 'true' in image_count else None
+            filtered_facets.append(('sources_with_images', image_count[i]))
+
+        return OrderedDict(filtered_facets)
 
     @property
     def object_list(self):

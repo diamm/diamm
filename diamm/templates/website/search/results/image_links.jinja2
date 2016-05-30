@@ -1,0 +1,12 @@
+{% if count > 0 %}
+    {% if params.images %}
+        <strong>
+    {% endif %}
+    <a href="{{ url('search') }}?{% if params.q %}q={{ params.q }}{% endif %}&images=true">
+        {{ 'Sources with images' | title }} ({{ count }})
+    </a>
+    {% if params.images %}
+        </strong>
+    {% endif %}
+{% endif %}
+

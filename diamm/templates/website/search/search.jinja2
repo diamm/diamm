@@ -17,23 +17,16 @@
                         {% endwith %}
                     </li>
                     {% for type, num in content.types.items() %}
-                    <li>
-                        {% with type=type, count=num, params=request.GET %}
-                        {% include 'website/search/results/type_links.jinja2' %}
-                        {% endwith %}
-                    </li>
+                        <li>
+                            {% with type=type, count=num, params=request.GET %}
+                                {% if type == 'sources_with_images' %}
+                                    {% include 'website/search/results/image_links.jinja2' %}
+                                {% elif not params.images %}
+                                    {% include 'website/search/results/type_links.jinja2' %}
+                                {% endif %}
+                            {% endwith %}
+                        </li>
                     {% endfor %}
-                    
-                    {% if content.image_count > 0 %}
-                    <li>
-                    {% if request.GET.images %}<b> {% endif %}
-                    <a href="{{ url('search') }}{% if request.GET.q %}?q={{ request.GET.q }}{% endif %}&images=true">
-                        Sources with images ({{ content.image_count }})
-                    </a>
-                    {% if request.GET.images %}</b> {% endif %}
-                    </li>
-                    {% endif %}
-
                 </ul>
             </div>
         </div>
