@@ -58,7 +58,6 @@ class LegacySource(models.Model):
     description_author = models.TextField(blank=True, null=True)
     external_urls = models.TextField(db_column='external_URLs', blank=True, null=True)  # Field name made lowercase.
     copyrightstatement = models.TextField(blank=True, null=True)
-    leafnumberingdescription = models.TextField(db_column='leafNumberingDescription', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
