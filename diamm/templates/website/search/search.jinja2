@@ -23,11 +23,17 @@
                         {% endwith %}
                     </li>
                     {% endfor %}
+                    
+                    {% if content.image_count > 0 %}
                     <li>
+                    {% if request.GET.images %}<b> {% endif %}
                     <a href="{{ url('search') }}{% if request.GET.q %}?q={{ request.GET.q }}{% endif %}&images=true">
-                        Sources (with images)
+                        Sources with images ({{ content.image_count }})
                     </a>
+                    {% if request.GET.images %}</b> {% endif %}
                     </li>
+                    {% endif %}
+
                 </ul>
             </div>
         </div>

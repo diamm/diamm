@@ -30,7 +30,7 @@ class SolrPaginator:
         self.qopts = {
             'q.op': settings.SOLR['DEFAULT_OPERATOR'],
             'facet': 'true',
-            'facet.field': 'type',
+            'facet.field': ['type', 'public_images_b'],
             'facet.mincount': 1,
             'hl': 'true',
             'defType': 'edismax',
@@ -41,26 +41,21 @@ class SolrPaginator:
             self.qopts.update(sorts)
 
         if filters:
-            fqstring = ""
+            fqlist = list() 
             for k, v in filters.items():
                 # If a list is passed in for a field, assume that we want to OR the filters to produce a listing from
                 # all the values; if not, assume it's a restriction.
                 # For example, {type: ['foo', 'bar']} ==> "type:foo OR type:bar"
                 # but {type: 'foo'} ==> 'type:foo'
                 if isinstance(v, list):
-                    fqstring += " OR ".join(["{0}:{1}".format(k, field) for field in v])
+                    fqlist.append(" OR ".join(["{0}:{1}".format(k, field) for field in v]))
                 else:
-                    fqstring += "{0}:{1} ".format(k, v)
+                    fqlist.append("{0}:{1} ".format(k, v))
 
-            print(fqstring)
+            print(fqlist)
             self.qopts.update({
-                'fq': fqstring
+                'fq': fqlist 
             })
-
-            # fqstring = " ".join(["{0}:{1}".format(k, v) for k, v in filters.items()])
-            # self.qopts.update({
-            #     'fq': fqstring
-            # })
 
         self.solr = pysolr.Solr(settings.SOLR['SERVER'])
 
@@ -130,6 +125,7 @@ class SolrPage:
             ('query', self.paginator.query),
             ('types', self.type_list),
             ('results', self.object_list),
+            ('image_count', self.images_count),
         ])
 
     @property
@@ -146,6 +142,16 @@ class SolrPage:
         # to display in the search results.
         filtered_facets = [k for k in sorted(zip(i, i), key=lambda f: f[0]) if k[0] in settings.SOLR['SEARCH_TYPES']]
         return OrderedDict(filtered_facets)
+
+    @property
+    def images_count(self):
+        image_count = self.result.facets['facet_fields']['public_images_b']
+        if not image_count:
+            return 0
+        i = image_count.index('true') + 1 if 'true' in image_count else None
+        if i:
+            return image_count[i]
+        return 0 
 
     @property
     def object_list(self):
