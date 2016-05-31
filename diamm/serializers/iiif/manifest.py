@@ -45,9 +45,9 @@ class SourceManifestSerializer(ContextDictSerializer):
         attr="display_name_s"
     )
     metadata = serpy.MethodField()
-    # see_also = serpy.MethodField(
-    #     label="seeAlso"
-    # )
+    see_also = serpy.MethodField(
+        label="seeAlso"
+    )
     description = serpy.MethodField()
 
     related = serpy.MethodField()
