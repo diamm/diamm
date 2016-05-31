@@ -143,10 +143,9 @@ class SolrPage:
 
         image_count = self.result.facets['facet_fields'].get('public_images_b')
         if image_count:
-            # if there are items with images (i.e. public_images_b is true)
-            # image_count will contain a list item 'true' followed by the number of items with images
-            i = image_count.index('true') + 1 if 'true' in image_count else None
-            filtered_facets.append(('sources_with_images', image_count[i]))
+            i = iter(image_count)
+            d = dict(zip(i, i))
+            filtered_facets.append(('sources_with_images', d['true']))
 
         return OrderedDict(filtered_facets)
 
