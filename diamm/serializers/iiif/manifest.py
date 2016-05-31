@@ -53,6 +53,14 @@ class SourceManifestSerializer(ContextDictSerializer):
     related = serpy.MethodField()
     sequences = serpy.MethodField()
     structures = serpy.MethodField()
+    attribution = StaticField(
+        value="Digital Image Archive of Medieval Music"
+    )
+
+    logo = StaticField(
+        value="https://{0}/static/images/diammlogo.png".format(settings.HOSTNAME)
+    )
+
     # thumbnail = serpy.MethodField(
     #     required=False
     # )
