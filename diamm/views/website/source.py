@@ -6,7 +6,8 @@ from rest_framework import response
 from drf_ujson.renderers import UJSONRenderer
 from diamm.models.data.source import Source
 from diamm.serializers.website.source import SourceListSerializer, SourceDetailSerializer
-from diamm.serializers.iiif.manifest import SourceManifestSerializer, CanvasSerializer
+from diamm.serializers.iiif.manifest import SourceManifestSerializer
+from diamm.serializers.iiif.canvas import CanvasSerializer
 
 
 class SourceList(generics.ListAPIView):
