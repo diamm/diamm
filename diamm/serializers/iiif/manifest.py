@@ -9,6 +9,7 @@
 import serpy
 import pysolr
 from django.conf import settings
+from django.template.defaultfilters import truncatewords
 from rest_framework.reverse import reverse
 from diamm.serializers.serializers import ContextDictSerializer
 from diamm.serializers.fields import StaticField
@@ -47,6 +48,8 @@ class SourceManifestSerializer(ContextDictSerializer):
     # see_also = serpy.MethodField(
     #     label="seeAlso"
     # )
+    description = serpy.MethodField()
+
     related = serpy.MethodField()
     sequences = serpy.MethodField()
     structures = serpy.MethodField()
@@ -77,6 +80,12 @@ class SourceManifestSerializer(ContextDictSerializer):
                     'value': value
                 })
         return metadata_entries
+
+    def get_description(self, obj):
+        if 'notes_txt' in obj:
+            # return the first note for the description. Truncate it to 300 words
+            return truncatewords(obj['notes_txt'][0], 300)
+        return None
 
     def get_see_also(self, obj):
         source_id = obj['pk']
