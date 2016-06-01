@@ -2,8 +2,7 @@ import serpy
 from rest_framework.reverse import reverse
 from diamm.serializers.serializers import ContextDictSerializer
 from diamm.serializers.fields import StaticField
-from diamm.serializers.iiif.service import ServiceSerializer
-
+from diamm.serializers.iiif.service import StructureServiceSerializer
 
 
 class StructureSerializer(ContextDictSerializer):
@@ -42,4 +41,4 @@ class StructureSerializer(ContextDictSerializer):
                        request=self.context['request'])
 
     def get_service(self, obj):
-        return ServiceSerializer(obj, context={"request": self.context['request']}).data
+        return StructureServiceSerializer(obj, context={"request": self.context['request']}).data

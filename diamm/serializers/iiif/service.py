@@ -6,10 +6,30 @@ from diamm.serializers.serializers import ContextDictSerializer
 from diamm.serializers.fields import StaticField
 
 
+class StructureServiceSerializer(ContextDictSerializer):
+    """
+        A minimal serializer that returns the context and a resolvable
+        @id for retrieving expanded service information.
+    """
+    service = StaticField(
+        label="@context",
+        value="https://{0}/services/item".format(settings.HOSTNAME)
+    )
+    id = serpy.MethodField(
+        label="@id"
+    )
+
+    def get_id(self, obj):
+        return reverse('source-item-detail',
+                       kwargs={"source_id": obj['source_i'],
+                               "item_id": obj['pk']},
+                       request=self.context['request'])
+
+
 class ServiceSerializer(ContextDictSerializer):
     service = StaticField(
         label="@context",
-        value="https://www.diamm.ac.uk/services/item"
+        value="https://{0}/services/item".format(settings.HOSTNAME)
     )
     id = serpy.MethodField(
         label="@id"
