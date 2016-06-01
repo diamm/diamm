@@ -61,9 +61,9 @@ class SourceManifestSerializer(ContextDictSerializer):
         value="https://{0}/static/images/diammlogo.png".format(settings.HOSTNAME)
     )
 
-    # thumbnail = serpy.MethodField(
-    #     required=False
-    # )
+    thumbnail = serpy.MethodField(
+        required=False
+    )
 
     def get_id(self, obj):
         return reverse('source-manifest',
