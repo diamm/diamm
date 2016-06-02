@@ -46,7 +46,7 @@ class SourceSearchSerializer(serpy.Serializer):
         required=False
     )
     source_type_s = serpy.StrField(
-        attr="source_type",
+        attr="type",
         required=False
     )
     date_statement_s = serpy.StrField(

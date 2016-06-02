@@ -314,7 +314,9 @@ class SourceDetailSerializer(ContextSerializer):
         required=False
     )
     date_statement = serpy.StrField()
-    source_type = serpy.StrField()
+    source_type = serpy.StrField(
+        attr="type"
+    )
     type = serpy.MethodField()
     cover_image_url = serpy.MethodField()
     manifest_url = serpy.MethodField()
