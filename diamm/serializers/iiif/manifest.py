@@ -167,7 +167,7 @@ class SourceManifestSerializer(ContextDictSerializer):
         # The pages_ii query ensures we retrieve only those records that have images associated with them.
         structure_query = {
             "fq": ["type:item", "source_i:{0}".format(obj['pk']), "pages_ii:[* TO *]"],
-            "fl": ["pages_ii", "source_i", "pk", "composition_s"],
+            "fl": ["pages_ii", "pages_ssni", "source_i", "pk", "composition_s"],
             "sort": "folio_start_ans asc",
             "rows": 10000,
         }

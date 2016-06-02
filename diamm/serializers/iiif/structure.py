@@ -6,7 +6,7 @@ from diamm.serializers.iiif.service import StructureServiceSerializer
 
 
 class StructureSerializer(ContextDictSerializer):
-    canvases = serpy.MethodField()
+    members = serpy.MethodField()
     id = serpy.MethodField(
         label="@id"
     )
@@ -20,19 +20,27 @@ class StructureSerializer(ContextDictSerializer):
 
     service = serpy.MethodField()
 
-    def get_canvases(self, obj):
+    def get_members(self, obj):
         if not obj.get('pages_ii'):
-            return []
+            return None
 
-        canvases = []
-        for p in obj['pages_ii']:
+        members = []
+        for p in obj['pages_ssni']:
+            pk, name = p.split("|")
             canvas_id = reverse("source-canvas-detail",
                                 kwargs={"source_id": obj['source_i'],
-                                        "page_id": p},
+                                        "page_id": pk},
                                 request=self.context['request'])
-            canvases.append(canvas_id)
 
-        return canvases
+            member_obj = {
+                "@id": canvas_id,
+                "@type": "sc:Canvas",
+                "label": name
+            }
+
+            members.append(member_obj)
+
+        return members
 
     def get_id(self, obj):
         return reverse('source-range-detail',
