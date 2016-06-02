@@ -24,8 +24,7 @@ from diamm.views.home import HomeView
 from diamm.views.auth import SessionAuth, SessionClose, AccountEmailSent, AccountUpdate
 from diamm.views.user import ProfileView
 from diamm.views.website.search import SearchView
-from diamm.views.contribution import MakeContribution, ContributionSubmitted
-from diamm.views.website.contribution import ContributionDetail, ContributionList
+from diamm.views.contribution import MakeContribution
 from diamm.views.website.set import SetDetail
 from diamm.views.website.source import SourceList, SourceDetail, SourceManifest, SourceCanvasDetail
 from diamm.views.website.source import SourceRangeDetail, SourceItemDetail
@@ -57,11 +56,9 @@ urlpatterns = [
     # public website
     url(r'^search/$', SearchView.as_view(), name="search"),
     url(r'^news/(?P<pk>[0-9]+)/$', StoryDetail.as_view(), name="story-detail"),
-    url(r'^contribution/detail/(?P<pk>[0-9]+)/$', ContributionDetail.as_view(), name="contribution-detail"),
-    url(r'^contributions/', ContributionList.as_view(), name="contribution-list"),
     url(r'^about/', AboutPagesDetail.as_view(), name="aboutpages-detail"),
     url(r'^contribution/$', MakeContribution.as_view(), name="contribution"),
-    url(r'^contribution/contribution-submitted/$', ContributionSubmitted.as_view(), name="contribution-submitted"),
+
 
 
     url(r'^sources/$', SourceList.as_view(), name="source-list"),
@@ -85,7 +82,7 @@ urlpatterns = [
     url(r'^organizations/$', OrganizationList.as_view(), name='organization-list'),
     url(r'^organizations/(?P<pk>[0-9]+)/$', OrganizationDetail.as_view(), name="organization-detail"),
     url(r'^composers/(?P<legacy_id>[0-9]+)/$', legacy_composer_redirect),
-    url(r'^compositions/$', CompositionList.as_view(), name="composition-list"),
+    url(r'^compositions/$', CompositionList.as_view(),  name="composition-list"),
     url(r'^compositions/(?P<pk>[0-9]+)/$', CompositionDetail.as_view(), name="composition-detail"),
 
     url(r'^set/(?P<pk>[0-9]+)/$', SetDetail.as_view(), name="set-detail"),
