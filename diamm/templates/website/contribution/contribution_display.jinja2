@@ -1,0 +1,23 @@
+{% block body %}
+
+{% if contributions %}
+    {% include "website/contribution/contributions_made_list.jinja2" %}
+{% endif %}
+
+<button id="show-contribution-form">Make a Contribution</button>
+
+<div id="contribution-form">
+    {% include 'website/contribution/make_contribution.jinja2' %}
+</div>
+
+<div id="messages">
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                {% if message.tags %}{% endif %}{{ message }}
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+
+{% endblock %}

@@ -75,26 +75,7 @@
         <div class="row">
             <div class="sixteen columns">
                 {% set contributions = contribution_source_sort(content.display_name) %}
-                {% if contributions %}
-                    {% include "website/contribution/contributions_made_list.jinja2" %}
-                {% endif %}
-            </div>
-        </div>
-        <div class="row">
-            <div class="sixteen columns">
-            <button id="show-contribution-form">Make a Contribution</button>
-                <div id="contribution-form">
-                    {% include 'website/contribution/make_contribution.jinja2' %}
-                </div>
-                <div id="messages">
-                    {% if messages %}
-                        <ul class="messages">
-                            {% for message in messages %}
-                                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-                </div>
+                {% include 'website/contribution/contribution_display.jinja2' %}
             </div>
         </div>
     </div>

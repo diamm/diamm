@@ -27,31 +27,10 @@
             </ul>
         </div>
     </div>
-    <div class="row">
+
         {% set contributions = contribution_sort(content.title) %}
-        {% if contributions %}
-            {% include "website/contribution/contributions_made_list.jinja2" %}
-        {% endif %}
-    </div>
-    <div class="row">
-        <div class="sixteen columns">
-            <button id="show-contribution-form">Make a Contribution</button>
+        {% include 'website/contribution/contribution_display.jinja2' %}
 
-            <div id="contribution-form">
-                {% include 'website/contribution/make_contribution.jinja2' %}
-            </div>
-
-            <div id="messages">
-                {% if messages %}
-                    <ul class="messages">
-                        {% for message in messages %}
-                           {% if message.tags %}{% endif %}{{ message }}
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
-        </div>
-    </div>
 {% endblock %}
 
 

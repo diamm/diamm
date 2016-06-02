@@ -1,28 +1,12 @@
 {% extends "base.jinja2" %}
 
 {% block body %}
-    <h1>Organization Detail</h1>
-
-
-    {% set contributions = contribution_sort(content.name) %}
-    {% if contributions %}
-        {% include "website/contribution/contributions_made_list.jinja2" %}
-    {% endif %}
-
-    <button id="show-contribution-form">Make a Contribution</button>
-
-    <div id="contribution-form">
-        {% include 'website/contribution/make_contribution.jinja2' %}
-    </div>
-
-    <div id="messages">
-        {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
+    <div class="row">
+        <div class="sixteen columns">
+            <h1>Organization Detail</h1>
+            {% set contributions = contribution_sort(content.name) %}
+            {% include 'website/contribution/contribution_display.jinja2' %}
+        </div>
     </div>
 {% endblock %}
 
