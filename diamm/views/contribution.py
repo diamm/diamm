@@ -1,51 +1,50 @@
-from rest_framework import views
-from diamm.renderers.html_renderer import HTMLRenderer
-from django.shortcuts import render
-from rest_framework import renderers
+from rest_framework import views, renderers, permissions
 from django.http import HttpResponseRedirect
-from rest_framework.response import Response
+from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist
+from django.contrib import messages
+from diamm.renderers.html_renderer import HTMLRenderer
 from diamm.forms.contribution_form import ContributionForm
-from diamm.models.site.contribution import Contribution
-from diamm.serializers.website.contribution import ContributionSerializer
 
 
 class MakeContribution(views.APIView):
-    template_name = "contribution.jinja2"
+    template_name = "website/contribution/contribution.jinja2"
     renderer_classes = (HTMLRenderer, renderers.JSONRenderer)
+    permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
-        if request.method == "POST":
-            form = ContributionForm(request.POST)
-
-            if form.is_valid():
-                contribution = form.save(commit=False)
-                contribution.contributor = request.user
-                contribution.save()
-                return HttpResponseRedirect('contribution-submitted')
-        else:
-            form = ContributionForm()
-        return render(request, 'website/contribution/contribution_submitted.jinja2', {'form': form})
-
-    def get(self, request, *args, **kwargs):
         form = ContributionForm(request.POST)
+        object_id = request.data.get('pk')
+        content_type = request.data.get('type')
+        current_url = request.GET.get('from', None)
+
         if form.is_valid():
             contribution = form.save(commit=False)
-            contribution.note = request.note
+            contribution.note = request.data.get('note')
+            contribution.object_id = object_id
             contribution.contributor = request.user
+
+            try:
+                contribution.content_type = ContentType.objects.get(app_label="diamm_data", model=content_type)
+            except ObjectDoesNotExist:
+                messages.success(request._request, 'Invalid content type')
+                return HttpResponseRedirect(current_url)
+
+            try:
+                contribution.content_type.model_class().objects.all().get(pk=contribution.object_id)
+            except ObjectDoesNotExist:
+                messages.success(request._request, 'Invalid Object')
+                return HttpResponseRedirect(current_url)
+
+            if not request.user.is_authenticated():
+                messages.success(request._request, 'Invalid User')
+                return HttpResponseRedirect(current_url)
+
             contribution.save()
-            return HttpResponseRedirect('contribution_submitted', pk=contribution.pk)
-        return render(request, 'website/contribution/contribution.jinja2', {'form': form})
+            messages.success(request._request, 'Your contribution was submitted')
+            return HttpResponseRedirect(current_url)
 
+        if not request.data.get('note'):
+            messages.success(request._request, 'You did not enter a contribution')
+        return HttpResponseRedirect(current_url)
 
-class ContributionSubmitted(views.APIView):
-    template_name = "contribution_submitted.jinja2"
-    renderer_classes = (HTMLRenderer, renderers.JSONRenderer)
-
-    def get(self, request, *args, **kwargs):
-        contributions = Contribution.objects.order_by('created')[:3]
-        contributions_data = ContributionSerializer(contributions,
-                                            context={'request': request},
-                                            many=True)
-        return Response({
-            'contributions': contributions_data.data
-        })

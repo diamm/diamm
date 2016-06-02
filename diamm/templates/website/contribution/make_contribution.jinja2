@@ -1,0 +1,12 @@
+
+{% block body %}
+
+    <form action="{{ url("contribution") }}?from={{ request.path|urlencode }}" method="POST">{% csrf_token %}
+        <h3>Contribution Form</h3>
+        <input id="pk" name="pk" value="{{ content.pk }}" type="hidden" readonly>
+        <input id="type" name="type" value="{{ content.type }}" type="hidden" readonly>
+        <textarea id="note" name="note" placeholder="Enter your contribution eg. spelling correction, add information, correct/update information"></textarea>
+        <button id="submit-contribution" type="submit">Submit</button>
+    </form>
+
+{% endblock %}

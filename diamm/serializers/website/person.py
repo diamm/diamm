@@ -68,16 +68,19 @@ class PersonCompositionSerializer(ContextDictSerializer):
 
         return sources
 
+
 class PersonListSerializer(ContextSerializer):
     pass
 
 
 class PersonDetailSerializer(ContextSerializer):
     url = serpy.MethodField()
+    pk = serpy.IntField()
     compositions = serpy.MethodField()
     related_sources = serpy.MethodField()
     copied_sources = serpy.MethodField()
     full_name = serpy.StrField()
+    type = serpy.MethodField()
     earliest_year = serpy.IntField(
         required=False
     )
@@ -105,6 +108,8 @@ class PersonDetailSerializer(ContextSerializer):
     def get_copied_sources(self, obj):
         return [PersonSourceCopyistSerializer(o, context={"request": self.context['request']}).data for o in obj.solr_copyist]
 
+    def get_type(self, obj):
+        return obj.__class__.__name__.lower()
 
 # from rest_framework import serializers
 # from diamm.models.data.person import Person

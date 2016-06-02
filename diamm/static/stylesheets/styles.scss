@@ -32,6 +32,34 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+ul.contribution-list {
+  li {
+    list-style-type: none;
+  }
+}
+
+#show-contribution-form {
+  border: none;
+}
+
+#submit-contribution {
+  color: $diamm-black;
+  text-decoration: none;
+  border: none;
+  padding-bottom: 1rem;
+  font-size: 1rem;
+  font-family: $menu-font;
+  font-weight: bold;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  align-items: flex-start;
+  &:hover, &:focus {
+    border-bottom: none;
+    background: $diamm-red;
+    color: $diamm-white;
+  }
+}
+
 div.search-result {
   padding-left: 1.5em;
   padding-bottom: 0.5em;
@@ -45,6 +73,33 @@ nav.center-block.text-center{
     }
   }
 
+}
+
+#contribution-form {
+  display:none;
+}
+
+input {
+  border: 1px dotted #999;
+  border-radius: 0;
+  width: 11rem;
+  height: 11rem;
+  margin: 0;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+textarea {
+  padding : 0 10px;
+  height: 11rem;
+  width: 11rem;
+  margin: 0;
+  border: none;
+  background: none;
+  display: block;
+  font-family: $serif;
+  font-size: 0.9rem;
 }
 
 a {

@@ -314,7 +314,8 @@ class SourceDetailSerializer(ContextSerializer):
         required=False
     )
     date_statement = serpy.StrField()
-    type = serpy.StrField()
+    source_type = serpy.StrField()
+    type = serpy.MethodField()
     cover_image_url = serpy.MethodField()
     manifest_url = serpy.MethodField()
     inventory_provided = serpy.BoolField()
@@ -354,6 +355,9 @@ class SourceDetailSerializer(ContextSerializer):
         attr="public_notes",
         many=True
     )
+
+    def get_type(self, obj):
+        return obj.__class__.__name__.lower()
 
     def get_url(self, obj):
         return reverse('source-detail',

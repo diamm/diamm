@@ -1,0 +1,8 @@
+<h2>Contributions</h2>
+<div class = "sixteen columns">
+    <ul class="contribution-list">
+        {% for contribution in contributions %}
+            <li>{{ contribution.contributor }}: {{ contribution.summary }}. {{ contribution.updated }}</li>
+        {% endfor %}
+    </ul>
+</div>

@@ -10,6 +10,7 @@ class CompositionSourceSerializer(serializers.ModelSerializer):
                                               read_only=True)
 
     display_name = serializers.ReadOnlyField(source='source.display_name')
+
     class Meta:
         model = Item
         fields = ('url', 'display_name')
@@ -28,6 +29,7 @@ class CompositionComposerSerializer(serializers.ModelSerializer):
 
 class CompositionListSerializer(serializers.HyperlinkedModelSerializer):
     composers = CompositionComposerSerializer(many=True)
+
     class Meta:
         model = Composition
         fields = ('url', 'title', 'composers')
@@ -36,6 +38,12 @@ class CompositionListSerializer(serializers.HyperlinkedModelSerializer):
 class CompositionDetailSerializer(serializers.HyperlinkedModelSerializer):
     composers = CompositionComposerSerializer(many=True)
     sources = CompositionSourceSerializer(many=True)
+    type = serializers.SerializerMethodField()
+
     class Meta:
         model = Composition
-        fields = ('url', 'title', 'composers', 'sources')
+        fields = ('url', 'title', 'composers', 'sources', 'pk', 'type')
+
+    def get_type(self, obj):
+        return self.Meta.model.__name__.lower()
+

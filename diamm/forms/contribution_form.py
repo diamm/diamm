@@ -6,4 +6,4 @@ class ContributionForm(forms.ModelForm):
 
     class Meta:
         model = Contribution
-        fields = ['note', 'object_id', 'content_type']
+        fields = ['note']
