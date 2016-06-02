@@ -18,7 +18,8 @@ def contribution_sort(content_name):
 @library.global_function
 def contribution_source_sort(content_name):
     contributionlist = []
-    contributions = Contribution.objects.all().filter(content_type=ContentType.objects.get(app_label="diamm_data", model="source"))
+    source_content_type = ContentType.objects.get(app_label="diamm_data", model="source")
+    contributions = Contribution.objects.filter(content_type=source_content_type)
 
     for contribution in contributions:
         if contribution.record.display_name.__str__() == content_name:
