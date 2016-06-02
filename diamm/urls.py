@@ -82,7 +82,7 @@ urlpatterns = [
     url(r'^organizations/$', OrganizationList.as_view(), name='organization-list'),
     url(r'^organizations/(?P<pk>[0-9]+)/$', OrganizationDetail.as_view(), name="organization-detail"),
     url(r'^composers/(?P<legacy_id>[0-9]+)/$', legacy_composer_redirect),
-    url(r'^compositions/$', CompositionList.as_view(),  name="composition-list"),
+    url(r'^compositions/$', CompositionList.as_view(), name="composition-list"),
     url(r'^compositions/(?P<pk>[0-9]+)/$', CompositionDetail.as_view(), name="composition-detail"),
 
     url(r'^set/(?P<pk>[0-9]+)/$', SetDetail.as_view(), name="set-detail"),
