@@ -122,6 +122,7 @@ class Command(BaseCommand):
     def _index_pages(self):
         self.stdout.write(term.blue("Indexing Pages"))
         self.solrconn.delete(q="type:page")
+        self.solrconn.delete(q="type:image")
         objs = Page.objects.all()
         self._index(objs, 'numeration', PageSearchSerializer)
 
