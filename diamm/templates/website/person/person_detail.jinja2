@@ -49,15 +49,3 @@
     {% set contributions = contribution_sort(content.full_name) %}
     {% include 'website/contribution/contribution_display.jinja2' %}
 {% endblock %}
-
-{% block scripts %}
-
-    <script>
-        document.getElementById('show-contribution-form').addEventListener('click', function ()
-        {
-            document.getElementById('contribution-form').style.display = "block";
-            document.getElementById('messages').style.display = "none";
-        });
-    </script>
-
-{% endblock %}
