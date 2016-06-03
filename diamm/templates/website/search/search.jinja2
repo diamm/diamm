@@ -19,11 +19,7 @@
                     {% for type, num in content.types.items() %}
                         <li>
                             {% with type=type, count=num, params=request.GET %}
-                                {% if type == 'sources_with_images' %}
-                                    {% include 'website/search/results/image_links.jinja2' %}
-                                {% elif not params.images %}
-                                    {% include 'website/search/results/type_links.jinja2' %}
-                                {% endif %}
+                                {% include 'website/search/results/type_links.jinja2' %}
                             {% endwith %}
                         </li>
                     {% endfor %}

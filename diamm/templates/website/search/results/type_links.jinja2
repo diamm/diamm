@@ -1,12 +1,18 @@
 {# Some fairly complex logic for these links, so we'll break them out here #}
-<a href="{{ url('search') }}?{% if params.q %}q={{ params.q }}{% endif %}{% if type %}&type={{ type }}{% endif %}"
+<a href="{{ url('search') }}?{%- if params.q -%}q={{ params.q }}{%- endif -%}{%- if type -%}&type={{ type }}{%- endif -%}"
    class="filter-type"
    data-facet-name="type"
    data-facet-value="{{ type }}">
   {% if type == params.type %}
     <strong>
   {% endif %}
-    {{ type | title }} {% if type != 'all' %}({{ count }}){% endif %}
+    {%- if type == 'all' -%}
+        All results
+    {%- elif type == 'sources_with_images' -%}
+        Sources with images ({{ count }})
+    {%- else -%}
+        {{ type | title }} ({{ count }})
+    {% endif %}
   {% if type == params.type %}
     </strong>
   {% endif %}

@@ -204,8 +204,8 @@ SOLR = {
         'composition'
     ],
     'FACET_FIELDS': [
-        'type',
-        'public_images_b'
+        '{!ex=type}type',
+        '{!ex=type}public_images_b'
     ],
     'FULLTEXT_QUERYFIELDS': [    # Boosting these fields allows more common methods of referring to a MSS to bubble up in the search results.
         'text',
