@@ -27,17 +27,17 @@ class MakeContribution(views.APIView):
             try:
                 contribution.content_type = ContentType.objects.get(app_label="diamm_data", model=content_type)
             except ObjectDoesNotExist:
-                messages.success(request._request, 'Invalid content type')
+                messages.error(request._request, 'Invalid content type')
                 return HttpResponseRedirect(current_url)
 
             try:
                 contribution.content_type.model_class().objects.all().get(pk=contribution.object_id)
             except ObjectDoesNotExist:
-                messages.success(request._request, 'Invalid Object')
+                messages.error(request._request, 'Invalid Object')
                 return HttpResponseRedirect(current_url)
 
             if not request.user.is_authenticated():
-                messages.success(request._request, 'Invalid User')
+                messages.error(request._request, 'Invalid User')
                 return HttpResponseRedirect(current_url)
 
             contribution.save()
@@ -45,6 +45,6 @@ class MakeContribution(views.APIView):
             return HttpResponseRedirect(current_url)
 
         if not request.data.get('note'):
-            messages.success(request._request, 'You did not enter a contribution')
+            messages.error(request._request, 'You did not enter a contribution')
         return HttpResponseRedirect(current_url)
 
