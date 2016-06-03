@@ -50,7 +50,7 @@ class SolrPaginator:
                 if isinstance(v, list):
                     fqlist.append(" OR ".join(["{0}:{1}".format(k, field) for field in v]))
                 else:
-                    fqlist.append("{0}:{1} ".format(k, v))
+                    fqlist.append("{0}:{1}".format(k, v))
 
             print(fqlist)
             self.qopts.update({
