@@ -1,0 +1,8 @@
+Full rebuild
+-- Drop, Create, Import migration database (diamm_data_migration)
+-- Drop, Create diamm_data_server
+-- run makemigrations / migrate
+-- run convert_legacy_data
+-- run testing_image_locations
+-- run load_pickled_info (get pickle file)
+-- run empty_solr / reindex_all

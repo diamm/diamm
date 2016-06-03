@@ -265,6 +265,7 @@ class SourceArchiveSerializer(ContextSerializer):
 class SourceNoteSerializer(ContextSerializer):
     note = serpy.StrField()
     type = serpy.IntField()
+    pk = serpy.IntField()
     note_type = serpy.StrField()
 
 
