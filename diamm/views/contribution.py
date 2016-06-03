@@ -16,7 +16,7 @@ class MakeContribution(views.APIView):
         form = ContributionForm(request.POST)
         object_id = request.data.get('pk')
         content_type = request.data.get('type')
-        current_url = request.GET.get('from', None)
+        current_url = request.data.get('from')
 
         if form.is_valid():
             contribution = form.save(commit=False)
