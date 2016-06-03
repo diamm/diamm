@@ -140,11 +140,14 @@ class SolrPage:
         # to display in the search results.
         filtered_facets = [k for k in sorted(zip(i, i), key=lambda f: f[0]) if k[0] in settings.SOLR['SEARCH_TYPES']]
 
+        # For the public_images_b facet, we will get the count for this value
+        # and send it along with the sources_with_images key.
         image_count = self.result.facets['facet_fields'].get('public_images_b')
         if image_count:
             i = iter(image_count)
             d = dict(zip(i, i))
-            filtered_facets.append(('sources_with_images', d['true']))
+            if d.get('true'):
+                filtered_facets.append(('sources_with_images', d['true']))
 
         return OrderedDict(filtered_facets)
 
