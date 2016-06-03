@@ -6,7 +6,7 @@ from diamm.serializers.serializers import ContextDictSerializer, ContextSerializ
 class PersonSourceCopyistSerializer(ContextDictSerializer):
     url = serpy.MethodField()
     copyist_type = serpy.StrField(
-        attr="type_s"
+        attr="type"
     )
     uncertain = serpy.BoolField(
         attr="uncertain_b"
