@@ -41,7 +41,7 @@ class SolrPaginator:
             self.qopts.update(sorts)
 
         if filters:
-            fqlist = list() 
+            fqlist = list()
             for k, v in filters.items():
                 # If a list is passed in for a field, assume that we want to OR the filters to produce a listing from
                 # all the values; if not, assume it's a restriction.
@@ -52,9 +52,8 @@ class SolrPaginator:
                 else:
                     fqlist.append("{0}:{1}".format(k, v))
 
-            print(fqlist)
             self.qopts.update({
-                'fq': fqlist 
+                'fq': fqlist
             })
 
         self.solr = pysolr.Solr(settings.SOLR['SERVER'])
