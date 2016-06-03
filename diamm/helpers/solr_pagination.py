@@ -30,7 +30,7 @@ class SolrPaginator:
         self.qopts = {
             'q.op': settings.SOLR['DEFAULT_OPERATOR'],
             'facet': 'true',
-            'facet.field': ['type', 'public_images_b'],
+            'facet.field': settings.SOLR['FACET_FIELDS'],
             'facet.mincount': 1,
             'hl': 'true',
             'defType': 'edismax',

@@ -203,6 +203,10 @@ SOLR = {
         'set',
         'composition'
     ],
+    'FACET_FIELDS': [
+        'type',
+        'public_images_b'
+    ],
     'FULLTEXT_QUERYFIELDS': [    # Boosting these fields allows more common methods of referring to a MSS to bubble up in the search results.
         'text',
         'source_boost_tns^10',  # Boost specific fields for source records that may be used at query time.
