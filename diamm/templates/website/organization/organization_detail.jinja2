@@ -2,8 +2,21 @@
 
 {% block body %}
     <div class="row">
+        <div class="sixteen columns organization-header">
+            <h1>{{ content.name }}</h1>
+                {% if content.variant_names %}
+                    {{ content.variant_names }}
+                {% endif %}
+        {% if content.location and content.note != "none"%}
+            {{ content.location }}
+        {% endif %}
+        </div>
+    </div>
+    <div class="row">
         <div class="sixteen columns">
-            <h1>Organization Detail</h1>
+            {% if content.note and content.note != "none" %}
+                <p>Note: {{ content.note }}</p>
+            {% endif %}
             {% set contributions = contribution_sort(content.name) %}
             {% include 'website/contribution/contribution_display.jinja2' %}
         </div>
