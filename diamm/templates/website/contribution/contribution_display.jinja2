@@ -7,7 +7,13 @@
 <button id="show-contribution-form">Make a Contribution</button>
 
 <div id="contribution-form">
-    {% include 'website/contribution/make_contribution.jinja2' %}
+    {% if user.is_authenticated() %}
+        {% include 'website/contribution/make_contribution.jinja2' %}
+    {% else %}
+        <p>Please log in to submit a contribution</p>
+    {% endif %}
+
+
 </div>
 
 <div id="messages">

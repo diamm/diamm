@@ -22,7 +22,6 @@ class MakeContribution(views.APIView):
             contribution = form.save(commit=False)
             contribution.note = request.data.get('note')
             contribution.object_id = object_id
-            contribution.contributor = request.user
 
             try:
                 contribution.content_type = ContentType.objects.get(app_label="diamm_data", model=content_type)
@@ -40,6 +39,7 @@ class MakeContribution(views.APIView):
                 messages.error(request._request, 'Invalid User')
                 return HttpResponseRedirect(current_url)
 
+            contribution.contributor = request.user
             contribution.save()
             messages.success(request._request, 'Your contribution was submitted')
             return HttpResponseRedirect(current_url)
