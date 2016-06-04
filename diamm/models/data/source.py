@@ -133,8 +133,19 @@ class Source(models.Model):
     def solr_inventory(self):
         connection = pysolr.Solr(settings.SOLR['SERVER'])
         fq = ['type:item', 'source_i:{0}'.format(self.pk), 'composition_i:[* TO *]']
+        fl = ['bibliography_ii',
+              'composers_ssni',
+              'composition_i',
+              'folio_start_s',
+              'folio_end_s',
+              'num_voices_s',
+              'pages_ii',
+              'pages_ssni'
+              'source_attribution_s',
+              'voices_ii',
+              'pk']
         # Set rows to an extremely high number so we get all of the item records in one go.
-        item_results = connection.search("*:*", fq=fq, sort="folio_start_ans asc", rows=10000)
+        item_results = connection.search("*:*", fq=fq, fl=fl, sort="folio_start_ans asc", rows=10000)
         if item_results.docs:
             return item_results.docs
         return []
