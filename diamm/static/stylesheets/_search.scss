@@ -1,5 +1,5 @@
 .search-box {
-  background: $diamm-light-grey;
+  background: rgba(128,128,128,0.5);
   margin-top: -1em;
 
   form {
@@ -47,22 +47,6 @@
     color: $diamm-med-grey;
   }
   .search-result {
-    .result-type {
-      font-size: 58%;
-      color: $diamm-grey;
-      position: relative;
-      top: -1px;
-    }
-    .upper-info {
-      margin-bottom: 0rem;
-      font-size: 85%;
-      font: $sans-serif;
-    }
-    .lower-info {
-      padding-top: 0rem;
-      font-size: 95%;
-      font: $sans-serif;
-    }
     h4 {
       margin-bottom: 0.1rem;
     }
