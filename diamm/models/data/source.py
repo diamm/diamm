@@ -1,3 +1,5 @@
+from itertools import groupby
+from operator import itemgetter
 from django.db import models
 from django.conf import settings
 import pysolr
@@ -136,6 +138,7 @@ class Source(models.Model):
         fl = ['bibliography_ii',
               'composers_ssni',
               'composition_i',
+              'composition_s',
               'folio_start_s',
               'folio_end_s',
               'num_voices_s',
@@ -156,12 +159,69 @@ class Source(models.Model):
     def solr_uninventoried(self):
         connection = pysolr.Solr(settings.SOLR['SERVER'])
         fq = ['type:item', 'source_i:{0}'.format(self.pk), '-composition_i:[* TO *]']
+        fl = ['bibliography_ii',
+              'composers_ssni',
+              'composition_i',
+              'composition_s',
+              'folio_start_s',
+              'folio_end_s',
+              'num_voices_s',
+              'pages_ii',
+              'pages_ssni'
+              'source_attribution_s',
+              'voices_ii',
+              'pk']
         sort = ["composer_ans asc"]
         # Set rows to an extremely high number so we get all of the item records in one go.
-        item_results = connection.search("*:*", fq=fq, sort=sort, rows=10000)
+        item_results = connection.search("*:*", fq=fq, fl=fl, sort=sort, rows=10000)
         if item_results.docs:
             return item_results.docs
         return []
+
+    @property
+    def inventory_by_composer(self):
+        """
+            inventory: [{
+                    composer: Bar, Foo,
+                    url: http://foo/bar
+                    pieces: [{
+                        title: blahblah,
+                        url: http://blahblah
+                    },etc.]
+                }
+        """
+        inventory = self.solr_inventory
+
+        sortable_inventory = []
+
+        for item in inventory:
+            for c in item['composers_ssni']:
+                new_item = (c, c.lower(), item)
+                sortable_inventory.append(new_item)
+
+        sorted_inventory = sorted(sortable_inventory, key=itemgetter(1))
+        grouped_inventory = groupby(sorted_inventory, itemgetter(0))
+
+        output = []
+        for namefield, group in grouped_inventory:
+            name, pk, uncertain = namefield.split("|")
+            obj = {
+                "pk": pk,
+                "name": name,
+                "inventory": []
+            }
+
+            if uncertain:
+                if uncertain == "True":
+                    obj["uncertain"] = True
+                else:
+                    obj["uncertain"] = False
+
+            for item in group:
+                obj["inventory"].append(item[2])
+
+            output.append(obj)
+        return output
 
     @property
     def solr_bibliography(self):

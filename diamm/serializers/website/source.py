@@ -160,6 +160,25 @@ class SourceBibliographySerializer(ContextDictSerializer):
     )
 
 
+class SourceComposerInventorySerializer(ContextDictSerializer):
+    url = serpy.MethodField()
+    name = serpy.StrField()
+    uncertain = serpy.BoolField(
+        required=False
+    )
+    inventory = serpy.MethodField()
+
+    def get_url(self, obj):
+        if 'pk' in obj and obj['pk']:
+            return reverse('person-detail',
+                           kwargs={"pk": obj['pk']},
+                           request=self.context['request'])
+        return None
+
+    def get_inventory(self, obj):
+        return obj['inventory']
+
+
 class SourceInventorySerializer(ContextDictSerializer):
     pk = serpy.IntField()
     url = serpy.MethodField()
@@ -323,6 +342,7 @@ class SourceDetailSerializer(ContextSerializer):
 
     has_images = serpy.MethodField()
     inventory = serpy.MethodField()
+    composer_inventory = serpy.MethodField()
     uninventoried = serpy.MethodField()
     archive = serpy.MethodField()
     sets = serpy.MethodField()
@@ -386,6 +406,11 @@ class SourceDetailSerializer(ContextSerializer):
         items = obj.solr_inventory
         inventory = [SourceInventorySerializer(i, context={"request": self.context['request']}).data
                         for i in items]
+        return inventory
+
+    def get_composer_inventory(self, obj):
+        items = obj.inventory_by_composer
+        inventory = [SourceComposerInventorySerializer(i, context={"request": self.context['request']}).data for i in items]
         return inventory
 
     def get_uninventoried(self, obj):
