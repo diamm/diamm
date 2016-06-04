@@ -107,17 +107,20 @@ class SourceSearchSerializer(serpy.Serializer):
             return []
 
     def get_sets_ii(self, obj):
-        if obj.sets.count() > 0:
-            return list(obj.sets.values_list("pk", flat=True))
+        """
+            Indexes membership in all of the sets that are not project sets (type=7).
+        """
+        if obj.sets.exclude(type=7).count() > 0:
+            return list(obj.sets.exclude(type=7).values_list("pk", flat=True))
         else:
             return []
 
     def get_sets_ssni(self, obj):
         """
-            PK|Name for the sets this source belongs to.
+            PK|Name for the sets this source belongs to except project sets (type=7)
         """
-        if obj.sets.count() > 0:
-            sourcesets = obj.sets.values_list("pk", "cluster_shelfmark")
+        if obj.sets.exclude(type=7).count() > 0:
+            sourcesets = obj.sets.exclude(type=7).values_list("pk", "cluster_shelfmark")
             sets = ["{0}|{1}".format(sset[0], sset[1]) for sset in sourcesets]
             return sets
         else:
