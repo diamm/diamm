@@ -61,6 +61,14 @@ class SourceSearchSerializer(serpy.Serializer):
         attr="inventory_provided"
     )
 
+    number_of_compositions_i = serpy.IntField(
+        attr="num_compositions"
+    )
+
+    number_of_composers_i = serpy.IntField(
+        attr="num_composers"
+    )
+
     identifiers_ss = serpy.MethodField()
     notations_ss = serpy.MethodField()
 

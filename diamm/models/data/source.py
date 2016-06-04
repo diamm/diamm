@@ -107,13 +107,23 @@ class Source(models.Model):
         return composer_names
 
     @property
+    def num_composers(self):
+        c = self.composers
+        return len(c)
+
+    @property
     def compositions(self):
         composition_names = []
-        for item in self.inventory.all().select_related('item'):
+        for item in self.inventory.all().select_related('composition'):
             if not item.composition:
                 continue
-            composition_names.append(item.composition.name)
+            composition_names.append(item.composition.title)
         return list(set(composition_names))
+
+    @property
+    def num_compositions(self):
+        c = self.compositions
+        return len(c)
 
     # Fetches results for a source from Solr. Much quicker than hitting up postgres
     # and sorts correctly too! Restricting the composition using [* TO *] means that
