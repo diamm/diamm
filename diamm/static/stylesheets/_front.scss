@@ -1,3 +1,16 @@
 .front-hero {
-  margin: -1em;
+  position: relative;
+  margin-top: -0.5em;
+
+  .search-box {
+    background: rgba($diamm-lt-blue, 0.7);
+    position: absolute;
+    width: 100%;
+    bottom: 8px;
+    height: 100px;
+
+    form {
+      margin-top: 1.5em;
+    }
+  }
 }

@@ -2847,7 +2847,16 @@ footer {
       padding-right: 0.5em; }
 
 .front-hero {
-  margin: -1em; }
+  position: relative;
+  margin-top: -0.5em; }
+  .front-hero .search-box {
+    background: rgba(19, 149, 219, 0.7);
+    position: absolute;
+    width: 100%;
+    bottom: 8px;
+    height: 100px; }
+    .front-hero .search-box form {
+      margin-top: 1.5em; }
 
 .source-header {
   margin-bottom: 1em; }
@@ -2945,7 +2954,7 @@ footer {
   margin-bottom: 0; }
 
 .search-box {
-  background: rgba(128, 128, 128, 0.5);
+  background: #dddede;
   margin-top: -1em; }
   .search-box form {
     margin-top: 1em;
