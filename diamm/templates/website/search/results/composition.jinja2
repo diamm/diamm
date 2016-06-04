@@ -1,21 +1,19 @@
 <div>
     {% if result.composers_ss %}
-    <p class="upper-info">Composer{{ result.composers_ss | length | pluralize }}:
+    Composer{{ result.composers_ss | length | pluralize }}:
         {% for composer in result.composers_ss %}
             {{ composer }}{{ "." if not loop.last else "" }}
         {% endfor %}
-    </p>
     {% else %}
-    <p class="upper-info">Anonymous </p>
+        Anonymous
     {% endif %}
-     <p class="lower-info">Appears in {{ result.sources_ii | length }} source{{ result.sources_ii | length | pluralize }} <br />
+
+    Appears in {{ result.sources_ii | length }} source{{ result.sources_ii | length | pluralize }}
 
     {% if result.genres_ss %}
         Genre{{ result.genres_ss | length | pluralize }}:
         {% for genre in result.genres_ss %}
             {{ genre }}{{ ", " if not loop.last else "" }}
         {% endfor %}
-
-    </p>
     {% endif %}
 </div>
