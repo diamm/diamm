@@ -65,6 +65,7 @@ class SourceSearchSerializer(serpy.Serializer):
     notations_ss = serpy.MethodField()
 
     sets_ii = serpy.MethodField()
+    sets_ssni = serpy.MethodField()
     notes_txt = serpy.MethodField()
 
     start_date_i = serpy.IntField(
@@ -100,6 +101,17 @@ class SourceSearchSerializer(serpy.Serializer):
     def get_sets_ii(self, obj):
         if obj.sets.count() > 0:
             return list(obj.sets.values_list("pk", flat=True))
+        else:
+            return []
+
+    def get_sets_ssni(self, obj):
+        """
+            PK|Name for the sets this source belongs to.
+        """
+        if obj.sets.count() > 0:
+            sourcesets = obj.sets.values_list("pk", "cluster_shelfmark")
+            sets = ["{0}|{1}".format(sset[0], sset[1]) for sset in sourcesets]
+            return sets
         else:
             return []
 
