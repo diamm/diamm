@@ -33,6 +33,7 @@ class ArchiveDetailSerializer(ContextSerializer):
     former_name = serpy.StrField(
         required=False
     )
+    name = serpy.StrField()
     siglum = serpy.StrField()
     website = serpy.StrField()
     logo = serpy.MethodField()
