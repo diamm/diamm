@@ -335,7 +335,9 @@ class SourceDetailSerializer(ContextSerializer):
     )
     date_statement = serpy.StrField()
     type = serpy.StrField()
-    cover_image_url = serpy.MethodField()
+    cover_image_info = serpy.MethodField(
+        required=False
+    )
     manifest_url = serpy.MethodField()
     inventory_provided = serpy.BoolField()
     public_images = serpy.BoolField()
@@ -381,13 +383,20 @@ class SourceDetailSerializer(ContextSerializer):
                        kwargs={"pk": obj.pk},
                        request=self.context['request'])
 
-    def get_cover_image_url(self, obj):
-        if getattr(obj, 'cover_image_id'):
-            return reverse('image-serve-info',
-                           kwargs={"pk": obj.cover_image_id},
-                           request=self.context['request'])
-        else:
+    def get_cover_image_info(self, obj):
+        try:
+            cover_obj = obj.cover
+        except AttributeError:
             return None
+
+        obj = {
+            'url': reverse('image-serve-info',
+                           kwargs={"pk": cover_obj['id']},
+                           request=self.context['request']),
+            'label': cover_obj['label']
+        }
+        return obj
+
 
     def get_has_images(self, obj):
         if obj.pages.count() > 0:

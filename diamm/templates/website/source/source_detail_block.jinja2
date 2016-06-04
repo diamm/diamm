@@ -138,8 +138,9 @@
         {% endif %}
     </div>
     <div class="five columns">
-        {% if content.cover_image_url %}
-            <img src="{{ content.cover_image_url }}/full/350,/0/default.jpg" class="u-full-width"/>
+        {% if content.cover_image_info %}
+            <img src="{{ content.cover_image_info.url }}/full/350,/0/default.jpg" class="u-full-width"/>
+            <p>Folio {{ content.cover_image_info.label }}</p>
         {% endif %}
         {#
         <h4>Private Notes</h4>

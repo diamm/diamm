@@ -91,6 +91,29 @@ class Source(models.Model):
         return self.public_notes.filter(type=11)
 
     @property
+    def cover(self):
+        """
+            If a cover image is set, returns the ID for that; else it chooses a random page with an image attached.
+        """
+        print('cover called.')
+        cover_obj = {}
+        if self.cover_image:
+            cover_obj['id'] = self.cover_image.id
+            cover_obj['label'] = self.cover_image.page.numeration
+            return cover_obj
+        else:
+            p = self.pages.order_by("?").only('numeration').first()
+            i = p.images.filter(type=1).only('id').first()
+            if i:
+                cover_obj['id'] = i.id
+                cover_obj['label'] = p.numeration
+                return cover_obj
+            else:
+                return None
+
+
+
+    @property
     def composers(self):
         composer_names = []
         for item in self.inventory.filter(source__id=self.pk).select_related('composition').prefetch_related('unattributed_composers'):
