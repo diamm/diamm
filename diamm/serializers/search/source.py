@@ -57,7 +57,7 @@ class SourceSearchSerializer(serpy.Serializer):
         attr="measurements",
         required=False
     )
-    inventory_provided_s = serpy.BoolField(
+    inventory_provided_b = serpy.BoolField(
         attr="inventory_provided"
     )
 
