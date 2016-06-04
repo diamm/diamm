@@ -50,6 +50,7 @@ class ItemSearchSerializer(serpy.Serializer):
         required=False
     )
     composers_ssni = serpy.MethodField()
+    composers_ss = serpy.MethodField()
     composer_ans = serpy.MethodField()
     bibliography_ii = serpy.MethodField()
     voices_ii = serpy.MethodField()
@@ -101,6 +102,20 @@ class ItemSearchSerializer(serpy.Serializer):
                 return ["Anonymous||"]
         elif obj.unattributed_composers.count() > 0:
             return ["{0}|{1}|{2}".format(c.composer.full_name, c.composer.pk, c.uncertain) for c in obj.unattributed_composers.all()]
+        else:
+            return []
+
+    def get_composers_ss(self, obj):
+        """
+            Returns an array of composer names for the purposes of filtering and searching by name.
+        """
+        if obj.composition:
+            if not obj.composition.anonymous:
+                return ["{0}".format(c.composer.full_name) for c in obj.composition.composers.all()]
+            else:
+                return ["Anonymous"]
+        elif obj.unattributed_composers.count() > 0:
+            return ["{0}".format(c.composer.full_name) for c in obj.unattributed_composers.all()]
         else:
             return []
 
