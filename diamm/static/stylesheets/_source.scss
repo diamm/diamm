@@ -32,7 +32,7 @@
   }
 }
 
-.source-description, .source-bibliography, .source-inventory {
+.source-description, .source-bibliography, .source-inventory, .composer-inventory {
   h3, h4 {
     font-weight: bold;
     font-size: 1em;
@@ -43,7 +43,11 @@
 }
 
 .source-inventory {
-  .source-inventory-header {
+  border-right: 1px solid $diamm-light-grey;
+}
+
+.source-inventory, .composer-inventory {
+  .inventory-header {
     font-size: 1.125em;
     font-weight: 600;
   }
@@ -52,7 +56,6 @@
   }
   dd {
     margin-bottom: 1.3em;
-    border-bottom: 1px solid $diamm-light-grey;
     table {
       margin-bottom: 0;
     }
