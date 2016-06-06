@@ -3,7 +3,7 @@ from diamm.models.data.person import Person
 from diamm.models.data.organization import Organization
 
 
-class SourceProvenanceSerializer(serpy.Serializer):
+class SourceProvenanceSearchSerializer(serpy.Serializer):
     type = serpy.MethodField()
     pk = serpy.IntField()
 
