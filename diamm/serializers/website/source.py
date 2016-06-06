@@ -163,10 +163,13 @@ class SourceBibliographySerializer(ContextDictSerializer):
 class SourceComposerInventorySerializer(ContextDictSerializer):
     url = serpy.MethodField()
     name = serpy.StrField()
-    uncertain = serpy.BoolField(
-        required=False
-    )
+    uncertain = serpy.MethodField()
     inventory = serpy.MethodField()
+
+    def get_uncertain(self, obj):
+        if 'uncertain' in obj:
+            return obj['uncertain']
+        return None
 
     def get_url(self, obj):
         if 'pk' in obj and obj['pk']:
