@@ -43,9 +43,9 @@ def solr_index_many(serializer, instances):
     connection.add(data)
 
 
-def solr_delete(serializer, instance):
+def solr_delete(instance):
     __solr_prepare([instance])
 
 
-def solr_delete_many(serializer, instances):
+def solr_delete_many(instances):
     __solr_prepare(instances)

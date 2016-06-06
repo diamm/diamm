@@ -12,6 +12,6 @@ def index_source_provenance(sender, instance, created, **kwargs):
 
 @receiver(post_delete, sender=SourceProvenance)
 def delete_source_provenance(sender, instance, **kwargs):
-    solr_delete(SourceProvenanceSerializer, instance)
+    solr_delete(instance)
 
 

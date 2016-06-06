@@ -12,6 +12,6 @@ def index_source_copyist(sender, instance, created, **kwargs):
 
 @receiver(post_delete, sender=SourceCopyist)
 def delete_source_copyist(sender, instance, **kwargs):
-    solr_delete(SourceCopyistSearchSerializer, instance)
+    solr_delete(instance)
 
 

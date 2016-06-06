@@ -12,4 +12,4 @@ def index_set(sender, instance, created, **kwargs):
 
 @receiver(post_delete, sender=Set)
 def delete_set(sender, instance, **kwargs):
-    solr_delete(SetSearchSerializer, instance)
+    solr_delete(instance)
