@@ -10,10 +10,6 @@
 */
 /* Base files. */
 /*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
-@import url(https://fonts.googleapis.com/css?family=Alegreya:400,400italic,700,700italic|Alegreya+Sans+SC:500,700,400|Alegreya+Sans:400,300,300italic,400italic,500,500italic,700italic,700);
-@import url(https://fonts.googleapis.com/css?family=Merriweather:400,400italic,700,700italic);
-@import url(https://fonts.googleapis.com/css?family=Old+Standard+TT:400,400italic,700);
-@import url(https://fonts.googleapis.com/css?family=Raleway:400,500,600);
 @import url(https://fonts.googleapis.com/css?family=PT+Serif:400,400italic,700,700italic);
 @import url(https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700,700italic);
 html {
@@ -2767,9 +2763,8 @@ form {
   z-index: 100; }
 
 .navbar {
-  box-shadow: 0px 0px 4px 2px #a9acab;
-  border-top: 5px solid #dd1c1a;
-  margin-bottom: 1rem; }
+  box-shadow: 0 0 4px 0 #011627;
+  border-top: 5px solid #dd1c1a; }
   .navbar:before, .navbar:after {
     content: " ";
     display: table; }
@@ -2847,16 +2842,29 @@ footer {
       padding-right: 0.5em; }
 
 .front-hero {
-  position: relative;
-  margin-top: -0.5em; }
-  .front-hero .search-box {
-    background: rgba(19, 149, 219, 0.7);
+  position: relative; }
+  .front-hero img {
+    border-bottom: 3px solid #dd1c1a; }
+  .front-hero .search {
     position: absolute;
     width: 100%;
-    bottom: 8px;
-    height: 100px; }
-    .front-hero .search-box form {
-      margin-top: 1.5em; }
+    margin: 0 auto;
+    top: 200px;
+    height: 4rem; }
+    .front-hero .search .strapline {
+      -webkit-border-radius: 0.5em;
+      -moz-border-radius: 0.5em;
+      border-radius: 0.5em;
+      background: rgba(1, 22, 39, 0.7);
+      text-align: center;
+      margin: 0 auto;
+      width: 40%;
+      height: 60px;
+      line-height: 60px;
+      vertical-align: middle;
+      color: #fdfffc; }
+    .front-hero .search .search-box {
+      background: none; }
 
 .source-header {
   margin-bottom: 1em; }
@@ -2931,7 +2939,6 @@ footer {
   margin-top: 0; }
   .source-description dl dt {
     text-transform: lowercase;
-    font-family: "Alegreya Sans SC", sans-serif;
     float: left;
     font-weight: bold;
     clear: left;
@@ -2954,12 +2961,14 @@ footer {
   margin-bottom: 0; }
 
 .search-box {
-  background: #dddede;
-  margin-top: -1em; }
+  background: #dddede; }
   .search-box form {
     margin-top: 1em;
     margin-bottom: 1em; }
     .search-box form input {
+      height: 50px;
+      font-size: 110%;
+      font-weight: 600;
       margin-bottom: 0; }
 
 .type-filter {
@@ -2987,7 +2996,8 @@ footer {
 
 .search-results .result-count {
   font-family: "PT Sans", sans-serif;
-  color: #a9acab; }
+  font-size: 90%;
+  color: #011627; }
 
 .search-results .search-result h4 {
   margin-bottom: 0.1rem; }

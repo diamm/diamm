@@ -1,16 +1,33 @@
+$position-adjust: 1em;
+
 .front-hero {
   position: relative;
-  margin-top: -0.5em;
 
-  .search-box {
-    background: rgba($diamm-lt-blue, 0.7);
+  img {
+    border-bottom: 3px solid $diamm-red;
+  }
+  .search {
     position: absolute;
     width: 100%;
-    bottom: 8px;
-    height: 100px;
-
-    form {
-      margin-top: 1.5em;
+    margin: 0 auto;
+    top: 200px;
+    height: 4rem;
+    .strapline {
+      @include rounded();
+      background: rgba($diamm-black, 0.7);
+      text-align: center;
+      margin: 0 auto;
+      width: 40%;
+      height: 60px;
+      line-height: 60px;
+      vertical-align: middle;
+      color: $diamm-white;
+    }
+    .search-box {
+      background: none;
+      //form {
+      //  margin-top: 1.5em;
+      //}
     }
   }
 }

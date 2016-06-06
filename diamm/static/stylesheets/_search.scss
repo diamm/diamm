@@ -1,12 +1,16 @@
+$search-font-size: 1.5rem;
+$search-input-adjust: $search-font-size + 1rem;
+
 .search-box {
   background: $diamm-light-grey;
-  margin-top: -1em;
-
   form {
     margin-top: 1em;
     margin-bottom: 1em;
 
     input {
+      height: 50px;
+      font-size: 110%;
+      font-weight: 600;
       margin-bottom: 0;
     }
   }
@@ -44,7 +48,8 @@
 .search-results {
   .result-count {
     font-family: $sans-serif;
-    color: $diamm-med-grey;
+    font-size: 90%;
+    color: $diamm-black;
   }
   .search-result {
     h4 {
