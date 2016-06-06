@@ -6,7 +6,7 @@ window.divaPlugins.push((function ()
     var structures = [];
     var items = [];
 
-    var item_div = document.getElementById("image-item-listing");
+    var itemsDiv = document.getElementById("image-item-listing");
     var addVisibilityToggle = function (div)
     {
         div.style.display = 'none';
@@ -22,8 +22,8 @@ window.divaPlugins.push((function ()
             }
         }
 
-        console.log(div);
         div.parentElement.onclick = toggleVisibility;
+        div.parentElement.style.cursor = 'pointer';
     };
 
     // Adapted from Underscore.js
@@ -47,20 +47,36 @@ window.divaPlugins.push((function ()
 
     var populateStructures = function (manifest)
     {
-        var displayItem = function (item)
+        var displayItem = function (item, serviceLabel)
         {
+            console.log(serviceLabel);
+            console.log(item);
+            console.log(item[0].composers[0].name);
+            var itemDiv = document.createElement("DIV");
+            var H3 = document.createElement("h3"); 
+            var t = document.createTextNode(serviceLabel);
+            H3.appendChild(t);
+            var itemDetailsDiv = document.createElement("DIV");
             var para = document.createElement("P");
-            var t = document.createTextNode("Composers: " + item[0].composers[0].name);
+            var text = "";
+            for (var i = 0, clen = item[0].composers.length; i < clen; i++)
+            {
+                text += item[0].composers[i].name + " ";
+            }
+            t = document.createTextNode("Composer: " + text);
             para.appendChild(t);
-            item_div.appendChild(para);
+            itemDetailsDiv.appendChild(para);
+            itemDiv.appendChild(H3);
+            itemDiv.appendChild(itemDetailsDiv);
+            itemsDiv.appendChild(itemDiv);
         };
 
-        var cacheAndDisplayItem = function (serviceId)
+        var cacheAndDisplayItem = function (service)
         {
             return function (item)
             {
-                items[serviceId] = item;
-                displayItem (item);
+                items[service.id] = item;
+                displayItem (item, service.label);
             };
 
         };
@@ -69,21 +85,17 @@ window.divaPlugins.push((function ()
         {
             for (var i = 0, slen = services.length; i < slen; i++)
             {
-                var h3 = document.createElement("H3");
-                var t = document.createTextNode(services[i].label);
-                h3.appendChild(t);
-                item_div.appendChild(h3);
-
-                if (items[services[i].id])
+                var service = services[i];
+                if (items[service.id])
                 {
-                    displayItem(items[services[i].id]);
+                    displayItem(items[service.id], service.label);
                 }
                 else
                 {
                     $.ajax({
                         dataType: "json",
-                        url: services[i].id,
-                        success: cacheAndDisplayItem(services[i].id)
+                        url: service.id,
+                        success: cacheAndDisplayItem(service)
                     });
                 }
             }
@@ -92,15 +104,15 @@ window.divaPlugins.push((function ()
         var displayItems = function (pageIndex, filename)
         {
             //Clear the item div
-            while (item_div.firstChild)
+            while (itemsDiv.firstChild)
             {
-                item_div.removeChild(item_div.firstChild);
+                itemsDiv.removeChild(itemsDiv.firstChild);
             }
 
             var h2 = document.createElement("H2");
             var t = document.createTextNode(filename);
             h2.appendChild(t);
-            item_div.appendChild(h2);
+            itemsDiv.appendChild(h2);
             var services = structures[filename];
 
             if (services)
