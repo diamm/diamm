@@ -3,7 +3,9 @@
  */
 window.divaPlugins.push((function ()
 {
-    var canvasServices = [];
+    var item_div = $("#image-item-listing");
+    var structures = [];
+    var items = [];
 
     // Adapted from Underscore.js
     // Returns a function that will only be trigerred 'wait' milliseconds
@@ -22,40 +24,80 @@ window.divaPlugins.push((function ()
             };
             clearTimeout(timeout);
             timeout = setTimeout(later, wait);
-        }
+        };
     }
 
-    var populateCanvasServices = function (manifest)
+    var populateStructures = function (manifest)
     {
-        var getService = function (pageIndex, filename)
+        var displayItem = function (item) 
         {
-            var serviceID = canvasServices[filename];
-            $.ajax({
-                url: serviceID,
-                success: function (data) { console.log(serviceID); console.log(filename); }
-            });
+            item_div.append("<p><strong>Composers: </strong>" + item[0].composers[0].name + "</p>");
         };
 
-        var getCanvasServices = function (structures)
+        var cacheAndDisplayItem = function (serviceId)
         {
-            for (var i=0, slen = structures.length; i < slen; i++)
+            return function (item)
             {
-                var members = structures[i].members;
+                items[serviceId] = item;
+                displayItem (item);
+            };
+
+        };
+
+        var fetchItems = function (services) 
+        {
+            for (var i = 0, slen = services.length; i < slen; i++)
+            {
+                item_div.append("<h3>" + services[i].label + "</h3>");
+                if (items[services[i].id])
+                {
+                    displayItem(items[services[i].id]);
+                } else
+                {
+                    $.ajax({
+                        dataType: "json",
+                        url: services[i].id,
+                        success: cacheAndDisplayItem (services[i].id)
+                    });
+                }
+            }
+        };
+
+        var displayItems = function (pageIndex, filename)
+        {
+            //Clear the item div
+            item_div.empty().append("<h2>" + filename + "</h2>");
+
+            var services = structures[filename];
+            if (services)
+            {
+                fetchItems (services);
+            }
+        };
+
+        var getStructures = function (manifestStructures)
+        {
+            for (var i=0, slen = manifestStructures.length; i < slen; i++)
+            {
+                var members = manifestStructures[i].members;
                 for (var j=0, mlen = members.length; j < mlen; j++)
                 {
                     var canvasID = members[j].label;
-                    if (canvasServices[canvasID] === undefined)
+                    if (structures[canvasID] === undefined)
                     {
-                        canvasServices[canvasID] = [];
+                        structures[canvasID] = [];
                     }
-                    canvasServices[canvasID].push(structures[i].service['@id']);
+                    structures[canvasID].push({
+                        label: manifestStructures[i].label,
+                        id: manifestStructures[i].service['@id']
+                    });
                 }
             }
-            console.log(canvasServices);
         };
 
-        getCanvasServices(manifest.structures);
-        diva.Events.subscribe('VisiblePageDidChange', debounce(getService, 250));
+        getStructures(manifest.structures);
+        displayItems(null, manifest.sequences[0].canvases[0].label);
+        diva.Events.subscribe('VisiblePageDidChange', debounce(displayItems, 100));
     };
 
 
@@ -64,7 +106,7 @@ window.divaPlugins.push((function ()
         init: function(settings)
         {
             console.log('Initializing IIIFStructure plugin');
-            diva.Events.subscribe('ManifestDidLoad', populateCanvasServices);
+            diva.Events.subscribe('ManifestDidLoad', populateStructures);
         }
     };
 })());
