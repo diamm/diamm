@@ -3,14 +3,32 @@
  */
 window.divaPlugins.push((function ()
 {
-    var item_div = $("#image-item-listing");
     var structures = [];
     var items = [];
+
+    var item_div = document.getElementById("image-item-listing");
+    var addVisibilityToggle = function (div)
+    {
+        div.style.display = 'none';
+        function toggleVisibility ()
+        {
+            if (div.style.display === 'block')
+            {
+                div.style.display = 'none';
+            }
+            else
+            {
+                div.style.display = 'block';
+            }
+        }
+
+        console.log(div);
+        div.parentElement.onclick = toggleVisibility;
+    };
 
     // Adapted from Underscore.js
     // Returns a function that will only be trigerred 'wait' milliseconds
     // after the last time it was called.
-    // the function will be triggered on the leading edge instead of trailing
     function debounce (func, wait)
     {
         var timeout;
@@ -29,9 +47,12 @@ window.divaPlugins.push((function ()
 
     var populateStructures = function (manifest)
     {
-        var displayItem = function (item) 
+        var displayItem = function (item)
         {
-            item_div.append("<p><strong>Composers: </strong>" + item[0].composers[0].name + "</p>");
+            var para = document.createElement("P");
+            var t = document.createTextNode("Composers: " + item[0].composers[0].name);
+            para.appendChild(t);
+            item_div.appendChild(para);
         };
 
         var cacheAndDisplayItem = function (serviceId)
@@ -44,20 +65,25 @@ window.divaPlugins.push((function ()
 
         };
 
-        var fetchItems = function (services) 
+        var fetchItems = function (services)
         {
             for (var i = 0, slen = services.length; i < slen; i++)
             {
-                item_div.append("<h3>" + services[i].label + "</h3>");
+                var h3 = document.createElement("H3");
+                var t = document.createTextNode(services[i].label);
+                h3.appendChild(t);
+                item_div.appendChild(h3);
+
                 if (items[services[i].id])
                 {
                     displayItem(items[services[i].id]);
-                } else
+                }
+                else
                 {
                     $.ajax({
                         dataType: "json",
                         url: services[i].id,
-                        success: cacheAndDisplayItem (services[i].id)
+                        success: cacheAndDisplayItem(services[i].id)
                     });
                 }
             }
@@ -66,9 +92,17 @@ window.divaPlugins.push((function ()
         var displayItems = function (pageIndex, filename)
         {
             //Clear the item div
-            item_div.empty().append("<h2>" + filename + "</h2>");
+            while (item_div.firstChild)
+            {
+                item_div.removeChild(item_div.firstChild);
+            }
 
+            var h2 = document.createElement("H2");
+            var t = document.createTextNode(filename);
+            h2.appendChild(t);
+            item_div.appendChild(h2);
             var services = structures[filename];
+
             if (services)
             {
                 fetchItems (services);
@@ -80,13 +114,16 @@ window.divaPlugins.push((function ()
             for (var i=0, slen = manifestStructures.length; i < slen; i++)
             {
                 var members = manifestStructures[i].members;
+
                 for (var j=0, mlen = members.length; j < mlen; j++)
                 {
                     var canvasID = members[j].label;
+
                     if (structures[canvasID] === undefined)
                     {
                         structures[canvasID] = [];
                     }
+
                     structures[canvasID].push({
                         label: manifestStructures[i].label,
                         id: manifestStructures[i].service['@id']
