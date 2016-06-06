@@ -31,7 +31,7 @@ from diamm.views.website.archive import ArchiveDetail
 from diamm.views.website.city import CityList, CityDetail
 from diamm.views.website.country import CountryList, CountryDetail
 from diamm.views.website.person import PersonDetail, legacy_composer_redirect
-from diamm.views.website.organization import OrganizationList, OrganizationDetail
+from diamm.views.website.organization import OrganizationDetail
 from diamm.views.website.composition import CompositionList, CompositionDetail
 from diamm.views.website.story import StoryDetail
 from diamm.views.website.image import image_serve
@@ -71,7 +71,6 @@ urlpatterns = [
     url(r'^countries/(?P<pk>[0-9]+)/$', CountryDetail.as_view(), name="country-detail"),
     # url(r'^people/$', PersonList.as_view(), name="person-list"),
     url(r'^people/(?P<pk>[0-9]+)/$', PersonDetail.as_view(), name="person-detail"),
-    url(r'^organizations/$', OrganizationList.as_view(), name='organization-list'),
     url(r'^organizations/(?P<pk>[0-9]+)/$', OrganizationDetail.as_view(), name="organization-detail"),
     url(r'^composers/(?P<legacy_id>[0-9]+)/$', legacy_composer_redirect),
     url(r'^compositions/$', CompositionList.as_view(), name="composition-list"),
