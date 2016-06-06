@@ -199,7 +199,7 @@ def migrate():
 
     update_table()
 
-    for entry in LegacySourceNotation.objects.all():
+    for entry in LegacySourceNotation.objects.exclude(alnotationtypekey=0):
         attach_notation_to_source(entry)
 
     print(term.blue('Done migrating Sources'))
