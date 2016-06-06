@@ -111,8 +111,6 @@ class Source(models.Model):
             else:
                 return None
 
-
-
     @property
     def composers(self):
         composer_names = []
