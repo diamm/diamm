@@ -18,6 +18,7 @@ class PersonDetail(generics.RetrieveAPIView):
 
     def get_queryset(self):
         cc_queryset = Composition.objects.all()
+        # This lets us prefetch on Generic Foreign Relations.
         queryset = Person.objects.prefetch_related(
             Prefetch('compositions__composition__sources__source__archive__city', queryset=cc_queryset),
         )
