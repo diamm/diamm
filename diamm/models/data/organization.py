@@ -1,5 +1,7 @@
 from django.db import models
+from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
+import pysolr
 
 
 class Organization(models.Model):
@@ -22,3 +24,44 @@ class Organization(models.Model):
 
     def __str__(self):
         return "{0}".format(self.name)
+
+    @property
+    def solr_copyist(self):
+        connection = pysolr.Solr(settings.SOLR['SERVER'])
+        fq = ['type:sourcecopyist',
+              'copyist_type_s:organization',
+              'copyist_pk_i:{0}'.format(self.pk)]
+        sort = ["source_ans asc"]
+        copy_res = connection.search("*:*", fq=fq, sort=sort, rows=10000)
+
+        if copy_res.hits > 0:
+            return copy_res.docs
+        else:
+            return []
+
+    @property
+    def solr_relationships(self):
+        connection = pysolr.Solr(settings.SOLR['SERVER'])
+        fq = ['type:sourcerelationship',
+              'related_entity_type_s:organization',
+              'related_entity_pk_i:{0}'.format(self.pk)]
+        sort = ["source_ans asc"]
+        rel_res = connection.search("*:*", fq=fq, sort=sort, rows=10000)
+        if rel_res.hits > 0:
+            return rel_res.docs
+        else:
+            return []
+
+    @property
+    def solr_provenance(self):
+        connection = pysolr.Solr(settings.SOLR['SERVER'])
+        fq = ['type:sourceprovenance',
+              'entity_type_s:organization',
+              'entity_pk_i:{0}'.format(self.pk)]
+        sort = ["source_ans asc"]
+        prov_res = connection.search("*:*", fq=fq, sort=sort, rows=10000)
+
+        if prov_res.hits > 0:
+            return prov_res.docs
+        else:
+            return []
