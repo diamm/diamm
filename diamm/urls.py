@@ -85,5 +85,5 @@ urlpatterns = [
     url(r'^images/(?P<pk>[0-9]+)/$', image_serve, name="image-serve-info")
 ]
 
-if settings.DEBUG is True:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+if settings.DEBUG:
+    urlpatterns += static("/media/", document_root=settings.MEDIA_ROOT)
