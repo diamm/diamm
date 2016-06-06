@@ -14,6 +14,6 @@ def index_source(sender, instance, created, **kwargs):
 
 @receiver(post_delete, sender=Source)
 def delete_source(sender, instance, **kwargs):
-    solr_delete(SourceSearchSerializer, instance)
-    solr_delete_many(ItemSearchSerializer, instance.inventory.all())
+    solr_delete(instance)
+    solr_delete_many(instance.inventory.all())
 

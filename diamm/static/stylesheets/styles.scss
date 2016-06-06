@@ -1,3 +1,4 @@
+@import "mixins";
 @import "skeleton/skeleton";
 @import "font-awesome/font-awesome";
 @import "variables";
@@ -30,12 +31,6 @@ body {
   display: flex;
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
-}
-
-div.search-result {
-  padding-left: 1.5em;
-  padding-bottom: 0.5em;
-  border-bottom: 1px solid $diamm-light-grey;
 }
 
 nav.center-block.text-center{

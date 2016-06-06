@@ -1,14 +1,107 @@
-from rest_framework import serializers
-from diamm.models.data.organization import Organization
+import serpy
+from rest_framework.reverse import reverse
+from diamm.serializers.serializers import ContextSerializer, ContextDictSerializer
+from diamm.models.data.geographic_area import GeographicArea
 
 
-class OrganizationListSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Organization
-        fields = ('url', 'name')
+class OrganizationLocationSerializer(ContextSerializer):
+    url = serpy.MethodField()
+    name = serpy.StrField(
+        attr='name'
+    )
+
+    def get_url(self, obj):
+        view_type = None
+        if obj.type == GeographicArea.CITY:
+            view_type = "city-detail"
+        elif obj.type == GeographicArea.COUNTRY:
+            view_type = "country-detail"
+
+        if view_type:
+            return reverse(view_type,
+                           kwargs={"pk": obj.pk},
+                           request=self.context['request'])
+        else:
+            return None
 
 
-class OrganizationDetailSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Organization
-        fields = ('url', 'name')
+class OrganizationSourceProvenanceSerializer(ContextDictSerializer):
+    url = serpy.MethodField()
+
+    source = serpy.StrField(
+        attr="source_s"
+    )
+
+    def get_url(self, obj):
+        return reverse('source-detail',
+                       kwargs={"pk": obj['source_i']},
+                       request=self.context['request'])
+
+
+class OrganizationSourceCopyistSerializer(ContextDictSerializer):
+    url = serpy.MethodField()
+    copyist_type = serpy.StrField(
+        attr="type_s"
+    )
+    uncertain = serpy.BoolField(
+        attr="uncertain_b"
+    )
+    source = serpy.StrField(
+        attr="source_s"
+    )
+
+    def get_url(self, obj):
+        return reverse('source-detail',
+                       kwargs={"pk": obj['source_i']},
+                       request=self.context['request'])
+
+class OrganizationSourceRelationshipSerializer(ContextDictSerializer):
+    url = serpy.MethodField()
+    relationship = serpy.StrField(
+        attr="relationship_type_s"
+    )
+    uncertain = serpy.BoolField(
+        attr="uncertain_b"
+    )
+    source = serpy.StrField(
+        attr="source_s"
+    )
+
+    def get_url(self, obj):
+        return reverse('source-detail',
+                       kwargs={"pk": obj['source_i']},
+                       request=self.context['request'])
+
+
+class OrganizationDetailSerializer(ContextSerializer):
+    url = serpy.MethodField()
+    name = serpy.StrField()
+    type = serpy.StrField(
+        attr="type.name"
+    )
+    related_sources = serpy.MethodField()
+    copied_sources = serpy.MethodField()
+    source_provenance = serpy.MethodField()
+    location = serpy.MethodField()
+
+    def get_url(self, obj):
+        return reverse('organization-detail',
+                       kwargs={"pk": obj.pk},
+                       request=self.context['request'])
+
+    def get_location(self, obj):
+        if obj.location:
+            return OrganizationLocationSerializer(obj.location, context={"request": self.context["request"]}).data
+        return None
+
+    def get_related_sources(self, obj):
+        return [OrganizationSourceRelationshipSerializer(o, context={"request": self.context["request"]}).data
+                for o in obj.solr_relationships]
+
+    def get_copied_sources(self, obj):
+        return [OrganizationSourceCopyistSerializer(o, context={"request": self.context['request']}).data
+                for o in obj.solr_copyist]
+
+    def get_source_provenance(self, obj):
+        return [OrganizationSourceProvenanceSerializer(o, context={"request": self.context['request']}).data
+                for o in obj.solr_provenance]

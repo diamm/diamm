@@ -160,6 +160,25 @@ class SourceBibliographySerializer(ContextDictSerializer):
     )
 
 
+class SourceComposerInventorySerializer(ContextDictSerializer):
+    url = serpy.MethodField()
+    name = serpy.StrField()
+    uncertain = serpy.BoolField(
+        required=False
+    )
+    inventory = serpy.MethodField()
+
+    def get_url(self, obj):
+        if 'pk' in obj and obj['pk']:
+            return reverse('person-detail',
+                           kwargs={"pk": obj['pk']},
+                           request=self.context['request'])
+        return None
+
+    def get_inventory(self, obj):
+        return obj['inventory']
+
+
 class SourceInventorySerializer(ContextDictSerializer):
     pk = serpy.IntField()
     url = serpy.MethodField()
@@ -316,13 +335,16 @@ class SourceDetailSerializer(ContextSerializer):
     )
     date_statement = serpy.StrField()
     type = serpy.StrField()
-    cover_image_url = serpy.MethodField()
+    cover_image_info = serpy.MethodField(
+        required=False
+    )
     manifest_url = serpy.MethodField()
     inventory_provided = serpy.BoolField()
     public_images = serpy.BoolField()
 
     has_images = serpy.MethodField()
     inventory = serpy.MethodField()
+    composer_inventory = serpy.MethodField()
     uninventoried = serpy.MethodField()
     archive = serpy.MethodField()
     sets = serpy.MethodField()
@@ -361,13 +383,20 @@ class SourceDetailSerializer(ContextSerializer):
                        kwargs={"pk": obj.pk},
                        request=self.context['request'])
 
-    def get_cover_image_url(self, obj):
-        if getattr(obj, 'cover_image_id'):
-            return reverse('image-serve-info',
-                           kwargs={"pk": obj.cover_image_id},
-                           request=self.context['request'])
-        else:
+    def get_cover_image_info(self, obj):
+        try:
+            cover_obj = obj.cover
+        except AttributeError:
             return None
+
+        obj = {
+            'url': reverse('image-serve-info',
+                           kwargs={"pk": cover_obj['id']},
+                           request=self.context['request']),
+            'label': cover_obj['label']
+        }
+        return obj
+
 
     def get_has_images(self, obj):
         if obj.pages.count() > 0:
@@ -386,6 +415,11 @@ class SourceDetailSerializer(ContextSerializer):
         items = obj.solr_inventory
         inventory = [SourceInventorySerializer(i, context={"request": self.context['request']}).data
                         for i in items]
+        return inventory
+
+    def get_composer_inventory(self, obj):
+        items = obj.inventory_by_composer
+        inventory = [SourceComposerInventorySerializer(i, context={"request": self.context['request']}).data for i in items]
         return inventory
 
     def get_uninventoried(self, obj):

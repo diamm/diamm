@@ -17,11 +17,11 @@
                         {% endwith %}
                     </li>
                     {% for type, num in content.types.items() %}
-                    <li>
-                        {% with type=type, count=num, params=request.GET %}
-                        {% include 'website/search/results/type_links.jinja2' %}
-                        {% endwith %}
-                    </li>
+                        <li>
+                            {% with type=type, count=num, params=request.GET %}
+                                {% include 'website/search/results/type_links.jinja2' %}
+                            {% endwith %}
+                        </li>
                     {% endfor %}
                 </ul>
             </div>

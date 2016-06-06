@@ -1,48 +1,52 @@
 {% extends "base.jinja2" %}
 
 {% block body %}
-    <h1>{{ content.full_name }}</h1>
-    {% if content.biography %}
-    <div>
-        <h3>Biography</h3>
-        {% for note in content.biography %}
-            {{ note.note | linebreaks }}
-        {% endfor %}
+    <div class="row">
+        <div class="sixteen columns">
+            <h1>{{ content.full_name }}</h1>
+            {% if content.biography %}
+                <div>
+                    <h3>Biography</h3>
+                    {% for note in content.biography %}
+                        {{ note.note | linebreaks }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% if content.compositions %}
+                <h3>Compositions</h3>
+                <ul>
+                    {% for composition in content.compositions %}
+                        <li>
+                            <a href="{{ composition.url }}">
+                                {{ "? " if composition.uncertain else "" }}{{ composition.title }}
+                            </a>
+                            {% if composition.sources %}
+                                <ul>
+                                    {% for source in composition.sources %}
+                                        <li><a href="{{ source.url }}">{{ source.name }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            {% if content.copied_sources %}
+                <h3>Sources Copied</h3>
+                <ul>
+                    {% for source in content.copied_sources %}
+                        <li>{{ "? " if source.uncertain else "" }}<a href="{{ source.url }}">{{ source.source }}</a> ({{ source.copyist_type }})</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            {% if content.related_sources %}
+                <h3>Other Relationships to Sources</h3>
+                <ul>
+                    {% for source in content.related_sources %}
+                        <li>{{ "? " if source.uncertain else "" }}<a href="{{ source.url }}">{{ source.source }}</a> ({{ source.relationship }})</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
     </div>
-    {% endif %}
-    {% if content.compositions %}
-        <h3>Compositions</h3>
-        <ul>
-            {% for composition in content.compositions %}
-                <li>
-                    <a href="{{ composition.url }}">
-                        {{ "? " if composition.uncertain else "" }}{{ composition.title }}
-                    </a>
-                    {% if composition.sources %}
-                        <ul>
-                        {% for source in composition.sources %}
-                            <li><a href="{{ source.url }}">{{ source.name }}</a></li>
-                        {% endfor %}
-                        </ul>
-                    {% endif %}
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-    {% if content.copied_sources %}
-        <h3>Sources Copied</h3>
-        <ul>
-        {% for source in content.copied_sources %}
-            <li>{{ "? " if source.uncertain else "" }}<a href="{{ source.url }}">{{ source.source }}</a> ({{ source.copyist_type }})</li>
-        {% endfor %}
-        </ul>
-    {% endif %}
-    {% if content.related_sources %}
-        <h3>Other Relationships to Sources</h3>
-        <ul>
-        {% for source in content.related_sources %}
-            <li>{{ "? " if source.uncertain else "" }}<a href="{{ source.url }}">{{ source.source }}</a> ({{ source.relationship }})</li>
-        {% endfor %}
-        </ul>
-    {% endif %}
 {% endblock %}

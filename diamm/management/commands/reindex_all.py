@@ -23,7 +23,7 @@ from diamm.serializers.search.page import PageSearchSerializer
 from diamm.models.data.set import Set
 from diamm.serializers.search.set import SetSearchSerializer
 from diamm.models.data.source_provenance import SourceProvenance
-from diamm.serializers.search.source_provenance import SourceProvenanceSerializer
+from diamm.serializers.search.source_provenance import SourceProvenanceSearchSerializer
 from diamm.models.data.source_relationship import SourceRelationship
 from diamm.serializers.search.source_relationship import SourceRelationshipSerializer
 from diamm.models.data.source_copyist import SourceCopyist
@@ -130,14 +130,14 @@ class Command(BaseCommand):
         self.stdout.write(term.blue("Indexing Sets"))
         self.solrconn.delete(q="type:set")
         self.solrconn.delete(q="type:child_source")
-        objs = Set.objects.all()
+        objs = Set.objects.exclude(type=Set.PROJECT)
         self._index(objs, 'cluster_shelfmark', SetSearchSerializer)
 
     def _index_source_provenance(self):
         self.stdout.write(term.blue("Indexing Source Provenance"))
         self.solrconn.delete(q="type:sourceprovenance")
         objs = SourceProvenance.objects.all()
-        self._index(objs, '', SourceProvenanceSerializer)
+        self._index(objs, '', SourceProvenanceSearchSerializer)
 
     def _index_source_relationship(self):
         self.stdout.write(term.blue("Indexing Source Relationships"))

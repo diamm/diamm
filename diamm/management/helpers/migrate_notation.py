@@ -45,7 +45,8 @@ def update_table():
 def migrate():
     print(term.green("Migrating notation types"))
     empty_table()
-    for entry in LegacyNotation.objects.all():
+    # Skip the 'not defined' entry, since we don't need that (there's no difference between None and "not defined")
+    for entry in LegacyNotation.objects.exclude(pk=0):
         migrate_notation(entry)
 
     update_table()

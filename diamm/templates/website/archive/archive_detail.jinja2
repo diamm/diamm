@@ -4,7 +4,11 @@
     <div class="row">
         <div class="sixteen columns">
             <h1>{{ content.name }} ({{ content.siglum }})</h1>
-            <h2>{{ content.city.name }}</h2>
+            <img src="{{ content.logo }}" />
+            <h2><a href="{{ content.city.url }}">{{ content.city.name }}</a>, {{ content.city.country }}</h2>
+            {% if content.website %}
+                <p><a href="http://{{ content.website }}">{{ content.name }} website</a></p>
+            {% endif %}
             <h3>Sources in this Archive</h3>
             <ul>
                 {% for source in content.sources %}

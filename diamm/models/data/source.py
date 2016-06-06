@@ -1,3 +1,5 @@
+from itertools import groupby
+from operator import itemgetter
 from django.db import models
 from django.conf import settings
 import pysolr
@@ -56,7 +58,7 @@ class Source(models.Model):
     measurements = models.CharField(max_length=512, blank=True, null=True)
     public = models.BooleanField(default=False, help_text="Source Description is Public")
     public_images = models.BooleanField(default=False, help_text="Source Images are Public")
-    notations = models.ManyToManyField("diamm_data.Notation")
+    notations = models.ManyToManyField("diamm_data.Notation", blank=True)
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -89,6 +91,27 @@ class Source(models.Model):
         return self.public_notes.filter(type=11)
 
     @property
+    def cover(self):
+        """
+            If a cover image is set, returns the ID for that; else it chooses a random page with an image attached.
+        """
+        print('cover called.')
+        cover_obj = {}
+        if self.cover_image:
+            cover_obj['id'] = self.cover_image.id
+            cover_obj['label'] = self.cover_image.page.numeration
+            return cover_obj
+        else:
+            p = self.pages.order_by("?").only('numeration').first()
+            i = p.images.filter(type=1).only('id').first()
+            if i:
+                cover_obj['id'] = i.id
+                cover_obj['label'] = p.numeration
+                return cover_obj
+            else:
+                return None
+
+    @property
     def composers(self):
         composer_names = []
         for item in self.inventory.filter(source__id=self.pk).select_related('composition').prefetch_related('unattributed_composers'):
@@ -107,13 +130,23 @@ class Source(models.Model):
         return composer_names
 
     @property
+    def num_composers(self):
+        c = self.composers
+        return len(c)
+
+    @property
     def compositions(self):
         composition_names = []
-        for item in self.inventory.all().select_related('item'):
+        for item in self.inventory.all().select_related('composition'):
             if not item.composition:
                 continue
-            composition_names.append(item.composition.name)
+            composition_names.append(item.composition.title)
         return list(set(composition_names))
+
+    @property
+    def num_compositions(self):
+        c = self.compositions
+        return len(c)
 
     # Fetches results for a source from Solr. Much quicker than hitting up postgres
     # and sorts correctly too! Restricting the composition using [* TO *] means that
@@ -123,8 +156,20 @@ class Source(models.Model):
     def solr_inventory(self):
         connection = pysolr.Solr(settings.SOLR['SERVER'])
         fq = ['type:item', 'source_i:{0}'.format(self.pk), 'composition_i:[* TO *]']
+        fl = ['bibliography_ii',
+              'composers_ssni',
+              'composition_i',
+              'composition_s',
+              'folio_start_s',
+              'folio_end_s',
+              'num_voices_s',
+              'pages_ii',
+              'pages_ssni'
+              'source_attribution_s',
+              'voices_ii',
+              'pk']
         # Set rows to an extremely high number so we get all of the item records in one go.
-        item_results = connection.search("*:*", fq=fq, sort="folio_start_ans asc", rows=10000)
+        item_results = connection.search("*:*", fq=fq, fl=fl, sort="folio_start_ans asc", rows=10000)
         if item_results.docs:
             return item_results.docs
         return []
@@ -135,12 +180,69 @@ class Source(models.Model):
     def solr_uninventoried(self):
         connection = pysolr.Solr(settings.SOLR['SERVER'])
         fq = ['type:item', 'source_i:{0}'.format(self.pk), '-composition_i:[* TO *]']
+        fl = ['bibliography_ii',
+              'composers_ssni',
+              'composition_i',
+              'composition_s',
+              'folio_start_s',
+              'folio_end_s',
+              'num_voices_s',
+              'pages_ii',
+              'pages_ssni'
+              'source_attribution_s',
+              'voices_ii',
+              'pk']
         sort = ["composer_ans asc"]
         # Set rows to an extremely high number so we get all of the item records in one go.
-        item_results = connection.search("*:*", fq=fq, sort=sort, rows=10000)
+        item_results = connection.search("*:*", fq=fq, fl=fl, sort=sort, rows=10000)
         if item_results.docs:
             return item_results.docs
         return []
+
+    @property
+    def inventory_by_composer(self):
+        """
+            inventory: [{
+                    composer: Bar, Foo,
+                    url: http://foo/bar
+                    pieces: [{
+                        title: blahblah,
+                        url: http://blahblah
+                    },etc.]
+                }
+        """
+        inventory = self.solr_inventory
+
+        sortable_inventory = []
+
+        for item in inventory:
+            for c in item['composers_ssni']:
+                new_item = (c, c.lower(), item)
+                sortable_inventory.append(new_item)
+
+        sorted_inventory = sorted(sortable_inventory, key=itemgetter(1))
+        grouped_inventory = groupby(sorted_inventory, itemgetter(0))
+
+        output = []
+        for namefield, group in grouped_inventory:
+            name, pk, uncertain = namefield.split("|")
+            obj = {
+                "pk": pk,
+                "name": name,
+                "inventory": []
+            }
+
+            if uncertain:
+                if uncertain == "True":
+                    obj["uncertain"] = True
+                else:
+                    obj["uncertain"] = False
+
+            for item in group:
+                obj["inventory"].append(item[2])
+
+            output.append(obj)
+        return output
 
     @property
     def solr_bibliography(self):

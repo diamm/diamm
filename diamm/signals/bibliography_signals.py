@@ -12,4 +12,4 @@ def index_bibliography(sender, instance, created, **kwargs):
 
 @receiver(post_delete, sender=Bibliography)
 def delete_bibliography(sender, instance, **kwargs):
-    solr_delete(BibliographySearchSerializer, instance)
+    solr_delete(instance)
