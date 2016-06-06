@@ -36,11 +36,11 @@ from diamm.views.website.composition import CompositionList, CompositionDetail
 from diamm.views.website.story import StoryDetail
 from diamm.views.website.image import image_serve
 from diamm.views.website.bibliography_author import BibliographyAuthorDetail
-from diamm.views.website.canvas import CanvasData
 
 
 urlpatterns = [
-    url(r'^search.xml$', TemplateView.as_view(template_name='opensearch.jinja2', content_type="application/opensearchdescription+xml"), name='opensearch'),
+    url(r'^search.xml$', TemplateView.as_view(template_name='opensearch.jinja2',
+                                              content_type="application/opensearchdescription+xml"), name='opensearch'),
     url(r'^admin/', admin.site.urls),
     url(r'^$', HomeView.as_view(), name="home"),
     url(r'^login/$', SessionAuth.as_view(), name="login"),
