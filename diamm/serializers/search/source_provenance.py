@@ -19,9 +19,13 @@ class SourceProvenanceSearchSerializer(serpy.Serializer):
     )
 
     city_s = serpy.MethodField()
+    city_i = serpy.MethodField()
     country_s = serpy.MethodField()
+    country_i = serpy.MethodField()
     region_s = serpy.MethodField()
+    region_i = serpy.MethodField()
     protectorate_s = serpy.MethodField()
+    protectorate_i = serpy.MethodField()
 
     country_uncertain_b = serpy.BoolField(
         attr="country_uncertain",
@@ -57,9 +61,19 @@ class SourceProvenanceSearchSerializer(serpy.Serializer):
             return obj.city.name
         return None
 
+    def get_city_i(self, obj):
+        if obj.city:
+            return obj.city.pk
+        return None
+
     def get_country_s(self, obj):
         if obj.country:
             return obj.country.name
+        return None
+
+    def get_country_i(self, obj):
+        if obj.country:
+            return obj.country.pk
         return None
 
     def get_region_s(self, obj):
@@ -67,9 +81,19 @@ class SourceProvenanceSearchSerializer(serpy.Serializer):
             return obj.region.name
         return None
 
+    def get_region_i(self, obj):
+        if obj.region:
+            return obj.region.pk
+        return None
+
     def get_protectorate_s(self, obj):
         if obj.protectorate:
             return obj.protectorate.name
+        return None
+
+    def get_protectorate_i(self, obj):
+        if obj.protectorate:
+            return obj.protectorate.pk
         return None
 
     def get_entity_type_s(self, obj):
