@@ -36,6 +36,8 @@ def migrate_source_bibliography(entry):
 
 def migrate():
     print(term.blue('Migrating Source Bibliographies'))
+    empty_source_bibliography()
+
     for entry in LegacyBibliographySource.objects.all():
         migrate_source_bibliography(entry)
     print(term.blue('Done migrating Source Bibliographies'))

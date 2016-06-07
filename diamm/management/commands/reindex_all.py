@@ -130,7 +130,7 @@ class Command(BaseCommand):
         self.stdout.write(term.blue("Indexing Sets"))
         self.solrconn.delete(q="type:set")
         self.solrconn.delete(q="type:child_source")
-        objs = Set.objects.exclude(type=Set.PROJECT)
+        objs = Set.objects.all()
         self._index(objs, 'cluster_shelfmark', SetSearchSerializer)
 
     def _index_source_provenance(self):
