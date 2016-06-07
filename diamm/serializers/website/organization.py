@@ -4,6 +4,14 @@ from diamm.serializers.serializers import ContextSerializer, ContextDictSerializ
 from diamm.models.data.geographic_area import GeographicArea
 
 
+class OrganizationContributionSerializer(ContextSerializer):
+    contributor = serpy.StrField(
+        attr="contributor.username"
+    )
+    summary = serpy.StrField()
+    updated = serpy.StrField()
+
+
 class OrganizationLocationSerializer(ContextSerializer):
     url = serpy.MethodField()
     name = serpy.StrField(
@@ -86,6 +94,7 @@ class OrganizationDetailSerializer(ContextSerializer):
     copied_sources = serpy.MethodField()
     source_provenance = serpy.MethodField()
     location = serpy.MethodField()
+    contributors = serpy.MethodField()
 
     def get_url(self, obj):
         return reverse('organization-detail',
@@ -112,3 +121,7 @@ class OrganizationDetailSerializer(ContextSerializer):
         return [OrganizationSourceProvenanceSerializer(o, context={"request": self.context['request']}).data
                 for o in obj.solr_provenance]
 
+    def get_contributors(self, obj):
+        if obj.contributions.count() > 0:
+            return OrganizationContributionSerializer(obj.contributions.filter(completed=True),
+                                                context={"request": self.context['request']}, many=True).data

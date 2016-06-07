@@ -1,7 +1,14 @@
 {% block body %}
 
 {% if contributions %}
-    {% include "website/contribution/contributions_made_list.jinja2" %}
+    <h2>Contributions</h2>
+    <div class="sixteen columns">
+        <ul class="contribution-list">
+            {% for contribution in contributions %}
+                <li>{{ contribution.contributor }}: {{ contribution.summary }}. {{ contribution.updated }}</li>
+            {% endfor %}
+        </ul>
+    </div>
 {% endif %}
 
 <button id="show-contribution-form">Make a Contribution</button>
