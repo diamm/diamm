@@ -3,10 +3,10 @@
 NAME="diamm"                            # name of the application
 VIRTUAL_ENV="/srv/webapps/diamm/denv"   # name of virtual_env directory
 DJANGODIR="/srv/webapps/diamm"               # Django project directory
-SOCKFILE="/var/run/diamm/diamm.sock"                # we will communicte using this unix socket
+SOCKFILE="/var/run/diamm/diamm.sock"                # we will communicate using this unix socket
 USER=www                         # the user to run as
 GROUP=www                       # the group to run as
-NUM_WORKERS=4                           # how many worker processes should Gunicorn spawn
+NUM_WORKERS=5                           # how many worker processes should Gunicorn spawn
 DJANGO_SETTINGS_MODULE=diamm.settings   # which settings file should Django use
 DJANGO_WSGI_MODULE=diamm.wsgi    # WSGI module name
 
@@ -27,6 +27,5 @@ export PYTHONPATH=$DJANGODIR:$PYTHONPATH
 exec ${VIRTUAL_ENV}/bin/gunicorn ${DJANGO_WSGI_MODULE}:application \
   --name $NAME \
   --workers $NUM_WORKERS \
-  --log-level=debug \
   --user=$USER --group=$GROUP \
   --bind=unix:$SOCKFILE
