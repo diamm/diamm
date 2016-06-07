@@ -43,7 +43,9 @@
     <copyField source="notes_txt" dest="text" />
     <copyField source="identifiers_ss" dest="text" />
     <copyField source="archive_s" dest="text" />
+    <!-- archive records store the city in the city_s field; sources store it in the archive_city_s -->
     <copyField source="archive_city_s" dest="text" />
+    <copyField source="city_s" dest="text" />
     <copyField source="last_name_s" dest="text" />
     <copyField source="variant_names_ss" dest="text" />
     <copyField source="siglum_s" dest="text" />
