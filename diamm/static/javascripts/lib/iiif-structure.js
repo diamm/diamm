@@ -49,24 +49,47 @@ window.divaPlugins.push((function ()
     {
         var displayItem = function (item, serviceLabel)
         {
-            console.log(serviceLabel);
-            console.log(item);
-            console.log(item[0].composers[0].name);
-            var itemDiv = document.createElement("DIV");
-            var H3 = document.createElement("h3"); 
+            var itemDiv = document.createElement("div");
+            var h3 = document.createElement("h3"); 
             var t = document.createTextNode(serviceLabel);
-            H3.appendChild(t);
-            var itemDetailsDiv = document.createElement("DIV");
-            var para = document.createElement("P");
+            h3.appendChild(t);
+            var itemDetailsDiv = document.createElement("div");
+            var ul = document.createElement("ul");
+
+            // Composer
+            var li = document.createElement("li");
             var text = "";
             for (var i = 0, clen = item[0].composers.length; i < clen; i++)
             {
                 text += item[0].composers[i].name + " ";
+                if (item[0].composers[i].uncertain)
+                {
+                    text += "? ";
+                }
             }
             t = document.createTextNode("Composer: " + text);
-            para.appendChild(t);
-            itemDetailsDiv.appendChild(para);
-            itemDiv.appendChild(H3);
+            li.appendChild(t);
+            ul.appendChild(li);
+
+            // folio
+            li = document.createElement("li");
+            if (item[0].folios.start.label === item[0].folios.end.label)
+            {
+                t = document.createTextNode("Folio: " + item[0].folios.start.label);
+            }
+            else
+            {
+                t = document.createTextNode("Folio: " + item[0].folios.start.label + "-" + item[0].folios.end.label);
+
+            }
+            li.appendChild(t);
+            ul.appendChild(li);
+
+            // voices
+            // TODO: add voices
+
+            itemDetailsDiv.appendChild(ul);
+            itemDiv.appendChild(h3);
             itemDiv.appendChild(itemDetailsDiv);
             itemsDiv.appendChild(itemDiv);
         };
@@ -109,7 +132,7 @@ window.divaPlugins.push((function ()
                 itemsDiv.removeChild(itemsDiv.firstChild);
             }
 
-            var h2 = document.createElement("H2");
+            var h2 = document.createElement("h2");
             var t = document.createTextNode(filename);
             h2.appendChild(t);
             itemsDiv.appendChild(h2);
