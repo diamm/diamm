@@ -41,6 +41,7 @@ class ServiceSerializer(ContextDictSerializer):
     composers = serpy.MethodField()
     voices = serpy.MethodField()
     folios = serpy.MethodField()
+    composition = serpy.MethodField()
 
     def get_id(self, obj):
         return reverse('source-item-detail',
@@ -117,3 +118,14 @@ class ServiceSerializer(ContextDictSerializer):
             }
 
         return folios
+
+    def get_composition(self, obj):
+        if 'composition_i' in obj:
+            composition = {
+                'title': obj['composition_s'],
+                '@id': reverse('composition-detail',
+                                kwargs={'pk': obj['composition_i']},
+                                request=self.context['request'])
+            }
+
+        return composition
