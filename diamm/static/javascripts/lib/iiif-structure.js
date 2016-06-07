@@ -47,19 +47,15 @@ window.divaPlugins.push((function ()
 
     var populateStructures = function (manifest)
     {
-        function getCompositionItem (composition)
+        function getCompositionAnchor (composition)
         {
-            var li, t, a;
-            li = document.createElement("li");
-            t = document.createTextNode("Composition: ");
-            li.appendChild(t);
+            var t, a;
             a = document.createElement("a");
             t = document.createTextNode(composition.title);
             a.setAttribute('href', composition['@id']);
             a.appendChild(t);
-            li.appendChild(a);
 
-            return li;
+            return a;
         }
 
         function getComposersItem (composers)
@@ -150,19 +146,18 @@ window.divaPlugins.push((function ()
             return li;
         }
 
-        var displayItem = function (item, serviceLabel)
+        var displayItem = function (item)
         {
-            var itemDiv, itemDetailsDiv, h3, t, ul, li;
+            var itemDiv, itemDetailsDiv, h3, t, ul, li, a;
             itemDiv = document.createElement("div");
-            h3 = document.createElement("h3");
-            t = document.createTextNode(serviceLabel);
-            h3.appendChild(t);
-            itemDetailsDiv = document.createElement("div");
-            ul = document.createElement("ul");
 
             // composition
-            li = getCompositionItem(item[0].composition);
-            ul.appendChild(li);
+            a = getCompositionAnchor(item[0].composition);
+            h3 = document.createElement("h3");
+            h3.appendChild(a);
+
+            itemDetailsDiv = document.createElement("div");
+            ul = document.createElement("ul");
 
             // composer
             li = getComposersItem(item[0].composers);
@@ -187,7 +182,7 @@ window.divaPlugins.push((function ()
             return function (item)
             {
                 items[service.id] = item;
-                displayItem (item, service.label);
+                displayItem (item);
             };
 
         };
@@ -199,7 +194,7 @@ window.divaPlugins.push((function ()
                 var service = services[i];
                 if (items[service.id])
                 {
-                    displayItem(items[service.id], service.label);
+                    displayItem(items[service.id]);
                 }
                 else
                 {
