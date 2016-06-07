@@ -1,10 +1,11 @@
 .site-header {
-  z-index: 10;
+  width: 100%;
+  z-index: 100;
 }
 
 .navbar {
-  box-shadow: 0px 0px 4px 2px $diamm-med-grey;
-  margin-bottom: 1rem;
+  box-shadow: 0 0 4px 0 $diamm-black;
+  border-top: 5px solid $diamm-red;
   &:before,
   &:after {
     content: " "; // 1

@@ -43,7 +43,11 @@ def image_serve(request, pk, region=None, size=None, rotation=None, *args, **kwa
     if region and size and rotation:
         location = "{0}/{1}/{2}/{3}/default.jpg".format(location, region, size, rotation)
 
-    r = requests.get(location, stream=True, headers={'referer': referer})
+    diamm = request.META.get('HTTP_X_DIAMM')
+
+    r = requests.get(location, stream=True, headers={'referer': referer,
+                                                     'X-DIAMM': diamm,
+                                                     'X-IIIF-ID': request.build_absolute_uri()}, verify=False)
 
     # If the response was a 200 (success) pass this along.
     if 200 <= r.status_code < 300:

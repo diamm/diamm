@@ -12,4 +12,4 @@ def index_composition(sender, instance, created, **kwargs):
 
 @receiver(post_delete, sender=Composition)
 def delete_composition(sender, instance, **kwargs):
-    solr_delete(CompositionSearchSerializer, instance)
+    solr_delete(instance)

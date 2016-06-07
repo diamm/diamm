@@ -20,11 +20,16 @@ class SearchView(generics.GenericAPIView):
 
         if not type_query or type_query == "all":
             filters.update({
-                'type': settings.SOLR['SEARCH_TYPES']
+                '{!tag=type}type': settings.SOLR['SEARCH_TYPES']
             })
         elif type_query and type_query in settings.SOLR['SEARCH_TYPES']:
             filters.update({
-                'type': type_query
+                '{!tag=type}type': type_query
+            })
+        elif type_query and type_query == "sources_with_images":
+            filters.update({
+                '{!tag=type}type': 'source',
+                '{!tag=type}public_images_b': True
             })
         # else ignore any invalid type filter settings...
 

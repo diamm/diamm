@@ -12,4 +12,4 @@ def index_person(sender, instance, created, **kwargs):
 
 @receiver(post_delete, sender=Person)
 def delete_person(sender, instance, **kwargs):
-    solr_delete(PersonSearchSerializer, instance)
+    solr_delete(instance)

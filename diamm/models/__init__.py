@@ -20,6 +20,7 @@ from diamm.models.migrate.legacy_author_bibliography import LegacyAuthorBibliogr
 from diamm.models.migrate.legacy_bibliography_source import LegacyBibliographySource
 from diamm.models.migrate.legacy_relationship_type import LegacyRelationshipType
 from diamm.models.migrate.legacy_source_person import LegacySourcePerson
+from diamm.models.migrate.legacy_source_notation import LegacySourceNotation
 from diamm.models.migrate.legacy_composition import LegacyComposition
 from diamm.models.migrate.legacy_item import LegacyItem
 from diamm.models.migrate.legacy_image import LegacyImage

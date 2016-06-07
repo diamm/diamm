@@ -30,7 +30,7 @@ class SolrPaginator:
         self.qopts = {
             'q.op': settings.SOLR['DEFAULT_OPERATOR'],
             'facet': 'true',
-            'facet.field': 'type',
+            'facet.field': settings.SOLR['FACET_FIELDS'],
             'facet.mincount': 1,
             'hl': 'true',
             'defType': 'edismax',
@@ -41,26 +41,20 @@ class SolrPaginator:
             self.qopts.update(sorts)
 
         if filters:
-            fqstring = ""
+            fqlist = list()
             for k, v in filters.items():
                 # If a list is passed in for a field, assume that we want to OR the filters to produce a listing from
                 # all the values; if not, assume it's a restriction.
                 # For example, {type: ['foo', 'bar']} ==> "type:foo OR type:bar"
                 # but {type: 'foo'} ==> 'type:foo'
                 if isinstance(v, list):
-                    fqstring += " OR ".join(["{0}:{1}".format(k, field) for field in v])
+                    fqlist.append(" OR ".join(["{0}:{1}".format(k, field) for field in v]))
                 else:
-                    fqstring += "{0}:{1} ".format(k, v)
+                    fqlist.append("{0}:{1}".format(k, v))
 
-            print(fqstring)
             self.qopts.update({
-                'fq': fqstring
+                'fq': fqlist
             })
-
-            # fqstring = " ".join(["{0}:{1}".format(k, v) for k, v in filters.items()])
-            # self.qopts.update({
-            #     'fq': fqstring
-            # })
 
         self.solr = pysolr.Solr(settings.SOLR['SERVER'])
 
@@ -145,6 +139,16 @@ class SolrPage:
         # Since Solr doesn't filter by facet _value_, we remove some of the values that we don't want
         # to display in the search results.
         filtered_facets = [k for k in sorted(zip(i, i), key=lambda f: f[0]) if k[0] in settings.SOLR['SEARCH_TYPES']]
+
+        # For the public_images_b facet, we will get the count for this value
+        # and send it along with the sources_with_images key.
+        image_count = self.result.facets['facet_fields'].get('public_images_b')
+        if image_count:
+            i = iter(image_count)
+            d = dict(zip(i, i))
+            if d.get('true'):
+                filtered_facets.append(('sources_with_images', d['true']))
+
         return OrderedDict(filtered_facets)
 
     @property

@@ -8,3 +8,4 @@ import diamm.signals.set_signals
 import diamm.signals.source_copyist_signals
 import diamm.signals.source_provenance_signals
 import diamm.signals.source_relationship_signals
+import diamm.signals.page_signals

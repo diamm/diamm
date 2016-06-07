@@ -12,4 +12,4 @@ def index_organization(sender, instance, created, **kwargs):
 
 @receiver(post_delete, sender=Organization)
 def delete_organization(sender, instance, **kwargs):
-    solr_delete(OrganizationSearchSerializer, instance)
+    solr_delete(instance)

@@ -31,4 +31,5 @@ from diamm.admin.data.clef import ClefAdmin
 from diamm.admin.data.image_type import ImageTypeAdmin
 from diamm.admin.data.language import LanguageAdmin
 from diamm.admin.data.mensuration import MensurationAdmin
+from diamm.admin.data.notation import NotationAdmin
 

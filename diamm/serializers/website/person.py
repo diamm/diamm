@@ -69,10 +69,6 @@ class PersonCompositionSerializer(ContextDictSerializer):
         return sources
 
 
-class PersonListSerializer(ContextSerializer):
-    pass
-
-
 class PersonDetailSerializer(ContextSerializer):
     url = serpy.MethodField()
     pk = serpy.IntField()

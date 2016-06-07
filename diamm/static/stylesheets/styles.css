@@ -10,10 +10,6 @@
 */
 /* Base files. */
 /*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
-@import url(https://fonts.googleapis.com/css?family=Alegreya:400,400italic,700,700italic|Alegreya+Sans+SC:500,700,400|Alegreya+Sans:400,300,300italic,400italic,500,500italic,700italic,700);
-@import url(https://fonts.googleapis.com/css?family=Merriweather:400,400italic,700,700italic);
-@import url(https://fonts.googleapis.com/css?family=Old+Standard+TT:400,400italic,700);
-@import url(https://fonts.googleapis.com/css?family=Raleway:400,500,600);
 @import url(https://fonts.googleapis.com/css?family=PT+Serif:400,400italic,700,700italic);
 @import url(https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700,700italic);
 html {
@@ -2763,11 +2759,12 @@ form {
   content: ""; }
 
 .site-header {
-  z-index: 10; }
+  width: 100%;
+  z-index: 100; }
 
 .navbar {
-  box-shadow: 0px 0px 4px 2px #a9acab;
-  margin-bottom: 1rem; }
+  box-shadow: 0 0 4px 0 #011627;
+  border-top: 5px solid #dd1c1a; }
   .navbar:before, .navbar:after {
     content: " ";
     display: table; }
@@ -2797,7 +2794,7 @@ form {
     padding: 0;
     margin: 0; }
     .navbar .navbar-list a {
-      color: #1e1e20;
+      color: #011627;
       text-decoration: none;
       padding: 0.6rem 1rem;
       font-size: 1.2rem;
@@ -2808,13 +2805,13 @@ form {
       align-items: flex-start; }
       .navbar .navbar-list a:hover, .navbar .navbar-list a:focus {
         border-bottom: none;
-        background: #b92025;
-        color: white; }
+        background: #dd1c1a;
+        color: #fdfffc; }
     .navbar .navbar-list .column {
       display: none;
       position: absolute;
       list-style-type: none;
-      background-color: white;
+      background-color: #fdfffc;
       float: left;
       margin-top: 0rem;
       margin-left: 0rem;
@@ -2847,15 +2844,15 @@ form {
     .navbar .navbar-list .navbar-item:hover .column {
       display: block; }
     .navbar .navbar-list .navbar-highlight {
-      background: #b92025; }
+      background: #dd1c1a; }
       .navbar .navbar-list .navbar-highlight a {
         color: #fff; }
         .navbar .navbar-list .navbar-highlight a:hover, .navbar .navbar-list .navbar-highlight a:focus {
-          background: #1e1e20; }
+          background: #011627; }
 
 footer {
   border-top: 3px double #a9acab;
-  background: white;
+  background: #fdfffc;
   height: 100px;
   padding: 1.25rem;
   margin-top: 1rem; }
@@ -2881,7 +2878,29 @@ footer {
       padding-right: 0.5em; }
 
 .front-hero {
-  margin: -1em; }
+  position: relative; }
+  .front-hero img {
+    border-bottom: 3px solid #dd1c1a; }
+  .front-hero .search {
+    position: absolute;
+    width: 100%;
+    margin: 0 auto;
+    top: 200px;
+    height: 4rem; }
+    .front-hero .search .strapline {
+      -webkit-border-radius: 0.5em;
+      -moz-border-radius: 0.5em;
+      border-radius: 0.5em;
+      background: rgba(1, 22, 39, 0.7);
+      text-align: center;
+      margin: 0 auto;
+      width: 40%;
+      height: 60px;
+      line-height: 60px;
+      vertical-align: middle;
+      color: #fdfffc; }
+    .front-hero .search .search-box {
+      background: none; }
 
 .source-header {
   margin-bottom: 1em; }
@@ -2908,29 +2927,31 @@ footer {
       margin: 0 1em 0 0;
       padding: 0; }
 
-.source-description h3, .source-description h4, .source-bibliography h3, .source-bibliography h4, .source-inventory h3, .source-inventory h4 {
+.source-description h3, .source-description h4, .source-bibliography h3, .source-bibliography h4, .source-inventory h3, .source-inventory h4, .composer-inventory h3, .composer-inventory h4 {
   font-weight: bold;
   font-size: 1em;
   letter-spacing: normal;
   margin-top: 0; }
 
-.source-inventory .source-inventory-header {
+.source-inventory {
+  border-right: 1px solid #dddede; }
+
+.source-inventory .inventory-header, .composer-inventory .inventory-header {
   font-size: 1.125em;
   font-weight: 600; }
 
-.source-inventory p {
+.source-inventory p, .composer-inventory p {
   padding-top: 0; }
 
-.source-inventory dd {
-  margin-bottom: 1.3em;
-  border-bottom: 1px solid #dddede; }
-  .source-inventory dd table {
+.source-inventory dd, .composer-inventory dd {
+  margin-bottom: 1.3em; }
+  .source-inventory dd table, .composer-inventory dd table {
     margin-bottom: 0; }
-  .source-inventory dd th {
+  .source-inventory dd th, .composer-inventory dd th {
     line-break: strict;
     vertical-align: top;
     white-space: nowrap; }
-  .source-inventory dd th, .source-inventory dd td {
+  .source-inventory dd th, .source-inventory dd td, .composer-inventory dd th, .composer-inventory dd td {
     border-bottom: none; }
 
 .source-description .source-details {
@@ -2954,7 +2975,6 @@ footer {
   margin-top: 0; }
   .source-description dl dt {
     text-transform: lowercase;
-    font-family: "Alegreya Sans SC", sans-serif;
     float: left;
     font-weight: bold;
     clear: left;
@@ -2977,12 +2997,14 @@ footer {
   margin-bottom: 0; }
 
 .search-box {
-  background: #dddede;
-  margin-top: -1em; }
+  background: #dddede; }
   .search-box form {
     margin-top: 1em;
     margin-bottom: 1em; }
     .search-box form input {
+      height: 50px;
+      font-size: 110%;
+      font-weight: 600;
       margin-bottom: 0; }
 
 .type-filter {
@@ -3010,29 +3032,14 @@ footer {
 
 .search-results .result-count {
   font-family: "PT Sans", sans-serif;
-  color: #a9acab; }
-
-.search-results .search-result .result-type {
-  font-size: 58%;
-  color: #2a2c2b;
-  position: relative;
-  top: -1px; }
-
-.search-results .search-result .upper-info {
-  margin-bottom: 0rem;
-  font-size: 85%;
-  font: "PT Sans", sans-serif; }
-
-.search-results .search-result .lower-info {
-  padding-top: 0rem;
-  font-size: 95%;
-  font: "PT Sans", sans-serif; }
+  font-size: 90%;
+  color: #011627; }
 
 .search-results .search-result h4 {
   margin-bottom: 0.1rem; }
 
 .debug {
-  border: 1px solid #1e1e20; }
+  border: 1px solid #011627; }
 
 html {
   height: 100%;
@@ -3042,7 +3049,7 @@ body {
   line-height: 1.45;
   font-weight: 400;
   font-family: "PT Sans", sans-serif;
-  color: #1e1e20;
+  color: #011627;
   min-height: 100%;
   display: flex;
   flex-direction: column;
@@ -3086,12 +3093,12 @@ nav.center-block.text-center ul li {
   display: inline; }
 
 a {
-  color: #0062cc;
+  color: #1395db;
   text-decoration: none;
   box-sizing: border-box; }
   a:hover {
-    color: #2760b9;
-    border-bottom: 1px solid #2760b9; }
+    color: #2364aa;
+    border-bottom: 1px solid #2364aa; }
 
 p {
   font-family: "PT Serif", serif;

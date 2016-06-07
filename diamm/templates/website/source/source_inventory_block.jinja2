@@ -1,19 +1,20 @@
 <div class="tab-panel row" id="inventory">
-    <div class="sixteen columns source-inventory">
-        <h3>Inventory</h3>
+    <div class="eight columns source-inventory">
+        <h3>Inventory (Source order)</h3>
 
         {% if content.inventory %}
         <dl>
             {% for item in content.inventory %}
             <dt class="source-inventory-header">
-                <a href="#">{{ item.folio_start }}&ndash;{{ item.folio_end }}</a>: {{ item.composition }},
-                {% for composer in item.composers %}
+
+                <a href="#">{{ item.folio_start }}&ndash;{{ item.folio_end }}</a>: <a href="{{ item.url }}">{{ item.composition }}</a>
+                ({%- for composer in item.composers -%}
                     {{ "?" if composer.uncertain else "" }}
                     {%- if composer.url %}<a href="{{ composer.url }}">{% endif -%}
                 {{ composer.full_name }}
                 {%- if composer.url -%}</a>{%- endif -%}
                 {%- if not loop.last -%}; {%- endif -%}
-                {% endfor %}
+                {% endfor %})
             </dt>
             <dd>
                 <table>
@@ -52,6 +53,30 @@
                     </li>
                 {% endfor %}
             </ul>
+        {% endif %}
+    </div>
+    <div class="eight columns composer-inventory">
+        <h3>Inventory (by Composer)</h3>
+        {% if content.composer_inventory %}
+            <dl>
+            {% for composer in content.composer_inventory %}
+                <dt class="composer-inventory-header">
+                    {% if composer.url %}<a href="{{ composer.url }}">{% endif %}
+                        {{ composer.name }}
+                    {% if composer.url %}</a>{% endif %}
+                    {% if composer.uncertain %} (Uncertain Attributions) {% endif %}
+                </dt>
+                <dd>
+                    <ul>
+                    {% for item in composer.inventory %}
+                        <li>{{ item.folio_start_s }}
+                            {%- if item.folio_end_s != item.folio_start_s -%}&ndash;{{ item.folio_end_s }}{%- endif -%}:
+                            <a href="{{ url('composition-detail', pk=item.composition_i) }}">{{ item.composition_s }}</a></li>
+                    {% endfor %}
+                    </ul>
+                </dd>
+            {% endfor %}
+            </dl>
         {% endif %}
     </div>
 </div>

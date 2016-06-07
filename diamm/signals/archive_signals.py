@@ -12,4 +12,4 @@ def index_archive(sender, instance, created, **kwargs):
 
 @receiver(post_delete, sender=Archive)
 def delete_archive(sender, instance, **kwargs):
-    solr_delete(ArchiveSearchSerializer, instance)
+    solr_delete(instance)

@@ -32,17 +32,17 @@ from diamm.views.website.archive import ArchiveDetail
 from diamm.views.website.city import CityList, CityDetail
 from diamm.views.website.country import CountryList, CountryDetail
 from diamm.views.website.person import PersonDetail, legacy_composer_redirect
-from diamm.views.website.organization import OrganizationList, OrganizationDetail
+from diamm.views.website.organization import OrganizationDetail
 from diamm.views.website.composition import CompositionList, CompositionDetail
 from diamm.views.website.story import StoryDetail
 from diamm.views.website.aboutpages import AboutPagesDetail
 from diamm.views.website.image import image_serve
 from diamm.views.website.bibliography_author import BibliographyAuthorDetail
-from diamm.views.website.canvas import CanvasData
 
 
 urlpatterns = [
-    url(r'^search.xml$', TemplateView.as_view(template_name='opensearch.jinja2', content_type="application/opensearchdescription+xml"), name='opensearch'),
+    url(r'^search.xml$', TemplateView.as_view(template_name='opensearch.jinja2',
+                                              content_type="application/opensearchdescription+xml"), name='opensearch'),
     url(r'^admin/', admin.site.urls),
     url(r'^$', HomeView.as_view(), name="home"),
     url(r'^login/$', SessionAuth.as_view(), name="login"),
@@ -79,7 +79,6 @@ urlpatterns = [
     url(r'^countries/(?P<pk>[0-9]+)/$', CountryDetail.as_view(), name="country-detail"),
     # url(r'^people/$', PersonList.as_view(), name="person-list"),
     url(r'^people/(?P<pk>[0-9]+)/$', PersonDetail.as_view(), name="person-detail"),
-    url(r'^organizations/$', OrganizationList.as_view(), name='organization-list'),
     url(r'^organizations/(?P<pk>[0-9]+)/$', OrganizationDetail.as_view(), name="organization-detail"),
     url(r'^composers/(?P<legacy_id>[0-9]+)/$', legacy_composer_redirect),
     url(r'^compositions/$', CompositionList.as_view(), name="composition-list"),
@@ -94,11 +93,5 @@ urlpatterns = [
     url(r'^images/(?P<pk>[0-9]+)/$', image_serve, name="image-serve-info"),
 
 ]
-
-if settings.DEBUG is True:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-
-admin.autodiscover()
-urlpatterns += [url(r'^admin/', include(admin.site.urls)), ]
-
+if settings.DEBUG:
+    urlpatterns += static("/media/", document_root=settings.MEDIA_ROOT)

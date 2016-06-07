@@ -1,5 +1,16 @@
-<img src="https://placehold.it/1400x300" alt="..." class="u-full-width">
+{#<img src="https://placehold.it/1400x500" alt="..." class="u-full-width">#}
 
+<div class="row">
+    <div class="sixteen columns">
+        <div class="front-hero">
+            <img src="https://beta.diamm.ac.uk/images/54175/1024,600,5000,1600/768,/0/default.jpg" class="u-full-width">
+            <div class="search">
+                {% include "website/blocks/search_box.jinja2" %}
+                <h2 class="strapline">Search {{ content.counts.num_sources }} sources from {{ content.counts.num_archives }} archives</h2>
+            </div>
+        </div>
+    </div>
+</div>
 {# <div id="diamm-carousel" class="carousel slide" data-ride="carousel">
     <ol class="carousel-indicators">
         <li data-target="#diamm-carousel" data-slide-to="0" class="active"></li>

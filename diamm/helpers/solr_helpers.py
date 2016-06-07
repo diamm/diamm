@@ -34,7 +34,6 @@ def solr_index(serializer, instance):
 
     # pysolr add takes a list of documents, so we wrap the instance in an array.
     connection.add([data])
-    connection.commit()
 
 
 def solr_index_many(serializer, instances):
@@ -42,12 +41,11 @@ def solr_index_many(serializer, instances):
     serialized = serializer(instances, many=True)
     data = serialized.data
     connection.add(data)
-    connection.commit()
 
 
-def solr_delete(serializer, instance):
+def solr_delete(instance):
     __solr_prepare([instance])
 
 
-def solr_delete_many(serializer, instances):
+def solr_delete_many(instances):
     __solr_prepare(instances)

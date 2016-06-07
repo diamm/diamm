@@ -6,7 +6,9 @@ from rest_framework import response
 from drf_ujson.renderers import UJSONRenderer
 from diamm.models.data.source import Source
 from diamm.serializers.website.source import SourceListSerializer, SourceDetailSerializer
-from diamm.serializers.iiif.manifest import SourceManifestSerializer, CanvasSerializer
+from diamm.serializers.iiif.manifest import SourceManifestSerializer
+from diamm.serializers.iiif.canvas import CanvasSerializer
+from diamm.serializers.iiif.service import ServiceSerializer
 
 
 class SourceList(generics.ListAPIView):
@@ -82,4 +84,25 @@ class SourceRangeDetail(generics.GenericAPIView):
 
 class SourceItemDetail(generics.GenericAPIView):
     renderer_classes = (UJSONRenderer,)
+
+    def get(self, request, source_id, item_id):
+        conn = pysolr.Solr(settings.SOLR['SERVER'])
+
+        # The pages_ii:[* TO *] query ensures we retrieve only
+        # those records that have images associated with them.
+        structure_query = {
+            "fq": ["type:item",
+                   "pk:{0}".format(item_id),
+                   "source_i:{0}".format(source_id),
+                   "pages_ii:[* TO *]"],
+            "sort": "folio_start_ans asc",
+            "rows": 10000,
+        }
+        structure_res = conn.search("*:*", **structure_query)
+        structures = [ServiceSerializer(s, context={"request": request}).data
+                      for s in structure_res.docs]
+
+        return response.Response(structures)
+
+
 

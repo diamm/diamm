@@ -28,6 +28,9 @@
 
 <div class="search-result">
     <h4>
+        {% if result.type == "source" and result.public_images_b %}
+            <i class="fa fa-picture-o" aria-hidden="true"></i>
+        {% endif %}
         <a href="{{ result.url }}">{{ result_name(result) }}</a> <span class="result-type">{{ result.type | title }}</span>
     </h4>
     {{ result_body(result) }}
