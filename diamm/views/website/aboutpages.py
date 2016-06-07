@@ -7,7 +7,6 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 
 
-
 class AboutPagesDetail(views.APIView):
     template_name = "aboutpages_detail.jinja2"
     renderer_classes = (HTMLRenderer, renderers.JSONRenderer)
@@ -15,9 +14,10 @@ class AboutPagesDetail(views.APIView):
     def get(self, request, *args, **kwargs):
         current_url = request.path
         aboutpages = get_object_or_404(AboutPages, url=current_url)
-        return Response({
-            'aboutpages': aboutpages
-        })
-       # return Response({}, status=status.HTTP_404_NOT_FOUND)
+        if aboutpages:
+            return Response({
+                'aboutpages': aboutpages
+            })
+        return Response({}, status=status.HTTP_404_NOT_FOUND)
 
 

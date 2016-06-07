@@ -406,7 +406,6 @@ class SourceDetailSerializer(ContextSerializer):
         }
         return obj
 
-
     def get_has_images(self, obj):
         if obj.pages.count() > 0:
             return True

@@ -55,6 +55,7 @@ class OrganizationSourceCopyistSerializer(ContextDictSerializer):
                        kwargs={"pk": obj['source_i']},
                        request=self.context['request'])
 
+
 class OrganizationSourceRelationshipSerializer(ContextDictSerializer):
     url = serpy.MethodField()
     relationship = serpy.StrField(
@@ -74,11 +75,13 @@ class OrganizationSourceRelationshipSerializer(ContextDictSerializer):
 
 
 class OrganizationDetailSerializer(ContextSerializer):
+    pk = serpy.IntField()
     url = serpy.MethodField()
     name = serpy.StrField()
-    type = serpy.StrField(
+    organization_type = serpy.StrField(
         attr="type.name"
     )
+    type = serpy.MethodField()
     related_sources = serpy.MethodField()
     copied_sources = serpy.MethodField()
     source_provenance = serpy.MethodField()
@@ -93,6 +96,9 @@ class OrganizationDetailSerializer(ContextSerializer):
         if obj.location:
             return OrganizationLocationSerializer(obj.location, context={"request": self.context["request"]}).data
         return None
+
+    def get_type(self, obj):
+        return obj.__class__.__name__.lower()
 
     def get_related_sources(self, obj):
         return [OrganizationSourceRelationshipSerializer(o, context={"request": self.context["request"]}).data
