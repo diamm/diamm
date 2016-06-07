@@ -56,19 +56,33 @@ window.divaPlugins.push((function ()
             var itemDetailsDiv = document.createElement("div");
             var ul = document.createElement("ul");
 
-            // Composer
+            // composer
             var li = document.createElement("li");
-            var text = "";
+            t = document.createTextNode("Composer: ");
+            li.appendChild(t);
+            var a;
             for (var i = 0, clen = item[0].composers.length; i < clen; i++)
             {
-                text += item[0].composers[i].name + " ";
+                if (item[0].composers[i]['@id'])
+                {
+                    a = document.createElement("a");
+                    t = document.createTextNode(item[0].composers[i].name + " ");
+                    a.setAttribute('href', item[0].composers[i]['@id']);
+                    a.appendChild(t);
+                    li.appendChild(a);
+                }
+                else
+                {
+                    t = document.createTextNode(item[0].composers[i].name + " ");
+                    li.appendChild(t);
+                }
+
                 if (item[0].composers[i].uncertain)
                 {
-                    text += "? ";
+                    t = document.createTextNode("? ");
+                    li.appendChild(t);
                 }
             }
-            t = document.createTextNode("Composer: " + text);
-            li.appendChild(t);
             ul.appendChild(li);
 
             // folio
@@ -84,11 +98,34 @@ window.divaPlugins.push((function ()
             }
             li.appendChild(t);
             ul.appendChild(li);
+            itemDetailsDiv.appendChild(ul);
 
             // voices
-            // TODO: add voices
+            var voices = item[0].voices, ul2;
+            for (i = 0, vlen = voices.length; i < vlen; i++)
+            {
+                t = document.createTextNode(voices[i].voice_text);
+                li = document.createElement("li");
+                li.appendChild(t);
+                ul.appendChild(li);
 
-            itemDetailsDiv.appendChild(ul);
+                if (voices[i].voice_type !== "no designation")
+                {
+                    ul2 = document.createElement("ul");
+                    t = document.createTextNode("Type: " + voices[i].voice_type);
+                    li = document.createElement("li");
+                    li.appendChild(t);
+                    ul2.appendChild(li);
+                }
+
+                ul2 = document.createElement("ul");
+                t = document.createTextNode("Language: " + voices[i].languages[0]);
+                li = document.createElement("li");
+                li.appendChild(t);
+                ul2.appendChild(li);
+                ul.appendChild(ul2);
+            }
+
             itemDiv.appendChild(h3);
             itemDiv.appendChild(itemDetailsDiv);
             itemsDiv.appendChild(itemDiv);
