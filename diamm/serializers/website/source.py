@@ -398,6 +398,9 @@ class SourceDetailSerializer(ContextSerializer):
         except AttributeError:
             return None
 
+        if not cover_obj:
+            return None
+
         obj = {
             'url': reverse('image-serve-info',
                            kwargs={"pk": cover_obj['id']},
