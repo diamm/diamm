@@ -6,6 +6,8 @@ from diamm.serializers.serializers import ContextSerializer
 class SetSourceSerializer(ContextSerializer):
     url = serpy.MethodField()
     shelfmark = serpy.StrField()
+    public_images = serpy.BoolField()
+    has_images = serpy.MethodField()
     display_name = serpy.StrField(
         required=False
     )
@@ -14,6 +16,11 @@ class SetSourceSerializer(ContextSerializer):
         return reverse('source-detail',
                        kwargs={"pk": obj.pk},
                        request=self.context['request'])
+
+    def get_has_images(self, obj):
+        if obj.pages.count() > 0:
+            return True
+        return False
 
 
 class SetDetailSerializer(ContextSerializer):

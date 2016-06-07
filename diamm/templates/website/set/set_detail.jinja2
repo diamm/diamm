@@ -8,7 +8,12 @@
                 <h2>Sources</h2>
                 <ul>
                 {% for source in content.sources %}
-                    <li><a href="{{ source.url }}">{{ source.display_name }}</a></li>
+                    <li class="image-source-list">
+                        {% if source.has_images and source.public_images %}
+                            <i class="fa fa-picture-o" aria-hidden="true"></i>
+                        {% endif %}
+                        <a href="{{ source.url }}">{{ source.display_name }}</a>
+                    </li>
                 {% endfor %}
                 </ul>
             {% endif %}
