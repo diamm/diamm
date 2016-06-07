@@ -203,14 +203,15 @@ def migrate_bibliography(legacy):
         __create_new_publication_entry(legacy.seriestitle, BibliographyPublication.B_SERIES, b)
 
     # Add any authors we may not know about. Here there be dragons.
-    __get_or_create_people(legacy.author1surname, legacy.author1firstname, b, BibliographyAuthorRole.R_AUTHOR, 1)
-    __get_or_create_people(legacy.author2surname, legacy.author2firstname, b, BibliographyAuthorRole.R_AUTHOR, 2)
-    __get_or_create_people(legacy.author3surname, legacy.author3firstname, b, BibliographyAuthorRole.R_AUTHOR, 3)
-    __get_or_create_people(legacy.author4surname, legacy.author4firstname, b, BibliographyAuthorRole.R_AUTHOR, 4)
-    __get_or_create_people(legacy.editor1surname, legacy.editor1firstname, b, BibliographyAuthorRole.R_EDITOR, 1)
-    __get_or_create_people(legacy.editor2surname, legacy.editor2firstname, b, BibliographyAuthorRole.R_EDITOR, 2)
-    __get_or_create_people(legacy.editor3surname, legacy.editor3firstname, b, BibliographyAuthorRole.R_EDITOR, 3)
-    __get_or_create_people(legacy.editor4surname, legacy.editor4firstname, b, BibliographyAuthorRole.R_EDITOR, 4)
+    # WIP: This may not be necessary -- see issue #63.
+    # __get_or_create_people(legacy.author1surname, legacy.author1firstname, b, BibliographyAuthorRole.R_AUTHOR, 1)
+    # __get_or_create_people(legacy.author2surname, legacy.author2firstname, b, BibliographyAuthorRole.R_AUTHOR, 2)
+    # __get_or_create_people(legacy.author3surname, legacy.author3firstname, b, BibliographyAuthorRole.R_AUTHOR, 3)
+    # __get_or_create_people(legacy.author4surname, legacy.author4firstname, b, BibliographyAuthorRole.R_AUTHOR, 4)
+    # __get_or_create_people(legacy.editor1surname, legacy.editor1firstname, b, BibliographyAuthorRole.R_EDITOR, 1)
+    # __get_or_create_people(legacy.editor2surname, legacy.editor2firstname, b, BibliographyAuthorRole.R_EDITOR, 2)
+    # __get_or_create_people(legacy.editor3surname, legacy.editor3firstname, b, BibliographyAuthorRole.R_EDITOR, 3)
+    # __get_or_create_people(legacy.editor4surname, legacy.editor4firstname, b, BibliographyAuthorRole.R_EDITOR, 4)
 
 
 def __get_or_create_people(surname, firstname, bibliography, role, position):
@@ -261,6 +262,7 @@ def attach_author_to_bibliography(entry):
     bar = BibliographyAuthorRole(**d)
     bar.save()
 
+
 def update_author_table():
     print(term.yellow("\tUpdating the ID sequences for the Django Bibliography Tables"))
     db = settings.DATABASES['default']
@@ -279,6 +281,7 @@ def update_author_table():
     nextid = maxid + 1
     curs.execute(sql_alt_auth, (nextid,))
 
+
 def update_table():
     print(term.yellow("\tUpdating the ID sequences for the Django Bibliography Tables"))
     db = settings.DATABASES['default']
@@ -296,6 +299,7 @@ def update_table():
     maxid = curs.fetchone()['maxid']
     nextid = maxid + 1
     curs.execute(sql_alt_bibl, (nextid,))
+
 
 def migrate():
     print(term.blue("Migrating Bibliography Entries"))
