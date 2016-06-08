@@ -131,6 +131,8 @@
 }
 
 #image-item-listing {
+  max-height: 770px;
+  overflow: scroll;
   p {
     margin-bottom: 0;
   }

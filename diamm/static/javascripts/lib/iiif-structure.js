@@ -130,7 +130,6 @@ window.divaPlugins.push((function ()
             var p, t = 'Genres: ';
             p = document.createElement("p");
 
-            console.log(genres.length);
             for (var i = 0, glen = genres.length; i < glen; i++) 
             {
                 t += genres[i] + ", ";
