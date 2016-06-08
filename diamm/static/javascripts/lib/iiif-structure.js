@@ -146,6 +146,21 @@ window.divaPlugins.push((function ()
             return li;
         }
 
+        function getGenresItem (genres)
+        {
+            var li, t = '';
+            li = document.createElement("li");
+
+            for (var i, glen = genres.length; i < glen; i++) 
+            {
+                t += genre + " ";
+            }
+
+            t = document.createTextNode(t);
+            li.appendChild(t);
+            return li;
+        }
+
         var displayItem = function (item)
         {
             var itemDiv, itemDetailsDiv, h3, t, ul, li, a;
