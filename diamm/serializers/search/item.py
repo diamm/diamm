@@ -54,6 +54,7 @@ class ItemSearchSerializer(serpy.Serializer):
     composer_ans = serpy.MethodField()
     bibliography_ii = serpy.MethodField()
     voices_ii = serpy.MethodField()
+    genres_ss = serpy.MethodField()
 
     def get_type(self, obj):
         return obj.__class__.__name__.lower()
@@ -138,3 +139,8 @@ class ItemSearchSerializer(serpy.Serializer):
             return "{0}".format(obj.unattributed_composers.first().composer.full_name)
         else:
             return None
+
+    def get_genres_ss(self, obj):
+        if obj.composition:
+            return list(obj.composition.genres.values_list('name', flat=True))
+        return []
