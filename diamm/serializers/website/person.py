@@ -3,10 +3,18 @@ from rest_framework.reverse import reverse
 from diamm.serializers.serializers import ContextDictSerializer, ContextSerializer
 
 
+class PersonContributionSerializer(ContextSerializer):
+    contributor = serpy.StrField(
+        attr="contributor.username"
+    )
+    summary = serpy.StrField()
+    updated = serpy.StrField()
+
+
 class PersonSourceCopyistSerializer(ContextDictSerializer):
     url = serpy.MethodField()
     copyist_type = serpy.StrField(
-        attr="type_s"
+        attr="type"
     )
     uncertain = serpy.BoolField(
         attr="uncertain_b"
@@ -71,10 +79,13 @@ class PersonCompositionSerializer(ContextDictSerializer):
 
 class PersonDetailSerializer(ContextSerializer):
     url = serpy.MethodField()
+    pk = serpy.IntField()
     compositions = serpy.MethodField()
     related_sources = serpy.MethodField()
     copied_sources = serpy.MethodField()
     full_name = serpy.StrField()
+    type = serpy.MethodField()
+    contributors = serpy.MethodField()
     earliest_year = serpy.IntField(
         required=False
     )
@@ -102,6 +113,13 @@ class PersonDetailSerializer(ContextSerializer):
     def get_copied_sources(self, obj):
         return [PersonSourceCopyistSerializer(o, context={"request": self.context['request']}).data for o in obj.solr_copyist]
 
+    def get_type(self, obj):
+        return obj.__class__.__name__.lower()
+
+    def get_contributors(self, obj):
+        if obj.contributions.count() > 0:
+            return PersonContributionSerializer(obj.contributions.filter(completed=True),
+                                                context={"request": self.context['request']}, many=True).data
 
 # from rest_framework import serializers
 # from diamm.models.data.person import Person

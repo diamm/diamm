@@ -59,6 +59,58 @@
         color: $diamm-white;
       }
     }
+
+    .about-menu-column {
+      display: none;
+      position: absolute;
+      list-style-type: none;
+      background-color: $diamm-white;
+      float: left;
+      margin-top: 0rem;
+      margin-left: 0rem;
+      width: 25rem;
+      padding: 0rem;
+
+    }
+
+    .about-menu-column div {
+      -webkit-column-count: 3;
+      -moz-column-count: 3;
+      column-count: 3;
+    }
+    .about-menu-column a {
+      display: block;
+      margin-top: 0rem;
+      margin-left: 0.2rem;
+      padding-left: 0rem;
+      font-size: 0.7rem;
+    }
+    .about-menu-column ul {
+      margin-left: 0.2rem;
+    }
+
+    .about-menu-column li {
+      margin-right: 0rem;
+    }
+
+    .dropdown-content-more {
+      list-style-type: square;
+      margin-top: 0rem;
+      margin-left: 0.2rem;
+    }
+
+    .dropdown-content-more a {
+      color: black;
+      padding: 0.2rem 0.3rem;
+      font-size: 0.5rem;
+      text-decoration: none;
+      display: block;
+    }
+
+    .navbar-item:hover .about-menu-column {
+      display: block;
+    }
+
     .navbar-highlight {
       background: $diamm-red;
       a {

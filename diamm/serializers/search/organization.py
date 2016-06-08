@@ -1,21 +1,21 @@
-from rest_framework import serializers
-from diamm.models.data.organization import Organization
+import serpy
 
 
-class OrganizationSearchSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Organization
-        fields = ("type",
-                  "pk",
-                  "name_s",
-                  "location_s")
+class OrganizationSearchSerializer(serpy.Serializer):
 
-    # TODO: Find some way to refactor these into a base class for DRY
-    type = serializers.SerializerMethodField()
-    pk = serializers.ReadOnlyField()
+    type = serpy.MethodField()
+    pk = serpy.IntField()
 
-    name_s = serializers.ReadOnlyField(source="name")
-    location_s = serializers.ReadOnlyField(source="location.name")
+    location_s = serpy.StrField(
+        attr="location.name"
+    )
+    name_s = serpy.StrField(
+        attr="name",
+    )
+    organization_type_s = serpy.StrField(
+        attr="type",
+        required=False
+    )
 
     def get_type(self, obj):
-        return self.Meta.model.__name__.lower()
+        return obj.__class__.__name__.lower()

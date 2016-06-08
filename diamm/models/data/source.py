@@ -2,6 +2,7 @@ from itertools import groupby
 from operator import itemgetter
 from django.db import models
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericRelation
 import pysolr
 
 
@@ -59,6 +60,7 @@ class Source(models.Model):
     public = models.BooleanField(default=False, help_text="Source Description is Public")
     public_images = models.BooleanField(default=False, help_text="Source Images are Public")
     notations = models.ManyToManyField("diamm_data.Notation", blank=True)
+    contributions = GenericRelation("diamm_site.Contribution")
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

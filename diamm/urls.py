@@ -14,7 +14,7 @@ Including another URLconf
     2. Import the include() function: from django.conf.urls import url, include
     3. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.views.generic import TemplateView
 from django.contrib import admin
 from django.conf import settings
@@ -24,6 +24,7 @@ from diamm.views.home import HomeView
 from diamm.views.auth import SessionAuth, SessionClose, AccountEmailSent, AccountUpdate
 from diamm.views.user import ProfileView
 from diamm.views.website.search import SearchView
+from diamm.views.contribution import MakeContribution
 from diamm.views.website.set import SetDetail
 from diamm.views.website.source import SourceList, SourceDetail, SourceManifest, SourceCanvasDetail
 from diamm.views.website.source import SourceRangeDetail, SourceItemDetail
@@ -34,6 +35,7 @@ from diamm.views.website.person import PersonDetail, legacy_composer_redirect
 from diamm.views.website.organization import OrganizationDetail
 from diamm.views.website.composition import CompositionList, CompositionDetail
 from diamm.views.website.story import StoryDetail
+from diamm.views.website.aboutpages import AboutPagesDetail
 from diamm.views.website.image import image_serve
 from diamm.views.website.bibliography_author import BibliographyAuthorDetail
 
@@ -49,9 +51,15 @@ urlpatterns = [
     url(r'^login/email-sent/$', AccountEmailSent.as_view(), name="account-email"),
     url(r'^user/(?P<pk>[0-9]+)/$', ProfileView.as_view(), name="user-profile"),
 
+
+
     # public website
     url(r'^search/$', SearchView.as_view(), name="search"),
     url(r'^news/(?P<pk>[0-9]+)/$', StoryDetail.as_view(), name="story-detail"),
+    url(r'^about/', AboutPagesDetail.as_view(), name="aboutpages-detail"),
+    url(r'^contribution/$', MakeContribution.as_view(), name="contribution"),
+
+
 
     url(r'^sources/$', SourceList.as_view(), name="source-list"),
     url(r'^sources/(?P<pk>[0-9]+)/$', SourceDetail.as_view(), name="source-detail"),
@@ -80,9 +88,10 @@ urlpatterns = [
 
     url(r'^authors/(?P<pk>[0-9]+)/$', BibliographyAuthorDetail.as_view(), name="author-detail"),
 
-    url(r'^images/(?P<pk>[0-9]+)/(?:(?P<region>.*)/(?P<size>.*)/(?P<rotation>.*)/default\.jpg)$', image_serve, name="image-serve"),
-    url(r'^images/(?P<pk>[0-9]+)/$', image_serve, name="image-serve-info")
-]
 
+    url(r'^images/(?P<pk>[0-9]+)/(?:(?P<region>.*)/(?P<size>.*)/(?P<rotation>.*)/default\.jpg)$', image_serve, name="image-serve"),
+    url(r'^images/(?P<pk>[0-9]+)/$', image_serve, name="image-serve-info"),
+
+]
 if settings.DEBUG:
     urlpatterns += static("/media/", document_root=settings.MEDIA_ROOT)

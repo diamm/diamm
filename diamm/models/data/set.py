@@ -42,3 +42,4 @@ class Set(models.Model):
     def set_type(self):
         d = dict(self.SET_TYPES)
         return d[self.type]
+
