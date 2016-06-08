@@ -58,12 +58,12 @@ window.divaPlugins.push((function ()
             return a;
         }
 
-        function getComposersItem (composers)
+        function getComposersPara (composers)
         {
-            var li, t, a;
-            li = document.createElement("li");
+            var p, t, a;
+            p = document.createElement("p");
             t = document.createTextNode("Composer: ");
-            li.appendChild(t);
+            p.appendChild(t);
             for (var i = 0, clen = composers.length; i < clen; i++)
             {
                 if (composers[i]['@id'])
@@ -72,122 +72,113 @@ window.divaPlugins.push((function ()
                     t = document.createTextNode(composers[i].name + " ");
                     a.setAttribute('href', composers[i]['@id']);
                     a.appendChild(t);
-                    li.appendChild(a);
+                    p.appendChild(a);
                 }
                 else
                 {
                     t = document.createTextNode(composers[i].name + " ");
-                    li.appendChild(t);
+                    p.appendChild(t);
                 }
 
                 if (composers[i].uncertain)
                 {
                     t = document.createTextNode("? ");
-                    li.appendChild(t);
+                    p.appendChild(t);
                 }
             }
 
-            return li;
+            return p;
         }
 
-        function getFolioItem (folio)
+        function getVoicesPara (voices)
         {
-            var li;
-            li = document.createElement("li");
-            if (folio.start.label === folio.end.label)
-            {
-                t = document.createTextNode("Folio: " + folio.start.label);
-            }
-            else
-            {
-                t = document.createTextNode("Folio: " + folio.start.label + "-" + folio.end.label);
-
-            }
-            li.appendChild(t);
-            return li;
-        }
-
-        function getVoicesItem (voices)
-        {
-            var ul, ul2, li, li2, div, t;
-            li = document.createElement("li");
+            var p, t;
+            p = document.createElement("p");
+            strong = document.createElement("strong");
             t = document.createTextNode("Voices");
-            div = document.createElement("div");
-            div.appendChild(t);
-            li.appendChild(div);
+            strong.appendChild(t);
+            p.appendChild(strong);
 
             for (i = 0, vlen = voices.length; i < vlen; i++)
             {
-                ul = document.createElement("ul");
-                t = document.createTextNode(voices[i].voice_text);
-                li2 = document.createElement("li");
-                li2.appendChild(t);
-                ul.appendChild(li2);
+                p2 = document.createElement("p");
+                p2.style.textIndent = '-1em';
+                p2.style.marginLeft = '1em';
+                t = document.createTextNode("Incipit: " + voices[i].voice_text);
+                p2.appendChild(t);
 
-                ul2 = document.createElement("ul");
-                if (voices[i].voice_type !== "no designation")
-                {
-                    t = document.createTextNode("Type: " + voices[i].voice_type);
-                    li2 = document.createElement("li");
-                    li2.appendChild(t);
-                    ul2.appendChild(li2);
-                }
+                var ul = document.createElement("ul");
+                t = document.createTextNode("Type: " + voices[i].voice_type);
+                var li = document.createElement("li");
+                li.appendChild(t);
+                ul.appendChild(li);
 
-                li2 = document.createElement("li");
                 t = document.createTextNode("Language: " + voices[i].languages[0]);
-                li2.appendChild(t);
-                ul2.appendChild(li2);
-                ul.appendChild(ul2);
+                li = document.createElement("li");
+                li.appendChild(t);
+                ul.appendChild(li);
+
+                p2.appendChild(ul);
+                p.appendChild(p2);
             }
 
-            div.appendChild(ul);
-            addVisibilityToggle(ul);
-            li.appendChild(div);
-            return li;
+            return p;
         }
 
-        function getGenresItem (genres)
+        function getGenresPara (genres)
         {
-            var li, t = '';
-            li = document.createElement("li");
+            var p, t = 'Genres: ';
+            p = document.createElement("p");
 
-            for (var i, glen = genres.length; i < glen; i++) 
+            console.log(genres.length);
+            for (var i = 0, glen = genres.length; i < glen; i++) 
             {
-                t += genre + " ";
+                t += genres[i] + ", ";
             }
 
-            t = document.createTextNode(t);
-            li.appendChild(t);
-            return li;
+            if (t.length > 'Genres: '.length)
+            { 
+                text = document.createTextNode(t.slice(0, -2));
+                p.appendChild(text);
+            } 
+            return p;
         }
 
         var displayItem = function (item)
         {
-            var itemDiv, itemDetailsDiv, h3, t, ul, li, a;
+            var itemDiv, itemDetailsDiv, h3, t, a;
             itemDiv = document.createElement("div");
 
             // composition
             a = getCompositionAnchor(item[0].composition);
             h3 = document.createElement("h3");
             h3.appendChild(a);
+            var start = item[0].folios.start.label, end = item[0].folios.end.label;
+            if ( start === item[0].folios.end.label)
+            {
+                t = document.createTextNode(" (" + start + ")");
+            }
+            else
+            {
+                t = document.createTextNode(" (" + start + "-" + end + ")");
+            }
+            h3.appendChild(t);
 
             itemDetailsDiv = document.createElement("div");
-            ul = document.createElement("ul");
 
             // composer
-            li = getComposersItem(item[0].composers);
-            ul.appendChild(li);
+            p = getComposersPara(item[0].composers);
+            itemDetailsDiv.appendChild(p);
 
-            // folio
-            li = getFolioItem (item[0].folios);
-            ul.appendChild(li);
+            // genres
+            p = getGenresPara(item[0].composition.genres);
+            itemDetailsDiv.appendChild(p);
 
             // voices
-            li = getVoicesItem(item[0].voices);
-            ul.appendChild(li);
+            p = getVoicesPara(item[0].voices);
+            itemDetailsDiv.appendChild(p);
 
             itemDiv.appendChild(h3);
-            itemDetailsDiv.appendChild(ul);
             itemDiv.appendChild(itemDetailsDiv);
             itemsDiv.appendChild(itemDiv);
         };
@@ -231,7 +222,7 @@ window.divaPlugins.push((function ()
             }
 
             var h2 = document.createElement("h2");
-            var t = document.createTextNode(filename);
+            var t = document.createTextNode("Folio " + filename);
             h2.appendChild(t);
             itemsDiv.appendChild(h2);
             var services = structures[filename];

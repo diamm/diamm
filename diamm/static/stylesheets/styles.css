@@ -2807,7 +2807,7 @@ form {
         border-bottom: none;
         background: #dd1c1a;
         color: #fdfffc; }
-    .navbar .navbar-list .column {
+    .navbar .navbar-list .about-menu-column {
       display: none;
       position: absolute;
       list-style-type: none;
@@ -2817,19 +2817,19 @@ form {
       margin-left: 0rem;
       width: 25rem;
       padding: 0rem; }
-    .navbar .navbar-list .column div {
+    .navbar .navbar-list .about-menu-column div {
       -webkit-column-count: 3;
       -moz-column-count: 3;
       column-count: 3; }
-    .navbar .navbar-list .column a {
+    .navbar .navbar-list .about-menu-column a {
       display: block;
       margin-top: 0rem;
       margin-left: 0.2rem;
       padding-left: 0rem;
       font-size: 0.7rem; }
-    .navbar .navbar-list .column ul {
+    .navbar .navbar-list .about-menu-column ul {
       margin-left: 0.2rem; }
-    .navbar .navbar-list .column li {
+    .navbar .navbar-list .about-menu-column li {
       margin-right: 0rem; }
     .navbar .navbar-list .dropdown-content-more {
       list-style-type: square;
@@ -2841,7 +2841,7 @@ form {
       font-size: 0.5rem;
       text-decoration: none;
       display: block; }
-    .navbar .navbar-list .navbar-item:hover .column {
+    .navbar .navbar-list .navbar-item:hover .about-menu-column {
       display: block; }
     .navbar .navbar-list .navbar-highlight {
       background: #dd1c1a; }
@@ -3064,6 +3064,9 @@ body {
   display: flex;
   flex-direction: column;
   -webkit-font-smoothing: antialiased; }
+
+li.image-source-list {
+  list-style-type: none; }
 
 ul.contribution-list li {
   list-style-type: none; }
