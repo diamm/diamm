@@ -123,7 +123,7 @@ class ServiceSerializer(ContextDictSerializer):
         if 'composition_i' in obj:
             composition = {
                 'title': obj['composition_s'],
-                'genres': obj['genres_ss'],
+                'genres': obj.get('genres_ss'),
                 '@id': reverse('composition-detail',
                                 kwargs={'pk': obj['composition_i']},
                                 request=self.context['request'])
