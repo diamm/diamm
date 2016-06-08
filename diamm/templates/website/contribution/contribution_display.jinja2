@@ -1,10 +1,9 @@
-{% block body %}
 
-{% if contributions %}
+{% if content.contributors %}
     <h2>Contributions</h2>
     <div class="sixteen columns">
         <ul class="contribution-list">
-            {% for contribution in contributions %}
+            {% for contribution in content.contributors %}
                 <li>{{ contribution.contributor }}: {{ contribution.summary }}. {{ contribution.updated }}</li>
             {% endfor %}
         </ul>
@@ -33,7 +32,7 @@
     {% endif %}
 </div>
 
-{% endblock %}
+
 
 {% block scripts %}
 

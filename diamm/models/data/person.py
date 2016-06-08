@@ -27,6 +27,7 @@ class Person(models.Model):
     sources_copied = GenericRelation("diamm_data.SourceCopyist")
     sources_related = GenericRelation("diamm_data.SourceRelationship")
     sources_provenance = GenericRelation("diamm_data.SourceProvenance")
+    contributions = GenericRelation("diamm_site.Contribution")
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
