@@ -121,8 +121,13 @@ class ServiceSerializer(ContextDictSerializer):
 
     def get_composition(self, obj):
         if 'composition_i' in obj:
+            connection = pysolr.Solr(settings.SOLR['SERVER'])
+            q = "pk:{0}".format(obj['composition_i'])
+            fq = ["type:composition"]
+            composition_doc = connection.search(q, fq=fq, rows=1).docs[0]
             composition = {
                 'title': obj['composition_s'],
+                'genres': composition_doc.get('genres_ss'),
                 '@id': reverse('composition-detail',
                                 kwargs={'pk': obj['composition_i']},
                                 request=self.context['request'])
