@@ -5,6 +5,14 @@ from rest_framework.reverse import reverse
 from diamm.serializers.serializers import ContextSerializer, ContextDictSerializer
 
 
+class SourceContributionSerializer(ContextSerializer):
+    contributor = serpy.StrField(
+        attr="contributor.username"
+    )
+    summary = serpy.StrField()
+    updated = serpy.StrField()
+
+
 class SourceCatalogueEntrySerializer(ContextSerializer):
     entry = serpy.MethodField()
     order = serpy.IntField()
@@ -337,7 +345,10 @@ class SourceDetailSerializer(ContextSerializer):
         required=False
     )
     date_statement = serpy.StrField()
-    type = serpy.StrField()
+    source_type = serpy.StrField(
+        attr="type"
+    )
+    type = serpy.MethodField()
     cover_image_info = serpy.MethodField(
         required=False
     )
@@ -355,6 +366,7 @@ class SourceDetailSerializer(ContextSerializer):
     relationships = serpy.MethodField()
     copyists = serpy.MethodField()
     catalogue_entries = serpy.MethodField()
+    contributors = serpy.MethodField()
 
     links = SourceURLSerializer(
         attr="links.all",
@@ -381,6 +393,9 @@ class SourceDetailSerializer(ContextSerializer):
         many=True
     )
 
+    def get_type(self, obj):
+        return obj.__class__.__name__.lower()
+
     def get_url(self, obj):
         return reverse('source-detail',
                        kwargs={"pk": obj.pk},
@@ -390,6 +405,9 @@ class SourceDetailSerializer(ContextSerializer):
         try:
             cover_obj = obj.cover
         except AttributeError:
+            return None
+
+        if not cover_obj:
             return None
 
         obj = {
@@ -459,3 +477,8 @@ class SourceDetailSerializer(ContextSerializer):
                                                   context={"request": self.context['request']},
                                                   many=True).data
         return []
+
+    def get_contributors(self, obj):
+        if obj.contributions.count() > 0:
+            return SourceContributionSerializer(obj.contributions.filter(completed=True),
+                                                context={"request": self.context['request']}, many=True).data

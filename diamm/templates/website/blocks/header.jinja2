@@ -6,9 +6,10 @@
             </li>
         </ul>
         <ul class="navbar-list pull-left">
-            <li class="navbar-item"><a href="#">About</a></li>
+                <li class="navbar-item"><a href="/about/">About</a>
+                    {% include "aboutpages_menu.jinja2" %}
+                </li>
             <li class="navbar-item"><a href="{{ url('search') }}">Search</a></li>
-            <li class="navbar-item"><a href="#">Browse</a></li>
         </ul>
         <ul class="navbar-list pull-right">
             <li class="navbar-item navbar-highlight"><a href="#">Donate</a></li>

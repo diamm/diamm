@@ -1,0 +1,10 @@
+<div>
+    <p class="upper-info"> {{ result.cluster_shelfmark_s }}</p>
+    {% if result.sources_ii %}
+    <p class="lower-info"> Source{{ result.sources_ii | length | pluralize }} it contains:
+        {% for source in result.sources_ii %}
+                <a href="{{ url('source-detail', pk=source) }}">{{ source }}</a>{{ ", " if not loop.last else "" }}
+        {% endfor %}
+    {% endif %}
+    </p>
+</div>

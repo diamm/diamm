@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'diamm',
     'diamm.diamm_data',
     'diamm.diamm_migrate',
@@ -54,7 +55,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'django_jinja',
     'pagedown',
-    'debug_toolbar'
+    'debug_toolbar',
 ]
 
 MIDDLEWARE_CLASSES = [
