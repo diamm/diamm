@@ -36,7 +36,12 @@
                 <h3>Sources Copied</h3>
                 <ul>
                     {% for source in content.copied_sources %}
-                        <li>{{ "? " if source.uncertain else "" }}<a href="{{ source.url }}">{{ source.source }}</a> ({{ source.copyist_type }})</li>
+                        <li class="image-source-list">
+                            {% if source.has_images and source.public_images %}
+                                <i class="fa fa-picture-o" aria-hidden="true"></i>
+                            {% endif %}
+                            {{ "? " if source.uncertain else "" }}<a href="{{ source.url }}">{{ source.source }}</a> ({{ source.copyist_type }})
+                        </li>
                     {% endfor %}
                 </ul>
             {% endif %}
@@ -44,7 +49,12 @@
                 <h3>Other Relationships to Sources</h3>
                 <ul>
                     {% for source in content.related_sources %}
-                        <li>{{ "? " if source.uncertain else "" }}<a href="{{ source.url }}">{{ source.source }}</a> ({{ source.relationship }})</li>
+                        <li class="image-source-list">
+                            {% if source.has_images and source.public_images %}
+                                <i class="fa fa-picture-o" aria-hidden="true"></i>
+                            {% endif %}
+                            {{ "? " if source.uncertain else "" }}<a href="{{ source.url }}">{{ source.source }}</a> ({{ source.relationship }})
+                        </li>
                     {% endfor %}
                 </ul>
             {% endif %}

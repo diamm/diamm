@@ -6,11 +6,21 @@ from diamm.serializers.serializers import ContextSerializer
 class SourceArchiveSerializer(ContextSerializer):
     url = serpy.MethodField()
     display_name = serpy.StrField()
+    has_images = serpy.MethodField()
+
+    public_images = serpy.BoolField(
+        attr="public_images"
+    )
 
     def get_url(self, obj):
         return reverse('source-detail',
                        kwargs={"pk": obj.pk},
                        request=self.context['request'])
+
+    def get_has_images(self, obj):
+        if obj.pages.count() > 0:
+            return True
+        return False
 
 
 class CityArchiveSerializer(ContextSerializer):

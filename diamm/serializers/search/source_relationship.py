@@ -6,6 +6,7 @@ from diamm.models.data.person import Person
 class SourceRelationshipSerializer(serpy.Serializer):
     pk = serpy.IntField()
     type = serpy.MethodField()
+    has_images_b = serpy.MethodField()
 
     source_i = serpy.IntField(
         attr="source.pk"
@@ -20,6 +21,9 @@ class SourceRelationshipSerializer(serpy.Serializer):
 
     uncertain_b = serpy.BoolField(
         attr="uncertain"
+    )
+    public_images_b = serpy.BoolField(
+        attr="source.public_images"
     )
 
     relationship_type_s = serpy.MethodField()
@@ -52,3 +56,8 @@ class SourceRelationshipSerializer(serpy.Serializer):
 
     def get_type(self, obj):
         return obj.__class__.__name__.lower()
+
+    def get_has_images_b(self, obj):
+        if obj.source.pages.count() > 0:
+            return True
+        return False
