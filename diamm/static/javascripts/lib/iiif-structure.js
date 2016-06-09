@@ -26,24 +26,33 @@ window.divaPlugins.push((function ()
     }
 
     var itemsDiv = document.getElementById("image-item-listing");
-    var addVisibilityToggle = function (element)
+    function addVoiceVisibilityToggle (element)
     {
+        var button = element.parentElement.firstChild; 
         element.style.display = 'none';
-        function toggleVisibility ()
+
+        var toggleVisibility = function ()
         {
             if (element.style.display === 'block')
             {
+                button.lastChild.remove();
+                i = document.createElement("i");
+                i.setAttribute("class", "fa fa-caret-down");
+                button.appendChild(i);
                 element.style.display = 'none';
             }
             else
             {
+                button.lastChild.remove();
+                i = document.createElement("i");
+                i.setAttribute("class", "fa fa-caret-up");
+                button.appendChild(i);
                 element.style.display = 'block';
             }
-        }
-
-        element.parentElement.onclick = toggleVisibility;
-        element.parentElement.style.cursor = 'pointer';
-    };
+        };
+        button.onclick = toggleVisibility;
+        button.style.cursor = 'pointer';
+    }
 
     var populateStructures = function (manifest)
     {
@@ -94,11 +103,14 @@ window.divaPlugins.push((function ()
 
         function getVoicesPara (voices)
         {
-            var p, t;
+            var p, t, i;
             p = document.createElement("p");
             strong = document.createElement("strong");
-            t = document.createTextNode("Voices");
+            t = document.createTextNode("Voices ");
             strong.appendChild(t);
+            i = document.createElement("i");
+            i.setAttribute("class", "fa fa-caret-down");
+            strong.appendChild(i);
             p.appendChild(strong);
 
             for (i = 0, vlen = voices.length; i < vlen; i++)
@@ -122,6 +134,7 @@ window.divaPlugins.push((function ()
 
                 p2.appendChild(ul);
                 p.appendChild(p2);
+                addVoiceVisibilityToggle(p2);
             }
 
             return p;
