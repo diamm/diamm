@@ -63,7 +63,9 @@ window.divaPlugins.push((function ()
             var p, t, a;
             p = document.createElement("p");
             t = document.createTextNode("Composer: ");
-            p.appendChild(t);
+            strong = document.createElement("strong");
+            strong.appendChild(t);
+            p.appendChild(strong);
             for (var i = 0, clen = composers.length; i < clen; i++)
             {
                 if (composers[i]['@id'])
@@ -127,16 +129,21 @@ window.divaPlugins.push((function ()
 
         function getGenresPara (genres)
         {
-            var p, t = 'Genres: ';
+            var p, strong, t = "Genres: ";
             p = document.createElement("p");
+            strong = document.createElement("strong");
+            t = document.createTextNode(t);
+            strong.appendChild(t);
 
+            t = "";
             for (var i = 0, glen = genres.length; i < glen; i++) 
             {
                 t += genres[i] + ", ";
             }
 
-            if (t.length > 'Genres: '.length)
+            if (t.length > 0)
             { 
+                p.appendChild(strong);
                 text = document.createTextNode(t.slice(0, -2));
                 p.appendChild(text);
             } 
