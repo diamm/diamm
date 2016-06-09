@@ -2999,8 +2999,7 @@ footer {
 #image-item-listing {
   max-height: 770px;
   overflow: scroll;
-  overflow-y: auto;
-  overflow-x: auto; }
+  overflow: auto; }
   #image-item-listing p {
     margin-bottom: 0; }
   #image-item-listing ul {
