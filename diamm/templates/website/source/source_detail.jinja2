@@ -86,6 +86,7 @@
     <script src="{{ static('javascripts/lib/diva.js/js/diva.js') }}" type="application/javascript"></script>
     <script src="{{ static('javascripts/lib/diva.js/js/utils.js') }}" type="application/javascript"></script>
     <script src="{{ static('javascripts/lib/iiif-page-data.js') }}" type="application/javascript"></script>
+    <script src="{{ static('javascripts/lib/iiif-structure.js') }}" type="application/javascript"></script>
     <script src="{{ static('javascripts/lib/tabs.js') }}" type="application/javascript"></script>
     <script type="application/javascript">
         $(document).ready(function()
@@ -99,7 +100,8 @@
                         $('#diva-wrapper').diva({
                             enableAutoTitle: false,
                             objectData: "{{ content.manifest_url }}",
-                            enableIIIFPageData: true
+                            enableIIIFPageData: true,
+                            enableIIIFStructure: true,
                         });
                     }
                 }}

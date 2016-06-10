@@ -2996,6 +2996,18 @@ footer {
 .diva-tools form {
   margin-bottom: 0; }
 
+#image-item-listing {
+  max-height: 770px;
+  overflow: scroll;
+  overflow: auto; }
+  #image-item-listing p {
+    margin-bottom: 0; }
+  #image-item-listing ul {
+    margin-left: 1em;
+    list-style-type: none; }
+  #image-item-listing li {
+    margin: 0 0; }
+
 #archive-logo {
   max-width: 400px; }
 

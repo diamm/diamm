@@ -130,6 +130,20 @@
   margin-bottom: 0;
 }
 
+#image-item-listing {
+  max-height: 770px;
+  overflow: scroll;
+  overflow: auto;
+  p {
+    margin-bottom: 0;
+  }
+  ul {
+      margin-left: 1em;
+      list-style-type: none;
+  }
+  li {
+    margin: 0 0;
+  }
 #archive-logo {
   max-width: 400px;
 }
