@@ -10,7 +10,7 @@
 
 {% block body %}
     <div class="row">
-        <div class="sixteen columns source-header">
+        <div class="twelve columns source-header">
             <h1>
                 {{ content.display_name }}
             </h1>
@@ -18,8 +18,14 @@
                 <a href="{{ content.archive.url }}">{{ content.archive.name }}</a>,
                 {{ content.archive.city }}, {{ content.archive.country }}
             </h2>
-            <img src="{{ content.archive.logo }}" id="archive-logo"/>
-            <p><em>{{ content.type }}, {{ content.date_statement }}</em></p>
+            <p>
+                <em>{{ content.type }}, {{ content.date_statement }}</em>
+            </p>
+        </div>
+        <div class="four columns">
+            <a href="{{ content.archive.url }}">
+                <img src="{{ content.archive.logo }}" id="archive-logo"/>
+            </a>
         </div>
     </div>
     <div class="row">
