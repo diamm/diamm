@@ -3008,8 +3008,12 @@ footer {
   #image-item-listing li {
     margin: 0 0; }
 
-#archive-logo {
-  max-width: 400px; }
+.archive-header-logo {
+  float: right;
+  max-width: 400px;
+  max-height: 100px; }
+  .archive-header-logo a:hover {
+    text-decoration: none; }
 
 .search-box {
   background: #dddede; }
