@@ -2850,6 +2850,9 @@ form {
         .navbar .navbar-list .navbar-highlight a:hover, .navbar .navbar-list .navbar-highlight a:focus {
           background: #011627; }
 
+nav.center-block.text-center ul li {
+  display: inline; }
+
 footer {
   border-top: 3px double #a9acab;
   background: #fdfffc;
@@ -3076,43 +3079,6 @@ body {
 
 li.image-source-list {
   list-style-type: none; }
-
-ul.contribution-list li {
-  list-style-type: none; }
-
-#submit-contribution {
-  position: absolute;
-  width: 25rem;
-  text-decoration: none;
-  padding-bottom: 1rem;
-  font-size: 0.8rem;
-  font-family: "PT Sans", sans-serif;
-  display: block; }
-
-#contribution-form {
-  display: none;
-  margin: 0; }
-  #contribution-form input {
-    border-radius: 0;
-    height: 11rem;
-    width: 25rem; }
-  #contribution-form textarea {
-    padding: 0 10px;
-    margin-bottom: 0;
-    height: 11rem;
-    width: 25rem;
-    background: none;
-    display: block;
-    font-family: "PT Serif", serif;
-    font-size: 0.9rem; }
-
-div.search-result {
-  padding-left: 1.5em;
-  padding-bottom: 0.5em;
-  border-bottom: 1px solid #dddede; }
-
-nav.center-block.text-center ul li {
-  display: inline; }
 
 a {
   color: #1395db;
