@@ -1,4 +1,8 @@
-$position-adjust: 1em;
+$position-adjust: -1rem;
+
+.front-content {
+  margin-top: $position-adjust;
+}
 
 .front-hero {
   position: relative;

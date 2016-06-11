@@ -2880,6 +2880,9 @@ footer {
       padding: 0;
       padding-right: 0.5em; }
 
+.front-content {
+  margin-top: -1rem; }
+
 .front-hero {
   position: relative; }
   .front-hero img {
@@ -2904,6 +2907,35 @@ footer {
       color: #fdfffc; }
     .front-hero .search .search-box {
       background: none; }
+
+#submit-contribution {
+  position: absolute;
+  width: 25rem;
+  text-decoration: none;
+  padding-bottom: 1rem;
+  font-size: 0.8rem;
+  font-family: "PT Sans", sans-serif;
+  display: block; }
+
+#contribution-form {
+  display: none;
+  margin: 0; }
+  #contribution-form input {
+    border-radius: 0;
+    height: 11rem;
+    width: 25rem; }
+  #contribution-form textarea {
+    padding: 0 10px;
+    margin-bottom: 0;
+    height: 11rem;
+    width: 25rem;
+    background: none;
+    display: block;
+    font-family: "PT Serif", serif;
+    font-size: 0.9rem; }
+
+ul.contribution-list li {
+  list-style-type: none; }
 
 .source-header {
   margin-bottom: 1em; }
@@ -3033,6 +3065,7 @@ footer {
   font-family: "PT Sans", sans-serif;
   font-size: 90%;
   padding: 0.5rem;
+  margin-top: -1rem;
   border-bottom: 1px solid #dddede; }
   .type-filter span {
     font-weight: 500;
@@ -3076,6 +3109,9 @@ body {
   display: flex;
   flex-direction: column;
   -webkit-font-smoothing: antialiased; }
+
+.full-width {
+  margin-bottom: 1rem; }
 
 li.image-source-list {
   list-style-type: none; }

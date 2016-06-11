@@ -9,6 +9,7 @@
 @import "tabs";
 @import "edit";
 @import "front";
+@import "contribution";
 @import "source";
 @import "search";
 @import "debug";
@@ -31,6 +32,10 @@ body {
   display: flex;
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
+}
+
+.full-width {
+  margin-bottom: 1rem;
 }
 
 li.image-source-list {
