@@ -79,12 +79,10 @@
             {% include "website/source/source_bibliography_block.jinja2" %}
             {% endif %}
         </div>
-        <div class="row">
-            <div class="sixteen columns">
-                {% include 'website/contribution/contribution_display.jinja2' %}
-            </div>
-        </div>
     </div>
+
+    {% include 'website/blocks/contribution.jinja2' %}
+
 {% endblock %}
 
 {% block scripts %}
