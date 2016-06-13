@@ -56,7 +56,6 @@ urlpatterns = [
     # public website
     url(r'^search/$', SearchView.as_view(), name="search"),
     url(r'^news/(?P<pk>[0-9]+)/$', StoryDetail.as_view(), name="story-detail"),
-    url(r'^about/', AboutPagesDetail.as_view(), name="aboutpages-detail"),
     url(r'^contribution/$', MakeContribution.as_view(), name="contribution"),
 
 
@@ -92,6 +91,7 @@ urlpatterns = [
     url(r'^images/(?P<pk>[0-9]+)/(?:(?P<region>.*)/(?P<size>.*)/(?P<rotation>.*)/default\.jpg)$', image_serve, name="image-serve"),
     url(r'^images/(?P<pk>[0-9]+)/$', image_serve, name="image-serve-info"),
 
+    url(r'^(?P<url>.*)/$', AboutPagesDetail.as_view(), name="aboutpages-detail"),
 ]
 if settings.DEBUG:
     urlpatterns += static("/media/", document_root=settings.MEDIA_ROOT)
