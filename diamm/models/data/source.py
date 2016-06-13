@@ -97,7 +97,6 @@ class Source(models.Model):
         """
             If a cover image is set, returns the ID for that; else it chooses a random page with an image attached.
         """
-        print('cover called.')
         cover_obj = {}
         if self.cover_image:
             cover_obj['id'] = self.cover_image.id

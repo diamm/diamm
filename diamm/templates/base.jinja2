@@ -13,10 +13,12 @@
 <body>
     {% include "website/blocks/header.jinja2" %}
 
-    {% block fullwidth %}
-    {% endblock %}
+    <div class="full-width">
+        {% block fullwidth %}
+        {% endblock %}
+    </div>
 
-    <div class="container">
+    <div class="container site-content">
         {% block body %}
         {% endblock %}
     </div>

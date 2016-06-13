@@ -9,6 +9,11 @@ class Organization(models.Model):
         app_label = "diamm_data"
         ordering = ('name',)
 
+    ARCHIVE_HELP_TEXT = """
+        If an organization has an equivalent entry in the Organizations table,
+        enter it here and the two will be linked.
+    """
+
     name = models.CharField(max_length=1024, default="s.n.")
     variant_names = models.CharField(max_length=1024, blank=True, null=True)
     type = models.ForeignKey("diamm_data.OrganizationType", default=1)
@@ -17,6 +22,7 @@ class Organization(models.Model):
     note = models.TextField(blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    archive = models.ForeignKey("diamm_data.Archive", blank=True, null=True, help_text=ARCHIVE_HELP_TEXT)
 
     sources_copied = GenericRelation("diamm_data.SourceCopyist")
     sources_related = GenericRelation("diamm_data.SourceRelationship")

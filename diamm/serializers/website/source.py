@@ -285,11 +285,16 @@ class SourceArchiveSerializer(ContextSerializer):
         attr='city.parent.name',
         required=False
     )
+    logo = serpy.MethodField()
 
     def get_url(self, obj):
         return reverse('archive-detail',
                        kwargs={"pk": obj.pk},
                        request=self.context['request'])
+
+    def get_logo(self, obj):
+        if obj.logo:
+            return obj.logo.url
 
 
 class SourceNoteSerializer(ContextSerializer):

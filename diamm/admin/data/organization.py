@@ -6,7 +6,7 @@ from reversion.admin import VersionAdmin
 
 @admin.register(Organization)
 class OrganizationAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
-    list_display = ('name', 'location', 'type')
+    list_display = ('name', 'location', 'type', 'legacy_id')
     list_filter = ('type',)
     search_fields = ('name',)
 

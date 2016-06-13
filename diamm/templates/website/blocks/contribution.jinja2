@@ -1,0 +1,48 @@
+
+{% if content.contributors %}
+    <h2>Contributions</h2>
+    <div class="sixteen columns">
+        <ul class="contribution-list">
+            {% for contribution in content.contributors %}
+                <li>{{ contribution.contributor }}: {{ contribution.summary }}. {{ contribution.updated }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+{% if user.is_authenticated() %}
+<div class="row">
+    <div class="sixteen columns">
+        <button id="show-contribution-form">Make a Contribution</button>
+        <div id="contribution-form">
+            <form action="{{ url("contribution") }}" method="POST">{% csrf_token %}
+                <h3>Contribution Form</h3>
+                <input id="pk" name="pk" value="{{ content.pk }}" type="hidden" readonly>
+                <input id="from" name="from" value="{{ request.path|urlencode }}" type="hidden" readonly>
+                <input id="type" name="type" value="{{ content.type }}" type="hidden" readonly>
+                <textarea id="note" name="note" placeholder="Enter your contribution eg. spelling correction, add information, correct/update information"></textarea>
+                <button id="submit-contribution" type="submit">Submit</button>
+            </form>
+        </div>
+
+        <div id="messages">
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        {% if message.tags %}{% endif %}{{ message }}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <script type="application/javascript">
+            document.getElementById('show-contribution-form').addEventListener('click', function ()
+            {
+                document.getElementById('contribution-form').style.display = "block";
+                document.getElementById('messages').style.display = "none";
+                document.getElementById('show-contribution-form').style.display = "none";
+            });
+        </script>
+    </div>
+</div>
+{% endif %}
