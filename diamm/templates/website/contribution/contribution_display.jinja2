@@ -4,22 +4,18 @@
     <div class="sixteen columns">
         <ul class="contribution-list">
             {% for contribution in content.contributors %}
-                <li>{{ contribution.contributor }}: {{ contribution.summary }}. {{ contribution.updated }}</li>
+                <li>{{ contribution.contributor }}: {{ contribution.summary }}. {{ contribution.updated | truncate(10, end='')}}</li>
             {% endfor %}
         </ul>
     </div>
 {% endif %}
 
-<button id="show-contribution-form">Make a Contribution</button>
+{% if user.is_authenticated() %}
+    <button id="show-contribution-form">Make a Contribution</button>
+{% endif %}
 
 <div id="contribution-form">
-    {% if user.is_authenticated() %}
-        {% include 'website/contribution/make_contribution.jinja2' %}
-    {% else %}
-        <p>Please log in to submit a contribution</p>
-    {% endif %}
-
-
+    {% include 'website/contribution/make_contribution.jinja2' %}
 </div>
 
 <div id="messages">
