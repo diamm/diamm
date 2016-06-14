@@ -1,17 +1,14 @@
+from collections import defaultdict
 from django_jinja import library
 from diamm.models.site.aboutpages import AboutPages
 
 
 @library.global_function
 def aboutpages_list():
-    pages = []
-    sublist = []
-    for page in AboutPages.objects.all().exclude(title="About"):
-        if page.about_section.__str__() == "About":
-            pages.append(page)
-        else:
-            sublist.append(page)
+    pages = AboutPages.objects.exclude(title="About").values_list('title', 'url', 'about_section__title').order_by('about_section__title', 'id').values()
+    p = defaultdict(list)
 
-    return pages, sublist
+    for d in pages:
+        p[(d['about_section_id'])].append(d)
 
-
+    return p

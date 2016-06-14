@@ -1,23 +1,29 @@
 from rest_framework import renderers
-from rest_framework import views
+from rest_framework import generics
+from django.shortcuts import get_object_or_404
 from diamm.models.site.aboutpages import AboutPages
 from diamm.renderers.html_renderer import HTMLRenderer
-from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
-from rest_framework import status
+
+from diamm.serializers.website.aboutpages import AboutPagesSerializer
 
 
-class AboutPagesDetail(views.APIView):
-    template_name = "aboutpages_detail.jinja2"
+class AboutPagesDetail(generics.RetrieveAPIView):
+    template_name = "website/aboutpages/aboutpages_detail.jinja2"
     renderer_classes = (HTMLRenderer, renderers.JSONRenderer)
+    serializer_class = AboutPagesSerializer
+    lookup_field = 'url'
+    lookup_url_kwarg = 'url'
 
-    def get(self, request, *args, **kwargs):
-        current_url = request.path
-        aboutpages = get_object_or_404(AboutPages, url=current_url)
-        if aboutpages:
-            return Response({
-                'aboutpages': aboutpages
-            })
-        return Response({}, status=status.HTTP_404_NOT_FOUND)
+    def get_queryset(self):
+        queryset = AboutPages.objects.filter(url=self.request.path)
+        return queryset
+
+    def get_object(self):
+        queryset = self.get_queryset()
+        filter = {}
+        filter_kwargs = {self.lookup_field: self.kwargs[self.lookup_url_kwarg]}
+        obj = get_object_or_404(queryset, **filter)
+        return obj
+
 
 

@@ -15,6 +15,11 @@
     <div class="sixteen columns">
         <button id="show-contribution-form">Make a Contribution</button>
         <div id="contribution-form">
+            <p>
+                Contributions will alert DIAMM staff to missing or incorrect information for a record in our database.
+                Any contributions you provide will be reviewed by DIAMM staff and, if accepted, your name and a summary
+                of your contribution will be listed on this record.
+            </p>
             <form action="{{ url("contribution") }}" method="POST">{% csrf_token %}
                 <h3>Contribution Form</h3>
                 <input id="pk" name="pk" value="{{ content.pk }}" type="hidden" readonly>
