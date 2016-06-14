@@ -8,3 +8,4 @@ class StatsSerializer(ContextDictSerializer):
     archive = serpy.IntField()
     composition = serpy.IntField()
     person = serpy.IntField()
+    composer = serpy.IntField()
