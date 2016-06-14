@@ -1,0 +1,11 @@
+{% extends "base.jinja2" %}
+
+{% block body %}
+<div class="row">
+    {% for key, value in content.items() %} 
+        <div class="three columns" style="text-align:center">
+            <h2>{{ key|title|replace("_", " ") }} </h2> {{ value|intcomma }}
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
