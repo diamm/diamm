@@ -110,7 +110,12 @@ class Command(BaseCommand):
         migrate_sets.migrate()
         migrate_composition_cycle.migrate()
 
-        # call_command('testing_image_locations')
+        print('creating image locations')
+        call_command('testing_image_locations')
 
-        # print('reindexing')
-        # call_command('reindex_all')
+        print('loading pickled info')
+        call_command('load_pickled_info')
+
+        print('emptying & reindexing')
+        call_command('empty_solr')
+        call_command('reindex_all')
