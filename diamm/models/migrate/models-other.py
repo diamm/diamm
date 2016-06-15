@@ -81,6 +81,7 @@ class Archive(models.Model):
     banner_url = models.TextField(db_column='banner_URL', blank=True, null=True)  # Field name made lowercase.
     library_type = models.TextField(blank=True, null=True)
     specialcase = models.TextField(blank=True, null=True)
+    formername = models.TextField(db_column='formerName', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -252,7 +253,6 @@ class CompositioncomposerIs(models.Model):
 class Compositioncycle(models.Model):
     compositioncyclekey = models.IntegerField(db_column='compositionCycleKey', primary_key=True)  # Field name made lowercase.
     title = models.TextField(blank=True, null=True)
-    title_model_compositionkey = models.DecimalField(db_column='title_model_compositionKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
     composerkey = models.DecimalField(db_column='composerKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
     composer = models.TextField(blank=True, null=True)
     alcycletypekey = models.DecimalField(db_column='alCycleTypeKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
@@ -518,6 +518,7 @@ class Source(models.Model):
     description_author = models.TextField(blank=True, null=True)
     external_urls = models.TextField(db_column='external_URLs', blank=True, null=True)  # Field name made lowercase.
     copyrightstatement = models.TextField(blank=True, null=True)
+    leafnumberingdescription = models.TextField(db_column='leafNumberingDescription', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
