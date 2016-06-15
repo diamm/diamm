@@ -90,3 +90,4 @@ class PageSearchSerializer(serpy.Serializer):
 
     def get_type(self, obj):
         return obj.__class__.__name__.lower()
+
