@@ -145,8 +145,12 @@ def migrate_organizations(entry):
         affiliation = LegacyAffiliation.objects.get(pk=entry.alaffiliationkey)
         affiliation_name = affiliation.affiliation
 
+    orgname = None
+    if entry.surname:
+        orgname = entry.surname.strip()
+
     d = {
-        'name': entry.surname,
+        'name': orgname,
         'note': affiliation_name,
         'variant_names': entry.aliases,
         'type': otype,
