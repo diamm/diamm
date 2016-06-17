@@ -131,7 +131,7 @@ class ItemSearchSerializer(serpy.Serializer):
             by composer. Esp. useful in non-attributed records.
         """
         if obj.composition:
-            if not obj.composition.anonymous:
+            if not obj.composition.anonymous and obj.composition.composers.count() > 0:
                 return "{0}".format(obj.composition.composers.first().composer.full_name)
             else:
                 return "Anonymous"

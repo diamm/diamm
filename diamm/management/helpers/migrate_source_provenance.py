@@ -62,7 +62,7 @@ def migrate_source_provenance(entry):
 
     organization = None
     if entry.institution:
-        orgname = entry.institution.strip("?")
+        orgname = entry.institution.strip("? ")
         try:
             organization = Organization.objects.get(name=orgname)
         except Organization.DoesNotExist:

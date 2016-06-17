@@ -35,6 +35,7 @@ def migrate_archive_to_archive(entry):
     d = {
         'id': entry.archivekey,
         'name': entry.archivenameoriginal,
+        'former_name': entry.formername,
         'siglum': entry.siglum,
         'librarian': entry.librariana,
         'secondary_contact': entry.librarianb,

@@ -53,14 +53,10 @@ urlpatterns = [
     url(r'^login/email-sent/$', AccountEmailSent.as_view(), name="account-email"),
     url(r'^user/(?P<pk>[0-9]+)/$', ProfileView.as_view(), name="user-profile"),
 
-
-
     # public website
     url(r'^search/$', SearchView.as_view(), name="search"),
     url(r'^news/(?P<pk>[0-9]+)/$', StoryDetail.as_view(), name="story-detail"),
     url(r'^contribution/$', MakeContribution.as_view(), name="contribution"),
-
-
 
     url(r'^sources/$', SourceList.as_view(), name="source-list"),
     url(r'^sources/(?P<pk>[0-9]+)/$', SourceDetail.as_view(), name="source-detail"),
@@ -88,7 +84,6 @@ urlpatterns = [
     url(r'^set/(?P<pk>[0-9]+)/$', SetDetail.as_view(), name="set-detail"),
 
     url(r'^authors/(?P<pk>[0-9]+)/$', BibliographyAuthorDetail.as_view(), name="author-detail"),
-
 
     url(r'^images/(?P<pk>[0-9]+)/(?:(?P<region>.*)/(?P<size>.*)/(?P<rotation>.*)/default\.jpg)$', image_serve, name="image-serve"),
     url(r'^images/(?P<pk>[0-9]+)/$', image_serve, name="image-serve-info"),

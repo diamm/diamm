@@ -72,6 +72,7 @@ class LegacyArchive(models.Model):
     banner_url = models.TextField(db_column='banner_URL', blank=True, null=True)  # Field name made lowercase.
     library_type = models.TextField(blank=True, null=True)
     specialcase = models.TextField(blank=True, null=True)
+    formername = models.TextField(db_column='formerName', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False

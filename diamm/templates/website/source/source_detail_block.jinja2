@@ -47,7 +47,7 @@
             {% if not content.inventory_provided %}
                 <tr>
                     <th>Inventory</th>
-                    <td>Since this source is post-1550, a complete inventory has not been supplied.</td>
+                    <td>This MS has not yet been inventoried by DIAMM. If you would like to submit an inventory, please send it to <a href="mailto:diamm@music.ox.ac.uk">diamm@music.ox.ac.uk</a></td>
                 </tr>
             {% endif %}
             {% if content.copyists %}
@@ -139,7 +139,7 @@
     </div>
     <div class="five columns">
         {% if content.cover_image_info %}
-            <img src="{{ content.cover_image_info.url }}/full/350,/0/default.jpg" class="u-full-width"/>
+            <img src="{{ content.cover_image_info.url }}full/350,/0/default.jpg" class="u-full-width"/>
             <p>Folio {{ content.cover_image_info.label }}</p>
         {% endif %}
         {#

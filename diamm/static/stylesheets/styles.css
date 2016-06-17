@@ -2808,34 +2808,40 @@ form {
         background: #dd1c1a;
         color: #fdfffc; }
     .navbar .navbar-list .dropdown-content {
-      display: none;
+      display: block;
       position: absolute;
       list-style-type: none;
       background-color: #fdfffc;
       float: left;
       margin-top: 0;
       margin-left: 0;
-      width: 18rem;
+      width: 20rem;
       padding: 0; }
     .navbar .navbar-list .dropdown-content div {
-      position: relative;
-      -webkit-column-count: 2;
-      -moz-column-count: 2;
-      column-count: 2; }
+      -webkit-column-count: 3;
+      -moz-column-count: 3;
+      column-count: 3; }
     .navbar .navbar-list .dropdown-content a {
       display: block;
       margin-top: 0;
       margin-left: 0.2rem;
       padding-left: 0;
-      font-size: 0.7rem;
-      padding-bottom: 0.5rem; }
-    .navbar .navbar-list .sub-pages {
-      list-style-type: square;
+      font-size: 0.7rem; }
+    .navbar .navbar-list .dropdown-content ul {
+      margin-left: 0.2rem; }
+    .navbar .navbar-list .dropdown-content li {
       margin-right: 0; }
-    .navbar .navbar-list .section-title {
-      list-style-type: none; }
-      .navbar .navbar-list .section-title a {
-        font-size: 0.9rem; }
+    .navbar .navbar-list .dropdown-content-more {
+      list-style-type: square;
+      margin-top: 0;
+      margin-left: 0.2rem;
+      margin-bottom: 0; }
+    .navbar .navbar-list .dropdown-content-more a {
+      color: black;
+      padding: 0.2rem 0.3rem;
+      font-size: 0.5rem;
+      text-decoration: none;
+      display: block; }
     .navbar .navbar-list .navbar-item:hover .dropdown-content {
       display: block; }
     .navbar .navbar-list .navbar-highlight {
@@ -3155,50 +3161,3 @@ small, .font_small {
 
 .pull-left {
   float: left !important; }
-
-form.create-form {
-  display: none; }
-
-form.login, form.create-form {
-  float: left;
-  position: relative;
-  margin-top: 2rem;
-  margin-left: 2rem;
-  width: 22rem;
-  height: auto;
-  vertical-align: baseline;
-  line-height: 24px;
-  font-weight: bold;
-  text-decoration: none;
-  border-radius: 5px;
-  -webkit-box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.2);
-  -moz-box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.2);
-  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.2); }
-  form.login h1, form.create-form h1 {
-    position: relative;
-    color: #011627;
-    margin-top: 0.8rem;
-    margin-left: 0.8rem;
-    font-weight: 400;
-    padding-bottom: 1rem; }
-  form.login input, form.create-form input {
-    width: 20rem;
-    display: block;
-    border: none;
-    margin-bottom: 2.2rem;
-    border-bottom: 1px solid #a9acab;
-    height: 2rem;
-    background-color: transparent;
-    -webkit-appearance: none; }
-    form.login input:focus, form.create-form input:focus {
-      color: #011627;
-      border-color: transparent;
-      border-bottom: 1px solid #a9acab; }
-  form.login #password, form.create-form #password {
-    display: none; }
-  form.login input:-webkit-autofill, form.login textarea:-webkit-autofill, form.login select:-webkit-autofill, form.create-form input:-webkit-autofill, form.create-form textarea:-webkit-autofill, form.create-form select:-webkit-autofill {
-    background-color: #fdfffc !important; }
-  form.login button, form.create-form button {
-    margin-bottom: 0.4rem; }
-  form.login a, form.create-form a {
-    font-size: 0.8rem; }

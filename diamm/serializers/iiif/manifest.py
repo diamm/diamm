@@ -120,8 +120,9 @@ class SourceManifestSerializer(ContextDictSerializer):
 
         # image_type_i:1 in the field list transformer childFilter ensures that
         # only the primary images (type 1) are returned.
+        # images_ss:[* TO *] ensures that only records with images attached are returned.
         canvas_query = {
-            "fq": ["type:page", "source_i:{0}".format(obj['pk'])],
+            "fq": ["type:page", "source_i:{0}".format(obj['pk']), "images_ss:[* TO *]"],
             "fl": ["id", "pk", "source_i", "numeration_s", "items_ii",
                    "[child parentFilter=type:page childFilter=image_type_i:1 childFilter=type:image]"],
             "sort": "sort_order_i asc, numeration_ans asc",
