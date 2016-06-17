@@ -7,7 +7,12 @@
 
     {{ result.archive_s }}, {{ result.archive_city_s }}
 
-    Inventory contains {{ result.number_of_composers_i }} composers with {{ result.number_of_compositions_i }} compositions.
+    {% if result.number_of_composers_i > 0 %}
+        Inventory contains {{ result.number_of_composers_i }} composers
+        {% if result.number_of_compositions_i > 0 %}
+            with {{ result.number_of_compositions_i }} compositions.
+        {% endif %}
+    {% endif %}
 
     {% if result.identifiers_ss %}
         Other identifiers:
