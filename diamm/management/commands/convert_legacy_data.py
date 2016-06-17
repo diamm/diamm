@@ -25,7 +25,6 @@ from diamm.management.helpers import migrate_text_and_voice
 from diamm.management.helpers import migrate_voice_type
 from diamm.management.helpers import migrate_notation
 from diamm.management.helpers import migrate_composition_cycle
-
 from diamm.models.data.page_condition import PageCondition
 from diamm.models.data.image_type import ImageType
 from diamm.models.data.organization_type import OrganizationType
@@ -41,6 +40,8 @@ from diamm.models.data.set import Set
 from diamm.models.data.source_copyist import SourceCopyist
 from diamm.models.data.source_provenance import SourceProvenance
 from diamm.models.data.source_relationship import SourceRelationship
+from diamm.models.data.page import Page
+from diamm.models.data.image import Image
 from diamm.signals.source_signals import index_source, delete_source
 from diamm.signals.person_signals import index_person, delete_person
 from diamm.signals.archive_signals import index_archive, delete_archive
@@ -50,6 +51,7 @@ from diamm.signals.bibliography_signals import index_bibliography, delete_biblio
 from diamm.signals.source_copyist_signals import index_source_copyist, delete_source_copyist
 from diamm.signals.source_provenance_signals import index_source_provenance, delete_source_provenance
 from diamm.signals.source_relationship_signals import index_source_relationship, delete_source_relationship
+from diamm.signals.page_signals import index_image, index_page
 from diamm.signals.set_signals import index_set, delete_set
 
 
@@ -64,6 +66,8 @@ class Command(BaseCommand):
         signals.post_save.disconnect(index_source_copyist, sender=SourceCopyist)
         signals.post_save.disconnect(index_source_provenance, sender=SourceProvenance)
         signals.post_save.disconnect(index_source_relationship, sender=SourceRelationship)
+        signals.post_save.disconnect(index_page, sender=Page)
+        signals.post_save.disconnect(index_image, sender=Image)
         signals.post_save.disconnect(index_set, sender=Set)
         signals.post_delete.disconnect(delete_source, sender=Source)
         signals.post_delete.disconnect(delete_person, sender=Person)
