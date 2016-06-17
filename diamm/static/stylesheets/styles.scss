@@ -90,3 +90,66 @@ small, .font_small {font-size: 0.889em;}
 .pull-left {
   float: left !important;
 }
+
+form.create-form {
+  display: none;
+}
+
+form.login, form.create-form {
+  float: left;
+  position: relative;
+  margin-top: 2rem;
+  margin-left: 2rem;
+  width: 22rem;
+  height: auto;
+  vertical-align: baseline;
+  line-height: 24px;
+  font-weight: bold;
+
+  text-decoration: none;
+
+
+  border-radius: 5px;
+  -webkit-box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.2);
+  h1 {
+    position: relative;
+    color: $diamm-black;
+    margin-top: 0.8rem;
+    margin-left: 0.8rem;
+    font-weight: 400;
+    padding-bottom: 1rem;
+  }
+  input {
+    width: 20rem;
+    display: block;
+    border: none;
+    margin-bottom: 2.2rem;
+    border-bottom: 1px solid $diamm-med-grey;
+    height: 2rem;
+    background-color: transparent;
+    -webkit-appearance: none;
+
+    &:focus {
+      color: $diamm-black;
+      border-color: transparent;
+      border-bottom: 1px solid $diamm-med-grey;
+    }
+  }
+
+  #password {
+    display: none;
+  }
+
+  input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
+    background-color: $diamm-white !important;
+  }
+  button {
+    margin-bottom: 0.4rem;
+  }
+  a {
+    font-size: 0.8rem;
+  }
+}
+

@@ -228,5 +228,8 @@ IIIF = {
     "THUMBNAIL_WIDTH": "250,"   # The constrained width of thumbnail images
 }
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
 if DEBUG:
     SILENCED_SYSTEM_CHECKS = []

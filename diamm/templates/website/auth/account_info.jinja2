@@ -1,0 +1,31 @@
+{% extends "base.jinja2" %}
+
+{% block body %}
+    <h1>Your Account.</h1>
+    <table>
+    {% if user.full_name %}
+        <tr>
+            <td>Name:</td>
+            <td>{{ user.full_name }}</td>
+        </tr>
+    {% endif %}
+        <tr>
+            <td>Username:</td>
+            <td>{{ user.username }}</td>
+        </tr>
+        {% if user.email %}
+        <tr>
+            <td>Email:</td>
+            <td>{{ user.email }}</td>
+        </tr>
+        {% endif %}
+
+        <tr>
+            <td>Comments:</td>
+                <td></td>
+        </tr>
+    </table>
+    <form action="{{ url('logout') }}" method="post" id="logout_form"> {% csrf_token %}
+        <input type="submit" value="Logout" />
+    </form>
+{% endblock %}

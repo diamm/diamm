@@ -61,74 +61,68 @@
     }
 
     .dropdown-content {
-      display: block;
+      display: none;
       position: absolute;
       list-style-type: none;
       background-color: $diamm-white;
       float: left;
       margin-top: 0;
       margin-left: 0;
-      width: 20rem;
+      width: 18rem;
       padding: 0;
-
     }
 
     .dropdown-content div {
-      -webkit-column-count: 3;
-      -moz-column-count: 3;
-      column-count: 3;
+      position: relative;
+      -webkit-column-count: 2;
+      -moz-column-count: 2;
+      column-count: 2;
     }
+
     .dropdown-content a {
       display: block;
       margin-top: 0;
       margin-left: 0.2rem;
       padding-left: 0;
       font-size: 0.7rem;
-    }
-    .dropdown-content ul {
-      margin-left: 0.2rem;
+      padding-bottom: 0.5rem;
     }
 
-    .dropdown-content li {
+    .sub-pages {
+      list-style-type: square;
       margin-right: 0;
     }
 
-    .dropdown-content-more {
-      list-style-type: square;
-      margin-top: 0;
-      margin-left: 0.2rem;
-      margin-bottom: 0;
-    }
+      .section-title {
+        list-style-type: none;
+        a {
+          font-size: 0.9rem;
+        }
+      }
 
-    .dropdown-content-more a {
-      color: black;
-      padding: 0.2rem 0.3rem;
-      font-size: 0.5rem;
-      text-decoration: none;
-      display: block;
-    }
+      .navbar-item:hover .dropdown-content {
+        display: block;
+      }
 
-    .navbar-item:hover .dropdown-content {
-      display: block;
-    }
-
-    .navbar-highlight {
-      background: $diamm-red;
-      a {
-        color: #fff;
-        &:hover, &:focus {
-          background: $diamm-black;
+      .navbar-highlight {
+        background: $diamm-red;
+        a {
+          color: #fff;
+          &:hover, &:focus {
+            background: $diamm-black;
+          }
         }
       }
     }
   }
-}
 
-nav.center-block.text-center{
-  ul{
-    li{
-      display: inline;
+  nav.center-block.text-center {
+    ul {
+      li {
+        display: inline;
+      }
     }
   }
-}
+
+
 

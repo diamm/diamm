@@ -15,7 +15,16 @@
             <li class="navbar-item navbar-highlight"><a href="#">Donate</a></li>
 
             {% if user.is_authenticated() %}
-                <li class="navbar-item"><a href="#">Your account</a></li>
+                <li class="navbar-item"><a href="{{ url('account-info') }}">Your account</a>
+                    <ul class="dropdown-content">
+                        <li><a href="{{ url('account-update') }}">Update Account</a></li>
+                        <li>
+                            <form action="{{ url('logout') }}" method="post" id="logout_form"> {% csrf_token %}
+                                <input type="submit" value="Logout" />
+                            </form>
+                        </li>
+                    </ul>
+                </li>
             {% else %}
                 <li class="navbar-item"><a href="{{ url('login') }}">Login</a></li>
             {% endif %}
