@@ -56,10 +56,6 @@ def migrate_composition(entry):
 
 
 def attach_composers_to_composition(entry):
-    # Skip the special compositions.
-    if entry.compositionkey in (0, 69332, 888888, 999999, 54681, 69558, 79920):
-        return None
-
     print(term.green("\tAttaching composer {0} to composition {1} with PK {2}".format(entry.composerkey, entry.compositionkey, entry.pk)))
     composition_pk = entry.compositionkey
     composition = Composition.objects.get(pk=composition_pk)
