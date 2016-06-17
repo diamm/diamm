@@ -77,6 +77,8 @@ def update_table():
 
 def migrate():
     print(term.blue("Creating and attaching people to roles"))
+    empty_roles()
+
     for entry in LegacyAffiliation.objects.all():
         migrate_role(entry)
 
