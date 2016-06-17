@@ -104,8 +104,8 @@ class Source(models.Model):
             return cover_obj
         else:
             p = self.pages.order_by("?").only('numeration').first()
-            i = p.images.filter(type=1).only('id').first()
-            if i:
+            i = p.images.filter(type=1).only('id', 'public').first()
+            if i and i.public:
                 cover_obj['id'] = i.id
                 cover_obj['label'] = p.numeration
                 return cover_obj
