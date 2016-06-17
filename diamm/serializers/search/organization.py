@@ -7,7 +7,8 @@ class OrganizationSearchSerializer(serpy.Serializer):
     pk = serpy.IntField()
 
     location_s = serpy.StrField(
-        attr="location.name"
+        attr="location.name",
+        required=False
     )
     name_s = serpy.StrField(
         attr="name",
