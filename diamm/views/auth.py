@@ -38,7 +38,7 @@ class SessionAuth(views.APIView):
         u = User.objects.filter(username=username)
 
         #check if user is in database
-        if not u.exists():
+        if u.exists():
             if u[0].last_login is None:
                 send_mail(
                     'DIAMM Account Password Change',
