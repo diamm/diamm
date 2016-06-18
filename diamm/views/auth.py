@@ -48,7 +48,8 @@ class SessionAuth(views.APIView):
                     fail_silently=False,
                 )
                 return Response({'old_user': True})
-        #if current user, send response to display the password field
+
+            # if current user, send response to display the password field
             if not password:
                 return Response({'old_user': False, 'password': False})
 
@@ -56,7 +57,7 @@ class SessionAuth(views.APIView):
         if user is not None:
             if user.is_active:
                 login(request, user)
-                #if isinstance(request.accepted_renderer, HTMLRenderer):
+                # if isinstance(request.accepted_renderer, HTMLRenderer):
                 return Response({'password': True, 'old_user': False, 'redirect': reverse('user-profile', kwargs={'pk': user.pk})})
             else:
                 # user exists but is not active; forbid them access.
@@ -105,17 +106,18 @@ class CreateAccount(views.APIView):
         email = request.data.get('email', None)
         first_name = request.data.get('first_name', None)
         last_name = request.data.get('last_name', None)
+
         try:
             validate_email(email)
         except forms.ValidationError:
             return Response("Invalid email", status=status.HTTP_401_UNAUTHORIZED)
+
         try:
             password_validation.validate_password(password)
         except forms.ValidationError:
             return Response("Invalid password", status=status.HTTP_401_UNAUTHORIZED)
 
         if username and password and email:
-
             if password != conf_password:
                 return Response("Passwords do not match", status=status.HTTP_401_UNAUTHORIZED)
 
