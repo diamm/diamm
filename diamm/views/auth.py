@@ -87,7 +87,7 @@ class AccountUpdate(views.APIView):
 
 
 class AccountEmailSent(views.APIView):
-    template_name = "website/auth/email_sent.html"
+    template_name = "website/auth/email_sent.jinja2"
     renderer_classes = (HTMLRenderer, renderers.JSONRenderer)
 
     def get(self, request, *args, **kwargs):
