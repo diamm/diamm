@@ -29,42 +29,41 @@ class SessionAuth(views.APIView):
     renderer_classes = (HTMLRenderer, renderers.JSONRenderer)
 
     def post(self, request, *args, **kwargs):
-        if request.is_ajax:
-            username = request.data.get('username', None)
-            password = request.data.get('password', None)
+        username = request.data.get('username', None)
+        password = request.data.get('password', None)
 
-            if not username:
-                return Response({'detail': "You must supply a username"}, status=status.HTTP_401_UNAUTHORIZED)
+        if not username:
+            return Response({'detail': "You must supply a username"}, status=status.HTTP_401_UNAUTHORIZED)
 
-            u = User.objects.filter(username=username)
+        u = User.objects.filter(username=username)
 
-            #check if user is in database
-            if u.count() > 0:
-                if u[0].last_login is None:
-                    send_mail(
-                        'DIAMM Account Password Change',
-                        'Here is the message.',
-                        'arielle.goldman@mail.mcgill.ca',
-                        ['arielle745@hotmail.com'],
-                        fail_silently=False,
-                    )
-                    return Response({'old_user': True})
-            #if current user, send response to display the password field
-                if not password:
-                    return Response({'old_user': False, 'password': False})
+        #check if user is in database
+        if not u.exists():
+            if u[0].last_login is None:
+                send_mail(
+                    'DIAMM Account Password Change',
+                    'Here is the message.',
+                    'arielle.goldman@mail.mcgill.ca',
+                    ['arielle745@hotmail.com'],
+                    fail_silently=False,
+                )
+                return Response({'old_user': True})
+        #if current user, send response to display the password field
+            if not password:
+                return Response({'old_user': False, 'password': False})
 
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                if user.is_active:
-                    login(request, user)
-                    #if isinstance(request.accepted_renderer, HTMLRenderer):
-                    return Response({'password': True, 'old_user': False, 'redirect': reverse('user-profile', kwargs={'pk': user.pk})})
-                else:
-                    # user exists but is not active; forbid them access.
-                    return Response({}, status=status.HTTP_403_FORBIDDEN)
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                #if isinstance(request.accepted_renderer, HTMLRenderer):
+                return Response({'password': True, 'old_user': False, 'redirect': reverse('user-profile', kwargs={'pk': user.pk})})
+            else:
+                # user exists but is not active; forbid them access.
+                return Response({}, status=status.HTTP_403_FORBIDDEN)
 
-            # user does not exist. Assume a typo and allow them to re-authenticate
-            return Response({}, status=status.HTTP_401_UNAUTHORIZED)
+        # user does not exist. Assume a typo and allow them to re-authenticate
+        return Response({}, status=status.HTTP_401_UNAUTHORIZED)
 
     def get(self, request, *args, **kwargs):
         return Response({})
