@@ -1,11 +1,11 @@
-% extends "base.jinja2" %}
+{% extends "base.jinja2" %}
 
 {% block body %}
 <form action="{{ url("login") }}" method="post">
     <input id="username" name="username" placeholder="Username">
     <input type="password" id="password" name="password" placeholder="Password">
     <button type="submit">Submit</button>
-    {% block body %}{% csrf_token %}
+    {% csrf_token %}
         {% if user.is_authenticated() %}
             <p>You are logged in</p>
         {% else %}
@@ -33,9 +33,10 @@
 
 
         {% endif %}
-    {% endblock %}
+    </form>
+{% endblock %}
 
-    {% block scripts %}
+{% block scripts %}
         <script src="{{ static('javascripts/lib/jquery/jquery.min.js') }}" type="application/javascript"></script>
         <script src="{{ static('javascripts/lib/login.js') }}" type="application/javascript"></script>
         <script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>
@@ -140,6 +141,4 @@
                 });
             });
         </script>
-
-    {% endblock %}
-    No newline at end of file
+{% endblock %}
