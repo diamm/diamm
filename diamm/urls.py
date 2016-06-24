@@ -14,19 +14,22 @@ Including another URLconf
     2. Import the include() function: from django.conf.urls import url, include
     3. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
-from django.conf.urls import url, include
+from django.conf.urls import url
 from django.views.generic import TemplateView
 from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
-
+from diamm.views.auth import (
+    LoginView, LogoutView, CreateAccount, ResetPassword, ActivateAccount
+)
 from diamm.views.home import HomeView
-from diamm.views.auth import SessionAuth, SessionClose, AccountEmailSent, AccountUpdate, CreateAccount, AccountInfo
 from diamm.views.user import ProfileView
 from diamm.views.website.search import SearchView
 from diamm.views.contribution import MakeContribution
 from diamm.views.website.set import SetDetail
-from diamm.views.website.source import SourceList, SourceDetail, SourceManifest, SourceCanvasDetail
+from diamm.views.website.source import (
+    SourceList, SourceDetail, SourceManifest, SourceCanvasDetail
+)
 from diamm.views.website.source import SourceRangeDetail, SourceItemDetail
 from diamm.views.website.archive import ArchiveDetail
 from diamm.views.website.city import CityList, CityDetail
@@ -45,12 +48,19 @@ urlpatterns = [
                                               content_type="application/opensearchdescription+xml"), name='opensearch'),
     url(r'^admin/', admin.site.urls),
     url(r'^$', HomeView.as_view(), name="home"),
-    url(r'^login/$', SessionAuth.as_view(), name="login"),
-    url(r'^logout/$', SessionClose.as_view(), name="logout"),
-    url(r'^login/update/$', AccountUpdate.as_view(), name="account-update"),
-    url(r'^login/create-account/$', CreateAccount.as_view(), name="create-account"),
-    url(r'^login/your-account/$', AccountInfo.as_view(), name="account-info"),
-    url(r'^login/email-sent/$', AccountEmailSent.as_view(), name="account-email"),
+    url(r'^login/$', LoginView.as_view(), name="login"),
+    url(r'^logout/$', LogoutView.as_view(), name="logout"),
+    url(r'^register/$', CreateAccount.as_view(), name="register"),
+    url(r'^reset/$', ResetPassword.as_view(), name="reset"),
+    url(r'^activate/(?P<uuid>[a-f0-9]{8}-?[a-f0-9]{4}-?4[a-f0-9]{3}-?[89ab][a-f0-9]{3}-?[a-f0-9]{12})/$', ActivateAccount.as_view(), name="activate"),
+    # url(r'^login/update/$', AccountUpdate.as_view(), name="account-update"),
+    # url(r'^login/create-account/$', CreateAccount.as_view(), name="create-account"),
+    # url(r'^login/your-account/$', AccountInfo.as_view(), name="account-info"),
+    # url(r'^login/email-sent/$', AccountEmailSent.as_view(), name="account-email"),
+    # url(r'^migrate/$', MigrateAccount.as_view(), name="migrate-account"),
+
+    # url(r'^forgot-password/$', RegisterAccount.as_view(), name="recover-password"),
+
     url(r'^user/(?P<pk>[0-9]+)/$', ProfileView.as_view(), name="user-profile"),
 
     # public website

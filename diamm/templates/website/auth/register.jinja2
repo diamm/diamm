@@ -1,0 +1,21 @@
+{% extends "base.jinja2" %}
+
+{% block head %}
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="twelve columns offset-by-four">
+            <div class="login-block">
+                <h2>Create an account</h2>
+                <form action="{{ url('register') }}" method="post">
+                    {% csrf_token %}
+                    {{ form }}
+                    <div class="g-recaptcha" data-sitekey="6Led0RYTAAAAAGXZ4815sqD0qX_h9nsQk8G_zq0b"></div>
+                    <button type="submit">Create account</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

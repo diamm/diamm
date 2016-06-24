@@ -1,144 +1,27 @@
 {% extends "base.jinja2" %}
 
 {% block body %}
-<form action="{{ url("login") }}" method="post">
-    <input id="username" name="username" placeholder="Username">
-    <input type="password" id="password" name="password" placeholder="Password">
-    <button type="submit">Submit</button>
-    {% csrf_token %}
-        {% if user.is_authenticated() %}
-            <p>You are logged in</p>
-        {% else %}
-            <form class="login" id="login-form" action="{{ url('login') }}" method="post">
-                <h1>Log In</h1>
+    <div class="row">
+        <div class="offset-by-five eleven columns">
+            <div class="login-block">
+                <h2>Login</h2>
+                <form action="{{ url('login') }}" method="post">
+                    {% csrf_token %}
+                    {{ form }}
+                    <button type="submit">Log in</button>
+                </form>
 
-                <input id="username" name="username" placeholder="Username">
-                <input id="password" name="password" type="password" placeholder="Password">
-
-                <button id="login" type="submit">Next</button>
-                <a href="#" id="create-account">Create an Account</a>
-            </form>
-
-
-            <form action="{{ url('create-account') }}" method="POST" class="create-form">
-                <h1>Create An Account</h1>
-                <input id="first-name" name="first-name" placeholder="First Name">
-                <input id="last-name" name="last-name" placeholder="Last Name">
-                <input id="email" name="email" placeholder="Email">
-                <input id="nusername" name="nusername" placeholder="Create a Username">
-                <input id="npassword" name="npassword" type="password" placeholder="Password">
-                <input id="conf-password" name="conf-password" type="password" placeholder="Confirm Your Password">
-                <button id="account-submit" type="submit">Submit</button>
-            </form>
-
-
-        {% endif %}
-    </form>
-{% endblock %}
-
-{% block scripts %}
-        <script src="{{ static('javascripts/lib/jquery/jquery.min.js') }}" type="application/javascript"></script>
-        <script src="{{ static('javascripts/lib/login.js') }}" type="application/javascript"></script>
-        <script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>
-        <script type="application/javascript">
-
-
-            $(document).ready(function()
-            {
-
-                document.getElementById('create-account').addEventListener('click', function ()
-                {
-                    var csrftoken = getCookie('csrftoken');
-                    $(".create-form").show();
-                    $("#login-form").hide();
-                });
-
-                document.getElementById('account-submit').addEventListener('click', function (e)
-                {
-                    e.preventDefault();
-                    var csrftoken = getCookie('csrftoken');
-
-                    $.ajax({
-                        type: "POST",
-                        url: '/login/create-account/',
-                        dataType: 'json',
-                        data: {
-                            username: $('#nusername').val(),
-                            password: $('#npassword').val(),
-                            email: $('#email').val(),
-                            first_name: $('#first-name').val(),
-                            last_name: $('#last-name').val(),
-                            detail: $("input[name=detail]").val(),
-                            conf_password: $('#conf-password').val(),
-                            csrfmiddlewaretoken: csrftoken
-                        },
-
-                        success: function (data)
-                        {
-                            if (data.redirect){
-                                window.location.replace(data.redirect);
-                            }
-
-                        },
-
-                        error: function (xhr, ajaxOptions, thrownError)
-                        {
-                            if (xhr.responseText)
-                            {
-                                alert(xhr.responseText);
-
-                            }
-                            else {
-                                alert('Fill out all the fields!');
-                            }
-                        }
-                    });
-
-                });
-
-                document.getElementById('login').addEventListener('click', function (e)
-                {
-                    e.preventDefault();
-                    var csrftoken = getCookie('csrftoken');
-
-                    $.ajax({
-                        type:"POST",
-                        url: $(this).attr('action'),
-                        dataType: 'json',
-                        data:
-                        {
-                            username: $('#username').val(),
-                            password: $('#password').val(),
-                            old_user: $("input[name=old]").val(),
-                            redirect: $("input[name=redirect]").val(),
-                            csrfmiddlewaretoken: csrftoken
-                        },
-
-                        success: function(data)
-                        {
-                            if (data.old_user)
-                            {
-                                alert('Email sent');
-                            }
-                            else
-                            {
-                                document.getElementById('password').style.display = "block";
-                                if(data.password)
-                                {
-                                    window.location.replace(data.redirect);
-                                }
-                            }
-                        },
-
-                        error: function(xhr, ajaxOptions, thrownError)
-                        {
-                            //alert for other errors
-                            alert('That is not a valid username - please try again or create an account');
-
-                        }
-                    });
-
-                });
-            });
-        </script>
+                <p>
+                    Are you a user of the old DIAMM site?
+                    <a href="{{ url('reset') }}">You need to reset your password.</a>
+                </p>
+                <p>
+                    <a href="{{ url('reset') }}">Recover a forgotten password.</a>
+                </p>
+                <p>
+                    <a href="{{ url('register') }}">Register for an account</a>
+                </p>
+            </div>
+        </div>
+    </div>
 {% endblock %}
