@@ -1,18 +1,114 @@
+from django import forms
 from django.contrib import admin
+from django.contrib.auth import (
+    password_validation
+)
+from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.auth.models import User
+from django.utils.translation import ugettext_lazy as _
 
-from diamm.models.diamm_user import DIAMMUser
-
-
-class DIAMMUserInline(admin.StackedInline):
-    model = DIAMMUser
-    can_delete = False
-    verbose_name_plural = "User profile"
+from diamm.models.diamm_user import CustomUserModel
 
 
+class UserCreationForm(forms.ModelForm):
+    """
+        A replication of the User Creation Form for users with passwords.
+
+    """
+    def __init__(self, *args, **kwargs):
+        super(UserCreationForm, self).__init__(*args, **kwargs)
+        self.fields[self._meta.model.USERNAME_FIELD].widget.attrs.update({'autofocus': ''})
+
+    class Meta:
+        model = CustomUserModel
+        fields = ('email',)
+
+    error_messages = {
+        'password_mismatch': _("The two password fields didn't match")
+    }
+
+    password1 = forms.CharField(
+        label=_('Password'),
+        strip=False,
+        widget=forms.PasswordInput
+    )
+    password2 = forms.CharField(
+        label=_('Password confirmation'),
+        strip=False,
+        widget=forms.PasswordInput,
+        help_text=_('Enter the same password as before, for verification')
+    )
+
+    def clean_password2(self):
+        password1 = self.cleaned_data.get('password1')
+        password2 = self.cleaned_data.get('password2')
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError(
+                self.error_messages['password_mismatch'],
+                code='password_mismatch'
+            )
+        password_validation.validate_password(self.cleaned_data.get('password2'), self.instance)
+        return password2
+
+    def save(self, commit=True):
+        user = super(UserCreationForm, self).save(commit=False)
+        user.set_password(self.cleaned_data['password1'])
+        if commit:
+            user.save()
+        return user
+
+
+class UserChangeForm(forms.ModelForm):
+    """
+        An implementation of the user change form.
+        Essentially replicates django.contrib.auth.forms.UserChangeForm
+    """
+    class Meta:
+        model = CustomUserModel
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(UserChangeForm, self).__init__(*args, **kwargs)
+        f = self.fields.get('user_permissions')
+        if f is not None:
+            f.queryset = f.queryset.select_related('content_type')
+
+    password = ReadOnlyPasswordHashField(
+        label=_("Password"),
+        help_text=_(
+            "Raw passwords are not stored, so there is no way to see this "
+            "user's password, but you can change the password using "
+            "<a href=\"../password/\">this form</a>."
+        ),
+    )
+
+    def clean_password(self):
+        # Regardless of what the user provides, return the initial value.
+        # This is done here, rather than on the field, because the
+        # field does not have access to the initial value
+        return self.initial["password"]
+
+
+@admin.register(CustomUserModel)
 class UserAdmin(BaseUserAdmin):
-    inlines = (DIAMMUserInline,)
+    form = UserChangeForm
+    add_form = UserCreationForm
 
-admin.site.unregister(User)
-admin.site.register(User, UserAdmin)
+    list_display = ('email', 'affiliation', 'is_staff', 'legacy_username')
+    list_filter = ('is_staff', 'is_superuser')
+    fieldsets = (
+        (None, {'fields': ('email', 'password')}),
+        (_('Personal info'), {'fields': ('first_name', 'last_name', 'affiliation')}),
+        (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+        (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
+        (_('Administration'), {'fields': ('temp_activation_key',)})
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email', 'password1', 'password2')
+        })
+    )
+    search_fields = ('email', 'affiliation', 'last_name', 'first_name')
+    ordering = ('date_joined',)
+

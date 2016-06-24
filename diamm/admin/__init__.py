@@ -1,3 +1,4 @@
+from diamm.admin.diamm_user import UserAdmin
 from diamm.admin.site.story import StoryAdmin
 from diamm.admin.site.tag import TagAdmin
 from diamm.admin.site.cover_image import CoverImageAdmin
