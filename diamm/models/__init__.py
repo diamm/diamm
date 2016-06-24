@@ -1,4 +1,4 @@
-from diamm.models.diamm_user import DIAMMUser
+from diamm.models.diamm_user import CustomUserModel
 from diamm.models.site.cover_image import CoverImage
 from diamm.models.site.story import Story
 from diamm.models.site.tag import Tag
