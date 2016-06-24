@@ -230,6 +230,17 @@ IIIF = {
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+MAIL = {
+    "FROM": "diamm@diamm.ac.uk",
+    "CONFIRMATION_MESSAGE": """
+    Dear {first_name} {last_name},
+
+    Please confirm your new account on {hostname} by clicking on the following link:
+
+    {confirmation_link}
+    """
+}
+
 
 if DEBUG:
     SILENCED_SYSTEM_CHECKS = []
