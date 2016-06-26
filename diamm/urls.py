@@ -17,6 +17,9 @@ Including another URLconf
 from django.conf.urls import url
 from django.views.generic import TemplateView
 from django.contrib import admin
+from django.contrib.auth.views import (
+    password_reset, password_reset_done, password_reset_confirm, password_reset_complete
+)
 from django.conf import settings
 from django.conf.urls.static import static
 from diamm.views.auth import (
@@ -55,16 +58,16 @@ urlpatterns = [
     url(r'^login/$', LoginView.as_view(), name="login"),
     url(r'^logout/$', LogoutView.as_view(), name="logout"),
     url(r'^register/$', CreateAccount.as_view(), name="register"),
-    url(r'^reset/$', 'django.contrib.auth.views.password_reset',
+    url(r'^reset/$', password_reset,
         {'post_reset_redirect': '/reset/sent/',
          'template_name': 'website/auth/reset.jinja2',
          'from_email': settings.DEFAULT_FROM_EMAIL}, name="reset"),
-    url(r'^reset/sent/$', 'django.contrib.auth.views.password_reset_done',
+    url(r'^reset/sent/$', password_reset_done,
         {"template_name": "website/auth/reset_sent.jinja2"}),
-    url(r'^reset/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$', 'django.contrib.auth.views.password_reset_confirm',
+    url(r'^reset/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$', password_reset_confirm,
         {'post_reset_redirect': '/reset/complete/',
          'template_name': "website/auth/reset_confirm.jinja2"}, name="password_reset_confirm"),
-    url(r'^reset/complete/$', 'django.contrib.auth.views.password_reset_complete',
+    url(r'^reset/complete/$', password_reset_complete,
         {'template_name': "website/auth/reset_complete.jinja2"}),
 
     url(r'^activate/(?P<uuid>[a-f0-9]{8}-?[a-f0-9]{4}-?4[a-f0-9]{3}-?[89ab][a-f0-9]{3}-?[a-f0-9]{12})/$',
