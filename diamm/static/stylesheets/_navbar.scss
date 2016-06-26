@@ -1,3 +1,19 @@
+.beta-header {
+  background-color: $diamm-red;
+  background-image: repeating-linear-gradient(315deg, transparent, transparent 35px, rgba(255,255,255,.5) 35px, rgba(255,255,255,.5) 70px);
+  text-align: center;
+  h3 {
+    padding: 10px 0;
+    margin: 0;
+    font-family: $sans-serif;
+    color: $diamm-white;
+
+    a {
+      color: $diamm-black;
+    }
+  }
+}
+
 .site-header {
   width: 100%;
   z-index: 100;

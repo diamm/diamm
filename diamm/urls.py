@@ -48,6 +48,10 @@ urlpatterns = [
                                               content_type="application/opensearchdescription+xml"), name='opensearch'),
     url(r'^admin/', admin.site.urls),
     url(r'^$', HomeView.as_view(), name="home"),
+
+    url(r'^beta/$', TemplateView.as_view(template_name="beta.jinja2"), name="beta"),
+
+    # Authentication and account resets
     url(r'^login/$', LoginView.as_view(), name="login"),
     url(r'^logout/$', LogoutView.as_view(), name="logout"),
     url(r'^register/$', CreateAccount.as_view(), name="register"),

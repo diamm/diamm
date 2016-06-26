@@ -2758,6 +2758,18 @@ form {
 .fa-percent:before {
   content: ""; }
 
+.beta-header {
+  background-color: #dd1c1a;
+  background-image: repeating-linear-gradient(315deg, transparent, transparent 35px, rgba(255, 255, 255, 0.5) 35px, rgba(255, 255, 255, 0.5) 70px);
+  text-align: center; }
+  .beta-header h3 {
+    padding: 10px 0;
+    margin: 0;
+    font-family: "PT Sans", sans-serif;
+    color: #fdfffc; }
+    .beta-header h3 a {
+      color: #011627; }
+
 .site-header {
   width: 100%;
   z-index: 100; }
@@ -3139,6 +3151,9 @@ form.login, form.create-form {
     margin-bottom: 0.4rem; }
   form.login a, form.create-form a {
     font-size: 0.8rem; }
+
+.beta-notice dt {
+  font-weight: bold; }
 
 .debug {
   border: 1px solid #011627; }
