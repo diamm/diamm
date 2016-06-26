@@ -83,6 +83,14 @@ class CreateAccount(FormView):
     template_name = "website/auth/register.jinja2"
     success_url = "/"
 
+    def get(self, request, *args, **kwargs):
+        """
+            If a user is already logged in, prevent them from accessing this form.
+        """
+        if request.user.is_authenticated():
+            return HttpResponse(status=status.HTTP_403_FORBIDDEN)
+        return super(CreateAccount, self).get(request, *args, **kwargs)
+
     def form_valid(self, form):
         response = super(CreateAccount, self).form_valid(form)
 
@@ -152,7 +160,7 @@ class CreateAccount(FormView):
                                           kwargs={"uuid": activation_key},
                                           request=self.request)
             ),
-            settings.MAIL['FROM'],
+            settings.DEFAULT_FROM_EMAIL,
             [to_address],
             fail_silently=False
         )
