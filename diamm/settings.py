@@ -135,7 +135,7 @@ DATABASE_ROUTERS = ['diamm.router.LegacyRouter']
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
-AUTH_USER_MODEL = "diamm_site.CustomUserModel"
+AUTH_USER_MODEL = "auth.CustomUserModel"
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -229,15 +229,16 @@ IIIF = {
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
+DEFAULT_FROM_EMAIL = "diamm@music.ox.ac.uk"
 MAIL = {
-    "FROM": "diamm@diamm.ac.uk",
     "CONFIRMATION_MESSAGE": """
     Dear {first_name} {last_name},
 
     Please confirm your new account on {hostname} by clicking on the following link:
 
     {confirmation_link}
+
+    Note that this link will expire after 24 hours and you will need to have a new confirmation e-mail sent to you.
     """
 }
 
