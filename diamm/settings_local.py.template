@@ -1,12 +1,17 @@
 import os
 
-HOSTNAME = "alpha.diamm.ac.uk"
+HOSTNAME = "www.diamm.ac.uk"
 
 MEDIA_URL = "https://{0}/media/".format(HOSTNAME)
 MEDIA_ROOT = os.path.join(
         os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "diamm", "media"
 )
 STATIC_ROOT = "/srv/www/{0}/static".format(HOSTNAME)
-LEGACY_IMAGE_DIR = "/Users/ahankins/Documents/code/git/diamm/testing/legacy"
-IMAGE_DIR = '/Users/ahankins/Documents/code/git/diamm/testing/images'
+LEGACY_IMAGE_DIR = ""
+IMAGE_DIR = ''
 
+GOOGLE_RECAPTCHA_SECRET = ""
+GOOGLE_RECAPTCHA_ADDRESS = ""
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = ''
