@@ -46,8 +46,13 @@ class CreateAccountForm(forms.Form):
 
     def clean(self):
         """
-            Validates that the passwords are present, that they match, and that the passwords
-            meet minimum security standards.
+            Validates that
+             - the user agreement has been checked (see the form template for the checkbox form field; the text for this
+             was lengthy and did not fit in the space provided for form help text)
+             - an existing user with the e-mail address does not exist
+             - the passwords are present
+             - that they match
+             - that the passwords meet minimum security standards.
 
         :return: None; will raise validation error if a condition is not met.
         """
@@ -56,7 +61,15 @@ class CreateAccountForm(forms.Form):
         confirm_password = cleaned_data.get('confirm_password')
         email = cleaned_data.get('email')
 
+        if 'user-agreement' not in self.data:
+            agreement_err = """
+                You must agree to the user terms and conditions.
+            """
+            err = forms.ValidationError(agreement_err)
+            raise err
+
         email_exists = CustomUserModel.objects.filter(email=email).exists()
+
         if email_exists:
             email_err = """
                 A user with the e-mail address {0} already exists. Try <a href='/recover'>recovering your password</a>.
