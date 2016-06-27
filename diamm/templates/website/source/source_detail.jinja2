@@ -91,26 +91,18 @@
     <script src="{{ static('javascripts/lib/diva.js/js/utils.js') }}" type="application/javascript"></script>
     <script src="{{ static('javascripts/lib/iiif-structure.js') }}" type="application/javascript"></script>
     <script src="{{ static('javascripts/lib/tabs.js') }}" type="application/javascript"></script>
+    <script src="{{ static('javascripts/lib/goToPage.js') }}" type="application/javascript"></script>
     <script type="application/javascript">
-        $(document).ready(function()
+        $("#tabs").tabs()
+        window.onload = function()
         {
-            $("#tabs").tabs({
-                tabCallbacks: {
-                    '#images': function ()
-                    {
-                        var divaObj = $("#diva-wrapper").data('diva');
-                        if (!divaObj)
-                        {
-                            $('#diva-wrapper').diva({
-                                enableAutoTitle: false,
-                                objectData: "{{ content.manifest_url }}",
-                                enableIIIFPageData: true,
-                                enableIIIFStructure: true
-                            });
-                        }
-                    }
-                }
+            var divaObj = $("#diva-wrapper").data('diva');
+            $('#diva-wrapper').diva({
+                    enableAutoTitle: false,
+                    objectData: "{{ content.manifest_url }}",
+                    enableIIIFPageData: true,
+                    enableIIIFStructure: true
             });
-        });
+        };
     </script>
 {% endblock %}
