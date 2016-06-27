@@ -8,7 +8,7 @@
             <dt class="source-inventory-header">
 
                 {% if item.folio_start %}
-                    <a href="#">{{ item.folio_start }}
+                <a href="#" onClick="goToPage('{{item.folio_start}}')" >{{ item.folio_start }}
                         {% if item.folio_end %}
                             &ndash;{{ item.folio_end }}
                         {% endif %}</a>:
@@ -79,10 +79,10 @@
                     {% for item in composer.inventory %}
                         <li>
                             {%- if item.folio_start_s %}
-                            {{ item.folio_start_s }}
+                                <a href="#" onClick="goToPage('{{ item.folio_start_s }}')">{{ item.folio_start_s }}
+                                {%- if item.folio_end_s != item.folio_start_s -%}&ndash;{{ item.folio_end_s }}: {%- endif -%}
+                                </a>
                             {% endif -%}
-
-                            {%- if item.folio_end_s != item.folio_start_s -%}&ndash;{{ item.folio_end_s }}: {%- endif -%}
                             <a href="{{ url('composition-detail', pk=item.composition_i) }}">{{ item.composition_s }}</a></li>
                     {% endfor %}
                     </ul>
