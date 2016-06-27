@@ -226,7 +226,6 @@ IIIF = {
     "THUMBNAIL_WIDTH": "250,"   # The constrained width of thumbnail images
 }
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = "diamm@music.ox.ac.uk"
 MAIL = {
     "CONFIRMATION_MESSAGE": """
