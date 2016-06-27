@@ -17,13 +17,13 @@ Including another URLconf
 from django.conf.urls import url
 from django.views.generic import TemplateView
 from django.contrib import admin
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib.auth.views import (
     password_reset, password_reset_done, password_reset_confirm, password_reset_complete
 )
-from django.conf import settings
-from django.conf.urls.static import static
 from diamm.views.auth import (
-    LoginView, LogoutView, CreateAccount, ResetPassword, ActivateAccount
+    LoginView, LogoutView, CreateAccount, ActivateAccount
 )
 from diamm.views.home import HomeView
 from diamm.views.user import ProfileView
