@@ -111,24 +111,6 @@ WSGI_APPLICATION = 'diamm.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'diamm_data_server',
-        'HOST': 'localhost',
-        'PORT': '5432',
-        'USER': 'diamm_data',
-        'PASSWORD': 'diamm123'
-    },
-    'migrate': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'diamm_data_migration',
-        'HOST': 'localhost',
-        'PORT': '5432',
-        'USER': 'diamm_data',
-        'PASSWORD': 'diamm123'
-    }
-}
 DATABASE_ROUTERS = ['diamm.router.LegacyRouter']
 
 # Password validation

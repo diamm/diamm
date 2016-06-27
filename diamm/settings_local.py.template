@@ -22,3 +22,22 @@ EMAIL_HOST = ""
 EMAIL_HOST_USER = ""
 EMAIL_HOST_PASSWORD = ""
 EMAIL_PORT = 587
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'diamm_data_server',
+        'HOST': 'localhost',
+        'PORT': '5432',
+        'USER': 'diamm_data',
+        'PASSWORD': ''
+    },
+    'migrate': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'diamm_data_migration',
+        'HOST': 'localhost',
+        'PORT': '5432',
+        'USER': 'diamm_data',
+        'PASSWORD': ''
+    }
+}
