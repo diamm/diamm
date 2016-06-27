@@ -430,8 +430,12 @@ class SourceDetailSerializer(ContextSerializer):
 
     def get_manifest_url(self, obj):
         # Return None if the document has no public images
+        if not self.context['request'].user.is_authenticated():
+            return None
+
         if not self.get_has_images(obj):
             return None
+
         return reverse('source-manifest',
                        kwargs={"pk": obj.pk},
                        request=self.context['request'])
