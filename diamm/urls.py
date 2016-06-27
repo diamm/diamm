@@ -53,6 +53,7 @@ urlpatterns = [
     url(r'^$', HomeView.as_view(), name="home"),
 
     url(r'^beta/$', TemplateView.as_view(template_name="beta.jinja2"), name="beta"),
+    url(r'^introduction/$', TemplateView.as_view(template_name="introduction.jinja2"), name="introduction"),
 
     # Authentication and account resets
     url(r'^login/$', LoginView.as_view(), name="login"),
