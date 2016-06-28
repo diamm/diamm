@@ -1,8 +1,8 @@
-var goToPage = function() 
+var goToPage = function()
 {
     var _onFolioClick = function (pageName)
     {
-        return function() 
+        return function()
         {
             activeTabPanel = document.querySelector(".front");
             activeTabPanel.classList.remove("front");
@@ -15,7 +15,7 @@ var goToPage = function()
     }
 
     var folio_links = document.querySelectorAll('.folio-link');
-    for (var i=0, len=folio_links.length; i < len; i++) 
+    for (var i=0, len=folio_links.length; i < len; i++)
     {
         page = folio_links[i].dataset.page;
         folio_links[i].addEventListener("click", _onFolioClick(page) )

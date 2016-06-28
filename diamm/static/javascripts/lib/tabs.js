@@ -44,7 +44,7 @@
         var gotoTab = function (tabHash)
         {
             var activeTabPanel = document.querySelector('.front');
-            if (activeTabPanel) 
+            if (activeTabPanel)
             {
                 activeTabPanel.classList.remove('front');
             }
