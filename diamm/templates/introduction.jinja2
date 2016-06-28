@@ -1,0 +1,105 @@
+{% extends "base.jinja2" %}
+
+{% block body %}
+    <div class="row">
+        <div class="sixteen columns">
+            <h2>Introduction to the DIAMM site</h2>
+            <p>
+                This introduction will serve to help you get acquainted with the tools and types of information you
+                will find on this site.
+            </p>
+            <h3>Types of information</h3>
+            <p>
+                The DIAMM database is structured as a number of different types of records, which are linked to other
+                types of records, allowing users to navigate between related entities.
+            </p>
+            <dl>
+                <dt id="sources">Sources</dt>
+                <dd>
+                    Sources are the central organizing point in the DIAMM database. A source represents a physical object held
+                    by an <a href="#archives">Archive</a>, and containing <a href="#compositions">Compositions</a> which
+                    form an inventory. <a href="#people">People</a> and <a href="#organizations">Organizations</a>
+                    may be related to a source in a number of ways, including <a href="#provenance">Provenance</a>,
+                    as <a href="#copyists">Copyists</a>, or any number of other <a href="#relationships">Relationships.</a>
+                    While many of the sources in the DIAMM catalogue have images attached to them, not all of them do.
+                    If a source has images, they are related to the source through <a href="#pages">Pages</a>.
+                </dd>
+                <dt id="archives">Archives</dt>
+                <dd>
+                    Archives are the organization that currently owns a physical <a href="#sources">Source</a>. They are
+                    distinct from <a href="#organizations">Organizations</a>, so a particular institution (e.g.,
+                    Christ Church, Oxford) may have entries as both an Archive and an Organization. Archives are also
+                    related to a particular city, which is represented as a <a href="#geographic">Geographic Area</a>.
+                </dd>
+                <dt id="people">People</dt>
+                <dd>
+                    People records represent the human actors. People may be related to
+                    <a href="#compositions">Compositions</a> as composers, or to <a href=#sources>Sources</a> as copyists,
+                    through provenance, or in any number of bespoke relationships. A person's record serves as a central
+                    place for seeing that individual's activity within the records of the DIAMM database.
+                </dd>
+                <dt id="organizations">Organizations</dt>
+                <dd>
+                    Organization records have many of the same relationships as <a href="#people">People</a>, but they
+                    represent corporate actors. Organizations can also have a <a href="#geographic">Geographic Area</a>,
+                    allowing them to be localized to a particular place.
+                </dd>
+                <dt id="compositions">Compositions</dt>
+                <dd>
+                    Compositions represent a musical work. Note that a composition can have many instantiations, in
+                    different forms, in many different <a href="#sources">Sources</a>. Compositions are related to
+                    <a href="#people">People</a> as composers, and a Composition may have more than one composer, as
+                    is the case if a composer's attribution is in dispute.
+                </dd>
+                <dt id="geographic">Geographic Areas</dt>
+                <dd>
+                    Geographic Areas are used to unify a number of geographically-based information sources. For example,
+                    a particular city may be host to a number of <a href="#archives">Archives</a> and <a href="#organizations">
+                    Organizations</a>.
+                </dd>
+                <dt id="provenance">Provenance</dt>
+                <dd>
+                    Source Provenance tracks the relationship between a <a href="#people">Person</a> or <a href="#organizations">
+                    Organization</a>, specifically focused on the origin of a source, as well as a source's <a href="#geographic">
+                    Geographic</a> origins.
+                </dd>
+                <dt id="copyists">Copyists</dt>
+                <dd>
+                    Source Copyists are a relationship between a <a href="#people">Person</a> or <a href="#organizations">
+                    Organization</a> and a <a href="#sources">Source</a>, specifically focused on roles in producing
+                    the source: Music copyists, illuminators, indexers, and the like.
+                </dd>
+                <dt id="relationships">Relationships</dt>
+                <dd>
+                    Source Relationships are generic relationships between a source and a <a href="#people">Person</a>
+                    or <a href="#organizations">Organization</a>. This can include information about relationships
+                    who have previously owned a source, commissioned a source, or have had a source dedicated to them,
+                    among other things.
+                </dd>
+                <dt id="pages">Pages</dt>
+                <dd>
+                    Pages are related to <a href="#sources">Sources</a>, and serve to represent one side of a leaf in
+                    a physical object. As such, <a href="#compositions">Compositions</a> are related to pages through
+                    a source's inventory, where the inventory gives the particular page, or page range, on which
+                    a composition may be found. Pages can be represented by many <a href="#images">Images</a>, which
+                    may represent the digital form of the page in several ways, such as infrared or ultraviolet images,
+                    as well as the natural colour version of the page.
+                </dd>
+                <dt id="sets">Sets</dt>
+                <dd>
+                    Sets are collections of <a href="#sources">Sources</a>, typically grouped together because together they
+                    represent a unified whole, such as a set of partbooks, or because they have some other relationship,
+                    such as originating from the same scriptorium.
+                </dd>
+                <dt id="bibliographies">Bibliographies</dt>
+                <dd>
+                    Bibliographies are present on <a href="#sources">Sources</a>, both on the source and on the inventory
+                    item (that is, there may be a bibliography entry on a particular instance of a <a href="#compositions">composition</a>
+                    in a source). Bibliographies feature authors, but it should be noted that Authors
+                    are distinct from <a href="#people">People</a> records. Users may navigate to an author's page to
+                    see all the bibliography entries in DIAMM by that author.
+                </dd>
+            </dl>
+        </div>
+    </div>
+{% endblock %}

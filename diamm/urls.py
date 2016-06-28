@@ -14,19 +14,25 @@ Including another URLconf
     2. Import the include() function: from django.conf.urls import url, include
     3. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
-from django.conf.urls import url, include
+from django.conf.urls import url
 from django.views.generic import TemplateView
 from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
-
+from django.contrib.auth.views import (
+    password_reset, password_reset_done, password_reset_confirm, password_reset_complete
+)
+from diamm.views.auth import (
+    LoginView, LogoutView, CreateAccount, ActivateAccount
+)
 from diamm.views.home import HomeView
-from diamm.views.auth import SessionAuth, SessionClose, AccountEmailSent, AccountUpdate
 from diamm.views.user import ProfileView
 from diamm.views.website.search import SearchView
 from diamm.views.contribution import MakeContribution
 from diamm.views.website.set import SetDetail
-from diamm.views.website.source import SourceList, SourceDetail, SourceManifest, SourceCanvasDetail
+from diamm.views.website.source import (
+    SourceList, SourceDetail, SourceManifest, SourceCanvasDetail
+)
 from diamm.views.website.source import SourceRangeDetail, SourceItemDetail
 from diamm.views.website.archive import ArchiveDetail
 from diamm.views.website.city import CityList, CityDetail
@@ -46,21 +52,35 @@ urlpatterns = [
                                               content_type="application/opensearchdescription+xml"), name='opensearch'),
     url(r'^admin/', admin.site.urls),
     url(r'^$', HomeView.as_view(), name="home"),
-    url(r'^login/$', SessionAuth.as_view(), name="login"),
-    url(r'^logout/$', SessionClose.as_view(), name="logout"),
-    url(r'^login/update/$', AccountUpdate.as_view(), name="account-update"),
-    url(r'^login/email-sent/$', AccountEmailSent.as_view(), name="account-email"),
+
+    url(r'^beta/$', TemplateView.as_view(template_name="beta.jinja2"), name="beta"),
+    url(r'^introduction/$', TemplateView.as_view(template_name="introduction.jinja2"), name="introduction"),
+
+    # Authentication and account resets
+    url(r'^login/$', LoginView.as_view(), name="login"),
+    url(r'^logout/$', LogoutView.as_view(), name="logout"),
+    url(r'^register/$', CreateAccount.as_view(), name="register"),
+    url(r'^reset/$', password_reset,
+        {'post_reset_redirect': '/reset/sent/',
+         'template_name': 'website/auth/reset.jinja2',
+         'from_email': settings.DEFAULT_FROM_EMAIL}, name="reset"),
+    url(r'^reset/sent/$', password_reset_done,
+        {"template_name": "website/auth/reset_sent.jinja2"}),
+    url(r'^reset/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$', password_reset_confirm,
+        {'post_reset_redirect': '/reset/complete/',
+         'template_name': "website/auth/reset_confirm.jinja2"}, name="password_reset_confirm"),
+    url(r'^reset/complete/$', password_reset_complete,
+        {'template_name': "website/auth/reset_complete.jinja2"}),
+
+    url(r'^activate/(?P<uuid>[a-f0-9]{8}-?[a-f0-9]{4}-?4[a-f0-9]{3}-?[89ab][a-f0-9]{3}-?[a-f0-9]{12})/$',
+        ActivateAccount.as_view(), name="activate"),
     url(r'^user/(?P<pk>[0-9]+)/$', ProfileView.as_view(), name="user-profile"),
-
-
 
     # public website
     url(r'^search/$', SearchView.as_view(), name="search"),
     url(r'^news/(?P<pk>[0-9]+)/$', StoryDetail.as_view(), name="story-detail"),
     url(r'^contribution/$', MakeContribution.as_view(), name="contribution"),
     url(r'^stats/$', StatsView.as_view(), name="stats"),
-
-
 
     url(r'^sources/$', SourceList.as_view(), name="source-list"),
     url(r'^sources/(?P<pk>[0-9]+)/$', SourceDetail.as_view(), name="source-detail"),
@@ -89,7 +109,6 @@ urlpatterns = [
 
     url(r'^authors/(?P<pk>[0-9]+)/$', BibliographyAuthorDetail.as_view(), name="author-detail"),
 
-
     url(r'^images/(?P<pk>[0-9]+)/(?:(?P<region>.*)/(?P<size>.*)/(?P<rotation>.*)/default\.jpg)$', image_serve, name="image-serve"),
     url(r'^images/(?P<pk>[0-9]+)/$', image_serve, name="image-serve-info"),
 
@@ -97,3 +116,4 @@ urlpatterns = [
 ]
 if settings.DEBUG:
     urlpatterns += static("/media/", document_root=settings.MEDIA_ROOT)
+

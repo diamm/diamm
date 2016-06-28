@@ -12,6 +12,8 @@
 @import "contribution";
 @import "source";
 @import "search";
+@import "login";
+@import "beta";
 @import "debug";
 
 
@@ -90,3 +92,4 @@ small, .font_small {font-size: 0.889em;}
 .pull-left {
   float: left !important;
 }
+

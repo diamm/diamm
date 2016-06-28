@@ -1,0 +1,43 @@
+import os
+
+HOSTNAME = "www.diamm.ac.uk"
+
+MEDIA_URL = "https://{0}/media/".format(HOSTNAME)
+MEDIA_ROOT = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "diamm", "media"
+)
+STATIC_ROOT = "/srv/www/{0}/static".format(HOSTNAME)
+LEGACY_IMAGE_DIR = ""
+IMAGE_DIR = ''
+
+GOOGLE_RECAPTCHA_SECRET = ""
+GOOGLE_RECAPTCHA_ADDRESS = ""
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = ''
+
+EMAIL_USE_TLS = True
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = ""
+EMAIL_HOST_USER = ""
+EMAIL_HOST_PASSWORD = ""
+EMAIL_PORT = 587
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'diamm_data_server',
+        'HOST': 'localhost',
+        'PORT': '5432',
+        'USER': 'diamm_data',
+        'PASSWORD': ''
+    },
+    'migrate': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'diamm_data_migration',
+        'HOST': 'localhost',
+        'PORT': '5432',
+        'USER': 'diamm_data',
+        'PASSWORD': ''
+    }
+}

@@ -6,8 +6,11 @@
             </li>
         </ul>
         <ul class="navbar-list pull-left">
-                <li class="navbar-item"><a href="/about/">About</a>
+                {# <li class="navbar-item"><a href="/about/">About</a>
                     {% include "website/aboutpages/aboutpages_menu.jinja2" %}
+                </li> #}
+                <li class="navbar-item">
+                    <a href="{{ url('introduction') }}">Introduction</a>
                 </li>
             <li class="navbar-item"><a href="{{ url('search') }}">Search</a></li>
         </ul>
@@ -15,7 +18,17 @@
             <li class="navbar-item navbar-highlight"><a href="#">Donate</a></li>
 
             {% if user.is_authenticated() %}
-                <li class="navbar-item"><a href="#">Your account</a></li>
+                <li class="navbar-item"><a href="{{ url('user-profile', pk=user.pk) }}">Your account</a>
+                    <ul class="dropdown-content">
+                        {# <li><a href="{{ url('account-update') }}">Update Account</a></li>#}
+                        <li>
+                            <form action="{{ url('logout') }}" method="post" id="logout_form">
+                                {% csrf_token %}
+                                <input type="submit" value="Logout" />
+                            </form>
+                        </li>
+                    </ul>
+                </li>
             {% else %}
                 <li class="navbar-item"><a href="{{ url('login') }}">Login</a></li>
             {% endif %}

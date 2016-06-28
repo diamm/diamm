@@ -1,4 +1,4 @@
-from diamm.models.diamm_user import DIAMMUser
+from diamm.models.diamm_user import CustomUserModel
 from diamm.models.site.cover_image import CoverImage
 from diamm.models.site.story import Story
 from diamm.models.site.tag import Tag
@@ -22,6 +22,7 @@ from diamm.models.migrate.legacy_relationship_type import LegacyRelationshipType
 from diamm.models.migrate.legacy_source_person import LegacySourcePerson
 from diamm.models.migrate.legacy_source_notation import LegacySourceNotation
 from diamm.models.migrate.legacy_composition import LegacyComposition
+from diamm.models.migrate.legacy_composition_composer import LegacyCompositionComposer
 from diamm.models.migrate.legacy_item import LegacyItem
 from diamm.models.migrate.legacy_image import LegacyImage
 from diamm.models.migrate.legacy_secondary_image import LegacySecondaryImage

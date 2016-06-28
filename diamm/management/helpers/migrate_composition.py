@@ -56,10 +56,6 @@ def migrate_composition(entry):
 
 
 def attach_composers_to_composition(entry):
-    # Skip the special compositions.
-    if entry.compositionkey in (0, 69332, 888888, 999999, 54681, 69558, 79920):
-        return None
-
     print(term.green("\tAttaching composer {0} to composition {1} with PK {2}".format(entry.composerkey, entry.compositionkey, entry.pk)))
     composition_pk = entry.compositionkey
     composition = Composition.objects.get(pk=composition_pk)
@@ -109,14 +105,13 @@ def update_table():
 def migrate():
     print(term.blue("Migrating Compositions"))
     empty_composition()
-    for entry in LegacyComposition.objects.all():
+    COMPOSITIONS_TO_SKIP = (0, 69332, 888888, 999999, 69558, 79920, 54681, 87464)
+    for entry in LegacyComposition.objects.exclude(pk__in=COMPOSITIONS_TO_SKIP):
         # Skip the "this source has not been inventoried" composition.
         # 69332 = "See description for inventory"
-        if entry.pk in (0, 69332, 888888, 999999, 69558, 79920, 54681):
-            continue
         migrate_composition(entry)
 
-    for entry in LegacyCompositionComposer.objects.all():
+    for entry in LegacyCompositionComposer.objects.exclude(compositionkey__in=COMPOSITIONS_TO_SKIP):
         attach_composers_to_composition(entry)
 
     update_table()

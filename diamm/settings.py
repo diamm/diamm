@@ -21,8 +21,6 @@ UPLOAD_DIR = os.path.join(BASE_DIR, 'uploads')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '@l%t#fyhaahycu$gct^u5ttya69v5n^00y48@)2mngdlel63g+'
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -44,7 +42,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.sites',
     'diamm',
     'diamm.diamm_data',
     'diamm.diamm_migrate',
@@ -115,28 +112,11 @@ WSGI_APPLICATION = 'diamm.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'diamm_data_server',
-        'HOST': 'localhost',
-        'PORT': '5432',
-        'USER': 'diamm_data',
-        'PASSWORD': 'diamm123'
-    },
-    'migrate': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'diamm_data_migration',
-        'HOST': 'localhost',
-        'PORT': '5432',
-        'USER': 'diamm_data',
-        'PASSWORD': 'diamm123'
-    }
-}
 DATABASE_ROUTERS = ['diamm.router.LegacyRouter']
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
+AUTH_USER_MODEL = "auth.CustomUserModel"
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -228,6 +208,20 @@ SOLR = {
 IIIF = {
     "THUMBNAIL_WIDTH": "250,"   # The constrained width of thumbnail images
 }
+
+DEFAULT_FROM_EMAIL = "diamm@music.ox.ac.uk"
+MAIL = {
+    "CONFIRMATION_MESSAGE": """
+    Dear {first_name} {last_name},
+
+    Please confirm your new account on {hostname} by clicking on the following link:
+
+    {confirmation_link}
+
+    Note that this link will expire after 24 hours and you will need to have a new confirmation e-mail sent to you.
+    """
+}
+
 
 if DEBUG:
     SILENCED_SYSTEM_CHECKS = []

@@ -1,9 +1,27 @@
 {% extends "base.jinja2" %}
 
 {% block body %}
-        <form action="{{ url("login") }}" method="post">
-            <input id="username" name="username" placeholder="Username">
-            <input type="password" id="password" name="password" placeholder="Password">
-            <button type="submit">Submit</button>
-        </form>
+    <div class="row">
+        <div class="offset-by-five eleven columns">
+            <div class="login-block">
+                <h2>Login</h2>
+                <form action="{{ url('login') }}" method="post">
+                    {% csrf_token %}
+                    {{ form }}
+                    <button type="submit">Log in</button>
+                </form>
+
+                <p>
+                    Are you a user of the old DIAMM site?
+                    <a href="{{ url('reset') }}">You need to reset your password.</a>
+                </p>
+                <p>
+                    <a href="{{ url('reset') }}">Recover a forgotten password.</a>
+                </p>
+                <p>
+                    <a href="{{ url('register') }}">Register for an account</a>
+                </p>
+            </div>
+        </div>
+    </div>
 {% endblock %}

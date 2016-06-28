@@ -14,7 +14,8 @@ class PersonContributionSerializer(ContextSerializer):
 class PersonSourceCopyistSerializer(ContextDictSerializer):
     url = serpy.MethodField()
     has_images = serpy.BoolField(
-        attr="has_images_b"
+        attr="has_images_b",
+        required=False
     )
     copyist_type = serpy.StrField(
         attr="type"
@@ -26,7 +27,8 @@ class PersonSourceCopyistSerializer(ContextDictSerializer):
         attr="source_s"
     )
     public_images = serpy.BoolField(
-        attr="public_images_b"
+        attr="public_images_b",
+        required=False
     )
 
     def get_url(self, obj):
@@ -38,7 +40,8 @@ class PersonSourceCopyistSerializer(ContextDictSerializer):
 class PersonSourceRelationshipSerializer(ContextDictSerializer):
     url = serpy.MethodField()
     has_images = serpy.BoolField(
-        attr="has_images_b"
+        attr="has_images_b",
+        required=False
     )
     relationship = serpy.StrField(
         attr="relationship_type_s"
@@ -50,7 +53,8 @@ class PersonSourceRelationshipSerializer(ContextDictSerializer):
         attr="source_s"
     )
     public_images = serpy.BoolField(
-        attr="public_images_b"
+        attr="public_images_b",
+        required=False
     )
 
     def get_url(self, obj):

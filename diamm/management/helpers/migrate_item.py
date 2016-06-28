@@ -96,7 +96,7 @@ def migrate_item(entry):
     composition_pk = entry.compositionkey
     orig_composition = None
 
-    if composition_pk not in (0, 69332, 54681, 69558, 79920, 888888, 999999):
+    if composition_pk not in (0, 69332, 54681, 69558, 79920, 888888, 999999, 87464):
         orig_composition = Composition.objects.get(pk=composition_pk)
 
     # If the composition is a 'filler' one that meant to stand in for one or more

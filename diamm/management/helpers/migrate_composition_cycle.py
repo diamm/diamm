@@ -50,10 +50,14 @@ def migrate_composition_cycle(entry):
     composition = Composition.objects.get(pk=int(entry.compositionkey))
     cycle = Cycle.objects.get(pk=int(entry.compositioncyclekey))
 
+    entry_no = None
+    if entry.orderno:
+        entry_no = int(entry.orderno)
+
     d = {
         'composition': composition,
         'cycle': cycle,
-        'order': int(entry.orderno)
+        'order': entry_no
     }
     cc = CompositionCycle(**d)
     cc.save()

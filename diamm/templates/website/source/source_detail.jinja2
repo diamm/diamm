@@ -37,7 +37,7 @@
                 <li><a class="tab" href="#inventory">Inventory</a></li>
                 {% endif %}
 
-                {% if content.public_images %}
+                {% if content.public_images and request.user.is_authenticated() %}
                 <li><a class="tab" href="#images">Images</a></li>
                 {% endif %}
 
@@ -63,7 +63,7 @@
             {% include "website/source/source_inventory_block.jinja2" %}
             {% endif %}
 
-            {% if content.public_images %}
+            {% if content.public_images and request.user.is_authenticated() %}
             {% include "website/source/source_images_block.jinja2" %}
             {% endif %}
 
@@ -91,26 +91,18 @@
     <script src="{{ static('javascripts/lib/diva.js/js/utils.js') }}" type="application/javascript"></script>
     <script src="{{ static('javascripts/lib/iiif-structure.js') }}" type="application/javascript"></script>
     <script src="{{ static('javascripts/lib/tabs.js') }}" type="application/javascript"></script>
+    <script src="{{ static('javascripts/lib/goToPage.js') }}" type="application/javascript"></script>
     <script type="application/javascript">
-        $(document).ready(function()
+        $("#tabs").tabs()
+        window.onload = function()
         {
-            $("#tabs").tabs({
-                tabCallbacks: {
-                    '#images': function ()
-                    {
-                        var divaObj = $("#diva-wrapper").data('diva');
-                        if (!divaObj)
-                        {
-                            $('#diva-wrapper').diva({
-                                enableAutoTitle: false,
-                                objectData: "{{ content.manifest_url }}",
-                                enableIIIFPageData: true,
-                                enableIIIFStructure: true
-                            });
-                        }
-                    }
-                }
+            var divaObj = $("#diva-wrapper").data('diva');
+            $('#diva-wrapper').diva({
+                    enableAutoTitle: false,
+                    objectData: "{{ content.manifest_url }}",
+                    enableIIIFPageData: true,
+                    enableIIIFStructure: true
             });
-        });
+        };
     </script>
 {% endblock %}

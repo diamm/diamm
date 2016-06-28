@@ -1,5 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
+from diamm.models.diamm_user import CustomUserModel
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 
@@ -8,7 +9,7 @@ class Contribution(models.Model):
     class Meta:
         app_label = "diamm_site"
 
-    contributor = models.ForeignKey(User)
+    contributor = models.ForeignKey(CustomUserModel)
 
     limit = models.Q(app_label="diamm_data",
                      model="person") | \
