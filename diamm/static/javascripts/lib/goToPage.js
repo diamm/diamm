@@ -2,7 +2,8 @@ var goToPage = function()
 {
     var _onFolioClick = function (pageName)
     {
-        return function() {
+        return function() 
+        {
             activeTabPanel = document.querySelector(".front");
             activeTabPanel.classList.remove("front");
             newActiveTabPanel = document.querySelector("#images");
