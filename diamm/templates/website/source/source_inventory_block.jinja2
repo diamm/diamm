@@ -79,7 +79,7 @@
                     {% for item in composer.inventory %}
                         <li>
                             {%- if item.folio_start_s %}
-                                <a href="#" class="folio-link" data-page"{{ item.folio_start_s }}">{{ item.folio_start_s }}
+                                <a href="#" class="folio-link" data-page="{{ item.folio_start_s }}">{{ item.folio_start_s }}
                                 {%- if item.folio_end_s != item.folio_start_s -%}&ndash;{{ item.folio_end_s }}: {%- endif -%}
                                 </a>
                             {% endif -%}
