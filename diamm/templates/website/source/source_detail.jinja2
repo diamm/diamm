@@ -93,16 +93,20 @@
     <script src="{{ static('javascripts/lib/tabs.js') }}" type="application/javascript"></script>
     <script src="{{ static('javascripts/lib/goToPage.js') }}" type="application/javascript"></script>
     <script type="application/javascript">
-        $("#tabs").tabs()
         window.onload = function()
         {
+            $("#tabs").tabs()
             var divaObj = $("#diva-wrapper").data('diva');
-            $('#diva-wrapper').diva({
-                    enableAutoTitle: false,
-                    objectData: "{{ content.manifest_url }}",
-                    enableIIIFPageData: true,
-                    enableIIIFStructure: true
-            });
+            if (!divaObj)
+            {
+                $('#diva-wrapper').diva({
+                        enableAutoTitle: false,
+                        objectData: "{{ content.manifest_url }}",
+                        enableIIIFPageData: true,
+                        enableIIIFStructure: true
+                });
+            }
+            goToPage();
         };
     </script>
 {% endblock %}
