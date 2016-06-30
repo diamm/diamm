@@ -2,12 +2,11 @@
 
 {% block body %}
     <div class="col-md-12">
-        <h1>City List</h1>
-        <ul>
+        <h1>Cities</h1>
+        {% include "website/blocks/browse_alphabet.jinja2" %}
         {% for city in content.results %}
-        <li><a href="{{ city.url }}">{{ city.name }}</a></li>
+        <h4><a href="{{ city.url }}">{{ city.name }}</a></h4>
         {% endfor %}
-        </ul>
         {% include "website/blocks/browse_paginator.jinja2" %}
     </div>
 {% endblock %}

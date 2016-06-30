@@ -2,12 +2,13 @@
 
 {% block body %}
     <div class="col-md-12">
-        <h1>Archive List</h1>
-        <ul>
+        <h1>Archives</h1>
         {% for archive in content.results %}
-            <li><a href="{{ archive.url }}">{{ archive.name }}</a> ({{ archive.city.name }})</li>
+        <div class="search-result">
+            <h4><a href="{{ archive.url }}">{{ archive.name }}</a></h4>
+            {{ archive.city.name }}
+        </div>
         {% endfor %}
-        </ul>
         {% include "website/blocks/browse_paginator.jinja2" %}
     </div>
 {% endblock %}
