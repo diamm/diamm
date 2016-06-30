@@ -4,7 +4,7 @@ import re
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 
-class Object_Pagination(PageNumberPagination):
+class ObjectPagination(PageNumberPagination):
     def replace_page_query(self, url, page_num):
         regex = "(?P<prefix>&|\?)page=[0-9]+"
         if re.search(regex, url):
