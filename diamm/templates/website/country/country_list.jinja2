@@ -2,12 +2,10 @@
 
 {% block body %}
     <div class="col-md-12">
-        <h1>Country List</h1>
-        <ul>
+        <h1>Countries</h1>
         {% for country in content.results %}
-            <li><a href="{{ country.url }}">{{ country.name }}</a></li>
+            <h4><a href="{{ country.url }}">{{ country.name }}</a></h4>
         {% endfor %}
-        </ul>
         {% include "website/blocks/browse_paginator.jinja2" %}
     </div>
 {% endblock %}

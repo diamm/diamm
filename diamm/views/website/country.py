@@ -3,6 +3,7 @@ from rest_framework import renderers
 from diamm.models.data.geographic_area import GeographicArea
 from diamm.serializers.website.country import CountryListSerializer, CountryDetailSerializer
 from diamm.renderers.html_renderer import HTMLRenderer
+from diamm.helpers.object_pagination import ObjectPagination
 
 
 class CountryList(generics.ListAPIView):
@@ -10,6 +11,7 @@ class CountryList(generics.ListAPIView):
     queryset = GeographicArea.objects.filter(type=GeographicArea.COUNTRY)
     serializer_class = CountryListSerializer
     renderer_classes = (HTMLRenderer, renderers.JSONRenderer)
+    pagination_class = ObjectPagination
 
 
 class CountryDetail(generics.RetrieveAPIView):
