@@ -3,7 +3,6 @@
     var Tabs = function (element, options)
     {
         var parentObject = $(element);
-        var activeTabPanel = null;
 
         var defaults = {
             tabsID: "tabs",                   // id of the parent tab block
@@ -44,13 +43,13 @@
 
         var gotoTab = function (tabHash)
         {
+            var activeTabPanel = document.querySelector('.front');
             if (activeTabPanel)
             {
                 activeTabPanel.classList.remove('front');
             }
             var newActiveTabPanel = document.querySelector(tabHash);
             newActiveTabPanel.classList.add('front');
-            activeTabPanel = newActiveTabPanel;
 
             if (settings.tabCallbacks.hasOwnProperty(tabHash))
             {
