@@ -162,7 +162,12 @@ def convert_secondary_image(entry):
         return None
 
     orig_image_pk = "legacy_image.{0}".format(int(entry.imagekey))
-    orig_image = Image.objects.get(legacy_id=orig_image_pk)
+    try:
+        orig_image = Image.objects.get(legacy_id=orig_image_pk)
+    except Image.DoesNotExist:
+        print(term.red("\t\tImage {0} does not exist. Skipping.".format(orig_image_pk)))
+        return None
+
     page = orig_image.page
     imtype_pk = determine_image_type(entry)
     imtype = ImageType.objects.get(pk=imtype_pk)
@@ -183,10 +188,14 @@ def attach_item_to_page(entry):
     item_pk = int(entry.itemkey)
 
     # These items have an image attached to it, and they shouldn't really. Skip them.
-    if item_pk in (92020,):
+    if item_pk in (92020, 71686):
         return None
 
-    item = Item.objects.get(pk=item_pk)
+    try:
+        item = Item.objects.get(pk=item_pk)
+    except Item.DoesNotExist:
+        print(term.red("\t\tItem {0} Does not exist".format(item_pk)))
+        return None
 
     image_pk = int(entry.imagekey)
     page = Page.objects.get(legacy_id="legacy_image.{0}".format(image_pk))
