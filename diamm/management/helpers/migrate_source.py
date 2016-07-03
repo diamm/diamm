@@ -57,6 +57,8 @@ def __migrate_surface(legacy_surface):
 
 
 def format_measurements(page_measurements, units):
+    # Deal with mixed content in the page measurements, some including the units
+    # and some not.
     if not page_measurements:
         return None
     if page_measurements and not units:
