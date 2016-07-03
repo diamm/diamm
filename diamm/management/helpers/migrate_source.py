@@ -72,7 +72,7 @@ def format_measurements(page_measurements, units):
 
 def migrate_source_to_source(legacy_source):
     print(term.green("\tMigrating Source {0} with ID {1}".format(legacy_source.shelfmark, legacy_source.pk)))
-    archive_pk = legacy_source.archivekey.pk
+    archive_pk = int(legacy_source.archivekey)
     archive = Archive.objects.get(pk=archive_pk)
     surface = __migrate_surface(legacy_source.surface)
     print(term.magenta("Converting surface {0} to type {1}".format(legacy_source.surface, surface)))
