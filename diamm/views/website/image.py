@@ -20,6 +20,7 @@ def image_serve(request, pk, region=None, size=None, rotation=None, *args, **kwa
         The images are requested via their database PK, but since we don't necessarily
         want to bother Postgres for this (slow lookup) we'll ask Solr for it.
     """
+
     field_list = [
         'location_s'
     ]
