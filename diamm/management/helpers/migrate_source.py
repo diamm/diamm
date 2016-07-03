@@ -38,16 +38,20 @@ def __migrate_surface(legacy_surface):
     if not legacy_surface:
         return None
 
-    if legacy_surface.lower() == 'parchment':
+    if legacy_surface.lower().strip() == 'parchment':
         return Source.PARCHMENT
-    elif legacy_surface.lower() == 'paper':
+    elif legacy_surface.lower().strip() in ('paper', 'aper', 'papel'):
         return Source.PAPER
-    elif legacy_surface.lower() in ('vellum', 'calfskin'):
+    elif legacy_surface.lower().strip() in ('vellum', 'calfskin'):
         return Source.VELLUM
-    elif legacy_surface.lower() in ('wood',):
+    elif legacy_surface.lower().strip() in ('wood',):
         return Source.WOOD
-    elif legacy_surface.lower() in ('slate',):
+    elif legacy_surface.lower().strip() in ('slate',):
         return Source.SLATE
+    elif 'mix' in legacy_surface.lower().strip():
+        return Source.MIXED
+    elif "+" in legacy_surface.lower().strip():
+        return Source.MIXED
     else:
         return Source.OTHER
 
