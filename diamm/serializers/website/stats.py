@@ -3,9 +3,9 @@ import serpy
 from diamm.serializers.serializers import ContextDictSerializer
 
 class StatsSerializer(ContextDictSerializer):
-    source = serpy.IntField(label='sources')
-    source_with_images = serpy.IntField(label='sources_with_images')
-    archive = serpy.IntField(label='archives')
-    composition = serpy.IntField(label='compositions')
-    person = serpy.IntField(label='people')
-    composer = serpy.IntField(label='composers')
+    sources = serpy.IntField(attr='source')
+    sources_with_images = serpy.IntField(attr='source_with_images')
+    archives = serpy.IntField(attr='archive')
+    compositions = serpy.IntField(attr='composition')
+    people = serpy.IntField(attr='person')
+    composers = serpy.IntField(attr='composer')
