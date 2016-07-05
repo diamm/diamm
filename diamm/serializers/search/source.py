@@ -90,6 +90,7 @@ class SourceSearchSerializer(serpy.Serializer):
         required=False
     )
     public_images_b = serpy.MethodField()
+    geographic_area_ii = serpy.MethodField()
 
     def get_type(self, obj):
         return obj.__class__.__name__.lower()
@@ -140,3 +141,10 @@ class SourceSearchSerializer(serpy.Serializer):
             return True
         else:
             return False
+
+    def get_geographic_area_ii(self, obj):
+        geographic_area = list()
+        provenances = obj.provenance.all()
+        for p in provenances:
+            geographic_area = geographic_area + [p.city_id, p.country_id, p.protectorate_id, p.region_id]
+        return geographic_area
