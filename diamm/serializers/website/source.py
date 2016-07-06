@@ -68,11 +68,14 @@ class SourceRelationshipSerializer(ContextDictSerializer):
 
 
 class SourceProvenanceSerializer(ContextDictSerializer):
+    entity = serpy.MethodField()
+    protectorate = serpy.MethodField()
+    region = serpy.MethodField()
     city = serpy.MethodField()
     country = serpy.MethodField()
-    region = serpy.MethodField()
-    protectorate = serpy.MethodField()
-    entity = serpy.MethodField()
+
+    class Meta:
+        ordering = ('entity', 'protectorate', 'region', 'city', 'country')
 
     def get_city(self, obj):
         if 'city_s' in obj:

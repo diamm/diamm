@@ -97,26 +97,17 @@
                         <ul class="no-style">
                             {%- for entry in content.provenance -%}
                             <li>
-                                {%- if entry.entity -%}
-                                    {{ "?" if entry.entity.uncertain else "" }}
-                                    <a href="{{ entry.entity.url }}">{{ entry.entity.name }}</a>,&nbsp;
-                                {%- endif -%}
-                                {%- if entry.protectorate -%}
-                                    {{ "?" if entry.protectorate.uncertain else "" }}
-                                    {{ entry.protectorate.name }},&nbsp;
-                                {%- endif -%}
-                                {%- if entry.region -%}
-                                    {{ "?" if entry.region.uncertain else "" }}
-                                    {{ entry.region.name }},&nbsp;
-                                {%- endif -%}
-                                {%- if entry.city -%}
-                                    {{ "?" if entry.city.uncertain else "" }}
-                                    <a href="{{ entry.city.url }}">{{ entry.city.name }}</a>,&nbsp;
-                                {%- endif -%}
-                                {%- if entry.country -%}
-                                    {{ "?" if entry.country.uncertain else "" }}
-                                    <a href="{{ entry.country.url }}">{{ entry.country.name }}</a>
-                                {%- endif -%}
+                                {%- for key, item in entry.items() -%}
+                                    {%- if item -%}
+                                        {{ "?" if item.uncertain else "" }}
+                                        {%- if item.url -%}
+                                            <a href="{{ item.url }}">{{ item.name }}</a>
+                                        {%- else -%}
+                                            {{ item.name }}
+                                        {%- endif -%}
+                                        {{ "" if key == 'country' else ", "}}
+                                    {%- endif -%}
+                                {%- endfor -%}
                             </li>
                             {%- endfor -%}
                         </ul>
