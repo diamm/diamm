@@ -6,7 +6,7 @@
         {% for archive in content.results %}
         <div class="search-result">
             <h4><a href="{{ archive.url }}">{{ archive.name }}</a></h4>
-            {{ archive.city.name }}
+            <a href="{{ archive.city.url }}">{{ archive.city.name }}</a>, {{ archive.city.country }}
         </div>
         {% endfor %}
         {% include "website/blocks/browse_paginator.jinja2" %}
