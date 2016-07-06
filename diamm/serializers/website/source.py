@@ -73,37 +73,35 @@ class SourceProvenanceSerializer(ContextDictSerializer):
     region = serpy.MethodField()
     protectorate = serpy.MethodField()
     entity = serpy.MethodField()
-    country_uncertain = serpy.BoolField(
-        attr="country_uncertain_b"
-    )
-    city_uncertain = serpy.BoolField(
-        attr="city_uncertain_b"
-    )
-    entity_uncertain = serpy.BoolField(
-        attr="entity_uncertain_b"
-    )
-    region_uncertain = serpy.BoolField(
-        attr="region_uncertain_b"
-    )
 
     def get_city(self, obj):
         if 'city_s' in obj:
-            return obj['city_s']
+            return {'name': obj['city_s'], 
+                    'url': reverse(
+                        'city-detail', 
+                        kwargs={'pk': obj['city_i']}, request=self.context['request']),
+                    'uncertain': obj['city_uncertain_b']}
         return None
 
     def get_country(self, obj):
         if 'country_s' in obj:
-            return obj['country_s']
+            return {'name': obj['country_s'], 
+                    'url': reverse(
+                        'country-detail', 
+                        kwargs={'pk': obj['country_i']}, request=self.context['request']),
+                    'uncertain': obj['country_uncertain_b']}
         return None
 
     def get_region(self, obj):
         if 'region_s' in obj:
-            return obj['region_s']
+            return {'name': obj['region_s'], 
+                    'uncertain': obj['region_uncertain_b']}
         return None
 
     def get_protectorate(self, obj):
         if 'protectorate_s' in obj:
-            return obj['protectorate_s']
+            return {'name': obj['protectorate_s'], 
+                    'uncertain': obj['protectorate_uncertain_b']}
         return None
 
     def get_entity(self, obj):

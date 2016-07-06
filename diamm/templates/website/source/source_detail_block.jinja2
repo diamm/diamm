@@ -98,19 +98,24 @@
                             {%- for entry in content.provenance -%}
                             <li>
                                 {%- if entry.entity -%}
-                                    {{ "?" if entity_uncertain else "" }}<a href="{{ entry.entity.url }}">{{ entry.entity.name }}</a>,&nbsp;
+                                    {{ "?" if entry.entity.uncertain else "" }}
+                                    <a href="{{ entry.entity.url }}">{{ entry.entity.name }}</a>,&nbsp;
                                 {%- endif -%}
                                 {%- if entry.protectorate -%}
-                                    {{ "?" if entry.protectorate_uncertain else "" }}{{ entry.protectorate }},&nbsp;
+                                    {{ "?" if entry.protectorate.uncertain else "" }}
+                                    {{ entry.protectorate.name }},&nbsp;
                                 {%- endif -%}
                                 {%- if entry.region -%}
-                                    {{ "?" if entry.region_uncertain else "" }}{{ entry.region }},&nbsp;
+                                    {{ "?" if entry.region.uncertain else "" }}
+                                    {{ entry.region.name }},&nbsp;
                                 {%- endif -%}
                                 {%- if entry.city -%}
-                                    {{ "?" if entry.city_uncertain else "" }}{{ entry.city }},&nbsp;
+                                    {{ "?" if entry.city.uncertain else "" }}
+                                    <a href="{{ entry.city.url }}">{{ entry.city.name }}</a>,&nbsp;
                                 {%- endif -%}
                                 {%- if entry.country -%}
-                                    {{ "?" if entry.country_uncertain else "" }}{{ entry.country }}
+                                    {{ "?" if entry.country.uncertain else "" }}
+                                    <a href="{{ entry.country.url }}">{{ entry.country.name }}</a>
                                 {%- endif -%}
                             </li>
                             {%- endfor -%}
