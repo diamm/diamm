@@ -84,9 +84,16 @@ class CustomUserModel(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'email'
 
+    @property
+    def full_name(self):
+        return self.get_full_name()
+
     def get_full_name(self):
-        full_name = "{0} {1}".format(self.first_name, self.last_name)
-        return full_name.strip()
+        if not self.last_name:
+            return "{0}".format(self.email)
+        else:
+            full_name = "{0} {1}".format(self.first_name, self.last_name)
+            return full_name.strip()
 
     def get_short_name(self):
         return self.first_name
