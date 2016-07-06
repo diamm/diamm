@@ -38,21 +38,27 @@ def __migrate_surface(legacy_surface):
     if not legacy_surface:
         return None
 
-    if legacy_surface.lower() == 'parchment':
+    if legacy_surface.lower().strip() == 'parchment':
         return Source.PARCHMENT
-    elif legacy_surface.lower() == 'paper':
+    elif legacy_surface.lower().strip() in ('paper', 'aper', 'papel'):
         return Source.PAPER
-    elif legacy_surface.lower() in ('vellum', 'calfskin'):
+    elif legacy_surface.lower().strip() in ('vellum', 'calfskin'):
         return Source.VELLUM
-    elif legacy_surface.lower() in ('wood',):
+    elif legacy_surface.lower().strip() in ('wood',):
         return Source.WOOD
-    elif legacy_surface.lower() in ('slate',):
+    elif legacy_surface.lower().strip() in ('slate',):
         return Source.SLATE
+    elif 'mix' in legacy_surface.lower().strip():
+        return Source.MIXED
+    elif "+" in legacy_surface.lower().strip():
+        return Source.MIXED
     else:
         return Source.OTHER
 
 
 def format_measurements(page_measurements, units):
+    # Deal with mixed content in the page measurements, some including the units
+    # and some not.
     if not page_measurements:
         return None
     if page_measurements and not units:
@@ -66,7 +72,7 @@ def format_measurements(page_measurements, units):
 
 def migrate_source_to_source(legacy_source):
     print(term.green("\tMigrating Source {0} with ID {1}".format(legacy_source.shelfmark, legacy_source.pk)))
-    archive_pk = legacy_source.archivekey.pk
+    archive_pk = int(legacy_source.archivekey)
     archive = Archive.objects.get(pk=archive_pk)
     surface = __migrate_surface(legacy_source.surface)
     print(term.magenta("Converting surface {0} to type {1}".format(legacy_source.surface, surface)))
@@ -136,16 +142,39 @@ def migrate_source_to_source(legacy_source):
             surl = SourceURL(**d)
             surl.save()
 
+    oth_num = None
+    if legacy_source.othernumberings:
+        oth_num = "Other numberings: {0}".format(legacy_source.othernumberings)
+
+    general_description = None
+    if legacy_source.generaldescription:
+        general_description = legacy_source.generaldescription
+    else:
+        general_description = legacy_source.description_diamm
+
+    contents_note = None
+    if legacy_source.index and legacy_source.index.strip() != "none":
+        contents_note = legacy_source.index
+
+
     notes = [
         (SourceNote.DATE_NOTE, legacy_source.datecomments),
         (SourceNote.RISM_NOTE, legacy_source.description_rism),
         (SourceNote.PRIVATE_NOTE, legacy_source.notes),
         (SourceNote.LIMINARY_NOTE, legacy_source.liminarytext),
         (SourceNote.RULING_NOTE, legacy_source.stavegauge),
-        (SourceNote.GENERAL_NOTE, legacy_source.description_diamm),
+        (SourceNote.GENERAL_NOTE, general_description),
         (SourceNote.CCM_NOTE, legacy_source.description_ccm),
         (SourceNote.DEDICATION_NOTE, legacy_source.dedicationtext),
-        (SourceNote.FOLIATION_NOTE, legacy_source.leafnumberingdescription)
+        (SourceNote.FOLIATION_NOTE, legacy_source.leafnumberingsystem),
+        (SourceNote.FOLIATION_NOTE, legacy_source.leafnumberingdescription),
+        (SourceNote.FOLIATION_NOTE, oth_num),
+        (SourceNote.BINDING_NOTE, legacy_source.binding),
+        (SourceNote.WATERMARK_NOTE, legacy_source.watermark),
+        (SourceNote.PHYSICAL_NOTE, legacy_source.condition),
+        (SourceNote.SURFACE_NOTE, legacy_source.surface),
+        (SourceNote.CONTENTS_NOTE, contents_note),
+        (SourceNote.NOTATION_NOTE, legacy_source.notation)
     ]
 
     for n in notes:

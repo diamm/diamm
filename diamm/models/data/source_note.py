@@ -20,6 +20,9 @@ class SourceNote(models.Model):
     DEDICATION_NOTE = 12
     RULING_NOTE = 13
     FOLIATION_NOTE = 14
+    DECORATION_NOTE = 15
+    CONTENTS_NOTE = 16
+    SURFACE_NOTE = 17
     PRIVATE_NOTE = 99
 
     NOTE_TYPES = (
@@ -37,6 +40,9 @@ class SourceNote(models.Model):
         (DEDICATION_NOTE, 'Dedication Note'),
         (RULING_NOTE, 'Ruling Note'),
         (FOLIATION_NOTE, 'Foliation Note'),
+        (DECORATION_NOTE, 'Decoration Note'),
+        (CONTENTS_NOTE, 'Contents Note'),
+        (SURFACE_NOTE, 'Surface Note'),
         (PRIVATE_NOTE, 'Private Note')
     )
 

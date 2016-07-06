@@ -21,7 +21,13 @@ def empty_table():
 def migrate_text_and_voice(entry):
     print(term.green("\tMigrating text entry {0}".format(entry.pk)))
     voice_type = VoiceType.objects.get(legacy_id="voice.{0}".format(int(entry.alvoicekey)))
-    item = Item.objects.get(pk=int(entry.itemkey))
+
+    try:
+        item = Item.objects.get(pk=int(entry.itemkey))
+    except Item.DoesNotExist:
+        print("\t\tItem {0} does not exist; continuing.".format(entry.itemkey))
+        return None
+
     mensuration = None
     # Skip the 'no designation' mensuration key and favour null for mensuration.
     if entry.almensurationkey not in (None, 0):
@@ -72,6 +78,7 @@ def migrate_text_and_voice(entry):
 
 
 def migrate():
+    print("Migrating Text and Voice Records")
     empty_table()
     # exclude bad records attached to an empty item.
     for entry in LegacyText.objects.exclude(pk__in=(82138, 111695)):

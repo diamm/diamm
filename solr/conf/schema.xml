@@ -98,18 +98,22 @@
     <fieldType name="text_general" class="solr.TextField" positionIncrementGap="100">
         <analyzer type="index">
             <tokenizer class="solr.StandardTokenizerFactory" />
+            <filter class="solr.LowerCaseFilterFactory"/>
         </analyzer>
         <analyzer type="query">
             <tokenizer class="solr.StandardTokenizerFactory" />
+            <filter class="solr.LowerCaseFilterFactory"/>
         </analyzer>
     </fieldType>
 
     <fieldType name="text_en" class="solr.TextField" positionIncrementGap="100">
         <analyzer type="index">
             <tokenizer class="solr.StandardTokenizerFactory" />
+            <filter class="solr.LowerCaseFilterFactory"/>
         </analyzer>
         <analyzer type="query">
             <tokenizer class="solr.StandardTokenizerFactory" />
+            <filter class="solr.LowerCaseFilterFactory"/>
         </analyzer>
     </fieldType>
 

@@ -12,6 +12,9 @@ from blessings import Terminal
 
 term = Terminal()
 
+# Composition keys that don't actually point to compositions, but to composition place-holders.
+BAD_COMPOSITION_KEYS = (0, 69332, 54681, 69558, 79920, 888888, 999999, 87464)
+
 aggregate_titles = ("works by",
                     "1 work",
                     "1 - 3 works",
@@ -60,10 +63,10 @@ def migrate_item(entry):
     source_pk = entry.sourcekey
     source = Source.objects.get(pk=source_pk)
 
-    # This is a special 'composition' that says that it's a post-1550 source.
-    # If that's the case, we'll skip adding this composition to the source
+    # This will stop any composition placeholders from being added to the item table.
+    # We'll skip adding this composition to the source
     # and simply set a flag on the source that no inventory has been provided.
-    if entry.compositionkey in (0, 79920):
+    if entry.compositionkey in BAD_COMPOSITION_KEYS:
         print(term.red('\t\tMarking the inventory as not provided.'))
         source.inventory_provided = False
         source.save()
@@ -96,7 +99,7 @@ def migrate_item(entry):
     composition_pk = entry.compositionkey
     orig_composition = None
 
-    if composition_pk not in (0, 69332, 54681, 69558, 79920, 888888, 999999, 87464):
+    if composition_pk not in BAD_COMPOSITION_KEYS:
         orig_composition = Composition.objects.get(pk=composition_pk)
 
     # If the composition is a 'filler' one that meant to stand in for one or more
@@ -175,7 +178,8 @@ def update_table():
 def migrate():
     print(term.blue("Migrating Items"))
     empty_items()
-    for entry in LegacyItem.objects.all():
+
+    for entry in LegacyItem.objects.filter(sourcekey__isnull=False):
         migrate_item(entry)
 
     clear_aggregate_compositions()
