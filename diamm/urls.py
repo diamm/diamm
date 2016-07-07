@@ -20,7 +20,8 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.views import (
-    password_reset, password_reset_done, password_reset_confirm, password_reset_complete
+    password_reset, password_reset_done, password_reset_confirm, password_reset_complete,
+    password_change, password_change_done, login, logout
 )
 from diamm.views.auth import (
     LoginView, LogoutView, CreateAccount, ActivateAccount
@@ -70,6 +71,12 @@ urlpatterns = [
          'template_name': "website/auth/reset_confirm.jinja2"}, name="password_reset_confirm"),
     url(r'^reset/complete/$', password_reset_complete,
         {'template_name': "website/auth/reset_complete.jinja2"}),
+    url(r'^change/$', password_change,
+        {"template_name": 'website/auth/change.jinja2',
+         "post_change_redirect": "/change/complete/"}, name="password-change"),
+    url(r'^change/complete/$', password_change_done,
+        {"template_name": "website/auth/change_complete.jinja2"},
+        name="password-change-done"),
 
     url(r'^account/$', ProfileView.as_view(), name="user-account"),
     url(r'^account/edit/$', ProfileEditView.as_view(), name="user-account-edit"),
