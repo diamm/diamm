@@ -2827,7 +2827,8 @@ form {
       float: left;
       margin-top: 0;
       margin-left: 0;
-      width: 18rem;
+      width: 6.2rem;
+      height: 2rem;
       padding: 0; }
     .navbar .navbar-list .dropdown-content div {
       position: relative;
