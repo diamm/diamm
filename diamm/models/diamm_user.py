@@ -63,7 +63,6 @@ class CustomUserModel(AbstractBaseUser, PermissionsMixin):
     affiliation = models.CharField(_('affiliation'), max_length=255, blank=True, null=True)
     legacy_username = models.CharField(_('legacy username'), max_length=255, blank=True, null=True)
     legacy_id = models.IntegerField(_('legacy id'), blank=True, null=True)
-    temp_activation_key = models.CharField(_('activation key'), max_length=128, blank=True, null=True)
 
     is_staff = models.BooleanField(
         _('staff status'),
