@@ -1,4 +1,9 @@
-<div>
+<div class="search-result-brief">
+    <span class="result-type">{{ result.type | title }}</span>
+    Type: {{ result.set_type_s }}
+</div>
+
+<div class="search-result-description">
     {{ result.cluster_shelfmark_s }}
     {% if result.sources_ii %}
         Contains {{ result.sources_ii | length }} sources.
