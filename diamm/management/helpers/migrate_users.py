@@ -27,7 +27,7 @@ def migrate_user(entry):
         "first_name": first_names,
         "email": entry.email,
         "affiliation": entry.affiliation,
-        "is_active": False,
+        "is_active": True,  # only active users are able to reset their password.
         "password": str(uuid.uuid4())  # set a random password. This will be changed on first login.
     }
     u = CustomUserModel.objects.create_user(**d)
