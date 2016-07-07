@@ -54,6 +54,7 @@ urlpatterns = [
 
     url(r'^beta/$', TemplateView.as_view(template_name="beta.jinja2"), name="beta"),
     url(r'^introduction/$', TemplateView.as_view(template_name="introduction.jinja2"), name="introduction"),
+    url(r'^technical/$', TemplateView.as_view(template_name="technical.jinja2"), name="technical"),
 
     # Authentication and account resets
     url(r'^login/$', login,
