@@ -26,7 +26,7 @@ from diamm.views.auth import (
     LoginView, LogoutView, CreateAccount, ActivateAccount
 )
 from diamm.views.home import HomeView
-from diamm.views.user import ProfileView
+from diamm.views.user import ProfileView, ProfileEditView
 from diamm.views.website.search import SearchView
 from diamm.views.contribution import MakeContribution
 from diamm.views.website.set import SetDetail
@@ -71,9 +71,8 @@ urlpatterns = [
     url(r'^reset/complete/$', password_reset_complete,
         {'template_name': "website/auth/reset_complete.jinja2"}),
 
-    url(r'^activate/(?P<uuid>[a-f0-9]{8}-?[a-f0-9]{4}-?4[a-f0-9]{3}-?[89ab][a-f0-9]{3}-?[a-f0-9]{12})/$',
-        ActivateAccount.as_view(), name="activate"),
-    url(r'^user/(?P<pk>[0-9]+)/$', ProfileView.as_view(), name="user-profile"),
+    url(r'^account/$', ProfileView.as_view(), name="user-account"),
+    url(r'^account/edit/$', ProfileEditView.as_view(), name="user-account-edit"),
 
     # public website
     url(r'^search/$', SearchView.as_view(), name="search"),
