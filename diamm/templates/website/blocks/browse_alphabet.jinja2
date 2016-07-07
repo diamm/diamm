@@ -1,5 +1,5 @@
 <h3>
     {% for char in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" %}
-    <a href="{{ content.pagination.url }}l={{ char }}">{{ char }}</a>
+    <a href="{{ content.url }}?l={{ char }}">{{ char }}</a>
     {% endfor %}
 </h3>
