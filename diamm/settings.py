@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'django_extensions',
     'django_jinja',
+    'django_jinja.contrib._humanize',
     'pagedown',
     'debug_toolbar',
 ]
