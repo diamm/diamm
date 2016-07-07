@@ -3092,6 +3092,11 @@ ul.contribution-list li {
         border-bottom: none;
         font-weight: 500; }
 
+.search-result-brief {
+  font-size: 90%; }
+  .search-result-brief .result-type {
+    font-weight: bold; }
+
 .search-results .result-count {
   font-family: "PT Sans", sans-serif;
   font-size: 90%;
