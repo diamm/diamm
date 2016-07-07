@@ -74,39 +74,6 @@ class SourceProvenanceSerializer(ContextDictSerializer):
     city = serpy.MethodField()
     country = serpy.MethodField()
 
-    class Meta:
-        ordering = ('entity', 'protectorate', 'region', 'city', 'country')
-
-    def get_city(self, obj):
-        if 'city_s' in obj:
-            return {'name': obj['city_s'], 
-                    'url': reverse(
-                        'city-detail', 
-                        kwargs={'pk': obj['city_i']}, request=self.context['request']),
-                    'uncertain': obj['city_uncertain_b']}
-        return None
-
-    def get_country(self, obj):
-        if 'country_s' in obj:
-            return {'name': obj['country_s'], 
-                    'url': reverse(
-                        'country-detail', 
-                        kwargs={'pk': obj['country_i']}, request=self.context['request']),
-                    'uncertain': obj['country_uncertain_b']}
-        return None
-
-    def get_region(self, obj):
-        if 'region_s' in obj:
-            return {'name': obj['region_s'], 
-                    'uncertain': obj['region_uncertain_b']}
-        return None
-
-    def get_protectorate(self, obj):
-        if 'protectorate_s' in obj:
-            return {'name': obj['protectorate_s'], 
-                    'uncertain': obj['protectorate_uncertain_b']}
-        return None
-
     def get_entity(self, obj):
         if 'entity_s' in obj:
             url = reverse("{0}-detail".format(obj['entity_type_s']),
@@ -116,8 +83,32 @@ class SourceProvenanceSerializer(ContextDictSerializer):
                 'name': obj['entity_s'],
                 'url': url
             }
-        else:
-            return None
+
+    def get_protectorate(self, obj):
+        if 'protectorate_s' in obj:
+            return {'name': obj['protectorate_s'],
+                    'uncertain': obj['protectorate_uncertain_b']}
+
+    def get_region(self, obj):
+        if 'region_s' in obj:
+            return {'name': obj['region_s'],
+                    'uncertain': obj['region_uncertain_b']}
+
+    def get_city(self, obj):
+        if 'city_s' in obj:
+            return {'name': obj['city_s'],
+                    'url': reverse(
+                        'city-detail',
+                        kwargs={'pk': obj['city_i']}, request=self.context['request']),
+                    'uncertain': obj['city_uncertain_b']}
+
+    def get_country(self, obj):
+        if 'country_s' in obj:
+            return {'name': obj['country_s'],
+                    'url': reverse(
+                        'country-detail',
+                        kwargs={'pk': obj['country_i']}, request=self.context['request']),
+                    'uncertain': obj['country_uncertain_b']}
 
 
 class SourceSetSerializer(ContextDictSerializer):

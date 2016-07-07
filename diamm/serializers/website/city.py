@@ -35,7 +35,7 @@ class CityDetailSerializer(serializers.HyperlinkedModelSerializer):
     country = CountryCitySerializer(
         source='parent'
     )
-    sources = serializers.SerializerMethodField() 
+    sources = serializers.SerializerMethodField()
 
     class Meta:
         model = GeographicArea
@@ -47,17 +47,18 @@ class CityDetailSerializer(serializers.HyperlinkedModelSerializer):
     def get_sources(self, obj):
         sources = list()
         connection = pysolr.Solr(settings.SOLR['SERVER'])
-        fq = ['type:source', 'geographic_area_ii:' + str(obj.id)]
-        results = connection.search('*:*', fq=fq)
+        fq = ['type:source', 'geographic_area_ii:{0}'.format(obj.id)]
+        fl = ['pk', 'geographic_area_ii', 'display_name_s']
+        results = connection.search('*:*', fq=fq, fl=fl)
         if results.hits > 0:
             for doc in results.docs:
                 sources.append({
-                    'url': 
+                    'url':
                         reverse(
-                            'source-detail', 
+                            'source-detail',
                             kwargs={'pk': doc['pk']},
                             request=self.context['request']),
                     'name': doc['display_name_s']
                 })
-        return sources 
+        return sources
 
