@@ -23,9 +23,7 @@ from django.contrib.auth.views import (
     password_reset, password_reset_done, password_reset_confirm, password_reset_complete,
     password_change, password_change_done, login, logout
 )
-from diamm.views.auth import (
-    LoginView, LogoutView, CreateAccount, ActivateAccount
-)
+from diamm.views.auth import CreateAccount
 from diamm.views.home import HomeView
 from diamm.views.user import ProfileView, ProfileEditView
 from diamm.views.website.search import SearchView
@@ -57,8 +55,10 @@ urlpatterns = [
     url(r'^introduction/$', TemplateView.as_view(template_name="introduction.jinja2"), name="introduction"),
 
     # Authentication and account resets
-    url(r'^login/$', LoginView.as_view(), name="login"),
-    url(r'^logout/$', LogoutView.as_view(), name="logout"),
+    url(r'^login/$', login,
+        {"template_name": 'website/auth/login.jinja2'}, name="login"),
+    url(r'^logout/$', logout,
+        {"next_page": "/"}, name="logout"),
     url(r'^register/$', CreateAccount.as_view(), name="register"),
     url(r'^reset/$', password_reset,
         {'post_reset_redirect': '/reset/sent/',
