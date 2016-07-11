@@ -94,14 +94,14 @@ class UserAdmin(BaseUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
 
-    list_display = ('email', 'affiliation', 'is_active', 'is_staff', 'legacy_username')
+    list_display = ('email', 'affiliation', 'is_active', 'is_staff', 'legacy_username', 'last_login')
     list_filter = ('is_staff', 'is_active', 'is_superuser')
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         (_('Personal info'), {'fields': ('first_name', 'last_name', 'affiliation')}),
         (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
-        (_('Administration'), {'fields': ('temp_activation_key', 'legacy_id')})
+        (_('Administration'), {'fields': ('legacy_id',)})
     )
     add_fieldsets = (
         (None, {

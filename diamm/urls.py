@@ -20,13 +20,12 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.views import (
-    password_reset, password_reset_done, password_reset_confirm, password_reset_complete
+    password_reset, password_reset_done, password_reset_confirm, password_reset_complete,
+    password_change, password_change_done, login, logout
 )
-from diamm.views.auth import (
-    LoginView, LogoutView, CreateAccount, ActivateAccount
-)
+from diamm.views.auth import CreateAccount
 from diamm.views.home import HomeView
-from diamm.views.user import ProfileView
+from diamm.views.user import ProfileView, ProfileEditView
 from diamm.views.website.search import SearchView, SaveSearch
 from diamm.views.contribution import MakeContribution
 from diamm.views.website.set import SetDetail
@@ -44,6 +43,7 @@ from diamm.views.website.story import StoryDetail
 from diamm.views.website.aboutpages import AboutPagesDetail
 from diamm.views.website.image import image_serve
 from diamm.views.website.bibliography_author import BibliographyAuthorDetail
+from diamm.views.website.stats import StatsView
 
 
 urlpatterns = [
@@ -56,8 +56,10 @@ urlpatterns = [
     url(r'^introduction/$', TemplateView.as_view(template_name="introduction.jinja2"), name="introduction"),
 
     # Authentication and account resets
-    url(r'^login/$', LoginView.as_view(), name="login"),
-    url(r'^logout/$', LogoutView.as_view(), name="logout"),
+    url(r'^login/$', login,
+        {"template_name": 'website/auth/login.jinja2'}, name="login"),
+    url(r'^logout/$', logout,
+        {"next_page": "/"}, name="logout"),
     url(r'^register/$', CreateAccount.as_view(), name="register"),
     url(r'^reset/$', password_reset,
         {'post_reset_redirect': '/reset/sent/',
@@ -70,16 +72,22 @@ urlpatterns = [
          'template_name': "website/auth/reset_confirm.jinja2"}, name="password_reset_confirm"),
     url(r'^reset/complete/$', password_reset_complete,
         {'template_name': "website/auth/reset_complete.jinja2"}),
+    url(r'^change/$', password_change,
+        {"template_name": 'website/auth/change.jinja2',
+         "post_change_redirect": "/change/complete/"}, name="password-change"),
+    url(r'^change/complete/$', password_change_done,
+        {"template_name": "website/auth/change_complete.jinja2"},
+        name="password-change-done"),
 
-    url(r'^activate/(?P<uuid>[a-f0-9]{8}-?[a-f0-9]{4}-?4[a-f0-9]{3}-?[89ab][a-f0-9]{3}-?[a-f0-9]{12})/$',
-        ActivateAccount.as_view(), name="activate"),
-    url(r'^user/(?P<pk>[0-9]+)/$', ProfileView.as_view(), name="user-profile"),
+    url(r'^account/$', ProfileView.as_view(), name="user-account"),
+    url(r'^account/edit/$', ProfileEditView.as_view(), name="user-account-edit"),
 
     # public website
     url(r'^search/$', SearchView.as_view(), name="search"),
     url(r'^search/save$', SaveSearch.as_view(), name="search-save"),
     url(r'^news/(?P<pk>[0-9]+)/$', StoryDetail.as_view(), name="story-detail"),
     url(r'^contribution/$', MakeContribution.as_view(), name="contribution"),
+    url(r'^stats/$', StatsView.as_view(), name="stats"),
 
     url(r'^sources/$', SourceList.as_view(), name="source-list"),
     url(r'^sources/(?P<pk>[0-9]+)/$', SourceDetail.as_view(), name="source-detail"),

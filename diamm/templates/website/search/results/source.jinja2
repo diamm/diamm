@@ -1,16 +1,12 @@
-<div class="search-result-description">
+<div class="search-result-brief">
+    <span class="result-type">{{ result.type | title }}</span>
     {{ result.surface_type_s if result.surface_type_s else "" }}
-
-    {% if result.source_type_s %}
-        {{ result.source_type_s }},
-    {% endif %}
-
-    {{ result.date_statement_s }}
-
-    {{ result.measurements_s if result.measurements_s else "" }}
-
+    {{ result.source_type_s if result.source_type_s else "" }}
+    {{ result.date_statement_s if result.date_statement_s else "" }}
     {{ result.archive_s }}, {{ result.archive_city_s }}
+</div>
 
+<div class="search-result-description">
     {% if result.number_of_composers_i > 0 %}
         Inventory contains {{ result.number_of_composers_i }} composers
         {% if result.number_of_compositions_i > 0 %}

@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'django_extensions',
     'django_jinja',
+    'django_jinja.contrib._humanize',
     'pagedown',
     'debug_toolbar',
 ]
@@ -116,6 +117,8 @@ DATABASE_ROUTERS = ['diamm.router.LegacyRouter']
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
 AUTH_USER_MODEL = "auth.CustomUserModel"
+LOGIN_URL = "/login/"
+LOGIN_REDIRECT_URL = "/account/"
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -208,7 +211,6 @@ IIIF = {
     "THUMBNAIL_WIDTH": "250,"   # The constrained width of thumbnail images
 }
 
-DEFAULT_FROM_EMAIL = "diamm@music.ox.ac.uk"
 MAIL = {
     "CONFIRMATION_MESSAGE": """
     Dear {first_name} {last_name},

@@ -72,7 +72,7 @@ class CreateAccountForm(forms.Form):
 
         if email_exists:
             email_err = """
-                A user with the e-mail address {0} already exists. Try <a href='/recover'>recovering your password</a>.
+                A user with the e-mail address {0} already exists. Try <a href='/reset'>recovering your password</a>.
             """
             err = forms.ValidationError(mark_safe(email_err.format(email)))
             raise err

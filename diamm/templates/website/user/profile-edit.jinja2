@@ -1,0 +1,12 @@
+{% extends "base.jinja2" %}
+
+{% block body %}
+    <div class="row">
+        <div class="sixteen columns">
+            <form action="{{ url('user-account-edit') }}" method="post">{% csrf_token %}
+                {{ form }}
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
