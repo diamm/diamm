@@ -43,6 +43,26 @@
             {% else %}
                 <p>Type your search above.</p>
             {% endif %}
+            {% if request.session.search_history %}
+                <p> Recent Searches </p>
+                <ul>
+                {%- for search in request.session.search_history.searches -%}
+                    <li>
+                        {% if request.user.is_authenticated() %}
+                            <a class="save-search fa {{ 'fa-bookmark' if search.saved else 'fa-bookmark-o'}}"
+                               aria-hidden="true"
+                               data-id="{{ loop.index }}"
+                               data-query="{{ search.query }}"
+                               data-querytype="{{ search.type }}"
+                               data-save="{{ not search.saved }}"></a>
+                        {% endif %}
+                        <a href="{{ search.url }}">
+                            {{ search.query }}{{ ", " + search.type|replace("_", " ") if search.type else "" }}
+                        </a>
+                    </li>
+                {%- endfor -%}
+                </ul>
+            {% endif %}
         {% endif %}
         </div>
     </div>
@@ -51,4 +71,6 @@
 {% endblock %}
 
 {% block scripts %}
+    <script src="{{ static('javascripts/lib/jquery/jquery.min.js')  }}" type="application/javascript"></script>
+    <script src="{{ static('javascripts/lib/save_search.js') }}" type="application/javascript"></script>
 {% endblock %}

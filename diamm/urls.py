@@ -27,7 +27,7 @@ from diamm.views.auth import (
 )
 from diamm.views.home import HomeView
 from diamm.views.user import ProfileView
-from diamm.views.website.search import SearchView
+from diamm.views.website.search import SearchView, SaveSearch
 from diamm.views.contribution import MakeContribution
 from diamm.views.website.set import SetDetail
 from diamm.views.website.source import (
@@ -77,6 +77,7 @@ urlpatterns = [
 
     # public website
     url(r'^search/$', SearchView.as_view(), name="search"),
+    url(r'^search/save$', SaveSearch.as_view(), name="search-save"),
     url(r'^news/(?P<pk>[0-9]+)/$', StoryDetail.as_view(), name="story-detail"),
     url(r'^contribution/$', MakeContribution.as_view(), name="contribution"),
 

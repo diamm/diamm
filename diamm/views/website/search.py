@@ -2,7 +2,9 @@ from django.conf import settings
 from rest_framework import generics
 from rest_framework import response
 from rest_framework import status
+
 from diamm.helpers.solr_pagination import SolrPaginator, SolrResultException
+from diamm.models.data.search import Search
 
 
 class SearchView(generics.GenericAPIView):
@@ -17,6 +19,16 @@ class SearchView(generics.GenericAPIView):
             return response.Response({})
 
         type_query = request.GET.get('type', None)
+
+        # Saves recent searches in the user session
+        if 'search_history' in request.session and request.session['search_history']['user'] != request.user.email \
+                or 'search_history' not in request.session:
+            user = None if not request.user.is_authenticated() else request.user.email
+            request.session['search_history'] = {'user': user, 'searches': []}
+        search = {'query': query, 'type': type_query, 'url': request.build_absolute_uri(), 'saved': False}
+        if search not in request.session['search_history']['searches']:
+            request.session['search_history']['searches'] = [search] + request.session['search_history']['searches'][:9]
+            request.session.modified = True
 
         if not type_query or type_query == "all":
             filters.update({
@@ -47,3 +59,25 @@ class SearchView(generics.GenericAPIView):
             return response.Response({'message': repr(e)}, status=status.HTTP_400_BAD_REQUEST)
 
         return response.Response(page.get_paginated_response())
+
+class SaveSearch(generics.CreateAPIView):
+    template_name = "rest_framework/api.html"
+
+    def post(self, request, *args, **kwargs):
+        if not self.request.user.is_authenticated():
+            return response.Response(status=status.HTTP_401_UNAUTHORIZED)
+        if not request.POST.get('query'):
+            return response.Response(status=status.HTTP_400_BAD_REQUEST)
+        if request.POST.get('save') == "True":
+            search = Search(
+                    user = request.user,
+                    query = request.POST.get('query'),
+                    query_type = request.POST.get('query_type'))
+            search.save()
+        else:
+            search = Search.objects.get(
+                    user=request.user,
+                    query=request.POST.get('query'),
+                    query_type=request.POST.get('query_type'))
+            search.delete()
+        return response.Response(status=status.HTTP_202_ACCEPTED)
