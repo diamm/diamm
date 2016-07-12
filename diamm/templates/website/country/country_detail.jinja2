@@ -1,13 +1,15 @@
 {% extends "base.jinja2" %}
 
 {% block body %}
-    <div class="col-md-12">
-        <h1>{{ content.name }}</h1>
-        <h2>Cities</h2>
-        <ul>
-            {% for city in content.cities %}
-            <li><a href="{{ city.url }}">{{ city.name }}</a></li>
-            {% endfor %}
-        </ul>
+    <div class="row">
+        <div class="twelve columns">
+            <h1>{{ content.name }}</h1>
+            <h2>Cities</h2>
+            <ul>
+                {% for city in content.cities %}
+                    <li><a href="{{ city.url }}">{{ city.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
 {% endblock %}
