@@ -90,6 +90,10 @@ class SourceSearchSerializer(serpy.Serializer):
         required=False
     )
     public_images_b = serpy.MethodField()
+    external_images_b = serpy.BoolField(
+        attr="has_external_images"
+    )
+
 
     def get_type(self, obj):
         return obj.__class__.__name__.lower()
@@ -137,3 +141,6 @@ class SourceSearchSerializer(serpy.Serializer):
             return True
         else:
             return False
+
+    def get_external_images_b(self, obj):
+        return obj.external_images

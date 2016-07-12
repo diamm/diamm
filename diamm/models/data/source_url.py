@@ -10,11 +10,13 @@ class SourceURL(models.Model):
     IIIF_MANIFEST = 1
     HOST = 2
     ANCILLARY = 3
+    EXTERNAL_IMAGES = 4
 
     URL_TYPES = (
         (IIIF_MANIFEST, 'IIIF'),
         (HOST, 'Host Institution'),
-        (ANCILLARY, 'Ancillary')
+        (ANCILLARY, 'Ancillary'),
+        (EXTERNAL_IMAGES, 'External Images')
     )
 
     type = models.IntegerField(choices=URL_TYPES)
