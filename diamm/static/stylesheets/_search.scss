@@ -46,6 +46,13 @@ $search-input-adjust: $search-font-size + 1rem;
   }
 }
 
+.search-result-brief {
+  font-size: 90%;
+  .result-type {
+    font-weight: bold;
+  }
+}
+
 .search-results {
   .result-count {
     font-family: $sans-serif;

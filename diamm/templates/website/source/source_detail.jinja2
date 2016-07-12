@@ -38,7 +38,9 @@
                 {% endif %}
 
                 {% if content.public_images and request.user.is_authenticated() %}
-                <li><a class="tab" href="#images">Images</a></li>
+                    <li><a class="tab" href="#images">Images</a></li>
+                {% elif content.public_images and request.user.is_authenticated() == False %}
+                    <li><span class="tab">Images (<a href="{{ url('login') }}?next={{ request.get_full_path() }}">Log in</a> to view)</span></li>
                 {% endif %}
 
                 {% if content.sets %}
