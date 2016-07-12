@@ -38,6 +38,9 @@ class SourceSearchSerializer(serpy.Serializer):
     archive_s = serpy.StrField(
         attr="archive.name"
     )
+    archive_i = serpy.IntField(
+        attr="archive.pk"
+    )
     archive_city_s = serpy.StrField(
         attr="archive.city.name"
     )
