@@ -133,10 +133,16 @@ def migrate_source_to_source(legacy_source):
             if not url_list:
                 continue
 
+            title = url_list.group('title')
+            url = url_list.group('url')
+            utype = SourceURL.ANCILLARY
+            if 'image' in title:
+                utype = SourceURL.EXTERNAL_IMAGES
+
             d = {
-                'type': SourceURL.ANCILLARY,
-                'link_text': url_list.group('title'),
-                'link': url_list.group('url'),
+                'type': utype,
+                'link_text': title,
+                'link': url,
                 'source': s
             }
             surl = SourceURL(**d)

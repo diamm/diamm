@@ -1,26 +1,28 @@
 import serpy
 from rest_framework.reverse import reverse
-from diamm.serializers.serializers import ContextSerializer
+from diamm.serializers.serializers import ContextSerializer, ContextDictSerializer
 
 
-class SourceArchiveSerializer(ContextSerializer):
+class SourceArchiveSerializer(ContextDictSerializer):
     url = serpy.MethodField()
-    display_name = serpy.StrField()
-    has_images = serpy.MethodField()
+    display_name = serpy.StrField(
+        attr="display_name_s"
+    )
+    # has_images = serpy.MethodField()
 
     public_images = serpy.BoolField(
-        attr="public_images"
+        attr="public_images_b"
     )
 
     def get_url(self, obj):
         return reverse('source-detail',
-                       kwargs={"pk": obj.pk},
+                       kwargs={"pk": obj['pk']},
                        request=self.context['request'])
 
-    def get_has_images(self, obj):
-        if obj.pages.count() > 0:
-            return True
-        return False
+    # def get_has_images(self, obj):
+    #     if obj.pages.count() > 0:
+    #         return True
+    #     return False
 
 
 class CityArchiveSerializer(ContextSerializer):
@@ -57,7 +59,7 @@ class ArchiveDetailSerializer(ContextSerializer):
         return CityArchiveSerializer(obj.city, context={'request': self.context['request']}).data
 
     def get_sources(self, obj):
-        return SourceArchiveSerializer(obj.sources.all(),
+        return SourceArchiveSerializer(obj.solr_sources,
                                        many=True,
                                        context={'request': self.context['request']}).data
 

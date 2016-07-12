@@ -18,7 +18,7 @@
             <li class="navbar-item navbar-highlight"><a href="#">Donate</a></li>
 
             {% if user.is_authenticated() %}
-                <li class="navbar-item"><a href="{{ url('user-profile', pk=user.pk) }}">Your account</a>
+                <li class="navbar-item"><a href="{{ url('user-account') }}">Your account</a>
                     <ul class="dropdown-content">
                         {# <li><a href="{{ url('account-update') }}">Update Account</a></li>#}
                         <li>
@@ -30,7 +30,7 @@
                     </ul>
                 </li>
             {% else %}
-                <li class="navbar-item"><a href="{{ url('login') }}">Login</a></li>
+                <li class="navbar-item"><a href="{{ url('login') }}?next={{ request.get_full_path() }}">Login</a></li>
             {% endif %}
         </ul>
     </nav>

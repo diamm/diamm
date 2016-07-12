@@ -8,6 +8,7 @@
                 <form action="{{ url('login') }}" method="post">
                     {% csrf_token %}
                     {{ form }}
+                    <input type="hidden" name="next" value="{{ next }}" />
                     <button type="submit">Log in</button>
                 </form>
 

@@ -38,6 +38,9 @@ class SourceSearchSerializer(serpy.Serializer):
     archive_s = serpy.StrField(
         attr="archive.name"
     )
+    archive_i = serpy.IntField(
+        attr="archive.pk"
+    )
     archive_city_s = serpy.StrField(
         attr="archive.city.name"
     )
@@ -90,6 +93,10 @@ class SourceSearchSerializer(serpy.Serializer):
         required=False
     )
     public_images_b = serpy.MethodField()
+    external_images_b = serpy.BoolField(
+        attr="has_external_images"
+    )
+
 
     def get_type(self, obj):
         return obj.__class__.__name__.lower()
@@ -107,11 +114,8 @@ class SourceSearchSerializer(serpy.Serializer):
             return []
 
     def get_sets_ii(self, obj):
-        """
-            Indexes membership in all of the sets that are not project sets (type=7).
-        """
-        if obj.sets.exclude(type=7).count() > 0:
-            return list(obj.sets.exclude(type=7).values_list("pk", flat=True))
+        if obj.sets.count() > 0:
+            return list(obj.sets.values_list("pk", flat=True))
         else:
             return []
 
@@ -119,8 +123,8 @@ class SourceSearchSerializer(serpy.Serializer):
         """
             PK|Name for the sets this source belongs to except project sets (type=7)
         """
-        if obj.sets.exclude(type=7).count() > 0:
-            sourcesets = obj.sets.exclude(type=7).values_list("pk", "cluster_shelfmark")
+        if obj.sets.count() > 0:
+            sourcesets = obj.sets.values_list("pk", "cluster_shelfmark")
             sets = ["{0}|{1}".format(sset[0], sset[1]) for sset in sourcesets]
             return sets
         else:
@@ -140,3 +144,6 @@ class SourceSearchSerializer(serpy.Serializer):
             return True
         else:
             return False
+
+    def get_external_images_b(self, obj):
+        return obj.external_images

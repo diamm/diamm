@@ -2827,7 +2827,8 @@ form {
       float: left;
       margin-top: 0;
       margin-left: 0;
-      width: 18rem;
+      width: 6.2rem;
+      height: 2rem;
       padding: 0; }
     .navbar .navbar-list .dropdown-content div {
       position: relative;
@@ -3091,6 +3092,11 @@ ul.contribution-list li {
       .type-filter ul a:hover, .type-filter ul a:focus {
         border-bottom: none;
         font-weight: 500; }
+
+.search-result-brief {
+  font-size: 90%; }
+  .search-result-brief .result-type {
+    font-weight: bold; }
 
 .search-results .result-count {
   font-family: "PT Sans", sans-serif;
