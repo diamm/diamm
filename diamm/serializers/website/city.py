@@ -1,34 +1,31 @@
 import serpy
-from rest_framework.reverse import reverse
 
 from diamm.models.data.geographic_area import GeographicArea
-from diamm.models.data.archive import Archive
-from diamm.serializers.serializers import ContextSerializer
+from diamm.serializers.serializers import HyperlinkedContextSerializer
 
 
-class CountryCitySerializer(ContextSerializer):
-    url = serpy.MethodField()
-    name = serpy.StrField()
-
-    #TODO: find a way to factor this url method out in a more DRY way
-    def get_url(self, obj):
-        return self.context['request'].build_absolute_uri(reverse('country-detail', [obj.pk]))
-
-class ArchiveCitySerializer(ContextSerializer):
+class CountryCitySerializer(HyperlinkedContextSerializer):
     url = serpy.MethodField()
     name = serpy.StrField()
 
     def get_url(self, obj):
-        return self.context['request'].build_absolute_uri(reverse('archive-detail', [obj.pk]))
+        return self.generate_url('country-detail', obj.pk)
 
-class CityListSerializer(ContextSerializer):
+class ArchiveCitySerializer(HyperlinkedContextSerializer):
     url = serpy.MethodField()
     name = serpy.StrField()
 
     def get_url(self, obj):
-        return self.context['request'].build_absolute_uri(reverse('city-detail', [obj.pk]))
+        return self.generate_url('archive-detail', obj.pk)
 
-class CityDetailSerializer(ContextSerializer):
+class CityListSerializer(HyperlinkedContextSerializer):
+    url = serpy.MethodField()
+    name = serpy.StrField()
+
+    def get_url(self, obj):
+        return self.generate_url('city-detail', obj.pk)
+
+class CityDetailSerializer(HyperlinkedContextSerializer):
     url = serpy.MethodField()
     name = serpy.StrField()
     archives = serpy.MethodField()
@@ -41,4 +38,4 @@ class CityDetailSerializer(ContextSerializer):
         return CountryCitySerializer(obj.parent, context=self.context).data
 
     def get_url(self, obj):
-        return self.context['request'].build_absolute_uri(reverse('city-detail', [obj.pk]))
+        return self.generate_url('city-detail', obj.pk)

@@ -1,5 +1,5 @@
 import serpy
-
+from rest_framework.reverse import reverse
 
 class ContextSerializer(serpy.Serializer):
     """
@@ -23,3 +23,16 @@ class ContextDictSerializer(serpy.DictSerializer):
         super(ContextDictSerializer, self).__init__(*args, **kwargs)
         if 'context' in kwargs:
             self.context = kwargs['context']
+
+class HyperlinkedContextSerializer(ContextSerializer):
+    """
+        Provides a method for getting the models related url
+    """
+    def __init__(self, *args, **kwargs):
+        super(HyperlinkedContextSerializer, self).__init__(*args, **kwargs)
+        if 'context' in kwargs:
+            self.context = kwargs['context']
+
+    def generate_url(self, view_name, *args, **kwargs):
+        return self.context['request'].build_absolute_uri(reverse(view_name, args, kwargs))
+
