@@ -1,11 +1,15 @@
 {% extends "base.jinja2" %}
 
 {% block body %}
-    <div>
-        <h1>Countries</h1>
-        {% for country in content.results %}
-            <h4><a href="{{ country.url }}">{{ country.name }}</a></h4>
-        {% endfor %}
-        {% include "website/blocks/browse_paginator.jinja2" %}
+    <div class="row">
+        <div class="twelve columns">
+            <h1>Country List</h1>
+            <ul>
+                {% for country in content.results %}
+                    <li><a href="{{ country.url }}">{{ country.name }}</a></li>
+                {% endfor %}
+            </ul>
+            {% include "website/blocks/browse_paginator.jinja2" %}
+        </div>
     </div>
 {% endblock %}
