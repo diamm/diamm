@@ -1,14 +1,17 @@
 {% extends "base.jinja2" %}
 
 {% block body %}
-    <div>
+    <div class="row">
+        <div class="sixteen columns">
         <h1>Archives</h1>
-        {% for archive in content.results %}
-        <div class="search-result">
-            <h4><a href="{{ archive.url }}">{{ archive.name }}</a></h4>
-            <a href="{{ archive.city.url }}">{{ archive.city.name }}</a>, {{ archive.city.country }}
+            <p>Note: Archives are sorted by city name.</p>
+            {% for archive in content.results %}
+            <div class="search-result">
+                <h4><a href="{{ archive.url }}">{{ archive.name }}</a></h4>
+                <a href="{{ archive.city.url }}">{{ archive.city.name }}</a>, {{ archive.city.country }}
+            </div>
+            {% endfor %}
+            {% include "website/blocks/browse_paginator.jinja2" %}
         </div>
-        {% endfor %}
-        {% include "website/blocks/browse_paginator.jinja2" %}
     </div>
 {% endblock %}
