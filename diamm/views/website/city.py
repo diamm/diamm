@@ -12,13 +12,14 @@ class CityList(generics.ListAPIView):
     renderer_classes = (HTMLRenderer, renderers.JSONRenderer)
     serializer_class = CityListSerializer
     pagination_class = ObjectPagination
+    queryset = GeographicArea.objects.filter(type=GeographicArea.CITY)
 
     def initial(self, request, *args, **kwargs):
         letter = request.GET.get('l', None)
+
         if letter:
-            self.queryset = GeographicArea.objects.filter(type=GeographicArea.CITY, name__istartswith=letter)
-        else:
-            self.queryset = GeographicArea.objects.filter(type=GeographicArea.CITY)
+            self.queryset = self.queryset.filter(name__istartswith=letter)
+
         super(CityList, self).initial(request, args, kwargs)
 
 
