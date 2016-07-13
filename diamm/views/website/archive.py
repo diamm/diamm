@@ -7,11 +7,11 @@ from diamm.helpers.object_pagination import ObjectPagination
 
 
 class ArchiveList(generics.ListAPIView):
-     template_name = "website/archive/archive_list.jinja2"
-     serializer_class = ArchiveListSerializer
-     queryset = Archive.objects.all()
-     renderer_classes = (HTMLRenderer, renderers.JSONRenderer)
-     pagination_class = ObjectPagination
+    template_name = "website/archive/archive_list.jinja2"
+    serializer_class = ArchiveListSerializer
+    queryset = Archive.objects.all()
+    renderer_classes = (HTMLRenderer, renderers.JSONRenderer)
+    pagination_class = ObjectPagination
 
 
 class ArchiveDetail(generics.RetrieveAPIView):
