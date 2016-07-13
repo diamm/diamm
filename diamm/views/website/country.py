@@ -13,6 +13,14 @@ class CountryList(generics.ListAPIView):
     renderer_classes = (HTMLRenderer, renderers.JSONRenderer)
     pagination_class = ObjectPagination
 
+    def initial(self, request, *args, **kwargs):
+        letter = request.GET.get('l', None)
+
+        if letter:
+            self.queryset = self.queryset.filter(name__istartswith=letter)
+
+        super(CountryList, self).initial(request, args, kwargs)
+
 
 class CountryDetail(generics.RetrieveAPIView):
     template_name = "website/country/country_detail.jinja2"

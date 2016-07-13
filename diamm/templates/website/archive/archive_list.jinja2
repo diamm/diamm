@@ -5,6 +5,7 @@
         <div class="sixteen columns">
         <h1>Archives</h1>
             <p>Note: Archives are sorted by city name.</p>
+            {% include "website/blocks/browse_alphabet.jinja2" %}
             {% for archive in content.results %}
             <div class="search-result">
                 <h4><a href="{{ archive.url }}">{{ archive.name }}</a></h4>

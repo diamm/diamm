@@ -13,6 +13,14 @@ class ArchiveList(generics.ListAPIView):
     renderer_classes = (HTMLRenderer, renderers.JSONRenderer)
     pagination_class = ObjectPagination
 
+    def initial(self, request, *args, **kwargs):
+        letter = request.GET.get('l', None)
+
+        if letter:
+            self.queryset = self.queryset.filter(name__istartswith=letter)
+
+        super(ArchiveList, self).initial(request, args, kwargs)
+
 
 class ArchiveDetail(generics.RetrieveAPIView):
     template_name = "website/archive/archive_detail.jinja2"
