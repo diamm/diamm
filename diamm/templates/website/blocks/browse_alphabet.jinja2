@@ -1,5 +1,8 @@
-<h3>
-    {% for char in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" %}
-    <a href="{{ content.url }}?l={{ char }}">{{ char }}</a>
-    {% endfor %}
-</h3>
+<div class="browse-alphabet">
+    <ul>
+        {% for char in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" %}
+        <li><a href="{{ content.url }}?l={{ char }}">{{ char }}</a></li>
+        {% endfor %}
+        <li><a href="{{ content.url }}">All</a></li>
+    </ul>
+</div>

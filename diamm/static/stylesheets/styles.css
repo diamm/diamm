@@ -3106,6 +3106,15 @@ ul.contribution-list li {
 .search-results .search-result h4 {
   margin-bottom: 0.1rem; }
 
+.browse-alphabet ul {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 0.6rem; }
+  .browse-alphabet ul li {
+    padding: 0 0.3rem;
+    margin: 0; }
+
 .login-block {
   width: 100%; }
   .login-block h2 {
