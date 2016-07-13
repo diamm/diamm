@@ -1,4 +1,5 @@
 import os
+import pysolr
 from django.db import models
 from django.conf import settings
 from diamm.helpers.storage import OverwriteStorage
@@ -49,3 +50,24 @@ class Archive(models.Model):
     @property
     def public_notes(self):
         return self.notes.exclude(type=1)  # exclude private notes.
+
+    @property
+    def solr_sources(self):
+        """
+            We use this method to return a list of sources for this archive
+            sorted by shelfmark. (Solr can do alphanumeric sort but the database
+            cannot.
+        """
+        conn = pysolr.Solr(settings.SOLR['SERVER'])
+        q = {
+            "fq": ['type:source', 'archive_i:{0}'.format(self.pk)],
+            "fl": ["pk", "public_images_b", 'display_name_s'],
+            "rows": 10000,
+            "sort": ["shelfmark_ans asc"]
+        }
+
+        res = conn.search("*:*", **q)
+        if res.hits > 0:
+            return res.docs
+        else:
+            return []

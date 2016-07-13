@@ -14,6 +14,21 @@
                     {{ content.shelfmark }} {% if content.name %}<em>&ldquo;{{ content.name }}&rdquo;</em>{% endif %}
                 </td>
             </tr>
+            {% if content.has_images == False and content.public_images == False %}
+            <tr>
+                <th>Image Availability</th>
+                <td>
+                    DIAMM does not have images of this source.
+                </td>
+            </tr>
+            {% elif content.has_images == True and content.public_images == False %}
+            <tr>
+                <th>Image Availability</th>
+                <td>
+                    DIAMM has images of this manuscript, but does not yet have permission to put them online.
+                </td>
+            </tr>
+            {% endif %}
             {% if content.surface_type %}
                 <tr>
                     <th>Surface</th>
@@ -124,16 +139,6 @@
                 </tr>
             {% endif %}
         </table>
-
-        {% if content.has_images == False and content.public_images == False %}
-            <p>
-                <strong>DIAMM does not have images of this source.</strong>
-            </p>
-        {% elif content.has_images == True and content.public_images == False %}
-            <p>
-                <strong>DIAMM has images of this manuscript, but does not yet have permission to put them online.</strong>
-            </p>
-        {% endif %}
 
         {% if content.notes %}
             {% for note in content.notes %}

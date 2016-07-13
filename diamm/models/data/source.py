@@ -93,6 +93,15 @@ class Source(models.Model):
         return self.public_notes.filter(type=11)
 
     @property
+    def has_external_images(self):
+        """
+            Does the source have an external URL pointing to images
+            on another website
+        """
+        # type 4 is the links to external images
+        return self.links.filter(type=4).count() > 0
+
+    @property
     def cover(self):
         """
             If a cover image is set, returns the ID for that; else it chooses a random page with an image attached.
