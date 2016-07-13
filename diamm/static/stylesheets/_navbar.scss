@@ -81,16 +81,15 @@
         position: absolute;
         list-style-type: none;
         margin: 0;
-        border-style: solid;
-        border-width: thin;
-        border-bottom-style: none;
-        border-bottom-width: none;
+        -webkit-box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.5);
+        -moz-box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.5);
+        box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.5);
     }
 
     ul.dropdown-content a, input {
         font-size: 1rem;
         font-weight: normal;
-        background-color: $diamm-white;
+        background-color: #fff;
         &:hover, &:focus {
             background: $diamm-red;
         };
@@ -100,10 +99,8 @@
     ul.dropdown-content li {
         height: 2rem;
         float: none;
-        background-color: $diamm-white;
+        background-color: #fff;
         overflow: hidden;
-        border-bottom-style: solid;
-        border-bottom-width: thin;
     }
 
 

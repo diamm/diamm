@@ -2824,24 +2824,21 @@ form {
       position: absolute;
       list-style-type: none;
       margin: 0;
-      border-style: solid;
-      border-width: thin;
-      border-bottom-style: none;
-      border-bottom-width: none; }
+      -webkit-box-shadow: 0px 5px 5px 0px rgba(0, 0, 0, 0.5);
+      -moz-box-shadow: 0px 5px 5px 0px rgba(0, 0, 0, 0.5);
+      box-shadow: 0px 5px 5px 0px rgba(0, 0, 0, 0.5); }
     .navbar .navbar-list ul.dropdown-content a, .navbar .navbar-list input {
       font-size: 1rem;
       font-weight: normal;
-      background-color: #fdfffc;
+      background-color: #fff;
       text-transform: None; }
       .navbar .navbar-list ul.dropdown-content a:hover, .navbar .navbar-list ul.dropdown-content a:focus, .navbar .navbar-list input:hover, .navbar .navbar-list input:focus {
         background: #dd1c1a; }
     .navbar .navbar-list ul.dropdown-content li {
       height: 2rem;
       float: none;
-      background-color: #fdfffc;
-      overflow: hidden;
-      border-bottom-style: solid;
-      border-bottom-width: thin; }
+      background-color: #fff;
+      overflow: hidden; }
     .navbar .navbar-list .sub-pages {
       list-style-type: square;
       margin-right: 0; }
