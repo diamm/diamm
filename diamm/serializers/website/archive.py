@@ -67,3 +67,16 @@ class ArchiveDetailSerializer(ContextSerializer):
         if obj.logo:
             return obj.logo.url
 
+class ArchiveListSerializer(ContextSerializer):
+    url = serpy.MethodField()
+    city = serpy.MethodField()
+    name = serpy.StrField()
+
+    def get_url(self, obj):
+        return reverse('archive-detail',
+                       kwargs={"pk": obj.pk},
+                       request=self.context['request'])
+
+    def get_city(self, obj):
+        return CityArchiveSerializer(obj.city, context={'request': self.context['request']}).data
+

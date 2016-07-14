@@ -2,8 +2,9 @@
 
 {% block body %}
     <div class="row">
-        <div class="twelve columns">
+        <div class="sixteen columns">
             <h1>City List</h1>
+            {% include "website/blocks/browse_alphabet.jinja2" %}
             <ul>
                 {% for city in content.results %}
                     <li><a href="{{ city.url }}">{{ city.name }}</a></li>
