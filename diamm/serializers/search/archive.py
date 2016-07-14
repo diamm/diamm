@@ -8,7 +8,7 @@ class ArchiveSearchSerializer(ContextSerializer):
     sources_ss = serpy.MethodField()
     city_s = serpy.StrField(attr="city.name")
     name_s = serpy.StrField(attr="name")
-    country_s = serpy.StrField(attr="city.parent.name")
+    country_s = serpy.StrField(attr="city.parent.name", required=False)
     siglum_s = serpy.StrField(attr="siglum")
 
     def get_type(self, obj):
@@ -16,3 +16,4 @@ class ArchiveSearchSerializer(ContextSerializer):
 
     def get_sources_ss(self, obj):
         return [source.display_name for source in obj.sources.all()]
+
