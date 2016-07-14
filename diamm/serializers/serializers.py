@@ -24,17 +24,3 @@ class ContextDictSerializer(serpy.DictSerializer):
         if 'context' in kwargs:
             self.context = kwargs['context']
 
-class HyperlinkedContextSerializer(ContextSerializer):
-    """
-        Provides a method for getting the models related url
-    """
-    def __init__(self, *args, **kwargs):
-        super(HyperlinkedContextSerializer, self).__init__(*args, **kwargs)
-        if 'context' in kwargs:
-            self.context = kwargs['context']
-        else:
-            raise TypeError("HyperlinkedContextSerializer missing parameter: 'context'")
-
-    def generate_url(self, view_name, *args, **kwargs):
-        return self.context['request'].build_absolute_uri(reverse(view_name, args, kwargs))
-

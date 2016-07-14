@@ -1,31 +1,31 @@
 import serpy
-
+from rest_framework.reverse import reverse
 from diamm.models.data.geographic_area import GeographicArea
-from diamm.serializers.serializers import HyperlinkedContextSerializer
+from diamm.serializers.serializers import ContextSerializer
 
 
-class CountryCitySerializer(HyperlinkedContextSerializer):
+class CountryCitySerializer(ContextSerializer):
     url = serpy.MethodField()
     name = serpy.StrField()
 
     def get_url(self, obj):
-        return self.generate_url('country-detail', obj.pk)
+        return reverse("country-detail", kwargs={"pk": obj.id}, request=self.context['request'])
 
-class ArchiveCitySerializer(HyperlinkedContextSerializer):
+class ArchiveCitySerializer(ContextSerializer):
     url = serpy.MethodField()
     name = serpy.StrField()
 
     def get_url(self, obj):
-        return self.generate_url('archive-detail', obj.pk)
+        return reverse("archive-detail", kwargs={"pk": obj.id}, request=self.context['request'])
 
-class CityListSerializer(HyperlinkedContextSerializer):
+class CityListSerializer(ContextSerializer):
     url = serpy.MethodField()
     name = serpy.StrField()
 
     def get_url(self, obj):
-        return self.generate_url('city-detail', obj.pk)
+        return reverse("city-detail", kwargs={"pk": obj.id}, request=self.context['request'])
 
-class CityDetailSerializer(HyperlinkedContextSerializer):
+class CityDetailSerializer(ContextSerializer):
     url = serpy.MethodField()
     name = serpy.StrField()
     archives = serpy.MethodField()
@@ -38,4 +38,4 @@ class CityDetailSerializer(HyperlinkedContextSerializer):
         return CountryCitySerializer(obj.parent, context=self.context).data
 
     def get_url(self, obj):
-        return self.generate_url('city-detail', obj.pk)
+        return reverse("city-detail", kwargs={"pk": obj.id}, request=self.context['request'])
