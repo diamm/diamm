@@ -19,7 +19,7 @@ class CountryList(generics.ListAPIView):
         if letter:
             self.queryset = self.queryset.filter(name__istartswith=letter)
 
-        super(CountryList, self).initial(request, args, kwargs)
+        super(CountryList, self).initial(request, *args, **kwargs)
 
 
 class CountryDetail(generics.RetrieveAPIView):
