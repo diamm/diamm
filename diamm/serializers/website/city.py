@@ -1,6 +1,5 @@
 import serpy
 from rest_framework.reverse import reverse
-from diamm.models.data.geographic_area import GeographicArea
 from diamm.serializers.serializers import ContextSerializer
 
 
