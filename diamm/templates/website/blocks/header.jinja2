@@ -13,6 +13,13 @@
                     <a href="{{ url('introduction') }}">Introduction</a>
                 </li>
             <li class="navbar-item"><a href="{{ url('search') }}">Search</a></li>
+            <li class="navbar-item"><a href="{{ url('country-list') }}">Browse</a>
+                <ul class="dropdown-content">
+                    <li><a href="{{ url('country-list') }}">Countries</a></li>
+                    <li><a href="{{ url('city-list') }}">Cities</a></li>
+                    <li><a href="{{ url('archive-list') }}">Archives</a></li>
+                </ul>
+            </li>
         </ul>
         <ul class="navbar-list pull-right">
             <li class="navbar-item navbar-highlight"><a href="#">Donate</a></li>

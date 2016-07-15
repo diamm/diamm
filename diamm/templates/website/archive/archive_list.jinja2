@@ -1,10 +1,18 @@
 {% extends "base.jinja2" %}
 
 {% block body %}
-    <h1>Archive List</h1>
-    <ul>
-    {% for archive in content.results %}
-        <li><a href="{{ archive.url }}">{{ archive.name }}</a> ({{ archive.city.name }})</li>
-    {% endfor %}
-    </ul>
+    <div class="row">
+        <div class="sixteen columns">
+        <h1>Archives</h1>
+            <p>Note: Archives are sorted by city name.</p>
+            {% include "website/blocks/browse_alphabet.jinja2" %}
+            {% for archive in content.results %}
+            <div class="search-result">
+                <h4><a href="{{ archive.url }}">{{ archive.name }}</a></h4>
+                <a href="{{ archive.city.url }}">{{ archive.city.name }}</a>, {{ archive.city.country }}
+            </div>
+            {% endfor %}
+            {% include "website/blocks/browse_paginator.jinja2" %}
+        </div>
+    </div>
 {% endblock %}

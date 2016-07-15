@@ -3,6 +3,8 @@
 {% block body %}
     <div class="row">
         <div class="twelve columns offset-by-four">
+            <h2>Change Password</h2>
+            <p>NB: Accounts on the beta website are independent from diamm.ac.uk, and resetting your password on this site will not affect your account details on the old site.</p>
             <form method="post">{% csrf_token %}
                 {{ form }}
                 <button type="submit">Reset</button>

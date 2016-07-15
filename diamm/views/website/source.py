@@ -9,11 +9,13 @@ from diamm.serializers.website.source import SourceListSerializer, SourceDetailS
 from diamm.serializers.iiif.manifest import SourceManifestSerializer
 from diamm.serializers.iiif.canvas import CanvasSerializer
 from diamm.serializers.iiif.service import ServiceSerializer
+from diamm.helpers.object_pagination import ObjectPagination
 
 
 class SourceList(generics.ListAPIView):
     template_name = "website/source/source_list.jinja2"
     queryset = Source.objects.all()
+    pagination_class = ObjectPagination 
 
     # For serializing large lists, we only need the minimal serializer,
     # but for accepting new objects we will pass it through the full serializer.

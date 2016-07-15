@@ -1,15 +1,17 @@
 {% extends "base.jinja2" %}
 
 {% block body %}
-    <div class="col-md-12">
-        <h1>{{ content.name }}, <a href="{{ content.country.url }}">{{ content.country.name }}</a></h1>
-        <h2>Archives</h2>
-        <ul>
-        {% for archive in content.archives %}
-            <li>
-                <a href="{{ archive.url }}">{{ archive.name }}</a>
-            </li>
-        {% endfor %}
-        </ul>
+    <div class="row">
+        <div class="twelve columns">
+            <h1>{{ content.name }}, <a href="{{ content.country.url }}">{{ content.country.name }}</a></h1>
+            <h2>Archives</h2>
+            <ul>
+                {% for archive in content.archives %}
+                    <li>
+                        <a href="{{ archive.url }}">{{ archive.name }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
 {% endblock %}

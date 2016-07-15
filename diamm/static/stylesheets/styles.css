@@ -2819,29 +2819,26 @@ form {
         border-bottom: none;
         background: #dd1c1a;
         color: #fdfffc; }
-    .navbar .navbar-list .dropdown-content {
+    .navbar .navbar-list ul.dropdown-content {
       display: none;
       position: absolute;
       list-style-type: none;
-      background-color: #fdfffc;
-      float: left;
-      margin-top: 0;
-      margin-left: 0;
-      width: 6.2rem;
+      margin: 0;
+      -webkit-box-shadow: 0px 5px 5px 0px rgba(0, 0, 0, 0.5);
+      -moz-box-shadow: 0px 5px 5px 0px rgba(0, 0, 0, 0.5);
+      box-shadow: 0px 5px 5px 0px rgba(0, 0, 0, 0.5); }
+    .navbar .navbar-list ul.dropdown-content a, .navbar .navbar-list input {
+      font-size: 1rem;
+      font-weight: normal;
+      background-color: #fff;
+      text-transform: None; }
+      .navbar .navbar-list ul.dropdown-content a:hover, .navbar .navbar-list ul.dropdown-content a:focus, .navbar .navbar-list input:hover, .navbar .navbar-list input:focus {
+        background: #dd1c1a; }
+    .navbar .navbar-list ul.dropdown-content li {
       height: 2rem;
-      padding: 0; }
-    .navbar .navbar-list .dropdown-content div {
-      position: relative;
-      -webkit-column-count: 2;
-      -moz-column-count: 2;
-      column-count: 2; }
-    .navbar .navbar-list .dropdown-content a {
-      display: block;
-      margin-top: 0;
-      margin-left: 0.2rem;
-      padding-left: 0;
-      font-size: 0.7rem;
-      padding-bottom: 0.5rem; }
+      float: none;
+      background-color: #fff;
+      overflow: hidden; }
     .navbar .navbar-list .sub-pages {
       list-style-type: square;
       margin-right: 0; }
@@ -3105,6 +3102,15 @@ ul.contribution-list li {
 
 .search-results .search-result h4 {
   margin-bottom: 0.1rem; }
+
+.browse-alphabet ul {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 0.6rem; }
+  .browse-alphabet ul li {
+    padding: 0 0.3rem;
+    margin: 0; }
 
 .login-block {
   width: 100%; }

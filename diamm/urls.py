@@ -33,7 +33,7 @@ from diamm.views.website.source import (
     SourceList, SourceDetail, SourceManifest, SourceCanvasDetail
 )
 from diamm.views.website.source import SourceRangeDetail, SourceItemDetail
-from diamm.views.website.archive import ArchiveDetail
+from diamm.views.website.archive import ArchiveList, ArchiveDetail
 from diamm.views.website.city import CityList, CityDetail
 from diamm.views.website.country import CountryList, CountryDetail
 from diamm.views.website.person import PersonDetail, legacy_composer_redirect
@@ -54,6 +54,7 @@ urlpatterns = [
 
     url(r'^beta/$', TemplateView.as_view(template_name="beta.jinja2"), name="beta"),
     url(r'^introduction/$', TemplateView.as_view(template_name="introduction.jinja2"), name="introduction"),
+    url(r'^technical/$', TemplateView.as_view(template_name="technical.jinja2"), name="technical"),
 
     # Authentication and account resets
     url(r'^login/$', login,
@@ -98,7 +99,7 @@ urlpatterns = [
     url(r'^sources/(?P<source_id>[0-9]+)/range/(?P<item_id>[0-9]+)/$', SourceRangeDetail.as_view(), name="source-range-detail"),
     url(r'^sources/(?P<source_id>[0-9]+)/item/(?P<item_id>[0-9]+)/$', SourceItemDetail.as_view(), name="source-item-detail"),
 
-    # url(r'^archives/$', ArchiveList.as_view(), name="archive-list"),
+    url(r'^archives/$', ArchiveList.as_view(), name="archive-list"),
     url(r'^archives/(?P<pk>[0-9]+)/$', ArchiveDetail.as_view(), name="archive-detail"),
     url(r'^cities/$', CityList.as_view(), name="city-list"),
     url(r'^cities/(?P<pk>[0-9]+)/$', CityDetail.as_view(), name="city-detail"),

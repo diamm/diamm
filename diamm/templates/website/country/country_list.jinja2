@@ -1,13 +1,16 @@
 {% extends "base.jinja2" %}
 
 {% block body %}
-    <div class="col-md-12">
-        <h1>Country List</h1>
-        <ul>
-        {% for country in content.results %}
-            <li><a href="{{ country.url }}">{{ country.name }}</a></li>
-        {% endfor %}
-        </ul>
-        {% include "website/blocks/browse_paginator.jinja2" %}
+    <div class="row">
+        <div class="sixteen columns">
+            <h1>Country List</h1>
+            {% include "website/blocks/browse_alphabet.jinja2" %}
+            <ul>
+                {% for country in content.results %}
+                    <li><a href="{{ country.url }}">{{ country.name }}</a></li>
+                {% endfor %}
+            </ul>
+            {% include "website/blocks/browse_paginator.jinja2" %}
+        </div>
     </div>
 {% endblock %}
