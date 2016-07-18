@@ -155,11 +155,11 @@ window.divaPlugins.push((function ()
             }
 
             if (t.length > 0)
-            { 
+            {
                 p.appendChild(strong);
                 text = document.createTextNode(t.slice(0, -2));
                 p.appendChild(text);
-            } 
+            }
             return p;
         }
 
@@ -186,16 +186,28 @@ window.divaPlugins.push((function ()
             itemDetailsDiv = document.createElement("div");
 
             // composer
-            p = getComposersPara(item[0].composers);
-            itemDetailsDiv.appendChild(p);
+            composers = item[0].composers;
+            if (composers !== null)
+            {
+                p = getComposersPara(item[0].composers);
+                itemDetailsDiv.appendChild(p);
+            }
 
             // genres
-            p = getGenresPara(item[0].composition.genres);
-            itemDetailsDiv.appendChild(p);
+            genres = item[0].composition.genres;
+            if (genres !== null)
+            {
+                p = getGenresPara(genres);
+                itemDetailsDiv.appendChild(p);
+            }
 
             // voices
-            p = getVoicesPara(item[0].voices);
-            itemDetailsDiv.appendChild(p);
+            voices = item[0].voices;
+            if (genres !== null)
+            {
+                p = getVoicesPara(voices);
+                itemDetailsDiv.appendChild(p);
+            }
 
             itemDiv.appendChild(h3);
             itemDiv.appendChild(itemDetailsDiv);
