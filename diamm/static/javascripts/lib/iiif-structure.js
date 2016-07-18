@@ -187,7 +187,7 @@ window.divaPlugins.push((function ()
 
             // composer
             composers = item[0].composers;
-            if (composers != null)
+            if (composers !== null)
             {
                 p = getComposersPara(item[0].composers);
                 itemDetailsDiv.appendChild(p);
@@ -195,7 +195,7 @@ window.divaPlugins.push((function ()
 
             // genres
             genres = item[0].composition.genres;
-            if (genres != null)
+            if (genres !== null)
             {
                 p = getGenresPara(genres);
                 itemDetailsDiv.appendChild(p);
@@ -203,7 +203,7 @@ window.divaPlugins.push((function ()
 
             // voices
             voices = item[0].voices;
-            if (genres != null)
+            if (genres !== null)
             {
                 p = getVoicesPara(voices);
                 itemDetailsDiv.appendChild(p);
