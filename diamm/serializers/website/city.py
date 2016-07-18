@@ -1,40 +1,40 @@
-from rest_framework import serializers
-from diamm.models.data.geographic_area import GeographicArea
-from diamm.models.data.archive import Archive
+import serpy
+from rest_framework.reverse import reverse
+from diamm.serializers.serializers import ContextSerializer
 
 
-class CountryCitySerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = GeographicArea
-        fields = ('url', 'name')
-        extra_kwargs = {
-            'url': {'view_name': 'country-detail'}
-        }
+class CountryCitySerializer(ContextSerializer):
+    url = serpy.MethodField()
+    name = serpy.StrField()
 
+    def get_url(self, obj):
+        return reverse("country-detail", kwargs={"pk": obj.id}, request=self.context['request'])
 
-class ArchiveCitySerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Archive
-        fields = ('url', 'name')
+class ArchiveCitySerializer(ContextSerializer):
+    url = serpy.MethodField()
+    name = serpy.StrField()
 
+    def get_url(self, obj):
+        return reverse("archive-detail", kwargs={"pk": obj.id}, request=self.context['request'])
 
-class CityListSerializer(serializers.ModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name='city-detail')
+class CityListSerializer(ContextSerializer):
+    url = serpy.MethodField()
+    name = serpy.StrField()
 
-    class Meta:
-        model = GeographicArea
-        fields = ('url', 'name')
+    def get_url(self, obj):
+        return reverse("city-detail", kwargs={"pk": obj.id}, request=self.context['request'])
 
+class CityDetailSerializer(ContextSerializer):
+    url = serpy.MethodField()
+    name = serpy.StrField()
+    archives = serpy.MethodField()
+    country = serpy.MethodField()
 
-class CityDetailSerializer(serializers.HyperlinkedModelSerializer):
-    archives = ArchiveCitySerializer(many=True)
-    country = CountryCitySerializer(
-        source="parent"
-    )
+    def get_archives(self, obj):
+        return ArchiveCitySerializer(obj.archives.all(), many=True, context=self.context).data
 
-    class Meta:
-        model = GeographicArea
-        fields = ('url', 'name', 'archives', 'country')
-        extra_kwargs = {
-            'url': {'view_name': 'city-detail'}
-        }
+    def get_country(self, obj):
+        return CountryCitySerializer(obj.parent, context=self.context).data
+
+    def get_url(self, obj):
+        return reverse("city-detail", kwargs={"pk": obj.id}, request=self.context['request'])

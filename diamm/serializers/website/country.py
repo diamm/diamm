@@ -1,29 +1,32 @@
-from rest_framework import serializers
-from diamm.models.data.geographic_area import GeographicArea
+import serpy
+from rest_framework.reverse import reverse
+from diamm.serializers.serializers import ContextSerializer
 
 
-class CountryCitySerializer(serializers.HyperlinkedModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name="city-detail")
+class CountryCitySerializer(ContextSerializer):
+    url = serpy.MethodField()
+    name = serpy.StrField()
 
-    class Meta:
-        model = GeographicArea
-        fields = ('url', 'name')
-
-
-class CountryListSerializer(serializers.HyperlinkedModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name="country-detail")
-
-    class Meta:
-        model = GeographicArea
-        fields = ('url', 'name')
+    def get_url(self, obj):
+        return reverse("city-detail", kwargs={"pk": obj.id}, request=self.context['request'])
 
 
-class CountryDetailSerializer(serializers.HyperlinkedModelSerializer):
-    cities = CountryCitySerializer(many=True)
+class CountryListSerializer(ContextSerializer):
+    url = serpy.MethodField()
+    name = serpy.StrField()
 
-    class Meta:
-        model = GeographicArea
-        fields = ('url', 'name', 'cities')
-        extra_kwargs = {
-            'url': {'view_name': 'country-detail'}
-        }
+    def get_url(self, obj):
+        return reverse("country-detail", kwargs={"pk": obj.id}, request=self.context['request'])
+
+
+class CountryDetailSerializer(ContextSerializer):
+    url = serpy.MethodField()
+    name = serpy.StrField()
+    cities = serpy.MethodField()
+
+    def get_cities(self, obj):
+        return CountryCitySerializer(obj.cities.all(), many=True, context=self.context).data
+
+    def get_url(self, obj):
+        return reverse("country-detail", kwargs={"pk": obj.id}, request=self.context['request'])
+
