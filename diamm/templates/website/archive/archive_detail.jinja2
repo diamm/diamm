@@ -9,17 +9,19 @@
             {% if content.website %}
                 <p><a href="http://{{ content.website }}">{{ content.name }} website</a></p>
             {% endif %}
-            <h3>Sources in this Archive</h3>
-            <ul>
-                {% for source in content.sources %}
-                    <li class="image-source-list">
-                        {% if source.has_images and source.public_images %}
-                            <i class="fa fa-picture-o" aria-hidden="true"></i>
-                        {% endif %}
-                        <a href="{{ source.url }}">{{ source.display_name }}</a>
-                    </li>
-                {% endfor %}
-            </ul>
+            {% if content.sources %}
+                <h3>Sources in this Archive</h3>
+                <ul>
+                    {% for source in content.sources %}
+                        <li class="image-source-list">
+                            {% if source.has_images and source.public_images %}
+                                <i class="fa fa-picture-o" aria-hidden="true"></i>
+                            {% endif %}
+                            <a href="{{ source.url }}">{{ source.display_name }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
         </div>
     </div>
 {% endblock %}
