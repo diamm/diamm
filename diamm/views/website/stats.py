@@ -17,8 +17,6 @@ class StatsView(generics.GenericAPIView):
             "facet.field": "type"
         }
         type_results = conn.search("*:*", **q)
-        import pdb
-        pdb.set_trace()
         i = iter(type_results.facets['facet_fields']['type'])
         # contains a dictionary with the count of types, keys include:
         # person, voice, item, sourcerelationship, set, organization, itembibliography,
