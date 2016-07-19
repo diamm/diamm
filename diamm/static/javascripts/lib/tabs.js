@@ -55,6 +55,9 @@
             {
                 settings.tabCallbacks[tabHash]();
             }
+            // This is to make sure the diva viewer resizers on tab change
+            // Will be a non-issue in diva 5
+            window.dispatchEvent(new Event("resize"));
         };
 
         init();
