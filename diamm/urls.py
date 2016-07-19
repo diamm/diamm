@@ -40,6 +40,7 @@ from diamm.views.website.person import PersonDetail, legacy_composer_redirect
 from diamm.views.website.organization import OrganizationDetail
 from diamm.views.website.composition import CompositionList, CompositionDetail
 from diamm.views.website.story import StoryDetail
+from diamm.views.website.tag import TagDetail
 from diamm.views.website.aboutpages import AboutPagesDetail
 from diamm.views.website.image import image_serve
 from diamm.views.website.bibliography_author import BibliographyAuthorDetail
@@ -86,6 +87,7 @@ urlpatterns = [
     # public website
     url(r'^search/$', SearchView.as_view(), name="search"),
     url(r'^news/(?P<pk>[0-9]+)/$', StoryDetail.as_view(), name="story-detail"),
+    url(r'^tags/(?P<pk>[0-9]+)/$', TagDetail.as_view(), name="tag-detail"),
     url(r'^contribution/$', MakeContribution.as_view(), name="contribution"),
     url(r'^stats/$', StatsView.as_view(), name="stats"),
 

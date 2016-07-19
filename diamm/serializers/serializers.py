@@ -1,5 +1,5 @@
 import serpy
-
+from rest_framework.reverse import reverse
 
 class ContextSerializer(serpy.Serializer):
     """
@@ -23,3 +23,4 @@ class ContextDictSerializer(serpy.DictSerializer):
         super(ContextDictSerializer, self).__init__(*args, **kwargs)
         if 'context' in kwargs:
             self.context = kwargs['context']
+

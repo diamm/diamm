@@ -1,64 +1,40 @@
-from rest_framework import serializers
+import serpy
 from rest_framework.reverse import reverse
-import pysolr
-
-from django.conf import settings
-from diamm.models.data.geographic_area import GeographicArea
-from diamm.models.data.archive import Archive
+from diamm.serializers.serializers import ContextSerializer
 
 
-class CountryCitySerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = GeographicArea
-        fields = ('url', 'name')
-        extra_kwargs = {
-            'url': {'view_name': 'country-detail'}
-        }
+class CountryCitySerializer(ContextSerializer):
+    url = serpy.MethodField()
+    name = serpy.StrField()
 
+    def get_url(self, obj):
+        return reverse("country-detail", kwargs={"pk": obj.id}, request=self.context['request'])
 
-class ArchiveCitySerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Archive
-        fields = ('url', 'name')
+class ArchiveCitySerializer(ContextSerializer):
+    url = serpy.MethodField()
+    name = serpy.StrField()
 
+    def get_url(self, obj):
+        return reverse("archive-detail", kwargs={"pk": obj.id}, request=self.context['request'])
 
-class CityListSerializer(serializers.ModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name='city-detail')
+class CityListSerializer(ContextSerializer):
+    url = serpy.MethodField()
+    name = serpy.StrField()
 
-    class Meta:
-        model = GeographicArea
-        fields = ('url', 'name')
+    def get_url(self, obj):
+        return reverse("city-detail", kwargs={"pk": obj.id}, request=self.context['request'])
 
+class CityDetailSerializer(ContextSerializer):
+    url = serpy.MethodField()
+    name = serpy.StrField()
+    archives = serpy.MethodField()
+    country = serpy.MethodField()
 
-class CityDetailSerializer(serializers.HyperlinkedModelSerializer):
-    archives = ArchiveCitySerializer(many=True)
-    country = CountryCitySerializer(
-        source='parent'
-    )
-    sources = serializers.SerializerMethodField()
+    def get_archives(self, obj):
+        return ArchiveCitySerializer(obj.archives.all(), many=True, context=self.context).data
 
-    class Meta:
-        model = GeographicArea
-        fields = ('url', 'name', 'archives', 'country', 'sources')
-        extra_kwargs = {
-            'url': {'view_name': 'city-detail'}
-        }
+    def get_country(self, obj):
+        return CountryCitySerializer(obj.parent, context=self.context).data
 
-    def get_sources(self, obj):
-        sources = list()
-        connection = pysolr.Solr(settings.SOLR['SERVER'])
-        fq = ['type:source', 'geographic_area_ii:{0}'.format(obj.id)]
-        fl = ['pk', 'geographic_area_ii', 'display_name_s']
-        results = connection.search('*:*', fq=fq, fl=fl)
-        if results.hits > 0:
-            for doc in results.docs:
-                sources.append({
-                    'url':
-                        reverse(
-                            'source-detail',
-                            kwargs={'pk': doc['pk']},
-                            request=self.context['request']),
-                    'name': doc['display_name_s']
-                })
-        return sources
-
+    def get_url(self, obj):
+        return reverse("city-detail", kwargs={"pk": obj.id}, request=self.context['request'])

@@ -20,7 +20,7 @@ class CityList(generics.ListAPIView):
         if letter:
             self.queryset = self.queryset.filter(name__istartswith=letter)
 
-        super(CityList, self).initial(request, args, kwargs)
+        super(CityList, self).initial(request, *args, **kwargs)
 
 
 class CityDetail(generics.RetrieveAPIView):

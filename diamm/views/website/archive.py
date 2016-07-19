@@ -19,7 +19,7 @@ class ArchiveList(generics.ListAPIView):
         if letter:
             self.queryset = self.queryset.filter(name__istartswith=letter)
 
-        super(ArchiveList, self).initial(request, args, kwargs)
+        super(ArchiveList, self).initial(request, *args, **kwargs)
 
 
 class ArchiveDetail(generics.RetrieveAPIView):
