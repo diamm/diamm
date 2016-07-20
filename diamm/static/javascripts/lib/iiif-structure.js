@@ -25,7 +25,7 @@ window.divaPlugins.push((function ()
         };
     }
 
-    var itemsDiv = document.getElementById("image-item-listing");
+    var itemsDiv = document.getElementById('image-item-listing');
     function addVoiceVisibilityToggle (element)
     {
         var button = element.parentElement.firstChild; 
@@ -36,16 +36,16 @@ window.divaPlugins.push((function ()
             if (element.style.display === 'block')
             {
                 button.lastChild.remove();
-                i = document.createElement("i");
-                i.setAttribute("class", "fa fa-caret-down");
+                var i = document.createElement('i');
+                i.setAttribute('class', 'fa fa-caret-down');
                 button.appendChild(i);
                 element.style.display = 'none';
             }
             else
             {
                 button.lastChild.remove();
-                i = document.createElement("i");
-                i.setAttribute("class", "fa fa-caret-up");
+                i = document.createElement('i');
+                i.setAttribute('class', 'fa fa-caret-up');
                 button.appendChild(i);
                 element.style.display = 'block';
             }
@@ -59,7 +59,7 @@ window.divaPlugins.push((function ()
         function getCompositionAnchor (composition)
         {
             var t, a;
-            a = document.createElement("a");
+            a = document.createElement('a');
             t = document.createTextNode(composition.title);
             a.setAttribute('href', composition['@id']);
             a.appendChild(t);
@@ -69,31 +69,31 @@ window.divaPlugins.push((function ()
 
         function getComposersPara (composers)
         {
-            var p, t, a;
-            p = document.createElement("p");
-            t = document.createTextNode("Composer: ");
-            strong = document.createElement("strong");
+            var p, t, a, strong;
+            p = document.createElement('p');
+            t = document.createTextNode('Composer: ');
+            strong = document.createElement('strong');
             strong.appendChild(t);
             p.appendChild(strong);
             for (var i = 0, clen = composers.length; i < clen; i++)
             {
                 if (composers[i]['@id'])
                 {
-                    a = document.createElement("a");
-                    t = document.createTextNode(composers[i].name + " ");
+                    a = document.createElement('a');
+                    t = document.createTextNode(composers[i].name + ' ');
                     a.setAttribute('href', composers[i]['@id']);
                     a.appendChild(t);
                     p.appendChild(a);
                 }
                 else
                 {
-                    t = document.createTextNode(composers[i].name + " ");
+                    t = document.createTextNode(composers[i].name + ' ');
                     p.appendChild(t);
                 }
 
                 if (composers[i].uncertain)
                 {
-                    t = document.createTextNode("? ");
+                    t = document.createTextNode('? ');
                     p.appendChild(t);
                 }
             }
@@ -103,32 +103,32 @@ window.divaPlugins.push((function ()
 
         function getVoicesPara (voices)
         {
-            var p, t, i;
-            p = document.createElement("p");
-            strong = document.createElement("strong");
-            t = document.createTextNode("Voices ");
+            var p, t, i, strong, vlen, p2;
+            p = document.createElement('p');
+            strong = document.createElement('strong');
+            t = document.createTextNode('Voices ');
             strong.appendChild(t);
-            i = document.createElement("i");
-            i.setAttribute("class", "fa fa-caret-down");
+            i = document.createElement('i');
+            i.setAttribute('class', 'fa fa-caret-down');
             strong.appendChild(i);
             p.appendChild(strong);
 
             for (i = 0, vlen = voices.length; i < vlen; i++)
             {
-                p2 = document.createElement("p");
+                p2 = document.createElement('p');
                 p2.style.textIndent = '-1em';
                 p2.style.marginLeft = '1em';
-                t = document.createTextNode("Incipit: " + voices[i].voice_text);
+                t = document.createTextNode('Incipit: ' + voices[i].voice_text);
                 p2.appendChild(t);
 
-                var ul = document.createElement("ul");
-                t = document.createTextNode("Type: " + voices[i].voice_type);
-                var li = document.createElement("li");
+                var ul = document.createElement('ul');
+                t = document.createTextNode('Type: ' + voices[i].voice_type);
+                var li = document.createElement('li');
                 li.appendChild(t);
                 ul.appendChild(li);
 
-                t = document.createTextNode("Language: " + voices[i].languages[0]);
-                li = document.createElement("li");
+                t = document.createTextNode('Language: ' + voices[i].languages[0]);
+                li = document.createElement('li');
                 li.appendChild(t);
                 ul.appendChild(li);
 
@@ -142,16 +142,16 @@ window.divaPlugins.push((function ()
 
         function getGenresPara (genres)
         {
-            var p, strong, t = "Genres: ";
-            p = document.createElement("p");
-            strong = document.createElement("strong");
+            var p, strong, text, t = 'Genres: ';
+            p = document.createElement('p');
+            strong = document.createElement('strong');
             t = document.createTextNode(t);
             strong.appendChild(t);
 
-            t = "";
+            t = '';
             for (var i = 0, glen = genres.length; i < glen; i++) 
             {
-                t += genres[i] + ", ";
+                t += genres[i] + ', ';
             }
 
             if (t.length > 0)
@@ -165,28 +165,28 @@ window.divaPlugins.push((function ()
 
         var displayItem = function (item)
         {
-            var itemDiv, itemDetailsDiv, h3, t, a;
-            itemDiv = document.createElement("div");
+            var itemDiv, itemDetailsDiv, h3, t, a, p;
+            itemDiv = document.createElement('div');
 
             // composition
             a = getCompositionAnchor(item[0].composition);
-            h3 = document.createElement("h3");
+            h3 = document.createElement('h3');
             h3.appendChild(a);
             var start = item[0].folios.start.label, end = item[0].folios.end.label;
             if ( start === item[0].folios.end.label)
             {
-                t = document.createTextNode(" (" + start + ")");
+                t = document.createTextNode(' (' + start + ')');
             }
             else
             {
-                t = document.createTextNode(" (" + start + "-" + end + ")");
+                t = document.createTextNode(' (' + start + '-' + end + ')');
             }
             h3.appendChild(t);
 
-            itemDetailsDiv = document.createElement("div");
+            itemDetailsDiv = document.createElement('div');
 
             // composer
-            composers = item[0].composers;
+            var composers = item[0].composers;
             if (composers !== null)
             {
                 p = getComposersPara(item[0].composers);
@@ -194,7 +194,7 @@ window.divaPlugins.push((function ()
             }
 
             // genres
-            genres = item[0].composition.genres;
+            var genres = item[0].composition.genres;
             if (genres !== null)
             {
                 p = getGenresPara(genres);
@@ -202,7 +202,7 @@ window.divaPlugins.push((function ()
             }
 
             // voices
-            voices = item[0].voices;
+            var voices = item[0].voices;
             if (genres !== null)
             {
                 p = getVoicesPara(voices);
@@ -236,7 +236,7 @@ window.divaPlugins.push((function ()
                 else
                 {
                     $.ajax({
-                        dataType: "json",
+                        dataType: 'json',
                         url: service.id,
                         success: cacheAndDisplayItem(service)
                     });
@@ -252,8 +252,8 @@ window.divaPlugins.push((function ()
                 itemsDiv.removeChild(itemsDiv.firstChild);
             }
 
-            var h2 = document.createElement("h2");
-            var t = document.createTextNode("Folio " + filename);
+            var h2 = document.createElement('h2');
+            var t = document.createTextNode('Folio ' + filename);
             h2.appendChild(t);
             itemsDiv.appendChild(h2);
             var services = structures[filename];
@@ -295,9 +295,8 @@ window.divaPlugins.push((function ()
 
     return {
         pluginName: 'IIIFStructure',
-        init: function(settings)
+        init: function()
         {
-            console.log('Initializing IIIFStructure plugin');
             diva.Events.subscribe('ManifestDidLoad', populateStructures);
         }
     };
