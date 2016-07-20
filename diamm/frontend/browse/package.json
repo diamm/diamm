@@ -1,0 +1,23 @@
+{
+  "name": "browse",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "node_modules/.bin/webpack",
+    "eslint:watch": "fswatch src/ | xargs -n 1 eslint",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "babel-core": "^6.11.4",
+    "babel-loader": "^6.2.4",
+    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-react": "^6.11.1",
+    "eslint": "^3.1.1",
+    "eslint-plugin-react": "^5.2.2",
+    "eslint-watch": "^2.1.13",
+    "webpack": "^1.13.1"
+  },
+  "dependencies": {
+    "react": "^15.2.1",
+    "react-dom": "^15.2.1"
+  }
+}
