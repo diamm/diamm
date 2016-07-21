@@ -1,12 +1,20 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
+import React from 'react'; // eslint-disable-line no-unused-vars
+import { render } from 'react-dom';
+import { Provider } from 'react-redux'; // eslint-disable-line no-unused-vars
+import { createStore } from 'redux';
 
-const rootElement = document.getElementById('content-root');
-const Foo = require('./components/foo.js').default;
+import FilterContainer from './containers/filter';
+import filter from './reducers/filter';
 
-let render = () =>
-{
-    ReactDOM.render(<Foo />, rootElement);
-};
 
-render();
+let store = createStore(filter);
+
+render(
+    <Provider store={store}>
+        <div className="row">
+        <FilterContainer />
+        </div>
+    </Provider>,
+    document.getElementById('content-root')
+);
+

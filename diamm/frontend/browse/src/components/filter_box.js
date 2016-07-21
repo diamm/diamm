@@ -1,19 +1,19 @@
 import React, { PropTypes } from 'react'; // eslint-disable-line no-unused-vars
-import TypeFilters from 'type_filters'; // eslint-disable-line no-unused-vars
+import TypeFilters from './type_filters'; // eslint-disable-line no-unused-vars
 
 
-const FilterBox = ({ types, onTypeClick }) =>
+const FilterBox = ({ type, onTypeClick }) =>
 (
-    <div className="FilterBox">
+    <div className="FilterBox four columns">
         <TypeFilters
-            types={types}
+            active_type_filter={type}
             onTypeClick={onTypeClick}
         />
     </div>
 );
 FilterBox.propTypes =
 {
-    types: PropTypes.array.isRequired,
+    type: PropTypes.string.isRequired,
     onTypeClick: PropTypes.func.isRequired
 };
 

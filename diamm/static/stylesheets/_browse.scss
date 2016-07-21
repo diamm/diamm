@@ -10,3 +10,19 @@
     }
   }
 }
+
+.active {
+    color: #1395db;
+    font-weight: bold;
+}
+
+ul.filter {
+    list-style-type: none;
+}
+
+.type-filter {
+    cursor: pointer;
+    &:hover {
+        color: #1395db;
+    }
+}
