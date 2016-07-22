@@ -27,6 +27,7 @@ from diamm.views.auth import CreateAccount
 from diamm.views.home import HomeView
 from diamm.views.user import ProfileView, ProfileEditView
 from diamm.views.website.search import SearchView
+from diamm.views.website.browse import BrowseView
 from diamm.views.contribution import MakeContribution
 from diamm.views.website.set import SetDetail
 from diamm.views.website.source import (
@@ -89,6 +90,7 @@ urlpatterns = [
     url(r'^news/(?P<pk>[0-9]+)/$', StoryDetail.as_view(), name="story-detail"),
     url(r'^tags/(?P<pk>[0-9]+)/$', TagDetail.as_view(), name="tag-detail"),
     url(r'^contribution/$', MakeContribution.as_view(), name="contribution"),
+    url(r'^browse/$', BrowseView.as_view(), name="browse"),
     url(r'^stats/$', StatsView.as_view(), name="stats"),
 
     url(r'^sources/$', SourceList.as_view(), name="source-list"),

@@ -3112,6 +3112,18 @@ ul.contribution-list li {
     padding: 0 0.3rem;
     margin: 0; }
 
+.active {
+  color: #1395db;
+  font-weight: bold; }
+
+ul.filter {
+  list-style-type: none; }
+
+.type-filter {
+  cursor: pointer; }
+  .type-filter:hover {
+    color: #1395db; }
+
 .login-block {
   width: 100%; }
   .login-block h2 {
