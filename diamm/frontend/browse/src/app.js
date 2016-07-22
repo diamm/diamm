@@ -3,7 +3,7 @@ import { render } from 'react-dom';
 import { Provider } from 'react-redux'; // eslint-disable-line no-unused-vars
 import { createStore } from 'redux';
 
-import FilterContainer from './containers/filter';
+import FilterContainer from './containers/filter'; // eslint-disable-line no-unused-vars
 import filter from './reducers/filter';
 
 
