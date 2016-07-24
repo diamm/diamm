@@ -82,7 +82,7 @@ class Command(BaseCommand):
         self.stdout.write(term.blue('Indexing Sources'))
         self.solrconn.delete(q="type:source")
         objs = Source.objects.all().order_by('pk').select_related('archive__city__parent')
-        objs = objs.prefetch_related('pages__images', 'sets', 'identifiers', 'copyists', 'inventory__composition')
+        objs = objs.prefetch_related('pages__images', 'sets', 'identifiers', 'copyists', 'inventory__composition', 'provenance')
         self._index(objs, 'shelfmark', SourceSearchSerializer)
 
     def _index_inventories(self):
