@@ -33,6 +33,16 @@ class SearchView(generics.GenericAPIView):
             })
         # else ignore any invalid type filter settings...
 
+        geo_filter = {
+            ('archive_country_s', 'country_s'): request.GET.get('country', None),
+            ('archive_city_s', 'city_s'): request.GET.get('city', None),
+            ('archive_s', 'name_s'): request.GET.get('archive', None)
+        }
+        # remove keys with None values
+        geo_filter = {k:v for (k, v) in geo_filter.items() if v}
+        if geo_filter:
+            filters.update(geo_filter)
+
         try:
             page_num = int(request.GET.get('page', 1))
         except ValueError:

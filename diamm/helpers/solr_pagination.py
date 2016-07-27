@@ -32,6 +32,7 @@ class SolrPaginator:
             'facet': 'true',
             'facet.field': settings.SOLR['FACET_FIELDS'],
             'facet.mincount': 1,
+            'facet.pivot': 'archive_country_s,archive_city_s,archive_s',
             'hl': 'true',
             'defType': 'edismax',
             'qf': settings.SOLR['FULLTEXT_QUERYFIELDS']
@@ -49,6 +50,10 @@ class SolrPaginator:
                 # but {type: 'foo'} ==> 'type:foo'
                 if isinstance(v, list):
                     fqlist.append(" OR ".join(["{0}:{1}".format(k, field) for field in v]))
+                # Do a similar transform if the key is a tuple;
+                # {(archive_country_s, country_s): 'Spain'} ==> "archive_country_s:Spain OR country_s:Spain"
+                elif isinstance(k, tuple):
+                    fqlist.append(" OR ".join(["{0}:{1}".format(key, v) for key in k]))
                 else:
                     fqlist.append("{0}:{1}".format(k, v))
 
@@ -123,8 +128,18 @@ class SolrPage:
             ('pagination', self.pagination),
             ('query', self.paginator.query),
             ('types', self.type_list),
+            ('geo', self.geo_list),
             ('results', self.object_list),
         ])
+
+    @property
+    def geo_list(self):
+        facets = self.result.facets['facet_pivot']['archive_country_s,archive_city_s,archive_s']
+
+        if not facets:
+            return {}
+
+        return facets
 
     @property
     def type_list(self):
