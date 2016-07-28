@@ -29,7 +29,7 @@
     {% endif %}
 
     <div class="row">
-        <div class="sixteen columns search-results">
+        <div class="thirteen columns search-results">
         {% if content.results %}
             <p class="result-count">Returned {{ content.count }} results.</p>
             {% for result in content.results %}
@@ -44,6 +44,13 @@
                 <p>Type your search above.</p>
             {% endif %}
         {% endif %}
+        </div>
+        <div class="three columns">
+            {% if content.geo %}
+            {% with geo=content.geo %}
+                {% include "website/search/results/geo.jinja2" %}
+            {% endwith %}
+            {% endif %}
         </div>
     </div>
 

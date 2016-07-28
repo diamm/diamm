@@ -1,0 +1,6 @@
+<a href="{{ url('search') }}?{%- if params.q -%}q={{ params.q }}{%- endif -%}{%- if type and name -%}&{{ type }}={{ name }}{%- endif -%}"
+    class="filter-geo"
+    data-facet-name="{{ type }}"
+    data-facet-value="{{ name }}">
+    {{ name }} ({{ count }})
+</a>

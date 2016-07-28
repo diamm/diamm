@@ -36,7 +36,7 @@ class SearchView(generics.GenericAPIView):
         geo_filter = {
             ('archive_country_s', 'country_s'): request.GET.get('country', None),
             ('archive_city_s', 'city_s'): request.GET.get('city', None),
-            ('archive_s', 'name_s'): request.GET.get('archive', None)
+            ('archive_s'): request.GET.get('archive', None)
         }
         # remove keys with None values
         geo_filter = {k:v for (k, v) in geo_filter.items() if v}

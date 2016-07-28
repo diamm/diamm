@@ -30,9 +30,8 @@ class SolrPaginator:
         self.qopts = {
             'q.op': settings.SOLR['DEFAULT_OPERATOR'],
             'facet': 'true',
-            'facet.field': settings.SOLR['FACET_FIELDS'],
+            'facet.field': settings.SOLR['FACET_FIELDS'] + settings.SOLR['GEO_FACETS'],
             'facet.mincount': 1,
-            'facet.pivot': 'archive_country_s,archive_city_s,archive_s',
             'hl': 'true',
             'defType': 'edismax',
             'qf': settings.SOLR['FULLTEXT_QUERYFIELDS']
@@ -49,13 +48,13 @@ class SolrPaginator:
                 # For example, {type: ['foo', 'bar']} ==> "type:foo OR type:bar"
                 # but {type: 'foo'} ==> 'type:foo'
                 if isinstance(v, list):
-                    fqlist.append(" OR ".join(["{0}:{1}".format(k, field) for field in v]))
+                    fqlist.append(" OR ".join(["{0}:\"{1}\"".format(k, field) for field in v]))
                 # Do a similar transform if the key is a tuple;
                 # {(archive_country_s, country_s): 'Spain'} ==> "archive_country_s:Spain OR country_s:Spain"
                 elif isinstance(k, tuple):
-                    fqlist.append(" OR ".join(["{0}:{1}".format(key, v) for key in k]))
+                    fqlist.append(" OR ".join(["{0}:\"{1}\"".format(key, v) for key in k]))
                 else:
-                    fqlist.append("{0}:{1}".format(k, v))
+                    fqlist.append("{0}:\"{1}\"".format(k, v))
 
             self.qopts.update({
                 'fq': fqlist
@@ -132,14 +131,32 @@ class SolrPage:
             ('results', self.object_list),
         ])
 
+    #TODO: refactor so that we don't need knowledge of geo facets list order
     @property
     def geo_list(self):
-        facets = self.result.facets['facet_pivot']['archive_country_s,archive_city_s,archive_s']
+        facets = [self.result.facets['facet_fields'].get(x) for x in settings.SOLR['GEO_FACETS']]
 
         if not facets:
             return {}
 
-        return facets
+        facet_dicts = list()
+        for facet in facets:
+            i = iter(facet)
+            facet_dicts.append({k:v for (k, v) in zip(i, i)})
+
+        def sum_dicts(d1, d2):
+            d = d1
+            d.update(d2)
+            d.update({k:(d1[k] + d2[k]) for k in set(d1) & set(d2)})
+            return d
+
+        # Beware: here be (potential) keyerrors
+        geo_dicts = {
+                'country': sum_dicts(facet_dicts[0], facet_dicts[1]),
+                'city': sum_dicts(facet_dicts[2], facet_dicts[3]),
+                'archive': facet_dicts[4]
+        }
+        return geo_dicts
 
     @property
     def type_list(self):
