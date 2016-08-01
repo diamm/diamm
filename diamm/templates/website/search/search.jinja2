@@ -51,6 +51,12 @@
                 {% include "website/search/results/geo.jinja2" %}
             {% endwith %}
             {% endif %}
+
+            {% if content.genres %}
+            {% with genres=content.genres %}
+                {% include "website/search/results/genres.jinja2" %}
+            {% endwith %}
+            {% endif %}
         </div>
     </div>
 

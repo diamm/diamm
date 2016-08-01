@@ -31,6 +31,7 @@ class SolrPaginator:
             'q.op': settings.SOLR['DEFAULT_OPERATOR'],
             'facet': 'true',
             'facet.field': settings.SOLR['FACET_FIELDS'] + settings.SOLR['GEO_FACETS'],
+            'facet.limit': 10,
             'facet.mincount': 1,
             'hl': 'true',
             'defType': 'edismax',
@@ -128,8 +129,22 @@ class SolrPage:
             ('query', self.paginator.query),
             ('types', self.type_list),
             ('geo', self.geo_list),
+            ('genres', self.genres_list),
             ('results', self.object_list),
         ])
+
+    @property
+    def genres_list(self):
+        def facet_url(genre):
+            q_params = self.paginator.request.query_params
+            query_string = "&".join(["{0}={1}".format(k, v) for k, v in q_params.items()])
+            return "{0}?{1}&genre={2}".format(reverse('search'), query_string, genre)
+
+        genres = self.result.facets['facet_fields'].get('genres_ss')
+        if not genres:
+            return {}
+        i = iter(genres)
+        return [{'name': k, 'count': v, 'url': facet_url(k)} for k, v in zip(i, i)]
 
     @property
     def geo_list(self):
@@ -137,6 +152,8 @@ class SolrPage:
         def reduce_list(l):
             # Takes a list of facets ['foo', 1', 'bar' 2, 'bar', 1] and converts them to
             # {'foo': 1, 'bar': 3} where repeated keys have summed values
+            if not l:
+                return {}
             i = iter(l)
             d = {}
             for k, v in zip(i, i):

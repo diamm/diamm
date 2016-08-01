@@ -1,0 +1,10 @@
+{% if genres and not request.GET.genre %}
+    <h2>Genre</h2>
+    <ul>
+        {% for genre in genres %}
+            <li>
+                <a href="{{ genre.url }}">{{ genre.name }} ({{ genre.count }})</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}

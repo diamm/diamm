@@ -199,6 +199,7 @@ SOLR = {
     'FACET_FIELDS': [
         '{!ex=type}type',
         '{!ex=type}public_images_b',
+        'genres_ss',
     ],
     'GEO_FACETS': [
         'archive_country_s',

@@ -43,6 +43,10 @@ class SearchView(generics.GenericAPIView):
         if geo_filter:
             filters.update(geo_filter)
 
+        genre_filter = request.GET.get('genre')
+        if genre_filter:
+            filters.update({'genres_ss': genre_filter})
+
         try:
             page_num = int(request.GET.get('page', 1))
         except ValueError:
