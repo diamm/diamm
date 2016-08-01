@@ -1,7 +1,7 @@
 {% if content.geo.archive and request.GET.city %}
     <h2>Archive</h2>
     <ul>
-        {% for name, count in content.geo.archive.items() %}
+        {% for name, count in content.geo.archive|dictsort(by='value')|reverse %}
             <li>
                 {% with type='archive', params=request.GET %}
                     {% include 'website/search/results/geo_links.jinja2' %}
@@ -12,7 +12,7 @@
 {% elif content.geo.city and request.GET.country %}
     <h2>City</h2>
     <ul>
-        {% for name, count in content.geo.city.items() %}
+        {% for name, count in content.geo.city|dictsort(by='value')|reverse %}
             <li>
                 {% with type='city', params=request.GET %}
                     {% include 'website/search/results/geo_links.jinja2' %}
@@ -23,7 +23,7 @@
 {% elif content.geo.country and not request.GET.archive %}
     <h2>Country</h2>
     <ul>
-        {% for name, count in content.geo.country.items() %}
+        {% for name, count in content.geo.country|dictsort(by='value')|reverse %}
             <li>
                 {% with type='country', params=request.GET %}
                     {% include 'website/search/results/geo_links.jinja2' %}

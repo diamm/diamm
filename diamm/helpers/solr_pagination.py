@@ -131,30 +131,27 @@ class SolrPage:
             ('results', self.object_list),
         ])
 
-    #TODO: refactor so that we don't need knowledge of geo facets list order
     @property
     def geo_list(self):
-        facets = [self.result.facets['facet_fields'].get(x) for x in settings.SOLR['GEO_FACETS']]
 
-        if not facets:
-            return {}
-
-        facet_dicts = list()
-        for facet in facets:
-            i = iter(facet)
-            facet_dicts.append({k:v for (k, v) in zip(i, i)})
-
-        def sum_dicts(d1, d2):
-            d = d1
-            d.update(d2)
-            d.update({k:(d1[k] + d2[k]) for k in set(d1) & set(d2)})
+        def reduce_list(l):
+            # Takes a list of facets ['foo', 1', 'bar' 2, 'bar', 1] and converts them to
+            # {'foo': 1, 'bar': 3} where repeated keys have summed values
+            i = iter(l)
+            d = {}
+            for k, v in zip(i, i):
+                d[k] = d[k] + v if k in d else v
             return d
 
-        # Beware: here be (potential) keyerrors
+        facet_fields = self.result.facets['facet_fields']
         geo_dicts = {
-                'country': sum_dicts(facet_dicts[0], facet_dicts[1]),
-                'city': sum_dicts(facet_dicts[2], facet_dicts[3]),
-                'archive': facet_dicts[4]
+            'country': reduce_list(
+                facet_fields.get('archive_country_s') +
+                facet_fields.get('country_s')),
+            'city': reduce_list(
+                facet_fields.get('archive_city_s') +
+                facet_fields.get('city_s')),
+            'archive': reduce_list(facet_fields.get('archive_s'))
         }
         return geo_dicts
 
