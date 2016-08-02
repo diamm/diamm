@@ -57,6 +57,12 @@
                 {% include "website/search/results/genres.jinja2" %}
             {% endwith %}
             {% endif %}
+
+            {% if content.dates %}
+            {% with dates=content.dates %}
+                {% include "website/search/results/dates.jinja2" %}
+            {% endwith %}
+            {% endif %}
         </div>
     </div>
 

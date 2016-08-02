@@ -38,14 +38,20 @@ class SearchView(generics.GenericAPIView):
             ('archive_city_s', 'city_s'): request.GET.get('city', None),
             ('archive_s'): request.GET.get('archive', None)
         }
-        # remove keys with None values
-        geo_filter = {k:v for (k, v) in geo_filter.items() if v}
+        # remove keys with None values and surrond values in quotes
+        geo_filter = {k:'"{0}"'.format(v) for (k, v) in geo_filter.items() if v}
         if geo_filter:
             filters.update(geo_filter)
 
         genre_filter = request.GET.get('genre')
         if genre_filter:
             filters.update({'genres_ss': genre_filter})
+
+        century_filter = request.GET.get('century')
+        if century_filter:
+            filters.update({
+                'start_date_i': '[* TO {0}]'.format(century_filter),
+                'end_date_i': '[{0} TO *]'.format(century_filter)})
 
         try:
             page_num = int(request.GET.get('page', 1))

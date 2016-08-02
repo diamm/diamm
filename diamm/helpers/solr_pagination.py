@@ -33,6 +33,7 @@ class SolrPaginator:
             'facet.field': settings.SOLR['FACET_FIELDS'] + settings.SOLR['GEO_FACETS'],
             'facet.limit': 10,
             'facet.mincount': 1,
+            'facet.pivot': settings.SOLR['FACET_PIVOTS'],
             'hl': 'true',
             'defType': 'edismax',
             'qf': settings.SOLR['FULLTEXT_QUERYFIELDS']
@@ -49,13 +50,13 @@ class SolrPaginator:
                 # For example, {type: ['foo', 'bar']} ==> "type:foo OR type:bar"
                 # but {type: 'foo'} ==> 'type:foo'
                 if isinstance(v, list):
-                    fqlist.append(" OR ".join(["{0}:\"{1}\"".format(k, field) for field in v]))
+                    fqlist.append(" OR ".join(["{0}:{1}".format(k, field) for field in v]))
                 # Do a similar transform if the key is a tuple;
                 # {(archive_country_s, country_s): 'Spain'} ==> "archive_country_s:Spain OR country_s:Spain"
                 elif isinstance(k, tuple):
-                    fqlist.append(" OR ".join(["{0}:\"{1}\"".format(key, v) for key in k]))
+                    fqlist.append(" OR ".join(["{0}:{1}".format(key, v) for key in k]))
                 else:
-                    fqlist.append("{0}:\"{1}\"".format(k, v))
+                    fqlist.append("{0}:{1}".format(k, v))
 
             self.qopts.update({
                 'fq': fqlist
@@ -130,26 +131,60 @@ class SolrPage:
             ('types', self.type_list),
             ('geo', self.geo_list),
             ('genres', self.genres_list),
+            ('dates', self.century_list),
             ('results', self.object_list),
         ])
 
     @property
+    def century_list(self):
+        q_params = self.paginator.request.query_params
+        query_string = "&".join(["{0}={1}".format(k, v) for k, v in q_params.items()])
+
+        def facet_url(century):
+            return "{0}?{1}&century={2}".format(reverse('search'), query_string, century)
+
+        dates = self.result.facets['facet_pivot'].get('start_date_i,end_date_i')
+
+        if not dates:
+            return []
+
+        # facet_pivot example -- [{'value': 1400, 'count': 25, 'pivot':
+        #    [{'value': 1500', 'count': 20}]}, {'value': 1600', 'count': 5}]
+        # This creates a dictionary of with centuries as keys and values of counts
+        # => {1400: 25, 1500: 20}
+        d = {}
+        for start_date in dates:
+            for end_date in start_date['pivot']:
+                s = start_date['value']
+                while s < end_date['value']:
+                    d[s] = d[s] + end_date['count'] if s in d else end_date['count']
+                    s += 100
+        return [{'name': k, 'count': v, 'url': facet_url(k)} for k, v in d.items()]
+
+    @property
     def genres_list(self):
+        q_params = self.paginator.request.query_params
+        query_string = "&".join(["{0}={1}".format(k, v) for k, v in q_params.items()])
+
         def facet_url(genre):
-            q_params = self.paginator.request.query_params
-            query_string = "&".join(["{0}={1}".format(k, v) for k, v in q_params.items()])
             return "{0}?{1}&genre={2}".format(reverse('search'), query_string, genre)
 
         genres = self.result.facets['facet_fields'].get('genres_ss')
         if not genres:
-            return {}
+            return []
         i = iter(genres)
         return [{'name': k, 'count': v, 'url': facet_url(k)} for k, v in zip(i, i)]
 
     @property
     def geo_list(self):
+        q_params = self.paginator.request.query_params
+        q_params = {k:v for k, v in q_params.items() if k not in ['country', 'city', 'archive']}
+        query_string = "&".join(["{0}={1}".format(k, v) for k, v in q_params.items()])
 
-        def reduce_list(l):
+        def facet_url(k, geo_type):
+            return "{0}?{1}&{2}={3}".format(reverse('search'), query_string, geo_type, k)
+
+        def reduce_list(l, geo_type):
             # Takes a list of facets ['foo', 1', 'bar' 2, 'bar', 1] and converts them to
             # {'foo': 1, 'bar': 3} where repeated keys have summed values
             if not l:
@@ -158,17 +193,19 @@ class SolrPage:
             d = {}
             for k, v in zip(i, i):
                 d[k] = d[k] + v if k in d else v
-            return d
+            return [{'name': k, 'count': v, 'url': facet_url(k, geo_type)} for k, v in d.items()]
 
         facet_fields = self.result.facets['facet_fields']
         geo_dicts = {
             'country': reduce_list(
                 facet_fields.get('archive_country_s') +
-                facet_fields.get('country_s')),
+                facet_fields.get('country_s'),
+                'country'),
             'city': reduce_list(
                 facet_fields.get('archive_city_s') +
-                facet_fields.get('city_s')),
-            'archive': reduce_list(facet_fields.get('archive_s'))
+                facet_fields.get('city_s'),
+                'city'),
+            'archive': reduce_list(facet_fields.get('archive_s'), 'archive')
         }
         return geo_dicts
 

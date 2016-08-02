@@ -208,6 +208,9 @@ SOLR = {
         'city_s',
         'archive_s',
     ],
+    'FACET_PIVOTS': [
+        'start_date_i,end_date_i',
+    ],
     'FULLTEXT_QUERYFIELDS': [    # Boosting these fields allows more common methods of referring to a MSS to bubble up in the search results.
         'text',
         'source_boost_tns^10',  # Boost specific fields for source records that may be used at query time.

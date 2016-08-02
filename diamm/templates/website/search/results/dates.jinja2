@@ -1,0 +1,10 @@
+{% if dates and not request.GET.century %}
+    <h2>Century</h2>
+    <ul>
+        {% for century in dates %}
+            <li>
+                <a href="{{ century.url }}">{{ century.name }}s ({{ century.count }})</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
