@@ -38,7 +38,7 @@ class SearchView(generics.GenericAPIView):
             ('archive_city_s', 'city_s'): request.GET.get('city', None),
             ('archive_s'): request.GET.get('archive', None)
         }
-        # remove keys with None values and surrond values in quotes
+        # remove keys with None values and surround values in quotes
         geo_filter = {k:'"{0}"'.format(v) for (k, v) in geo_filter.items() if v}
         if geo_filter:
             filters.update(geo_filter)

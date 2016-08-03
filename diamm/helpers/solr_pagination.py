@@ -148,10 +148,10 @@ class SolrPage:
         if not dates:
             return []
 
-        # facet_pivot example -- [{'value': 1400, 'count': 25, 'pivot':
+        #    [{'value': 1400, 'count': 25, 'pivot':
         #    [{'value': 1500', 'count': 20}]}, {'value': 1600', 'count': 5}]
-        # This creates a dictionary of with centuries as keys and values of counts
-        # => {1400: 25, 1500: 20}
+        # => [{'name': 1400, 'count': 25, 'url': 'search/?century=1400'},
+        #     {'name': 1500, 'count': 20, 'url': 'search/?century=1500'}
         d = {}
         for start_date in dates:
             for end_date in start_date['pivot']:
@@ -159,7 +159,11 @@ class SolrPage:
                 while s < end_date['value']:
                     d[s] = d[s] + end_date['count'] if s in d else end_date['count']
                     s += 100
-        return [{'name': k, 'count': v, 'url': facet_url(k)} for k, v in d.items()]
+
+        return sorted(
+            [{'name': k, 'count': v, 'url': facet_url(k)} for k, v in d.items()],
+            key=lambda x: x['count'],
+            reverse=True)
 
     @property
     def genres_list(self):
@@ -186,14 +190,18 @@ class SolrPage:
 
         def reduce_list(l, geo_type):
             # Takes a list of facets ['foo', 1', 'bar' 2, 'bar', 1] and converts them to
-            # {'foo': 1, 'bar': 3} where repeated keys have summed values
+            # [{'name': 'bar', 'count': 3, 'url': 'search/?country=bar'},
+            #  {'name': 'foo', 'count': 1, 'url': 'search/?country=foo'}] where repeated keys have summed values
             if not l:
                 return {}
             i = iter(l)
             d = {}
             for k, v in zip(i, i):
                 d[k] = d[k] + v if k in d else v
-            return [{'name': k, 'count': v, 'url': facet_url(k, geo_type)} for k, v in d.items()]
+            return sorted(
+                [{'name': k, 'count': v, 'url': facet_url(k, geo_type)} for k, v in d.items()],
+                key=lambda x: x['count'],
+                reverse=True)
 
         facet_fields = self.result.facets['facet_fields']
         geo_dicts = {
