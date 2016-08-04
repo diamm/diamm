@@ -138,37 +138,22 @@ class SolrPage:
     @property
     def century_list(self):
         q_params = self.paginator.request.query_params
-        query_string = "&".join(["{0}={1}".format(k, v) for k, v in q_params.items()])
-
-        def facet_url(century):
-            return "{0}?{1}&century={2}".format(reverse('search'), query_string, century)
+        url = reverse('search') + '?' + "&".join(["{0}={1}".format(k, v) for k, v in q_params.items()])
 
         dates = self.result.facets['facet_pivot'].get('start_date_i,end_date_i')
 
         if not dates:
             return []
 
-        # converts a start/end date pivot to a list of century intervals
-        # e.g. (1400, [{'value': 1500, 'count': 20}, {'value': 1600, 'count': 5}])
-        #    => [(1400, 20), (1400, 5), (1500, 5)]
-        def pivot_to_list(x, l):
-            if not l or not x < l[0]['value']:
-                return []
-            h, *t = l
-            return [(x, h['count'])] + pivot_to_list(x, t) + pivot_to_list(x+100, t)
-
-        # create century intervals for each pivot and add their sums to a dict
-        l, d= [], {}
+        d = {'@url': url, 'results': []}
         for start_date in dates:
-            l += pivot_to_list(start_date['value'], start_date['pivot'])
-        for x in l:
-            century, count = x
-            d[century] = d[century] + count if century in d else count
+            for end_date in start_date['pivot']:
+                d['results'].append({
+                        'start_date': start_date['value'],
+                        'end_date': end_date['value'],
+                        'count': end_date['count']})
+        return d
 
-        return sorted(
-            [{'name': k, 'count': v, 'url': facet_url(k)} for k, v in d.items()],
-            key=lambda x: x['count'],
-            reverse=True)
 
     @property
     def genres_list(self):

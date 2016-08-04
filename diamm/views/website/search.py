@@ -47,11 +47,12 @@ class SearchView(generics.GenericAPIView):
         if genre_filter:
             filters.update({'genres_ss': genre_filter})
 
-        century_filter = request.GET.get('century')
-        if century_filter:
+        start_date_filter = request.GET.get('start_date', None)
+        end_date_filter = request.GET.get('end_date',None)
+        if start_date_filter and end_date_filter:
             filters.update({
-                'start_date_i': '[* TO {0}]'.format(century_filter),
-                'end_date_i': '[{0} TO *]'.format(century_filter)})
+                'start_date_i': '{{* TO {0}}}'.format(end_date_filter),
+                'end_date_i': '{{{0} TO *}}'.format(start_date_filter)})
 
         try:
             page_num = int(request.GET.get('page', 1))

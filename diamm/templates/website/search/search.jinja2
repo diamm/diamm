@@ -4,6 +4,10 @@
     {% include "website/blocks/search_box.jinja2" %}
 {% endblock %}
 
+{% block head %}
+    <link href="{{ static('stylesheets/nouislider/nouislider.min.css') }}" rel="stylesheet">
+{% endblock %}
+
 {% block body %}
     {% if content.types %}
         <div class="type-filter-bar">
@@ -58,10 +62,10 @@
             {% endwith %}
             {% endif %}
 
-            {% if content.dates %}
-            {% with dates=content.dates %}
-                {% include "website/search/results/dates.jinja2" %}
-            {% endwith %}
+            {% if content.dates and not (request.GET.start_date or request.GET.end_date) %}
+                <h2>Century</h2>
+                <div id="slider"></div>
+                <a href="#" class="button" id="century_filter"></a>
             {% endif %}
         </div>
     </div>
@@ -70,4 +74,50 @@
 {% endblock %}
 
 {% block scripts %}
+    <script src="{{ static('javascripts/src/nouislider/nouislider.min.js') }}"></script>
+    <script type="text/javascript">
+    {% if content.dates %}
+        var dates = {{ content.dates.results|safe }};
+        var url = "{{ content.dates['@url']|safe }}";
+    {% endif %}
+
+    var count_dates = function(start_date, end_date) {
+        var count = 0;
+        for (var i = 0, length = dates.length; i < length; i++) {
+            if ((start_date < dates[i].end_date) && (end_date > dates[i].start_date))
+                count += dates[i].count;
+        };
+        return count;
+    };
+
+    var century_filter = document.getElementById('century_filter');
+    var range = document.getElementById('slider');
+    if (range) {
+        noUiSlider.create(range, {
+            start: [800, 1800],
+            step: 100,
+            connect: true,
+            margin: 20,
+            orientation: 'vertical',
+            direction: 'rtl',
+            range: {
+                'min': 800,
+                'max': 1800
+            },
+            pips: {
+                mode: 'steps',
+                density: 100
+            }
+        });
+
+        range.noUiSlider.on('update', function( values, handle  ) {
+            var start_date = Math.round(values[0])
+            var end_date = Math.round(values[1]);
+            var count = count_dates(start_date, end_date);
+            century_filter.innerHTML = "filter (" + count + ")";
+            century_filter.href = url + "&start_date=" + start_date + "&end_date=" + end_date;
+        });
+    };
+
+    </script>
 {% endblock %}
