@@ -3129,6 +3129,11 @@ ul.contribution-list li {
 .search-results .search-result h4 {
   margin-bottom: 0.1rem; }
 
+.facet_list {
+  list-style: none; }
+  .facet_list li {
+    margin: 0.5rem; }
+
 #slider {
   height: 300px;
   margin: 20px; }

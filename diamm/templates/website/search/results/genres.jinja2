@@ -1,6 +1,6 @@
 {% if genres and not request.GET.genre %}
     <h2>Genre</h2>
-    <ul>
+    <ul class="facet_list">
         {% for genre in genres %}
             <li>
                 <a href="{{ genre.url }}">{{ genre.name }} ({{ genre.count }})</a>

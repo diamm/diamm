@@ -1,6 +1,6 @@
 {% if content.geo.archive and request.GET.city %}
     <h2>Archive</h2>
-    <ul>
+    <ul class="facet_list">
         {% for archive in content.geo.archive %}
             <li>
                 {% with type='archive', name=archive.name, count=archive.count, url=archive.url, params=request.GET %}
@@ -11,7 +11,7 @@
     </ul>
 {% elif content.geo.city and request.GET.country %}
     <h2>City</h2>
-    <ul>
+    <ul class="facet_list">
         {% for city in content.geo.city %}
             <li>
                 {% with type='city', name=city.name, count=city.count, url=city.url, params=request.GET %}
@@ -22,7 +22,7 @@
     </ul>
 {% elif content.geo.country and not request.GET.archive %}
     <h2>Country</h2>
-    <ul>
+    <ul class="facet_list">
         {% for country in content.geo.country %}
             <li>
                 {% with type='country', name=country.name, count=country.count, url=country.url, params=request.GET %}
