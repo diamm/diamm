@@ -148,21 +148,22 @@ class SolrPage:
         if not dates:
             return []
 
-        # converts a century and it's pivot to a list of century intervals
+        # converts a start/end date pivot to a list of century intervals
         # e.g. (1400, [{'value': 1500, 'count': 20}, {'value': 1600, 'count': 5}])
         #    => [(1400, 20), (1400, 5), (1500, 5)]
-        def helper(x, l):
+        def pivot_to_list(x, l):
             if not l or not x < l[0]['value']:
                 return []
             h, *t = l
-            return [(x, h['count'])] + helper(x, t) + helper(x+100, t)
+            return [(x, h['count'])] + pivot_to_list(x, t) + pivot_to_list(x+100, t)
 
         # create century intervals for each pivot and add their sums to a dict
         l, d= [], {}
         for start_date in dates:
-            l += helper(start_date['value'], start_date['pivot'])
+            l += pivot_to_list(start_date['value'], start_date['pivot'])
         for x in l:
-            d[x[0]] = d[x[0]] + x[1] if x[0] in d else x[1]
+            century, count = x
+            d[century] = d[century] + count if century in d else count
 
         return sorted(
             [{'name': k, 'count': v, 'url': facet_url(k)} for k, v in d.items()],
