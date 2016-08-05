@@ -154,7 +154,6 @@ class SolrPage:
                         'count': end_date['count']})
         return d
 
-
     @property
     def genres_list(self):
         q_params = self.paginator.request.query_params
