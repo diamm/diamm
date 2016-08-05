@@ -1,4 +1,5 @@
 import math
+import urllib.parse
 import pysolr
 from rest_framework.utils.urls import replace_query_param
 from rest_framework.reverse import reverse
@@ -156,17 +157,27 @@ class SolrPage:
 
     @property
     def genres_list(self):
-        q_params = self.paginator.request.query_params
-        query_string = "&".join(["{0}={1}".format(k, v) for k, v in q_params.items()])
-
-        def facet_url(genre):
-            return "{0}?{1}&genre={2}".format(reverse('search', request=self.paginator.request), query_string, genre)
-
         genres = self.result.facets['facet_fields'].get('genres_ss')
-        if not genres:
-            return []
-        i = iter(genres)
-        return [{'name': k, 'count': v, 'url': facet_url(k)} for k, v in zip(i, i)]
+        genre_iterator = iter(genres)
+        (scheme, netloc, path, params, query, fragment) = urllib.parse.urlparse(reverse('search', request=self.paginator.request))
+        d = []
+
+        for k, v in zip(genre_iterator, genre_iterator):
+            # since we want to construct a new URL for each genre, we need a fresh copy of the
+            # query parameters.
+            query_parameters = self.paginator.request.query_params.copy()
+            query_parameters.update({
+                'genre': k
+            })
+            query = query_parameters.urlencode()
+            final_url = urllib.parse.urlunparse((scheme, netloc, path, params, query, fragment))
+
+            d.append({
+                'name': k,
+                'count': v,
+                'url': final_url
+            })
+        return d
 
     @property
     def geo_list(self):
