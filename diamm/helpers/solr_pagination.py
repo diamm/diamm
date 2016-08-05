@@ -138,7 +138,7 @@ class SolrPage:
     @property
     def century_list(self):
         q_params = self.paginator.request.query_params
-        url = reverse('search') + '?' + "&".join(["{0}={1}".format(k, v) for k, v in q_params.items()])
+        url = reverse('search', request=self.paginator.request) + '?' + "&".join(["{0}={1}".format(k, v) for k, v in q_params.items()])
 
         dates = self.result.facets['facet_pivot'].get('start_date_i,end_date_i')
 
@@ -161,7 +161,7 @@ class SolrPage:
         query_string = "&".join(["{0}={1}".format(k, v) for k, v in q_params.items()])
 
         def facet_url(genre):
-            return "{0}?{1}&genre={2}".format(reverse('search'), query_string, genre)
+            return "{0}?{1}&genre={2}".format(reverse('search', request=self.paginator.request), query_string, genre)
 
         genres = self.result.facets['facet_fields'].get('genres_ss')
         if not genres:
@@ -176,7 +176,7 @@ class SolrPage:
         query_string = "&".join(["{0}={1}".format(k, v) for k, v in q_params.items()])
 
         def facet_url(k, geo_type):
-            return "{0}?{1}&{2}={3}".format(reverse('search'), query_string, geo_type, k)
+            return "{0}?{1}&{2}={3}".format(reverse('search', request=self.paginator.request), query_string, geo_type, k)
 
         def reduce_list(l, geo_type):
             # Takes a list of facets ['foo', 1', 'bar' 2, 'bar', 1] and converts them to
