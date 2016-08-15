@@ -107,9 +107,10 @@
                         enableIIIFPageData: true,
                         enableIIIFStructure: true
                 });
+                divaObj = $("#diva-wrapper").data('diva');
             }
             //Registers functions that will be called when the fragment identifier is changed
-            Hash(Tab, Page);
+            Hash(Tab, Page(divaObj));
         };
     </script>
 {% endblock %}
