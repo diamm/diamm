@@ -18,15 +18,17 @@ class CompositionSourceSerializer(ContextSerializer):
     )
 
     has_images = serpy.MethodField()
-
     public_images = serpy.BoolField(
         attr="source.public_images"
     )
 
     def get_url(self, obj):
-        return reverse('source-detail',
+        url = reverse('source-detail',
                        kwargs={"pk": obj.source.pk},
                        request=self.context['request'])
+        if self.get_has_images(obj):
+            url += "#tab=images&folio={0}".format(obj.folio_start)
+        return url
 
     def get_has_images(self,obj):
         if obj.pages.count() > 0:
