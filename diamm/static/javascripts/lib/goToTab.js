@@ -14,6 +14,9 @@ var Tab = function (params) {
         window.dispatchEvent(new Event('resize'));
     };
 
-    if (params['tab'])
-            goToTab(params['tab']);
+    if (params['tab']) {
+        goToTab(params['tab']);
+    } else {
+        goToTab('details');
+    }
 };
