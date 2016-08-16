@@ -1,76 +1,31 @@
-(function($)
-{
-    var Tabs = function (element, options)
+function Hash () {
+    console.log("Hash has been initialized");
+    var that = this;
+
+    this.callbacks = arguments;
+
+    var getHashParams = function ()
     {
-        var parentObject = $(element);
+        var hash = window.location.hash.substr(1).split('&');
 
-        var defaults = {
-            tabsID: "tabs",                   // id of the parent tab block
-            tabClass: "tab",                  // class of the <li> for each tab.
-            tabContainerID: "tab-container",  // ID of the tab container block
-            tabPanelClass: "tab-panel",       // class of the div for each tab panel.
-            tabCallbacks: {}                  // a hash of callbacks to call when a tab panel is switched. Format: {hash: function}
-        };
-
-        var settings = $.extend({}, defaults, options);
-
-        var init = function ()
+        var params = {};
+        for (var i = 0, hlen = hash.length; i < hlen; i++)
         {
-            console.log('tab init called');
-            var tabParent = document.getElementById(settings.tabsID);
-            var tabs = tabParent.querySelectorAll("a.tab"),
-                i = tabs.length;
-
-            while(i--)
-            {
-                var tab = tabs[i];
-                handleClick(tab);
-                if (tab.classList.contains('active'))
-                {
-                    gotoTab(tab.hash);
-                }
-            }
-        };
-
-        var handleClick = function (tab)
-        {
-            tab.addEventListener('click', function(event)
-            {
-                event.preventDefault();
-                gotoTab(tab.hash);
-            });
-        };
-
-        var gotoTab = function (tabHash)
-        {
-            var activeTabPanel = document.querySelector('.front');
-            if (activeTabPanel)
-            {
-                activeTabPanel.classList.remove('front');
-            }
-            var newActiveTabPanel = document.querySelector(tabHash);
-            newActiveTabPanel.classList.add('front');
-
-            if (settings.tabCallbacks.hasOwnProperty(tabHash))
-            {
-                settings.tabCallbacks[tabHash]();
-            }
-            // This is to make sure the diva viewer resizers on tab change
-            // Will be a non-issue in diva 5
-            window.dispatchEvent(new Event("resize"));
-        };
-
-        init();
-    };
-
-    $.fn.tabs = function (options)
-    {
-        return this.each(function ()
-        {
-            var tabContainer = $(this);
-
-            var tabs = new Tabs(this, options);
-            tabContainer.data('tabs', tabs);
-        })
+            h = hash[i].split("=");
+            params[h[0]] = h[1];
+        }
+        return params;
     }
-})(jQuery);
+
+    var onHashChange = function()
+    {
+        params = getHashParams();
+        for (var i = 0, clen = this.callbacks.length; i < clen; i++)
+        {
+            that.callbacks[i](params);
+        }
+    }
+
+    onHashChange();
+    window.onhashchange = onHashChange;
+}

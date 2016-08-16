@@ -1,27 +1,33 @@
-var goToPage = function()
+var Page = function (divaInstance)
 {
-    var _onFolioClick = function (pageName)
+    var goToPage = function(pageName)
     {
-        return function()
+        activeTabPanel = document.querySelector('.front');
+        if (activeTabPanel)
+            activeTabPanel.classList.remove('front');
+        newActiveTabPanel = document.querySelector('#images');
+        newActiveTabPanel.classList.add('front');
+
+        divaInstance.gotoPageByName(pageName);
+        // This is to make sure the diva viewer resizes on tab change
+        // Will be a non-issue in diva 5
+        window.dispatchEvent(new Event('resize'));
+    }
+
+    return function (params) {
+        if (params['folio'])
         {
-            activeTabPanel = document.querySelector(".front");
-            activeTabPanel.classList.remove("front");
-            newActiveTabPanel = document.querySelector("#images");
-            newActiveTabPanel.classList.add("front");
-
-            var diva_instance = $('#diva-wrapper').data('diva');
-            diva_instance.gotoPageByName(pageName);
-            // This is to make sure the diva viewer resizes on tab change
-            // Will be a non-issue in diva 5
-            window.dispatchEvent(new Event("resize"));
+            if (!divaInstance.isReady())
+            {
+                var handle = diva.Events.subscribe(
+                    'ViewerDidLoad',
+                    function ()
+                    {
+                        goToPage(params['folio']);
+                        diva.Events.unsubscribe(handle);
+                    });
+            }
+            goToPage(params['folio']);
         }
-    }
-
-    var folio_links = document.querySelectorAll('.folio-link');
-    for (var i=0, len=folio_links.length; i < len; i++)
-    {
-        page = folio_links[i].dataset.page;
-        folio_links[i].addEventListener("click", _onFolioClick(page) )
-    }
-
+    };
 }

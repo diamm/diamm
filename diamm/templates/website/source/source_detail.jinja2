@@ -31,28 +31,28 @@
     <div class="row">
         <div id="tabs" class="sixteen columns source-tabs">
             <ul>
-                <li><a class="tab active" href="#details">Details</a></li>
+                <li><a class="tab active" href="#tab=details">Details</a></li>
 
                 {% if content.inventory or content.uninventoried %}
-                <li><a class="tab" href="#inventory">Inventory</a></li>
+                <li><a class="tab" href="#tab=inventory">Inventory</a></li>
                 {% endif %}
 
                 {% if content.public_images and request.user.is_authenticated() %}
-                    <li><a class="tab" href="#images">Images</a></li>
+                    <li><a class="tab" href="#tab=images">Images</a></li>
                 {% elif content.public_images and request.user.is_authenticated() == False %}
                     <li><span class="tab">Images (<a href="{{ url('login') }}?next={{ request.get_full_path() }}">Log in</a> to view)</span></li>
                 {% endif %}
 
                 {% if content.sets %}
-                    <li><a class="tab" href="#sets">Sets</a></li>
+                    <li><a class="tab" href="#tab=sets">Sets</a></li>
                 {% endif %}
 
                 {% if content.catalogue_entries %}
-                <li><a class="tab" href="#catalogue">Catalogue Entries</a></li>
+                <li><a class="tab" href="#tab=catalogue">Catalogue Entries</a></li>
                 {% endif %}
 
                 {% if content.bibliography %}
-                <li><a class="tab" href="#bibliography">Bibliography</a></li>
+                <li><a class="tab" href="#tab=bibliography">Bibliography</a></li>
                 {% endif %}
             </ul>
         </div>
@@ -93,11 +93,11 @@
     <script src="{{ static('javascripts/lib/diva.js/js/utils.js') }}" type="application/javascript"></script>
     <script src="{{ static('javascripts/lib/iiif-structure.js') }}" type="application/javascript"></script>
     <script src="{{ static('javascripts/lib/tabs.js') }}" type="application/javascript"></script>
+    <script src="{{ static('javascripts/lib/goToTab.js') }}" type="application/javascript"></script>
     <script src="{{ static('javascripts/lib/goToPage.js') }}" type="application/javascript"></script>
     <script type="application/javascript">
         window.onload = function()
         {
-            $("#tabs").tabs()
             var divaObj = $("#diva-wrapper").data('diva');
             if (!divaObj)
             {
@@ -107,8 +107,10 @@
                         enableIIIFPageData: true,
                         enableIIIFStructure: true
                 });
+                divaObj = $("#diva-wrapper").data('diva');
             }
-            goToPage();
+            //Registers functions that will be called when the fragment identifier is changed
+            Hash(Tab, Page(divaObj));
         };
     </script>
 {% endblock %}

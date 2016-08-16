@@ -17,9 +17,3 @@ class CompositionDetail(generics.RetrieveAPIView):
     renderer_classes = (HTMLRenderer, renderers.JSONRenderer)
     serializer_class = CompositionDetailSerializer
     queryset = Composition.objects.all()
-
-
-
-
-
-
