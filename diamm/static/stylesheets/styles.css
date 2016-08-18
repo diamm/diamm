@@ -55,7 +55,6 @@ a {
 
 a:active {
   outline: 0; }
-
 a:hover {
   outline: 0; }
 
@@ -263,17 +262,21 @@ h6 {
 @media (min-width: 550px) {
   h1 {
     font-size: 5.0rem; }
+
   h2 {
     font-size: 4.2rem; }
+
   h3 {
     font-size: 3.6rem; }
+
   h4 {
     font-size: 3.0rem; }
+
   h5 {
     font-size: 2.4rem; }
+
   h6 {
     font-size: 1.5rem; } }
-
 p {
   margin-top: 0; }
 
@@ -305,83 +308,117 @@ p {
   .container {
     width: 85%;
     padding: 0; } }
-
 @media (min-width: 550px) {
   .container {
     width: 100%; }
+
   /*whatever you want - can even be fixed if you prefer*/
   .container .column,
   .container .columns {
     margin-left: 0.78125%;
     margin-right: 0.78125%; }
+
   .container .one.column,
   .container .one.columns {
     width: 4.6875%; }
+
   .container .two.columns {
     width: 10.9375%; }
+
   .container .three.columns {
     width: 17.1875%; }
+
   .container .four.columns {
     width: 23.4375%; }
+
   .container .five.columns {
     width: 29.6875%; }
+
   .container .six.columns {
     width: 35.9375%; }
+
   .container .seven.columns {
     width: 42.1875%; }
+
   .container .eight.columns {
     width: 48.4375%; }
+
   .container .nine.columns {
     width: 54.6875%; }
+
   .container .ten.columns {
     width: 60.9375%; }
+
   .container .eleven.columns {
     width: 67.1875%; }
+
   .container .twelve.columns {
     width: 73.4375%; }
+
   .container .thirteen.columns {
     width: 79.6875%; }
+
   .container .fourteen.columns {
     width: 85.9375%; }
+
   .container .fifteen.columns {
     width: 92.1875%; }
+
   .container .sixteen.columns {
     width: 98.4375%; }
+
   .container .one-third.column {
     width: 31.7708%; }
+
   .container .two-thirds.column {
     width: 65.1041%; }
+
   /* Offsets */
   .container .offset-by-one {
     padding-left: 6.25%; }
+
   .container .offset-by-two {
     padding-left: 12.5%; }
+
   .container .offset-by-three {
     padding-left: 18.75%; }
+
   .container .offset-by-four {
     padding-left: 25%; }
+
   .container .offset-by-five {
     padding-left: 31.25%; }
+
   .container .offset-by-six {
     padding-left: 37.5%; }
+
   .container .offset-by-seven {
     padding-left: 43.75%; }
+
   .container .offset-by-eight {
     padding-left: 50%; }
+
   .container .offset-by-nine {
     padding-left: 56.25%; }
+
   .container .offset-by-ten {
     padding-left: 62.5%; }
+
   .container .offset-by-eleven {
     padding-left: 68.75%; }
+
   .container .offset-by-twelve {
     padding-left: 75%; }
+
   .container .offset-by-thirteen {
     padding-left: 81.25%; }
+
   .container .offset-by-fourteen {
     padding-left: 87.5%; }
+
   .container .offset-by-fifteen {
     padding-left: 93.75%; }
+
   /*
   .container {
     width: $container-width-larger-than-phablet;
@@ -447,7 +484,6 @@ p {
 
   .offset-by-one-half.column,
   .offset-by-one-half.column   { margin-left: grid-offset-length(6);  } */ }
-
 .container:after,
 .row:after,
 .u-cf {
@@ -548,7 +584,6 @@ input[type="submit"].button-primary:focus, input[type="reset"].button-primary:fo
   color: #fff;
   background-color: #1eaedb;
   border-color: #1eaedb; }
-
 input[type="email"], input[type="number"], input[type="search"], input[type="text"], input[type="tel"], input[type="url"], input[type="password"] {
   height: 38px;
   padding: 6px 10px;
@@ -691,7 +726,6 @@ form {
   src: url("../fonts/font-awesome/fontawesome-webfont.eot?#iefix&v=4.5.0") format("embedded-opentype"), url("../fonts/font-awesome/fontawesome-webfont.woff2?v=4.5.0") format("woff2"), url("../fonts/font-awesome/fontawesome-webfont.woff?v=4.5.0") format("woff"), url("../fonts/font-awesome/fontawesome-webfont.ttf?v=4.5.0") format("truetype"), url("../fonts/font-awesome/fontawesome-webfont.svg?v=4.5.0#fontawesomeregular") format("svg");
   font-weight: normal;
   font-style: normal; }
-
 .fa {
   display: inline-block;
   font: normal normal normal 14px/1 FontAwesome;
@@ -751,7 +785,6 @@ form {
 
 .fa.fa-pull-left {
   margin-right: .3em; }
-
 .fa.fa-pull-right {
   margin-left: .3em; }
 
@@ -764,7 +797,6 @@ form {
 
 .fa.pull-left {
   margin-right: .3em; }
-
 .fa.pull-right {
   margin-left: .3em; }
 
@@ -783,7 +815,6 @@ form {
   100% {
     -webkit-transform: rotate(359deg);
     transform: rotate(359deg); } }
-
 @keyframes fa-spin {
   0% {
     -webkit-transform: rotate(0deg);
@@ -791,7 +822,6 @@ form {
   100% {
     -webkit-transform: rotate(359deg);
     transform: rotate(359deg); } }
-
 .fa-rotate-90 {
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
   -webkit-transform: rotate(90deg);
@@ -2979,10 +3009,8 @@ ul.contribution-list li {
 .source-inventory .inventory-header, .composer-inventory .inventory-header {
   font-size: 1.125em;
   font-weight: 600; }
-
 .source-inventory p, .composer-inventory p {
   padding-top: 0; }
-
 .source-inventory dd, .composer-inventory dd {
   margin-bottom: 1.3em; }
   .source-inventory dd table, .composer-inventory dd table {
@@ -3008,7 +3036,6 @@ ul.contribution-list li {
     width: 20%; }
   .source-description .source-details ul, .source-description .source-details li {
     margin: 0; }
-
 .source-description dl {
   overflow: auto;
   margin-bottom: 0;
@@ -3099,9 +3126,17 @@ ul.contribution-list li {
   font-family: "PT Sans", sans-serif;
   font-size: 90%;
   color: #011627; }
-
 .search-results .search-result h4 {
   margin-bottom: 0.1rem; }
+
+.facet_list {
+  list-style: none; }
+  .facet_list li {
+    margin: 0.5rem; }
+
+#slider {
+  height: 300px;
+  margin: 20px; }
 
 .browse-alphabet ul {
   list-style: none;

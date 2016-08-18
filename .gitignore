@@ -13,3 +13,4 @@ testing
 env
 /.idea
 /diamm/settings_local.py
+*.swp

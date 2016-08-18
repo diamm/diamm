@@ -65,3 +65,15 @@ $search-input-adjust: $search-font-size + 1rem;
     }
   }
 }
+
+.facet_list {
+    list-style: none;
+    li {
+        margin: 0.5rem;
+    }
+}
+
+#slider {
+    height: 300px;
+    margin: 20px;
+}

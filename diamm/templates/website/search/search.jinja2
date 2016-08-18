@@ -4,6 +4,10 @@
     {% include "website/blocks/search_box.jinja2" %}
 {% endblock %}
 
+{% block head %}
+    <link href="{{ static('stylesheets/nouislider/nouislider.min.css') }}" rel="stylesheet">
+{% endblock %}
+
 {% block body %}
     {% if content.types %}
         <div class="type-filter-bar">
@@ -29,7 +33,7 @@
     {% endif %}
 
     <div class="row">
-        <div class="sixteen columns search-results">
+        <div class="thirteen columns search-results">
         {% if content.results %}
             <p class="result-count">Returned {{ content.count }} results.</p>
             {% for result in content.results %}
@@ -45,10 +49,72 @@
             {% endif %}
         {% endif %}
         </div>
+        <div class="three columns">
+            {% if content.geo %}
+            {% with geo=content.geo %}
+                {% include "website/search/results/geo.jinja2" %}
+            {% endwith %}
+            {% endif %}
+
+            {% if content.genres %}
+            {% with genres=content.genres %}
+                {% include "website/search/results/genres.jinja2" %}
+            {% endwith %}
+            {% endif %}
+
+            {% if content.dates and not (request.GET.start_date or request.GET.end_date) %}
+                <h2>Century</h2>
+                <div id="slider"></div>
+                <a href="#" class="button" id="century_filter"></a>
+            {% endif %}
+        </div>
     </div>
 
 
 {% endblock %}
 
 {% block scripts %}
+    <script src="{{ static('javascripts/src/nouislider/nouislider.min.js') }}"></script>
+    <script type="text/javascript">
+    {% if content.dates %}
+        var dates = {{ content.dates|safe }};
+
+        var century_filter = document.getElementById('century_filter');
+        var range = document.getElementById('slider');
+        if (range) {
+            noUiSlider.create(range, {
+                start: [800, 1800],
+                step: 100,
+                connect: true,
+                margin: 20,
+                orientation: 'vertical',
+                direction: 'rtl',
+                range: {
+                    'min': 800,
+                    'max': 1800
+                },
+                pips: {
+                    mode: 'steps',
+                    density: 100
+                }
+            });
+
+            // Whenever the slider is moved, update the filter count
+            range.noUiSlider.on('update', function( values, handle  ) {
+                var start_date = Math.round(values[0])
+                var end_date = Math.round(values[1]);
+                var date_range = dates.find(
+                    function (range)
+                    {
+                        if (range.start_date === start_date && range.end_date === end_date)
+                            return true
+                        return false
+                    })
+                century_filter.innerHTML = "filter (" + date_range.count + ")";
+                century_filter.href = date_range.url
+            });
+        };
+    {% endif %}
+
+    </script>
 {% endblock %}

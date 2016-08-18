@@ -198,7 +198,18 @@ SOLR = {
     ],
     'FACET_FIELDS': [
         '{!ex=type}type',
-        '{!ex=type}public_images_b'
+        '{!ex=type}public_images_b',
+        'genres_ss',
+    ],
+    'GEO_FACETS': [
+        'archive_country_s',
+        'country_s',
+        'archive_city_s',
+        'city_s',
+        'archive_s',
+    ],
+    'FACET_PIVOTS': [
+        'start_date_i,end_date_i',
     ],
     'FULLTEXT_QUERYFIELDS': [    # Boosting these fields allows more common methods of referring to a MSS to bubble up in the search results.
         'text',

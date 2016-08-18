@@ -33,6 +33,27 @@ class SearchView(generics.GenericAPIView):
             })
         # else ignore any invalid type filter settings...
 
+        geo_filter = {
+            ('archive_country_s', 'country_s'): request.GET.get('country', None),
+            ('archive_city_s', 'city_s'): request.GET.get('city', None),
+            ('archive_s'): request.GET.get('archive', None)
+        }
+        # remove keys with None values and surround values in quotes
+        geo_filter = {k:'"{0}"'.format(v) for (k, v) in geo_filter.items() if v}
+        if geo_filter:
+            filters.update(geo_filter)
+
+        genre_filter = request.GET.get('genre')
+        if genre_filter:
+            filters.update({'genres_ss': genre_filter})
+
+        start_date_filter = request.GET.get('start_date', None)
+        end_date_filter = request.GET.get('end_date',None)
+        if start_date_filter and end_date_filter:
+            filters.update({
+                'start_date_i': '{{* TO {0}}}'.format(end_date_filter),
+                'end_date_i': '{{{0} TO *}}'.format(start_date_filter)})
+
         try:
             page_num = int(request.GET.get('page', 1))
         except ValueError:
