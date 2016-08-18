@@ -1,6 +1,7 @@
-import math
+from copy import deepcopy
 import urllib.parse
 import pysolr
+import math
 from rest_framework.utils.urls import replace_query_param
 from rest_framework.reverse import reverse
 from django.conf import settings
@@ -136,24 +137,45 @@ class SolrPage:
             ('results', self.object_list),
         ])
 
+    def _build_url(self, url):
+        q_string = urllib.parse.urlencode(url['query_params'])
+        return url['base_url'] + '?' + q_string
+
+    def _get_century_counts(self, dates, start_date, end_date, url, counts=[]):
+        if end_date < start_date:
+            return counts
+
+        for s in range(start_date, end_date, 100):
+            count = {'start_date': s, 'end_date': end_date, 'count': 0}
+            for date in dates:
+
+                url['query_params'].update({'start_date': s, 'end_date': end_date})
+                count['url'] = self._build_url(url)
+
+                if (s < date['end_date']) and (end_date > date['start_date']):
+                    count['count'] += date['count']
+            counts.append(count)
+        return self._get_century_counts(dates, start_date, end_date - 100, url, counts)
+
     @property
     def century_list(self):
-        q_params = self.paginator.request.query_params
-        url = reverse('search', request=self.paginator.request) + '?' + "&".join(["{0}={1}".format(k, v) for k, v in q_params.items()])
+        url = {
+            'base_url': reverse('search', request=self.paginator.request).split('?')[0],
+            'query_params': self.paginator.request.query_params.copy()}
 
-        dates = self.result.facets['facet_pivot'].get('start_date_i,end_date_i')
+        dates_pivot = self.result.facets['facet_pivot'].get('start_date_i,end_date_i')
 
-        if not dates:
+        if not dates_pivot:
             return []
 
-        d = {'@url': url, 'results': []}
-        for start_date in dates:
+        dates = []
+        for start_date in dates_pivot:
             for end_date in start_date['pivot']:
-                d['results'].append({
-                        'start_date': start_date['value'],
-                        'end_date': end_date['value'],
-                        'count': end_date['count']})
-        return d
+                dates.append({
+                    'start_date': start_date['value'],
+                    'end_date': end_date['value'],
+                    'count': end_date['count']})
+        return self._get_century_counts(dates, 800, 1800, url)
 
     @property
     def genres_list(self):
@@ -181,12 +203,8 @@ class SolrPage:
 
     @property
     def geo_list(self):
-        q_params = self.paginator.request.query_params
-        q_params = {k:v for k, v in q_params.items() if k not in ['country', 'city', 'archive']}
-        query_string = "&".join(["{0}={1}".format(k, v) for k, v in q_params.items()])
-
-        def facet_url(k, geo_type):
-            return "{0}?{1}&{2}={3}".format(reverse('search', request=self.paginator.request), query_string, geo_type, k)
+        url = {'base_url': reverse('search', request=self.paginator.request).split('?')[0],
+                'query_params': self.paginator.request.query_params.copy()}
 
         def reduce_list(l, geo_type):
             # Takes a list of facets ['foo', 1', 'bar' 2, 'bar', 1] and converts them to
@@ -194,14 +212,21 @@ class SolrPage:
             #  {'name': 'foo', 'count': 1, 'url': 'search/?country=foo'}] where repeated keys have summed values
             if not l:
                 return {}
+
             i = iter(l)
             d = {}
             for k, v in zip(i, i):
                 d[k] = d[k] + v if k in d else v
-            return sorted(
-                [{'name': k, 'count': v, 'url': facet_url(k, geo_type)} for k, v in d.items()],
-                key=lambda x: x['count'],
-                reverse=True)
+
+            geo_list = []
+            for k, v in d.items():
+                geo_url = deepcopy(url)
+                geo_url['query_params'].update({geo_type: k})
+                geo_list.append({'name': k,
+                                 'count': v,
+                                 'url': self._build_url(geo_url)})
+
+            return sorted(geo_list, key=lambda x: x['count'], reverse=True)
 
         facet_fields = self.result.facets['facet_fields']
         geo_dicts = {

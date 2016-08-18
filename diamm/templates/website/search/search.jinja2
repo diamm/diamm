@@ -77,18 +77,7 @@
     <script src="{{ static('javascripts/src/nouislider/nouislider.min.js') }}"></script>
     <script type="text/javascript">
     {% if content.dates %}
-        var dates = {{ content.dates.results|safe }};
-        var url = "{{ content.dates['@url']|safe }}";
-
-        // counts the number of items in the range given
-        var count_dates = function(start_date, end_date) {
-            var count = 0;
-            for (var i = 0, length = dates.length; i < length; i++) {
-                if ((start_date < dates[i].end_date) && (end_date > dates[i].start_date))
-                    count += dates[i].count;
-            };
-            return count;
-        };
+        var dates = {{ content.dates|safe }};
 
         var century_filter = document.getElementById('century_filter');
         var range = document.getElementById('slider');
@@ -114,9 +103,15 @@
             range.noUiSlider.on('update', function( values, handle  ) {
                 var start_date = Math.round(values[0])
                 var end_date = Math.round(values[1]);
-                var count = count_dates(start_date, end_date);
-                century_filter.innerHTML = "filter (" + count + ")";
-                century_filter.href = url + "&start_date=" + start_date + "&end_date=" + end_date;
+                var date_range = dates.find(
+                    function (range)
+                    {
+                        if (range.start_date === start_date && range.end_date === end_date)
+                            return true
+                        return false
+                    })
+                century_filter.innerHTML = "filter (" + date_range.count + ")";
+                century_filter.href = date_range.url
             });
         };
     {% endif %}
