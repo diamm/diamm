@@ -1,54 +1,14 @@
 {% extends "base.jinja2" %}
 
 {% block fullwidth %}
-    {% include "website/blocks/search_box.jinja2" %}
-{% endblock %}
-
-{% block body %}
-    {% if content.types %}
-        <div class="type-filter-bar">
-            <div class="type-filter">
-                <span class="filter-label">Filter by: </span>
-                <ul>
-                    <li>
-                        {# "All" is a special value. #}
-                        {% with type="all", count=content.count, params=request.GET %}
-                            {% include 'website/search/results/type_links.jinja2' %}
-                        {% endwith %}
-                    </li>
-                    {% for type, num in content.types.items() %}
-                        <li>
-                            {% with type=type, count=num, params=request.GET %}
-                                {% include 'website/search/results/type_links.jinja2' %}
-                            {% endwith %}
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
-    {% endif %}
-
-    <div class="row">
-        <div class="sixteen columns search-results">
-        {% if content.results %}
-            <p class="result-count">Returned {{ content.count }} results.</p>
-            {% for result in content.results %}
-                {% include 'website/search/results/result.jinja2' %}
-            {% endfor %}
-
-            {% include "website/blocks/browse_paginator.jinja2" %}
-        {% else %}
-            {% if request.GET.q %}
-                <p>No results were found.</p>
-            {% else %}
-                <p>Type your search above.</p>
-            {% endif %}
-        {% endif %}
-        </div>
+    {#    {% include "website/blocks/search_box.jinja2" %}#}
+    <div id="search-body">
+        <!-- filled by react application -->
     </div>
-
-
 {% endblock %}
 
 {% block scripts %}
+    <script src="{{ static('apps/node_modules/react/dist/react.js') }}"></script>
+    <script src="{{ static('apps/node_modules/react-dom/dist/react-dom.js') }}"></script>
+    <script src="{{ static('apps/search/dist/bundle.js') }}"></script>
 {% endblock %}
