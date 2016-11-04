@@ -3,6 +3,7 @@ from rest_framework.reverse import reverse
 from diamm.serializers.website.tag import TagSerializer
 from diamm.serializers.serializers import ContextSerializer
 
+
 class StorySerializer(ContextSerializer):
     title = serpy.StrField()
     body = serpy.StrField()
