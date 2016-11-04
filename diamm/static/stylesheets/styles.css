@@ -2954,19 +2954,6 @@ ul.contribution-list li {
     font-weight: 400;
     font-size: 1.3em; }
 
-.source-tabs {
-  margin-bottom: 1rem; }
-  .source-tabs ul {
-    list-style: none;
-    display: flex;
-    flex-wrap: wrap;
-    margin: 0;
-    padding: 0; }
-    .source-tabs ul li {
-      font-weight: bold;
-      margin: 0 1em 0 0;
-      padding: 0; }
-
 .source-description h3, .source-description h4, .source-bibliography h3, .source-bibliography h4, .source-inventory h3, .source-inventory h4, .composer-inventory h3, .composer-inventory h4 {
   font-weight: bold;
   font-size: 1em;

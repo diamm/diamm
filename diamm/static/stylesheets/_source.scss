@@ -16,22 +16,6 @@
 
 }
 
-.source-tabs {
-  margin-bottom: 1rem;
-  ul {
-    list-style: none;
-    display: flex;
-    flex-wrap: wrap;
-    margin: 0;
-    padding: 0;
-    li {
-      font-weight: bold;
-      margin: 0 1em 0 0;
-      padding: 0;
-    }
-  }
-}
-
 .source-description, .source-bibliography, .source-inventory, .composer-inventory {
   h3, h4 {
     font-weight: bold;
