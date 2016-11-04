@@ -186,7 +186,7 @@ def migrate_source_to_source(legacy_source):
     for n in notes:
         if n[1]:
             d = {
-                'note': n[1],
+                'note': n[1].replace("\n", "\n\n").replace("\r", "\n\n"),
                 'type': n[0],
                 'source': s
             }
