@@ -13,3 +13,7 @@ testing
 env
 /.idea
 /diamm/settings_local.py
+/diamm/static/apps/node_modules
+/diamm/static/apps/typings
+/diamm/static/apps/source/dist
+/diamm/static/apps/search/dist
