@@ -5,11 +5,11 @@
 {% endblock %}
 
 {% block head %}
-    <link rel="stylesheet" href="{{ static('javascripts/lib/diva.js/css/diva.min.css') }}" />
+    {# <link rel="stylesheet" href="{{ static('javascripts/lib/diva.js/css/diva.min.css') }}" /> #}
 {% endblock %}
 
 {% block body %}
-    <div class="row">
+    <div id="source-heading" class="row">
         <div class="twelve columns source-header">
             <h1>
                 {{ content.display_name }}
@@ -24,71 +24,18 @@
         </div>
         <div class="four columns">
             <a href="{{ content.archive.url }}">
-                <img src="{{ content.archive.logo }}" class="archive-header-logo"/>
+                {# <img src="{{ content.archive.logo }}" class="archive-header-logo"/> #}
             </a>
         </div>
     </div>
-    <div class="row">
-        <div id="tabs" class="sixteen columns source-tabs">
-            <ul>
-                <li><a class="tab active" href="#details">Details</a></li>
-
-                {% if content.inventory or content.uninventoried %}
-                <li><a class="tab" href="#inventory">Inventory</a></li>
-                {% endif %}
-
-                {% if content.public_images and request.user.is_authenticated() %}
-                    <li><a class="tab" href="#images">Images</a></li>
-                {% elif content.public_images and request.user.is_authenticated() == False %}
-                    <li><span class="tab">Images (<a href="{{ url('login') }}?next={{ request.get_full_path() }}">Log in</a> to view)</span></li>
-                {% endif %}
-
-                {% if content.sets %}
-                    <li><a class="tab" href="#sets">Sets</a></li>
-                {% endif %}
-
-                {% if content.catalogue_entries %}
-                <li><a class="tab" href="#catalogue">Catalogue Entries</a></li>
-                {% endif %}
-
-                {% if content.bibliography %}
-                <li><a class="tab" href="#bibliography">Bibliography</a></li>
-                {% endif %}
-            </ul>
-        </div>
-    </div>
-    <div id="tab-container" class="row">
-        <div class="sixteen columns">
-            {% include "website/source/source_detail_block.jinja2" %}
-
-            {% if content.inventory or content.uninventoried %}
-            {% include "website/source/source_inventory_block.jinja2" %}
-            {% endif %}
-
-            {% if content.public_images and request.user.is_authenticated() %}
-            {% include "website/source/source_images_block.jinja2" %}
-            {% endif %}
-
-            {% if content.sets %}
-            {% include "website/source/source_set_block.jinja2" %}
-            {% endif %}
-
-            {% if content.catalogue_entries %}
-            {% include "website/source/source_catalogue_entries_block.jinja2" %}
-            {% endif %}
-
-            {% if content.bibliography %}
-            {% include "website/source/source_bibliography_block.jinja2" %}
-            {% endif %}
-        </div>
-    </div>
-
-    {% include 'website/blocks/contribution.jinja2' %}
-
+    <div id="source-body" class="row"></div>
 {% endblock %}
 
 {% block scripts %}
-    <script src="{{ static('javascripts/lib/jquery/jquery.min.js') }}" type="application/javascript"></script>
+    <script src="{{ static('apps/node_modules/react/dist/react.js') }}"></script>
+    <script src="{{ static('apps/node_modules/react-dom/dist/react-dom.js') }}"></script>
+    <script src="{{ static('apps/source/dist/bundle.js') }}"></script>
+    {# <script src="{{ static('javascripts/lib/jquery/jquery.min.js') }}" type="application/javascript"></script>
     <script src="{{ static('javascripts/lib/diva.js/js/diva.js') }}" type="application/javascript"></script>
     <script src="{{ static('javascripts/lib/diva.js/js/utils.js') }}" type="application/javascript"></script>
     <script src="{{ static('javascripts/lib/iiif-structure.js') }}" type="application/javascript"></script>
@@ -97,7 +44,7 @@
     <script type="application/javascript">
         window.onload = function()
         {
-            $("#tabs").tabs()
+            $("#tabs").tabs();
             var divaObj = $("#diva-wrapper").data('diva');
             if (!divaObj)
             {
@@ -110,5 +57,5 @@
             }
             goToPage();
         };
-    </script>
+    </script> #}
 {% endblock %}
