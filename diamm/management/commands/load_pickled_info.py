@@ -1,5 +1,4 @@
 from django.core.management import BaseCommand
-from diamm.models.data.page import Page
 from diamm.models.data.image import Image
 import pickle
 import ujson

@@ -1,6 +1,5 @@
 from urllib.parse import urljoin
 import requests
-import ujson
 from django.core.management import BaseCommand
 from diamm.models.data.image import Image
 
@@ -14,7 +13,6 @@ def _image_data_request(location):
     if r.status_code == 200:
         return r.json()
     else:
-        # mock the image data with 0x0 for any errors.
         print('Error parsing request for {0}: status code was {1}'.format(url, r.status_code))
         return None
 
