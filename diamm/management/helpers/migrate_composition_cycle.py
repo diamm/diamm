@@ -13,11 +13,13 @@ from blessings import Terminal
 
 term = Terminal()
 
+
 def empty_tables():
     print(term.red("\tEmptying tables"))
     CompositionCycle.objects.all().delete()
     Cycle.objects.all().delete()
     CycleType.objects.all().delete()
+
 
 def migrate_cycle_type(entry):
     print(term.green("\tMigrating Cycle Type pk {0}".format(entry.pk)))
@@ -44,6 +46,7 @@ def migrate_cycle(entry):
     }
     c = Cycle(**d)
     c.save()
+
 
 def migrate_composition_cycle(entry):
     print(term.green("\tMigrating composition cycle relationship pk {0}".format(entry.pk)))
