@@ -1,4 +1,6 @@
 {
+  "compileOnSave": false,
+  "buildOnSave": false,
   "compilerOptions": {
     "outDir": "./dist/",
     "sourceMap": true,
@@ -10,5 +12,9 @@
   "files": [
     "../typings/index.d.ts",
     "./src/app.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
   ]
 }

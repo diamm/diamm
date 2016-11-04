@@ -4,33 +4,30 @@ import TabPanel from "../containers/tabpanel";
 
 function mapStateToProps (state: any)
 {
-    console.log(state);
     return {};
 }
 
 function mapDispatchToProps (dispatch: any)
 {
-    console.log(dispatch);
     return {};
 }
 
-
-interface BibliographyProps
+interface DescriptionComponentProps
 {
-    foo?: string;
-    onFoo?: any;
     children?: any;
 }
 
-class Bibliography extends React.Component<BibliographyProps, void>
+class Description extends React.Component<DescriptionComponentProps, void>
 {
-    render()
+    render ()
     {
-        console.log(this.props);
         return <TabPanel
-            id="source-body-bibliography"
-            title="Bibliography"
-            route="/bibliography">
+            id="source-body-description"
+            title="Description"
+            route="/"
+            isDefault={ true }
+        >
+            <p>a description</p>
         </TabPanel>;
     }
 }
@@ -38,4 +35,4 @@ class Bibliography extends React.Component<BibliographyProps, void>
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Bibliography);
+)(Description);
