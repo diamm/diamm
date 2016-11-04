@@ -20,8 +20,8 @@ class LegacyRouter(object):
             return True
         return False
 
-    def allow_migrate(self, db, model):
-        if db == 'migrate' or model._meta.app_label == "diamm_migrate":
-            return False
+    def allow_migrate(self, db, app_label, model_name=None, **hints):
+        if app_label == "diamm_migrate":
+            return db == 'migrate'
         else: # but all other models/databases are fine
             return True
