@@ -1,61 +1,25 @@
 {% extends "base.jinja2" %}
 
 {% block title %}
-    <title>Source: {{ content.display_name }}</title>
 {% endblock %}
 
 {% block head %}
-    {# <link rel="stylesheet" href="{{ static('javascripts/lib/diva.js/css/diva.min.css') }}" /> #}
 {% endblock %}
 
 {% block body %}
-    <div id="source-heading" class="row">
-        <div class="twelve columns source-header">
-            <h1>
-                {{ content.display_name }}
-            </h1>
-            <h2>
-                <a href="{{ content.archive.url }}">{{ content.archive.name }}</a>,
-                {{ content.archive.city }}, {{ content.archive.country }}
-            </h2>
-            <p>
-                <em>{{ content.type }}, {{ content.date_statement }}</em>
-            </p>
-        </div>
-        <div class="four columns">
-            <a href="{{ content.archive.url }}">
-                {# <img src="{{ content.archive.logo }}" class="archive-header-logo"/> #}
-            </a>
-        </div>
-    </div>
-    <div id="source-body" class="row"></div>
+    <div id="source-body" class="row"
+         data-source-id="{{ content.pk }}"
+         data-is-authenticated="{{ request.user.is_authenticated() }}"
+         {% if request.user.is_authenticated %}
+             data-username="{{ request.user.full_name }}"
+             data-is-staff="{{ request.user.is_staff }}"
+             data-is-superuser="{{ request.user.is_superuser }}"
+         {% endif %}
+    ></div>
 {% endblock %}
 
 {% block scripts %}
-    <script src="{{ static('apps/node_modules/react/dist/react.js') }}"></script>
-    <script src="{{ static('apps/node_modules/react-dom/dist/react-dom.js') }}"></script>
+    <script src="{{ static('javascripts/lib/jquery/jquery.min.js') }}"></script>
+    <script src="{{ static('javascripts/lib/diva.js/js/diva.min.js') }}"></script>
     <script src="{{ static('apps/source/dist/bundle.js') }}"></script>
-    {# <script src="{{ static('javascripts/lib/jquery/jquery.min.js') }}" type="application/javascript"></script>
-    <script src="{{ static('javascripts/lib/diva.js/js/diva.js') }}" type="application/javascript"></script>
-    <script src="{{ static('javascripts/lib/diva.js/js/utils.js') }}" type="application/javascript"></script>
-    <script src="{{ static('javascripts/lib/iiif-structure.js') }}" type="application/javascript"></script>
-    <script src="{{ static('javascripts/lib/tabs.js') }}" type="application/javascript"></script>
-    <script src="{{ static('javascripts/lib/goToPage.js') }}" type="application/javascript"></script>
-    <script type="application/javascript">
-        window.onload = function()
-        {
-            $("#tabs").tabs();
-            var divaObj = $("#diva-wrapper").data('diva');
-            if (!divaObj)
-            {
-                $('#diva-wrapper').diva({
-                        enableAutoTitle: false,
-                        objectData: "{{ content.manifest_url }}",
-                        enableIIIFPageData: true,
-                        enableIIIFStructure: true
-                });
-            }
-            goToPage();
-        };
-    </script> #}
 {% endblock %}
