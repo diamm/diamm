@@ -19,6 +19,7 @@ class VoiceSearchSerializer(serpy.Serializer):
     )
 
     voice_type_s = serpy.MethodField()
+    voice_type_i = serpy.MethodField()
     languages_ss = serpy.MethodField()
     mensuration_s = serpy.MethodField()
     mensuration_text_s = serpy.MethodField()

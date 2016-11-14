@@ -194,15 +194,22 @@ class SourceInventorySerializer(ContextDictSerializer):
     pk = serpy.IntField()
     url = serpy.MethodField()
     num_voices = serpy.MethodField()
+    genres = serpy.MethodField()
     folio_start = serpy.MethodField()
     folio_end = serpy.MethodField()
     composition = serpy.MethodField()
     composers = serpy.MethodField()
     bibliography = serpy.MethodField()
+    voices = serpy.MethodField()
 
     def get_num_voices(self, obj):
         if 'num_voices_s' in obj:
             return obj['num_voices_s']
+        return None
+
+    def get_genres(self, obj):
+        if 'genres_ss' in obj:
+            return obj['genres_ss']
         return None
 
     # @TODO Finish Item Bibliography stuff.
@@ -273,6 +280,23 @@ class SourceInventorySerializer(ContextDictSerializer):
 
         return out
 
+    def get_voices(self, obj):
+        if not obj.get('voices_ii', None):
+            return None
+
+        connection = pysolr.Solr(settings.SOLR['SERVER'])
+        id_list = ",".join(str(x) for x in obj.get('voices_ii'))
+        fq = ["type:voice", "{!terms f=pk}"+id_list]
+        fl = ["mensuration_s",
+              "mensuration_text_s",
+              "clef_s",
+              "languages_ss",
+              "voice_text_s",
+              "voice_type_s"]
+
+        voice_res = connection.search("*:*", fq=fq, fl=fl, rows=10000)
+        return voice_res.docs
+
 
 class SourceArchiveSerializer(ContextSerializer):
     url = serpy.MethodField()
@@ -299,6 +323,7 @@ class SourceArchiveSerializer(ContextSerializer):
 
 class SourceNoteSerializer(ContextSerializer):
     note = serpy.StrField()
+    author = serpy.StrField()
     type = serpy.IntField()
     pk = serpy.IntField()
     note_type = serpy.StrField()
