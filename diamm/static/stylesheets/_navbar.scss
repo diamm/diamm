@@ -20,8 +20,9 @@
 }
 
 .navbar {
-  box-shadow: 0 0 4px 0 $diamm-black;
-  border-top: 5px solid $diamm-red;
+  //box-shadow: 0 0 4px 0 $diamm-black;
+  //border-top: 5px solid $diamm-red;
+  background: $diamm-black;
   &:before,
   &:after {
     content: " "; // 1
@@ -36,7 +37,7 @@
   .navbar-brand {
     z-index: 10;
     padding-right: 1rem;
-    height: 40px;
+    height: 50px;
     overflow: visible;
     li {
       margin-right: 1em;
@@ -48,6 +49,11 @@
           background: none;
           color: unset;
         }
+
+        img {
+          height: 80px;
+          filter: drop-shadow(1px 1px 1px $diamm-black);
+        }
       }
     }
   }
@@ -56,23 +62,25 @@
     list-style: none;
     display: flex;
     flex-wrap: wrap;
+    height: 50px;
     justify-content: center;
     padding: 0;
     margin: 0;
     a {
-      color: $diamm-black;
+      color: $diamm-white;
       text-decoration: none;
-      padding: 0.6rem 1rem;
-      font-size: 1.2rem;
+      padding: 0.6rem 0.6rem;
+      font-size: 1.1rem;
+      text-transform: lowercase;
       font-family: $menu-font;
-      font-weight: bold;
-      -webkit-font-smoothing: antialiased;
+      font-weight: 500;
+      //-webkit-font-smoothing: antialiased;
       display: flex;
       align-items: flex-start;
       &:hover, &:focus {
         border-bottom: none;
-        background: $diamm-red;
-        color: $diamm-white;
+        background: $diamm-white;
+        color: $diamm-red;
       }
     }
 
@@ -103,7 +111,6 @@
         overflow: hidden;
     }
 
-
     .sub-pages {
       list-style-type: square;
       margin-right: 0;
@@ -125,7 +132,8 @@
         a {
           color: #fff;
           &:hover, &:focus {
-            background: $diamm-black;
+            background: $diamm-white;
+            color: $diamm-red;
           }
         }
       }

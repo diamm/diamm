@@ -1,5 +1,30 @@
+.source-section-selector {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  border-bottom: 1px solid $diamm-light-grey;
+  margin-bottom: 0.5rem;
+  li.active {
+    font-weight: 700;
+  }
+
+  li {
+    margin-bottom: 0;
+    a {
+      font-family: $small-caps;
+      font-size: 1rem;
+      text-transform: lowercase;
+      padding: 0.3rem 0.6rem;
+      display: flex;
+      align-items: flex-start;
+      &:hover, &:focus {
+        border-bottom: none;
+      }
+    }
+  }
+}
+
 .source-header {
-  margin-bottom: 1em;
   p {
     margin: 0;
     padding: 0;
@@ -18,8 +43,9 @@
 
 .source-description, .source-bibliography, .source-inventory, .composer-inventory {
   h3, h4 {
-    font-weight: bold;
-    font-size: 1em;
+    font-family: $sans-serif;
+    font-weight: 500;
+    font-size: 1.1em;
     letter-spacing: normal;
     margin-top: 0;
 
@@ -27,48 +53,142 @@
 }
 
 .source-inventory {
-  border-right: 1px solid $diamm-light-grey;
-}
+  .quicklook {
+    font-size: 14px;
+    cursor: pointer;
+    vertical-align: top;
+    &:hover {
+      color: $diamm-white;
+      background: $diamm-red;
+      border-color: $diamm-red;
+    }
+  }
 
-.source-inventory, .composer-inventory {
+  .source-inventory-menu {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+
+    li.active {
+      font-weight: 700;
+    }
+
+    li {
+      margin-bottom: 0;
+      font-family: $sans-serif;
+      font-size: 0.9rem;
+      padding: 0.3rem 0.3rem;
+      display: flex;
+      align-items: flex-start;
+
+      a {
+        &:hover, &:focus {
+          border-bottom: none;
+        }
+      }
+    }
+
+  }
+
+  hr {
+    margin: 1em;
+  }
+
   .inventory-header {
     font-size: 1.125em;
     font-weight: 600;
   }
+
   p {
     padding-top: 0;
   }
-  dd {
-    margin-bottom: 1.3em;
-    table {
-      margin-bottom: 0;
-    }
-    th {
-      line-break: strict;
+
+  .source-order {
+    margin-bottom: 1.5rem;
+    font-family: $sans-serif;
+    width: 100%;
+    td {
+      text-align: left;
       vertical-align: top;
-      white-space: nowrap;
+      border: 0;
+      padding: 0;
+
+      p {
+        margin: 0;
+        padding: 0;
+        font-family: $sans-serif;
+      }
     }
-    th, td {
-      border-bottom: none;
+
+    .foliation {
+      font-size: 1.1em;
+      font-weight: 700;
+      width: 10%;
+    }
+
+    .composition-info {
+      width: 60%;
+      h4 {
+        font-size: 1.1em;
+        font-weight: 700;
+      }
+    }
+
+    .composers {
+      width: 30%;
+      span {
+        margin-right: 0.6em;
+      }
+    }
+
+    .item-details, .item-bibliography {
+      font-size: 0.9rem;
+      ul {
+        list-style: none;
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0;
+        padding: 0;
+        .title {
+          font-weight: 700;
+        }
+        li {
+          margin: 0 0.5em 0 0;
+        }
+      }
+      .voice-detail {
+        margin-bottom: 0.4rem;
+      }
     }
   }
 }
 
 .source-description {
+  hr {
+    margin: 1em 0;
+  }
+  p {
+    margin-bottom: 0.4rem;
+    padding-top: 0;
+    padding-left: 0;
+  }
   .source-details {
+    font-family: $sans-serif;
+    font-weight: 400;
+    font-size: 0.9rem;
+
     width: 100%;
     margin-bottom: 1rem;
     th, td {
-      border-bottom: 1px solid $diamm-light-grey;
-      padding: 8px;
+      border-bottom: none;
+      padding: 3px;
     }
     th {
-      border-right: 1px solid $diamm-light-grey;
-    }
-    th {
+      font-weight: 700;
       vertical-align: top;
-      padding-right: 10px;
-      width: 20%;
+      padding-right: 6px;
+      width: 15%;
     }
     ul, li {
       margin: 0;

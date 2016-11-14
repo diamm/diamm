@@ -28,7 +28,7 @@ html {
 body {
   line-height: 1.45;
   font-weight: 400;
-  font-family: $sans-serif;
+  font-family: $serif;
   color: $diamm-black;
 
   min-height: 100%;
@@ -48,7 +48,7 @@ li.image-source-list {
 a {
   color: $diamm-lt-blue;
   text-decoration: none;
-  box-sizing: border-box;
+  //box-sizing: border-box;
   &:hover {
     color: $diamm-dk-blue;
     border-bottom: 1px solid $diamm-dk-blue;
