@@ -51,6 +51,9 @@ class SourceNote(models.Model):
     source = models.ForeignKey("diamm_data.Source",
                                related_name="notes")
 
+    # Authority for the note
+    author = models.CharField(max_length=255, blank=True, null=True)
+
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 

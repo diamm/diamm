@@ -173,8 +173,9 @@ class Source(models.Model):
               'folio_start_s',
               'folio_end_s',
               'num_voices_s',
+              'genres_ss',
               'pages_ii',
-              'pages_ssni'
+              'pages_ssni',
               'source_attribution_s',
               'voices_ii',
               'pk']
@@ -323,7 +324,8 @@ class Source(models.Model):
     def solr_relationships(self):
         connection = pysolr.Solr(settings.SOLR['SERVER'])
         fq = ['type:sourcerelationship', 'source_i:{0}'.format(self.pk)]
-        rel_results = connection.search("*:*", fq=fq, rows=10000)
+        sort = ["related_entity_s asc"]
+        rel_results = connection.search("*:*", fq=fq, sort=sort, rows=10000)
 
         if rel_results.hits > 0:
             return rel_results.docs
@@ -333,7 +335,8 @@ class Source(models.Model):
     def solr_copyists(self):
         connection = pysolr.Solr(settings.SOLR['SERVER'])
         fq = ['type:sourcecopyist', 'source_i:{0}'.format(self.pk)]
-        copyist_results = connection.search("*:*", fq=fq, rows=10000)
+        sort = ["copyist_s asc"]
+        copyist_results = connection.search("*:*", fq=fq, sort=sort, rows=10000)
 
         if copyist_results.hits > 0:
             return copyist_results.docs
