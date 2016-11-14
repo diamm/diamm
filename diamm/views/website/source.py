@@ -15,7 +15,7 @@ from diamm.helpers.object_pagination import ObjectPagination
 class SourceList(generics.ListAPIView):
     template_name = "website/source/source_list.jinja2"
     queryset = Source.objects.all()
-    pagination_class = ObjectPagination 
+    pagination_class = ObjectPagination
 
     # For serializing large lists, we only need the minimal serializer,
     # but for accepting new objects we will pass it through the full serializer.
@@ -35,6 +35,11 @@ class SourceDetail(generics.RetrieveAPIView):
         queryset = Source.objects.all()
         queryset = queryset.select_related('archive__city__parent')
         return queryset
+
+    def get(self, request, *args, **kwargs):
+        if request.accepted_renderer.format == "html":
+            return response.Response({'pk': kwargs['pk']})
+        return super(SourceDetail, self).get(request, args, kwargs)
 
 
 class SourceManifest(generics.GenericAPIView):
