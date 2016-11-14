@@ -162,6 +162,7 @@ def migrate_source_to_source(legacy_source):
     if legacy_source.index and legacy_source.index.strip() != "none":
         contents_note = legacy_source.index
 
+    author = legacy_source.authority if legacy_source.authority is not None else None
 
     notes = [
         (SourceNote.DATE_NOTE, legacy_source.datecomments),
@@ -188,7 +189,8 @@ def migrate_source_to_source(legacy_source):
             d = {
                 'note': n[1].replace("\n", "\n\n").replace("\r", "\n\n"),
                 'type': n[0],
-                'source': s
+                'source': s,
+                'author': author
             }
             note = SourceNote(**d)
             note.save()
