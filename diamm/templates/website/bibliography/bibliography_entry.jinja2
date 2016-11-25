@@ -52,8 +52,14 @@
 
 {%- macro first_title(content) %}
     {# journal, book, or festschrift -#}
-    {%- if content.type.pk in (6, 2, 5) -%}
+    {%- if content.type.pk in (6, 2) -%}
     <em>{{ content.title }}.</em>
+    {%- elif content.type.pk in (5,) and content.publication_info.filter(type=2).count() > 0 -%}
+    {# chapter in a festschrift #}
+    {{ content.title }}.
+    {%- elif content.type.pk in (5,) -%}
+    {# festschrift #}
+    <em>{{ content.title }}</em>
     {%- else -%}
     {# journal article, book chapter, dissertation -#}
     {{ content.title }}.
@@ -61,8 +67,8 @@
 {% endmacro -%}
 
 {%- macro other_titles(content) %}
-    {# journal, book chapter #}
-    {%- if content.type.pk in (1, 3) %}
+    {# journal, book chapter, chapter in festschrift #}
+    {%- if content.type.pk in (1, 3, 5) %}
     {# 2 = parent title #}
         {% set oth_title = content.publication_info.filter(type=2)|first %}
         {% if oth_title -%}<em>{{ oth_title.entry }},</em>{%- endif %}
