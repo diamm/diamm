@@ -31,6 +31,7 @@
     <!-- stored but not indexed -->
     <dynamicField name="*_sni" type="string" indexed="false" stored="true" />
     <dynamicField name="*_ssni" type="string" indexed="false" stored="true" multiValued="true" />
+    <dynamicField name="*_ssdv" type="string" indexed="true" stored="true" multiValued="true" docValues="true" />
 
     <uniqueKey>id</uniqueKey>
 
@@ -63,6 +64,11 @@
 
     <copyField source="city_s" dest="archive_boost_tns" />
     <copyField source="siglum_s" dest="archive_boost_tns" />
+
+    <!-- facet fields for aggregated faceting -->
+    <copyField source="archive_city_s" dest="facet_cities_ss" />
+    <copyField source="city_s" dest="facet_cities_ss" />
+    <copyField source="archives_cities_ss" dest="facet_cities_ss" />
 
     <!-- field definitions -->
     <fieldType name="uuid" class="solr.UUIDField" indexed="true" />
