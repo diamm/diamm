@@ -1,5 +1,7 @@
 import React from "react";
 import ReactMarkdown from "react-markdown";
+import { Link } from "react-router";
+import { IMAGES_ROUTE } from "../../routes";
 
 /*
 * React components for the Description tab. Factored out here
@@ -131,7 +133,7 @@ export const Copyists = ({copyists}) =>
                                         { copyist.uncertain ? "? " : null }
                                         { copyist.copyist.name }
                                     </span>
-                                </a> <span>({ copyist.type })</span>
+                                </a> <span>({ copyist.type_s })</span>
                             </li>
                         );
                     })}
@@ -259,5 +261,20 @@ export const Notes = ({notes}) =>
                 );
             })}
         </div>
+    );
+};
+
+export const CoverImage = ({show, info}) =>
+{
+    if (!show)
+        return null;
+
+    return (
+        <figure className="source-cover-image">
+            <Link to={ IMAGES_ROUTE }>
+                <img src={ `${info.url}/full/350,/0/default.jpg` } />
+            </Link>
+            <figcaption>{ info.label }</figcaption>
+        </figure>
     );
 };

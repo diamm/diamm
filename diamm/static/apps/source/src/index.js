@@ -7,10 +7,28 @@ import { syncHistoryWithStore } from "react-router-redux";
 
 import configureStore from "./store";
 import routes from "./routes";
+import { setActiveTab } from "./actions/index";
 
-const store = configureStore({});
+export const store = configureStore({});
 const appHistory = useRouterHistory(createHashHistory)();
 const history = syncHistoryWithStore(appHistory, store);
+
+const PUSH = "PUSH";
+const POP = "POP";
+
+/*
+*
+* This enables the active tab switching by listening for the route switching
+* action and dispatching the action to set the active tab state.
+*
+* */
+history.listen( (location) => {
+    // we're only interested in the 'PUSH' actions
+    if (location.action === POP)
+        return null;
+
+    store.dispatch(setActiveTab(location))
+});
 
 
 ReactDOM.render(

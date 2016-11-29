@@ -1,4 +1,4 @@
-import { SET_USER_INFO } from "../actions/index";
+import { SET_USER_INFO } from "../constants";
 
 const INITIAL_STATE = null;
 

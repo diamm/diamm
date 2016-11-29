@@ -37,8 +37,8 @@ const ImagesMenuLink = ({authenticated, active, route, title, show=true}) =>
     if (!authenticated)
     {
         return (
-            <li>
-                Images (Log in to view)
+            <li className="unauthenticated-image-link">
+                Images (<a href={ `/login?next=${route}` }>Log in to view</a>)
             </li>
         );
     }
@@ -78,7 +78,10 @@ class App extends React.Component
         if (!this.props.source)
         {
             return (
-                <div>Loading...</div>
+                <div className="loading-spinner">
+                    <i className="fa fa-2x fa-spinner fa-spin" />
+                    <span className="message">Loading...</span>
+                </div>
             );
         }
 
@@ -101,7 +104,7 @@ class App extends React.Component
                             show={ this.props.source.inventory.length !== 0 }
                         />
                         <ImagesMenuLink
-                            authenticated={ this.props.user.isAuthenticated }
+                            authenticated={ (this.props.user !== null && this.props.user.isAuthenticated) }
                             active={ isActive(IMAGES_ROUTE, true) }
                             route={ IMAGES_ROUTE }
                             title="Images"
@@ -135,7 +138,7 @@ class App extends React.Component
                         />
                     </ul>
                 </div>
-                <div className="row">
+                <div className="row source-data">
                     { this.props.children }
                 </div>
             </div>

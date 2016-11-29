@@ -1,4 +1,7 @@
-import { FETCH_SOURCE_INFO, RECEIVE_SOURCE_INFO } from "../actions/index";
+import {
+    FETCH_SOURCE_INFO,
+    RECEIVE_SOURCE_INFO
+} from "../constants";
 
 // set the initial state to null so that we can easily check
 // to see if the source information has loaded. When loaded this will

@@ -10,7 +10,8 @@ import {
     Relationships,
     Links,
     Provenance,
-    Notes
+    Notes,
+    CoverImage
 } from "./containers/description";
 
 
@@ -55,11 +56,13 @@ class Description extends React.Component
                     <Notes notes={ this.props.notes } />
                 </div>
                 <div className="five columns">
-                    <img src="https://placehold.it/350x500" />
+                    <CoverImage
+                        show={ this.props.cover_image_info && this.props.has_images && this.props.public_images }
+                        info={ this.props.cover_image_info }
+                    />
                 </div>
             </div>
         );
-
     }
 }
 
@@ -79,7 +82,8 @@ function mapStateToProps (state)
         relationships: state.source.relationships,
         links: state.source.links,
         provenance: state.source.provenance,
-        notes: state.source.notes
+        notes: state.source.notes,
+        cover_image_info: state.source.cover_image_info
     }
 }
 

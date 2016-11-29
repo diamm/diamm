@@ -15,11 +15,9 @@ class Title extends React.Component
                     <h2>
                         <a href={ archive.url }>{ archive.name }</a>, <span>{ archive.city }, { archive.country }</span>
                     </h2>
-                    <p>
-                        <em>{ this.props.type }, { this.props.date_statement }</em>
-                    </p>
+                    <div>{ this.props.type }, { this.props.date_statement }</div>
                 </div>
-                <div className="four columns">
+                <div className="four columns source-archive-logo">
                     <a href={ archive.url }>
                         <img src={ archive.logo } className="archive-header-logo"/>
                     </a>
@@ -34,7 +32,7 @@ function mapStateToProps (state)
     return {
         display_name: state.source.display_name,
         archive: state.source.archive,
-        type: state.source.type,
+        type: state.source.source_type,
         date_statement: state.source.date_statement
     };
 }

@@ -5,6 +5,7 @@ import {
     INVENTORY_ROUTE_ALPHABETICAL
 } from "../../routes";
 import { Link } from "react-router";
+import { connect } from "react-redux";
 
 
 export class InventoryMenu extends React.Component
@@ -18,18 +19,26 @@ export class InventoryMenu extends React.Component
         let isActive = this.context.router.isActive;
 
         return (
-            <ul className="source-inventory-menu">
-                <li>View: </li>
-                <li className={ isActive(INVENTORY_ROUTE) ? "active" : ""}>
-                    <Link to={ INVENTORY_ROUTE }>Source Order</Link>
-                </li>
-                <li className={ isActive(INVENTORY_ROUTE_BY_COMPOSER) ? "active" : ""}>
-                    <Link to={ INVENTORY_ROUTE_BY_COMPOSER }>By Composer (A-Z)</Link>
-                </li>
-                <li className={ isActive(INVENTORY_ROUTE_ALPHABETICAL) ? "active" : ""}>
-                    <Link to={ INVENTORY_ROUTE_ALPHABETICAL }>Alphabetical by Composition</Link>
-                </li>
-            </ul>
+            <div className="row">
+                <ul className="source-inventory-menu eleven columns">
+                    <li>View: </li>
+                    <li className={ isActive(INVENTORY_ROUTE) ? "active" : ""}>
+                        <Link to={ INVENTORY_ROUTE }>Source Order</Link>
+                    </li>
+                    <li className={ isActive(INVENTORY_ROUTE_BY_COMPOSER) ? "active" : ""}>
+                        <Link to={ INVENTORY_ROUTE_BY_COMPOSER }>By Composer (A-Z)</Link>
+                    </li>
+                    <li className={ isActive(INVENTORY_ROUTE_ALPHABETICAL) ? "active" : ""}>
+                        <Link to={ INVENTORY_ROUTE_ALPHABETICAL }>By Composition (A-Z)</Link>
+                    </li>
+                </ul>
+                <ul className="source-inventory-legend five columns">
+                    <li>Legend: </li>
+                    <li><i className="fa fa-binoculars fa-border quicklook-legend" /> {" Quicklook"}</li>
+                    <li><i className="fa fa-eye fa-border quicklook-legend" /> { " View Image" }</li>
+                    <li><i className="fa fa-plus fa-border quicklook-legend"/> { " Item Details"} </li>
+                </ul>
+            </div>
         );
     }
 }
@@ -41,6 +50,9 @@ const onQuickLook = (url) =>
 
 export const QuickLook = ({url}) =>
 {
+    if (!url)
+        return null;
+
     return (
         <span
             className="fa fa-border fa-binoculars quicklook"
@@ -67,6 +79,11 @@ export const Composers = ({composers}) =>
 
 export const Foliation = ({folio_start, folio_end, show_quicklook}) =>
 {
+    if (!folio_start)
+        return (
+            <span>[no start folio listed]</span>
+        );
+
     return (
         <span>
             { folio_start }{ (folio_end && folio_start !== folio_end) ? `–${folio_end} ` : " " }
@@ -95,7 +112,7 @@ export const Bibliography = ({entry}) =>
 
     return (
         <span>
-            <p><strong>Item Bibliography</strong></p>
+            <div><strong>Item Bibliography</strong></div>
             { entry.map ( (bib, idx) => {
                 return(
                     <p key={ idx } dangerouslySetInnerHTML={{__html: bib.prerendered_s }}/>
@@ -112,7 +129,7 @@ export const Voices = ({voices, num_voices}) =>
             { num_voices &&
                 <span><strong>Number of Voices:</strong> { num_voices }</span>}
 
-            { voices.map ( (voice, idx) => {
+            { voices && voices.map ( (voice, idx) => {
                 return (
                     <div key={ idx } className="voice-detail">
                         <ul>
@@ -135,21 +152,12 @@ export const Voices = ({voices, num_voices}) =>
     );
 };
 
-export const Details = ({genres, voices, num_voices, bibliography}) =>
+export const Attribution = ({attribution}) =>
 {
-    if (!genres && !voices && !num_voices && !bibliography)
+    if (!attribution)
         return null;
 
     return (
-        <tr>
-            <td />
-            <td className="item-details">
-                <Genres genres={ genres }/>
-                <Voices voices={ voices } num_voices={ num_voices } />
-            </td>
-            <td className="item-bibliography">
-                <Bibliography entry={ bibliography } />
-            </td>
-        </tr>
-    );
+        <div><strong>Source Attribution: </strong> { attribution }</div>
+    )
 };

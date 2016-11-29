@@ -1,6 +1,15 @@
-export const FETCH_SOURCE_INFO = "FETCH_SOURCE_INFO";
-export const RECEIVE_SOURCE_INFO = "RECEIVE_SOURCE_INFO";
-export const SET_USER_INFO = "SET_USER_INFO";
+import {
+    SERVER_BASE_URL,
+    SET_USER_INFO,
+    RECEIVE_SOURCE_INFO,
+    SET_ACTIVE_TAB,
+    INITIALIZE_INVENTORY_DETAIL_STATE,
+    SHOW_INVENTORY_DETAILS_FOR_ITEM,
+    INITIALIZE_ALPHA_INVENTORY_DETAIL_STATE,
+    SHOW_ALPHA_INVENTORY_DETAILS_FOR_ITEM
+} from "../constants";
+import "whatwg-fetch";
+
 
 export function setUserInfo (username, authenticated, staff, superuser)
 {
@@ -21,33 +30,69 @@ export function setUserInfo (username, authenticated, staff, superuser)
 
 export function receiveSourceInfo (payload)
 {
-    console.log('dispatched receive source info');
     return {
         type: RECEIVE_SOURCE_INFO,
         payload
     }
 }
 
-
 export function fetchSourceInfo (sourceId)
 {
-    console.log('Fetching source info for ', sourceId);
-
     return (dispatch) =>
     {
-        return fetch(`//alpha.diamm.ac.uk/sources/${sourceId}/`, {
+        return fetch(`${SERVER_BASE_URL}sources/${sourceId}/`, {
                 headers: {
                     "Accept": "application/json"
                 }
             })
             .then((response) => {
-                console.log('received response');
                 return response.json();
             })
             .then((payload) => {
-                console.log('dispatching');
-                console.log(payload);
                 dispatch(receiveSourceInfo(payload));
+                dispatch(initializeInventoryDetailState(payload.inventory));
+                dispatch(initializeAlphaInventoryDetailState(payload.inventory));
             });
     };
+}
+
+export function setActiveTab (location)
+{
+    return {
+        type: SET_ACTIVE_TAB,
+        tab: location.pathname
+    }
+}
+
+export function showInventoryDetailsForItem (idx)
+{
+    return {
+        type: SHOW_INVENTORY_DETAILS_FOR_ITEM,
+        index: idx
+    }
+}
+
+export function initializeInventoryDetailState (inventory)
+{
+    return {
+        type: INITIALIZE_INVENTORY_DETAIL_STATE,
+        payload: inventory.length
+    }
+}
+
+
+export function initializeAlphaInventoryDetailState (inventory)
+{
+    return {
+        type: INITIALIZE_ALPHA_INVENTORY_DETAIL_STATE,
+        payload: inventory.length
+    }
+}
+
+export function showAlphaInventoryDetailsForItem (idx)
+{
+    return {
+        type: SHOW_ALPHA_INVENTORY_DETAILS_FOR_ITEM,
+        index: idx
+    }
 }

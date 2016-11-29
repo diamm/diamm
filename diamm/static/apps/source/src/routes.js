@@ -10,6 +10,8 @@ import Sets from "./components/sets";
 import Bibliography from "./components/bibliography";
 import Commentary from "./components/commentary";
 import Credits from "./components/credits";
+import { store } from "./index";
+import { setActiveTab } from "./actions/index";
 
 export const ROOT_ROUTE = "/";
 export const INVENTORY_ROUTE = "inventory";
@@ -19,9 +21,10 @@ export const BIBLIOGRAPHY_ROUTE = "bibliography";
 export const COMMENTARY_ROUTE = "commentary";
 export const CREDITS_ROUTE = "credits";
 
-export const INVENTORY_ROUTE_BY_ORDER = `${INVENTORY_ROUTE}/source-order`;
+// export const INVENTORY_ROUTE_BY_ORDER = `${INVENTORY_ROUTE}/source-order`;
 export const INVENTORY_ROUTE_BY_COMPOSER = `${INVENTORY_ROUTE}/composer`;
 export const INVENTORY_ROUTE_ALPHABETICAL = `${INVENTORY_ROUTE}/alphabetical`;
+
 
 export default (
     <Route path={ ROOT_ROUTE } component={ App }>

@@ -1,9 +1,15 @@
 import React from "react";
 import $ from "jquery";
+import diva from "diva.js";
 
 
 class DivaViewer extends React.Component
 {
+    constructor (props)
+    {
+        super(props);
+    }
+
     shouldComponentUpdate ()
     {
         return false;
@@ -11,15 +17,27 @@ class DivaViewer extends React.Component
 
     componentDidMount ()
     {
-        this.diva = $(this.refs.divaviewer).diva({
-            objectData: "https://alpha.diamm.ac.uk/sources/117/manifest/"
+        console.log(this.props.manifestURL);
+
+        $(this.refs.divaContainer).diva({
+            objectData: this.props.manifestURL,
+            enableAutoTitle: false,
+            fixedHeightGrid: false
         });
+
+        diva.Events.subscribe("ManifestDidLoad", this.props.onManifestLoaded);
+        diva.Events.subscribe("VisiblePageDidChange", this.props.onLoadPageData);
+
+        this.diva = $(this.refs.divaContainer).data('diva');
     }
 
     render ()
     {
+        if (!this.props.manifestURL)
+            return null;
+
         return (
-            <div id="diva-viewer" ref="divaviewer"/>
+            <div id="divaContainer" ref="divaContainer"/>
         );
     }
 }
