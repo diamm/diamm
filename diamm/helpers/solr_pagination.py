@@ -32,13 +32,14 @@ class SolrPaginator:
             'facet': 'true',
             'facet.field': settings.SOLR['FACET_FIELDS'],
             'facet.mincount': 1,
+            'facet.pivot': settings.SOLR['FACET_PIVOTS'],
             'hl': 'true',
             'defType': 'edismax',
-            'qf': settings.SOLR['FULLTEXT_QUERYFIELDS']
+            'qf': settings.SOLR['FULLTEXT_QUERYFIELDS'],
         }
 
         if sorts:
-            self.qopts.update(sorts)
+            self.qopts['sort'] = sorts
 
         if filters:
             fqlist = list()
@@ -124,6 +125,7 @@ class SolrPage:
             ('query', self.paginator.query),
             ('types', self.type_list),
             ('results', self.object_list),
+            ('facets', self.facet_list)
         ])
 
     @property
@@ -150,6 +152,16 @@ class SolrPage:
                 filtered_facets.append(('sources_with_images', d['true']))
 
         return OrderedDict(filtered_facets)
+
+    @property
+    def facet_list(self):
+        facets = self.result.facets['facet_fields']
+        pivot_facets = self.result.facets['facet_pivot']
+        # print(facets)
+
+        available_facets = {key: value for (key, value) in facets.items() if key in settings.INTERFACE_FACETS}
+        # print(available_facets)
+        return available_facets
 
     @property
     def object_list(self):
