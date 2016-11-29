@@ -1,4 +1,5 @@
 @charset "UTF-8";
+@import url(../javascripts/lib/diva.js/css/diva.min.css);
 /*
 * Skeleton V2.0.4
 * Copyright 2014, Dave Gamache
@@ -10,7 +11,7 @@
 */
 /* Base files. */
 /*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
-@import url("https://fonts.googleapis.com/css?family=Alegreya+Sans+SC:400,400i,500,500i,700,700i|Alegreya+Sans:400,400i,500,500i,700,700i|Alegreya:400,400i,700,700i");
+@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,600,700);
 html {
   font-family: sans-serif;
   -ms-text-size-adjust: 100%;
@@ -2764,7 +2765,7 @@ form {
   .beta-header h3 {
     padding: 10px 0;
     margin: 0;
-    font-family: "Alegreya Sans", sans-serif;
+    font-family: "Source Sans Pro", sans-serif;
     color: #fdfffc; }
     .beta-header h3 a {
       color: #1b1b1b; }
@@ -2808,12 +2809,13 @@ form {
     padding: 0;
     margin: 0; }
     .navbar .navbar-list a {
+      font-family: "Source Sans Pro", sans-serif;
+      letter-spacing: .05em;
+      text-transform: uppercase;
       color: #fdfffc;
       text-decoration: none;
       padding: 0.6rem 0.6rem;
-      font-size: 1.1rem;
-      text-transform: lowercase;
-      font-family: "Alegreya Sans SC", sans-serif;
+      font-size: 1.3rem;
       font-weight: 500;
       display: flex;
       align-items: flex-start; }
@@ -2922,7 +2924,7 @@ footer {
   text-decoration: none;
   padding-bottom: 1rem;
   font-size: 0.8rem;
-  font-family: "Alegreya Sans", sans-serif;
+  font-family: "Source Sans Pro", sans-serif;
   display: block; }
 
 #contribution-form {
@@ -2949,21 +2951,44 @@ ul.contribution-list li {
   list-style: none;
   display: flex;
   flex-wrap: wrap;
-  border-bottom: 1px solid #dddede;
-  margin-bottom: 0.5rem; }
+  border-bottom: 2px solid #f39d9d;
+  margin: 0.5rem 0;
+  font-family: "Source Sans Pro", sans-serif;
+  letter-spacing: .05em;
+  text-transform: uppercase; }
   .source-section-selector li.active {
-    font-weight: 700; }
+    font-weight: 700;
+    background: #f9cbca; }
+  .source-section-selector li.unauthenticated-image-link {
+    margin-bottom: 0;
+    display: flex;
+    align-items: flex-start;
+    padding: 0.3rem 0.6rem; }
+    .source-section-selector li.unauthenticated-image-link a {
+      padding: 0; }
   .source-section-selector li {
     margin-bottom: 0; }
     .source-section-selector li a {
-      font-family: "Alegreya Sans SC", sans-serif;
-      font-size: 1rem;
-      text-transform: lowercase;
+      color: #dd1c1a;
       padding: 0.3rem 0.6rem;
       display: flex;
       align-items: flex-start; }
       .source-section-selector li a:hover, .source-section-selector li a:focus {
-        border-bottom: none; }
+        border-bottom: none;
+        background: #f9cbca; }
+
+.source-archive-logo img {
+  max-height: 4rem; }
+
+.source-cover-image {
+  overflow: hidden; }
+  .source-cover-image img {
+    width: 100%; }
+  .source-cover-image a:hover {
+    border-bottom: none; }
+  .source-cover-image figcaption {
+    text-align: center;
+    background: #dddede; }
 
 .source-header p {
   margin: 0;
@@ -2977,21 +3002,36 @@ ul.contribution-list li {
   font-weight: 400;
   font-size: 1.3em; }
 
-.source-description h3, .source-description h4, .source-bibliography h3, .source-bibliography h4, .source-inventory h3, .source-inventory h4, .composer-inventory h3, .composer-inventory h4 {
-  font-family: "Alegreya Sans", sans-serif;
-  font-weight: 500;
-  font-size: 1.1em;
-  letter-spacing: normal;
-  margin-top: 0; }
+.source-inventory .quicklook-legend {
+  font-size: 14px;
+  vertical-align: top;
+  margin: 0 0.2rem; }
 
 .source-inventory .quicklook {
   font-size: 14px;
   cursor: pointer;
+  margin: 0 0.2rem;
   vertical-align: top; }
   .source-inventory .quicklook:hover {
     color: #fdfffc;
     background: #dd1c1a;
     border-color: #dd1c1a; }
+
+.source-inventory .quicklook.active {
+  color: #fdfffc;
+  background: #dd1c1a;
+  border-color: #dd1c1a; }
+
+.source-inventory .source-inventory-legend {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem; }
+  .source-inventory .source-inventory-legend li {
+    margin-bottom: 0;
+    padding: 0.3rem 0.3rem;
+    display: flex;
+    align-items: flex-start; }
 
 .source-inventory .source-inventory-menu {
   list-style: none;
@@ -3002,16 +3042,11 @@ ul.contribution-list li {
     font-weight: 700; }
   .source-inventory .source-inventory-menu li {
     margin-bottom: 0;
-    font-family: "Alegreya Sans", sans-serif;
-    font-size: 0.9rem;
     padding: 0.3rem 0.3rem;
     display: flex;
     align-items: flex-start; }
     .source-inventory .source-inventory-menu li a:hover, .source-inventory .source-inventory-menu li a:focus {
       border-bottom: none; }
-
-.source-inventory hr {
-  margin: 1em; }
 
 .source-inventory .inventory-header {
   font-size: 1.125em;
@@ -3020,46 +3055,53 @@ ul.contribution-list li {
 .source-inventory p {
   padding-top: 0; }
 
-.source-inventory .source-order {
-  margin-bottom: 1.5rem;
-  font-family: "Alegreya Sans", sans-serif;
+.source-inventory .source-order-header, .source-inventory .composer-order-header, .source-inventory .alpha-order-header {
+  font-weight: 700;
+  border-bottom: 1px solid #dddede; }
+
+.source-inventory .source-order, .source-inventory .composer-order, .source-inventory .alpha-order {
+  padding: 0.6rem 0;
   width: 100%; }
-  .source-inventory .source-order td {
-    text-align: left;
-    vertical-align: top;
-    border: 0;
-    padding: 0; }
-    .source-inventory .source-order td p {
-      margin: 0;
-      padding: 0;
-      font-family: "Alegreya Sans", sans-serif; }
-  .source-inventory .source-order .foliation {
+  .source-inventory .source-order .foliation, .source-inventory .composer-order .foliation, .source-inventory .alpha-order .foliation {
     font-size: 1.1em;
     font-weight: 700;
     width: 10%; }
-  .source-inventory .source-order .composition-info {
-    width: 60%; }
-    .source-inventory .source-order .composition-info h4 {
-      font-size: 1.1em;
-      font-weight: 700; }
-  .source-inventory .source-order .composers {
-    width: 30%; }
-    .source-inventory .source-order .composers span {
-      margin-right: 0.6em; }
-  .source-inventory .source-order .item-details, .source-inventory .source-order .item-bibliography {
+  .source-inventory .source-order h4, .source-inventory .composer-order h4, .source-inventory .alpha-order h4 {
+    font-size: 1.2em;
+    font-weight: 700;
+    margin: 0;
+    padding: 0; }
+  .source-inventory .source-order .composers span, .source-inventory .composer-order .composers span, .source-inventory .alpha-order .composers span {
+    margin-right: 0.8em; }
+  .source-inventory .source-order .item-details, .source-inventory .source-order .item-bibliography, .source-inventory .source-order .voice-details, .source-inventory .composer-order .item-details, .source-inventory .composer-order .item-bibliography, .source-inventory .composer-order .voice-details, .source-inventory .alpha-order .item-details, .source-inventory .alpha-order .item-bibliography, .source-inventory .alpha-order .voice-details {
     font-size: 0.9rem; }
-    .source-inventory .source-order .item-details ul, .source-inventory .source-order .item-bibliography ul {
+    .source-inventory .source-order .item-details p, .source-inventory .source-order .item-bibliography p, .source-inventory .source-order .voice-details p, .source-inventory .composer-order .item-details p, .source-inventory .composer-order .item-bibliography p, .source-inventory .composer-order .voice-details p, .source-inventory .alpha-order .item-details p, .source-inventory .alpha-order .item-bibliography p, .source-inventory .alpha-order .voice-details p {
+      margin-bottom: 0.3rem; }
+    .source-inventory .source-order .item-details ul, .source-inventory .source-order .item-bibliography ul, .source-inventory .source-order .voice-details ul, .source-inventory .composer-order .item-details ul, .source-inventory .composer-order .item-bibliography ul, .source-inventory .composer-order .voice-details ul, .source-inventory .alpha-order .item-details ul, .source-inventory .alpha-order .item-bibliography ul, .source-inventory .alpha-order .voice-details ul {
       list-style: none;
       display: flex;
       flex-wrap: wrap;
       margin: 0;
       padding: 0; }
-      .source-inventory .source-order .item-details ul .title, .source-inventory .source-order .item-bibliography ul .title {
+      .source-inventory .source-order .item-details ul .title, .source-inventory .source-order .item-bibliography ul .title, .source-inventory .source-order .voice-details ul .title, .source-inventory .composer-order .item-details ul .title, .source-inventory .composer-order .item-bibliography ul .title, .source-inventory .composer-order .voice-details ul .title, .source-inventory .alpha-order .item-details ul .title, .source-inventory .alpha-order .item-bibliography ul .title, .source-inventory .alpha-order .voice-details ul .title {
         font-weight: 700; }
-      .source-inventory .source-order .item-details ul li, .source-inventory .source-order .item-bibliography ul li {
+      .source-inventory .source-order .item-details ul li, .source-inventory .source-order .item-bibliography ul li, .source-inventory .source-order .voice-details ul li, .source-inventory .composer-order .item-details ul li, .source-inventory .composer-order .item-bibliography ul li, .source-inventory .composer-order .voice-details ul li, .source-inventory .alpha-order .item-details ul li, .source-inventory .alpha-order .item-bibliography ul li, .source-inventory .alpha-order .voice-details ul li {
         margin: 0 0.5em 0 0; }
-    .source-inventory .source-order .item-details .voice-detail, .source-inventory .source-order .item-bibliography .voice-detail {
-      margin-bottom: 0.4rem; }
+    .source-inventory .source-order .item-details .voice-detail, .source-inventory .source-order .item-bibliography .voice-detail, .source-inventory .source-order .voice-details .voice-detail, .source-inventory .composer-order .item-details .voice-detail, .source-inventory .composer-order .item-bibliography .voice-detail, .source-inventory .composer-order .voice-details .voice-detail, .source-inventory .alpha-order .item-details .voice-detail, .source-inventory .alpha-order .item-bibliography .voice-detail, .source-inventory .alpha-order .voice-details .voice-detail {
+      margin-bottom: 0.4rem;
+      padding-left: 0.4rem;
+      border-left: 1px solid #dddede; }
+
+.source-inventory .composer-order .composer {
+  font-weight: 700; }
+
+.source-inventory .composer-order .composition-details ul {
+  list-style: none;
+  margin: 0;
+  padding: 0; }
+  .source-inventory .composer-order .composition-details ul li {
+    margin: 0;
+    padding: 0; }
 
 .source-description hr {
   margin: 1em 0; }
@@ -3070,16 +3112,13 @@ ul.contribution-list li {
   padding-left: 0; }
 
 .source-description .source-details {
-  font-family: "Alegreya Sans", sans-serif;
-  font-weight: 400;
-  font-size: 0.9rem;
   width: 100%;
   margin-bottom: 1rem; }
   .source-description .source-details th, .source-description .source-details td {
     border-bottom: none;
     padding: 3px; }
   .source-description .source-details th {
-    font-weight: 700;
+    font-weight: 600;
     vertical-align: top;
     padding-right: 6px;
     width: 15%; }
@@ -3132,26 +3171,104 @@ ul.contribution-list li {
   .archive-header-logo a:hover {
     text-decoration: none; }
 
+.diva-tools-left, .diva-tools-right {
+  margin: 0;
+  padding: 0; }
+  .diva-tools-left .diva-input, .diva-tools-left input, .diva-tools-left button, .diva-tools-right .diva-input, .diva-tools-right input, .diva-tools-right button {
+    margin: 0; }
+
+.diva-tools {
+  margin-bottom: 0.6rem; }
+
+.diva-full-width .diva-fullscreen-tools {
+  padding: 4px;
+  bottom: 15px;
+  right: 30px;
+  top: auto; }
+
+.diva-full-width .diva-button {
+  margin-bottom: -1px;
+  height: 25px;
+  width: 25px;
+  background-size: 80%; }
+
+.diva-full-width .diva-document-icon {
+  background-size: 50%; }
+
+.diva-full-width .diva-view-options {
+  bottom: 24px;
+  top: auto; }
+  .diva-full-width .diva-view-options .diva-button {
+    display: inline-block; }
+
+.diva-full-width .diva-link-icon {
+  display: none; }
+
+.diva-full-width .diva-tools-left {
+  text-align: center;
+  margin-bottom: 0.3rem; }
+  .diva-full-width .diva-tools-left .diva-zoom-label, .diva-full-width .diva-tools-left .diva-grid-label {
+    display: none; }
+
+.diva-full-width .diva-tools-right {
+  text-align: center;
+  margin: 0; }
+  .diva-full-width .diva-tools-right .diva-page-label, .diva-full-width .diva-tools-right .diva-goto-form {
+    display: none; }
+
+.diva-document-icon {
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAYCAYAAADOMhxqAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAAsSURBVDiNY/T19f3PQAJgIkUxAwMDA+P//yRZQIYNNPfDqIZRDUNHw3DIcQDkTQvYVGzS1gAAAABJRU5ErkJggg=="); }
+
+.diva-grid-icon {
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABfSURBVDiNY/T19X3AwMAgz4AKHm7atEmBgYGBwc/Pjyx5JiyCDGhiZMkzYRGkChiaBj/EIv4QB5toecb///9T4jCcgGZBwTiajmFgaBo8mo4ZGBhG0zESGJoG0yQdAwD6QT53wkiu4gAAAABJRU5ErkJggg=="); }
+
+.diva-book-icon {
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAADtJREFUeNpi/P//PwMtABMDjQDNDGbx8/MjKiw2bdrECKKJVT/0gmLU4FGDRw0eNXhADWYcrZpgACDAAPfJDBBti7cPAAAAAElFTkSuQmCC"); }
+
+.diva-link-icon {
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAXCAYAAAALHW+jAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAANFSURBVDiNjZRPaBx1FMc/b3banUgVQQ8boUURoSIWE8GCYINtDjUwv91Esxdb8F9NDlURclAohsWDglQRjHVFbKuguLKSnclqKigqBS9uFKSCiTRYCxGxejC4m+z+5nlwpo6bjeZ3+r3v+77PvPdmGFFVtnoKhcLeKIqeA24DLqlqva+v71ilUllNPLJVoO/7R0TkBJDpSi1FUXRwbm7u/JaB+Xz+kKqeBpxNLD86jnPX7OzsT/8LNMbcC7yX6uxrx3GOqupuVX0F6AMQkW9yudwd/wk0xtwDzALbY+nc+vr6vvn5+d8AfN8fEZFZYFucf2qzETDGDAHVBCYii9ba4QQGEIbhh8BUquy+nsB8Pj8AhMk4wHK73T5Qr9d/7vZ6nnc6Fd68ATgxMbFNVU8BV8adXcxkMvuz2exqPp9/tlgs/ustN5vNYiq8sAG4srIyDOyJw1+jKNofRdEla+28qh5rtVonS6WSA+D7/qiIvJrUisi7vUbenbq/HYbhEnAI2BtrhxcWFl6Tv88A4MawRi6Xe34DUEQupsI7RURqtdoJEZlJRFU9YoyZFJEXgF+A71T1YLlcbl/+bMbGxq6x1u7JZDLnOp3OMnBFXP96GIaT8YhvAg/E+qrrutdba4dc1/2yWq2uQPzlj4yMXGWtPaOqp1zX/UNEnkl1+ajv+y+rqnqe9wjwbazvsNYO1Wq1DxIYgFMqlRzXdUNVvR3Ytba2NjU4OPiSiLyVgj5mjHmyUqlYVf00pd/QvTKn0Wg8Duz7Zz26Mj09HWWz2YeA9+O9LorIO4VCYaeIjCfFURSd3wBM7QTg6SAI3gCoVCq2v7//fqDcbrcPdDodiaLoE+C62LssIme6gS5wY/JAz/Nm0slyudwGJo0x1wKfATfFqXXgwSAI/uzV4VJybzabY92G0dHRq4GPgVtiqQMUgyD4vNubAKtJICLlQqEwnMTFYnGHtfYjYCCZQkQOB0FQ6wUDkPHx8e2tVusr4NZYa6rqEyLSAF4EhmJdVfXhMAxPbgaD+I9tjNkFnAV2bmZU1aNhGM5slk+OAxAEwQVr7TDwQy+WiExtBXYZCFCv1xc9zxsAjgPfA78DXwB312q141uBAfwFPr5cDatao0oAAAAASUVORK5CYII="); }
+
+.diva-zoom-out-button,
+.diva-grid-out-button {
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAAIklEQVR42mNgGAWjYBQQB3x9ff9TgkcNJmzwKBgFowAVAACElnmBtJelAAAAAABJRU5ErkJggg=="); }
+
+.diva-zoom-in-button,
+.diva-grid-in-button {
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAAKElEQVR42mNgGAWkAF9f3//IeNTgkWQwugGk4lGDqRf2o+l41OCRAgDiStSheMjqggAAAABJRU5ErkJggg=="); }
+
+.diva-fullscreen-icon {
+  background-image: url("data:image/png;base64,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"); }
+
+.diva-toggle-nonpaged-icon {
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4AgTEBEfaruPBwAAAKNJREFUSMfdVcENgCAMbI0zdQGWghfw6lQswFL40lQkoiKReD/aArnrFTClBGcwxjgAsHk8xohyTUSlg/wEdVh4DjtBZ8x3ipkZT9IoZN3k6s7ge4lyt1yB3NOdAWqtXYMVPTO7PKiU2vWgyeev2vQq5FTPNZ9LuiGEg8/Ht2mJDRGVYukTBr0v8FWJ1sZmf0Qpj7+U6G/P9Z0JHUoi3+LzWsECD3Iw40bs39cAAAAASUVORK5CYII="); }
+
+.diva-toggle-nonpaged-icon-active {
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4AgQERwL1rjg7gAAAJRJREFUSMfdVFsOgCAM24wng4PBDtaz4ZcJmvESUbR/sIXSrRuHECgHa60nIqeE+HTWHhKuIEgl1BDQQoOxtiQD4EyYNdXDFUxRIr7wLj+mgI0xKZ/XQAB4xdqHHriOD7pbbdqAoBJoPo/lAihN9+STHKtR7t7ZRaMJpFiivbGlxqcm/vvL7mfrumVCpyqR9Pi8lLABZfMqIZXz4SkAAAAASUVORK5CYII="); }
+
+.source-sets .source-set-sources {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start; }
+  .source-sets .source-set-sources .source-set-source {
+    flex: 0 0 auto;
+    margin: 8px;
+    text-align: center;
+    width: 180px; }
+
 .search-box {
-  background: #dddede; }
-  .search-box form {
-    margin-top: 1em;
-    margin-bottom: 1em; }
-    .search-box form input {
-      height: 50px;
-      font-size: 110%;
-      font-weight: 600;
-      margin-bottom: 0; }
+  background: #dddede;
+  text-align: center;
+  padding: 16px; }
+  .search-box input {
+    height: 50px;
+    font-size: 110%;
+    font-weight: 600;
+    margin-bottom: 0;
+    width: 40%; }
 
 .type-filter {
-  font-family: "Alegreya Sans", sans-serif;
-  font-size: 90%;
-  padding: 0.5rem;
-  margin-top: -1rem;
+  text-align: center;
   border-bottom: 1px solid #dddede; }
-  .type-filter span {
-    font-weight: 500;
-    float: left; }
   .type-filter ul {
     margin-bottom: 0;
     list-style: none;
@@ -3167,18 +3284,13 @@ ul.contribution-list li {
         border-bottom: none;
         font-weight: 500; }
 
-.search-result-brief {
-  font-size: 90%; }
-  .search-result-brief .result-type {
-    font-weight: bold; }
-
-.search-results .result-count {
-  font-family: "Alegreya Sans", sans-serif;
-  font-size: 90%;
-  color: #1b1b1b; }
-
-.search-results .search-result h4 {
-  margin-bottom: 0.1rem; }
+.search-results .search-result {
+  width: 100%; }
+  .search-results .search-result h3 {
+    font-weight: 400;
+    font-size: 1.4rem; }
+  .search-results .search-result .result-type {
+    color: #a9acab; }
 
 .browse-alphabet ul {
   list-style: none;
@@ -3249,12 +3361,11 @@ form.login, form.create-form {
 
 html {
   height: 100%;
-  font-size: 1.125em; }
+  font-size: 1em; }
 
 body {
   line-height: 1.45;
-  font-weight: 400;
-  font-family: "Alegreya", serif;
+  font-family: "Source Sans Pro", sans-serif;
   color: #1b1b1b;
   min-height: 100%;
   display: flex;
@@ -3268,14 +3379,14 @@ li.image-source-list {
   list-style-type: none; }
 
 a {
-  color: #1485cc;
+  color: #0971b2;
   text-decoration: none; }
   a:hover {
-    color: #0971b2;
-    border-bottom: 1px solid #0971b2; }
+    color: #1485cc;
+    background: #ecf7fd; }
 
 p {
-  font-family: "Alegreya", serif;
+  font-family: "Source Sans Pro", sans-serif;
   margin-bottom: 1.3em;
   padding-top: 0.5em;
   padding-left: 0.3em; }
@@ -3301,6 +3412,15 @@ h4 {
 
 small, .font_small {
   font-size: 0.889em; }
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Source Sans Pro", sans-serif; }
+  .loading-spinner .message {
+    font-size: 2em;
+    margin-left: 1em; }
 
 .container {
   flex: 1 0 auto; }

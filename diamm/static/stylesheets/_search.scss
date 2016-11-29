@@ -3,29 +3,20 @@ $search-input-adjust: $search-font-size + 1rem;
 
 .search-box {
   background: $diamm-light-grey;
-  form {
-    margin-top: 1em;
-    margin-bottom: 1em;
-
-    input {
-      height: 50px;
-      font-size: 110%;
-      font-weight: 600;
-      margin-bottom: 0;
-    }
+  text-align: center;
+  padding: 16px;
+  input {
+    height: 50px;
+    font-size: 110%;
+    font-weight: 600;
+    margin-bottom: 0;
+    width: 40%;
   }
 }
 
 .type-filter {
-  font-family: $sans-serif;
-  font-size: 90%;
-  padding: 0.5rem;
-  margin-top: -1rem;
+  text-align: center;
   border-bottom: 1px solid $diamm-light-grey;
-  span {
-    font-weight: 500;
-    float: left;
-  }
   ul {
     margin-bottom: 0;
     list-style: none;
@@ -46,22 +37,15 @@ $search-input-adjust: $search-font-size + 1rem;
   }
 }
 
-.search-result-brief {
-  font-size: 90%;
-  .result-type {
-    font-weight: bold;
-  }
-}
-
 .search-results {
-  .result-count {
-    font-family: $sans-serif;
-    font-size: 90%;
-    color: $diamm-black;
-  }
   .search-result {
-    h4 {
-      margin-bottom: 0.1rem;
+    width: 100%;
+    h3 {
+      font-weight: 400;
+      font-size: 1.4rem;
+    }
+    .result-type {
+      color: $diamm-med-grey;
     }
   }
 }

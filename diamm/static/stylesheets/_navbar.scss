@@ -67,12 +67,11 @@
     padding: 0;
     margin: 0;
     a {
+      @include small-caps;
       color: $diamm-white;
       text-decoration: none;
       padding: 0.6rem 0.6rem;
-      font-size: 1.1rem;
-      text-transform: lowercase;
-      font-family: $menu-font;
+      font-size: 1.3rem;
       font-weight: 500;
       //-webkit-font-smoothing: antialiased;
       display: flex;
