@@ -8,6 +8,7 @@ from diamm.models.data.item_note import ItemNote
 from diamm.models.data.item_composer import ItemComposer
 from diamm.models.data.source import Source
 from diamm.models.data.composition import Composition
+from diamm.management.helpers.utilities import remove_leading_zeroes
 from blessings import Terminal
 
 term = Terminal()
@@ -82,8 +83,8 @@ def migrate_item(entry):
     d = {
         'id': entry.pk,
         'source': source,
-        'folio_start': entry.folio_start,
-        'folio_end': entry.folio_end,
+        'folio_start': remove_leading_zeroes(entry.folio_start),
+        'folio_end': remove_leading_zeroes(entry.folio_end),
         'source_attribution': entry.composeroriginal,
         'source_incipit': entry.incipittranscription,
         'layout': layout,

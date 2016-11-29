@@ -9,7 +9,7 @@ from diamm.models.data.page_note import PageNote
 from diamm.models.migrate.legacy_image import LegacyImage
 from diamm.models.migrate.legacy_secondary_image import LegacySecondaryImage
 from diamm.models.migrate.legacy_item_image import LegacyItemImage
-from diamm.management.helpers.utilities import convert_yn_to_boolean
+from diamm.management.helpers.utilities import convert_yn_to_boolean, remove_leading_zeroes
 from blessings import Terminal
 
 term = Terminal()
@@ -124,7 +124,7 @@ def convert_image(entry):
     folio = entry.folio if entry.folio else "FIXMEFOLIO"
 
     d = {
-        'numeration': folio,
+        'numeration': remove_leading_zeroes(folio),
         'sort_order': entry.orderno,
         'source': source,
         'legacy_id': "legacy_image.{0}".format(entry.pk)
