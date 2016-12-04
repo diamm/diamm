@@ -6,9 +6,10 @@ import {
     INITIALIZE_INVENTORY_DETAIL_STATE,
     SHOW_INVENTORY_DETAILS_FOR_ITEM,
     INITIALIZE_ALPHA_INVENTORY_DETAIL_STATE,
-    SHOW_ALPHA_INVENTORY_DETAILS_FOR_ITEM
+    SHOW_ALPHA_INVENTORY_DETAILS_FOR_ITEM,
+    OPEN_QUICKLOOK_VIEW,
+    CLOSE_QUICKLOOK_VIEW
 } from "../constants";
-import "whatwg-fetch";
 
 
 export function setUserInfo (username, authenticated, staff, superuser)
@@ -94,5 +95,33 @@ export function showAlphaInventoryDetailsForItem (idx)
     return {
         type: SHOW_ALPHA_INVENTORY_DETAILS_FOR_ITEM,
         index: idx
+    }
+}
+
+export function openQuickLookView (url)
+{
+    return (dispatch) =>
+    {
+        return fetch(url, {
+            headers: {
+                "Accept": "application/json"
+            }
+        }).then((response) =>
+        {
+            return response.json()
+        }).then((payload) =>
+        {
+            dispatch({
+                type: OPEN_QUICKLOOK_VIEW,
+                payload
+            })
+        })
+    }
+}
+
+export function closeQuickLookView ()
+{
+    return {
+        type: CLOSE_QUICKLOOK_VIEW
     }
 }

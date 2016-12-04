@@ -100,6 +100,7 @@ def migrate_source_to_source(legacy_source):
         'format': legacy_source.format,
         'measurements': measurements,
         'public': True,
+        'sort_order': legacy_source.sortorder,
         'public_images': convert_yn_to_boolean(legacy_source.webpermission),
         'inventory_provided': True  # set this as true at this stage of the import; will be switched later when the inventory is actually imported.
     }

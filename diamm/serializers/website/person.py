@@ -1,6 +1,11 @@
 import serpy
 from rest_framework.reverse import reverse
 from diamm.serializers.serializers import ContextDictSerializer, ContextSerializer
+from diamm.models.data.person_note import PersonNote
+
+
+class PersonNoteSerializer(ContextSerializer):
+    note = serpy.StrField()
 
 
 class PersonContributionSerializer(ContextSerializer):
@@ -18,7 +23,7 @@ class PersonSourceCopyistSerializer(ContextDictSerializer):
         required=False
     )
     copyist_type = serpy.StrField(
-        attr="type"
+        attr="type_s"
     )
     uncertain = serpy.BoolField(
         attr="uncertain_b"
@@ -114,6 +119,8 @@ class PersonDetailSerializer(ContextSerializer):
     latest_year_approximate = serpy.BoolField(
         required=False
     )
+    biography = serpy.MethodField()
+    variant_names = serpy.MethodField()
 
     def get_url(self, obj):
         return reverse('person-detail',
@@ -136,6 +143,12 @@ class PersonDetailSerializer(ContextSerializer):
         if obj.contributions.count() > 0:
             return PersonContributionSerializer(obj.contributions.filter(completed=True),
                                                 context={"request": self.context['request']}, many=True).data
+
+    def get_biography(self, obj):
+        return PersonNoteSerializer(obj.notes.filter(type=PersonNote.BIOGRAPHY, public=True), many=True).data
+
+    def get_variant_names(self, obj):
+        return obj.notes.filter(type=PersonNote.VARIANT_NAME_NOTE, public=True).values_list('note', flat=True)
 
 # from rest_framework import serializers
 # from diamm.models.data.person import Person

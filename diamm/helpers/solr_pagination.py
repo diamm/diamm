@@ -14,6 +14,8 @@ class SolrResultObject(object):
 class SolrResultException(BaseException):
     pass
 
+class PageRangeOutOfBoundsException(BaseException):
+    pass
 
 class SolrPaginator:
     """
@@ -32,11 +34,13 @@ class SolrPaginator:
             'facet': 'true',
             'facet.field': settings.SOLR['FACET_FIELDS'],
             'facet.mincount': 1,
+            'facet.limit': -1,
             'facet.pivot': settings.SOLR['FACET_PIVOTS'],
             'hl': 'true',
             'defType': 'edismax',
             'qf': settings.SOLR['FULLTEXT_QUERYFIELDS'],
         }
+        self.qopts.update(settings.SOLR['FACET_SORT'])
 
         if sorts:
             self.qopts['sort'] = sorts
@@ -103,6 +107,10 @@ class SolrPaginator:
         """
         # e.g., page 3: ((3 - 1) * 20) + 1, start = 41
         # remainder = 0 if page_num == 1 else 1  # page 1 starts at result 0; page 2 starts at result 11
+        print(page_num, self.num_pages)
+        if self.num_pages != 0 and page_num > self.num_pages:
+            raise PageRangeOutOfBoundsException()
+
         start = ((page_num - 1) * self.page_size)
         self._fetch_page(start=start)
         return SolrPage(self.result, page_num, self)
@@ -155,13 +163,11 @@ class SolrPage:
 
     @property
     def facet_list(self):
-        facets = self.result.facets['facet_fields']
-        pivot_facets = self.result.facets['facet_pivot']
-        # print(facets)
-
-        available_facets = {key: value for (key, value) in facets.items() if key in settings.INTERFACE_FACETS}
-        # print(available_facets)
-        return available_facets
+        solr_facets = self.result.facets.get('facet_fields', None)
+        pivot_facets = self.result.facets.get('facet_pivot', None)
+        facets = {key: value for (key, value) in solr_facets.items() if key in settings.INTERFACE_FACETS}
+        facets.update(pivot_facets)
+        return facets
 
     @property
     def object_list(self):
@@ -170,7 +176,6 @@ class SolrPage:
         # Generate fully qualified URLs for the resources in Solr when the results are returned.
         # This way we don't have to store the full URL in Solr.
         for obj in docs:
-            # Filter out any result objects that are not of the type we want to display
             url = reverse("{0}-detail".format(obj['type']),
                           kwargs={'pk': obj['pk']},
                           request=self.paginator.request)
@@ -184,18 +189,18 @@ class SolrPage:
 
     @property
     def pagination(self):
-        pages = {}
-        for pnum in range(self.paginator.num_pages):
-            url = self.paginator.request.build_absolute_uri()
-            pg_url = replace_query_param(url, 'page', pnum + 1)
-            pages[pnum + 1] = pg_url
+        # pages = {}
+        # for pnum in range(self.paginator.num_pages):
+        #     url = self.paginator.request.build_absolute_uri()
+        #     pg_url = replace_query_param(url, 'page', pnum + 1)
+        #     pages[pnum + 1] = pg_url
 
         return OrderedDict([
             ('next', self.next_url),
             ('previous', self.previous_url),
             ('current_page', self.number),
             ('num_pages', self.paginator.num_pages),
-            ('pages', pages)
+            # ('pages', pages)
         ])
 
     @property

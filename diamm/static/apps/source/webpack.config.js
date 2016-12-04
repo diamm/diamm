@@ -10,7 +10,7 @@ module.exports = {
     output: {
         filename: "./dist/bundle.js",
     },
-    devtool: "source-map",
+    devtool: (process.env.NODE_ENV === "production") ? "source-map" : "eval-source-map",
     resolve: {
         extensions: ["", ".js", ".jsx"],
         alias: {
@@ -56,7 +56,8 @@ function productionPlugins()
             'diva': 'diva',
             '$': sharedJQueryPath,
             'jQuery': sharedJQueryPath,
-            'window.jQuery': sharedJQueryPath
+            'window.jQuery': sharedJQueryPath,
+            URLSearchParams: "url-search-params"
         })
     ]
 }
@@ -68,7 +69,8 @@ function developmentPlugins()
             'diva': 'diva',
             '$': sharedJQueryPath,
             'jQuery': sharedJQueryPath,
-            'window.jQuery': sharedJQueryPath
+            'window.jQuery': sharedJQueryPath,
+            URLSearchParams: "url-search-params"
         })
     ]
 }

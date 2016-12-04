@@ -1,10 +1,12 @@
 import {
-    SERVER_BASE_URL,
     UPDATE_CURRENT_QUERY_TERM,
-    UPDATE_SEARCH_RESULTS
+    RESET_COMPOSERS_FACET,
+    RESET_CURRENT_QUERY,
+    RESET_CURRENT_QUERY_TYPE
 } from "../constants";
-import "whatwg-fetch";
-
+import {
+    performSearch
+} from "./search_api";
 
 export function updateCurrentQueryTerm (currentQuery)
 {
@@ -14,36 +16,60 @@ export function updateCurrentQueryTerm (currentQuery)
     };
 }
 
-export function performSearch (queryValue)
+export function performQueryTermSearch (query)
 {
-    console.log('Perform search ' + queryValue);
-    let params = { q: queryValue };
-    let qstring = Object.keys(params).map(k => encodeURIComponent(k) + "=" + encodeURIComponent(params[k])).join("&");
-    qstring = "?" + qstring;
-
     return (dispatch) =>
     {
-        console.log("fetching");
+        let params = new URLSearchParams(window.location.search);
+        params.set('q', query);
+        let qstring = params.toString();
 
-        return fetch(`${SERVER_BASE_URL}${qstring}`, {
-                headers: {
-                    "Accept": "application/json"
-                }
-            })
-            .then( (response) => {
-                return response.json();
-            })
-            .then( (payload) => {
-                window.history.replaceState("", "", `${SERVER_BASE_URL}${qstring}`);
-                return dispatch(updateSearchResults(payload))
-            });
-    };
+        return dispatch(
+            performSearch(qstring)
+        )
+    }
 }
 
-export function updateSearchResults (results)
+
+export function performInitialPageLoadSearch ()
 {
-    return {
-        type: UPDATE_SEARCH_RESULTS,
-        results
-    };
+    return (dispatch) =>
+    {
+        let params = new URLSearchParams(window.location.search);
+        let qstring = params.toString() || "";
+
+        return dispatch(
+            performSearch(qstring)
+        );
+    }
+}
+
+export function clearAll ()
+{
+    return (dispatch) =>
+    {
+        let params = new URLSearchParams(window.location.search);
+        for (let p of params)
+        {
+            params.delete(p[0]);
+        }
+
+        let qstring = params.toString();
+
+        dispatch(
+            performSearch(qstring)
+        );
+
+        dispatch({
+            type: RESET_COMPOSERS_FACET
+        });
+
+        dispatch({
+            type: RESET_CURRENT_QUERY
+        });
+
+        dispatch({
+            type: RESET_CURRENT_QUERY_TYPE
+        });
+    }
 }

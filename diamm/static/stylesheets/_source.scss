@@ -2,13 +2,12 @@
   list-style: none;
   display: flex;
   flex-wrap: wrap;
-  border-bottom: 2px solid lighten($diamm-red, 30%);
+  box-shadow: 0 4px 6px -6px $diamm-grey;
   margin: 0.5rem 0;
   @include small-caps;
 
   li.active {
     font-weight: 700;
-    background: lighten($diamm-red, 40%);
   }
 
   li.unauthenticated-image-link {
@@ -25,12 +24,12 @@
     margin-bottom: 0;
     a {
       color: $diamm-red;
+      background: none;
       padding: 0.3rem 0.6rem;
       display: flex;
       align-items: flex-start;
-      &:hover, &:focus {
-        border-bottom: none;
-        background: lighten($diamm-red, 40%);
+      &:hover {
+        background-color: lighten($diamm-red, 40%);
       }
     }
   }
@@ -324,23 +323,25 @@
 
 .diva-full-width {
   .diva-fullscreen-tools {
-    padding: 4px;
-    bottom: 15px;
-    right: 30px;
-    top: auto;
+    display:none;
+    top: 0;
+    left: 0;
+    right: 15px;
+    padding: 0.3rem 0.6rem;
+    box-shadow: 0 6px 8px -8px $diamm-black;
+    background-color: rgba(255, 255, 255, 0.85);
   }
   .diva-button {
     margin-bottom: -1px;
-    height: 25px;
-    width: 25px;
-    background-size: 80%
+    //height: 25px;
+    //width: 25px;
+    //background-size: 80%
   }
   .diva-document-icon {
     background-size: 50%;
   }
   .diva-view-options {
-    bottom: 24px;
-    top:auto;
+    bottom: auto;
     .diva-button {
       display: inline-block;
     }
@@ -412,3 +413,71 @@
     }
   }
 }
+
+.quicklook-modal {
+  position: fixed;
+  z-index: 100;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0;
+  background-color: rgb(0,0,0); /* Black fallback color */
+  background-color: rgba(0,0,0, 0.8); /* Black w/opacity */
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .quicklook-content {
+    max-width: 50%;
+    min-width: 50%;
+    min-height: 80%;
+    max-height: 80%;
+    background-color: $diamm-white;
+    overflow: auto;
+  }
+
+  .quicklook-title {
+    background-color: $diamm-red;
+    padding: 0.6rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: $diamm-white;
+    display: flex;
+    justify-content: space-between;
+
+
+    .full-record-link {
+      padding: 0.3rem;
+      margin-right: 1rem;
+      color: $diamm-white;
+      font-weight: 500;
+
+      &:hover {
+        background: $diamm-white;
+        color: $diamm-red;
+      }
+    }
+    i {
+      padding: 0.3rem 0;
+      cursor: pointer;
+    }
+  }
+
+  .quicklook-body {
+    padding: 0.6rem;
+
+    table {
+      width: 100%;
+    }
+
+    h4 {
+      margin: 0;
+    }
+  }
+
+  .quicklook-footer {
+  }
+}
+

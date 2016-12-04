@@ -8,6 +8,10 @@ export const SourceResultType = ({result}) =>
                 <a href={ result.url }>{ result.display_name_s }</a>
                 <span className="result-type"> Source</span>
             </h3>
+            <div>
+                <div>{ result.archive_city_s }, { result.archive_s }</div>
+            </div>
+
         </div>
     );
 };
@@ -44,6 +48,14 @@ export const CompositionResultType = ({result}) =>
                 <a href={ result.url }>{ result.title_s }</a>
                 <span className="result-type"> Composition</span>
             </h3>
+            <div>
+                <div>{ result.composers_ss && result.composers_ss.map( (c, i) =>{
+                    return (
+                        <span key={ i }>{ c }</span>
+                    )
+                    })}
+                </div>
+            </div>
         </div>
     );
 };
@@ -56,6 +68,9 @@ export const ArchiveResultType = ({result}) =>
                 <a href={ result.url }>{ result.name_s }</a>
                 <span className="result-type"> Archive</span>
             </h3>
+            <div>
+                { result.city_s }, { result.country_s }
+            </div>
         </div>
     );
 };

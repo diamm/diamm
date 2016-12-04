@@ -3,12 +3,14 @@ var webpack = require('webpack');
 
 module.exports = {
     entry: [
+        'babel-polyfill',
+        'whatwg-fetch',
         './src/index.js'
     ],
     output: {
         filename: "./dist/bundle.js",
     },
-    devtool: "source-map",
+    devtool: (process.env.NODE_ENV === "production") ? "source-map" : "eval-source-map",
     resolve: {
         extensions: ["", ".js", ".jsx"],
     },
@@ -41,6 +43,9 @@ function productionPlugins()
                 NODE_ENV: JSON.stringify('production')
             }
         }),
+        new webpack.ProvidePlugin({
+            URLSearchParams: "url-search-params"
+        }),
         new webpack.optimize.UglifyJsPlugin(),
         new webpack.optimize.OccurrenceOrderPlugin(true),
     ]
@@ -48,5 +53,9 @@ function productionPlugins()
 
 function developmentPlugins()
 {
-    return []
+    return [
+        new webpack.ProvidePlugin({
+            URLSearchParams: "url-search-params"
+        })
+    ]
 }

@@ -86,11 +86,13 @@ small, .font_small {font-size: 0.889em;}
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: $sans-serif;
+  height: 100vh;
 
   .message {
-    font-size: 2em;
-    margin-left: 1em;
+    text-align: center;
+    width: 20%;
+    height: 20%;
+    color: $diamm-red;
   }
 }
 

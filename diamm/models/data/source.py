@@ -106,14 +106,20 @@ class Source(models.Model):
         """
             If a cover image is set, returns the ID for that; else it chooses a random page with an image attached.
         """
+        if not self.public_images:
+            return None
+
         cover_obj = {}
         if self.cover_image:
             cover_obj['id'] = self.cover_image.id
             cover_obj['label'] = self.cover_image.page.numeration
             return cover_obj
         else:
+            if self.pages.count() == 0:
+                return None
+
             p = self.pages.order_by("?").only('numeration').first()
-            i = p.images.filter(type=1).only('id', 'public').first()
+            i = p.images.filter(type=1, iiif_response_cache__isnull=False).only('id', 'public').first()
             if i and i.public:
                 cover_obj['id'] = i.id
                 cover_obj['label'] = p.numeration
@@ -212,48 +218,42 @@ class Source(models.Model):
 
     @property
     def inventory_by_composer(self):
-        """
-            inventory: [{
-                    composer: Bar, Foo,
-                    url: http://foo/bar
-                    pieces: [{
-                        title: blahblah,
-                        url: http://blahblah
-                    },etc.]
-                }
-        """
-        inventory = self.solr_inventory
+        connection = pysolr.Solr(settings.SOLR['SERVER'])
+        fq = ["type:composerinventory",
+              "source_i:{0}".format(self.pk)]
+        gp = {
+            "group": "true",
+            "group.field": "composer_s",
+            "group.limit": "10000",
+            "group.sort": "composition_s asc"
+        }
+        sort = ["composer_s asc"]
 
-        sortable_inventory = []
+        res = connection.search("*:*",
+                                fq=fq,
+                                sort=sort,
+                                rows=10000,
+                                **gp)
 
-        for item in inventory:
-            for c in item['composers_ssni']:
-                new_item = (c, c.lower(), item)
-                sortable_inventory.append(new_item)
+        expanded = res.grouped['composer_s']['groups']
+        reslist = []
 
-        sorted_inventory = sorted(sortable_inventory, key=itemgetter(1))
-        grouped_inventory = groupby(sorted_inventory, itemgetter(0))
+        for doc in expanded:
+            composer = doc['groupValue']
+            inventory = doc['doclist']['docs']
 
-        output = []
-        for namefield, group in grouped_inventory:
-            name, pk, uncertain = namefield.split("|")
-            obj = {
-                "pk": pk,
-                "name": name,
-                "inventory": []
-            }
+            composer_pk = None
+            if inventory:
+                # get composer pk from the first record.
+                composer_pk = inventory[0].get('composer_i', None)
 
-            if uncertain:
-                if uncertain == "True":
-                    obj["uncertain"] = True
-                else:
-                    obj["uncertain"] = False
+            reslist.append({
+                'composer': composer,
+                'pk': composer_pk,
+                'inventory': inventory
+            })
 
-            for item in group:
-                obj["inventory"].append(item[2])
-
-            output.append(obj)
-        return output
+        return reslist
 
     @property
     def solr_bibliography(self):

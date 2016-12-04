@@ -34,6 +34,9 @@ class SourceCopyistSerializer(ContextDictSerializer):
     type = serpy.StrField(
         attr="type"
     )
+    type_s = serpy.StrField(
+        attr="type_s"
+    )
 
     def get_copyist(self, obj):
         url = reverse('{0}-detail'.format(obj['copyist_type_s']),
@@ -137,7 +140,7 @@ class SourceSetSerializer(ContextDictSerializer):
         if 'source_id' in self.context:
             fq.append("-pk:{0}".format(self.context['source_id']))
 
-        fl = ["pk", "shelfmark_s", "display_name_s"]
+        fl = ["pk", "shelfmark_s", "display_name_s", "cover_image_i"]
         sort = ["shelfmark_ans asc"]
 
         results = connection.search("*:*", fq=fq, fl=fl, sort=sort, rows=10000)
@@ -147,7 +150,14 @@ class SourceSetSerializer(ContextDictSerializer):
                 source_url = reverse('source-detail',
                                      kwargs={"pk": doc['pk']},
                                      request=self.context['request'])
+
                 doc['url'] = source_url
+                if doc.get('cover_image_i'):
+                    doc['cover_image'] = reverse('image-serve-info',
+                                                 kwargs={"pk": doc["cover_image_i"]},
+                                                 request=self.context['request'])
+                else:
+                    doc['cover_image'] = None
 
             return results.docs
         else:
@@ -168,26 +178,58 @@ class SourceBibliographySerializer(ContextDictSerializer):
     )
 
 
-class SourceComposerInventorySerializer(ContextDictSerializer):
+class SourceComposerInventoryCompositionSerializer(ContextDictSerializer):
+    folio_start = serpy.StrField(
+        attr="folio_start_s",
+        required=False
+    )
+    folio_end = serpy.StrField(
+        attr="folio_end_s",
+        required=False
+    )
+    uncertain = serpy.BoolField(
+        attr="uncertain_b",
+        required=False
+    )
+    source_attribution = serpy.StrField(
+        attr="source_attribution_s",
+        required=False
+    )
+    composition = serpy.StrField(
+        attr="composition_s",
+        required=False
+    )
     url = serpy.MethodField()
-    name = serpy.StrField()
-    uncertain = serpy.MethodField()
-    inventory = serpy.MethodField()
-
-    def get_uncertain(self, obj):
-        if 'uncertain' in obj:
-            return obj['uncertain']
-        return None
 
     def get_url(self, obj):
-        if 'pk' in obj and obj['pk']:
-            return reverse('person-detail',
-                           kwargs={"pk": obj['pk']},
-                           request=self.context['request'])
-        return None
+        if 'composition_i' not in obj:
+            return None
+
+        return reverse("composition-detail",
+                       kwargs={"pk": obj['composition_i']},
+                       request=self.context['request'])
+
+
+class SourceComposerInventorySerializer(ContextDictSerializer):
+    url = serpy.MethodField()
+    name = serpy.StrField(
+        attr="composer"
+    )
+    inventory = serpy.MethodField()
 
     def get_inventory(self, obj):
-        return obj['inventory']
+        return SourceComposerInventoryCompositionSerializer(
+            obj['inventory'],
+            many=True,
+            context={"request": self.context['request']}
+        ).data
+
+    def get_url(self, obj):
+        if 'pk' in obj and obj.get('pk'):
+            return reverse('person-detail',
+                           kwargs={"pk": obj['pk']},
+                           request=self.context["request"])
+        return None
 
 
 class SourceInventorySerializer(ContextDictSerializer):
@@ -201,6 +243,18 @@ class SourceInventorySerializer(ContextDictSerializer):
     composers = serpy.MethodField()
     bibliography = serpy.MethodField()
     voices = serpy.MethodField()
+    pages = serpy.MethodField()
+    source_attribution = serpy.MethodField()
+
+    def get_pages(self, obj):
+        if 'pages_ii' in obj:
+            return obj['pages_ii']
+        return None
+
+    def get_source_attribution(self, obj):
+        if 'source_attribution_s' in obj:
+            return obj['source_attribution_s']
+        return None
 
     def get_num_voices(self, obj):
         if 'num_voices_s' in obj:
@@ -397,6 +451,7 @@ class SourceDetailSerializer(ContextSerializer):
     copyists = serpy.MethodField()
     catalogue_entries = serpy.MethodField()
     contributors = serpy.MethodField()
+    iiif_manifest = serpy.MethodField()
 
     links = SourceURLSerializer(
         attr="links.all",
@@ -516,3 +571,8 @@ class SourceDetailSerializer(ContextSerializer):
         if obj.contributions.count() > 0:
             return SourceContributionSerializer(obj.contributions.filter(completed=True),
                                                 context={"request": self.context['request']}, many=True).data
+
+    def get_iiif_manifest(self, obj):
+        if self.get_has_images(obj):
+            return reverse('source-manifest', kwargs={"pk": int(obj.pk)}, request=self.context['request'])
+        return None

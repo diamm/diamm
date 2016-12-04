@@ -1,7 +1,16 @@
 import React from "react";
 import debounce from "lodash.debounce";
 import { connect } from "react-redux";
-import { performSearch } from "../actions/index";
+import {
+    performInitialPageLoadSearch,
+    performQueryTermSearch
+} from "../actions/index";
+import {
+    performSearch
+} from "../actions/search_api";
+// import URLSearchParams from "url-search-params";
+// import "babel-polyfill";
+
 import SearchBar from "./search_bar";
 import SearchTypeFilter from "./search_type_filter";
 import SideBar from "./side_bar";
@@ -11,16 +20,25 @@ class App extends React.Component
 {
     componentDidMount ()
     {
-        console.log(this.props.location.query);
+        this.props.performInitialPageLoadSearch();
     }
 
     render ()
     {
+        if (!this.props.results)
+        {
+            return null;
+        }
+
         /*
          * Cause a search query to fire only once every 500ms, so that we don't overload the server
          * handling every keypress.
          * */
-        const searchTermChange = debounce( (term) => { this.props.dispatch(performSearch(term)) }, 500);
+        const searchTermChange = debounce(
+            (term) => {
+                this.props.performQueryTermSearch(term);
+            }, 800);
+
         return (
             <div>
                 <SearchBar
@@ -34,7 +52,9 @@ class App extends React.Component
                             <SideBar />
                         </div>
                         <div className="thirteen columns">
-                            <Results />
+                            <Results
+                                results={ this.props.results }
+                            />
                         </div>
                     </div>
                 </div>
@@ -43,4 +63,11 @@ class App extends React.Component
     }
 }
 
-export default connect()(App);
+function mapStateToProps (state)
+{
+    return {
+        results: state.results
+    }
+}
+
+export default connect(mapStateToProps, { performInitialPageLoadSearch, performQueryTermSearch })(App);

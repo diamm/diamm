@@ -177,9 +177,22 @@ REST_FRAMEWORK = {
     ),
 }
 
+INTERFACE_FACETS = {
+    "cities": "facet_cities_ss",
+    "genres": "genres_ss",
+    "notations": "notations_ss",
+    "composers": "composers_ss",
+    "archive_locations": ["country_s", "city_s"],  # an array creates a pivot facet
+    "source_type": "source_type_s",
+    "has_inventory": "inventory_provided_b",
+    "organization_type": "organization_type_s",
+    "location": "location_s",
+    "archive": "archive_s"
+}
+
 SOLR = {
     'SERVER': "http://localhost:8983/solr/diamm/",
-    'PAGE_SIZE': REST_FRAMEWORK['PAGE_SIZE'],
+    'PAGE_SIZE': REST_FRAMEWORK['PAGE_SIZE'],  # use the same page size as DRF for consistency
     'DEFAULT_OPERATOR': 'AND',
     'INDEX_TYPES': {
         'SOURCE': {
@@ -196,16 +209,46 @@ SOLR = {
         'set',
         'composition'
     ],
-    'FACET_FIELDS': [
+    'FACET_FIELDS': [  # Use the interface facets to define public-facing facet fields.
         '{!ex=type}type',
-        '{!ex=type}public_images_b'
+        '{!ex=type}public_images_b',
     ],
+    'FACET_PIVOTS': [],
+    'FACET_SORT': {   # custom sorting for certain facets (default is by count; index is alphanumeric)
+        "f.composers_ss.facet.sort": "index",
+        "f.country_s.facet.sort": "index",
+        "f.city_s.facet.sort": "index",
+        "f.name_s.facet.sort": "index",
+        "f.genres_ss.facet.sort": "index",
+        "f.archive_s.facet.sort": "index"
+    },
     'FULLTEXT_QUERYFIELDS': [    # Boosting these fields allows more common methods of referring to a MSS to bubble up in the search results.
         'text',
         'source_boost_tns^10',  # Boost specific fields for source records that may be used at query time.
         'archive_boost_tns^5'
-    ]
+    ],
+    'TYPE_SORTS': {
+        'archive': 'name_ans asc',
+        'set': 'cluster_shelfmark_ans asc',
+        'person': 'name_ans asc',
+        'organization': 'name_ans asc',
+        'composition': 'title_ans asc',
+        'source': 'shelfmark_ans asc',
+        'sources_with_images': 'shelfmark_ans asc'
+    }
 }
+
+# do some manipulation to get the interface facets into the Solr configuration
+# We assign the solr output key to the key of the interface facet dict for
+# consistent reference, and so we can more easily work with it in the search response
+# handler.
+for k, v in INTERFACE_FACETS.items():
+    if isinstance(v, list):
+        pfacet = "{{!key={k}}}{v}".format(k=k, v=",".join(v))
+        SOLR['FACET_PIVOTS'].append(pfacet)
+    else:
+        facet = "{{!key={k}}}{v}".format(k=k, v=v)
+        SOLR['FACET_FIELDS'].append(facet)
 
 IIIF = {
     "THUMBNAIL_WIDTH": "250,"   # The constrained width of thumbnail images

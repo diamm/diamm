@@ -5,6 +5,7 @@ import userReducer from "./user_reducer";
 import tabsReducer from "./tabs_reducer";
 import manifestReducer from "./manifest_reducer";
 import imageViewReducer from "./image_view_reducer";
+import quickLookReducer from "./quicklook_reducer";
 
 const rootReducer = combineReducers({
     user: userReducer,
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
     tabs: tabsReducer,
     manifest: manifestReducer,
     image_view: imageViewReducer,
+    quicklook: quickLookReducer,
     routing
 });
 

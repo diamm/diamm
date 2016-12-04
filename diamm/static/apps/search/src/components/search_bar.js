@@ -1,9 +1,9 @@
 import React from "react";
 import { connect } from "react-redux";
 import {
-    updateCurrentQueryTerm,
-    performSearch
+    updateCurrentQueryTerm
 } from "../actions/index";
+// import URLSearchParams from "url-search-params";
 
 
 class SearchBar extends React.Component
@@ -12,13 +12,15 @@ class SearchBar extends React.Component
         router: React.PropTypes.object
     };
 
-    componentWillMount ()
+    componentDidMount ()
     {
-        if (this.props.defaultQuery.q)
-        {
-            this.props.updateCurrentQueryTerm(this.props.defaultQuery.q);
-            this.props.onSearchTermChange(this.props.defaultQuery.q);
-        }
+        // set the search box value in a way that does not trigger the onChange
+        // event.
+        let params = new URLSearchParams(window.location.search);
+        let value = params.get('q') || "";
+
+        this.refs.search_input.value = value;
+        this.props.updateCurrentQueryTerm(value);
 
     }
 
@@ -38,6 +40,7 @@ class SearchBar extends React.Component
                         placeholder="Search"
                         value={ this.props.currentQuery }
                         onChange={ event => this.onInputChange(event) }
+                        ref="search_input"
                     />
                 </div>
             </div>

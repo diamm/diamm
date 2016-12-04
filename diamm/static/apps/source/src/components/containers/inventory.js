@@ -5,8 +5,21 @@ import {
     INVENTORY_ROUTE_ALPHABETICAL
 } from "../../routes";
 import { Link } from "react-router";
-import { connect } from "react-redux";
+import { openQuickLookView } from "../../actions/index";
+import { store } from "../../index";
 
+
+const InventoryMenuItem = ({active, route, title, show=true}) =>
+{
+    if (!show)
+        return null;
+
+    return (
+        <li className={ active ? "active" : ""}>
+            <Link to={ route }>{ title }</Link>
+        </li>
+    );
+}
 
 export class InventoryMenu extends React.Component
 {
@@ -17,26 +30,36 @@ export class InventoryMenu extends React.Component
     render()
     {
         let isActive = this.context.router.isActive;
+        let isUninventoried = this.props.uninventoried.length > 0;
 
         return (
             <div className="row">
                 <ul className="source-inventory-menu eleven columns">
                     <li>View: </li>
-                    <li className={ isActive(INVENTORY_ROUTE) ? "active" : ""}>
-                        <Link to={ INVENTORY_ROUTE }>Source Order</Link>
-                    </li>
-                    <li className={ isActive(INVENTORY_ROUTE_BY_COMPOSER) ? "active" : ""}>
-                        <Link to={ INVENTORY_ROUTE_BY_COMPOSER }>By Composer (A-Z)</Link>
-                    </li>
-                    <li className={ isActive(INVENTORY_ROUTE_ALPHABETICAL) ? "active" : ""}>
-                        <Link to={ INVENTORY_ROUTE_ALPHABETICAL }>By Composition (A-Z)</Link>
-                    </li>
+                    <InventoryMenuItem
+                        active={ isActive(INVENTORY_ROUTE) }
+                        route={ INVENTORY_ROUTE }
+                        title={ isUninventoried ? "Uninventoried" : "Source Order" }
+                        show={ this.props.source_order.length > 0 || isUninventoried }
+                    />
+                    <InventoryMenuItem
+                        active={ isActive(INVENTORY_ROUTE_BY_COMPOSER) }
+                        route={ INVENTORY_ROUTE_BY_COMPOSER }
+                        title="By Composer (A-Z)"
+                        show={ this.props.source_order.length > 0 }  // <-- don't bother showing the composers if there is nothing in the source.
+                    />
+                    <InventoryMenuItem
+                        active={ isActive(INVENTORY_ROUTE_ALPHABETICAL) }
+                        route={ INVENTORY_ROUTE_ALPHABETICAL }
+                        title="By Composition (A-Z)"
+                        show={ this.props.source_order.length > 0 }
+                    />
                 </ul>
                 <ul className="source-inventory-legend five columns">
                     <li>Legend: </li>
                     <li><i className="fa fa-binoculars fa-border quicklook-legend" /> {" Quicklook"}</li>
-                    <li><i className="fa fa-eye fa-border quicklook-legend" /> { " View Image" }</li>
-                    <li><i className="fa fa-plus fa-border quicklook-legend"/> { " Item Details"} </li>
+                    <li><i className="fa fa-image fa-border quicklook-legend" /> { " View Image" }</li>
+                    <li><i className="fa fa-chevron-circle-down fa-border quicklook-legend"/> { " Item Details"} </li>
                 </ul>
             </div>
         );
@@ -45,8 +68,11 @@ export class InventoryMenu extends React.Component
 
 const onQuickLook = (url) =>
 {
-    console.log('quicklook ', url);
+    store.dispatch(
+        openQuickLookView(url)
+    );
 };
+
 
 export const QuickLook = ({url}) =>
 {
@@ -56,7 +82,7 @@ export const QuickLook = ({url}) =>
     return (
         <span
             className="fa fa-border fa-binoculars quicklook"
-            onClick={ () => onQuickLook(url) }
+            onClick={ () => { onQuickLook(url) } }
         />
     );
 };
@@ -69,7 +95,9 @@ export const Composers = ({composers}) =>
                 return (
                     <span key={ idx } className="composer-names">
                         { composer.full_name } { composer.uncertain ? "(?) " : "" }
-                        <QuickLook url={ composer.url } />
+                        <QuickLook
+                            url={ composer.url }
+                        />
                     </span>
                 );
             })}
@@ -88,7 +116,7 @@ export const Foliation = ({folio_start, folio_end, show_quicklook}) =>
         <span>
             { folio_start }{ (folio_end && folio_start !== folio_end) ? `–${folio_end} ` : " " }
             { show_quicklook &&
-                <i className="fa fa-eye fa-border quicklook" />}
+                <i className="fa fa-image fa-border quicklook" />}
         </span>
     );
 };

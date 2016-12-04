@@ -2,9 +2,9 @@ import {
     UPDATE_SEARCH_RESULTS
 } from "../constants";
 
-const INITIAL_STATE = {};
+const INITIAL_STATE = null;
 
-export default function resultsReducer (state = INITIAL_STATE, action)
+export default function results (state = INITIAL_STATE, action)
 {
     switch (action.type)
     {

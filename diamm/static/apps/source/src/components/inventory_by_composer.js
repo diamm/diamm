@@ -26,7 +26,7 @@ class InventoryByComposer extends React.Component
                         <div key={ idx } className="composer-order row">
                             <div className="three columns composer">
                                 <span>{ entry.name }</span>
-                                <QuickLook url={ "#" } />
+                                <QuickLook url={ entry.url } />
                             </div>
                             <div className="thirteen columns composition-details">
                                 <ul>
@@ -34,7 +34,7 @@ class InventoryByComposer extends React.Component
                                     return (
                                         <li key={ idx }>
                                             { cmp.composition } { cmp.uncertain ? "(?)" : ""}
-                                            <QuickLook url={ "#" } />
+                                            <QuickLook url={ cmp.url } />
                                             <Foliation
                                                 folio_start={ cmp.folio_start }
                                                 folio_end={ cmp.folio_end }

@@ -7,6 +7,7 @@ import {
     Foliation,
 } from "./containers/inventory";
 import Details from "./inventory_details";
+import InventoryUninventoried from "./inventory_uninventoried";
 import { showInventoryDetailsForItem } from "../actions/index";
 
 
@@ -19,6 +20,14 @@ class InventoryByOrder extends React.Component
 
     render ()
     {
+        if (this.props.inventory.length === 0)
+            return (
+                <Inventory>
+                    <InventoryUninventoried />
+                </Inventory>
+            );
+
+
         return (
             <Inventory>
                 <div className="source-order-header row">
@@ -34,7 +43,7 @@ class InventoryByOrder extends React.Component
                 </div>
                 { this.props.inventory.map ( (entry, idx) => {
                     const showDetail = this.props.showDetail && this.props.showDetail[idx];
-                    const detailClassNames = showDetail ? "fa fa-info-circle fa-border quicklook active" : "fa fa-info-circle fa-border quicklook";
+                    const detailClassNames = showDetail ? "fa fa-chevron-up fa-border quicklook active" : "fa fa-chevron-down fa-border quicklook";
 
                     return (
                         <div key={ idx } className="source-order row">

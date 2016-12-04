@@ -1,14 +1,16 @@
 import { combineReducers } from "redux";
 import { routerReducer as routing } from "react-router-redux";
-import currentQueryReducer from "./current_query";
-import resultsReducer from "./results";
-import facetsReducer from "./facets";
+import currentQuery from "./current_query";
+import currentQueryType from "./current_query_type";
+import currentFacets from "./current_facets";
+import results from "./results";
 
 
 const rootReducer = combineReducers({
-    currentQuery: currentQueryReducer,
-    results: resultsReducer,
-    facets: facetsReducer,
+    currentQuery,
+    currentFacets,
+    currentQueryType,
+    results,
     routing
 });
 

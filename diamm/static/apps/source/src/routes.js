@@ -5,6 +5,7 @@ import Description from "./components/description";
 import InventoryByOrder from "./components/inventory_by_order";
 import InventoryByComposer from "./components/inventory_by_composer";
 import InventoryAlphabetical from "./components/inventory_alphabetical";
+import InventoryUninventoried from "./components/inventory_uninventoried";
 import Images from "./components/images";
 import Sets from "./components/sets";
 import Bibliography from "./components/bibliography";

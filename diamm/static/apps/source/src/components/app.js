@@ -5,6 +5,7 @@ import {
     INVENTORY_ROUTE,
     INVENTORY_ROUTE_BY_COMPOSER,
     INVENTORY_ROUTE_ALPHABETICAL,
+    INVENTORY_ROUTE_UNINVENTORIED,
     IMAGES_ROUTE,
     SETS_ROUTE,
     BIBLIOGRAPHY_ROUTE,
@@ -79,8 +80,9 @@ class App extends React.Component
         {
             return (
                 <div className="loading-spinner">
-                    <i className="fa fa-2x fa-spinner fa-spin" />
-                    <span className="message">Loading...</span>
+                    <div className="message">
+                        <i className="fa fa-circle-o-notch fa-3x fa-spin" />
+                    </div>
                 </div>
             );
         }
@@ -98,10 +100,12 @@ class App extends React.Component
                             title="Description"
                         />
                         <MenuLink
-                            active={ isActive(INVENTORY_ROUTE, true) || isActive(INVENTORY_ROUTE_BY_COMPOSER, true) || isActive(INVENTORY_ROUTE_ALPHABETICAL) }
+                            active={ isActive(INVENTORY_ROUTE, true) ||
+                                     isActive(INVENTORY_ROUTE_BY_COMPOSER, true) ||
+                                     isActive(INVENTORY_ROUTE_ALPHABETICAL, true) }
                             route={ INVENTORY_ROUTE }
                             title="Inventory"
-                            show={ this.props.source.inventory.length !== 0 }
+                            show={ this.props.source.inventory.length !== 0 || this.props.source.uninventoried.length !== 0 }
                         />
                         <ImagesMenuLink
                             authenticated={ (this.props.user !== null && this.props.user.isAuthenticated) }
