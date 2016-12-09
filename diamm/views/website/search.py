@@ -11,6 +11,7 @@ class SearchView(generics.GenericAPIView):
     def get(self, request, *args, **kwargs):
         query = request.GET.get('q', None)
         filters = {}
+        exclusive_filters = {}  # these will get ANDed... the others will get ORed
         sorts = []
 
         # On a blank query retrieve everything, but sort
@@ -49,11 +50,31 @@ class SearchView(generics.GenericAPIView):
             filters.update({
                 'city_s': "\"{0}\"".format(request.GET.get('city_s'))
             })
-        if 'composers_ss' in request.GET:
-            filters.update({
-                'composers_ss': "\"{0}\"".format(request.GET.get('composers_ss'))
+
+        if 'composer' in request.GET:
+            exclusive_filters.update({
+                'composers_ss': ["\"{0}\"".format(p.replace('"', r'\"')) for p in request.GET.getlist('composer')]
             })
 
+        if 'genre' in request.GET:
+            exclusive_filters.update({
+                'genres_ss': ["\"{0}\"".format(p.replace('"', r'\"')) for p in request.GET.getlist('genre')]
+            })
+
+        if 'notation' in request.GET:
+            exclusive_filters.update({
+                'notations_ss': ["\"{0}\"".format(p.replace('"', r'\"')) for p in request.GET.getlist('notation')]
+            })
+
+        if 'sourcetype' in request.GET:
+            exclusive_filters.update({
+                "source_type_s": ["\"{0}\"".format(p.replace('"', r'\"')) for p in request.GET.getlist('sourcetype')]
+            })
+
+        if 'has_inventory' in request.GET:
+            filters.update({
+                'inventory_provided_b': request.GET.get('has_inventory', None)
+            })
 
         if type_query in settings.SOLR['TYPE_SORTS'].keys():
             sorts.append(settings.SOLR['TYPE_SORTS'][type_query])
@@ -66,7 +87,7 @@ class SearchView(generics.GenericAPIView):
             page_num = 1
 
         try:
-            paginator = SolrPaginator(query, filters, sorts, request)
+            paginator = SolrPaginator(query, filters, exclusive_filters, sorts, request)
             page = paginator.page(page_num)
         except SolrResultException as e:
             # We assume that an exception raised by Solr is the result of a bad request by the client,

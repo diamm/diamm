@@ -27,7 +27,7 @@ class Organization(models.Model):
     sources_copied = GenericRelation("diamm_data.SourceCopyist")
     sources_related = GenericRelation("diamm_data.SourceRelationship")
     sources_provenance = GenericRelation("diamm_data.SourceProvenance")
-    contributions = GenericRelation("diamm_site.Contribution")
+
 
     def __str__(self):
         return "{0}".format(self.name)

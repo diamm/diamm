@@ -10,10 +10,12 @@ class CompositionSearchSerializer(serpy.Serializer):
         attr="title"
     )
     genres_ss = serpy.MethodField()
+    composers_ssni = serpy.MethodField()
     composers_ss = serpy.MethodField()
     composers_ii = serpy.MethodField()
     voice_text_txt = serpy.MethodField()
     sources_ss = serpy.MethodField()
+    sources_ssni = serpy.MethodField()
     sources_ii = serpy.MethodField()
 
     def get_type(self, obj):
@@ -29,15 +31,25 @@ class CompositionSearchSerializer(serpy.Serializer):
             return [o.composer.full_name for o in obj.composers.all()]
         return []
 
+    def get_composers_ssni(self, obj):
+        if obj.composers:
+            return ["{0}|{1}|{2}".format(o.composer.pk, o.composer.full_name, o.uncertain) for o in obj.composers.all()]
+        return []
+
     def get_composers_ii(self, obj):
         if obj.composers:
             return [o.composer.pk for o in obj.composers.all()]
         return []
 
+    def get_sources_ssni(self, obj):
+        if obj.sources.count() == 0:
+            return []
+        return ["{0}|{1}".format(s.source.pk, s.source.display_name) for s in obj.sources.all()]
+
     def get_sources_ss(self, obj):
         if obj.sources.count() == 0:
             return []
-        return ["{0}|{1}".format(s.source.pk, s.source.display_name) for s in obj.sources.all().only('pk')]
+        return [s.source.display_name for s in obj.sources.all()]
 
     def get_sources_ii(self, obj):
         if obj.sources.count() == 0:

@@ -4,8 +4,8 @@
     <div class="row">
         <div class="offset-by-five eleven columns">
             <div class="login-block">
-                <h2>Login</h2>
-                <form action="{{ url('login') }}" method="post">
+                <h2>Log in</h2>
+                <form action="{{ url('login') }}" method="post" class="login">
                     {% csrf_token %}
                     {{ form }}
                     <input type="hidden" name="next" value="{{ next }}" />

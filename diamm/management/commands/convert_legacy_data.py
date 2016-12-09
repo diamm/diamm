@@ -25,6 +25,7 @@ from diamm.management.helpers import migrate_text_and_voice
 from diamm.management.helpers import migrate_voice_type
 from diamm.management.helpers import migrate_notation
 from diamm.management.helpers import migrate_composition_cycle
+from diamm.management.helpers import migrate_commentary
 from diamm.models.data.page_condition import PageCondition
 from diamm.models.data.image_type import ImageType
 from diamm.models.data.organization_type import OrganizationType

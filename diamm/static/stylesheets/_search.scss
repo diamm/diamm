@@ -3,14 +3,12 @@ $search-input-adjust: $search-font-size + 1rem;
 
 .search-box {
   background: $diamm-light-grey;
-  text-align: center;
   padding: 16px;
+  margin: 0 -10px;
   input {
     height: 50px;
     font-size: 110%;
     font-weight: 600;
-    margin-bottom: 0;
-    width: 40%;
   }
 }
 
@@ -84,6 +82,15 @@ $search-input-adjust: $search-font-size + 1rem;
 }
 
 .facet-sidebar {
+  //.search-results-info {
+  //  display: flex;
+  //  align-items: center;
+  //  justify-content: center;
+  //}
+  .search-result-clear {
+    width: 60%;
+    @include button();
+  }
   .search-result-count {
     text-align: center;
     font-weight: 600;
@@ -97,6 +104,7 @@ $search-input-adjust: $search-font-size + 1rem;
       display: flex;
       justify-content: flex-start;
       padding: 0.6rem 0;
+
       .facet-show-control {
         flex: 1 1 auto;
         text-align: right;
@@ -115,16 +123,40 @@ $search-input-adjust: $search-font-size + 1rem;
       .highlighted {
         background-color: $diamm-light-grey;
       }
+
       label, input {
         margin: 0;
         font-weight: 400;
         font-size: 1rem;
       }
-      input {
+      input[type=text] {
         width: 100%;
       }
+      input[type=radio], input[type=checkbox] {
+        margin-right: 0.4rem;
+      }
+    }
+
+    .facet-body.select-list {
+      max-height: 300px;
+      padding: 0.3rem 0.6rem;
+      overflow: auto;
+      box-shadow: inset 1px 1px 6px 0 $diamm-light-grey;
     }
   }
+}
+
+.selected-autocomplete-facet {
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.3rem;
+  margin: 0.3rem 0;
+  max-width: 80%;
+  color: $diamm-white;
+  background: $diamm-red;
+  @include rounded(0.3rem);
+  display: flex;
+  justify-content: space-between;
 }
 
 .archive-location-facet-country_s {

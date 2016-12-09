@@ -3,7 +3,6 @@
   display: flex;
   flex-wrap: wrap;
   box-shadow: 0 4px 6px -6px $diamm-grey;
-  margin: 0.5rem 0;
   @include small-caps;
 
   li.active {
@@ -35,6 +34,12 @@
   }
 }
 
+.notes {
+  section {
+    margin-bottom: 1.5rem;
+  }
+}
+
 .source-archive-logo {
   img {
     max-height: 4rem;
@@ -42,7 +47,7 @@
 }
 
 .source-cover-image {
-  overflow: hidden;
+  //overflow: hidden;
   img {
     width: 100%;
   }
@@ -217,6 +222,27 @@
   }
 }
 
+.source-details {
+  width: 100%;
+  margin-bottom: 1rem;
+
+  th, td {
+    border-bottom: none;
+    padding: 3px;
+  }
+
+  th {
+    font-weight: 600;
+    vertical-align: top;
+    padding-right: 6px;
+    width: 15%;
+  }
+
+  ul, li {
+    margin: 0;
+  }
+}
+
 .source-description {
   hr {
     margin: 1em 0;
@@ -225,23 +251,6 @@
     margin-bottom: 0.4rem;
     padding-top: 0;
     padding-left: 0;
-  }
-  .source-details {
-    width: 100%;
-    margin-bottom: 1rem;
-    th, td {
-      border-bottom: none;
-      padding: 3px;
-    }
-    th {
-      font-weight: 600;
-      vertical-align: top;
-      padding-right: 6px;
-      width: 15%;
-    }
-    ul, li {
-      margin: 0;
-    }
   }
 
   dl {
@@ -404,17 +413,18 @@
     flex-wrap: wrap;
     align-items: flex-start;
 
-    .source-set-source {
+    .box {
       flex: 0 0 auto;
-      //border: 1px solid $diamm-light-grey;
       margin: 8px;
       text-align: center;
       width: 180px;
+      height: 280px;
     }
   }
 }
 
-.quicklook-modal {
+.quicklook-modal,
+.problem-report-modal {
   position: fixed;
   z-index: 100;
   top: 0;
@@ -429,16 +439,19 @@
   align-items: center;
   justify-content: center;
 
-  .quicklook-content {
+  .quicklook-content,
+  .problem-report-content {
     max-width: 50%;
     min-width: 50%;
     min-height: 80%;
     max-height: 80%;
     background-color: $diamm-white;
     overflow: auto;
+    @include rounded(0.3rem);
   }
 
-  .quicklook-title {
+  .quicklook-title,
+  .problem-report-title {
     background-color: $diamm-red;
     padding: 0.6rem;
     font-size: 1.2rem;
@@ -465,8 +478,21 @@
     }
   }
 
-  .quicklook-body {
+  .quicklook-body,
+  .problem-report-body {
     padding: 0.6rem;
+
+    .submission {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    textarea {
+      width: 100%;
+      height: 100%;
+      margin-bottom: 0;
+    }
+
 
     table {
       width: 100%;
@@ -479,5 +505,12 @@
 
   .quicklook-footer {
   }
+}
+
+.problems-link {
+  @include button();
+  width: 60%;
+  margin: auto;
+
 }
 

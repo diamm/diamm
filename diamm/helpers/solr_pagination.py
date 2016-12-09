@@ -17,12 +17,13 @@ class SolrResultException(BaseException):
 class PageRangeOutOfBoundsException(BaseException):
     pass
 
+
 class SolrPaginator:
     """
         Takes in a SolrSearch object (pre-execute) and manages
         a paginated list of Solr results.
     """
-    def __init__(self, query, filters, sorts, request, *args, **kwargs):
+    def __init__(self, query, filters, exclusive_filters, sorts, request, *args, **kwargs):
         # The query is the value of the fulltext q-field.
         self.query = query
         self.request = request
@@ -45,8 +46,9 @@ class SolrPaginator:
         if sorts:
             self.qopts['sort'] = sorts
 
+        fqlist = list()
+
         if filters:
-            fqlist = list()
             for k, v in filters.items():
                 # If a list is passed in for a field, assume that we want to OR the filters to produce a listing from
                 # all the values; if not, assume it's a restriction.
@@ -57,9 +59,20 @@ class SolrPaginator:
                 else:
                     fqlist.append("{0}:{1}".format(k, v))
 
-            self.qopts.update({
-                'fq': fqlist
-            })
+        if exclusive_filters:
+            for k, v in exclusive_filters.items():
+                # unlike the previous filters, this will be ANDed and not ORed
+                if isinstance(v, list):
+                    fqlist.append(" AND ".join(["{0}:{1}".format(k, field) for field in v]))
+                else:
+                    fqlist.append("{0}:{1}".format(k, v))
+
+        # update our fq query opts with the values from our filters.
+        self.qopts.update({
+            'fq': fqlist
+        })
+
+
 
         self.solr = pysolr.Solr(settings.SOLR['SERVER'])
 

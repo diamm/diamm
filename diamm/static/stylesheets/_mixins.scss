@@ -64,3 +64,24 @@
   background: -moz-linear-gradient(top,  $from, $to);
   filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#{$from}', endColorstr='#{$to}');
 }
+
+@mixin button {
+  @include rounded(0.3rem);
+  cursor: pointer;
+  text-align: center;
+  color: $diamm-white;
+  background-color: $diamm-red;
+  border: 2px solid $diamm-red;
+  text-transform: none;
+  font-weight: 600;
+  font-size: inherit;
+  line-height: inherit;
+  padding: 0.4rem 0.8rem;
+  height: inherit;
+  letter-spacing: inherit;
+  &:hover {
+    color: $diamm-red !important;
+    background-color: $diamm-white !important;
+    border-color: 2px solid $diamm-red !important;
+  }
+}

@@ -24,10 +24,10 @@ from django.contrib.auth.views import (
     password_change, password_change_done, login, logout
 )
 from diamm.views.auth import CreateAccount
+from registration.backends.hmac.views import ActivationView
 from diamm.views.home import HomeView
 from diamm.views.user import ProfileView, ProfileEditView
 from diamm.views.website.search import SearchView
-from diamm.views.contribution import MakeContribution
 from diamm.views.website.set import SetDetail
 from diamm.views.website.source import (
     SourceList, SourceDetail, SourceManifest, SourceCanvasDetail
@@ -45,6 +45,8 @@ from diamm.views.website.aboutpages import AboutPagesDetail
 from diamm.views.website.image import image_serve
 from diamm.views.website.bibliography_author import BibliographyAuthorDetail
 from diamm.views.website.stats import StatsView
+from diamm.views.website.commentary import CommentaryList
+from diamm.views.catalogue.catalogue import CatalogueView
 
 
 urlpatterns = [
@@ -80,6 +82,15 @@ urlpatterns = [
     url(r'^change/complete/$', password_change_done,
         {"template_name": "website/auth/change_complete.jinja2"},
         name="password-change-done"),
+    url(r'activate/(?P<activation_key>[-:\w]+)/$',
+            ActivationView.as_view(
+                template_name="website/auth/activation.jinja2"
+            ),
+        name='registration_activate'),
+    url(r'activate/complete/$', TemplateView.as_view(
+        template_name="website/auth/activation.jinja2"
+    ), name='registration_activation_complete'),
+
 
     url(r'^account/$', ProfileView.as_view(), name="user-account"),
     url(r'^account/edit/$', ProfileEditView.as_view(), name="user-account-edit"),
@@ -88,7 +99,6 @@ urlpatterns = [
     url(r'^search/$', SearchView.as_view(), name="search"),
     url(r'^news/(?P<pk>[0-9]+)/$', StoryDetail.as_view(), name="story-detail"),
     url(r'^tags/(?P<pk>[0-9]+)/$', TagDetail.as_view(), name="tag-detail"),
-    url(r'^contribution/$', MakeContribution.as_view(), name="contribution"),
     url(r'^stats/$', StatsView.as_view(), name="stats"),
 
     url(r'^sources/$', SourceList.as_view(), name="source-list"),
@@ -120,6 +130,12 @@ urlpatterns = [
 
     url(r'^images/(?P<pk>[0-9]+)/(?:(?P<region>.*)/(?P<size>.*)/(?P<rotation>.*)/default\.jpg)$', image_serve, name="image-serve"),
     url(r'^images/(?P<pk>[0-9]+)/$', image_serve, name="image-serve-info"),
+
+    url(r'^commentary/$', CommentaryList.as_view(), name="commentary-list"),
+
+    # Cataloguing view
+    url(r'^catalogue/(.*)$', CatalogueView.as_view(), name="catalogue-view"),
+
 
     url(r'^(?P<url>.*)/$', AboutPagesDetail.as_view(), name="aboutpages-detail"),
 ]

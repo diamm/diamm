@@ -433,6 +433,21 @@ class NotationsourceIs(models.Model):
         db_table = 'NotationSource_IS'
 
 
+class Note(models.Model):
+    legacy_id = models.IntegerField(blank=True, null=True)
+    notetype = models.IntegerField(db_column='noteType', blank=True, null=True)  # Field name made lowercase.
+    notetext = models.TextField(db_column='noteText', blank=True, null=True)  # Field name made lowercase.
+    user = models.IntegerField(blank=True, null=True)
+    visibility = models.IntegerField(blank=True, null=True)
+    datemodified = models.DateTimeField(db_column='dateModified', blank=True, null=True)  # Field name made lowercase.
+    sourcekey = models.IntegerField(db_column='sourceKey', blank=True, null=True)  # Field name made lowercase.
+    imagekey = models.IntegerField(db_column='imageKey', blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'Note'
+
+
 class Secondaryimage(models.Model):
     secondaryimagekey = models.IntegerField(db_column='secondaryImageKey', primary_key=True)  # Field name made lowercase.
     imagekey = models.DecimalField(db_column='ImageKey', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
@@ -827,3 +842,13 @@ class Alvoice(models.Model):
     class Meta:
         managed = False
         db_table = 'alVoice'
+
+
+class DjangoMigrations(models.Model):
+    app = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
+    applied = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'django_migrations'

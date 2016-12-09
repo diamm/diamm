@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block body %}
-    <div id="source-body" class="row"
+    <div id="source-body"
          data-source-id="{{ content.pk }}"
          data-is-authenticated="{{ request.user.is_authenticated() }}"
          {% if request.user.is_authenticated %}
@@ -19,6 +19,5 @@
 {% endblock %}
 
 {% block scripts %}
-{#    <script src="{{ static('javascripts/lib/jquery/jquery.min.js') }}"></script>#}
     <script src="{{ static('apps/source/dist/bundle.js') }}"></script>
 {% endblock %}

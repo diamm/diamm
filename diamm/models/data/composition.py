@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.contenttypes.fields import GenericRelation
 
 
 class Composition(models.Model):
@@ -14,7 +13,6 @@ class Composition(models.Model):
     genres = models.ManyToManyField("diamm_data.Genre", blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    contributions = GenericRelation("diamm_site.Contribution")
 
     def __str__(self):
         return "{0}".format(self.title)

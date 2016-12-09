@@ -1,0 +1,10 @@
+{% extends "base.jinja2" %}
+
+{% block body %}
+    <div class="row">
+        <div class="offset-by-five eleven columns">
+            <h3>Activation success.</h3>
+            <p>You may now <a href="{{ url('login') }}">Log in</a>.</p>
+        </div>
+    </div>
+{% endblock %}

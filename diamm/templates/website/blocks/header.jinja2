@@ -1,104 +1,19 @@
 <header class="site-header">
-    <nav role="navigation" class="navbar">
-        <ul class="navbar-list navbar-brand pull-left">
-            <li>
-                <a href="{{ url('home') }}"><img src="{{ static('images/headerLogo.png') }}" /></a>
-            </li>
-        </ul>
-        <ul class="navbar-list pull-left">
-                {# <li class="navbar-item"><a href="/about/">About</a>
-                    {% include "website/aboutpages/aboutpages_menu.jinja2" %}
-                </li> #}
-                <li class="navbar-item">
-                    <a href="{{ url('introduction') }}">Introduction</a>
-                </li>
-            <li class="navbar-item"><a href="{{ url('search') }}">Search</a></li>
-            <li class="navbar-item"><a href="{{ url('country-list') }}">Browse</a>
-                <ul class="dropdown-content">
-                    <li><a href="{{ url('country-list') }}">Countries</a></li>
-                    <li><a href="{{ url('city-list') }}">Cities</a></li>
-                    <li><a href="{{ url('archive-list') }}">Archives</a></li>
-                </ul>
-            </li>
-        </ul>
-        <ul class="navbar-list pull-right">
-            <li class="navbar-item navbar-highlight"><a href="#">Donate</a></li>
-
+    <nav role="navigation" class="nav">
+        <div class="nav-left">
+            <a href="{{ url('home') }}" class="nav-item is-brand">
+                <img src="{{ static('images/headerLogo.png') }}" />
+            </a>
+            <a href="{{ url('introduction') }}" class="nav-item">About DIAMM</a>
+            <a href="{{ url('search') }}" class="nav-item">Search & Browse</a>
+        </div>
+        <div class="nav-right">
+            <a href="#" class="nav-item nav-highlight">Donate</a>
             {% if user.is_authenticated() %}
-                <li class="navbar-item"><a href="{{ url('user-account') }}">Your account</a>
-                    <ul class="dropdown-content">
-                        {# <li><a href="{{ url('account-update') }}">Update Account</a></li>#}
-                        <li>
-                            <form action="{{ url('logout') }}" method="post" id="logout_form">
-                                {% csrf_token %}
-                                <input type="submit" value="Logout" />
-                            </form>
-                        </li>
-                    </ul>
-                </li>
+                    <a href="{{ url('user-account') }}" class="nav-item">Your account</a>
             {% else %}
-                <li class="navbar-item"><a href="{{ url('login') }}?next={{ request.get_full_path() }}">Login</a></li>
+                <a class="nav-item" href="{{ url('login') }}?next={{ request.get_full_path() }}">Login</a>
             {% endif %}
-        </ul>
+        </div>
     </nav>
 </header>
-
-{# <nav class="navbar navbar-default diamm-navbar">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="{{ url("home") }}">DIAMM</a>
-        </div>
-        <ul class="nav navbar-nav">
-            <li>
-                <a href="#">About</a>
-            </li>
-            <li>
-                <a href="{{ url("search") }}">Search</a>
-            </li>
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                    Browse <span class="fa fa-caret-down"></span>
-                </a>
-                <ul class="dropdown-menu">
-                    <li>
-                        <a href="{{ url("country-list") }}"> Countries</a>
-                        <a href="{{ url("city-list") }}"> Cities</a>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-        <ul class="nav navbar-nav navbar-right">
-            <li class="donate-button">
-                <a href="#">
-                    <span class="fa fa-dollar"></span>
-                    Donate
-                </a>
-            </li>
-            {% if request.user.is_authenticated() %}
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                    <span class="fa fa-user"></span> Welcome
-                    {% if request.user.last_name %}
-                        {{ request.user.first_name }} {{ request.user.last_name }}
-                    {% else %}
-                        {{ request.user.username }}
-                    {% endif %}
-                    <span class="fa fa-caret-down"></span>
-                </a>
-                <ul class="dropdown-menu">
-                    <li>
-                        <a href="{{ url("user-profile", pk=request.user.id) }}">User Profile</a>
-                    </li>
-                    <li><a href="#" id="logout-link">Logout</a></li>
-                </ul>
-            </li>
-            {% else %}
-            <li>
-                <a href="{{ url("login") }}">
-                    <span class="fa fa-user"></span> Login
-                </a>
-            </li>
-            {% endif %}
-        </ul>
-    </div>
-</nav> #}

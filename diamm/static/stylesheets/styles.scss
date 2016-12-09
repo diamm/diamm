@@ -1,10 +1,11 @@
 @import "../javascripts/lib/diva.js/css/diva.min.css";
-@import "mixins";
-@import "skeleton/skeleton";
-@import "font-awesome/font-awesome";
-@import "variables";
 @import "fonts";
 @import "colors";
+@import "mixins";
+//@import "skeleton/skeleton";
+@import "font-awesome/font-awesome";
+@import "bulma.css";
+@import "variables";
 @import "navbar";
 @import "footer";
 @import "tabs";
@@ -22,6 +23,7 @@
 html {
   height: 100%;
   font-size: 1em;
+  background-color: $diamm-white;
 }
 
 // Font calculations based on: http://type-scale.com/?size=18&scale=1.414&text=A%20Visual%20Type%20Scale&webfont=Libre+Baskerville&font-family=Alegreya%20Sans&font-weight=400&font-family-headers=&font-weight-headers=inherit&background-color=white&font-color=%23333
@@ -37,12 +39,16 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-.full-width {
-  margin-bottom: 1rem;
+.page-body {
+  margin-top: 1rem !important;
 }
 
-li.image-source-list {
-  list-style-type: none;
+.tabs li.is-active a {
+  color: $diamm-red;
+  border-bottom-color: $diamm-red;
+}
+.tabs.is-boxed li.is-active {
+  box-shadow: 0 2px 10px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);
 }
 
 a {
@@ -54,33 +60,6 @@ a {
     background: lighten($diamm-lt-blue, 52%);
   }
 }
-
-p {
-  font-family: $sans-serif;
-  margin-bottom: 1.3em;
-  padding-top: 0.5em;
-  padding-left: 0.3em;
-}
-
-h1, h2, h3, h4 {
-  margin: 1.414em 0 0.5em;
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: normal;
-}
-
-h1 {
-  margin-top: 0;
-  font-size: 1.602em;
-}
-
-h2 {font-size: 1.424em;}
-
-h3 {font-size: 1.266em;}
-
-h4 {font-size: 1.125em;}
-
-small, .font_small {font-size: 0.889em;}
 
 .loading-spinner {
   display: flex;
@@ -96,8 +75,9 @@ small, .font_small {font-size: 0.889em;}
   }
 }
 
-.container {
-  flex: 1 0 auto;
+h1, h2, h3, h4, h5,
+.content h1, .content h2, .content h3, .content h4, .content h5 {
+  font-weight: 600;
 }
 
 .pull-right {
@@ -106,5 +86,9 @@ small, .font_small {font-size: 0.889em;}
 
 .pull-left {
   float: left !important;
+}
+
+button {
+  @include button();
 }
 

@@ -15,6 +15,7 @@ class Page(models.Model):
 
     numeration = models.CharField(max_length=64, help_text="""The folio or page number. If there are many different systems in use,
                                                            choose one and put the others in the note field.""")
+    # legacy id for the Image it was derived from.
     legacy_id = models.CharField(max_length=64, blank=True, null=True)
 
     # This may be refactored to allow for multiple page sort orders, but for now we'll stick with one

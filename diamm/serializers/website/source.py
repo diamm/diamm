@@ -5,14 +5,6 @@ from rest_framework.reverse import reverse
 from diamm.serializers.serializers import ContextSerializer, ContextDictSerializer
 
 
-class SourceContributionSerializer(ContextSerializer):
-    contributor = serpy.StrField(
-        attr="contributor.username"
-    )
-    summary = serpy.StrField()
-    updated = serpy.StrField()
-
-
 class SourceCatalogueEntrySerializer(ContextSerializer):
     entry = serpy.MethodField()
     order = serpy.IntField()
@@ -450,7 +442,6 @@ class SourceDetailSerializer(ContextSerializer):
     relationships = serpy.MethodField()
     copyists = serpy.MethodField()
     catalogue_entries = serpy.MethodField()
-    contributors = serpy.MethodField()
     iiif_manifest = serpy.MethodField()
 
     links = SourceURLSerializer(
@@ -566,11 +557,6 @@ class SourceDetailSerializer(ContextSerializer):
                                                   context={"request": self.context['request']},
                                                   many=True).data
         return []
-
-    def get_contributors(self, obj):
-        if obj.contributions.count() > 0:
-            return SourceContributionSerializer(obj.contributions.filter(completed=True),
-                                                context={"request": self.context['request']}, many=True).data
 
     def get_iiif_manifest(self, obj):
         if self.get_has_images(obj):
