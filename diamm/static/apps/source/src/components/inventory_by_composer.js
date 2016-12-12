@@ -13,41 +13,43 @@ class InventoryByComposer extends React.Component
     {
         return (
             <Inventory>
-                <div className="row composer-order-header">
-                    <div className="three columns">
-                        <span>Composer</span>
-                    </div>
-                    <div className="thirteen columns">
-                        <span>Compositions</span>
-                    </div>
-                </div>
-                { this.props.inventory.map ((entry, idx) => {
-                    return (
-                        <div key={ idx } className="composer-order row">
-                            <div className="three columns composer">
-                                <span>{ entry.name }</span>
-                                <QuickLook url={ entry.url } />
-                            </div>
-                            <div className="thirteen columns composition-details">
-                                <ul>
-                                { entry.inventory.map ((cmp, idx) => {
-                                    return (
-                                        <li key={ idx }>
-                                            { cmp.composition } { cmp.uncertain ? "(?)" : ""}
-                                            <QuickLook url={ cmp.url } />
-                                            <Foliation
-                                                folio_start={ cmp.folio_start }
-                                                folio_end={ cmp.folio_end }
-                                                show_quicklook={ (this.props.authenticated !== false && entry.pages && entry.pages.length > 0) }
-                                            />
-                                        </li>
-                                    );
-                                })}
-                                </ul>
-                            </div>
-                        </div>
-                    );
-                }) }
+                <table className="table">
+                    <thead>
+                        <tr>
+                            <th>Composer</th>
+                            <th>Compositions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    { this.props.inventory.map ((entry, idx) => {
+                        return (
+                            <tr key={ idx } className="composer-order">
+                                <td className="composer">
+                                    <span>{ entry.name }</span>
+                                    <QuickLook url={ entry.url } />
+                                </td>
+                                <td className="composition-details">
+                                    <ul>
+                                        { entry.inventory.map ((cmp, idx) => {
+                                            return (
+                                                <li key={ idx }>
+                                                    { cmp.composition } { cmp.uncertain ? "(?)" : ""}
+                                                    <QuickLook url={ cmp.url } />
+                                                    <Foliation
+                                                        folio_start={ cmp.folio_start }
+                                                        folio_end={ cmp.folio_end }
+                                                        show_quicklook={ (this.props.authenticated !== false && entry.pages && entry.pages.length > 0) }
+                                                    />
+                                                </li>
+                                            );
+                                        })}
+                                    </ul>
+                                </td>
+                            </tr>
+                        );
+                    }) }
+                    </tbody>
+                </table>
             </Inventory>
         );
     }

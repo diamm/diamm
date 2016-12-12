@@ -14,7 +14,7 @@ Including another URLconf
     2. Import the include() function: from django.conf.urls import url, include
     3. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.views.generic import TemplateView
 from django.contrib import admin
 from django.conf import settings
@@ -30,30 +30,30 @@ from diamm.views.user import ProfileView, ProfileEditView
 from diamm.views.website.search import SearchView
 from diamm.views.website.set import SetDetail
 from diamm.views.website.source import (
-    SourceList, SourceDetail, SourceManifest, SourceCanvasDetail
+    SourceDetail, SourceManifest, SourceCanvasDetail
 )
 from diamm.views.website.source import SourceRangeDetail, SourceItemDetail
-from diamm.views.website.archive import ArchiveList, ArchiveDetail
+from diamm.views.website.archive import ArchiveDetail
 from diamm.views.website.city import CityList, CityDetail
 from diamm.views.website.country import CountryList, CountryDetail
 from diamm.views.website.person import PersonDetail, legacy_composer_redirect
 from diamm.views.website.organization import OrganizationDetail
-from diamm.views.website.composition import CompositionList, CompositionDetail
-from diamm.views.website.story import StoryDetail
-from diamm.views.website.tag import TagDetail
-from diamm.views.website.aboutpages import AboutPagesDetail
+from diamm.views.website.composition import CompositionDetail
 from diamm.views.website.image import image_serve
 from diamm.views.website.bibliography_author import BibliographyAuthorDetail
-from diamm.views.website.stats import StatsView
 from diamm.views.website.commentary import CommentaryList
 from diamm.views.catalogue.catalogue import CatalogueView
+
+from wagtail.wagtailadmin import urls as wagtailadmin_urls
+from wagtail.wagtaildocs import urls as wagtaildocs_urls
+from wagtail.wagtailcore import urls as wagtail_urls
 
 
 urlpatterns = [
     url(r'^search.xml$', TemplateView.as_view(template_name='opensearch.jinja2',
                                               content_type="application/opensearchdescription+xml"), name='opensearch'),
     url(r'^admin/', admin.site.urls),
-    url(r'^$', HomeView.as_view(), name="home"),
+    # url(r'^$', HomeView.as_view(), name="home"),
 
     url(r'^beta/$', TemplateView.as_view(template_name="beta.jinja2"), name="beta"),
     url(r'^introduction/$', TemplateView.as_view(template_name="introduction.jinja2"), name="introduction"),
@@ -97,11 +97,6 @@ urlpatterns = [
 
     # public website
     url(r'^search/$', SearchView.as_view(), name="search"),
-    url(r'^news/(?P<pk>[0-9]+)/$', StoryDetail.as_view(), name="story-detail"),
-    url(r'^tags/(?P<pk>[0-9]+)/$', TagDetail.as_view(), name="tag-detail"),
-    url(r'^stats/$', StatsView.as_view(), name="stats"),
-
-    url(r'^sources/$', SourceList.as_view(), name="source-list"),
     url(r'^sources/(?P<pk>[0-9]+)/$', SourceDetail.as_view(), name="source-detail"),
     url(r'^sources/(?P<pk>[0-9]+)/manifest/$', SourceManifest.as_view(), name="source-manifest"),
 
@@ -111,7 +106,6 @@ urlpatterns = [
     url(r'^sources/(?P<source_id>[0-9]+)/range/(?P<item_id>[0-9]+)/$', SourceRangeDetail.as_view(), name="source-range-detail"),
     url(r'^sources/(?P<source_id>[0-9]+)/item/(?P<item_id>[0-9]+)/$', SourceItemDetail.as_view(), name="source-item-detail"),
 
-    url(r'^archives/$', ArchiveList.as_view(), name="archive-list"),
     url(r'^archives/(?P<pk>[0-9]+)/$', ArchiveDetail.as_view(), name="archive-detail"),
     url(r'^cities/$', CityList.as_view(), name="city-list"),
     url(r'^cities/(?P<pk>[0-9]+)/$', CityDetail.as_view(), name="city-detail"),
@@ -121,7 +115,6 @@ urlpatterns = [
     url(r'^people/(?P<pk>[0-9]+)/$', PersonDetail.as_view(), name="person-detail"),
     url(r'^organizations/(?P<pk>[0-9]+)/$', OrganizationDetail.as_view(), name="organization-detail"),
     url(r'^composers/(?P<legacy_id>[0-9]+)/$', legacy_composer_redirect),
-    url(r'^compositions/$', CompositionList.as_view(), name="composition-list"),
     url(r'^compositions/(?P<pk>[0-9]+)/$', CompositionDetail.as_view(), name="composition-detail"),
 
     url(r'^set/(?P<pk>[0-9]+)/$', SetDetail.as_view(), name="set-detail"),
@@ -136,8 +129,11 @@ urlpatterns = [
     # Cataloguing view
     url(r'^catalogue/(.*)$', CatalogueView.as_view(), name="catalogue-view"),
 
-
-    url(r'^(?P<url>.*)/$', AboutPagesDetail.as_view(), name="aboutpages-detail"),
+    # Any routes that are not matched by the previous are routed to the Wagtail module
+    #  which acts as a CMS for the non-database content.
+    url(r'^cms/', include(wagtailadmin_urls)),
+    url(r'^documents/', include(wagtaildocs_urls)),
+    url(r'', include(wagtail_urls)),
 ]
 if settings.DEBUG:
     urlpatterns += static("/media/", document_root=settings.MEDIA_ROOT)

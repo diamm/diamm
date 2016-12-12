@@ -5,14 +5,11 @@ import Description from "./components/description";
 import InventoryByOrder from "./components/inventory_by_order";
 import InventoryByComposer from "./components/inventory_by_composer";
 import InventoryAlphabetical from "./components/inventory_alphabetical";
-import InventoryUninventoried from "./components/inventory_uninventoried";
 import Images from "./components/images";
 import Sets from "./components/sets";
 import Bibliography from "./components/bibliography";
 import Commentary from "./components/commentary";
 import Credits from "./components/credits";
-import { store } from "./index";
-import { setActiveTab } from "./actions/index";
 
 export const ROOT_ROUTE = "/";
 export const INVENTORY_ROUTE = "inventory";
@@ -22,7 +19,6 @@ export const BIBLIOGRAPHY_ROUTE = "bibliography";
 export const COMMENTARY_ROUTE = "commentary";
 export const CREDITS_ROUTE = "credits";
 
-// export const INVENTORY_ROUTE_BY_ORDER = `${INVENTORY_ROUTE}/source-order`;
 export const INVENTORY_ROUTE_BY_COMPOSER = `${INVENTORY_ROUTE}/composer`;
 export const INVENTORY_ROUTE_ALPHABETICAL = `${INVENTORY_ROUTE}/alphabetical`;
 

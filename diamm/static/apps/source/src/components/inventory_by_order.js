@@ -30,48 +30,54 @@ class InventoryByOrder extends React.Component
 
         return (
             <Inventory>
-                <div className="source-order-header row">
-                    <div className="two columns">
-                        Folios / Pages
-                    </div>
-                    <div className="eight columns">
-                        Composition
-                    </div>
-                    <div className="six columns">
-                        Composers (? Uncertain)
-                    </div>
-                </div>
-                { this.props.inventory.map ( (entry, idx) => {
-                    const showDetail = this.props.showDetail && this.props.showDetail[idx];
-                    const detailClassNames = showDetail ? "fa fa-chevron-up fa-border quicklook active" : "fa fa-chevron-down fa-border quicklook";
+                <table className="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                Folios / Pages
+                            </th>
+                            <th>
+                                Composition
+                            </th>
+                            <th>
+                                Composers (? Uncertain)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    { this.props.inventory.map ( (entry, idx) => {
+                        const showDetail = this.props.showDetail && this.props.showDetail[idx];
+                        const detailClassNames = showDetail ? "fa fa-chevron-circle-up fa-border quicklook active" : "fa fa-chevron-circle-down fa-border quicklook";
 
-                    return (
-                        <div key={ idx } className="source-order row">
-                            <div className="two columns">
-                                <Foliation
-                                    folio_start={ entry.folio_start }
-                                    folio_end={ entry.folio_end }
-                                    show_quicklook={ (this.props.user !== null && entry.pages && entry.pages.length > 0) }
-                                />
-                            </div>
-                            <div className="eight columns item-details">
-                                <h4 className="composition-name">
-                                    { entry.composition }
-                                    <QuickLook url={ entry.url } />
-                                    <i
-                                        className={ detailClassNames }
-                                        onClick={ () => { this.handleShowDetailClick(idx); }}
+                        return (
+                            <tr key={ idx }>
+                                <td>
+                                    <Foliation
+                                        folio_start={ entry.folio_start }
+                                        folio_end={ entry.folio_end }
+                                        show_quicklook={ (this.props.user !== null && entry.pages && entry.pages.length > 0) }
                                     />
-                                </h4>
-                            </div>
-                            <div className="six columns">
-                                <Composers composers={ entry.composers } />
-                            </div>
-                            { showDetail &&
-                                <Details entry={ entry } /> }
-                        </div>
-                    );
-                })}
+                                </td>
+                                <td className="item-details">
+                                    <h4 className="composition-name">
+                                        { entry.composition }
+                                        <QuickLook url={ entry.url } />
+                                        <i
+                                            className={ detailClassNames }
+                                            onClick={ () => { this.handleShowDetailClick(idx); }}
+                                        />
+                                    </h4>
+                                </td>
+                                <td>
+                                    <Composers composers={ entry.composers } />
+                                </td>
+                            </tr>
+                        );
+                    })}
+                    </tbody>
+                </table>
+
+
             </Inventory>
         );
     }

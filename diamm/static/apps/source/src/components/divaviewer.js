@@ -23,7 +23,9 @@ class DivaViewer extends React.Component
         let t;
         let b = $(fullscreenBlock);
 
-        b.on('mousemove', function (e)
+        if (this.diva.isInFullscreen())
+        {
+            b.on('mousemove', function (e)
             {
                 let bar = $(".diva-fullscreen-tools");
                 bar.fadeIn('medium');
@@ -31,16 +33,33 @@ class DivaViewer extends React.Component
                 t = setTimeout( function ()
                 {
                     bar.fadeOut('medium');
-                }, 3000);
+                }, 2000);
             });
+        }
+        else
+        {
+            // unsubscribe the mousemove from the toolbar when we exit fullscreen.
+            b.off('mousemove');
+        }
+    }
 
-
+    getDivaInstance ()
+    {
+        return $(this.refs.divaContainer).data('diva');
     }
 
     shouldComponentUpdate ()
     {
         return false;
     }
+
+    // componentWillReceiveProps (nextProps)
+    // {
+    //     // console.log('component will receive props')
+    //     // console.log(nextProps);
+    //     let divaInstance = this.getDivaInstance();
+    //     divaInstance.gotoPageByLabel(this.nextProps.activeCanvasLabel);
+    // }
 
     componentDidMount ()
     {
@@ -50,11 +69,23 @@ class DivaViewer extends React.Component
             fixedHeightGrid: false
         });
 
+        this.diva = $(this.refs.divaContainer).data('diva');
+
         diva.Events.subscribe("ManifestDidLoad", this.props.onManifestLoaded);
         diva.Events.subscribe("VisiblePageDidChange", this.props.onLoadPageData);
         diva.Events.subscribe("ModeDidSwitch", this.attachFullscreenToolbarHandler.bind(this));
+        diva.Events.subscribe("ViewerDidLoad", this.viewerLoaded.bind(this));
+    }
 
-        this.diva = $(this.refs.divaContainer).data('diva');
+    viewerLoaded ()
+    {
+        console.log('viewer loaded', this.props);
+        if (this.props.activeCanvasLabel)
+        {
+            console.log('active canvas', this.props.activeCanvasLabel);
+            console.log(this.diva.getSettings().manifest);
+            this.diva.gotoPageByLabel(this.props.activeCanvasLabel);
+        }
     }
 
     render ()

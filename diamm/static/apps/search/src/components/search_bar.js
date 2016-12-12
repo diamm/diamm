@@ -33,16 +33,15 @@ class SearchBar extends React.Component
     render ()
     {
         return (
-            <div className="row">
-                <div className="sixteen columns search-box">
-                    <input
-                        type="text"
-                        placeholder="Search"
-                        value={ this.props.currentQuery }
-                        onChange={ event => this.onInputChange(event) }
-                        ref="search_input"
-                    />
-                </div>
+            <div className="columns search-box">
+                <input
+                    className="column is-half is-offset-one-quarter"
+                    type="text"
+                    placeholder="Search"
+                    value={ this.props.currentQuery }
+                    onChange={ event => this.onInputChange(event) }
+                    ref="search_input"
+                />
             </div>
         )
     }

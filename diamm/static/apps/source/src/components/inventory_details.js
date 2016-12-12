@@ -19,7 +19,7 @@ class Details extends React.Component
             return null;
 
         return (
-            <div className="row">
+            <tr className="row" colSpan="3">
                 <div className="voice-details three columns">
                     <Voices voices={ voices } num_voices={ num_voices } />
                 </div>
@@ -30,7 +30,7 @@ class Details extends React.Component
                 <div className="item-bibliography ten columns">
                     <Bibliography entry={ bibliography } />
                 </div>
-            </div>
+            </tr>
         );
     }
 }

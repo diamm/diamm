@@ -2,7 +2,8 @@ import React from "react";
 import {
     INVENTORY_ROUTE,
     INVENTORY_ROUTE_BY_COMPOSER,
-    INVENTORY_ROUTE_ALPHABETICAL
+    INVENTORY_ROUTE_ALPHABETICAL,
+    IMAGES_ROUTE
 } from "../../routes";
 import { Link } from "react-router";
 import { openQuickLookView } from "../../actions/index";
@@ -15,7 +16,7 @@ const InventoryMenuItem = ({active, route, title, show=true}) =>
         return null;
 
     return (
-        <li className={ active ? "active" : ""}>
+        <li className={ active ? "is-active" : ""}>
             <Link to={ route }>{ title }</Link>
         </li>
     );
@@ -33,9 +34,8 @@ export class InventoryMenu extends React.Component
         let isUninventoried = this.props.uninventoried.length > 0;
 
         return (
-            <div className="row">
-                <ul className="source-inventory-menu eleven columns">
-                    <li>View: </li>
+            <div className="tabs">
+                <ul>
                     <InventoryMenuItem
                         active={ isActive(INVENTORY_ROUTE) }
                         route={ INVENTORY_ROUTE }
@@ -54,12 +54,6 @@ export class InventoryMenu extends React.Component
                         title="By Composition (A-Z)"
                         show={ this.props.source_order.length > 0 }
                     />
-                </ul>
-                <ul className="source-inventory-legend five columns">
-                    <li>Legend: </li>
-                    <li><i className="fa fa-binoculars fa-border quicklook-legend" /> {" Quicklook"}</li>
-                    <li><i className="fa fa-image fa-border quicklook-legend" /> { " View Image" }</li>
-                    <li><i className="fa fa-chevron-circle-down fa-border quicklook-legend"/> { " Item Details"} </li>
                 </ul>
             </div>
         );
@@ -116,7 +110,9 @@ export const Foliation = ({folio_start, folio_end, show_quicklook}) =>
         <span>
             { folio_start }{ (folio_end && folio_start !== folio_end) ? `–${folio_end} ` : " " }
             { show_quicklook &&
-                <i className="fa fa-image fa-border quicklook" />}
+            <Link to={ {pathname: IMAGES_ROUTE, query: {p: folio_start}} }>
+                <i className="fa fa-file-text-o fa-border quicklook" />
+            </Link>}
         </span>
     );
 };

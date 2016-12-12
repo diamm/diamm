@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import debounce from "lodash.debounce";
+import _ from "lodash";
 
 import DivaViewer from "./divaviewer";
 import PageData from "./page_data";
@@ -29,27 +30,49 @@ class Images extends React.Component
     });
 
     /*
-    * Called when the IIIF Manifest has been loaded and is available
+    * Called when the IIIF Manifest has been loaded and is available.
+    * Also dispatches a function to compute the page and canvas ranges.
     * */
     manifestLoaded (manifest)
     {
         this.props.setActiveManifest(manifest);
     }
 
+    componentDidMount ()
+    {
+        /*
+         * Once the viewer has loaded, check the URL for any
+         * query params that have been passed along, as this is how
+         * we'll scroll Diva to the right page, based on the image filename URL.
+         * */
+        let hashparams = window.location.hash;
+        let qparams = _.last(hashparams.split("?"));
+
+        if (qparams)
+        {
+            let params = new URLSearchParams(qparams);
+            if (!params.has('p'))
+                return;
+
+            this.props.setCurrentlyActiveCanvasTitle(params.get('p'));
+        }
+    }
+
     render()
     {
         return (
-            <div className="row">
-                <div className="six columns">
-                    <PageData />
-                </div>
-                <div className="ten columns">
+            <div className="columns">
+                <div className="column is-three-quarters">
                     <DivaViewer
                         ref="divaViewer"
                         manifestURL={ this.props.manifestURL }
                         onLoadPageData={ this.loadPageData.bind(this) }
                         onManifestLoaded={ this.manifestLoaded.bind(this) }
+                        activeCanvasLabel={ this.props.activeCanvasLabel }
                     />
+                </div>
+                <div className="column">
+                    <PageData />
                 </div>
             </div>
         );
@@ -61,7 +84,8 @@ function mapStateToProps (state)
     return {
         manifestURL: state.source.iiif_manifest,
         manifest: state.manifest,
-        rangeLookup: state.image_view.ranges
+        rangeLookup: state.image_view.ranges,
+        activeCanvasLabel: state.image_view.activeCanvasLabel
 
     }
 }

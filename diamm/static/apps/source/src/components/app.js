@@ -23,7 +23,7 @@ const MenuLink = ({active, route, title, show=true}) =>
         return null;
 
     return (
-        <li className={ active ? "active" : ""}>
+        <li className={ active ? "is-active" : ""}>
             <Link to={ route }>{ title }</Link>
         </li>
     );
@@ -39,7 +39,7 @@ const ImagesMenuLink = ({authenticated, active, route, title, show=true}) =>
     {
         return (
             <li className="unauthenticated-image-link">
-                Images (<a href={ `/login?next=${route}` }>Log in to view</a>)
+                Images (<a href={ `/login/?next=${window.location.pathname}` }>Log in to view</a>)
             </li>
         );
     }
@@ -92,59 +92,61 @@ class App extends React.Component
         return (
             <div>
                 <Title />
-                <div className="row">
-                    <ul className="source-section-selector">
-                        <MenuLink
-                            active={ isActive(ROOT_ROUTE, true) }
-                            route={ ROOT_ROUTE }
-                            title="Description"
-                        />
-                        <MenuLink
-                            active={ isActive(INVENTORY_ROUTE, true) ||
-                                     isActive(INVENTORY_ROUTE_BY_COMPOSER, true) ||
-                                     isActive(INVENTORY_ROUTE_ALPHABETICAL, true) }
-                            route={ INVENTORY_ROUTE }
-                            title="Inventory"
-                            show={ this.props.source.inventory.length !== 0 || this.props.source.uninventoried.length !== 0 }
-                        />
-                        <ImagesMenuLink
-                            authenticated={ (this.props.user !== null && this.props.user.isAuthenticated) }
-                            active={ isActive(IMAGES_ROUTE, true) }
-                            route={ IMAGES_ROUTE }
-                            title="Images"
-                            show={
-                                this.props.source.public_images && this.props.source.has_images
-                            }
-                        />
-                        <MenuLink
-                            active={ isActive(SETS_ROUTE, true) }
-                            route={ SETS_ROUTE }
-                            title="Sets"
-                            show={ this.props.source.sets.length !== 0 }
-                        />
-                        <MenuLink
-                            active={ isActive(BIBLIOGRAPHY_ROUTE, true) }
-                            route={ BIBLIOGRAPHY_ROUTE }
-                            title="Bibliography"
-                            show={ this.props.source.bibliography.length !== 0 }
-                        />
-                        <MenuLink
-                            active={ isActive(COMMENTARY_ROUTE, true) }
-                            route={ COMMENTARY_ROUTE }
-                            title="Commentary"
-                            show={ false }
-                        />
-                        <MenuLink
-                            active={ isActive(CREDITS_ROUTE, true) }
-                            route={ CREDITS_ROUTE }
-                            title="Credits"
-                            show={ false }
-                        />
-                    </ul>
+                <div className="columns">
+                    <div className="column">
+                        <div className="tabs is-boxed is-medium">
+                        <ul>
+                            <MenuLink
+                                active={ isActive(ROOT_ROUTE, true) }
+                                route={ ROOT_ROUTE }
+                                title="Description"
+                            />
+                            <MenuLink
+                                active={ isActive(INVENTORY_ROUTE, true) ||
+                                         isActive(INVENTORY_ROUTE_BY_COMPOSER, true) ||
+                                         isActive(INVENTORY_ROUTE_ALPHABETICAL, true) }
+                                route={ INVENTORY_ROUTE }
+                                title="Inventory"
+                                show={ this.props.source.inventory.length !== 0 || this.props.source.uninventoried.length !== 0 }
+                            />
+                            <ImagesMenuLink
+                                authenticated={ (this.props.user !== null && this.props.user.isAuthenticated) }
+                                active={ isActive(IMAGES_ROUTE, true) }
+                                route={ IMAGES_ROUTE }
+                                title="Images"
+                                show={
+                                    this.props.source.public_images && this.props.source.has_images
+                                }
+                            />
+                            <MenuLink
+                                active={ isActive(SETS_ROUTE, true) }
+                                route={ SETS_ROUTE }
+                                title="Sets"
+                                show={ this.props.source.sets.length !== 0 }
+                            />
+                            <MenuLink
+                                active={ isActive(BIBLIOGRAPHY_ROUTE, true) }
+                                route={ BIBLIOGRAPHY_ROUTE }
+                                title="Bibliography"
+                                show={ this.props.source.bibliography.length !== 0 }
+                            />
+                            <MenuLink
+                                active={ isActive(COMMENTARY_ROUTE, true) }
+                                route={ COMMENTARY_ROUTE }
+                                title="Commentary"
+                                show={ true }
+                            />
+                            <MenuLink
+                                active={ isActive(CREDITS_ROUTE, true) }
+                                route={ CREDITS_ROUTE }
+                                title="Credits"
+                                show={ false }
+                            />
+                        </ul>
+                        </div>
+                    </div>
                 </div>
-                <div className="row source-data">
-                    { this.props.children }
-                </div>
+                { this.props.children }
             </div>
         );
     }

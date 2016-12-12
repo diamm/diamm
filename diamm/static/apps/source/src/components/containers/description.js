@@ -250,14 +250,13 @@ export const Notes = ({notes}) =>
         return null;
 
     return (
-        <div>
+        <div className="content notes">
             { notes.map( (note, idx) => {
                 return (
-                    <div key={ idx }>
-                        <h4>{ note.note_type }</h4>
+                    <section key={ idx }>
+                        <h5>{ note.note_type }</h5>
                         <ReactMarkdown source={ note.note } />
-                        <hr />
-                    </div>
+                    </section>
                 );
             })}
         </div>
@@ -270,11 +269,40 @@ export const CoverImage = ({show, info}) =>
         return null;
 
     return (
-        <figure className="source-cover-image">
-            <Link to={ IMAGES_ROUTE }>
-                <img src={ `${info.url}/full/350,/0/default.jpg` } />
-            </Link>
-            <figcaption>{ info.label }</figcaption>
+        <figure className="card">
+            <div className="card-image">
+                <Link to={ {pathname: IMAGES_ROUTE, query: {p: info.label}} }>
+                    <img src={ `${info.url}/full/350,/0/default.jpg` } />
+                </Link>
+            </div>
+            <div className="card-content">
+                <p className="title is-5">{ info.label }</p>
+            </div>
         </figure>
+    );
+};
+
+export const Contents = ({numInventoried, numComposers, uninventoried}) =>
+{
+    if (!numInventoried && !numComposers && !uninventoried)
+        return null;
+
+    let nums;
+    if (numInventoried && numComposers)
+    {
+        nums = <span>{ numInventoried } pieces from { numComposers } composers.</span>
+    }
+    else if (uninventoried)
+    {
+        nums = <span>Contains works from { uninventoried } composers.</span>
+    }
+
+    return (
+        <tr>
+            <th>Contents</th>
+            <td>
+                { nums }
+            </td>
+        </tr>
     );
 };

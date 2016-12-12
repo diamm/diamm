@@ -6,12 +6,6 @@ from diamm.models.data.composition import Composition
 from diamm.serializers.website.person import PersonDetailSerializer
 
 
-# class PersonList(generics.ListAPIView):
-#     template_name = "website/person/person_list.jinja2"
-#     queryset = Person.objects.all()
-#     serializer_class = PersonListSerializer
-#
-
 class PersonDetail(generics.RetrieveAPIView):
     template_name = "website/person/person_detail.jinja2"
     serializer_class = PersonDetailSerializer
@@ -25,6 +19,8 @@ class PersonDetail(generics.RetrieveAPIView):
         return queryset
 
 
+# Since the old DIAMM IDs have been replaced with new ones, this
+# call will handle redirections to the new records.
 def legacy_composer_redirect(request, legacy_id):
     legacy_lookup = "legacy_composer.{0}".format(legacy_id)
     person = Person.objects.get(legacy_id=legacy_lookup)

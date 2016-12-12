@@ -7,7 +7,7 @@ class PageData extends React.Component
     {
         return (
             <div>
-                Folio { this.props.activeCanvasTitle }
+                Folio { this.props.activeCanvasLabel }
             </div>
         )
     }
@@ -16,7 +16,7 @@ class PageData extends React.Component
 function mapStateToProps (state)
 {
     return {
-        activeCanvasTitle: state.image_view.activeCanvasTitle
+        activeCanvasLabel: state.image_view.activeCanvasLabel
     }
 }
 

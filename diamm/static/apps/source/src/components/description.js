@@ -11,8 +11,13 @@ import {
     Links,
     Provenance,
     Notes,
-    CoverImage
+    CoverImage,
+    Contents
 } from "./containers/description";
+import ProblemReport from "./problem_report";
+import {
+    openProblemReport
+} from "../actions/problem_report";
 
 
 class Description extends React.Component
@@ -22,8 +27,8 @@ class Description extends React.Component
         const { archive } = this.props;
 
         return (
-            <div className="row">
-                <div className="eleven columns source-description">
+            <div className="columns">
+                <div className="column is-three-quarters">
                     <table className="source-details">
                         <tbody>
                         <tr>
@@ -50,12 +55,30 @@ class Description extends React.Component
                         <Relationships relationships={ this.props.relationships } />
                         <Links links={ this.props.links } />
                         <Provenance provenance={ this.props.provenance } />
+                        <Contents
+                            numInventoried={ this.props.inventory.length }
+                            numComposers={ this.props.composers.length }
+                            uninventoried={ this.props.uninventoried.length } />
                         </tbody>
                     </table>
 
                     <Notes notes={ this.props.notes } />
+                    <div className="problem-report">
+                        <div
+                            className="button"
+                            onClick={ () => this.props.openProblemReport() }
+                        >
+                            Report a problem
+                        </div>
+                    </div>
+                    { this.props.userIsAuthenticated && this.props.problemReportVisible &&
+                    <ProblemReport for={ this.props.display_name }
+                                   type={ "source" }
+                                   pk={ this.props.pk }
+                                   username={ this.props.username }
+                    /> }
                 </div>
-                <div className="five columns">
+                <div className="column">
                     <CoverImage
                         show={ this.props.cover_image_info && this.props.has_images && this.props.public_images }
                         info={ this.props.cover_image_info }
@@ -69,6 +92,7 @@ class Description extends React.Component
 function mapStateToProps (state)
 {
     return {
+        display_name: state.source.display_name,
         shelfmark: state.source.shelfmark,
         name: state.source.name,
         archive: state.source.archive,
@@ -83,8 +107,19 @@ function mapStateToProps (state)
         links: state.source.links,
         provenance: state.source.provenance,
         notes: state.source.notes,
-        cover_image_info: state.source.cover_image_info
+        cover_image_info: state.source.cover_image_info,
+        uninventoried: state.source.uninventoried,
+        inventory: state.source.inventory,
+        composers: state.source.composer_inventory,
+        source_type: state.source.source_type,
+        date_statement: state.source.date_statement,
+        type: state.source.type,
+        pk: state.source.pk,
+
+        problemReportVisible: state.problem_report.visible,
+        userIsAuthenticated: state.user.isAuthenticated,
+        username: state.user.username
     }
 }
 
-export default connect(mapStateToProps)(Description);
+export default connect(mapStateToProps, { openProblemReport })(Description);

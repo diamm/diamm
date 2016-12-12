@@ -5,31 +5,41 @@
 {% endblock %}
 
 {% block body %}
-    <div class="row">
-        <div class="sixteen columns">
-            <h1>{{ content.title }}</h1>
-            <h2>Composers</h2>
-            <ul>
-            {% for composer in content.composers %}
-                <li>
+    <div class="columns">
+        <div class="column">
+            <h1 class="title is-2">{{ content.title }}</h1>
+            <h3>
+                {% for composer in content.composers %}
                     <a href="{{ composer.url }}">{{ composer.full_name }} </a>
                     {% if composer.uncertain %}
                         (uncertain)
                     {% endif %}
-                </li>
-            {% endfor %}
-            </ul>
-            <h2>Appears in</h2>
-            <ul>
-            {% for source in content.sources %}
-                <li class="image-source-list">
-                    {% if source.has_images and source.public_images %}
-                        <i class="fa fa-picture-o" aria-hidden="true"></i>
-                    {% endif %}
-                    <a href="{{ source.url }}">{{ source.display_name }}</a>
-                </li>
-            {% endfor %}
-            </ul>
+                {% endfor %}
+            </h3>
+        </div>
+    </div>
+    <div class="columns">
+        <div class="column">
+            <h3 class="title is-3">Appears in</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for source in content.sources %}
+                    <tr>
+                        <td>
+                            {% if source.has_images and source.public_images %}
+                                <i class="fa fa-picture-o" aria-hidden="true"></i>
+                            {% endif %}
+                            <a href="{{ source.url }}">{{ source.display_name }}</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 {% endblock %}

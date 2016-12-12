@@ -1,10 +1,10 @@
 from diamm.models.diamm_user import CustomUserModel
-from diamm.models.site.cover_image import CoverImage
-from diamm.models.site.story import Story
-from diamm.models.site.tag import Tag
 from diamm.models.site.problem_report import ProblemReport
-from diamm.models.site.aboutpages import AboutPages
 from diamm.models.site.commentary import Commentary
+from diamm.models.site.content_page import ContentPage
+from diamm.models.site.news_page import NewsPage
+from diamm.models.site.news_index import NewsIndexPage
+from diamm.models.site.home_page import HomePage
 
 from diamm.models.migrate.legacy_source import LegacySource
 from diamm.models.migrate.legacy_archive import LegacyArchive

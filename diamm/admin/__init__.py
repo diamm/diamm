@@ -1,9 +1,6 @@
 from diamm.admin.diamm_user import UserAdmin
-from diamm.admin.site.story import StoryAdmin
-from diamm.admin.site.tag import TagAdmin
-from diamm.admin.site.cover_image import CoverImageAdmin
-from diamm.admin.site.contribution import ContributionAdmin
-from diamm.admin.site.aboutpages import AboutPagesAdmin
+from diamm.admin.site.problem_report import ProblemReportAdmin
+from diamm.admin.site.commentary import CommentaryAdmin
 
 from diamm.admin.data.source import SourceAdmin
 from diamm.admin.data.source_catalogue_entry import SourceCatalogueEntryAdmin

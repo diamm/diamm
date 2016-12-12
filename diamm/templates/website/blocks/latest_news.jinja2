@@ -1,0 +1,6 @@
+{% for article in news %}
+    <h3 class="title is-5">
+        <a href="{{ article.slug }}">{{ article.title }}</a>
+    </h3>
+    {{ article.summary | richtext }}
+{% endfor %}

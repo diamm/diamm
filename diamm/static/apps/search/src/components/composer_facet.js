@@ -1,48 +1,29 @@
 import React from "react";
 import { connect } from "react-redux";
 import AutocompleteComponent from "./autocomplete_component";
+import Facet from "./facets";
 import {
     updateCurrentComposerValue,
-    performComposerSearch
+    performComposerSearch,
+    addComposerToActive,
+    clearActiveComposers,
+    removeComposerFromActive
 } from "../actions/facets";
 import _ from "lodash";
 
 
-class ComposerAutocompleteComponent extends React.Component
-{
-    componentDidMount ()
-    {
-        let params = new URLSearchParams(window.location.search);
-        let composer = params.get('composers_ss') || "";
-
-        this.props.updateCurrentComposerValue(composer);
-        this.refs.composer_autocomplete.refs.input.value = composer;
-        // this.refs.composer_autocomplete.index.value = composer;
-    }
-
-    render ()
-    {
-        return (
-            <Autocomplete
-                value={ this.props.currentValue }
-                items={ this.props.facets }
-                getItemValue={ (item) => item[0] }
-                shouldItemRender={ (state, value) => {
-                    return state[0].toLowerCase().indexOf(value.toLowerCase()) !== -1
-                }}
-                onChange={ (event, value) => this.props.updateCurrentValue(value) }
-                onSelect={ (value) => this.props.selectCurrentValue(value) }
-                renderItem={ (item, isHighlighted) =>
-                {
-                    return (<div className={ isHighlighted ? "highlighted" : ""}>{ item[0] }</div>);
-                }}
-                inputProps={ {placeholder: "Search composers"} }
-                wrapperStyle={ {} }
-                ref="composer_autocomplete"
-            />
-        );
-    }
-}
+// class ComposerAutocompleteComponent extends React.Component
+// {
+//     componentDidMount ()
+//     {
+//         let params = new URLSearchParams(window.location.search);
+//         let composer = params.get('composers_ss') || "";
+//
+//         this.props.updateCurrentComposerValue(composer);
+//         this.refs.composer_autocomplete.refs.input.value = composer;
+//         // this.refs.composer_autocomplete.index.value = composer;
+//     }
+// }
 
 
 class ComposerFacet extends React.Component
@@ -54,8 +35,32 @@ class ComposerFacet extends React.Component
 
     selectCurrentValue (value)
     {
-        this.props.updateCurrentComposerValue(value);
-        this.props.performComposerSearch(value);
+        // reset the state key to a blank value.
+        this.props.updateCurrentComposerValue("");
+        // shift the selected value to the 'active' keys
+        this.props.addComposerToActive(value);
+        // fire off a search.
+        this.props.performComposerSearch();
+    }
+
+    removeComposerFromActive (value)
+    {
+        this.props.removeComposerFromActive(value);
+        this.props.performComposerSearch();
+    }
+
+    resetFacet ()
+    {
+        this.props.clearActiveComposers();
+    }
+
+    _showControls ()
+    {
+        return (
+            <div className="facet-show-control" onClick={ () => this.resetFacet() }>
+                Clear all
+            </div>
+        );
     }
 
     render ()
@@ -66,11 +71,11 @@ class ComposerFacet extends React.Component
         let facets = _.chunk(this.props.composersFacets, 2);
 
         return (
-            <div className="facet-block">
-                <div className="facet-title">
-                    <h4>Composers</h4>
-                </div>
-                <div className="facet-body">
+            <div>
+                <Facet
+                    title="Composers"
+                    controls={ this._showControls() }
+                >
                     <AutocompleteComponent
                         value={ this.props.currentValue }
                         items={ facets }
@@ -78,6 +83,20 @@ class ComposerFacet extends React.Component
                         selectCurrentValue={ this.selectCurrentValue.bind(this) }
                         placeholder={ "Search composers" }
                     />
+                </Facet>
+                <div className="selected-composers">
+                    { this.props.activeValues.map( (c, idx) =>
+                    {
+                        return (
+                            <div className="selected-autocomplete-facet" key={ idx }>
+                                <span>{ c }</span>
+                                <i
+                                    className="fa fa-close"
+                                    onClick={ () => this.removeComposerFromActive(c) }
+                                />
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
         );
@@ -88,8 +107,17 @@ function mapStateToProps (state)
 {
     return {
         currentValue: state.currentFacets.composers.facetValue,
+        activeValues: state.currentFacets.composers.active,
         composersFacets: state.results.facets.composers
     }
 }
 
-export default connect(mapStateToProps, { updateCurrentComposerValue, performComposerSearch })(ComposerFacet);
+const mapDispatchToProps = {
+    updateCurrentComposerValue,
+    performComposerSearch,
+    addComposerToActive,
+    clearActiveComposers,
+    removeComposerFromActive
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ComposerFacet);

@@ -65,7 +65,6 @@ class CompositionDetailSerializer(ContextSerializer):
     pk = serpy.IntField()
     url = serpy.MethodField()
     title = serpy.StrField()
-    contributors = serpy.MethodField()
 
     def get_url(self, obj):
         return reverse('composition-detail',
@@ -88,8 +87,3 @@ class CompositionDetailSerializer(ContextSerializer):
                     for o in obj.composers.all()]
         else:
             return None
-
-    def get_contributors(self, obj):
-        if obj.contributions.count() > 0:
-            return CompositionContributionSerializer(obj.contributions.filter(completed=True),
-                                                context={"request": self.context['request']}, many=True).data

@@ -7,7 +7,7 @@ import {
 const INITIAL_STATE = {
     activeRanges: null,
     activeCanvas: null,
-    activeCanvasTitle: null,
+    activeCanvasLabel: null,
     ranges: null
 };
 
@@ -20,7 +20,7 @@ export default function imageViewReducer (state=INITIAL_STATE, action)
         case (IIIF_SET_CURRENTLY_ACTIVE_CANVAS):
             return { ...state, "activeCanvas": action.canvas };
         case (IIIF_SET_CURRENTLY_ACTIVE_CANVAS_TITLE):
-            return { ...state, "activeCanvasTitle": action.title };
+            return { ...state, "activeCanvasLabel": action.title };
         case (IIIF_SET_COMPUTED_RANGE_LOOKUP):
             return { ...state, "ranges": action.ranges };
         default:

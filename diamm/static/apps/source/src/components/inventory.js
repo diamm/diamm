@@ -8,19 +8,36 @@ class Inventory extends React.Component
     render ()
     {
         return (
-            <div className="row">
-                <div className="sixteen columns source-inventory">
-                    <InventoryMenu
-                        source_order={ this.props.source_order }
-                        composer_order={ this.props.composer_order }
-                        uninventoried={ this.props.uninventoried }
-                    />
-                    {/* Only mount this component if the type is set on quicklook.
-                            This lets the QuickLook component's lifecycle method control
-                            the overflow styles for body, since the component will
-                            unmount when the quicklook prop is empty. */}
-                    { this.props.quicklook.type &&
-                        <QuickLook content={ this.props.quicklook }/> }
+            <div>
+                {/* Only mount this component if the type is set on quicklook.
+                 This lets the QuickLook component's lifecycle method control
+                 the overflow styles for body, since the component will
+                 unmount when the quicklook prop is empty. */}
+                { this.props.quicklook.type &&
+                <QuickLook content={ this.props.quicklook }/> }
+
+                <div className="columns">
+                    <div className="column">
+                        <nav className="level">
+                            <div className="level-left">
+                                <div className="level-item">
+                                    <InventoryMenu
+                                        source_order={ this.props.source_order }
+                                        composer_order={ this.props.composer_order }
+                                        uninventoried={ this.props.uninventoried }
+                                    />
+                                </div>
+                            </div>
+                            <div className="level-right">
+                                <div className="level-item">Legend: </div>
+                                <div className="level-item"><i className="fa fa-binoculars fa-border quicklook-legend" /> {" Quicklook"}</div>
+                                <div className="level-item"><i className="fa fa-image fa-border quicklook-legend" /> { " View Image" }</div>
+                                <div className="level-item"><i className="fa fa-chevron-circle-down fa-border quicklook-legend"/> { " Item Details"} </div>
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+                <div className="columns">
                     { this.props.children }
                 </div>
             </div>

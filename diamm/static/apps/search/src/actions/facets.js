@@ -6,7 +6,10 @@ import {
     UPDATE_CURRENT_QUERY_TYPE,
     UPDATE_ARCHIVE_LOCATION_FACET,
     RESET_ARCHIVE_LOCATION_FACET,
-    UPDATE_CURRENT_COMPOSER_VALUE
+    UPDATE_CURRENT_COMPOSER_VALUE,
+    ADD_COMPOSER_TO_ACTIVE,
+    CLEAR_ACTIVE_COMPOSERS,
+    REMOVE_COMPOSER_FROM_ACTIVE
 } from "../constants";
 
 
@@ -18,12 +21,16 @@ export function updateCurrentComposerValue (value)
     }
 }
 
-export function performComposerSearch (value)
+export function performComposerSearch ()
 {
-    return (dispatch) =>
+    return (dispatch, getState) =>
     {
+        let currentState = getState();
+        let activeComposers = currentState.currentFacets.composers.active;
+
         let params = new URLSearchParams(window.location.search);
-        params.set('composers_ss', value);
+        params.delete('composer');
+        activeComposers.map( (p) => params.append('composer', p) );
         let qstring = params.toString();
 
         return dispatch(
@@ -112,4 +119,38 @@ export function resetArchiveLocationFacet ()
             type: RESET_ARCHIVE_LOCATION_FACET
         })
     };
+}
+
+export function addComposerToActive (value)
+{
+    return {
+        type: ADD_COMPOSER_TO_ACTIVE,
+        value
+    }
+}
+
+export function removeComposerFromActive (value)
+{
+    return {
+        type: REMOVE_COMPOSER_FROM_ACTIVE,
+        value
+    }
+}
+
+export function clearActiveComposers ()
+{
+    return (dispatch) =>
+    {
+        let params = new URLSearchParams(window.location.search);
+        params.delete('composer');
+        let qstring = params.toString();
+
+        dispatch(
+            performSearch(qstring)
+        );
+
+        dispatch({
+            type: CLEAR_ACTIVE_COMPOSERS
+        });
+    }
 }

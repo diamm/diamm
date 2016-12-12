@@ -6,12 +6,16 @@ export const SourceResultType = ({result}) =>
         <div className="search-result">
             <h3>
                 <a href={ result.url }>{ result.display_name_s }</a>
-                <span className="result-type"> Source</span>
+                <span className="result-type"> Source { result.public_images_b && <i className="fa fa-file-text-o" />}</span>
             </h3>
             <div>
                 <div>{ result.archive_city_s }, { result.archive_s }</div>
+                <div>{ result.source_type_s }{ result.date_statement_s ? `, ${result.date_statement_s}` : ""}{ result.surface_type_s ? `, ${result.surface_type_s}` : ""}.</div>
+                <div>
+                    { result.number_of_composers_i ? `${result.number_of_composers_i} composers inventoried. ` : " " }
+                    { result.number_of_compositions_i ? `Contains ${result.number_of_compositions_i} pieces. ` : " " }
+                </div>
             </div>
-
         </div>
     );
 };
@@ -49,11 +53,7 @@ export const CompositionResultType = ({result}) =>
                 <span className="result-type"> Composition</span>
             </h3>
             <div>
-                <div>{ result.composers_ss && result.composers_ss.map( (c, i) =>{
-                    return (
-                        <span key={ i }>{ c }</span>
-                    )
-                    })}
+                <div>{ result.composers_ssni && <Composers composers={ result.composers_ssni } /> }
                 </div>
             </div>
         </div>
@@ -85,4 +85,24 @@ export const SetResultType = ({result}) =>
             </h3>
         </div>
     );
-}
+};
+
+/*
+*
+* Helper methods
+**/
+const Composers = ({composers}) =>
+{
+    return (
+        <div>
+            { composers.map( (composer, idx) => {
+                let [ pk, full_name, uncertain ] = composer.split("|");
+                return (
+                    <span key={ idx } className="composer-names">
+                        { full_name } { uncertain === "True" ? "(?) " : "" }
+                    </span>
+                );
+            })}
+        </div>
+    );
+};

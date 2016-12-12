@@ -5,6 +5,8 @@ var sharedJQueryPath = require.resolve('jquery');
 
 module.exports = {
     entry: [
+        'babel-polyfill',
+        'whatwg-fetch',
         './src/index.js'
     ],
     output: {

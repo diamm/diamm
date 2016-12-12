@@ -1,9 +1,11 @@
 from rest_framework import views
 from rest_framework.response import Response
-from diamm.models.site.story import Story
 from diamm.models.data.source import Source
 from diamm.models.data.archive import Archive
-from diamm.serializers.website.story import StorySerializer
+from diamm.models.data.image import Image
+from diamm.models.data.composition import Composition
+from diamm.models.data.person import Person
+from diamm.models.data.organization import Organization
 
 
 class HomeView(views.APIView):
@@ -12,20 +14,21 @@ class HomeView(views.APIView):
     def _counts(self):
         num_sources = Source.objects.count()
         num_archives = Archive.objects.count()
+        num_images = Image.objects.count()
+        num_compositions = Composition.objects.count()
+        num_people = Person.objects.count()
+        num_organizations = Organization.objects.count()
 
         return {
             'num_sources': num_sources,
-            'num_archives': num_archives
+            'num_archives': num_archives,
+            'num_images': num_images,
+            'num_compositions': num_compositions,
+            'num_people': num_people,
+            'num_organizations': num_organizations
         }
 
-
     def get(self, request, *args, **kwargs):
-        news_stories = Story.objects.order_by('created')[:3]
-        news_stories_data = StorySerializer(news_stories,
-                                            context={'request': request},
-                                            many=True).data
-
         return Response({
-            'stories': news_stories_data,
             'counts': self._counts()
         })

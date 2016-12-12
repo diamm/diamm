@@ -10,14 +10,12 @@ class ResultCount extends React.Component
     render ()
     {
         return (
-            <div>
+            <div className="search-results-info">
                 <div className="search-result-count">
                     { this.props.count } results found.
                 </div>
-                <div className="search-result-clear">
-                    <a onClick={ () => { this.props.clearAll() } }>
-                        Clear Search
-                    </a>
+                <div onClick={ () => { this.props.clearAll() } } className="search-result-clear">
+                    Clear Search
                 </div>
             </div>
         );

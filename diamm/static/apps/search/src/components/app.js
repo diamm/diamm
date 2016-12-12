@@ -5,11 +5,6 @@ import {
     performInitialPageLoadSearch,
     performQueryTermSearch
 } from "../actions/index";
-import {
-    performSearch
-} from "../actions/search_api";
-// import URLSearchParams from "url-search-params";
-// import "babel-polyfill";
 
 import SearchBar from "./search_bar";
 import SearchTypeFilter from "./search_type_filter";
@@ -46,16 +41,14 @@ class App extends React.Component
                     onSearchTermChange={ searchTermChange }
                 />
                 <SearchTypeFilter />
-                <div className="container">
-                    <div className="row">
-                        <div className="three columns">
-                            <SideBar />
-                        </div>
-                        <div className="thirteen columns">
-                            <Results
-                                results={ this.props.results }
-                            />
-                        </div>
+                <div className="columns container is-fluid">
+                    <div className="column is-3">
+                        <SideBar />
+                    </div>
+                    <div className="column is-9">
+                        <Results
+                            results={ this.props.results }
+                        />
                     </div>
                 </div>
             </div>

@@ -1,47 +1,54 @@
 {% extends "base.jinja2" %}
 
 {% block body %}
-    <div class="row">
-        <div class="sixteen columns">
+    <div class="columns">
+        <div class="column">
             <h1>{{ content.name }}</h1>
             {% if content.location %}
-                <h2><a href="{{ content.location.url }}">{{ content.location.name }}</a></h2>
+                <h2>
+                    <a href="{{ content.location.url }}">{{ content.location.name }}</a>
+                </h2>
             {% endif %}
-
+        </div>
+    </div>
+    <div class="columns">
+        <div class="column">
             {% if content.source_provenance %}
-                <h3>Source Provenance Entries</h3>
+                <h3>Provenance Entries</h3>
                 <ul>
-                {% for entry in content.source_provenance %}
-                    <li><a href="{{ entry.url }}">{{ entry.source }}</a></li>
-                {% endfor %}
+                    {% for entry in content.source_provenance %}
+                        <li><a href="{{ entry.url }}">{{ entry.source }}</a></li>
+                    {% endfor %}
                 </ul>
             {% endif %}
-
+        </div>
+        <div class="column">
             {% if content.related_sources %}
                 <h3>Related Sources</h3>
                 <ul>
-                {% for entry in content.related_sources %}
-                    <li>
-                        {{ "?" if entry.uncertain else "" }}
-                        <a href="{{ entry.url }}">
-                            {{ entry.source }}
-                        </a> ({{ entry.relationship }})
-                    </li>
-                {% endfor %}
+                    {% for entry in content.related_sources %}
+                        <li>
+                            {{ "?" if entry.uncertain else "" }}
+                            <a href="{{ entry.url }}">
+                                {{ entry.source }}
+                            </a> ({{ entry.relationship }})
+                        </li>
+                    {% endfor %}
                 </ul>
             {% endif %}
-
+        </div>
+        <div class="column">
             {% if content.copied_sources %}
                 <h3>Copied Sources</h3>
                 <ul>
-                {% for entry in content.copied_sources %}
-                    <li>
-                        {{ "?" if entry.uncertain else "" }}
-                        <a href="{{ entry.url }}">
-                            {{ entry.source }}
-                        </a> ({{ entry.type }})
-                    </li>
-                {% endfor %}
+                    {% for entry in content.copied_sources %}
+                        <li>
+                            {{ "?" if entry.uncertain else "" }}
+                            <a href="{{ entry.url }}">
+                                {{ entry.source }}
+                            </a> ({{ entry.type }})
+                        </li>
+                    {% endfor %}
                 </ul>
             {% endif %}
         </div>

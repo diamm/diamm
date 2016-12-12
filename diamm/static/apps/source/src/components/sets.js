@@ -11,12 +11,13 @@ const Sources = ({sources}) =>
                     src = `${source.cover_image}full/100,/0/default.jpg`;
 
                 return (
-                    <figure key={ idx } className="source-set-source">
+                    <div key={ idx } className="box">
                         <a href={ source.url }><img src={ src } /></a>
+
                         <figcaption>
                             <a href={ source.url }>{ source.display_name_s }</a>
                         </figcaption>
-                    </figure>
+                    </div>
                 );
             })}
         </div>
@@ -29,8 +30,8 @@ class Sets extends React.Component
     render ()
     {
         return (
-            <div className="row">
-                <div className="sixteen columns source-sets">
+            <div className="columns">
+                <div className="column source-sets">
                     { this.props.sets.map( (set, idx) =>{
                         return (
                             <div key={ idx }>

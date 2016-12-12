@@ -19,7 +19,6 @@ class SearchTypeFilter extends React.Component
 
     handleTypeClick (type)
     {
-        console.log('type click');
         this.props.performTypeFacetQuery(type);
         this.props.setActiveTypeFacet(type);
     }
@@ -30,9 +29,14 @@ class SearchTypeFilter extends React.Component
         sortedKeys.sort();
 
         return (
-            <div className="row type-filter">
+            <div className="columns type-filter">
                 <div className="type-filter-label">
-                    Show only:
+                    Filter:
+                </div>
+                <div className={ ("all" === this.props.currentQueryType) ? "show-all active" : "show-all" }>
+                    <a onClick={ () => this.handleTypeClick("all") }>
+                        Show All
+                    </a>
                 </div>
                 <ul>
                 { sortedKeys.map( (typ, idx) =>
@@ -47,11 +51,6 @@ class SearchTypeFilter extends React.Component
                     );
                 })}
                 </ul>
-                <div className={ ("all" === this.props.currentQueryType) ? "show-all active" : "show-all" }>
-                    <a onClick={ () => this.handleTypeClick("all") }>
-                        Show All
-                    </a>
-                </div>
             </div>
         )
     }

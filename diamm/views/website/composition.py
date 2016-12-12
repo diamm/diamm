@@ -1,15 +1,8 @@
 from rest_framework import generics
 from rest_framework import renderers
 from diamm.models.data.composition import Composition
-from diamm.serializers.website.composition import CompositionListSerializer, CompositionDetailSerializer
+from diamm.serializers.website.composition import CompositionDetailSerializer
 from diamm.renderers.html_renderer import HTMLRenderer
-
-
-class CompositionList(generics.ListAPIView):
-    template_name = "website/composition/composition_list.jinja2"
-    renderer_classes = (HTMLRenderer, renderers.JSONRenderer)
-    serializer_class = CompositionListSerializer
-    queryset = Composition.objects.all()
 
 
 class CompositionDetail(generics.RetrieveAPIView):

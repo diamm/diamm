@@ -54,6 +54,22 @@ INSTALLED_APPS = [
     'django_jinja.contrib._humanize',
     'pagedown',
     'debug_toolbar',
+
+    # wagtail config for CMS
+    'wagtail.wagtailforms',
+    'wagtail.wagtailredirects',
+    'wagtail.wagtailembeds',
+    'wagtail.wagtailsites',
+    'wagtail.wagtailusers',
+    'wagtail.wagtailsnippets',
+    'wagtail.wagtaildocs',
+    'wagtail.wagtailimages',
+    'wagtail.wagtailsearch',
+    'wagtail.wagtailadmin',
+    'wagtail.wagtailcore',
+
+    'modelcluster',
+    'taggit'
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -67,6 +83,8 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'wagtail.wagtailcore.middleware.SiteMiddleware',
+    'wagtail.wagtailredirects.middleware.RedirectMiddleware'
 ]
 
 ROOT_URLCONF = 'diamm.urls'
@@ -88,6 +106,11 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
+            ],
+            "extensions": DEFAULT_EXTENSIONS + [
+                'wagtail.wagtailcore.jinja2tags.core',
+                'wagtail.wagtailadmin.jinja2tags.userbar',
+                'wagtail.wagtailimages.jinja2tags.images',
             ]
         }
     },
@@ -266,6 +289,10 @@ MAIL = {
     """
 }
 
+ACCOUNT_ACTIVATION_DAYS = 7
+REGISTRATION_OPEN = True
+REGISTRATION_SALT = "afs;lkasjdfi8&(*&(askjdfhalskdfls79a87fa68asdfashh"
+WAGTAIL_SITE_NAME = 'Digital Image Archive of Medieval Music'
 
 if DEBUG:
     SILENCED_SYSTEM_CHECKS = []
