@@ -50,7 +50,7 @@ class CustomUserModel(AbstractBaseUser, PermissionsMixin):
         See: https://docs.djangoproject.com/en/dev/topics/auth/customizing/#auth-custom-user
     """
     class Meta:
-        app_label = "auth"
+        app_label = "diamm_site"
         verbose_name = "User"
 
     email = models.EmailField(

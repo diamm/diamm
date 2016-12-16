@@ -139,7 +139,7 @@ DATABASE_ROUTERS = ['diamm.router.LegacyRouter']
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
-AUTH_USER_MODEL = "auth.CustomUserModel"
+AUTH_USER_MODEL = "diamm_site.CustomUserModel"
 LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = "/account/"
 
