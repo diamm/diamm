@@ -1,6 +1,5 @@
 import requests
 import ujson
-import uuid
 from django.views.generic.edit import FormView
 from django.http.response import HttpResponse
 from django.core.mail import send_mail
