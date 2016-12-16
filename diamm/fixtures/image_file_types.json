@@ -2,67 +2,67 @@
   {
     "model": "diamm_data.ImageType",
     "id": 1,
-    "fields": {"name": "Primary Image"}
+    "fields": {"name": "Primary Image", "id": 1}
   },
   {
     "model": "diamm_data.ImageType",
     "id": 2,
-    "fields": {"name": "Colour UV"}
+    "fields": {"name": "Colour UV", "id": 2}
   },
   {
     "model": "diamm_data.ImageType",
     "id": 3,
-    "fields": {"name": "Watermark"}
+    "fields": {"name": "Watermark", "id": 3}
   },
   {
     "model": "diamm_data.ImageType",
     "id": 4,
-    "fields": {"name": "Detail"}
+    "fields": {"name": "Detail", "id": 4}
   },
   {
     "model": "diamm_data.ImageType",
     "id": 5,
-    "fields": {"name": "Grayscale UV"}
+    "fields": {"name": "Grayscale UV", "id": 5}
   },
   {
     "model": "diamm_data.ImageType",
     "id": 6,
-    "fields": {"name": "Digitally Enhanced"}
+    "fields": {"name": "Digitally Enhanced", "id": 6}
   },
   {
     "model": "diamm_data.ImageType",
     "id": 7,
-    "fields": {"name": "Levels adjusted"}
+    "fields": {"name": "Levels adjusted", "id": 7}
   },
   {
     "model": "diamm_data.ImageType",
     "id": 8,
-    "fields": {"name": "Digitally Restored"}
+    "fields": {"name": "Digitally Restored", "id": 8}
   },
   {
     "model": "diamm_data.ImageType",
     "id": 9,
-    "fields": {"name": "Alternate Exposure"}
+    "fields": {"name": "Alternate Exposure", "id": 9}
   },
   {
     "model": "diamm_data.ImageType",
     "id": 10,
-    "fields": {"name": "Infra-red"}
+    "fields": {"name": "Infra-red", "id": 10}
   },
   {
     "model": "diamm_data.ImageType",
     "id": 11,
-    "fields": {"name": "Alternate Focus"}
+    "fields": {"name": "Alternate Focus", "id": 11}
   },
   {
     "model": "diamm_data.ImageType",
     "id": 12,
-    "fields": {"name": "Alternate Shot"}
+    "fields": {"name": "Alternate Shot", "id": 12}
   },
   {
     "model": "diamm_data.ImageType",
     "id": 13,
-    "fields": {"name": "Raking Light"}
+    "fields": {"name": "Raking Light", "id": 13}
   }
 
 ]
