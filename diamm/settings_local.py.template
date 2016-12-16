@@ -9,6 +9,7 @@ MEDIA_ROOT = os.path.join(
 STATIC_ROOT = "/srv/www/{0}/static".format(HOSTNAME)
 LEGACY_IMAGE_DIR = ""
 IMAGE_DIR = ''
+DIAMM_IMAGE_KEY = ""
 
 GOOGLE_RECAPTCHA_SECRET = ""
 GOOGLE_RECAPTCHA_ADDRESS = ""

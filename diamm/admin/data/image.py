@@ -1,5 +1,9 @@
 from django import forms
 from django.contrib import admin
+from django.conf import settings
+import requests
+import ujson
+from urllib.parse import urljoin
 from diamm.models.data.image import Image
 from diamm.models.data.image_note import ImageNote
 from diamm.models.data.page import Page
@@ -79,6 +83,24 @@ class ImageNoteInline(admin.TabularInline):
     extra = 0
 
 
+def refetch_iiif_info(modeladmin, request, queryset):
+    for img in queryset:
+        location = img.location
+        url = urljoin(location + "/", "info.json")
+        print(url)
+        r = requests.get(url, headers={
+            "referer": "https://{0}".format(settings.HOSTNAME),
+            "X-DIAMM": settings.DIAMM_IMAGE_KEY
+        })
+        print(r.status_code)
+        if 200 <= r.status_code < 300:
+            j = r.json()
+            img.iiif_response_cache = ujson.dumps(j)
+            img.save()
+
+refetch_iiif_info.short_description = "Re-Fetch IIIF Image Info"
+
+
 @admin.register(Image)
 class ImageAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     form = ImageAdminForm
@@ -87,6 +109,7 @@ class ImageAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     # filter_horizontal = ('items',)
     search_fields = ('legacy_filename',)
     inlines = (ImageNoteInline,)
+    actions = (refetch_iiif_info,)
 
     def get_type(self, obj):
         return "{0}".format(obj.type.name)
