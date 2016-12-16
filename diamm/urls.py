@@ -25,7 +25,6 @@ from django.contrib.auth.views import (
 )
 from diamm.views.auth import CreateAccount
 from registration.backends.hmac.views import ActivationView
-from diamm.views.home import HomeView
 from diamm.views.user import ProfileView, ProfileEditView
 from diamm.views.website.search import SearchView
 from diamm.views.website.set import SetDetail
