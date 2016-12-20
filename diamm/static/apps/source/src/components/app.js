@@ -10,7 +10,8 @@ import {
     SETS_ROUTE,
     BIBLIOGRAPHY_ROUTE,
     CREDITS_ROUTE,
-    COMMENTARY_ROUTE
+    COMMENTARY_ROUTE,
+    COMMENTARY_ROUTE_PRIVATE
 } from "../routes";
 import { connect } from "react-redux";
 
@@ -39,7 +40,7 @@ const ImagesMenuLink = ({authenticated, active, route, title, show=true}) =>
     {
         return (
             <li className="unauthenticated-image-link">
-                Images (<a href={ `/login/?next=${window.location.pathname}` }>Log in to view</a>)
+                <a href={ `/login/?next=${window.location.pathname}` }>Images (Log in to view)</a>
             </li>
         );
     }
@@ -80,7 +81,7 @@ class App extends React.Component
         {
             return (
                 <div className="loading-spinner">
-                    <div className="message">
+                    <div className="spinner-message box">
                         <i className="fa fa-circle-o-notch fa-3x fa-spin" />
                     </div>
                 </div>
@@ -94,8 +95,8 @@ class App extends React.Component
                 <Title />
                 <div className="columns">
                     <div className="column">
-                        <div className="tabs is-boxed is-medium">
-                        <ul>
+                        <div className="tabs is-boxed">
+                        <ul className="source-section-selector">
                             <MenuLink
                                 active={ isActive(ROOT_ROUTE, true) }
                                 route={ ROOT_ROUTE }
@@ -131,7 +132,8 @@ class App extends React.Component
                                 show={ this.props.source.bibliography.length !== 0 }
                             />
                             <MenuLink
-                                active={ isActive(COMMENTARY_ROUTE, true) }
+                                active={ isActive(COMMENTARY_ROUTE, true) ||
+                                         isActive(COMMENTARY_ROUTE_PRIVATE, true) }
                                 route={ COMMENTARY_ROUTE }
                                 title="Commentary"
                                 show={ true }

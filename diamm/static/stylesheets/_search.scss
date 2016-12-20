@@ -69,6 +69,7 @@ $search-input-adjust: $search-font-size + 1rem;
   .search-result {
     width: 100%;
     margin: 0.5rem 0;
+
     h3 {
       margin: 0;
       font-weight: 600;
@@ -82,17 +83,11 @@ $search-input-adjust: $search-font-size + 1rem;
 }
 
 .facet-sidebar {
-  //.search-results-info {
-  //  display: flex;
-  //  align-items: center;
-  //  justify-content: center;
-  //}
-  .search-result-clear {
-    width: 60%;
-    @include button();
+  .search-results-info {
+    display: flex;
+    justify-content: space-between;
   }
   .search-result-count {
-    text-align: center;
     font-weight: 600;
     padding: 0.5rem;
   }

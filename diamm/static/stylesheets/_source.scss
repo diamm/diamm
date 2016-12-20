@@ -1,39 +1,3 @@
-.source-section-selector {
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  box-shadow: 0 4px 6px -6px $diamm-grey;
-  @include small-caps;
-
-  li.active {
-    font-weight: 700;
-  }
-
-  li.unauthenticated-image-link {
-    margin-bottom: 0;
-    display: flex;
-    align-items: flex-start;
-    padding: 0.3rem 0.6rem;
-    a {
-      padding: 0;
-    }
-  }
-
-  li {
-    margin-bottom: 0;
-    a {
-      color: $diamm-red;
-      background: none;
-      padding: 0.3rem 0.6rem;
-      display: flex;
-      align-items: flex-start;
-      &:hover {
-        background-color: lighten($diamm-red, 40%);
-      }
-    }
-  }
-}
-
 .notes {
   section {
     margin-bottom: 1.5rem;
@@ -61,20 +25,6 @@
 }
 
 .source-header {
-  p {
-    margin: 0;
-    padding: 0;
-  }
-  h1, h2 {
-    margin: 0;
-    padding: 0;
-  }
-
-  h2 {
-    font-weight: 400;
-    font-size: 1.3em;
-  }
-
 }
 
 .source-inventory {
@@ -189,9 +139,6 @@
         flex-wrap: wrap;
         margin: 0;
         padding: 0;
-        .title {
-          font-weight: 700;
-        }
         li {
           margin: 0 0.5em 0 0;
         }

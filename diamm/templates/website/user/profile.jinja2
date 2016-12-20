@@ -1,15 +1,50 @@
 {% extends "base.jinja2" %}
 
 {% block body %}
-    <div class="row">
-        <div class="sixteen columns">
-            <h1>Hello {{ content.full_name }}</h1>
+    <div class="columns">
+        <div class="column">
+            <h1 class="title">Hello {{ content.full_name }}</h1>
+            {% if content.affiliation %}
+            <h2 class="subtitle">{{ content.affiliation }}</h2>
+            {% endif %}
+            <div class="powers">
+                {% if content.superuser %}
+                    <span class="tag is-medium is-info">
+                        superuser&nbsp;
+                        <i class="fa fa-superpowers">
+                        </i>
+                    </span>
+                {% endif %}
+                {% if content.staff %}
+                    <span class="tag is-medium is-info">
+                        staff&nbsp;
+                        <i class="fa fa-id-badge">
+                        </i>
+                    </span>
+
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="columns">
+        <div class="column is-one-quarter">
+            <p>
+                <a href="{{ url('logout') }}">Log out</a>
+            </p>
             <p>
                 <a href="{{ url('password-change') }}">Change Password</a>
             </p>
             <p>
                 <a href="{{ url('user-account-edit') }}">Edit Account Details</a>
             </p>
+        </div>
+        <div class="column">
+            <h3 class="title">Recent Comments</h3>
+        </div>
+    </div>
+    <div class="columns">
+        <div class="column">
+            <h3 class="title">Problem reports</h3>
         </div>
     </div>
 {% endblock %}

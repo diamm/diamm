@@ -2,8 +2,6 @@ from diamm.models.site.news_page import NewsPage
 from django_jinja import library
 
 
-print('registering template tags.')
-
 @library.global_function
 @library.render_with("website/blocks/latest_news.jinja2")
 def latest_news():

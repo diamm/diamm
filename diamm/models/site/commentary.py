@@ -10,6 +10,11 @@ class Commentary(models.Model):
         'diamm_data' to reinforce that commentary is different than
         cataloguing data.
     """
+    class Meta:
+        app_label = "diamm_site"
+        ordering = ["created"]
+        verbose_name_plural = "commentaries"
+
     PRIVATE = 0
     PUBLIC = 1
 
@@ -18,13 +23,8 @@ class Commentary(models.Model):
         (PUBLIC, "Public")
     )
 
-    class Meta:
-        app_label = "diamm_site"
-        ordering = ["created"]
-        verbose_name_plural = "commentaries"
-
     comment = models.TextField()
-    author = models.ForeignKey(CustomUserModel)
+    author = models.ForeignKey(CustomUserModel, related_name="commentaries")
     comment_type = models.IntegerField(choices=COMMENT_TYPE_OPTIONS)
 
     limit = models.Q(app_label='diamm_data', model="source") | models.Q(app_label="diamm_data", model="page")

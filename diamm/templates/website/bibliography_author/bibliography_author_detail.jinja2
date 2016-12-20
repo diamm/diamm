@@ -1,12 +1,21 @@
 {% extends "base.jinja2" %}
 
 {% block body %}
-    {{ content.last_name }}, {{ content.first_name }}
-
-    {% for entry in content.bibliography %}
-        <p>
-            {{ entry.entry | safe }}
-            {% if user.is_staff %}<sup><a href="/admin/diamm_data/bibliography/{{ entry.pk }}/change">Edit</a></sup>{% endif %}
-        </p>
-    {% endfor %}
+    <div class="columns">
+        <div class="column">
+            <h2 class="title">
+                {{ content.last_name }}, {{ content.first_name }}
+            </h2>
+        </div>
+    </div>
+    <div class="columns">
+        <div class="column content">
+            {% for entry in content.bibliography %}
+                <p class="bibliography-entry">
+                    {{ entry.entry | safe }}
+                    {% if user.is_staff %}<sup><a href="/admin/diamm_data/bibliography/{{ entry.pk }}/change">Edit</a></sup>{% endif %}
+                </p>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}

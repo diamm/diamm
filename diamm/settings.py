@@ -53,7 +53,7 @@ INSTALLED_APPS = [
     'django_jinja',
     'django_jinja.contrib._humanize',
     'pagedown',
-    'debug_toolbar',
+    # 'debug_toolbar',
 
     # wagtail config for CMS
     'wagtail.wagtailforms',
@@ -82,9 +82,10 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'wagtail.wagtailcore.middleware.SiteMiddleware',
-    'wagtail.wagtailredirects.middleware.RedirectMiddleware'
+    'wagtail.wagtailredirects.middleware.RedirectMiddleware',
 ]
 
 ROOT_URLCONF = 'diamm.urls'
@@ -135,7 +136,7 @@ WSGI_APPLICATION = 'diamm.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
-DATABASE_ROUTERS = ['diamm.router.LegacyRouter']
+DATABASE_ROUTERS = ['diamm.router.DatabaseRouter']
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators

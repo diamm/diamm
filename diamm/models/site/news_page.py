@@ -10,7 +10,8 @@ class NewsPage(Page):
 
     body = RichTextField()
     summary = models.CharField(max_length=255)
-    template = "diamm_site/news_page.jinja2"
+
+    template = "website/cms/news_page.jinja2"
 
 NewsPage.content_panels = [
     FieldPanel('title', classname="full title"),

@@ -4,7 +4,10 @@ from diamm.models.site.commentary import Commentary
 from diamm.models.site.content_page import ContentPage
 from diamm.models.site.news_page import NewsPage
 from diamm.models.site.news_index import NewsIndexPage
+from diamm.models.site.publication_page import PublicationPage
+from diamm.models.site.dissertation_page import DissertationPage
 from diamm.models.site.home_page import HomePage
+
 
 from diamm.models.migrate.legacy_source import LegacySource
 from diamm.models.migrate.legacy_archive import LegacyArchive

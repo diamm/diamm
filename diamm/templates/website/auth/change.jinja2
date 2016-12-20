@@ -1,13 +1,17 @@
 {% extends "base.jinja2" %}
+{% import "website/blocks/form_field.jinja2" as form_field %}
 
 {% block body %}
-    <div class="row">
-        <div class="twelve columns offset-by-four">
-            <h2>Change Password</h2>
+    <div class="columns">
+        <div class="column is-half is-offset-one-quarter">
+            <h2 class="title">Change Password</h2>
             <p>NB: Accounts on the beta website are independent from diamm.ac.uk, and resetting your password on this site will not affect your account details on the old site.</p>
-            <form method="post">{% csrf_token %}
-                {{ form }}
-                <button type="submit">Reset</button>
+            <form method="post">
+                {% csrf_token %}
+                {{ form_field.format(form.old_password, "password") }}
+                {{ form_field.format(form.new_password1, "password") }}
+                {{ form_field.format(form.new_password2, "password") }}
+                <button type="submit" class="button is-primary">Reset</button>
             </form>
         </div>
     </div>

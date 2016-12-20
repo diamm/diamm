@@ -6,7 +6,7 @@ export const SourceResultType = ({result}) =>
         <div className="search-result">
             <h3>
                 <a href={ result.url }>{ result.display_name_s }</a>
-                <span className="result-type"> Source { result.public_images_b && <i className="fa fa-file-text-o" />}</span>
+                <span className="result-type"> Source { result.public_images_b && <i className="fa fa-file-image-o" />}</span>
             </h3>
             <div>
                 <div>{ result.archive_city_s }, { result.archive_s }</div>

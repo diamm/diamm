@@ -23,12 +23,13 @@ class Bibliography extends React.Component
     {
         const { bibliography } = this.props;
         return (
-            <div className="row">
-                <div className="sixteen columns source-bibliography">
-                    <h3>Bibliography <small>&Dagger; <em>denotes primary source study</em></small></h3>
+            <div className="columns">
+                <div className="column source-bibliography content">
+                    <h3 className="title is-3">Bibliography</h3>
+                    <h4 className="subtitle is-5">&Dagger; <em>denotes primary source study</em></h4>
                     { bibliography.map( (entry, idx) => {
                         return (
-                            <p key={ idx }>
+                            <p key={ idx } className="bibliography-entry">
                                 { entry.primary_study ? <PrimaryStudy entry={ entry } /> : <Entry entry={ entry }/> }
                             </p>
                         );

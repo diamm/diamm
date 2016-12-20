@@ -10,12 +10,12 @@ class Title extends React.Component
 
         return (
             <div id="source-heading" className="columns">
-                <div className="column is-10 source-header">
-                    <h1 className="title is-2">{ this.props.display_name }</h1>
-                    <h2 className="subtitle is-4" style={ {marginBottom: "10px"} }>
+                <div className="column is-two-thirds">
+                    <h2 className="title is-3">{ this.props.display_name }</h2>
+                    <h3 className="subtitle is-5">
                         <a href={ archive.url }>{ archive.name }</a>, <span>{ archive.city }, { archive.country }</span>
-                    </h2>
-                    <h3 className="subtitle is-5">{ this.props.source_type }, { this.props.date_statement }</h3>
+                    </h3>
+                    <h4 className="subtitle is-6">{ this.props.source_type }, { this.props.date_statement }</h4>
                 </div>
                 <div className="column source-archive-logo">
                     <a href={ archive.url }>

@@ -24,6 +24,7 @@ class HomePage(Page):
 
 
 HomePage.content_panels = [
+    FieldPanel('title'),
     StreamFieldPanel('carousel'),
     FieldPanel('brief_description'),
 ]

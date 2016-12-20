@@ -1,0 +1,8 @@
+{% extends "website/cms/cmsbase.jinja2" %}
+
+{% block cmsbody %}
+        <div class="content">
+        <h2>{{ page.title }}</h2>
+            {{ page.body | richtext }}
+        </div>
+{% endblock %}

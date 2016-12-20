@@ -49,7 +49,7 @@ def image_serve(request, pk, region=None, size=None, rotation=None, *args, **kwa
 
     r = requests.get(location, stream=True, headers={'referer': referer,
                                                      'X-DIAMM': diamm,
-                                                     'X-IIIF-ID': iiif_id}, verify=False)
+                                                     'X-IIIF-ID': iiif_id}, verify=True)
 
     # If the response was a 200 (success) pass this along.
     if 200 <= r.status_code < 300:

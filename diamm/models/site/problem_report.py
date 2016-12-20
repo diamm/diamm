@@ -9,7 +9,7 @@ class ProblemReport(models.Model):
     class Meta:
         app_label = "diamm_site"
 
-    contributor = models.ForeignKey(CustomUserModel)
+    contributor = models.ForeignKey(CustomUserModel, related_name="problem_reports")
 
     limit = models.Q(app_label="diamm_data",
                      model="person") | \

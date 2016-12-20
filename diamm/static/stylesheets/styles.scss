@@ -4,37 +4,34 @@
 @import "mixins";
 //@import "skeleton/skeleton";
 @import "font-awesome/font-awesome";
-@import "bulma.css";
 @import "variables";
+@import "bulma";
 @import "navbar";
 @import "footer";
-@import "tabs";
 @import "edit";
 @import "front";
-@import "contribution";
+@import "archive";
 @import "source";
 @import "search";
-@import "browse";
+@import "bibliography";
 @import "login";
 @import "beta";
-@import "debug";
 @import "../vendor/ideal-image-slider/ideal-image-slider.css";
 
 
 html {
   height: 100%;
-  font-size: 1em;
+  //font-size: 1em;
   background-color: $diamm-white;
 }
 
 // Font calculations based on: http://type-scale.com/?size=18&scale=1.414&text=A%20Visual%20Type%20Scale&webfont=Libre+Baskerville&font-family=Alegreya%20Sans&font-weight=400&font-family-headers=&font-weight-headers=inherit&background-color=white&font-color=%23333
 
 body {
-  line-height: 1.45;
   font-family: $sans-serif;
   color: $diamm-black;
 
-  min-height: 100%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
@@ -42,6 +39,7 @@ body {
 
 .page-body {
   margin-top: 1rem !important;
+  flex: 1;
 }
 
 .tabs li.is-active a {
@@ -55,7 +53,6 @@ body {
 a {
   color: $diamm-dk-blue;
   text-decoration: none;
-  //box-sizing: border-box;
   &:hover {
     color: $diamm-lt-blue;
     background: lighten($diamm-lt-blue, 52%);
@@ -68,7 +65,8 @@ a {
   align-items: center;
   height: 100vh;
 
-  .message {
+  .spinner-message {
+    justify-content: center;
     text-align: center;
     width: 20%;
     height: 20%;
@@ -76,30 +74,38 @@ a {
   }
 }
 
-h1, h2, h3, h4, h5,
-.content h1, .content h2, .content h3, .content h4, .content h5 {
-  font-weight: 600;
-}
+//h1, h2, h3, h4, h5,
+//.content h1, .content h2, .content h3, .content h4, .content h5 {
+//  font-weight: 600;
+//}
 
-.pull-right {
-  float: right !important;
-}
+//.pull-right {
+//  float: right !important;
+//}
+//
+//.pull-left {
+//  float: left !important;
+//}
 
-.pull-left {
-  float: left !important;
-}
+//button {
+//  @include button();
+//}
 
-button {
-  @include button();
-}
+//.button.is-primary {
+//  background-color: $diamm-red;
+//}
+//.button.is-primary:hover,
+//.button.is-primary:focus {
+//  background-color: darken($diamm-red, 5%);
+//}
 
-.richtext-image.left {
-  float: left;
-  margin-right: 2rem;
-}
-
-.richtext-image.right {
-  float: right;
-  margin-left: 2rem;
-}
+//.richtext-image.left {
+//  float: left;
+//  margin-right: 2rem;
+//}
+//
+//.richtext-image.right {
+//  float: right;
+//  margin-left: 2rem;
+//}
 

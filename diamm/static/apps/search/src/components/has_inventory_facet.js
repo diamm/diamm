@@ -55,7 +55,7 @@ class HasInventoryFacet extends React.Component
                                     checked={ this.props.activeSelect === facet[0] }
                                     onChange={ () => this.selectHasInventoryValue(facet[0])}
                                 />
-                                { facet[0] } ({ facet[1] })
+                                { facet[0] === "true" ? "Yes" : "No" }
                             </label>
                         </div>
                     );

@@ -4,8 +4,16 @@
             <a href="/" class="nav-item is-brand">
                 <img src="{{ static('images/headerLogo.png') }}" />
             </a>
-            <a href="{{ url('introduction') }}" class="nav-item">About DIAMM</a>
-            <a href="{{ url('search') }}" class="nav-item">Search & Browse</a>
+            <div class="dropdown-menu-parent">
+                <a href="#" class="nav-item">About DIAMM</a>
+                <div class="dropdown-menu">
+                    {{ get_menu() }}
+                </div>
+            </div>
+            <div>
+                <a href="{{ url('search') }}" class="nav-item">Search & Browse</a>
+            </div>
+
         </div>
         <div class="nav-right">
             <a href="#" class="nav-item nav-highlight">Donate</a>

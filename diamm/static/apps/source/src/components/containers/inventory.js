@@ -20,7 +20,7 @@ const InventoryMenuItem = ({active, route, title, show=true}) =>
             <Link to={ route }>{ title }</Link>
         </li>
     );
-}
+};
 
 export class InventoryMenu extends React.Component
 {

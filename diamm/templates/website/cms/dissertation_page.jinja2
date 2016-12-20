@@ -1,0 +1,9 @@
+{% extends "website/cms/cmsbase.jinja2" %}
+
+{% block cmsbody %}
+    <div>
+        <h2 class="title">{{ page.title }}</h2>
+        <h3 class="subtitle">{{ page.author.full_name }}</h3>
+        {{ page.abstract | richtext }}
+    </div>
+{% endblock %}

@@ -54,9 +54,9 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     # url(r'^$', HomeView.as_view(), name="home"),
 
-    url(r'^beta/$', TemplateView.as_view(template_name="beta.jinja2"), name="beta"),
-    url(r'^introduction/$', TemplateView.as_view(template_name="introduction.jinja2"), name="introduction"),
-    url(r'^technical/$', TemplateView.as_view(template_name="technical.jinja2"), name="technical"),
+    # url(r'^beta/$', TemplateView.as_view(template_name="beta.jinja2"), name="beta"),
+    # url(r'^introduction/$', TemplateView.as_view(template_name="introduction.jinja2"), name="introduction"),
+    # url(r'^technical/$', TemplateView.as_view(template_name="technical.jinja2"), name="technical"),
 
     # Authentication and account resets
     url(r'^login/$', login,
@@ -65,11 +65,10 @@ urlpatterns = [
         {"next_page": "/"}, name="logout"),
     url(r'^register/$', CreateAccount.as_view(), name="register"),
     url(r'^reset/$', password_reset,
-        {'post_reset_redirect': '/reset/sent/',
-         'template_name': 'website/auth/reset.jinja2',
+        {'template_name': 'website/auth/reset.jinja2',
          'from_email': settings.DEFAULT_FROM_EMAIL}, name="reset"),
     url(r'^reset/sent/$', password_reset_done,
-        {"template_name": "website/auth/reset_sent.jinja2"}),
+        {"template_name": "website/auth/reset_sent.jinja2"}, name="password_reset_done"),
     url(r'^reset/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$', password_reset_confirm,
         {'post_reset_redirect': '/reset/complete/',
          'template_name': "website/auth/reset_confirm.jinja2"}, name="password_reset_confirm"),

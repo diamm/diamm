@@ -34,6 +34,18 @@ class Source(models.Model):
         (OTHER, 'Other')
     )
 
+    MIXED_NUMBERING_SYSTEM = "mixed"
+    FOLIATION_NUMBERING_SYSTEM = "foliation"
+    PAGINATION_NUMBERING_SYSTEM = "pagination"
+    NO_NUMBERING_SYSTEM = "none"
+
+    NUMBERING_SYSTEM = (
+        (MIXED_NUMBERING_SYSTEM, "Mixed Foliation and Pagination"),
+        (FOLIATION_NUMBERING_SYSTEM, "Foliation"),
+        (PAGINATION_NUMBERING_SYSTEM, "Pagination"),
+        (NO_NUMBERING_SYSTEM, "None / Unknown")
+    )
+
     id = models.AutoField(primary_key=True)  # migrate old ID
     archive = models.ForeignKey('diamm_data.Archive', related_name="sources")
     name = models.CharField(max_length=255, blank=True, null=True)
@@ -57,6 +69,7 @@ class Source(models.Model):
     cover_image = models.ForeignKey("diamm_data.Image", blank=True, null=True)
     format = models.CharField(max_length=255, blank=True, null=True)
     measurements = models.CharField(max_length=512, blank=True, null=True)
+    numbering_system = models.CharField(choices=NUMBERING_SYSTEM, max_length=32, blank=True, null=True)
     public = models.BooleanField(default=False, help_text="Source Description is Public")
     public_images = models.BooleanField(default=False, help_text="Source Images are Public")
     notations = models.ManyToManyField("diamm_data.Notation", blank=True)
@@ -85,7 +98,7 @@ class Source(models.Model):
 
     @property
     def public_notes(self):
-        return self.notes.exclude(type=99)  # exclude private notes
+        return self.notes.exclude(type=99).order_by('sort')  # exclude private notes
 
     @property
     def date_notes(self):

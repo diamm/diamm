@@ -13,6 +13,15 @@ class UserSerializer(serializers.ContextSerializer):
     )
     full_name = serpy.StrField()
     date_joined = serpy.StrField()
+    affiliation = serpy.StrField(
+        required=False
+    )
+    superuser = serpy.BoolField(
+        attr="is_superuser"
+    )
+    staff = serpy.BoolField(
+        attr="is_staff"
+    )
 
     def get_url(self, obj):
         return reverse(

@@ -11,31 +11,29 @@
         </div>
     </div>
     <div class="columns">
-        {% if content.website %}
-            <p><a href="http://{{ content.website }}">{{ content.name }} website</a></p>
-        {% endif %}
-        {% if content.sources %}
-            <h3>Sources in this Archive</h3>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Source</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for source in content.sources %}
-                    <tr>
-                        <td>
-                            {% if source.has_images and source.public_images %}
-                                <i class="fa fa-picture-o" aria-hidden="true"></i>
+        <div class="column">
+            {% if content.website %}
+                <p>
+                    <strong>Archive website: </strong><a href="http://{{ content.website }}">{{ content.name }}</a>
+                </p>
+            {% endif %}
+            {% if content.sources %}
+                <h3 class="title is-4">Sources in this Archive</h3>
+                <div class="archive-sources">
+                    {% for source in content.sources %}
+                        <div class="box">
+                            {% if source.cover_image %}
+                                <a href="{{ source.url }}">
+                                    <img src="{{ source.cover_image }}" />
+                                </a>
                             {% endif %}
-                            <a href="{{ source.url }}">{{ source.display_name }}</a>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        {% endif %}
-
+                            <div>
+                                <a href="{{ source.url }}">{{ source.display_name }}</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
     </div>
 {% endblock %}

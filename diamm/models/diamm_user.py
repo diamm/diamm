@@ -44,10 +44,6 @@ class CustomUserModel(AbstractBaseUser, PermissionsMixin):
     """
         A custom user model for DIAMM that uses an e-mail address as the username.
         Essentially a copy of django.contrib.auth.models.AbstractUser.
-
-        It belongs to the 'django.contrib.auth' app, so it may be referred to as 'auth.CustomUserModel'
-
-        See: https://docs.djangoproject.com/en/dev/topics/auth/customizing/#auth-custom-user
     """
     class Meta:
         app_label = "diamm_site"

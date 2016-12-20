@@ -4,15 +4,39 @@ from rest_framework import generics
 from rest_framework import renderers
 from rest_framework import response
 from rest_framework import status
+from rest_framework import permissions
 
 from diamm.models.site.commentary import Commentary
 from diamm.serializers.website.commentary import CommentarySerializer
-from diamm.renderers.html_renderer import HTMLRenderer
 
 
-class CommentaryList(generics.ListAPIView):
+class CommentaryList(generics.ListCreateAPIView):
     renderer_classes = (renderers.JSONRenderer,)
     serializer_class = CommentarySerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
+
+    def post(self, request, *args, **kwargs):
+        data = self.request.data
+        objtype = data.get('objtype')
+        objpk = data.get('objpk')
+        user = self.request.user
+        attachment_type = ContentType.objects.get(app_label="diamm_data", model=objtype).model_class()
+        attachment = attachment_type.objects.get(pk=objpk)
+
+        comment_type = data.get('comment_type')
+        comment = data.get('comment')
+
+        d = {
+            'comment_type': comment_type,
+            'attachment': attachment,
+            'author': user,
+            'comment': comment
+        }
+
+        c = Commentary(**d)
+        c.save()
+
+        return response.Response(status.HTTP_201_CREATED)
 
     def get(self, request, *args, **kwargs):
         pk = self.request.query_params.get('pk', None)
@@ -38,8 +62,6 @@ class CommentaryList(generics.ListAPIView):
             contenttype = ContentType.objects.get(app_label="diamm_data", model='source')
         except ContentType.DoesNotExist:
             raise
-
-        print(self.request.user)
 
         queryset = Commentary.objects.filter(
                     (Q(content_type=contenttype) & Q(object_id=pk)) &

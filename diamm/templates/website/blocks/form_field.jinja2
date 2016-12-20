@@ -1,0 +1,11 @@
+{%- macro format(field, ftype) -%}
+    <label class="label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+    <p class="control">
+        <input class="input" type="{{ ftype }}" id="{{ field.id_for_label }}" value="{{  field.value() if field.value() else "" }}" name="{{ field.html_name }}" />
+        {% if field.errors %}
+            {% for err in field.errors %}
+                <span class="help is-danger">{{ err }}</span>
+            {% endfor %}
+        {% endif %}
+    </p>
+{%- endmacro -%}

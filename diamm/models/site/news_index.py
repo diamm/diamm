@@ -10,7 +10,7 @@ class NewsIndexPage(Page):
 
     body = RichTextField()
 
-    template = "diamm_site/news_index.jinja2"
+    template = "website/cms/news_index.jinja2"
     subbpage_types = ["diamm_site.NewsPage"]
 
 

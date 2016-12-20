@@ -14,6 +14,7 @@ class SolrResultObject(object):
 class SolrResultException(BaseException):
     pass
 
+
 class PageRangeOutOfBoundsException(BaseException):
     pass
 

@@ -8,7 +8,8 @@ import InventoryAlphabetical from "./components/inventory_alphabetical";
 import Images from "./components/images";
 import Sets from "./components/sets";
 import Bibliography from "./components/bibliography";
-import Commentary from "./components/commentary";
+import CommentaryPublic from "./components/commentary_public";
+import CommentaryPrivate from "./components/commentary_private";
 import Credits from "./components/credits";
 
 export const ROOT_ROUTE = "/";
@@ -21,6 +22,7 @@ export const CREDITS_ROUTE = "credits";
 
 export const INVENTORY_ROUTE_BY_COMPOSER = `${INVENTORY_ROUTE}/composer`;
 export const INVENTORY_ROUTE_ALPHABETICAL = `${INVENTORY_ROUTE}/alphabetical`;
+export const COMMENTARY_ROUTE_PRIVATE = `${COMMENTARY_ROUTE}/private`;
 
 
 export default (
@@ -33,6 +35,7 @@ export default (
         <Route path={ SETS_ROUTE } component={ Sets } />
         <Route path={ BIBLIOGRAPHY_ROUTE } component={ Bibliography } />
         <Route path={ CREDITS_ROUTE } component={ Credits } />
-        <Route path={ COMMENTARY_ROUTE } component={ Commentary } />
+        <Route path={ COMMENTARY_ROUTE } component={ CommentaryPublic } />
+        <Route path={ COMMENTARY_ROUTE_PRIVATE } component={ CommentaryPrivate } />
     </Route>
 );

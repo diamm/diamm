@@ -424,6 +424,12 @@ class SourceDetailSerializer(ContextSerializer):
     source_type = serpy.StrField(
         attr="type"
     )
+    format = serpy.StrField(
+        required=False
+    )
+    measurements = serpy.StrField(
+        required=False
+    )
     type = serpy.MethodField()
     cover_image_info = serpy.MethodField(
         required=False

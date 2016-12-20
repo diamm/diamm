@@ -14,9 +14,9 @@ class ResultCount extends React.Component
                 <div className="search-result-count">
                     { this.props.count } results found.
                 </div>
-                <div onClick={ () => { this.props.clearAll() } } className="search-result-clear">
+                <button onClick={ () => { this.props.clearAll() } } className="button is-primary">
                     Clear Search
-                </div>
+                </button>
             </div>
         );
     }

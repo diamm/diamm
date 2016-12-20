@@ -13,10 +13,22 @@ class SourceArchiveSerializer(ContextDictSerializer):
     public_images = serpy.BoolField(
         attr="public_images_b"
     )
+    cover_image = serpy.MethodField()
 
     def get_url(self, obj):
         return reverse('source-detail',
                        kwargs={"pk": obj['pk']},
+                       request=self.context['request'])
+
+    def get_cover_image(self, obj):
+        if not obj.get('cover_image_i'):
+            return None
+
+        return reverse('image-serve',
+                       kwargs={"pk": obj['cover_image_i'],
+                               "region": "full",
+                               "size": "100,",
+                               "rotation": 0},
                        request=self.context['request'])
 
 

@@ -10,13 +10,15 @@ class ItemNote(models.Model):
     CONCORDANCES = 3
     LAYOUT = 4
     POSITION = 5
+    NON_MUSIC_CONTENTS = 6
 
     NOTE_TYPE = (
         (GENERAL_NOTE, "General Note"),
         (COPYING_STYLE, "Copying Style"),
         (CONCORDANCES, "Concordances"),
         (LAYOUT, "Layout"),
-        (POSITION, "Position on Page")
+        (POSITION, "Position on Page"),
+        (NON_MUSIC_CONTENTS, "Non-music contents description")
     )
 
     type = models.IntegerField(choices=NOTE_TYPE)

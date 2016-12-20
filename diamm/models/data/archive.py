@@ -61,7 +61,7 @@ class Archive(models.Model):
         conn = pysolr.Solr(settings.SOLR['SERVER'])
         q = {
             "fq": ['type:source', 'archive_i:{0}'.format(self.pk)],
-            "fl": ["pk", "public_images_b", 'display_name_s'],
+            "fl": ["pk", "public_images_b", 'display_name_s', 'cover_image_i'],
             "rows": 10000,
             "sort": ["shelfmark_ans asc"]
         }

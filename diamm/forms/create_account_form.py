@@ -7,41 +7,21 @@ from diamm.models.diamm_user import CustomUserModel
 class CreateAccountForm(forms.Form):
     first_name = forms.CharField(
         required=True,
-        widget=forms.TextInput(
-            attrs={"class": "u-full-width"}
-        )
     )
     last_name = forms.CharField(
         required=True,
-        widget=forms.TextInput(
-            attrs={"class": "u-full-width"}
-        )
     )
     affiliation = forms.CharField(
         required=True,
-        widget=forms.TextInput(
-            attrs={"class": "u-full-width"}
-        )
     )
     email = forms.EmailField(
         required=True,
-        widget=forms.EmailInput(
-            attrs={"class": "u-full-width"}
-        )
     )
-
     password = forms.CharField(
         required=True,
-        widget=forms.PasswordInput(
-            attrs={"class": "u-full-width"}
-        ),
     )
-
     confirm_password = forms.CharField(
         required=True,
-        widget=forms.PasswordInput(
-            attrs={"class": "u-full-width"}
-        )
     )
 
     def clean(self):

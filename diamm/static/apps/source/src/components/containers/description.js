@@ -244,7 +244,7 @@ export const Provenance = ({provenance}) =>
     );
 };
 
-export const Notes = ({notes}) =>
+export const Notes = ({notes, showEdit}) =>
 {
     if (notes.length === 0)
         return null;
@@ -254,7 +254,12 @@ export const Notes = ({notes}) =>
             { notes.map( (note, idx) => {
                 return (
                     <section key={ idx }>
-                        <h5>{ note.note_type }</h5>
+                        <h5 className="title is-5">
+                            { note.note_type }
+                            { showEdit &&
+                                <sup><a href={ `/admin/diamm_data/sourcenote/${note.pk}?next=/` }>Edit</a></sup>
+                            }
+                        </h5>
                         <ReactMarkdown source={ note.note } />
                     </section>
                 );
@@ -302,6 +307,60 @@ export const Contents = ({numInventoried, numComposers, uninventoried}) =>
             <th>Contents</th>
             <td>
                 { nums }
+            </td>
+        </tr>
+    );
+};
+
+export const Archive = ({archive}) =>
+{
+    return (
+        <tr>
+            <th>Archive</th>
+            <td>
+                <a href={ archive.url }>{ archive.name }</a>, { archive.city }, { archive.country } ({ archive.siglum })
+            </td>
+        </tr>
+    );
+};
+
+export const Shelfmark = ({shelfmark, name}) =>
+{
+    return (
+        <tr>
+            <th>Shelfmark</th>
+            <td>
+                { shelfmark } { name && <em>&ldquo;{ name }&rdquo;</em> }
+            </td>
+        </tr>
+    );
+};
+
+export const Format = ({format}) =>
+{
+    if (!format)
+        return null;
+
+    return (
+        <tr>
+            <th>Format</th>
+            <td>
+                { format }
+            </td>
+        </tr>
+    );
+};
+
+export const Measurements = ({measurements}) =>
+{
+    if (!measurements)
+        return null;
+
+    return (
+        <tr>
+            <th>Measurements</th>
+            <td>
+                { measurements }
             </td>
         </tr>
     );
