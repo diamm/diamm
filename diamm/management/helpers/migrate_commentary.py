@@ -4,8 +4,12 @@ from diamm.models.site.commentary import Commentary
 from diamm.models.diamm_user import CustomUserModel
 from diamm.models.data.source import Source
 from diamm.models.data.page import Page
+import html2text
 
 term = Terminal()
+
+text_converter = html2text.HTML2Text()
+text_converter.unicode_snob = True
 
 def empty_commentary():
     print(term.magenta("\tEmptying commentary"))
@@ -22,9 +26,9 @@ def migrate_note(entry):
         return None
 
     attached = None
-    if entry.sourcekey != None:
+    if entry.sourcekey:
         attached = Source.objects.get(pk=entry.sourcekey)
-    elif entry.imagekey != None:
+    elif entry.imagekey:
         try:
             attached = Page.objects.get(legacy_id="legacy_image.{0}".format(entry.imagekey))
         except Page.DoesNotExist:
@@ -38,7 +42,7 @@ def migrate_note(entry):
         "comment_type": comment_type,
         "attachment": attached,
         "author": user,
-        "comment": entry.notetext
+        "comment": text_converter.handle(entry.notetext)  # converts HTML to Markdown
     }
     c = Commentary(**d)
     c.save()

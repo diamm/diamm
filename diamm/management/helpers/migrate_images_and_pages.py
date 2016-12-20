@@ -108,11 +108,11 @@ def determine_image_type(entry):
 
 def determine_filename(entry):
     if entry.filename and entry.filename not in ('not photographed', 'not_photographed', 'notphotographed', 'applytolibrary', 'librarydigitized'):
-        return entry.filename
+        return entry.filename.strip()
     elif hasattr(entry, 'archivedfilename') and entry.archivedfilename is not None:
-        return entry.archivedfilename
+        return entry.archivedfilename.strip()
     elif hasattr(entry, 'archivefilename') and entry.archivefilename is not None:
-        return entry.archivefilename
+        return entry.archivefilename.strip()
     else:
         print(term.red("\tCould not determine filename for image {0}".format(entry.pk)))
         return None
@@ -170,6 +170,8 @@ def convert_secondary_image(entry):
 
     page = orig_image.page
     imtype_pk = determine_image_type(entry)
+    print(imtype_pk)
+
     imtype = ImageType.objects.get(pk=imtype_pk)
 
     imd = {

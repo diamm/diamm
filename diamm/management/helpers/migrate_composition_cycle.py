@@ -34,6 +34,7 @@ def migrate_cycle_type(entry):
 def migrate_cycle(entry):
     print(term.green("\tMigrating cycle PK {0}".format(entry.pk)))
     ctype = CycleType.objects.get(pk=int(entry.alcycletypekey))
+
     composer = None
     if entry.composerkey != 0:
         composer = Person.objects.get(legacy_id="legacy_composer.{0}".format(int(entry.composerkey)))
@@ -51,7 +52,12 @@ def migrate_cycle(entry):
 def migrate_composition_cycle(entry):
     print(term.green("\tMigrating composition cycle relationship pk {0}".format(entry.pk)))
     composition = Composition.objects.get(pk=int(entry.compositionkey))
-    cycle = Cycle.objects.get(pk=int(entry.compositioncyclekey))
+
+    try:
+        cycle = Cycle.objects.get(pk=int(entry.compositioncyclekey))
+    except Cycle.DoesNotExist:
+        print(term.red("\t\tCycle {0} does not exist. Skipping".format(entry.compositioncyclekey)))
+        return None
 
     entry_no = None
     if entry.orderno:

@@ -3,7 +3,6 @@ import os
 import psycopg2 as psql
 from django.conf import settings
 from django.db.models import Q
-from django.core.files import File
 from diamm.models.migrate.legacy_source import LegacySource
 from diamm.models.migrate.legacy_source_notation import LegacySourceNotation
 from diamm.models.data.source import Source
@@ -15,9 +14,14 @@ from diamm.models.data.source_identifier import SourceIdentifier
 from diamm.models.data.source_note import SourceNote
 from diamm.models.data.source_url import SourceURL
 from blessings import Terminal
+import html2text
 
 term = Terminal()
 
+text_converter = html2text.HTML2Text()
+text_converter.unicode_snob = True
+
+COPYRIGHT_NOTICE = """This information is reproduced here by kind permission of the publishers. It is COPYRIGHT and copying/reproduction of any of this content without permission may result in legal action."""
 
 def empty_source():
     print(term.magenta('\tEmptying Source'))
@@ -70,6 +74,45 @@ def format_measurements(page_measurements, units):
         return "{0} {1}".format(page_measurements.strip(), units)
 
 
+def determine_note_contributor(note_type, legacy_source):
+    record_authority = legacy_source.authority if legacy_source.authority is not None else None
+    if note_type == SourceNote.CCM_NOTE:
+        return "Census-Catalogue of Manuscript Sources of Polyphonic Music 1400-1550"
+    elif note_type == SourceNote.RISM_NOTE:
+        return "Répertoire Internationale des Sources Musicales"
+    elif record_authority:
+        return record_authority
+    else:
+        return ""
+
+
+def convert_numbering_system(system):
+    if not system:
+        return None
+    if system.lower() == "foliation":
+        return Source.FOLIATION_NUMBERING_SYSTEM
+    elif system.lower() == "pagination":
+        return Source.PAGINATION_NUMBERING_SYSTEM
+    elif system.lower() == "foliation and pagination":
+        return Source.MIXED_NUMBERING_SYSTEM
+    elif system.lower() == "none/unknown":
+        return Source.NO_NUMBERING_SYSTEM
+    else:
+        return None
+
+def determine_note_sort(notetype):
+    if notetype == SourceNote.CCM_NOTE:
+        return 99
+    elif notetype == SourceNote.RISM_NOTE:
+        return 98
+    else:
+        return 0
+
+def format_copyrighted_note(note):
+    if note:
+        return "{0}\n**{1}**".format(note, COPYRIGHT_NOTICE)
+    return None
+
 def migrate_source_to_source(legacy_source):
     print(term.green("\tMigrating Source {0} with ID {1}".format(legacy_source.shelfmark, legacy_source.pk)))
     archive_pk = int(legacy_source.archivekey)
@@ -94,6 +137,7 @@ def migrate_source_to_source(legacy_source):
         'shelfmark': legacy_source.shelfmark,
         'type': source_type,
         'surface': surface,
+        'numbering_system': convert_numbering_system(legacy_source.leafnumberingsystem),
         'start_date': start_date,
         'end_date': end_date,
         'date_statement': legacy_source.dateofsource,
@@ -156,42 +200,48 @@ def migrate_source_to_source(legacy_source):
     general_description = None
     if legacy_source.generaldescription:
         general_description = legacy_source.generaldescription
-    else:
-        general_description = legacy_source.description_diamm
+
+    diamm_description = None
+    if legacy_source.description_diamm:
+        diamm_description = legacy_source.description_diamm
 
     contents_note = None
     if legacy_source.index and legacy_source.index.strip() != "none":
         contents_note = legacy_source.index
 
-    author = legacy_source.authority if legacy_source.authority is not None else None
-
     notes = [
         (SourceNote.DATE_NOTE, legacy_source.datecomments),
-        (SourceNote.RISM_NOTE, legacy_source.description_rism),
+        (SourceNote.RISM_NOTE, format_copyrighted_note(legacy_source.description_rism)),
         (SourceNote.PRIVATE_NOTE, legacy_source.notes),
         (SourceNote.LIMINARY_NOTE, legacy_source.liminarytext),
         (SourceNote.RULING_NOTE, legacy_source.stavegauge),
         (SourceNote.GENERAL_NOTE, general_description),
-        (SourceNote.CCM_NOTE, legacy_source.description_ccm),
+        (SourceNote.CCM_NOTE, format_copyrighted_note(legacy_source.description_ccm)),
         (SourceNote.DEDICATION_NOTE, legacy_source.dedicationtext),
-        (SourceNote.FOLIATION_NOTE, legacy_source.leafnumberingsystem),
         (SourceNote.FOLIATION_NOTE, legacy_source.leafnumberingdescription),
         (SourceNote.FOLIATION_NOTE, oth_num),
+        (SourceNote.FOLIATION_NOTE, legacy_source.folio),
         (SourceNote.BINDING_NOTE, legacy_source.binding),
         (SourceNote.WATERMARK_NOTE, legacy_source.watermark),
         (SourceNote.PHYSICAL_NOTE, legacy_source.condition),
         (SourceNote.SURFACE_NOTE, legacy_source.surface),
         (SourceNote.CONTENTS_NOTE, contents_note),
-        (SourceNote.NOTATION_NOTE, legacy_source.notation)
+        (SourceNote.NOTATION_NOTE, legacy_source.notation),
+        (SourceNote.DECORATION_NOTE, legacy_source.decoration),
+        (SourceNote.DIAMM_NOTE, diamm_description)
     ]
 
     for n in notes:
+        author = determine_note_contributor(n[0], legacy_source)
+        sort = determine_note_sort(n[0])
+
         if n[1]:
             d = {
                 'note': n[1].replace("\n", "\n\n").replace("\r", "\n\n"),
                 'type': n[0],
                 'source': s,
-                'author': author
+                'author': author,
+                'sort': sort
             }
             note = SourceNote(**d)
             note.save()
