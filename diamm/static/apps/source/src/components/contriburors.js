@@ -1,7 +1,7 @@
 import React from "react";
 
 
-class Credits extends React.Component
+class Contributors extends React.Component
 {
     render ()
     {

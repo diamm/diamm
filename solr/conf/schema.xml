@@ -69,6 +69,8 @@
     <copyField source="archive_city_s" dest="facet_cities_ss" />
     <copyField source="city_s" dest="facet_cities_ss" />
     <copyField source="archives_cities_ss" dest="facet_cities_ss" />
+    <copyField source="start_date_i" dest="facet_date_range_ii" />
+    <copyField source="end_date_i" dest="facet_date_range_ii" />
 
     <!-- fields for alphanumeric sorting -->
     <copyField source="name_s" dest="name_ans" />
