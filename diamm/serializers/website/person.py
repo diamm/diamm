@@ -85,7 +85,7 @@ class PersonCompositionSerializer(ContextDictSerializer):
         if 'sources_ss' not in obj:
             return []
         sources = []
-        for entry in obj['sources_ss']:
+        for entry in obj['sources_ssni']:
             pk, name = entry.split("|")
             d = {
                 'url': reverse('source-detail',
@@ -127,13 +127,19 @@ class PersonDetailSerializer(ContextSerializer):
                        request=self.context['request'])
 
     def get_compositions(self, obj):
-        return [PersonCompositionSerializer(o, context={'request': self.context['request']}).data for o in obj.solr_compositions]
+        return PersonCompositionSerializer(obj.solr_compositions,
+                                           context={'request': self.context['request']},
+                                           many=True).data
 
     def get_related_sources(self, obj):
-        return [PersonSourceRelationshipSerializer(o, context={"request": self.context['request']}).data for o in obj.solr_relationships]
+        return PersonSourceRelationshipSerializer(obj.solr_relationships,
+                                                  context={"request": self.context['request']},
+                                                  many=True).data
 
     def get_copied_sources(self, obj):
-        return [PersonSourceCopyistSerializer(o, context={"request": self.context['request']}).data for o in obj.solr_copyist]
+        return PersonSourceCopyistSerializer(obj.solr_copyist,
+                                             context={"request": self.context['request']},
+                                             many=True).data
 
     def get_type(self, obj):
         return obj.__class__.__name__.lower()

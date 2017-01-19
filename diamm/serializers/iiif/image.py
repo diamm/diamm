@@ -4,6 +4,42 @@ from diamm.serializers.serializers import ContextDictSerializer
 from diamm.serializers.fields import StaticField
 
 
+class ImageResourceSerializer(ContextDictSerializer):
+    id = serpy.MethodField()
+    type = StaticField(
+        label="@type",
+        value="dctypes:Image"
+    )
+    format = StaticField(
+        value="image/jpeg"
+    )
+    width = serpy.IntField(
+        attr="width_i"
+    )
+    height = serpy.IntField(
+        attr="height_i"
+    )
+    label = serpy.StrField(
+        attr="image_type_s"
+    )
+    service = serpy.MethodField()
+
+    def get_id(self, obj):
+        return reverse('image-serve-info',
+                       kwargs={"pk": obj['pk']},
+                       request=self.context['request'])
+
+    def get_service(self, obj):
+        proxied_image_url = reverse('image-serve-info',
+                                    kwargs={"pk": obj['pk']},
+                                    request=self.context['request'])
+        return {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "profile": "http://iiif.io/api/image/2/level1.json",
+            "@id": proxied_image_url,
+        }
+
+
 class ImageSerializer(ContextDictSerializer):
     type = StaticField(
         label="@type",
@@ -26,18 +62,21 @@ class ImageSerializer(ContextDictSerializer):
         )
 
     def get_resource(self, obj):
-        proxied_image_url = reverse('image-serve-info',
-                                    kwargs={"pk": obj['pk']},
-                                    request=self.context['request'])
-        return {
-            "@id": proxied_image_url,
-            "@type": "dctypes:Image",
-            "format": "image/jpeg",
-            "width": obj['width_i'],
-            "height": obj['height_i'],
-            "service": {
-                "@context": "http://iiif.io/api/image/2/context.json",
-                "@id": proxied_image_url,
-                "profile": "http://iiif.io/api/image/2/level1.json"
+        doclen = len(obj['_childDocuments_'])
+
+        if doclen == 0:
+            return []
+
+        if doclen == 1:
+            return ImageResourceSerializer(obj['_childDocuments_'][0],
+                                           context={"request": self.context['request']}).data
+        else:
+            imgs = obj['_childDocuments_']
+
+            return {
+                "@type": "oa:Choice",
+                "default": ImageResourceSerializer(imgs[0],
+                                                   context={"request": self.context['request']}).data,
+                "item": ImageResourceSerializer(imgs[1:], many=True, context={"request": self.context['request']}).data
             }
-        }
+

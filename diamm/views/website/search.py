@@ -76,6 +76,20 @@ class SearchView(generics.GenericAPIView):
                 'inventory_provided_b': request.GET.get('has_inventory', None)
             })
 
+        if 'date_range' in request.GET:
+            start, end = request.GET.get('date_range').split(",")
+            filters.update({
+                'facet_date_range_ii': "[{0} TO {1}]".format(start, end)
+            })
+
+        if 'anonymous' in request.GET:
+            filters.update({
+                'anonymous_b': request.GET.get('anonymous', None)
+            })
+
+        # adjusts the sorting for each type, but defaults to sorting empty queries
+        # by archive_city so that sources sort to the top alphabetically by the
+        # city where they are held.
         if type_query in settings.SOLR['TYPE_SORTS'].keys():
             sorts.append(settings.SOLR['TYPE_SORTS'][type_query])
         else:

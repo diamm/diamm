@@ -12,7 +12,7 @@ class Title extends React.Component
             <div id="source-heading" className="columns">
                 <div className="column is-two-thirds">
                     <h2 className="title is-3">{ this.props.display_name }</h2>
-                    <h3 className="subtitle is-5">
+                    <h3 className="subtitle is-5" style={ { marginBottom: "0.5rem" } }>
                         <a href={ archive.url }>{ archive.name }</a>, <span>{ archive.city }, { archive.country }</span>
                     </h3>
                     <h4 className="subtitle is-6">{ this.props.source_type }, { this.props.date_statement }</h4>

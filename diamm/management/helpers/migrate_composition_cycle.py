@@ -51,7 +51,10 @@ def migrate_cycle(entry):
 
 def migrate_composition_cycle(entry):
     print(term.green("\tMigrating composition cycle relationship pk {0}".format(entry.pk)))
-    composition = Composition.objects.get(pk=int(entry.compositionkey))
+    try:
+        composition = Composition.objects.get(pk=int(entry.compositionkey))
+    except Composition.DoesNotExist:
+        return None
 
     try:
         cycle = Cycle.objects.get(pk=int(entry.compositioncyclekey))

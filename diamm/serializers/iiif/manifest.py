@@ -129,8 +129,7 @@ class SourceManifestSerializer(ContextDictSerializer):
             "rows": 10000
         }
         canvas_res = conn.search("*:*", **canvas_query)
-        canvases = [CanvasSerializer(c, context={"request": self.context['request']}).data
-                    for c in canvas_res.docs]
+        canvases = CanvasSerializer(canvas_res.docs, many=True, context={"request": self.context['request']}).data
 
         label = "Default"
         source_id = obj['pk']
@@ -173,7 +172,9 @@ class SourceManifestSerializer(ContextDictSerializer):
             "rows": 10000,
         }
         structure_res = conn.search("*:*", **structure_query)
-        structures = [StructureSerializer(s, context={"request": self.context["request"]}).data
-                      for s in structure_res.docs]
+
+        structures = StructureSerializer(structure_res.docs,
+                                         context={"request": self.context["request"]},
+                                         many=True).data
 
         return structures

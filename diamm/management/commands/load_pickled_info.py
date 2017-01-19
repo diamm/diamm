@@ -15,6 +15,8 @@ class Command(BaseCommand):
                     image = Image.objects.get(location=k)
                 except Image.MultipleObjectsReturned:
                     image = Image.objects.filter(location=k).first()
+                except Image.DoesNotExist:
+                    continue
 
                 if not image:
                     print("OH NO NO IMAGE FOUND!")

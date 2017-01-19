@@ -7,7 +7,8 @@ import manifestReducer from "./manifest_reducer";
 import imageViewReducer from "./image_view_reducer";
 import quickLookReducer from "./quicklook_reducer";
 import commentaryReducer from "./commentary_reducer";
-import problemReportReducer from "./problem_report_reducer";
+import correctionsReducer from "./corrections_reducer";
+import inventoryReducer from "./inventory_reducer";
 
 const rootReducer = combineReducers({
     user: userReducer,
@@ -17,7 +18,8 @@ const rootReducer = combineReducers({
     image_view: imageViewReducer,
     quicklook: quickLookReducer,
     commentary: commentaryReducer,
-    problem_report: problemReportReducer,
+    corrections: correctionsReducer,
+    inventory: inventoryReducer,
     routing
 });
 

@@ -9,6 +9,9 @@ class CompositionSearchSerializer(serpy.Serializer):
     title_s = serpy.StrField(
         attr="title"
     )
+    anonymous_b = serpy.BoolField(
+        attr="anonymous"
+    )
     genres_ss = serpy.MethodField()
     composers_ssni = serpy.MethodField()
     composers_ss = serpy.MethodField()

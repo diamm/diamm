@@ -9,7 +9,7 @@ from django_extensions.admin import ForeignKeyAutocompleteAdmin
 
 @admin.register(ProblemReport)
 class ProblemReportAdmin(ForeignKeyAutocompleteAdmin):
-    list_display = ('get_contributor', 'get_entity', 'created', 'completed')
+    list_display = ('get_contributor', 'get_entity', 'created', 'accepted')
     search_fields = ('contributor__last_name', 'contributor__first_name', 'contributor__username')
 
     related_search_fields = {

@@ -34,10 +34,10 @@ class Source(models.Model):
         (OTHER, 'Other')
     )
 
-    MIXED_NUMBERING_SYSTEM = "mixed"
-    FOLIATION_NUMBERING_SYSTEM = "foliation"
-    PAGINATION_NUMBERING_SYSTEM = "pagination"
-    NO_NUMBERING_SYSTEM = "none"
+    MIXED_NUMBERING_SYSTEM = 1
+    FOLIATION_NUMBERING_SYSTEM = 2
+    PAGINATION_NUMBERING_SYSTEM = 3
+    NO_NUMBERING_SYSTEM = 4
 
     NUMBERING_SYSTEM = (
         (MIXED_NUMBERING_SYSTEM, "Mixed Foliation and Pagination"),
@@ -58,18 +58,18 @@ class Source(models.Model):
     start_date = models.IntegerField(blank=True, null=True,
                                      help_text="""Enter the start year as a four digit integer. If
                                      the precise year is not known, enter it rounding DOWN to the closest
-                                     decade, and then century. Examples: 1456, 1450, 1400.
+                                     known decade, and then century. Examples: 1456, 1450, 1400.
                                      """)
     end_date = models.IntegerField(blank=True, null=True,
                                    help_text="""Enter the end year as a four digit integer. If the
                                    precise year is not known, enter it rounding UP to the
-                                   closest decade, and then century. Examples: 1456, 1460, 1500.
+                                   closest known decade, and then century. Examples: 1456, 1460, 1500.
                                    """)
     date_statement = models.CharField(max_length=512, blank=True, null=True)
     cover_image = models.ForeignKey("diamm_data.Image", blank=True, null=True)
     format = models.CharField(max_length=255, blank=True, null=True)
     measurements = models.CharField(max_length=512, blank=True, null=True)
-    numbering_system = models.CharField(choices=NUMBERING_SYSTEM, max_length=32, blank=True, null=True)
+    numbering_system = models.IntegerField(choices=NUMBERING_SYSTEM, blank=True, null=True)
     public = models.BooleanField(default=False, help_text="Source Description is Public")
     public_images = models.BooleanField(default=False, help_text="Source Images are Public")
     notations = models.ManyToManyField("diamm_data.Notation", blank=True)
@@ -95,6 +95,13 @@ class Source(models.Model):
 
         d = dict(self.SURFACE_OPTIONS)
         return d[self.surface]
+
+    @property
+    def numbering_system_type(self):
+        if not self.numbering_system:
+            return None
+        d = dict(self.NUMBERING_SYSTEM)
+        return d[self.numbering_system]
 
     @property
     def public_notes(self):
@@ -196,6 +203,7 @@ class Source(models.Model):
               'pages_ssni',
               'source_attribution_s',
               'voices_ii',
+              "[child parentFilter=type:item childFilter=type:itemnote]",
               'pk']
         # Set rows to an extremely high number so we get all of the item records in one go.
         item_results = connection.search("*:*", fq=fq, fl=fl, sort="folio_start_ans asc", rows=10000)

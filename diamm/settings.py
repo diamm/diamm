@@ -211,7 +211,9 @@ INTERFACE_FACETS = {
     "has_inventory": "inventory_provided_b",
     "organization_type": "organization_type_s",
     "location": "location_s",
-    "archive": "archive_s"
+    "archive": "archive_s",
+    "anonymous": "anonymous_b",
+    "source_date_range": "facet_date_range_ii"
 }
 
 SOLR = {

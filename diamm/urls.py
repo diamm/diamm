@@ -42,6 +42,7 @@ from diamm.views.website.image import image_serve
 from diamm.views.website.bibliography_author import BibliographyAuthorDetail
 from diamm.views.website.commentary import CommentaryList
 from diamm.views.catalogue.catalogue import CatalogueView
+from diamm.views.website.correction import CorrectionList
 
 from wagtail.wagtailadmin import urls as wagtailadmin_urls
 from wagtail.wagtaildocs import urls as wagtaildocs_urls
@@ -123,6 +124,7 @@ urlpatterns = [
     url(r'^images/(?P<pk>[0-9]+)/$', image_serve, name="image-serve-info"),
 
     url(r'^commentary/$', CommentaryList.as_view(), name="commentary-list"),
+    url(r'^corrections/$', CorrectionList.as_view(), name="correction-list"),
 
     # Cataloguing view
     url(r'^catalogue/(.*)$', CatalogueView.as_view(), name="catalogue-view"),

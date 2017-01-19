@@ -9,7 +9,9 @@ import { ControlBar } from "./containers/images";
 import {
     setActiveManifest,
     setCurrentlyActiveCanvas,
-    setCurrentlyActiveCanvasTitle
+    setCurrentlyActiveCanvasTitle,
+    fetchActiveRanges,
+    clearPageContents
 } from "../actions/iiif_actions";
 
 
@@ -21,13 +23,21 @@ class Images extends React.Component
     * */
     loadPageData = debounce( (pageIndex, pageName) =>
     {
+        this.props.clearPageContents();
+
         let canvas = this.props.manifest.sequences[0].canvases[pageIndex]["@id"];
         let canvasTitle = this.props.manifest.sequences[0].canvases[pageIndex]["label"];
         let ranges = this.props.rangeLookup[canvas];
 
         this.props.setCurrentlyActiveCanvas(canvas);
         this.props.setCurrentlyActiveCanvasTitle(canvasTitle);
-    });
+
+        if (ranges)
+        {
+            this.props.fetchActiveRanges(ranges);
+        }
+
+    }, 50);
 
     /*
     * Called when the IIIF Manifest has been loaded and is available.
@@ -82,7 +92,7 @@ class Images extends React.Component
 function mapStateToProps (state)
 {
     return {
-        manifestURL: state.source.iiif_manifest,
+        manifestURL: state.source.manifest_url,
         manifest: state.manifest,
         rangeLookup: state.image_view.ranges,
         activeCanvasLabel: state.image_view.activeCanvasLabel
@@ -93,7 +103,9 @@ function mapStateToProps (state)
 const mapDispatchToProps = {
     setActiveManifest,
     setCurrentlyActiveCanvas,
-    setCurrentlyActiveCanvasTitle
+    setCurrentlyActiveCanvasTitle,
+    fetchActiveRanges,
+    clearPageContents
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Images);

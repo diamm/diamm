@@ -11,6 +11,7 @@ import Bibliography from "./components/bibliography";
 import CommentaryPublic from "./components/commentary_public";
 import CommentaryPrivate from "./components/commentary_private";
 import Credits from "./components/credits";
+import Corrections from "./components/corrections"
 
 export const ROOT_ROUTE = "/";
 export const INVENTORY_ROUTE = "inventory";
@@ -19,6 +20,7 @@ export const SETS_ROUTE = "sets";
 export const BIBLIOGRAPHY_ROUTE = "bibliography";
 export const COMMENTARY_ROUTE = "commentary";
 export const CREDITS_ROUTE = "credits";
+export const CORRECTIONS_ROUTE = "corrections";
 
 export const INVENTORY_ROUTE_BY_COMPOSER = `${INVENTORY_ROUTE}/composer`;
 export const INVENTORY_ROUTE_ALPHABETICAL = `${INVENTORY_ROUTE}/alphabetical`;
@@ -37,5 +39,6 @@ export default (
         <Route path={ CREDITS_ROUTE } component={ Credits } />
         <Route path={ COMMENTARY_ROUTE } component={ CommentaryPublic } />
         <Route path={ COMMENTARY_ROUTE_PRIVATE } component={ CommentaryPrivate } />
+        <Route path={ CORRECTIONS_ROUTE } component={ Corrections } />
     </Route>
 );

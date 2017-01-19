@@ -110,18 +110,23 @@ class OrganizationDetailSerializer(ContextSerializer):
         return obj.__class__.__name__.lower()
 
     def get_related_sources(self, obj):
-        return [OrganizationSourceRelationshipSerializer(o, context={"request": self.context["request"]}).data
-                for o in obj.solr_relationships]
+        return OrganizationSourceRelationshipSerializer(obj.solr_relationships,
+                                                         many=True,
+                                                         context={"request": self.context["request"]}).data
 
     def get_copied_sources(self, obj):
-        return [OrganizationSourceCopyistSerializer(o, context={"request": self.context['request']}).data
-                for o in obj.solr_copyist]
+        return OrganizationSourceCopyistSerializer(obj.solr_copyist,
+                                                   many=True,
+                                                   context={"request": self.context['request']}).data
 
     def get_source_provenance(self, obj):
-        return [OrganizationSourceProvenanceSerializer(o, context={"request": self.context['request']}).data
-                for o in obj.solr_provenance]
+        return OrganizationSourceProvenanceSerializer(obj.solr_provenance,
+                                                      many=True,
+                                                      context={"request": self.context['request']}).data
 
     def get_contributors(self, obj):
         if obj.contributions.count() > 0:
             return OrganizationContributionSerializer(obj.contributions.filter(completed=True),
-                                                context={"request": self.context['request']}, many=True).data
+                                                      context={"request": self.context['request']},
+                                                      many=True).data
+        return []

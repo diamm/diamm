@@ -1,6 +1,6 @@
 import React from "react";
 import $ from "jquery";
-import diva from "diva.js";
+import diva from "diva.js/build/js/diva.min";
 import ReactDOM from "react-dom";
 import debounce from "lodash.debounce";
 
@@ -79,11 +79,8 @@ class DivaViewer extends React.Component
 
     viewerLoaded ()
     {
-        console.log('viewer loaded', this.props);
         if (this.props.activeCanvasLabel)
         {
-            console.log('active canvas', this.props.activeCanvasLabel);
-            console.log(this.diva.getSettings().manifest);
             this.diva.gotoPageByLabel(this.props.activeCanvasLabel);
         }
     }

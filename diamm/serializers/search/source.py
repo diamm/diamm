@@ -24,10 +24,6 @@ class SourceSearchSerializer(serpy.Serializer):
     shelfmark_s = serpy.StrField(
         attr='shelfmark'
     )
-    # Alphanumeric sort field -- moved to solr copy field...
-    # shelfmark_ans = serpy.StrField(
-    #     attr='shelfmark'
-    # )
     name_s = serpy.StrField(
         attr="name",
         required=False

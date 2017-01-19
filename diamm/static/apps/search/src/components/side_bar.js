@@ -17,6 +17,7 @@ import GenresFacet from "./genres_facet";
 import NotationsFacet from "./notations_facet";
 import SourceTypeFacet from "./source_type_facet";
 import HasInventoryFacet from "./has_inventory_facet";
+import AnonymousFacet from "./anonymous_facet";
 
 import ResultCount from "./result_count";
 
@@ -53,6 +54,16 @@ class SideBar extends React.Component
         {
             return (
                 <HasInventoryFacet />
+            )
+        }
+    }
+
+    _renderAnonymousFacet ()
+    {
+        if (this.props.anonymous && this.props.anonymous.length > 0)
+        {
+            return (
+                <AnonymousFacet />
             )
         }
     }
@@ -101,6 +112,7 @@ class SideBar extends React.Component
             <div className="facet-sidebar">
                 <ResultCount count={ this.props.count } />
                 { this._renderComposersFacet() }
+                { this._renderAnonymousFacet() }
                 { this._renderNotationsFacet() }
                 { this._renderHasInventoryFacet() }
                 { this._renderSourceTypeFacet() }
@@ -121,6 +133,7 @@ function mapStateToProps (state)
         notations: state.results.facets.notations,
         sourceTypes: state.results.facets.source_type,
         hasInventory: state.results.facets.has_inventory,
+        anonymous: state.results.facets.anonymous,
 
         genres: state.results.facets.genres,
         showAllGenres: state.currentFacets.genres.show_all,

@@ -90,8 +90,8 @@ class SourceItemDetail(generics.GenericAPIView):
             "rows": 10000,
         }
         structure_res = conn.search("*:*", **structure_query)
-        structures = [ServiceSerializer(s, context={"request": request}).data
-                      for s in structure_res.docs]
+        structures = ServiceSerializer(structure_res.docs[0],
+                                       context={"request": request}).data
 
         return response.Response(structures)
 

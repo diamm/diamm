@@ -40,11 +40,33 @@
         </div>
         <div class="column">
             <h3 class="title">Recent Comments</h3>
+            {% if not content.comments %}
+                <p>No comments to display.</p>
+            {% else %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Commented on</th>
+                            <th>Visibility</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for comment in content.comments %}
+                            <tr>
+                                <td><a href="{{ comment.attachment_url }}">{{ comment.attachment }} ({{ comment.attachment_type }})</a></td>
+                                <td>{{ comment.type_of_comment }}</td>
+                                <td>{{ comment.created | naturaltime }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
         </div>
     </div>
     <div class="columns">
         <div class="column">
-            <h3 class="title">Problem reports</h3>
+            <h3 class="title">Contributions</h3>
         </div>
     </div>
 {% endblock %}

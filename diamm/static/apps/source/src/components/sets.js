@@ -6,13 +6,28 @@ const Sources = ({sources}) =>
     return (
         <div className="source-set-sources">
             { sources.map( (source, idx) =>{
-                let src="https://placehold.it/100x140";
+                let src;
                 if (source.cover_image !== null)
-                    src = `${source.cover_image}full/100,/0/default.jpg`;
+                {
+                    src = <img src={`${source.cover_image}full/100,/0/default.jpg` } />;
+                }
+                else
+                {
+                    src = (<div className="no-image">
+                        <div>
+                            <i className="fa fa-eye-slash" />
+                        </div>
+                        <div>
+                            <small>No images available</small>
+                        </div>
+                    </div>)
+                }
 
                 return (
                     <div key={ idx } className="box">
-                        <a href={ source.url }><img src={ src } /></a>
+                        <a href={ source.url }>
+                            { src }
+                        </a>
 
                         <figcaption>
                             <a href={ source.url }>{ source.display_name_s }</a>
@@ -35,8 +50,8 @@ class Sets extends React.Component
                     { this.props.sets.map( (set, idx) =>{
                         return (
                             <div key={ idx }>
-                                <h2>Set: { set.cluster_shelfmark }</h2>
-                                <p><strong>Type: </strong>{ set.set_type }</p>
+                                <h2 className="title is-3">Set: { set.cluster_shelfmark }</h2>
+                                <h3 className="subtitle is-5"><strong>Type: </strong>{ set.set_type }</h3>
                                 <Sources sources={ set.sources } />
                             </div>
                         );

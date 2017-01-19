@@ -3,7 +3,11 @@ import {
     IIIF_SET_CURRENTLY_ACTIVE_RANGES,
     IIIF_SET_CURRENTLY_ACTIVE_CANVAS,
     IIIF_SET_CURRENTLY_ACTIVE_CANVAS_TITLE,
-    IIIF_SET_COMPUTED_RANGE_LOOKUP
+    IIIF_SET_COMPUTED_RANGE_LOOKUP,
+    IIIF_CLEAR_PAGE_CONTENTS,
+    IIIF_ADD_TO_PAGE_CONTENTS,
+    IIIF_IS_FETCHING_PAGE_CONTENTS,
+    IIIF_FINISHED_FETCHING_PAGE_CONTENTS
 } from "../constants";
 import _ from "lodash";
 
@@ -14,7 +18,7 @@ export function computeRangeLookup (structures)
 
     structures.map( (entry) =>
     {
-        let range = entry["@id"];
+        let range = entry;
         entry.members.map( (member) =>
         {
             let canvas = member["@id"];
@@ -31,7 +35,7 @@ export function setActiveManifest (manifest)
 {
     return (dispatch) =>
     {
-        dispatch(computeRangeLookup(manifest.structures))
+        dispatch(computeRangeLookup(manifest.structures));
 
         return dispatch({
             type: IIIF_MANIFEST_DID_LOAD,
@@ -55,13 +59,33 @@ export function setCurrentlyActiveRanges (ranges)
 
 export function fetchActiveRanges (ranges)
 {
-    return (dispatch) =>
+    return (dispatch, getState) =>
     {
+        let state = getState();
+        let isFetching = state.image_view.isFetchingPageContents;
+
+        // bail early if we're already fetching
+        if (isFetching)
+            return;
+
         dispatch(setCurrentlyActiveRanges(ranges));
 
-        dispatch( () => ranges.map( (range) => {
-            console.log('fetching', range);
-        }));
+        ranges.map( (range) => {
+            fetch(range.service['@id'])
+                .then((response) =>
+                {
+                    dispatch({
+                        type: IIIF_FINISHED_FETCHING_PAGE_CONTENTS
+                    });
+                    return response.json()
+                }).then((data) =>
+                {
+                    dispatch({
+                        type: IIIF_ADD_TO_PAGE_CONTENTS,
+                        item: data
+                    })
+                });
+        });
     };
 
     // return {
@@ -83,5 +107,12 @@ export function setCurrentlyActiveCanvasTitle (title)
     return {
         type: IIIF_SET_CURRENTLY_ACTIVE_CANVAS_TITLE,
         title
+    }
+}
+
+export function clearPageContents ()
+{
+    return {
+        type: IIIF_CLEAR_PAGE_CONTENTS
     }
 }

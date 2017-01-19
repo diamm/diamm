@@ -33,7 +33,7 @@ export function fetchCommentary (pk, objtype)
         })
         .then( (response) =>
         {
-            return response.json()
+            return response.json();
         })
         .then( (payload) =>
         {

@@ -13,6 +13,7 @@ from diamm.admin.data.archive import ArchiveAdmin
 from diamm.admin.data.genre import GenreAdmin
 from diamm.admin.data.person import PersonAdmin
 from diamm.admin.data.organization import OrganizationAdmin
+from diamm.admin.data.organization_type import OrganizationTypeAdmin
 from diamm.admin.data.bibliography import BibliographyAdmin
 from diamm.admin.data.bibliography_author import BibliographyAuthorAdmin
 from diamm.admin.data.composition import CompositionAdmin

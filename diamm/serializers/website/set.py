@@ -39,7 +39,8 @@ class SetDetailSerializer(ContextSerializer):
 
     def get_sources(self, obj):
         if obj.sources:
-            return [SetSourceSerializer(o, context={'request': self.context['request']}).data
-                    for o in obj.sources.all()]
+            return SetSourceSerializer(obj.sources.all(),
+                                       many=True,
+                                       context={'request': self.context['request']}).data
         else:
             return None

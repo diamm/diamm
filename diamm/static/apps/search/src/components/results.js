@@ -41,15 +41,23 @@ class Results extends React.Component
                 { this.props.results.map( (result) => {
                     return <Result result={ result } key={ result.id } />
                 })}
-                <ReactPaginate
-                    pageNum={ this.props.pagination.num_pages }
-                    pageRangeDisplayed={ 5 }
-                    marginPagesDisplayed={ 4 }
-                    clickCallback={ this.handlePaginationClick.bind(this) }
-                    containerClassName="pagination"
-                    nextLabel={ "\u00BB" }
-                    previousLabel={ "\u00AB" }
-                />
+                <nav className="pagination">
+                    <ReactPaginate
+                        pageNum={ this.props.pagination.num_pages }
+                        pageRangeDisplayed={ 5 }
+                        marginPagesDisplayed={ 4 }
+                        clickCallback={ this.handlePaginationClick.bind(this) }
+                        containerClassName="pagination-list"
+                        nextLabel={ "\u00BB" }
+                        previousLabel={ "\u00AB" }
+                        nextLinkClassName="pagination-next"
+                        previousLinkClassName="pagination-previous"
+                        breakClassName="pagination-ellipsis"
+                        pageLinkClassName="pagination-link"
+                        disabledClassName="is-disabled"
+                        activeClassName="is-current"
+                    />
+                </nav>
             </div>
         )
     }

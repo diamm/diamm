@@ -44,12 +44,17 @@ export function fetchSourceInfo (sourceId)
         return fetch(`${SERVER_BASE_URL}sources/${sourceId}/`, {
                 headers: {
                     "Accept": "application/json"
-                }
+                },
+                credentials: "same-origin"
             })
-            .then((response) => {
+            .then((response) =>
+            {
                 return response.json();
             })
-            .then((payload) => {
+            .then((payload) =>
+            {
+                console.log(payload);
+
                 dispatch(receiveSourceInfo(payload));
                 dispatch(initializeInventoryDetailState(payload.inventory));
                 dispatch(initializeAlphaInventoryDetailState(payload.inventory));
@@ -65,13 +70,6 @@ export function setActiveTab (location)
     }
 }
 
-export function showInventoryDetailsForItem (idx)
-{
-    return {
-        type: SHOW_INVENTORY_DETAILS_FOR_ITEM,
-        index: idx
-    }
-}
 
 export function initializeInventoryDetailState (inventory)
 {
@@ -87,14 +85,6 @@ export function initializeAlphaInventoryDetailState (inventory)
     return {
         type: INITIALIZE_ALPHA_INVENTORY_DETAIL_STATE,
         payload: inventory.length
-    }
-}
-
-export function showAlphaInventoryDetailsForItem (idx)
-{
-    return {
-        type: SHOW_ALPHA_INVENTORY_DETAILS_FOR_ITEM,
-        index: idx
     }
 }
 

@@ -31,7 +31,9 @@ export class InventoryMenu extends React.Component
     render()
     {
         let isActive = this.context.router.isActive;
-        let isUninventoried = this.props.uninventoried.length > 0;
+
+        // a source is uninventoried if it has entries in the 'uninventoried' key AND it has no entries in the inventory.
+        let isUninventoried = this.props.uninventoried.length > 0 && this.props.source_order.length === 0;
 
         return (
             <div className="tabs">
@@ -74,10 +76,11 @@ export const QuickLook = ({url}) =>
         return null;
 
     return (
-        <span
-            className="fa fa-border fa-binoculars quicklook"
+        <span className="icon is-small">
+        <i
+            className="fa fa-border fa-binoculars fa-small quicklook"
             onClick={ () => { onQuickLook(url) } }
-        />
+        /></span>
     );
 };
 
@@ -87,12 +90,9 @@ export const Composers = ({composers}) =>
         <div>
             { composers.map( (composer, idx) => {
                 return (
-                    <span key={ idx } className="composer-names">
-                        { composer.full_name } { composer.uncertain ? "(?) " : "" }
-                        <QuickLook
-                            url={ composer.url }
-                        />
-                    </span>
+                    <div key={ idx } className="composer-names">
+                        { composer.full_name } { composer.uncertain ? "(?) " : " " }
+                    </div>
                 );
             })}
         </div>
@@ -111,7 +111,7 @@ export const Foliation = ({folio_start, folio_end, show_quicklook}) =>
             { folio_start }{ (folio_end && folio_start !== folio_end) ? `–${folio_end} ` : " " }
             { show_quicklook &&
             <Link to={ {pathname: IMAGES_ROUTE, query: {p: folio_start}} }>
-                <i className="fa fa-file-text-o fa-border quicklook" />
+                <span className="icon is-small"><i className="fa fa-file-text-o fa-border quicklook" /></span>
             </Link>}
         </span>
     );
@@ -135,14 +135,80 @@ export const Bibliography = ({entry}) =>
         return null;
 
     return (
-        <span>
-            <div><strong>Item Bibliography</strong></div>
+        <div>
+            <h5 className="title is-5">Item Bibliography</h5>
             { entry.map ( (bib, idx) => {
                 return(
                     <p key={ idx } dangerouslySetInnerHTML={{__html: bib.prerendered_s }}/>
                 );
             })}
-        </span>
+        </div>
+    );
+};
+
+export const ItemNotes = ({notes}) =>
+{
+    if (!notes)
+        return null;
+
+    return (
+        <div>
+            <h5 className="title is-5">Item Notes</h5>
+            { notes.map( (note, idx) =>
+            {
+                return (
+                    <p key={ idx }>
+                        <strong>{ note.note_type }: </strong>
+                        { note.note }
+                    </p>
+                );
+            })}
+        </div>
+    );
+};
+
+const Langs = ({langs}) =>
+{
+    return (
+        <p>
+            <strong>Languages: </strong>{ langs.join(", ") }
+        </p>
+    );
+};
+
+const Mensur = ({mensuration}) =>
+{
+    return (
+        <p>
+            <strong>Mensuration: </strong>{ mensuration }
+        </p>
+    );
+};
+
+const Clef = ({clef}) =>
+{
+    return (
+        <p>
+            <strong>Clef: </strong>{ clef }
+        </p>
+    );
+};
+
+const VoiceType = ({voicetype}) =>
+{
+    return (
+        <p>
+            <strong>Voice: </strong>{ voicetype }
+        </p>
+    );
+};
+
+const VoiceText = ({voicetext}) =>
+{
+    return (
+        <p>
+            <strong>Voice Text: </strong>{ voicetext }
+        </p>
     );
 };
 
@@ -150,25 +216,19 @@ export const Voices = ({voices, num_voices}) =>
 {
     return (
         <div>
+            <h5 className="title is-5">Voices</h5>
+
             { num_voices &&
                 <span><strong>Number of Voices:</strong> { num_voices }</span>}
 
             { voices && voices.map ( (voice, idx) => {
                 return (
                     <div key={ idx } className="voice-detail">
-                        <ul>
-                            { voice.voice_type_s &&
-                                <li><strong>Voice: </strong>{ voice.voice_type_s }</li>}
-                            { voice.languages_ss &&
-                                <li><strong>Languages: </strong>{ voice.languages_ss.join(", ") }</li>}
-                            { voice.mensuration_s &&
-                                <li><strong>Mensuration: </strong>{ voice.mensuration_s }</li> }
-                            { voice.clef_s &&
-                                <li><strong>Clef: </strong>{ voice.clef_s }</li>}
-                        </ul>
-                        { voice.voice_text_s &&
-                            <span><strong>Voice text: </strong> { voice.voice_text_s }</span>}
-
+                        { voice.voice_type_s && <VoiceType voicetype={ voice.voice_type_s } /> }
+                        { voice.languages_ss && <Langs langs={ voice.languages_ss } /> }
+                        { voice.mensuration_s && <Mensur mensuration={ voice.mensuration_s } /> }
+                        { voice.clef_s && <Clef clef={ voice.clef_s }/> }
+                        { voice.voice_text_s && <VoiceText voicetext={ voice.voice_text_s } /> }
                     </div>
                 );
             })}

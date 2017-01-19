@@ -10,7 +10,7 @@ import {
     Foliation
 } from "./containers/inventory";
 import Details from "./inventory_details";
-import { showAlphaInventoryDetailsForItem } from "../actions/index";
+import { showAlphaInventoryDetailsForItem } from "../actions/inventory";
 
 class InventoryAlphabetical extends React.Component
 {
@@ -19,48 +19,64 @@ class InventoryAlphabetical extends React.Component
         this.props.showAlphaInventoryDetailsForItem(idx);
     }
 
+    _renderDetail ()
+    {
+        if (this.props.showDetail === null)
+        {
+            return (
+                <p>Click an item to see its details here.</p>
+            );
+        }
+
+        let entry = this.props.alphabetical[this.props.showDetail];
+
+        return (
+            <Details entry={ entry } />
+        );
+    }
+
     render()
     {
         return (
             <Inventory>
-                <table className="table">
-                    <thead>
-                        <tr>
-                            <th>Composition</th>
-                            <th>Composers (? Uncertain)</th>
-                            <th>Folios / Pages</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    { this.props.alphabetical.map( (entry, idx) =>
-                    {
-                        const showDetail = this.props.showDetail && this.props.showDetail[idx];
-                        const detailClassNames = showDetail ? "fa fa-chevron-circle-up fa-border quicklook active" : "fa fa-chevron-circle-down fa-border quicklook";
-
-                        return (
-                            <tr key={ idx } className="alpha-order">
-                                <td className="item-details">
-                                    <h4 className="composition-name">
-                                        { entry.composition }
-                                        <QuickLook url={ entry.url } />
-                                        <i className={ detailClassNames } onClick={ () => this.handleShowDetailClick(idx) } />
-                                    </h4>
-                                </td>
-                                <td>
-                                    <Composers composers={ entry.composers } />
-                                </td>
-                                <td>
-                                    <Foliation
-                                        folio_start={ entry.folio_start }
-                                        folio_end={ entry.folio_end }
-                                        show_quicklook={ (this.props.user !== null && entry.pages && entry.pages.length > 0) }
-                                    />
-                                </td>
+                <div className="column is-two-thirds">
+                    <table className="table">
+                        <thead>
+                            <tr>
+                                <th>Composition</th>
+                                <th>Composers (? Uncertain)</th>
+                                <th>Folios / Pages</th>
                             </tr>
-                        )
-                    })}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                        { this.props.alphabetical.map( (entry, idx) =>
+                        {
+                            return (
+                                <tr key={ idx } className="alpha-order" onClick={ () => this.handleShowDetailClick(idx) }>
+                                    <td className="item-details">
+                                        <h4 className="composition-name">
+                                            { entry.composition }
+                                        </h4>
+                                    </td>
+                                    <td>
+                                        <Composers composers={ entry.composers } />
+                                    </td>
+                                    <td>
+                                        <Foliation
+                                            folio_start={ entry.folio_start }
+                                            folio_end={ entry.folio_end }
+                                            show_quicklook={ (this.props.user !== null && entry.pages && entry.pages.length > 0) }
+                                        />
+                                    </td>
+                                </tr>
+                            )
+                        })}
+                        </tbody>
+                    </table>
+                </div>
+                <div className="column scroll-sidebar">
+                    { this._renderDetail() }
+                </div>
             </Inventory>
         );
 
@@ -80,6 +96,7 @@ function mapStateToProps (state)
 {
     return {
         alphabetical: alphaSortInventory(state),
+        showDetail: state.inventory.activeAlphaOrderItem,
         user: state.user
     }
 }

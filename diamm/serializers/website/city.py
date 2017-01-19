@@ -10,6 +10,7 @@ class CountryCitySerializer(ContextSerializer):
     def get_url(self, obj):
         return reverse("country-detail", kwargs={"pk": obj.id}, request=self.context['request'])
 
+
 class ArchiveCitySerializer(ContextSerializer):
     url = serpy.MethodField()
     name = serpy.StrField()
@@ -17,12 +18,14 @@ class ArchiveCitySerializer(ContextSerializer):
     def get_url(self, obj):
         return reverse("archive-detail", kwargs={"pk": obj.id}, request=self.context['request'])
 
+
 class CityListSerializer(ContextSerializer):
     url = serpy.MethodField()
     name = serpy.StrField()
 
     def get_url(self, obj):
         return reverse("city-detail", kwargs={"pk": obj.id}, request=self.context['request'])
+
 
 class CityDetailSerializer(ContextSerializer):
     url = serpy.MethodField()

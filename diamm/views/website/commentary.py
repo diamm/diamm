@@ -63,8 +63,11 @@ class CommentaryList(generics.ListCreateAPIView):
         except ContentType.DoesNotExist:
             raise
 
+        visibility_filter = Q(comment_type=Commentary.PUBLIC)
+        if self.request.user.is_authenticated():
+            visibility_filter |= Q(author=self.request.user)
+
         queryset = Commentary.objects.filter(
-                    (Q(content_type=contenttype) & Q(object_id=pk)) &
-                    (Q(comment_type=Commentary.PUBLIC) | Q(author=self.request.user)))
+                    (Q(content_type=contenttype) & Q(object_id=pk)) & visibility_filter)
 
         return queryset

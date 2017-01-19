@@ -3,23 +3,25 @@
 {% block body %}
     <div class="columns">
         <div class="column">
-            <h1 class="title">{{ content.full_name }}</h1>
+            <h1 class="title is-2">{{ content.full_name }}</h1>
         </div>
     </div>
     {% if content.biography %}
     <div class="columns">
         <div class="column">
-            <h3>Biography</h3>
+            <h3 class="title is-3">Biography</h3>
+            <div class="content">
             {% for note in content.biography %}
-                {{ note.note | linebreaks }}
+                {{ note.note | markdown | safe }}
             {% endfor %}
+            </div>
         </div>
     </div>
     {% endif %}
     <div class="columns">
         <div class="column">
             {% if content.compositions %}
-                <h3>Compositions</h3>
+                <h3 class="title is-3">Compositions</h3>
                 <table class="table">
                     <thead>
                         <tr>
@@ -50,11 +52,12 @@
                 </table>
             {% endif %}
             {% if content.copied_sources %}
-                <h3>Sources Copied</h3>
+                <h4 class="title is-4">Sources Copied</h4>
                 <table class="table">
                     <thead>
                         <tr>
                             <th>Source</th>
+                            <th>Copyist Type</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -62,9 +65,12 @@
                         <tr>
                             <td>
                                 {% if source.has_images and source.public_images %}
-                                    <i class="fa fa-picture-o" aria-hidden="true"></i>
+                                    <i class="fa fa-file-image-o" aria-hidden="true"></i>
                                 {% endif %}
-                                {{ "? " if source.uncertain else "" }}<a href="{{ source.url }}">{{ source.source }}</a> ({{ source.copyist_type }})
+                                {{ "? " if source.uncertain else "" }}<a href="{{ source.url }}">{{ source.source }}</a>
+                            </td>
+                            <td>
+                                {{ source.copyist_type }}
                             </td>
                         </tr>
                     {% endfor %}
@@ -72,11 +78,12 @@
                 </table>
             {% endif %}
             {% if content.related_sources %}
-                <h3>Other Relationships to Sources</h3>
+                <h4 class="title is-4">Other Relationships to Sources</h4>
                 <table class="table">
                     <thead>
                         <tr>
                             <th>Source</th>
+                            <th>Relationship</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -84,9 +91,12 @@
                         <tr>
                             <td>
                                 {% if source.has_images and source.public_images %}
-                                    <i class="fa fa-picture-o" aria-hidden="true"></i>
+                                    <i class="fa fa-file-image-o" aria-hidden="true"></i>
                                 {% endif %}
-                                {{ "? " if source.uncertain else "" }}<a href="{{ source.url }}">{{ source.source }}</a> ({{ source.relationship }})
+                                {{ "? " if source.uncertain else "" }}<a href="{{ source.url }}">{{ source.source }}</a>
+                            </td>
+                            <td>
+                                {{ source.relationship }}
                             </td>
                         </tr>
                     {% endfor %}
@@ -95,4 +105,11 @@
             {% endif %}
         </div>
     </div>
+    {% if request.user.is_staff %}
+        <div class="columns">
+            <div class="column">
+                <a class="button" href="/admin/diamm_data/person/{{ content.pk }}">Edit</a>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}

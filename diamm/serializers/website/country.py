@@ -29,4 +29,3 @@ class CountryDetailSerializer(ContextSerializer):
 
     def get_url(self, obj):
         return reverse("country-detail", kwargs={"pk": obj.id}, request=self.context['request'])
-

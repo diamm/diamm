@@ -22,4 +22,6 @@ class BibliographyAuthorSerializer(ContextSerializer):
                        request=self.context['request'])
 
     def get_bibliography(self, obj):
-        return [BibliographySerializer(o, context={'request': self.context['request']}).data for o in obj.solr_bibliography]
+        return BibliographySerializer(obj.solr_bibliography,
+                                      many=True,
+                                      context={'request': self.context['request']}).data

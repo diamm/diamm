@@ -43,6 +43,7 @@ export class CommentaryMenu extends React.Component
                         active={ isActive(COMMENTARY_ROUTE_PRIVATE) }
                         route={ COMMENTARY_ROUTE_PRIVATE }
                         title="Private Comments"
+                        show={ this.props.isAuthenticated }
                     />
                 </ul>
             </div>

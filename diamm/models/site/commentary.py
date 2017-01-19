@@ -36,3 +36,11 @@ class Commentary(models.Model):
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+
+    @property
+    def type_of_comment(self):
+        if self.comment_type is None:
+            return None
+
+        d = dict(self.COMMENT_TYPE_OPTIONS)
+        return d[self.comment_type]

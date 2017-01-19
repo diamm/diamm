@@ -9,14 +9,14 @@ class Inventory extends React.Component
     {
         return (
             <div>
-                {/* Only mount this component if the type is set on quicklook.
-                 This lets the QuickLook component's lifecycle method control
-                 the overflow styles for body, since the component will
-                 unmount when the quicklook prop is empty. */}
-                { this.props.quicklook.type &&
-                <QuickLook content={ this.props.quicklook }/> }
-
                 <div className="columns">
+                    {/* Only mount this component if the type is set on quicklook.
+                     This lets the QuickLook component's lifecycle method control
+                     the overflow styles for body, since the component will
+                     unmount when the quicklook prop is empty. */}
+                    { this.props.quicklook.type &&
+                    <QuickLook content={ this.props.quicklook }/> }
+
                     <div className="column">
                         <nav className="level">
                             <div className="level-left">
@@ -27,12 +27,6 @@ class Inventory extends React.Component
                                         uninventoried={ this.props.uninventoried }
                                     />
                                 </div>
-                            </div>
-                            <div className="level-right">
-                                <div className="level-item">Legend: </div>
-                                <div className="level-item"><i className="fa fa-binoculars fa-border quicklook-legend" /> {" Quicklook"}</div>
-                                <div className="level-item"><i className="fa fa-image fa-border quicklook-legend" /> { " View Image" }</div>
-                                <div className="level-item"><i className="fa fa-chevron-circle-down fa-border quicklook-legend"/> { " Item Details"} </div>
                             </div>
                         </nav>
                     </div>

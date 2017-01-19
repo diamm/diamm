@@ -1,3 +1,4 @@
+import sys
 from django.core.management.base import BaseCommand
 from django.core.management import call_command
 from diamm.management.helpers import migrate_regions

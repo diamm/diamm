@@ -3,10 +3,38 @@ from rest_framework.reverse import reverse
 from diamm.serializers.serializers import ContextSerializer
 
 
+class CompositionCycleCompositionSerializer(ContextSerializer):
+    title = serpy.StrField(
+        attr="composition.title"
+    )
+    url = serpy.MethodField()
+
+    def get_url(self, obj):
+        return reverse('composition-detail',
+                       kwargs={"pk": obj.composition.pk},
+                       request=self.context['request'])
+
+
+class CompositionCycleSerializer(ContextSerializer):
+    title = serpy.StrField(
+        attr="cycle.title"
+    )
+    type = serpy.StrField(
+        attr="cycle.type.name"
+    )
+    compositions = serpy.MethodField()
+
+    def get_compositions(self, obj):
+        return CompositionCycleCompositionSerializer(obj.cycle.compositions.all(),
+                                                     many=True,
+                                                     context={"request": self.context['request']}).data
+
+
 class CompositionContributionSerializer(ContextSerializer):
     contributor = serpy.StrField(
         attr="contributor.username"
     )
+
     summary = serpy.StrField()
     updated = serpy.StrField()
 
@@ -44,8 +72,8 @@ class CompositionComposerSerializer(ContextSerializer):
 
     def get_url(self, obj):
         return reverse('person-detail',
-                kwargs={"pk": obj.composer.pk},
-                request=self.context['request'])
+                       kwargs={"pk": obj.composer.pk},
+                       request=self.context['request'])
 
 
 class CompositionListSerializer(ContextSerializer):
@@ -54,8 +82,9 @@ class CompositionListSerializer(ContextSerializer):
 
     def get_composers(self, obj):
         if obj.composers:
-            return [CompositionComposerSerializer(o, context={"request": self.context['request']}).data
-                    for o in obj.composers.all()]
+            return CompositionComposerSerializer(obj.composers.all(),
+                                                 context={"request": self.context['request']},
+                                                 many=True).data
 
 
 class CompositionDetailSerializer(ContextSerializer):
@@ -65,6 +94,8 @@ class CompositionDetailSerializer(ContextSerializer):
     pk = serpy.IntField()
     url = serpy.MethodField()
     title = serpy.StrField()
+    cycles = serpy.MethodField()
+    genres = serpy.MethodField()
 
     def get_url(self, obj):
         return reverse('composition-detail',
@@ -76,14 +107,28 @@ class CompositionDetailSerializer(ContextSerializer):
 
     def get_sources(self, obj):
         if obj.sources:
-            return [CompositionSourceSerializer(o, context={'request': self.context['request']}).data
-                    for o in obj.sources.all()]
+            return CompositionSourceSerializer(obj.sources.all(),
+                                               context={'request': self.context['request']},
+                                               many=True).data
         else:
-            return None
+            return []
 
     def get_composers(self, obj):
         if obj.composers:
-            return [CompositionComposerSerializer(o, context={"request": self.context['request']}).data
-                    for o in obj.composers.all()]
+            return CompositionComposerSerializer(obj.composers.all(),
+                                                 context={"request": self.context['request']},
+                                                 many=True).data
         else:
-            return None
+            return []
+
+    def get_cycles(self, obj):
+        if obj.cycles.count() > 0:
+            return CompositionCycleSerializer(obj.cycles.all(),
+                                              context={"request": self.context['request']},
+                                              many=True).data
+        return []
+
+    def get_genres(self, obj):
+        if obj.genres.count() > 0:
+            return obj.genres.values_list('name', flat=True)
+        return []

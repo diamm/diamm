@@ -56,6 +56,19 @@ export const SurfaceType = ({surface_type}) =>
     );
 };
 
+export const NumberingSystemType = ({numbering_system_type}) =>
+{
+    if (!numbering_system_type)
+        return null;
+
+    return (
+        <tr>
+            <th>Numbering System</th>
+            <td>{ numbering_system_type }</td>
+        </tr>
+    );
+};
+
 export const OtherIdentifiers = ({identifiers}) =>
 {
     if (!identifiers)

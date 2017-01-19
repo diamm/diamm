@@ -9,11 +9,11 @@ class DissertationPage(Page):
     class Meta:
         app_label = "diamm_site"
 
-    author = models.ForeignKey(
-        "diamm_data.BibliographyAuthor",
-        on_delete=models.PROTECT,
-        related_name='+'
-    )
+    # author = models.ForeignKey(
+    #     "diamm_data.BibliographyAuthor",
+    #     on_delete=models.PROTECT,
+    #     related_name='+'
+    # )
     abstract = fields.RichTextField()
     university = models.CharField(max_length=255)
     year = models.IntegerField()
@@ -29,7 +29,7 @@ class DissertationPage(Page):
 
     parent_page_types = ['diamm_site.ContentPage']
     content_panels = Page.content_panels + [
-        FieldPanel('author'),
+        # FieldPanel('author'),
         FieldPanel('abstract', classname="full"),
         FieldPanel('university'),
         FieldPanel('year'),

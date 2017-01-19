@@ -10,6 +10,7 @@ from diamm.management.helpers.utilities import convert_yn_to_boolean
 from blessings import Terminal
 
 term = Terminal()
+COMPOSITIONS_TO_SKIP = (0, 69332, 888888, 999999, 69558, 79920, 54681, 87464, 89027)
 
 
 def empty_composition():
@@ -105,7 +106,7 @@ def update_table():
 def migrate():
     print(term.blue("Migrating Compositions"))
     empty_composition()
-    COMPOSITIONS_TO_SKIP = (0, 69332, 888888, 999999, 69558, 79920, 54681, 87464)
+    # COMPOSITIONS_TO_SKIP = (0, 69332, 888888, 999999, 69558, 79920, 54681, 87464, 89027)
     for entry in LegacyComposition.objects.exclude(pk__in=COMPOSITIONS_TO_SKIP):
         # Skip the "this source has not been inventoried" composition.
         # 69332 = "See description for inventory"

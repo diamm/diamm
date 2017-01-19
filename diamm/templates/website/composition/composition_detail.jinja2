@@ -16,15 +16,36 @@
                     {% endif %}
                 {% endfor %}
             </h3>
+            {% if content.genres %}
+                <p>
+                    <strong>Genres: </strong>{{ content.genres | join(", ") }}
+
+                </p>
+            {% endif %}
         </div>
     </div>
+    {% if content.cycles %}
     <div class="columns">
         <div class="column">
-            <h3 class="title is-4">Appears in</h3>
+            <h3 class="title is-4">Cycles</h3>
+            {% for cycle in content.cycles %}
+                <h4 class="subtitle is-5">{{ cycle.title }} ({{ cycle.type }})</h4>
+                <ul>
+                {% for composition in cycle.compositions %}
+                    <li><a href="{{ composition.url }}">{{ composition.title }}</a></li>
+                {% endfor %}
+                </ul>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    <div class="columns">
+        <div class="column">
+            <h3 class="title is-4">Sources</h3>
             <table class="table">
                 <thead>
                     <tr>
-                        <th></th>
+                        <th>Source</th>
                     </tr>
                 </thead>
                 <tbody>

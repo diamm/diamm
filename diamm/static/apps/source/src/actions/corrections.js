@@ -1,37 +1,65 @@
 import {
-    CLOSE_PROBLEM_REPORT_VIEW,
-    OPEN_PROBLEM_REPORT_VIEW,
-    UPDATE_PROBLEM_REPORT_TEXT
+    CORRECTION_REPORT_SUBMITTED,
+    UPDATE_CORRECTION_REPORT_TEXT,
+    SERVER_BASE_URL,
 } from "../constants";
-import { post } from "./api";
+import Cookie from "js-cookie";
+import {
+    CORRECTIONS_ROUTE
+} from "../routes";
 
-
-export function openProblemReport ()
+//
+//
+// export function openProblemReport ()
+// {
+//     return {
+//         type: OPEN_PROBLEM_REPORT_VIEW
+//     }
+// }
+//
+// export function closeProblemReport ()
+// {
+//     return {
+//         type: CLOSE_PROBLEM_REPORT_VIEW
+//     }
+// }
+//
+export function updateCorrectionReportText (note)
 {
     return {
-        type: OPEN_PROBLEM_REPORT_VIEW
-    }
-}
-
-export function closeProblemReport ()
-{
-    return {
-        type: CLOSE_PROBLEM_REPORT_VIEW
-    }
-}
-
-export function updateProblemReportText (note)
-{
-    return {
-        type: UPDATE_PROBLEM_REPORT_TEXT,
+        type: UPDATE_CORRECTION_REPORT_TEXT,
         note
     }
 }
 
-export function submitProblemReport (text)
+export function submitCorrectionReport (text, sourceId)
 {
     return (dispatch) =>
     {
-        return post("")
+        let url = `${SERVER_BASE_URL}${CORRECTIONS_ROUTE}/`;
+        let csrftoken = Cookie.get('csrftoken');
+        return fetch(url, {
+            method: "POST",
+            credentials: "same-origin",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken
+            },
+            body: JSON.stringify({
+                objtype: "source",
+                objpk: sourceId,
+                note: text
+            })
+        })
+        .then( (response) =>
+        {
+            return response.json();
+        })
+        .then( (payload) =>
+        {
+            dispatch({
+                type: CORRECTION_REPORT_SUBMITTED
+            })
+        });
     }
 }

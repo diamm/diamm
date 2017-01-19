@@ -1,10 +1,46 @@
 import React from "react";
-import { connect } from "react-redux"
-import { Genres, Voices, Bibliography, Attribution } from "./containers/inventory";
+import { connect } from "react-redux";
+import {
+    Genres,
+    Voices,
+    Bibliography,
+    Attribution,
+    Composers,
+    ItemNotes
+} from "./containers/inventory";
 
+// hardcode the limit at which the sidebar will start scrolling. This is approximately the distance from the top of the
+// page.
+const __HARDCODED_SCROLL_LIMIT_FOR_GREAT_JUSTICE = 250;
 
 class Details extends React.Component
 {
+    componentDidMount ()
+    {
+        window.addEventListener('scroll', this.handleScroll.bind(this));
+    }
+
+    componentWillUnmount ()
+    {
+        window.removeEventListener('scroll', this.handleScroll.bind(this))
+    }
+
+    handleScroll (event)
+    {
+        if (!this.infoCard)
+            return;
+
+        if (document.body.scrollTop > __HARDCODED_SCROLL_LIMIT_FOR_GREAT_JUSTICE)
+        {
+            this.infoCard.classList.add('item-detail-position-fixed');
+        }
+        else
+        {
+            // check and re-add class if needed.
+            this.infoCard.classList.remove('item-detail-position-fixed');
+        }
+    }
+
     render ()
     {
         const {
@@ -12,25 +48,35 @@ class Details extends React.Component
             voices,
             num_voices,
             bibliography,
-            source_attribution
+            source_attribution,
+            composition,
+            composers,
+            notes
         } = this.props.entry;
 
         if (!genres && !voices && !num_voices && !bibliography)
             return null;
 
         return (
-            <tr className="row" colSpan="3">
-                <div className="voice-details three columns">
-                    <Voices voices={ voices } num_voices={ num_voices } />
+            <div className="item-detail-box" ref={ (card) => { this.infoCard = card; }}>
+                <h4 className="title is-4">Item details</h4>
+
+                <div className="card is-fullwidth">
+                    <header className="card-header">
+                        <h4 className="card-header-title title is-4 is-not-bold">
+                            { composition }
+                        </h4>
+                    </header>
+                    <div className="card-content">
+                        <Composers composers={ composers } />
+                        <Genres genres={ genres }/>
+                        <Attribution attribution={ source_attribution } />
+                        <Voices voices={ voices } num_voices={ num_voices } />
+                        <ItemNotes notes={ notes } />
+                        <Bibliography entry={ bibliography } />
+                    </div>
                 </div>
-                <div className="item-details three columns">
-                    <Genres genres={ genres }/>
-                    <Attribution attribution={ source_attribution } />
-                </div>
-                <div className="item-bibliography ten columns">
-                    <Bibliography entry={ bibliography } />
-                </div>
-            </tr>
+            </div>
         );
     }
 }

@@ -1,3 +1,4 @@
+import operator
 import serpy
 from rest_framework.reverse import reverse
 from diamm.serializers.serializers import ContextDictSerializer
@@ -23,12 +24,13 @@ class CanvasSerializer(ContextDictSerializer):
     def get_width(self, obj):
         if not '_childDocuments_' in obj:
             return 0
+        obj['_childDocuments_'].sort(key=operator.itemgetter('image_type_i'))
         return obj['_childDocuments_'][0]['width_i']
 
     def get_height(self, obj):
         if not '_childDocuments_' in obj:
             return 0
-
+        obj['_childDocuments_'].sort(key=operator.itemgetter('image_type_i'))
         return obj['_childDocuments_'][0]['height_i']
 
     def get_id(self, obj):
@@ -43,11 +45,13 @@ class CanvasSerializer(ContextDictSerializer):
         if not '_childDocuments_' in obj:
             return []
 
-        imgs = obj['_childDocuments_']
+        obj['_childDocuments_'].sort(key=operator.itemgetter('image_type_i'))
         context = {
             "source_id": obj["source_i"],
             "page_id": obj["pk"],
             "request": self.context['request']
         }
-        imgs_data = [ImageSerializer(i, context=context).data for i in imgs]
+
+        # the 'images' key is always an array.
+        imgs_data = [ImageSerializer(obj, context=context).data]
         return imgs_data

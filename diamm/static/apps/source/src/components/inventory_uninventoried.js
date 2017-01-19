@@ -11,8 +11,8 @@ class InventoryUninventoried extends React.Component
     render ()
     {
         return (
-            <div className="row">
-                <div className="sixteen columns">
+            <div className="columns">
+                <div className="column">
                     <p>This source has not been inventoried. It is known to contain
                         works by:</p>
                     { this.props.uninventoried.map( (itm, idx) => {

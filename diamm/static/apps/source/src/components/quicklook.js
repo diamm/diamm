@@ -111,26 +111,18 @@ class QuickLook extends React.Component
             return null;
 
         return (
-            <div className="quicklook-modal" style={ {width: "100%" } }>
-
-                <div className="quicklook-content">
-                    <div className="quicklook-title">
+            <div className="modal" style={ {width: "100%" } }>
+                <div className="modal-background" />
+                <div className="modal-card">
+                    <header className="modal-card-head">
                         <div>
                             QuickLook: { this.props.content.title || this.props.content.full_name }
                         </div>
-                        <div>
-                            <a className="full-record-link" href={ this.props.content.url } target="_blank">
-                                Full record
-                            </a>
-                            <i
-                                className="fa fa-close"
-                                onClick={ () => this.onCloseQuickLook() }
-                            />
-                        </div>
-                    </div>
-                    <div className="quicklook-body">
+                        <button className="delete" />
+                    </header>
+                    <section className="modal-card-body">
                         { this.getQLRenderer(this.props.content) }
-                    </div>
+                    </section>
                 </div>
             </div>
         );

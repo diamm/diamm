@@ -24,7 +24,7 @@
     "babel-loader": "^6.2.8",
     "classnames": "^2.2.5",
     "dateformat": "^2.0.0",
-    "diva.js": "^5.0.3",
+    "diva.js": "git+https://github.com/DDMAL/diva.js.git#develop",
     "exports-loader": "^0.6.3",
     "history": "^3.2.1",
     "immutable": "^3.8.1",

@@ -16,12 +16,9 @@ import {
     Archive,
     Shelfmark,
     Format,
-    Measurements
+    Measurements,
+    NumberingSystemType
 } from "./containers/description";
-import ProblemReport from "./problem_report";
-import {
-    openProblemReport
-} from "../actions/problem_report";
 
 
 class Description extends React.Component
@@ -40,6 +37,7 @@ class Description extends React.Component
                                 public_images={ this.props.public_images }
                             />
                             <SurfaceType surface_type={ this.props.surface_type } />
+                            <NumberingSystemType numbering_system_type={ this.props.numbering_system_type } />
                             <Format format={ this.props.format } />
                             <Measurements measurements={ this.props.measurements } />
                             <OtherIdentifiers indentifiers={ this.props.identifiers } />
@@ -57,20 +55,6 @@ class Description extends React.Component
                     </table>
 
                     <Notes notes={ this.props.notes } showEdit={ this.props.userIsStaff } />
-                    <div className="problem-report">
-                        <div
-                            className="button"
-                            onClick={ () => this.props.openProblemReport() }
-                        >
-                            Report a problem
-                        </div>
-                    </div>
-                    { this.props.userIsAuthenticated && this.props.problemReportVisible &&
-                    <ProblemReport for={ this.props.display_name }
-                                   type={ "source" }
-                                   pk={ this.props.pk }
-                                   username={ this.props.username }
-                    /> }
                 </div>
                 <div className="column">
                     <CoverImage
@@ -93,6 +77,7 @@ function mapStateToProps (state)
         has_images: state.source.has_images,
         public_images: state.source.public_images,
         surface_type: state.source.surface_type,
+        numbering_system_type: state.source.numbering_system_type,
         identifiers: state.source.identifiers,
         notations: state.source.notations,
         inventory_provided: state.source.inventory_provided,
@@ -112,11 +97,10 @@ function mapStateToProps (state)
         format: state.source.format,
         measurements: state.source.measurements,
 
-        problemReportVisible: state.problem_report.visible,
         userIsAuthenticated: state.user.isAuthenticated,
         userIsStaff: state.user.isStaff,
         username: state.user.username
     }
 }
 
-export default connect(mapStateToProps, { openProblemReport })(Description);
+export default connect(mapStateToProps)(Description);

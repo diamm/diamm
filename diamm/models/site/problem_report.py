@@ -29,7 +29,7 @@ class ProblemReport(models.Model):
     note = models.TextField()
 
     # NB: To be filled out by DIAMM staff and used to build the contributions list for each record.
-    completed = models.BooleanField(default=False)
+    accepted = models.BooleanField(default=False, help_text="If the change has been accepted as substantive by DIAMM staff, check this box. This will add the record to the linked source's Contributors area.")
     summary = models.CharField(help_text="A summary of the change that was contributed by the user. Used to automatically build a contributor's entry for the record",
                                max_length=255, blank=True, null=True)
 

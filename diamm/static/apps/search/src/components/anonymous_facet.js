@@ -3,24 +3,24 @@ import { connect } from "react-redux";
 import Facet from "./facets";
 import _ from "lodash";
 import {
-    performHasInventorySearch,
-    updateHasInventoryValue,
-    clearHasInventoryValue
-} from "../actions/has_inventory_facet";
+    performAnonymousSearch,
+    updateAnonymousValue,
+    clearAnonymousValue
+} from "../actions/anonymous_facet";
 
 
-class HasInventoryFacet extends React.Component
+class AnonymousFacet extends React.Component
 {
-    selectHasInventoryValue (value)
+    selectAnonymousValue (value)
     {
-        this.props.updateHasInventoryValue(value);
-        this.props.performHasInventorySearch();
+        this.props.updateAnonymousValue(value);
+        this.props.performAnonymousSearch();
     }
 
-    clearHasInventory ()
+    clearAnonymous ()
     {
-        this.props.clearHasInventoryValue();
-        this.props.performHasInventorySearch();
+        this.props.clearAnonymousValue();
+        this.props.performAnonymousSearch();
     }
 
     _showControls ()
@@ -28,7 +28,7 @@ class HasInventoryFacet extends React.Component
         return (
             <div
                 className="facet-show-control"
-                onClick={ () => this.clearHasInventory() }
+                onClick={ () => this.clearAnonymous() }
             >
                 Clear
             </div>
@@ -37,10 +37,10 @@ class HasInventoryFacet extends React.Component
 
     render ()
     {
-        let facets = _.chunk(this.props.hasInventoryFacet, 2);
+        let facets = _.chunk(this.props.anonymousFacet, 2);
         return (
             <Facet
-                title="Has Inventory"
+                title="Anonymous Compositions"
                 bodyClasses={ 'select-list' }
                 controls={ this._showControls() }
             >
@@ -51,9 +51,9 @@ class HasInventoryFacet extends React.Component
                             <label>
                                 <input
                                     type="radio"
-                                    name="has-inventory"
+                                    name="anonymous"
                                     checked={ this.props.activeSelect === facet[0] }
-                                    onChange={ () => this.selectHasInventoryValue(facet[0])}
+                                    onChange={ () => this.selectAnonymousValue(facet[0])}
                                 />
                                 { facet[0] === "true" ? "Yes" : "No" }
                             </label>
@@ -68,15 +68,15 @@ class HasInventoryFacet extends React.Component
 function mapStateToProps (state)
 {
     return {
-        hasInventoryFacet: state.results.facets.has_inventory,
-        activeSelect: state.currentFacets.hasInventory.active
+        anonymousFacet: state.results.facets.anonymous,
+        activeSelect: state.currentFacets.anonymous.active
     };
 }
 
 const mapDispatchToProps = {
-    performHasInventorySearch,
-    updateHasInventoryValue,
-    clearHasInventoryValue
+    performAnonymousSearch,
+    updateAnonymousValue,
+    clearAnonymousValue
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(HasInventoryFacet);
+export default connect(mapStateToProps, mapDispatchToProps)(AnonymousFacet);

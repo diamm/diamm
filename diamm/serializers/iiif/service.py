@@ -29,7 +29,7 @@ class StructureServiceSerializer(ContextDictSerializer):
 class ServiceSerializer(ContextDictSerializer):
     service = StaticField(
         label="@context",
-        value="https://{0}/services/item".format(settings.HOSTNAME)
+        value="https://{0}/services/item".format(settings.HOSTNAME)  # custom DIAMM service namespace
     )
     id = serpy.MethodField(
         label="@id"
@@ -42,6 +42,7 @@ class ServiceSerializer(ContextDictSerializer):
     voices = serpy.MethodField()
     folios = serpy.MethodField()
     composition = serpy.MethodField()
+    pages = serpy.MethodField()
 
     def get_id(self, obj):
         return reverse('source-item-detail',
@@ -50,6 +51,9 @@ class ServiceSerializer(ContextDictSerializer):
                        request=self.context['request'])
 
     def get_composers(self, obj):
+        if 'composers_ssni' not in obj:
+            return []
+
         composers = []
         for composer in obj['composers_ssni']:
             c = {}
@@ -82,15 +86,15 @@ class ServiceSerializer(ContextDictSerializer):
 
         voices = []
         for voice in voice_list.docs:
-            v = {}
-
-            v['voice_type'] = voice.get('voice_type_s')
-            v['voice_text'] = voice.get('voice_text_s')
-            v['languages'] = voice.get('languages_ss')  # an array of languages
-            v['clef'] = voice.get('clef_s')
-            v['mensuration_sign'] = voice.get('mensuration_s')
-            v['mensuration_text'] = voice.get('mensuration_text_s')
-
+            v = {
+                'voice_type': voice.get('voice_type_s'),
+                'voice_text': voice.get('voice_text_s'),
+                'languages': voice.get('languages_ss'),
+                'clef': voice.get('clef_s'),
+                'mensuration_sign': voice.get('mensuration_s'),
+                'mensuration_text': voice.get('mensuration_text_s')
+            }
+            # strip out any None values.
             v = {key: value for key, value in v.items() if value}
             voices.append(v)
 
@@ -128,5 +132,20 @@ class ServiceSerializer(ContextDictSerializer):
                                 kwargs={'pk': obj['composition_i']},
                                 request=self.context['request'])
             }
+            return composition
+        return None
 
-        return composition
+    def get_pages(self, obj):
+        if 'pages_ssni' in obj:
+            pages = []
+            for page in obj['pages_ssni']:
+                pk, label = page.split("|")
+                pages.append({
+                    'label': label,
+                    '@id': reverse('source-canvas-detail',
+                                   kwargs={'source_id': obj['source_i'],
+                                           "page_id": pk},
+                                   request=self.context['request'])
+                })
+            return pages
+        return None

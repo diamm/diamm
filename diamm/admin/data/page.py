@@ -5,8 +5,9 @@ from django_extensions.admin import ForeignKeyAutocompleteAdmin
 
 @admin.register(Page)
 class PageAdmin(ForeignKeyAutocompleteAdmin):
-    list_display = ('get_source', 'numeration')
+    list_display = ('get_source', 'numeration', 'page_type')
     search_fields = ('source__shelfmark', 'source__name')
+    list_editable = ('page_type',)
 
     related_search_fields = {
         'source': ['shelfmark', 'name', 'pk']

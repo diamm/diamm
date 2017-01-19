@@ -55,7 +55,7 @@ a {
   text-decoration: none;
   &:hover {
     color: $diamm-lt-blue;
-    background: lighten($diamm-lt-blue, 52%);
+    //background: lighten($diamm-lt-blue, 52%);
   }
 }
 
@@ -72,6 +72,21 @@ a {
     height: 20%;
     color: $diamm-red;
   }
+}
+
+.no-image {
+  background-color: $diamm-light-grey;
+  border: 1px solid $diamm-grey;
+  width: 100px;
+  height: 140px;
+  margin: 0 auto;
+  //display: flex;
+  //align-items: center;
+  //justify-content: center;
+}
+
+.is-not-bold {
+  font-weight: $weight-normal !important;
 }
 
 //h1, h2, h3, h4, h5,

@@ -3,7 +3,14 @@
 {% block cmsbody %}
     <div>
         <h2 class="title">{{ page.title }}</h2>
-        <h3 class="subtitle">{{ page.author.full_name }}</h3>
-        {{ page.abstract | richtext }}
+        <h3 class="subtitle is-5">{{ page.author.full_name }}</h3>
+        <h4 class="subtitle is-6">{{ page.degree }}, {{ page.university }}, {{ page.year }}</h4>
+
+        <a class="button is-primary" href="{{ page.attachment.url }}">Download PDF: {{ page.attachment.title }}</a>
+        <hr />
+        <div class="content">
+            <h4>Abstract</h4>
+                {{ page.abstract | richtext }}
+        </div>
     </div>
 {% endblock %}

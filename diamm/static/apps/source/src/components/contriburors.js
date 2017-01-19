@@ -1,4 +1,5 @@
 import React from "react";
+import { connect } from "react-redux";
 
 
 class Contributors extends React.Component
@@ -13,4 +14,4 @@ class Contributors extends React.Component
     }
 }
 
-export default Credits;
+export default connect()(Contributors);

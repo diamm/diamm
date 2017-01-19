@@ -5,7 +5,7 @@
 
 .nav {
   background-color: $diamm-grey;
-  box-shadow: 0 2px 5px rgba(10, 10, 10, 0.6), 0 0 0 0px rgba(10, 10, 10, 0.5);
+  box-shadow: 0 1px 10px rgba(10, 10, 10, 0.6), 0 0 0 0px rgba(10, 10, 10, 0.5);
 
   a.nav-item {
     height: 100%;
@@ -64,17 +64,20 @@
     display: block;
   }
 
+  .is-3-columns {
+    columns: 180px 3;
+    column-rule: 1px dashed $diamm-light-grey;
+  }
+
   .dropdown-menu {
     display: none;
     position: absolute;
-    top: $navbar-height;
+    top: $navbar-height - 1;
     background-color: $diamm-white;
-    box-shadow: 0 5px 5px rgba(10, 10, 10, 0.6), 0 0 0 0px rgba(10, 10, 10, 0.5);
+    box-shadow: 0 1px 10px rgba(10, 10, 10, 0.6), 0 0 0 0px rgba(10, 10, 10, 0.5);
     border-radius: 0 5px 5px;
     padding: 15px;
     text-align: left;
-    columns: 180px 3;
-    column-rule: 1px dashed $diamm-light-grey;
 
     .dropdown-menu-section {
       div {
@@ -91,13 +94,18 @@
       }
 
       a {
-        color: $diamm-red;
+        color: $diamm-grey;
         &:hover {
           color: darken($diamm-red, 10%);
           background: none;
         }
       }
     }
+  }
+
+  .account-menu {
+    width: 260px;
+    right: 0;
   }
 }
 
