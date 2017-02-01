@@ -73,6 +73,7 @@ from diamm.models.data.image import Image
 from diamm.models.data.image_note import ImageNote
 from diamm.models.data.image_type import ImageType
 from diamm.models.data.set import Set
+from diamm.models.data.search import Search
 from diamm.models.data.set_bibliography import SetBibliography
 from diamm.models.data.voice import Voice
 from diamm.models.data.voice_type import VoiceType
