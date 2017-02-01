@@ -9,6 +9,7 @@ import quickLookReducer from "./quicklook_reducer";
 import commentaryReducer from "./commentary_reducer";
 import correctionsReducer from "./corrections_reducer";
 import inventoryReducer from "./inventory_reducer";
+import contributorsReducer from "./contributors_reducer";
 
 const rootReducer = combineReducers({
     user: userReducer,
@@ -20,6 +21,7 @@ const rootReducer = combineReducers({
     commentary: commentaryReducer,
     corrections: correctionsReducer,
     inventory: inventoryReducer,
+    contributors: contributorsReducer,
     routing
 });
 

@@ -1,6 +1,23 @@
+import re
 import serpy
+from django.template.loader import get_template
 from rest_framework.reverse import reverse
 from diamm.serializers.serializers import ContextSerializer
+
+
+class CompositionBibliographySerializer(ContextSerializer):
+    citation = serpy.MethodField()
+    pages = serpy.StrField()
+
+    def get_citation(self, obj):
+        template = get_template("website/bibliography/bibliography_entry.jinja2")
+        citation = template.template.render(content=obj.bibliography)
+        # strip out any newlines from the templating process
+        citation = re.sub('\n', '', citation)
+        # strip out multiple spaces
+        citation = re.sub('\s+', ' ', citation)
+        citation = citation.strip()
+        return citation
 
 
 class CompositionCycleCompositionSerializer(ContextSerializer):
@@ -76,17 +93,6 @@ class CompositionComposerSerializer(ContextSerializer):
                        request=self.context['request'])
 
 
-class CompositionListSerializer(ContextSerializer):
-    composers = serpy.MethodField()
-    title = serpy.StrField()
-
-    def get_composers(self, obj):
-        if obj.composers:
-            return CompositionComposerSerializer(obj.composers.all(),
-                                                 context={"request": self.context['request']},
-                                                 many=True).data
-
-
 class CompositionDetailSerializer(ContextSerializer):
     composers = serpy.MethodField()
     sources = serpy.MethodField()
@@ -96,6 +102,7 @@ class CompositionDetailSerializer(ContextSerializer):
     title = serpy.StrField()
     cycles = serpy.MethodField()
     genres = serpy.MethodField()
+    bibliography = serpy.MethodField()
 
     def get_url(self, obj):
         return reverse('composition-detail',
@@ -132,3 +139,6 @@ class CompositionDetailSerializer(ContextSerializer):
         if obj.genres.count() > 0:
             return obj.genres.values_list('name', flat=True)
         return []
+
+    def get_bibliography(self, obj):
+        return CompositionBibliographySerializer(obj.bibliography.all(), many=True).data

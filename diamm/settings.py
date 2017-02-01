@@ -138,6 +138,9 @@ WSGI_APPLICATION = 'diamm.wsgi.application'
 
 DATABASE_ROUTERS = ['diamm.router.DatabaseRouter']
 
+# Some records fail with too many fields if this check is not disabled.
+DATA_UPLOAD_MAX_NUMBER_FIELDS = None
+
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
 AUTH_USER_MODEL = "diamm_site.CustomUserModel"

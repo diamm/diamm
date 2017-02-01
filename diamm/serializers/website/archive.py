@@ -47,6 +47,7 @@ class CityArchiveSerializer(ContextSerializer):
 
 class ArchiveDetailSerializer(ContextSerializer):
     url = serpy.MethodField()
+    pk = serpy.IntField()
     sources = serpy.MethodField()
     city = serpy.MethodField()
     former_name = serpy.StrField(

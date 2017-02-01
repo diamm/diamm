@@ -9,7 +9,7 @@ import {
     IMAGES_ROUTE,
     SETS_ROUTE,
     BIBLIOGRAPHY_ROUTE,
-    CREDITS_ROUTE,
+    CONTRIBUTORS_ROUTE,
     COMMENTARY_ROUTE,
     COMMENTARY_ROUTE_PRIVATE,
     CORRECTIONS_ROUTE
@@ -152,13 +152,11 @@ class App extends React.Component
                                                  isActive(COMMENTARY_ROUTE_PRIVATE, true) }
                                         route={ COMMENTARY_ROUTE }
                                         title="Commentary"
-                                        show={ true }
                                     />
                                     <MenuLink
-                                        active={ isActive(CREDITS_ROUTE, true) }
-                                        route={ CREDITS_ROUTE }
-                                        title="Credits"
-                                        show={ false }
+                                        active={ isActive(CONTRIBUTORS_ROUTE, true) }
+                                        route={ CONTRIBUTORS_ROUTE }
+                                        title="Contributors"
                                     />
                                 </ul>
                                 </div>

@@ -1,59 +1,89 @@
-import re
 import os
+import re
 import shutil
-import sys
 import unicodedata
-from django.core.management import BaseCommand
-import hashlib
 from django.conf import settings
+from django.db.models import signals
+from django.core.management import BaseCommand
 from diamm.models.data.image import Image
+from diamm.signals.page_signals import index_image
 from diamm.models.data.source import Source
-from blessings import Terminal
 
-term = Terminal()
+STORE0 = "/dbdata2"
+STORE1 = "/dbdata4"
+OLDPATH = "/dbdata3/diamm/images"
 
-RE_spaces = r"[\s()\[\]:/]+"
-RE_remove = r'[,(){}"\'\*]+'
+TEST = False
+
+RE_spaces = r"[\s]+"
+RE_remove = r'[:,\.\[\](){}"\'\*/]+'
 RE_underscores = r"[_]+"
 
 
-def clean_dirname(msdir):
-    # remove any extraneous spaces
-    newdir = msdir.replace("/", " ")
-    newdir = re.sub(RE_remove, "", newdir)
-    newdir = re.sub(RE_spaces, "_", newdir)
-    # ensure we only ever have one underscore (in case there was " _")
-    newdir = re.sub(RE_underscores, "_", newdir)
-    newdir = unicodedata.normalize('NFKD', newdir).encode('ascii', 'ignore')
-
-    return str(newdir, 'ascii')
+def list_duplicates(l):
+    seen = set()
+    seen_add = seen.add
+    seen_twice = set( x for x in l if x in seen or seen_add(x))
+    return list(seen_twice)
 
 
 class Command(BaseCommand):
-    def handle(self, *args, **options):
-        images = Image.objects.all().prefetch_related('items__source__archive')
+    def _foldername(self, source):
+        sn = re.sub(RE_remove, "", source.shelfmark)
+        sn = re.sub(RE_spaces, "_", sn)
 
-        for img in images:
-            if img.filename in (None, 'applytolibrary', 'not photographed', 'librarydigitized'):
+        sg = re.sub(RE_remove, "", source.archive.siglum)
+        sg = re.sub(RE_spaces, "_", sg)
+        n = "{0}_{1}_{2}".format(sg, sn, source.pk)
+        n = unicodedata.normalize('NFKD', n).encode('ascii', 'ignore').decode('ascii')
+        return n
+
+    def handle(self, *args, **options):
+        signals.post_save.disconnect(index_image, sender=Image)
+
+        sources = Source.objects.all().select_related('archive').order_by('pk')
+
+        # pre-check duplicates
+        fnames = []
+        for source in sources:
+            if source.pages.count() == 0:
                 continue
 
-            items = img.items.all()
-            for it in items:
-                potential_foldername = "{0}_{1}".format(it.source.archive.siglum, it.source.shelfmark)
-                foldername = clean_dirname(potential_foldername)
-                new_path = os.path.join(settings.IMAGE_DIR, foldername)
-                if not os.path.exists(new_path):
-                    print(term.blue("Making {0}".format(foldername)))
-                    os.mkdir(new_path)
+            # split the image storage over two drives based on even/odd source pks so we don't fill it up.
+            store = None
+            urlpath = None
+            if source.pk % 2 == 0:
+                store = STORE0
+                urlpath = "{0}{1}/store0/".format(settings.URL)
+            else:
+                store = STORE1
 
-                imgfn = "{0}.jp2".format(img.filename)
-                legacy_img = os.path.join(settings.LEGACY_IMAGE_DIR, imgfn)
+            foldername = self._foldername(source)
+            print(foldername)
 
-                print(term.green("Moving {0} to {1}".format(legacy_img, os.path.join(new_path, imgfn))))
+            pathname = os.path.join(store, foldername)
+
+            # if os.path.exists(pathname):
+            #     print('path exists. Bailing')
+            #     sys.exit(-1)
+
+            if not TEST:
                 try:
-                    os.rename(legacy_img, os.path.join(new_path, imgfn))
-                    # copy for testing
-                    # shutil.copy(legacy_img, new_path)
-                except FileNotFoundError as e:
-                    print(term.red("\tSkipping {0} (moved previously?)".format(legacy_img)))
+                    os.mkdir(pathname)
+                except FileExistsError:
+                    pass
 
+            for page in source.pages.all():
+                pname = page.numeration
+                print("\t{0}".format(pname))
+                for image in page.images.filter():
+                    if not image.legacy_filename:
+                        continue
+
+                    print("\t\t{0}".format(image.legacy_filename))
+
+                    if not TEST:
+                        try:
+                            shutil.move(os.path.join(OLDPATH, "{0}.jp2".format(image.legacy_filename)), pathname)
+                        except FileNotFoundError:
+                            pass

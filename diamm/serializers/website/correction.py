@@ -2,8 +2,10 @@ import serpy
 
 
 class CorrectionSerializer(serpy.Serializer):
-    note = serpy.StrField()
+    summary = serpy.StrField()
     contributor = serpy.StrField(
-        attr="contributor.full_name"
+        attr="contributor.full_name",
+        required=False
     )
-    created = serpy.StrField()
+    credit = serpy.StrField()
+    updated = serpy.StrField()

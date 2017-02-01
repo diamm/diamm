@@ -63,6 +63,21 @@
             </table>
         </div>
     </div>
+    {% if content.bibliography %}
+    <div class="columns">
+        <div class="column">
+            <h3 class="title is-4">Bibliography</h3>
+            {% for item in content.bibliography %}
+                <p>{{ item.citation | safe }} pp. {{ item.pages }}.</p>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    {% if request.user.is_staff %}
+        {% with edit_path="/admin/diamm_data/composition/" %}
+            {% include "website/blocks/edit_bar.jinja2"  %}
+        {% endwith %}
+    {% endif %}
 {% endblock %}
 
 

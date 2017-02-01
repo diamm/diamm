@@ -100,6 +100,7 @@ def convert_numbering_system(system):
     else:
         return None
 
+
 def determine_note_sort(notetype):
     if notetype == SourceNote.CCM_NOTE:
         return 99
@@ -108,10 +109,12 @@ def determine_note_sort(notetype):
     else:
         return 0
 
+
 def format_copyrighted_note(note):
     if note:
         return "{0}\n**{1}**".format(note, COPYRIGHT_NOTICE)
     return None
+
 
 def migrate_source_to_source(legacy_source):
     print(term.green("\tMigrating Source {0} with ID {1}".format(legacy_source.shelfmark, legacy_source.pk)))

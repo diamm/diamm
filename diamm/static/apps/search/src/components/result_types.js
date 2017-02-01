@@ -65,11 +65,11 @@ export const ArchiveResultType = ({result}) =>
     return (
         <div className="search-result">
             <h3>
-                <a href={ result.url }>{ result.name_s }</a>
+                <a href={ result.url }>{ result.name_s } ({ result.siglum_s })</a>
                 <span className="result-type"> Archive</span>
             </h3>
             <div>
-                { result.city_s }, { result.country_s }
+                { result.city_s }, { result.country_s }.
             </div>
         </div>
     );

@@ -24,6 +24,7 @@ from diamm.admin.diamm_user import UserAdmin
 from diamm.admin.data.set import SetAdmin
 from diamm.admin.data.text import TextAdmin
 from diamm.admin.data.voice import VoiceAdmin
+from diamm.admin.data.voice_type import VoiceTypeAdmin
 from diamm.admin.data.cycle import CycleAdmin
 from diamm.admin.data.cycle_type import CycleTypeAdmin
 from diamm.admin.data.clef import ClefAdmin

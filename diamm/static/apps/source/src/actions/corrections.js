@@ -8,22 +8,7 @@ import {
     CORRECTIONS_ROUTE
 } from "../routes";
 
-//
-//
-// export function openProblemReport ()
-// {
-//     return {
-//         type: OPEN_PROBLEM_REPORT_VIEW
-//     }
-// }
-//
-// export function closeProblemReport ()
-// {
-//     return {
-//         type: CLOSE_PROBLEM_REPORT_VIEW
-//     }
-// }
-//
+
 export function updateCorrectionReportText (note)
 {
     return {

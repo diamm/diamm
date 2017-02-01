@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.template.defaultfilters import truncatewords
 from diamm.models.data.item import Item
 from diamm.models.data.item_bibliography import ItemBibliography
+from diamm.models.data.item_note import ItemNote
 from reversion.admin import VersionAdmin
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
 
@@ -28,6 +29,10 @@ from django_extensions.admin import ForeignKeyAutocompleteAdmin
 #         elif val == "False":
 #             return queryset.filter(aggregate_composer__isnull=False)
 
+class ItemNoteInline(admin.TabularInline):
+    model = ItemNote
+    extra = 0
+
 
 class BibliographyInline(admin.TabularInline):
     model = ItemBibliography
@@ -42,13 +47,13 @@ class ItemAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     search_fields = ("source__name", "source__identifiers__identifier",
                      "composition__title")
     # list_filter = (AggregateComposerListFilter,)
-    inlines = (BibliographyInline,)
-    # filter_horizontal = ['pages']
+    inlines = (BibliographyInline, ItemNoteInline)
+    filter_horizontal = ['pages']
     # exclude = ("pages",)
 
     related_search_fields = {
         "composition": ("title",),
-        "source": ("shelfmark",),
+        "source": ("shelfmark",)
     }
 
     def get_source(self, obj):

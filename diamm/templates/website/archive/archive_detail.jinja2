@@ -7,11 +7,13 @@
             <h2 class="subtitle"><a href="{{ content.city.url }}">{{ content.city.name }}</a>, {{ content.city.country }}</h2>
         </div>
         <div class="column">
+            {% if content.logo %}
             <img src="{{ content.logo }}" />
+            {% endif %}
         </div>
     </div>
     <div class="columns">
-        <div class="column">
+        <div class="column content">
             {% if content.website %}
                 <p>
                     <strong>Archive website: </strong><a href="http://{{ content.website }}">{{ content.name }}</a>
@@ -36,4 +38,9 @@
             {% endif %}
         </div>
     </div>
+    {% if request.user.is_staff %}
+        {% with edit_path="/admin/diamm_data/archive/" %}
+            {% include "website/blocks/edit_bar.jinja2"  %}
+        {% endwith %}
+    {% endif %}
 {% endblock %}

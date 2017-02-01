@@ -42,7 +42,8 @@ from diamm.views.website.image import image_serve
 from diamm.views.website.bibliography_author import BibliographyAuthorDetail
 from diamm.views.website.commentary import CommentaryList
 from diamm.views.catalogue.catalogue import CatalogueView
-from diamm.views.website.correction import CorrectionList
+from diamm.views.website.correction import CorrectionCreate
+from diamm.views.website.contributor import ContributorList
 
 from wagtail.wagtailadmin import urls as wagtailadmin_urls
 from wagtail.wagtaildocs import urls as wagtaildocs_urls
@@ -110,6 +111,7 @@ urlpatterns = [
     url(r'^cities/(?P<pk>[0-9]+)/$', CityDetail.as_view(), name="city-detail"),
     url(r'^countries/$', CountryList.as_view(), name="country-list"),
     url(r'^countries/(?P<pk>[0-9]+)/$', CountryDetail.as_view(), name="country-detail"),
+
     # url(r'^people/$', PersonList.as_view(), name="person-list"),
     url(r'^people/(?P<pk>[0-9]+)/$', PersonDetail.as_view(), name="person-detail"),
     url(r'^organizations/(?P<pk>[0-9]+)/$', OrganizationDetail.as_view(), name="organization-detail"),
@@ -124,7 +126,10 @@ urlpatterns = [
     url(r'^images/(?P<pk>[0-9]+)/$', image_serve, name="image-serve-info"),
 
     url(r'^commentary/$', CommentaryList.as_view(), name="commentary-list"),
-    url(r'^corrections/$', CorrectionList.as_view(), name="correction-list"),
+
+    # Two views on the same content; see the problem_report model for clarification.
+    url(r'^corrections/$', CorrectionCreate.as_view(), name="correction-create"),
+    url(r'^contributors/$', ContributorList.as_view(), name="contributor-list"),
 
     # Cataloguing view
     url(r'^catalogue/(.*)$', CatalogueView.as_view(), name="catalogue-view"),

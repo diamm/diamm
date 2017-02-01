@@ -5,6 +5,8 @@ from diamm.models.data.composition_bibliography import CompositionBibliography
 
 
 class BibliographyInline(admin.TabularInline):
+    verbose_name = "Composition Bibliography"
+    verbose_name_plural = "Composition Bibliographies"
     model = CompositionBibliography
     extra = 0
     raw_id_fields = ('bibliography',)

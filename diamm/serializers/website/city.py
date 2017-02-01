@@ -32,12 +32,16 @@ class CityDetailSerializer(ContextSerializer):
     name = serpy.StrField()
     archives = serpy.MethodField()
     country = serpy.MethodField()
+    provenance_relationships = serpy.MethodField()
 
     def get_archives(self, obj):
         return ArchiveCitySerializer(obj.archives.all(), many=True, context=self.context).data
 
     def get_country(self, obj):
         return CountryCitySerializer(obj.parent, context=self.context).data
+
+    def get_provenance_relationships(self, obj):
+        return ProvenanceSerializer(obj.city_sources.all(), many=True, context=self.context).data
 
     def get_url(self, obj):
         return reverse("city-detail", kwargs={"pk": obj.id}, request=self.context['request'])

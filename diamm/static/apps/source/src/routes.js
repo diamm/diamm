@@ -10,7 +10,7 @@ import Sets from "./components/sets";
 import Bibliography from "./components/bibliography";
 import CommentaryPublic from "./components/commentary_public";
 import CommentaryPrivate from "./components/commentary_private";
-import Credits from "./components/credits";
+import Contributors from "./components/contributors";
 import Corrections from "./components/corrections"
 
 export const ROOT_ROUTE = "/";
@@ -19,7 +19,7 @@ export const IMAGES_ROUTE = "images";
 export const SETS_ROUTE = "sets";
 export const BIBLIOGRAPHY_ROUTE = "bibliography";
 export const COMMENTARY_ROUTE = "commentary";
-export const CREDITS_ROUTE = "credits";
+export const CONTRIBUTORS_ROUTE = "contributors";
 export const CORRECTIONS_ROUTE = "corrections";
 
 export const INVENTORY_ROUTE_BY_COMPOSER = `${INVENTORY_ROUTE}/composer`;
@@ -36,7 +36,7 @@ export default (
         <Route path={ IMAGES_ROUTE } component={ Images } />
         <Route path={ SETS_ROUTE } component={ Sets } />
         <Route path={ BIBLIOGRAPHY_ROUTE } component={ Bibliography } />
-        <Route path={ CREDITS_ROUTE } component={ Credits } />
+        <Route path={ CONTRIBUTORS_ROUTE } component={ Contributors } />
         <Route path={ COMMENTARY_ROUTE } component={ CommentaryPublic } />
         <Route path={ COMMENTARY_ROUTE_PRIVATE } component={ CommentaryPrivate } />
         <Route path={ CORRECTIONS_ROUTE } component={ Corrections } />
