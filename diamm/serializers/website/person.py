@@ -4,6 +4,21 @@ from diamm.serializers.serializers import ContextDictSerializer, ContextSerializ
 from diamm.models.data.person_note import PersonNote
 
 
+class PersonRoleSerializer(ContextSerializer):
+    earliest_year = serpy.StrField(
+        required=False
+    )
+    latest_year = serpy.StrField(
+        required=False
+    )
+    role = serpy.StrField(
+        attr="role.name"
+    )
+    note = serpy.StrField(
+        required=False
+    )
+
+
 class PersonNoteSerializer(ContextSerializer):
     note = serpy.StrField()
 
@@ -120,6 +135,7 @@ class PersonDetailSerializer(ContextSerializer):
     )
     biography = serpy.MethodField()
     variant_names = serpy.MethodField()
+    roles = serpy.MethodField()
 
     def get_url(self, obj):
         return reverse('person-detail',
@@ -149,3 +165,6 @@ class PersonDetailSerializer(ContextSerializer):
 
     def get_variant_names(self, obj):
         return obj.notes.filter(type=PersonNote.VARIANT_NAME_NOTE, public=True).values_list('note', flat=True)
+
+    def get_roles(self, obj):
+        return PersonRoleSerializer(obj.roles.all(), many=True).data
