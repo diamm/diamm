@@ -9752,6 +9752,10 @@ tr.selected {
   border-color: 2px solid #dd1c1a !important;
 }
 
+.image-composition-details {
+  margin-bottom: 10px;
+}
+
 .search-box {
   background: #dddede;
   padding: 16px;
@@ -10013,6 +10017,10 @@ a:hover {
   width: 100px;
   height: 140px;
   margin: 0 auto;
+}
+
+.is-bold {
+  font-weight: 700 !important;
 }
 
 .is-not-bold {

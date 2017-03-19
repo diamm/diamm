@@ -85,6 +85,10 @@ a {
   //justify-content: center;
 }
 
+.is-bold {
+  font-weight: $weight-bold !important;
+}
+
 .is-not-bold {
   font-weight: $weight-normal !important;
 }
