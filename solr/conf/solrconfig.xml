@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <config>
+    <lib dir="${solr.install.dir:../../../..}/libexec/contrib/analysis-extras/lib" regex="icu4j-.*\.jar" />
+    <lib dir="${solr.install.dir:../../../..}/libexec/contrib/analysis-extras/lucene-libs" regex="lucene-analyzers-icu-.*\.jar" />
+
     <luceneMatchVersion>6.0</luceneMatchVersion>
 
     <dataDir>${solr.data.dir:}</dataDir>
