@@ -21,8 +21,8 @@ class Person(models.Model):
     latest_year_approximate = models.BooleanField(default=False)
 
     legacy_id = models.CharField(max_length=64)
-    roles = models.ManyToManyField("diamm_data.Role",
-                                   through="diamm_data.PersonRole")
+    # roles = models.ManyToManyField("diamm_data.Role",
+    #                                through="diamm_data.PersonRole")
 
     sources_copied = GenericRelation("diamm_data.SourceCopyist")
     sources_related = GenericRelation("diamm_data.SourceRelationship")

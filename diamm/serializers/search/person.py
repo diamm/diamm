@@ -32,7 +32,7 @@ class PersonSearchSerializer(ContextSerializer):
     variant_names_ss = serpy.MethodField()
 
     def get_role_ss(self, obj):
-        return [role.name for role in obj.roles.all()]
+        return [role.role for role in obj.roles.all()]
 
     def get_variant_names_ss(self, obj):
         vnames = []
