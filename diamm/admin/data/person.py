@@ -107,7 +107,7 @@ class PersonAdmin(VersionAdmin):
                CopiedSourcesInline, RelatedSourcesInline, ProvenanceSourcesInline,
                CompositionsInline)
     actions = ['merge_people_action']
-    filter_horizontal = ('roles',)
+    # filter_horizontal = ('roles',)
     list_filter = []
 
     formfield_overrides = {
@@ -116,7 +116,7 @@ class PersonAdmin(VersionAdmin):
 
     def get_queryset(self, request):
         qset = super(PersonAdmin, self).get_queryset(request)
-        qset = qset.prefetch_related('roles')
+        # qset = qset.prefetch_related('roles')
         return qset
 
     def merge_people_action(self, request, queryset):
