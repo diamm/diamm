@@ -58,7 +58,7 @@ class ServiceSerializer(ContextDictSerializer):
         for composer in obj['composers_ssni']:
             c = {}
             name, pk, uncertain = composer.split("|")
-            c['name'] = name
+            c['full_name'] = name
 
             if pk:
                 composer_url = reverse("person-detail",
