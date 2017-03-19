@@ -115,6 +115,7 @@ class Command(BaseCommand):
         migrate_users.migrate()
         migrate_sets.migrate()
         migrate_composition_cycle.migrate()
+        migrate_commentary.migrate()
 
         print('creating image locations')
         call_command('testing_image_locations')
