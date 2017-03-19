@@ -82,6 +82,13 @@ class Command(BaseCommand):
         signals.post_delete.disconnect(delete_source_relationship, sender=SourceRelationship)
         signals.post_delete.disconnect(delete_set, sender=Set)
 
+        raw_input = input("Zeroing the data tables. THIS WILL DELETE EVERYTHING! Press 'y' to continue ")
+        if raw_input != "y":
+            sys.exit(-1)
+
+        call_command('migrate', 'diamm_data', 'zero')
+        call_command('migrate', 'diamm_data')
+
         print("Emptying Fixture tables")
         PageCondition.objects.all().delete()
         ImageType.objects.all().delete()
