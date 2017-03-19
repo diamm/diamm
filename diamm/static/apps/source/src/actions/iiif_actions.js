@@ -46,7 +46,6 @@ export function setActiveManifest (manifest)
 
 export function loadPageData (manifest)
 {
-
 }
 
 export function setCurrentlyActiveRanges (ranges)
@@ -80,6 +79,7 @@ export function fetchActiveRanges (ranges)
                     return response.json()
                 }).then((data) =>
                 {
+                    dispatch(clearPageContents);
                     dispatch({
                         type: IIIF_ADD_TO_PAGE_CONTENTS,
                         item: data

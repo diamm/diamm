@@ -66,7 +66,8 @@ class DivaViewer extends React.Component
         $(this.refs.divaContainer).diva({
             objectData: this.props.manifestURL,
             enableAutoTitle: false,
-            fixedHeightGrid: false
+            fixedHeightGrid: false,
+            enableImageTitles: true
         });
 
         this.diva = $(this.refs.divaContainer).data('diva');

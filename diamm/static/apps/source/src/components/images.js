@@ -23,8 +23,6 @@ class Images extends React.Component
     * */
     loadPageData = debounce( (pageIndex, pageName) =>
     {
-        this.props.clearPageContents();
-
         let canvas = this.props.manifest.sequences[0].canvases[pageIndex]["@id"];
         let canvasTitle = this.props.manifest.sequences[0].canvases[pageIndex]["label"];
         let ranges = this.props.rangeLookup[canvas];
@@ -82,7 +80,7 @@ class Images extends React.Component
                     />
                 </div>
                 <div className="column">
-                    <PageData />
+                    <PageData viewer={ this.refs.divaViewer } />
                 </div>
             </div>
         );

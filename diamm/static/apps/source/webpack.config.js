@@ -14,7 +14,7 @@ module.exports = {
     },
     devtool: (process.env.NODE_ENV === "production") ? "source-map" : "eval-source-map",
     resolve: {
-        extensions: ["", ".js", ".jsx"],
+        extensions: [".js", ".jsx"],
         alias: {
             // We need all usages of jQuery to resolve to the same library
             // not only becuase bundling duplicates would be bad (that could
@@ -27,10 +27,10 @@ module.exports = {
         loaders: [
             {
                 test: /\.json$/,
-                loaders: ['json']
+                loaders: ['json-loader']
             },
             {
-                loader: "babel",
+                loader: "babel-loader",
                 include: [
                     path.resolve(__dirname, "src")
                 ],

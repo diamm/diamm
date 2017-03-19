@@ -1,21 +1,24 @@
 import React from "react";
 import { connect } from "react-redux";
+import PageCompositionDetails from "./containers/images";
 
 class PageData extends React.Component
 {
     render ()
     {
-        return (
-            <div>
-                Folio { this.props.activeCanvasLabel }
+        if (!this.props.pageContents)
+            return null;
 
-                { this.props.pageContents.map( (itm, idx) =>
-                {
-                    if (itm.composition)
-                    {
-                        return <p key={ idx }>{ itm.composition.title }</p>
-                    }
-                })}
+        return (
+            <div className="card is-fullwidth">
+                <header className="card-header">
+                    <h4 className="card-header-title title is-4 is-not-bold">
+                        Folio { this.props.activeCanvasLabel }
+                    </h4>
+                </header>
+                <div className="card-content">
+                    <PageCompositionDetails viewer={ this.props.viewer } />
+                </div>
             </div>
         )
     }

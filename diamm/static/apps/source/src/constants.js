@@ -1,4 +1,4 @@
-export const SERVER_BASE_URL = "https://alpha.diamm.ac.uk/";
+export const SERVER_BASE_URL = "https://www.diamm.ac.uk/";
 
 export const FETCH_SOURCE_INFO = "FETCH_SOURCE_INFO";
 export const RECEIVE_SOURCE_INFO = "RECEIVE_SOURCE_INFO";

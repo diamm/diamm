@@ -37,7 +37,7 @@ class InventoryByComposer extends React.Component
                                                         <Foliation
                                                             folio_start={ cmp.folio_start }
                                                             folio_end={ cmp.folio_end }
-                                                            show_quicklook={ (this.props.user !== null && cmp.folio_start) }
+                                                            show_quicklook={ (this.props.user !== null && entry.pages && entry.pages.length > 0) }
                                                         />
                                                     </li>
                                                 );
