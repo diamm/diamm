@@ -28,15 +28,20 @@ def migrate_composition_bibliography(entry):
     except Composition.DoesNotExist:
         # This composition has been converted to an item.
         print(term.yellow("\t\tConverting record to an item bibliography entry"))
-        i = Item.objects.get(legacy_composition="legacy_composition.{0}".format(int(entry.compositionkey)))
-        d = {
-            'item': i,
-            'bibliography': bibliography,
-            'pages': pages
-        }
-        en = ItemBibliography(**d)
-        en.save()
-        return
+        try:
+            i = Item.objects.get(legacy_composition="legacy_composition.{0}".format(int(entry.compositionkey)))
+            d = {
+                'item': i,
+                'bibliography': bibliography,
+                'pages': pages
+            }
+            en = ItemBibliography(**d)
+            en.save()
+            return
+        except:
+            print(term.red("\t\tPROBLEM!! SKIPPING ENTRY {0}".format(entry.pk)))
+            input("Press any key to continue")
+            return None
 
     d = {
         "composition": composition,
