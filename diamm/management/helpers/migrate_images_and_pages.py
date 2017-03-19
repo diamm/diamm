@@ -22,6 +22,25 @@ def empty_page_and_image():
     Page.objects.all().delete()
 
 
+def __convert_page_type(entry):
+    if entry.type == "fragment":
+        return Page.FRAGMENT
+    elif entry.type == "endpaper-contemporary":
+        return Page.ENDPAPER_CONTEMPORARY
+    elif entry.type == "page":
+        return Page.PAGE
+    elif entry.type == "additional":
+        return Page.ADDITIONAL
+    elif entry.type == "endpaper-modern":
+        return Page.ENDPAPER_MODERN
+    elif entry.type == "opening":
+        return Page.OPENING
+    elif entry.type == "bindings":
+        return Page.BINDINGS
+    else:
+        return Page.PAGE
+
+
 def __determine_page_conditions(entry):
     entries = entry.vrevaluation.split("\r")
     out = []
@@ -122,12 +141,14 @@ def convert_image(entry):
     print(term.green("\tMigrating image with ID {0} to a Page".format(entry.pk)))
     source = Source.objects.get(pk=int(entry.sourcekey))
     folio = entry.folio if entry.folio else "FIXMEFOLIO"
+    page_type = __convert_page_type(entry)
 
     d = {
         'numeration': remove_leading_zeroes(folio),
         'sort_order': entry.orderno,
         'source': source,
-        'legacy_id': "legacy_image.{0}".format(entry.pk)
+        'legacy_id': "legacy_image.{0}".format(entry.pk),
+        'page_type': page_type
     }
 
     p = Page(**d)
@@ -140,6 +161,7 @@ def convert_image(entry):
         print(term.green("\t\tCreating an Image record for Image {0} ({1})".format(entry.pk, filename)))
         available = convert_yn_to_boolean(entry.availwebsite)
         imtype = ImageType.objects.get(pk=ImageType.PRIMARY)
+        page_type = __convert_page_type(entry)
 
         imd = {
             'page': p,
@@ -170,7 +192,6 @@ def convert_secondary_image(entry):
 
     page = orig_image.page
     imtype_pk = determine_image_type(entry)
-    print(imtype_pk)
 
     imtype = ImageType.objects.get(pk=imtype_pk)
 
@@ -179,7 +200,7 @@ def convert_secondary_image(entry):
         "legacy_filename": filename,
         "page": page,
         "type": imtype,
-        "public": orig_image.public
+        "public": orig_image.public,
     }
     im = Image(**imd)
     im.save()
@@ -269,3 +290,22 @@ def update_page_notes():
             }
             pgn = PageNote(**d)
             pgn.save()
+
+
+def update_image_type():
+    images = LegacyImage.objects.all()
+
+    for entry in images:
+        print(term.green("Updating page type for legacy image {0}".format(entry.imagekey)))
+        try:
+            page = Page.objects.get(legacy_id="legacy_image.{0}".format(int(entry.imagekey)))
+        except Page.DoesNotExist:
+            print('page could not be found')
+            continue
+
+        ptype = __convert_page_type(entry)
+        page.page_type = ptype
+        page.save()
+
+
+
