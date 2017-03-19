@@ -124,7 +124,7 @@ class SourceSetSerializer(ContextDictSerializer):
     )
 
     def get_sources(self, obj):
-        source_ids = ",".join([str(id) for id in obj['sources_ii']])
+        source_ids = ",".join([str(sid) for sid in obj['sources_ii']])
         connection = pysolr.Solr(settings.SOLR['SERVER'])
         fq = ["type:source", "{!terms f=pk}"+source_ids]
 
@@ -183,15 +183,19 @@ class SourceComposerInventoryCompositionSerializer(ContextDictSerializer):
         attr="uncertain_b",
         required=False
     )
-    source_attribution = serpy.StrField(
-        attr="source_attribution_s",
-        required=False
-    )
+
+    source_attribution = serpy.MethodField()
+
     composition = serpy.StrField(
         attr="composition_s",
         required=False
     )
     url = serpy.MethodField()
+
+    def get_source_attribution(self, obj):
+        if 'source_attribution_i' in obj:
+            return obj['source_attribution_i']
+        return None
 
     def get_url(self, obj):
         if 'composition_i' not in obj:
@@ -228,7 +232,7 @@ class SourceInventoryNoteSerializer(serpy.DictSerializer):
     note = serpy.StrField(
         attr="note_sni"
     )
-    note_type=serpy.StrField(
+    note_type = serpy.StrField(
         attr="note_type_s"
     )
 
