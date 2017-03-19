@@ -11,6 +11,9 @@ class SetSourceSerializer(ContextSerializer):
     display_name = serpy.StrField(
         required=False
     )
+    archive_name = serpy.StrField(
+        attr="archive.name"
+    )
 
     def get_url(self, obj):
         return reverse('source-detail',
