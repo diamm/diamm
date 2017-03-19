@@ -1,21 +1,36 @@
 {% extends "base.jinja2" %}
 
 {% block body %}
-    <div class="row">
-        <div class="sixteen columns">
-            <h1>{{ content.cluster_shelfmark }}</h1>
+    <div class="columns">
+        <div class="column">
+            <h1 class="title is-2">Set: {{ content.cluster_shelfmark }}</h1>
+            <h2 class="subtitle">{{ content.type }}</h2>
+            <hr />
             {% if content.sources %}
-                <h2>Sources</h2>
-                <ul>
-                {% for source in content.sources %}
-                    <li class="image-source-list">
-                        {% if source.has_images and source.public_images %}
-                            <i class="fa fa-picture-o" aria-hidden="true"></i>
-                        {% endif %}
-                        <a href="{{ source.url }}">{{ source.display_name }}</a>
-                    </li>
-                {% endfor %}
-                </ul>
+                <h3 class="title is-4">Sources</h3>
+                <div class="archive-sources">
+                    {% for source in content.sources %}
+                        <div class="box">
+                            {% if source.cover_image %}
+                                <a href="{{ source.url }}">
+                                    <img src="{{ source.cover_image }}" />
+                                </a>
+                            {% else %}
+                                <div class="no-image">
+                                    <div>
+                                        <i class="fa fa-eye-slash"></i>
+                                    </div>
+                                    <div>
+                                        <small>No images available</small>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            <div>
+                                <a href="{{ source.url }}">{{ source.display_name }}</a> ({{ source.archive_name }})
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
             {% endif %}
         </div>
     </div>
