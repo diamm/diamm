@@ -54,8 +54,6 @@ urlpatterns = [
     url(r'^search.xml$', TemplateView.as_view(template_name='opensearch.jinja2',
                                               content_type="application/opensearchdescription+xml"), name='opensearch'),
     url(r'^admin/', admin.site.urls),
-    # url(r'^$', HomeView.as_view(), name="home"),
-
     # url(r'^beta/$', TemplateView.as_view(template_name="beta.jinja2"), name="beta"),
     # url(r'^introduction/$', TemplateView.as_view(template_name="introduction.jinja2"), name="introduction"),
     # url(r'^technical/$', TemplateView.as_view(template_name="technical.jinja2"), name="technical"),
@@ -118,7 +116,7 @@ urlpatterns = [
     url(r'^composers/(?P<legacy_id>[0-9]+)/$', legacy_composer_redirect),
     url(r'^compositions/(?P<pk>[0-9]+)/$', CompositionDetail.as_view(), name="composition-detail"),
 
-    url(r'^set/(?P<pk>[0-9]+)/$', SetDetail.as_view(), name="set-detail"),
+    url(r'^sets/(?P<pk>[0-9]+)/$', SetDetail.as_view(), name="set-detail"),
 
     url(r'^authors/(?P<pk>[0-9]+)/$', BibliographyAuthorDetail.as_view(), name="author-detail"),
 
