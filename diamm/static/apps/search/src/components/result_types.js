@@ -4,7 +4,7 @@ export const SourceResultType = ({result}) =>
 {
     return (
         <div className="search-result">
-            <h3>
+            <h3 className="title is-3">
                 <a href={ result.url }>{ result.display_name_s }</a>
                 <span className="result-type"> Source { result.public_images_b && <i className="fa fa-file-image-o" />}</span>
             </h3>

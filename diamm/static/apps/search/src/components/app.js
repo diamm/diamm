@@ -42,10 +42,10 @@ class App extends React.Component
                 />
                 <SearchTypeFilter />
                 <div className="columns container is-fluid">
-                    <div className="column is-3">
+                    <div className="column is-one-quarter">
                         <SideBar />
                     </div>
-                    <div className="column is-9">
+                    <div className="column is-three-quarters">
                         <Results
                             results={ this.props.results }
                         />

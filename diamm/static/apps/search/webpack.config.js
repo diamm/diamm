@@ -12,16 +12,16 @@ module.exports = {
     },
     devtool: (process.env.NODE_ENV === "production") ? "source-map" : "eval-source-map",
     resolve: {
-        extensions: ["", ".js", ".jsx"],
+        extensions: [".js", ".jsx"],
     },
     module: {
         loaders: [
             {
                 test: /\.json$/,
-                loaders: ['json']
+                loaders: ['json-loader']
             },
             {
-                loader: "babel",
+                loader: "babel-loader",
                 include: [
                     path.resolve(__dirname, "src")
                 ],
@@ -40,14 +40,14 @@ function productionPlugins()
     return [
         new webpack.DefinePlugin({
             'process.env': {
-                NODE_ENV: JSON.stringify('production')
+                NODE_ENV: JSON.stringify("production")
             }
-        }),
-        new webpack.ProvidePlugin({
-            URLSearchParams: "url-search-params"
         }),
         new webpack.optimize.UglifyJsPlugin(),
         new webpack.optimize.OccurrenceOrderPlugin(true),
+        new webpack.ProvidePlugin({
+            URLSearchParams: "url-search-params"
+        }),
     ]
 }
 

@@ -263,14 +263,14 @@ export const Notes = ({notes, showEdit}) =>
         return null;
 
     return (
-        <div className="content notes">
+        <div className="notes">
             { notes.map( (note, idx) => {
                 return (
                     <section key={ idx }>
                         <h5 className="title is-5">
                             { note.note_type }
                             { showEdit &&
-                                <sup><a href={ `/admin/diamm_data/sourcenote/${note.pk}?next=/` }>Edit</a></sup>
+                                <sup><a href={ `/admin/diamm_data/sourcenote/${note.pk}/` }>Edit</a></sup>
                             }
                         </h5>
                         <ReactMarkdown source={ note.note } />
@@ -290,7 +290,7 @@ export const CoverImage = ({show, info}) =>
         <figure className="card">
             <div className="card-image">
                 <Link to={ {pathname: IMAGES_ROUTE, query: {p: info.label}} }>
-                    <img src={ `${info.url}/full/350,/0/default.jpg` } />
+                    <img src={ `${info.url}full/350,/0/default.jpg` } />
                 </Link>
             </div>
             <div className="card-content">

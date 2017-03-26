@@ -25,8 +25,7 @@ class Bibliography extends React.Component
         return (
             <div className="columns">
                 <div className="column source-bibliography content">
-                    <h3 className="title is-3">Bibliography</h3>
-                    <h4 className="subtitle is-5">&Dagger; <em>denotes primary source study</em></h4>
+                    <p><strong>&Dagger; <em>denotes primary source study</em></strong></p>
                     { bibliography.map( (entry, idx) => {
                         return (
                             <p key={ idx } className="bibliography-entry">

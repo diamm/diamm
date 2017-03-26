@@ -19,14 +19,10 @@ class InventoryAlphabetical extends React.Component
         this.props.showAlphaInventoryDetailsForItem(idx);
     }
 
-    _renderDetail ()
+    _renderDetail (idx)
     {
-        if (this.props.showDetail === null)
-        {
-            return (
-                <p>Click an item to see its details here.</p>
-            );
-        }
+        if (this.props.showDetail !== idx)
+            return null;
 
         let entry = this.props.alphabetical[this.props.showDetail];
 
@@ -39,8 +35,9 @@ class InventoryAlphabetical extends React.Component
     {
         return (
             <Inventory>
-                <div className="column is-two-thirds">
-                    <table className="table">
+                <div className="column">
+                    <p>Click an entry to see more information about that item.</p>
+                    <table className="table inventory-table">
                         <thead>
                             <tr>
                                 <th>Composition</th>
@@ -51,12 +48,18 @@ class InventoryAlphabetical extends React.Component
                         <tbody>
                         { this.props.alphabetical.map( (entry, idx) =>
                         {
+                            if (this.props.showDetail === idx)
+                            {
+                                return (
+                                    <tr key={ idx }>
+                                        { this._renderDetail(idx) }
+                                    </tr>
+                                )
+                            }
                             return (
                                 <tr key={ idx } className="alpha-order" onClick={ () => this.handleShowDetailClick(idx) }>
                                     <td className="item-details">
-                                        <h4 className="composition-name">
-                                            { entry.composition }
-                                        </h4>
+                                        { entry.composition }
                                     </td>
                                     <td>
                                         <Composers composers={ entry.composers } />
@@ -73,9 +76,6 @@ class InventoryAlphabetical extends React.Component
                         })}
                         </tbody>
                     </table>
-                </div>
-                <div className="column scroll-sidebar">
-                    { this._renderDetail() }
                 </div>
             </Inventory>
         );

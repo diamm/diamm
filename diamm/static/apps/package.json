@@ -18,13 +18,13 @@
     "babel-preset-es2015": "^6.18.0",
     "babel-preset-react": "^6.16.0",
     "babel-preset-stage-1": "^6.16.0",
-    "webpack": "^1.13.3"
+    "webpack": "^2.3.2"
   },
   "dependencies": {
     "babel-loader": "^6.2.8",
     "classnames": "^2.2.5",
     "dateformat": "^2.0.0",
-    "diva.js": "git+https://github.com/DDMAL/diva.js.git#develop",
+    "diva.js": "^5.0.4",
     "exports-loader": "^0.6.3",
     "history": "^3.2.1",
     "immutable": "^3.8.1",

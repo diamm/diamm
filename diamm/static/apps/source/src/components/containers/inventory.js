@@ -84,6 +84,24 @@ export const QuickLook = ({url}) =>
     );
 };
 
+const linkComposerName = (composer) =>
+{
+    if (composer.url !== null)
+    {
+        return (
+            <a href={ composer.url }>
+                { composer.full_name }
+            </a>
+        );
+    }
+    else
+    {
+        return (
+            composer.full_name
+        );
+    }
+};
+
 export const Composers = ({composers}) =>
 {
     return (
@@ -91,7 +109,7 @@ export const Composers = ({composers}) =>
             { composers.map( (composer, idx) => {
                 return (
                     <div key={ idx } className="composer-names">
-                        { composer.full_name } { composer.uncertain ? "(?) " : " " }
+                        { linkComposerName(composer) } { composer.uncertain ? "(?) " : " " }
                     </div>
                 );
             })}
@@ -136,7 +154,7 @@ export const Bibliography = ({entry}) =>
 
     return (
         <div>
-            <h5 className="title is-5">Item Bibliography</h5>
+            <h4>Item Bibliography</h4>
             { entry.map ( (bib, idx) => {
                 return(
                     <p key={ idx } dangerouslySetInnerHTML={{__html: bib.prerendered_s }}/>
@@ -153,14 +171,15 @@ export const ItemNotes = ({notes}) =>
 
     return (
         <div>
-            <h5 className="title is-5">Item Notes</h5>
             { notes.map( (note, idx) =>
             {
                 return (
-                    <p key={ idx }>
-                        <strong>{ note.note_type }: </strong>
-                        { note.note }
-                    </p>
+                    <div key={ idx }>
+                        <h5>{ note.note_type }</h5>
+                        <p>
+                            { note.note }
+                        </p>
+                    </div>
                 );
             })}
         </div>
@@ -216,7 +235,7 @@ export const Voices = ({voices, num_voices}) =>
 {
     return (
         <div>
-            <h5 className="title is-5">Voices</h5>
+            <h4>Voices</h4>
 
             { num_voices &&
                 <span><strong>Number of Voices:</strong> { num_voices }</span>}

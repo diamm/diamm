@@ -85,6 +85,7 @@ class App extends React.Component
         }
 
         const sourceId = parentElement.getAttribute("data-source-id");
+        this._sourceName = parentElement.getAttribute('data-source-name');
         // fire off request for source info
         this.props.fetchSourceInfo(sourceId);
     }
@@ -94,13 +95,17 @@ class App extends React.Component
         if (!this.props.source)
         {
             return (
-                <div className="loading-spinner">
-                    <div className="spinner-message box">
-                        <i className="fa fa-circle-o-notch fa-3x fa-spin" />
+                <div>
+                    <div className="loading-message">
+                        <h5 className="title is-5">Loading { this._sourceName }</h5>
+                    </div>
+                    <div className="loading-spinner">
+                        <div className="icon is-large">
+                            <i className="fa fa-circle-o-notch fa-5x fa-spin" />
+                        </div>
                     </div>
                 </div>
-            );
-        }
+            );        }
 
         let isActive = this.context.router.isActive;
 
@@ -167,7 +172,7 @@ class App extends React.Component
                                         <MenuLink
                                             active={ isActive(CORRECTIONS_ROUTE, true) }
                                             route={ CORRECTIONS_ROUTE }
-                                            title="Report a correction"
+                                            title="Contribute a Change"
                                             show={ this.props.userIsAuthenticated }
                                         />
                                         <ExternalMenuLink

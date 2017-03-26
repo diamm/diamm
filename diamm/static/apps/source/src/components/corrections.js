@@ -27,7 +27,7 @@ class Correction extends React.Component
         return (
             <div className="columns">
                 <div className="column is-two-thirds content">
-                    <p>Use this form to report a correction to the source record for <strong>{ this.props.sourceTitle }</strong>.
+                    <p>Use this form to report a correction or contribute to the source record for <strong>{ this.props.sourceTitle }</strong>.
                         Your submission will be reviewed by DIAMM staff and, if accepted you will be acknowledged in the "Contributors"
                         section of the source record.
                     </p>

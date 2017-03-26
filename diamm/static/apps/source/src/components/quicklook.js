@@ -76,13 +76,11 @@ class QuickLook extends React.Component
 {
     componentDidMount()
     {
-        console.log('mount');
         document.body.style.overflow = "hidden";
     }
 
     componentWillUnmount()
     {
-        console.log('unmount');
         document.body.style.overflow = "auto";
     }
 

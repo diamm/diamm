@@ -17,14 +17,10 @@ class InventoryByOrder extends React.Component
         this.props.showInventoryDetailsForItem(idx);
     }
 
-    _renderDetail ()
+    _renderDetail (idx)
     {
-        if (this.props.showDetail === null)
-        {
-            return (
-                <p>Click an item to see its details here.</p>
-            );
-        }
+        if (this.props.showDetail !== idx)
+            return null;
 
         let entry = this.props.inventory[this.props.showDetail];
         return (
@@ -40,12 +36,11 @@ class InventoryByOrder extends React.Component
                     <InventoryUninventoried />
                 </Inventory>
             );
-
-
         return (
             <Inventory>
-                <div className="column is-two-thirds">
-                    <table className="table">
+                <div className="column">
+                    <p>Click an entry to see more information about that item.</p>
+                    <table className="table inventory-table">
                         <thead>
                             <tr>
                                 <th>
@@ -61,34 +56,40 @@ class InventoryByOrder extends React.Component
                         </thead>
                         <tbody>
                         { this.props.inventory.map ( (entry, idx) => {
-                            return (
-                                <tr key={ idx }
-                                    onClick={ () => this.handleShowDetailClick(idx) }
-                                    className={ idx === this.props.showDetail ? "selected" : ""}
-                                >
-                                    <td>
-                                        <Foliation
-                                            folio_start={ entry.folio_start }
-                                            folio_end={ entry.folio_end }
-                                            show_quicklook={ (this.props.user !== null && entry.pages && entry.pages.length > 0) }
-                                        />
-                                    </td>
-                                    <td className="item-details">
-                                        <h4 className="composition-name">
+
+                            if (this.props.showDetail === idx)
+                            {
+                                return (
+                                    <tr key={ idx } className="selected">
+                                        { this._renderDetail(idx) }
+                                    </tr>
+                                )
+                            }
+                            else
+                            {
+                                return (
+                                    <tr key={ idx }
+                                        onClick={ () => this.handleShowDetailClick(idx) }
+                                    >
+                                        <td>
+                                            <Foliation
+                                                folio_start={ entry.folio_start }
+                                                folio_end={ entry.folio_end }
+                                                show_quicklook={ (this.props.user !== null && entry.pages && entry.pages.length > 0) }
+                                            />
+                                        </td>
+                                        <td className="item-details">
                                             { `${entry.composition} ` }
-                                        </h4>
-                                    </td>
-                                    <td>
-                                        <Composers composers={ entry.composers } />
-                                    </td>
-                                </tr>
-                            );
+                                        </td>
+                                        <td>
+                                            <Composers composers={ entry.composers } />
+                                        </td>
+                                    </tr>
+                                );
+                            }
                         })}
                         </tbody>
                     </table>
-                </div>
-                <div className="column scroll-sidebar">
-                    { this._renderDetail() }
                 </div>
             </Inventory>
         );

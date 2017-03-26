@@ -53,8 +53,6 @@ export function fetchSourceInfo (sourceId)
             })
             .then((payload) =>
             {
-                console.log(payload);
-
                 dispatch(receiveSourceInfo(payload));
                 dispatch(initializeInventoryDetailState(payload.inventory));
                 dispatch(initializeAlphaInventoryDetailState(payload.inventory));

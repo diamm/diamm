@@ -101,6 +101,19 @@ class SideBar extends React.Component
         }
     }
 
+    _anySidebarBlockVisible ()
+    {
+        let vis = this.props.composers.length > 0 ||
+                  this.props.genres.length > 0 ||
+                  this.props.sourceTypes.length > 0 ||
+                  this.props.anonymous.length > 0 ||
+                  this.props.hasInventory.length > 0 ||
+                  this.props.notations.length > 0 ||
+                  this.props.archiveLocations.length > 0;
+        console.log(vis);
+        return vis
+    }
+
     render ()
     {
         if (!this.props.results)
@@ -111,9 +124,10 @@ class SideBar extends React.Component
         return (
             <div className="facet-sidebar">
                 <ResultCount count={ this.props.count } />
-                <div>
+                { this._anySidebarBlockVisible() ? <div>
                     <h4 className="title is-5 is-bold">Filter Results</h4>
-                </div>
+                    </div> : "" }
+
 
                 { this._renderComposersFacet() }
                 { this._renderAnonymousFacet() }

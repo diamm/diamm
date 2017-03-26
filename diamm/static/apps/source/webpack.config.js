@@ -1,6 +1,5 @@
 var path = require('path');
 var webpack = require('webpack');
-
 var sharedJQueryPath = require.resolve('jquery');
 
 module.exports = {
@@ -12,7 +11,7 @@ module.exports = {
     output: {
         filename: "./dist/bundle.js",
     },
-    devtool: (process.env.NODE_ENV === "production") ? "source-map" : "eval-source-map",
+    devtool: (process.env.NODE_ENV === "production") ? "cheap-module-source-map" : "eval-source-map",
     resolve: {
         extensions: [".js", ".jsx"],
         alias: {
@@ -49,7 +48,7 @@ function productionPlugins()
     return [
         new webpack.DefinePlugin({
             'process.env': {
-                NODE_ENV: JSON.stringify('production')
+                NODE_ENV: JSON.stringify(process.env.NODE_ENV)
             }
         }),
         new webpack.optimize.UglifyJsPlugin(),
@@ -67,6 +66,11 @@ function productionPlugins()
 function developmentPlugins()
 {
     return [
+        new webpack.DefinePlugin({
+            'process.env': {
+                NODE_ENV: JSON.stringify(process.env.NODE_ENV)
+            }
+        }),
         new webpack.ProvidePlugin({
             'diva': 'diva',
             '$': sharedJQueryPath,

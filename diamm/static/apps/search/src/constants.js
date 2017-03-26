@@ -1,4 +1,4 @@
-export const SERVER_BASE_URL = "https://alpha.diamm.ac.uk/search/";
+export const SERVER_BASE_URL = "https://www.diamm.ac.uk/search/";
 
 export const UPDATE_CURRENT_QUERY_TERM = "UPDATE_CURRENT_QUERY_TERM";
 export const UPDATE_CURRENT_QUERY_TYPE = "UPDATE_CURRENT_QUERY_TYPE";

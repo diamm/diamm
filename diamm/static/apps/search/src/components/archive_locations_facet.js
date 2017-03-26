@@ -64,7 +64,7 @@ class ArchiveLocationsFacet extends React.Component
 
         return (
             <Facet
-                title="Archives"
+                title="Archive Locations"
                 controls={ this._showControls() }
                 bodyClasses={ 'select-list' }
             >

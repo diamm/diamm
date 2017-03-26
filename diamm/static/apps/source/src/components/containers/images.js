@@ -14,8 +14,6 @@ class PageCompositionDetails extends React.Component
 {
     gotoPageInViewer (label)
     {
-        console.log('go to ' + label);
-
         this.props.viewer.diva.gotoPageByLabel(label);
     }
 

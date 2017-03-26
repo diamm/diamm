@@ -30,6 +30,9 @@ class Contributors extends React.Component
         return (
             <div className="columns">
                 <div className="column is-8">
+                    <p className="contributions-intro">Contributions to this record are recorded here. If you wish to contribute
+                    information or a correction to this record, use the "Contribute a Change" link. This
+                    will then be reviewed by DIAMM staff and, if accepted, your contribution will be acknowledged here.</p>
                     { this.props.contributors.results.map( (entry, idx) =>
                     {
                         let contributor = entry.contributor || entry.credit;
