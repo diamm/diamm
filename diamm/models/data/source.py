@@ -1,8 +1,5 @@
-from itertools import groupby
-from operator import itemgetter
 from django.db import models
 from django.conf import settings
-from django.contrib.contenttypes.fields import GenericRelation
 import pysolr
 
 
