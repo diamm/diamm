@@ -1,6 +1,10 @@
 .notes {
   section {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.1rem;
+  }
+  h5.title {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
   }
 }
 
@@ -24,7 +28,8 @@
   }
 }
 
-.source-header {
+#source-heading {
+  margin-bottom: -0.75rem;
 }
 
 .source-inventory {
@@ -199,10 +204,10 @@ tr.selected {
   }
 
   th {
-    font-weight: 600;
+    font-weight: 500;
     vertical-align: top;
     padding-right: 6px;
-    width: 15%;
+    width: 20%;
   }
 
   ul, li {
@@ -248,6 +253,9 @@ tr.selected {
     margin-bottom: 0.5em;
     padding-left: 22px;
     text-indent: -22px;
+    strong {
+      font-weight: 500;
+    }
   }
 }
 
@@ -405,3 +413,18 @@ tr.selected {
   margin-bottom: 10px;
 }
 
+.contributions-intro {
+  margin-bottom: 1rem;
+}
+
+.inventory-table {
+  h5 {
+    font-weight: 500;
+    font-size: 1.1rem;
+  }
+  h4 {
+    font-weight: 500;
+    font-size: 1.1rem;
+    margin-top: 0.8rem;
+  }
+}

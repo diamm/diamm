@@ -65,4 +65,39 @@
 
 .diamm-description {
   font-size: 1.2rem;
+  p {
+    border-top: 2px solid $diamm-red;
+    border-bottom: 2px solid $diamm-red;
+    margin: 0.5em;
+    padding: 0.8em;
+  }
+}
+
+.diamm-front {
+  .title {
+    margin-bottom: 0.5rem;
+  }
+  article {
+    margin-bottom: 0.8rem;
+  }
+  .publications-intro {
+    margin-bottom: 0.8rem;
+  }
+
+  .media + .media {
+    border-top: none;
+    margin-top: 0.3rem;
+    padding-top: 0.3rem;
+  }
+
+  .front-sidebar {
+    .front-sidebar-block {
+      margin-bottom: 1rem;
+    }
+  }
+}
+
+.diamm-news {
+  .news-story {
+  }
 }
