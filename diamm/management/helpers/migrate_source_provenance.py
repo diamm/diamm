@@ -31,7 +31,8 @@ def migrate_source_provenance(entry):
 
     city = None
     if entry.city:
-        cname = entry.city.rstrip("?")
+        cname = entry.city.rstrip("?").strip()
+
         lid = "legacy_source_provenance_city.{0}_{1}".format(entry.alprovenancekey, cname.lower())
 
         try:
