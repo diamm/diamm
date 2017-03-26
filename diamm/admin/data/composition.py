@@ -2,6 +2,7 @@ from django.contrib import admin
 from diamm.models.data.composition import Composition
 from diamm.models.data.composition_composer import CompositionComposer
 from diamm.models.data.composition_bibliography import CompositionBibliography
+from reversion.admin import VersionAdmin
 
 
 class BibliographyInline(admin.TabularInline):
@@ -19,7 +20,7 @@ class ComposerInline(admin.TabularInline):
 
 
 @admin.register(Composition)
-class CompositionAdmin(admin.ModelAdmin):
+class CompositionAdmin(VersionAdmin):
     list_display = ('title', 'get_composers', 'get_genres')
     search_fields = ('title', 'composers__composer__last_name')
     inlines = (ComposerInline, BibliographyInline)

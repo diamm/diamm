@@ -1,4 +1,3 @@
-import re
 from django.contrib import admin
 from django.db import models
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
@@ -83,7 +82,7 @@ class SourceAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     view_on_site = True
     save_on_top = True
     list_display = ('shelfmark', 'name', 'get_city', 'get_archive', 'public', 'public_images', 'inventory_provided')
-    search_fields = ('identifiers__identifier', 'name', 'archive__name', 'archive__siglum', 'shelfmark')
+    search_fields = ('identifiers__identifier', 'name', 'archive__name', 'archive__siglum', 'archive__city__name', 'shelfmark')
     inlines = (IdentifiersInline, NotesInline, URLsInline,
                BibliographyInline, SourceRelationshipInline)
     list_filter = (CountryListFilter, InventoryFilter)

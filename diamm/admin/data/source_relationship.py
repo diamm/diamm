@@ -3,10 +3,11 @@ from diamm.models.data.source_relationship import SourceRelationship
 from diamm.models.data.person import Person
 from diamm.models.data.organization import Organization
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
+from reversion.admin import VersionAdmin
 
 
 @admin.register(SourceRelationship)
-class SourceRelationshipAdmin(ForeignKeyAutocompleteAdmin):
+class SourceRelationshipAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     list_display = ('get_source', 'get_related_entity', 'relationship_type')
 
     # search_fields = ('source__name',

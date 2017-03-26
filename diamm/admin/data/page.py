@@ -2,6 +2,7 @@ from django.contrib import admin
 from diamm.models.data.page import Page
 from diamm.models.data.image import Image
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
+from reversion.admin import VersionAdmin
 
 
 class ImageInline(admin.StackedInline):
@@ -11,7 +12,7 @@ class ImageInline(admin.StackedInline):
 
 
 @admin.register(Page)
-class PageAdmin(ForeignKeyAutocompleteAdmin):
+class PageAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     list_display = ('get_source', 'numeration', 'page_type', 'legacy_id')
     search_fields = ('source__shelfmark', 'source__name', 'source__id')
     list_editable = ('page_type',)

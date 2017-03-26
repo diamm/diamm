@@ -98,7 +98,6 @@ def migrate_to_organization(modeladmin, request, queryset):
 migrate_to_organization.short_description = "Migrate Person to Organization"
 
 
-
 @admin.register(Person)
 class PersonAdmin(VersionAdmin):
     list_display = ('last_name', 'first_name', 'earliest_year', 'latest_year', 'legacy_id')
