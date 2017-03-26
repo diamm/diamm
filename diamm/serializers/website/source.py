@@ -492,10 +492,7 @@ class SourceDetailSerializer(ContextSerializer):
         call=True,
         many=True
     )
-    notes = SourceNoteSerializer(
-        attr="public_notes",
-        many=True
-    )
+    notes = serpy.MethodField()
 
     def get_type(self, obj):
         return obj.__class__.__name__.lower()
@@ -504,6 +501,11 @@ class SourceDetailSerializer(ContextSerializer):
         return reverse('source-detail',
                        kwargs={"pk": obj.pk},
                        request=self.context['request'])
+
+    def get_notes(self, obj):
+        return SourceNoteSerializer(obj.public_notes.order_by('type', 'sort'),
+                                    many=True,
+                                    context={"request": self.context['request']}).data
 
     def get_cover_image_info(self, obj):
         try:

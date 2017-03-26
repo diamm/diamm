@@ -4,6 +4,10 @@ from rest_framework.reverse import reverse
 from diamm.serializers import serializers
 
 
+class UserContributionsSerializer(serializers.ContextSerializer):
+    summary = serpy.StrField(required=False)
+
+
 class UserCommentSerializer(serializers.ContextSerializer):
     comment = serpy.StrField()
     type_of_comment = serpy.StrField()
@@ -46,6 +50,7 @@ class UserSerializer(serializers.ContextSerializer):
         attr="is_staff"
     )
     comments = serpy.MethodField()
+    contributions = serpy.MethodField()
 
     def get_url(self, obj):
         return reverse(
@@ -57,3 +62,8 @@ class UserSerializer(serializers.ContextSerializer):
         return UserCommentSerializer(obj.commentaries.order_by('created').all()[:10],
                                      many=True,
                                      context={"request": self.context['request']}).data
+
+    def get_contributions(self, obj):
+        return UserContributionsSerializer(obj.problem_reports.filter(accepted=True),
+                                           many=True,
+                                           context={"request": self.context['request']}).data
