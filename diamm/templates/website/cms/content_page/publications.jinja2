@@ -12,7 +12,6 @@
             <tr>
                 <th>Title</th>
                 <th>Prices</th>
-                <th>Purchase</th>
             </tr>
         </thead>
         <tbody>
@@ -20,7 +19,6 @@
                 <tr>
                     <td><a href="{{ p.url }}">{{ p.title }}</a></td>
                     <td>{% for block in p.pricing %}{% include_block block %}{% endfor %}</td>
-                    <td>{% if p.purchase_link %}<a href="{{ p.purchase_link }}">Purchase</a>{% endif %}</td>
                 </tr>
             {% endfor %}
         </tbody>

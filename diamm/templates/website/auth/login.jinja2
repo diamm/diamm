@@ -1,23 +1,28 @@
 {% extends "base.jinja2" %}
+{% import "website/blocks/form_field.jinja2" as form_field %}
 
 {% block body %}
     <div class="columns" style="align-items: center">
         <div class="column is-half is-offset-one-quarter">
-            <div class="login-block">
+            <div>
                 <h2 class="title">Log in</h2>
                 <form action="{{ url('login') }}" method="post" class="login">
                     {% csrf_token %}
-                    <label class="label">{{ form.username.label }}</label>
-                    <p class="control">
-                        <input class="input" type="text" id="{{ form.username.id_for_label }}" placeholder="you@example.co.uk" name="{{ form.username.html_name }}"/>
-                    </p>
-                    <label class="label">{{ form.password.label }}</label>
-                    <p class="control">
-                        <input class="input" type="password" id="{{ form.password.id_for_label }}" name="{{ form.password.html_name }}" />
-                    </p>
+                    {% if form.non_field_errors() %}
+                        <div class="notification is-danger">
+                            {{ form.non_field_errors() }}
+                        </div>
+                    {% endif %}
+                    {{ form_field.format(form.username, "text") }}
+                    {{ form_field.format(form.password, "password") }}
 
                     <input class="input" type="hidden" name="next" value="{{ next }}" />
-                    <button type="submit" class="button is-primary">Log in</button>
+
+                    <div class="field is-grouped is-pulled-right">
+                        <p class="control">
+                            <button type="submit" class="button is-primary">Log in</button>
+                        </p>
+                    </div>
                 </form>
 
                 <p>

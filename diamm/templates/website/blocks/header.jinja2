@@ -5,8 +5,8 @@
                 <img src="{{ static('images/headerLogo.png') }}" />
             </a>
             <div class="dropdown-menu-parent">
-                <a href="#" class="nav-item">About DIAMM</a>
-                <div class="dropdown-menu is-3-columns">
+                <a href="/about" class="nav-item">About DIAMM</a>
+                <div class="dropdown-menu right-menu is-3-columns">
                     {{ get_menu() }}
                 </div>
             </div>
@@ -16,11 +16,11 @@
 
         </div>
         <div class="nav-right">
-            <a href="#" class="nav-item nav-highlight">Donate</a>
+            <a href="http://www.oxforduniversitystores.co.uk/product-catalogue/music-faculty-diamm/music-faculty-diamm-publications/donation-help-to-keep-wwwdiammacuk-free" class="nav-item nav-highlight">Donate</a>
             {% if user.is_authenticated() %}
                 <div class="dropdown-menu-parent">
                     <a href="{{ url('user-account') }}" class="nav-item">Your account</a>
-                    <div class="dropdown-menu account-menu">
+                    <div class="dropdown-menu left-menu account-menu">
                         <div class="dropdown-menu-section">
                             <h4>Welcome, {{ request.user.full_name }}</h4>
                             <div>
@@ -34,7 +34,7 @@
                 </div>
 
             {% else %}
-                <a class="nav-item" href="{{ url('login') }}?next={{ request.get_full_path() }}">Login</a>
+                <a class="nav-item" href="{{ url('login') }}?next={{ request.get_full_path() }}">Login or Register</a>
             {% endif %}
         </div>
     </nav>

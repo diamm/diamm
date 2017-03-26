@@ -3,9 +3,9 @@
 {% block body %}
     <div class="columns">
         <div class="column">
-            <h1 class="title">Hello {{ content.full_name }}</h1>
+            <h2 class="title is-2">Hello {{ content.full_name }}</h2>
             {% if content.affiliation %}
-            <h2 class="subtitle">{{ content.affiliation }}</h2>
+            <h3 class="subtitle">{{ content.affiliation }}</h3>
             {% endif %}
             <div class="powers">
                 {% if content.superuser %}

@@ -8,9 +8,15 @@
                 <h2 class="title">Reset your password</h2>
                 <p>Please enter your new password twice so we can verify you typed it in correctly.</p>
                 <form method="post">{% csrf_token %}
-                    {{ form_field.format(form.new_password1, "password") }}
-                    {{ form_field.format(form.new_password2, "password") }}
-                    <button class="button is-primary">Change my password</button>
+                    <div class="field">
+                        {{ form_field.format(form.new_password1, "password") }}
+                    </div>
+                    <div class="field">
+                        {{ form_field.format(form.new_password2, "password") }}
+                    </div>
+                    <div class="field">
+                        <button class="button is-primary">Change my password</button>
+                    </div>
                 </form>
             {% else %}
                 <p>The password reset link was invalid, possibly because it has already been used.  Please request a new password reset.</p>

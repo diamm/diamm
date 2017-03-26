@@ -31,29 +31,36 @@
 {% endblock %}
 
 {% block body %}
-    <div class="tile is-ancestor">
-        <div class="tile is-half is-parent is-vertical">
-            <div class="tile is-child diamm-description">
-                <p class="title is-2">About Us</p>
-                {% include_block page.brief_description %}
+    <div class="columns diamm-front">
+        <div class="column is-two-thirds">
+            <div class="columns">
+                <div class="column diamm-description">
+                    {% include_block page.brief_description %}
+                </div>
             </div>
-            <div class="tile is-child">
-                <p class="title">Publications</p>
-                <p>Lorem ipsum stuf stuff etc.</p>
+            <div class="columns">
+                <div class="column is-half">
+                    <h3 class="title is-4">Latest News</h3>
+                    {{ latest_news() }}
+                </div>
+                <div class="column is-half">
+                    <h3 class="title is-4">DIAMM Publications</h3>
+                    <div class="publications-intro">
+                        {{ page.publications_intro | richtext }}
+                    </div>
+                    {{ publication_block() }}
+                    <a href="/publications">More publications</a>
+                </div>
             </div>
         </div>
-        <div class="tile is-parent is-vertical">
-            <div class="tile is-child">
-                <p class="title is-4">Latest News</p>
-                {{ latest_news() }}
+        <div class="column is-one-third front-sidebar">
+            <div class="front-sidebar-block">
+                <h4 class="title is-4">Recently Added Sources</h4>
+                {{ recently_added_sources() }}
             </div>
-            <div class="tile is-child">
-                <p class="title is-4">Recent Additions</p>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam semper diam at erat pulvinar, at pulvinar felis blandit. Vestibulum volutpat tellus diam, consequat gravida libero rhoncus ut. Morbi maximus, leo sit amet vehicula eleifend, nunc dui porta orci, quis semper odio felis ut quam.</p>
-            </div>
-            <div class="tile is-child">
-                <p class="title is-4">Recent Comments</p>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam semper diam at erat pulvinar, at pulvinar felis blandit. Vestibulum volutpat tellus diam, consequat gravida libero rhoncus ut. Morbi maximus, leo sit amet vehicula eleifend, nunc dui porta orci, quis semper odio felis ut quam.</p>
+            <div class="front-sidebar-block">
+                <h4 class="title is-4">Recently Updated Sources</h4>
+                {{ recently_updated_sources() }}
             </div>
         </div>
     </div>

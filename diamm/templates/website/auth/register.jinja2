@@ -8,7 +8,7 @@
 {% block body %}
     <div class="columns">
         <div class="column is-half is-offset-one-quarter">
-            <div class="login-block content">
+            <div>
                 <h2 class="title">Create an account</h2>
                 <form action="{{ url('register') }}" method="post">
                     {% csrf_token %}
@@ -19,8 +19,8 @@
                     {{ form_field.format(form.password, "password") }}
                     {{ form_field.format(form.confirm_password, "password") }}
 
-                    <h3 class="title is-3">User agreement</h3>
-                    <ul>
+                    <h4 class="title is-4">User agreement</h4>
+                    <ul class="list">
                         <li>You will not communicate the password and username you are given to any other person or any third party for any reason (please apply to <a href='mailto:diamm@music.ox.ac.uk'>diamm@music.ox.ac.uk</a> for teaching/course accounts);</li>
                         <li>You will not download, copy, redistribute or print any image obtained through the DIAMM website, nor use any image from DIAMM for a commercial purpose;</li>
                         <li>You understand that downloading images from the DIAMM website is theft;</li>

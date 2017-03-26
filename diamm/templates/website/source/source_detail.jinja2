@@ -1,6 +1,7 @@
 {% extends "base.jinja2" %}
 
 {% block title %}
+    <title>Digital Image Archive of Medieval Music :: {{ content.display_name }}</title>
 {% endblock %}
 
 {% block head %}
@@ -9,6 +10,7 @@
 {% block body %}
     <div id="source-body"
          data-source-id="{{ content.pk }}"
+         data-source-name="{{ content.display_name }}"
          data-is-authenticated="{{ request.user.is_authenticated() }}"
          {% if request.user.is_authenticated %}
              data-username="{{ request.user.full_name }}"
