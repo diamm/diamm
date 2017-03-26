@@ -8,11 +8,13 @@ class PersonNote(models.Model):
     BIOGRAPHY = 1
     VARIANT_NAME_NOTE = 2
     DATE_NOTE = 3
+    BIBLIOGRAPHY_NOTE = 4
 
     NOTE_TYPES = (
         (BIOGRAPHY, "Biography"),
         (VARIANT_NAME_NOTE, "Variant Name"),
-        (DATE_NOTE, "Date")
+        (DATE_NOTE, "Date"),
+        (BIBLIOGRAPHY_NOTE, "Bibliography")
     )
 
     note = models.TextField()
