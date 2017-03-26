@@ -18,6 +18,7 @@ class HomePage(Page):
     ])
 
     brief_description = RichTextField()
+    publications_intro = RichTextField(blank=True, null=True)
 
     template = "index.jinja2"
     subbpage_types = ["diamm_site.ContentPage", "diamm_site.NewsIndexPage"]
@@ -27,4 +28,5 @@ HomePage.content_panels = [
     FieldPanel('title'),
     StreamFieldPanel('carousel'),
     FieldPanel('brief_description'),
+    FieldPanel('publications_intro')
 ]
