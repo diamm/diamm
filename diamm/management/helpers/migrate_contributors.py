@@ -2,6 +2,7 @@ from blessings import Terminal
 from django.db.models import Q
 from diamm.models.data.source_note import SourceNote
 from diamm.models.site.problem_report import ProblemReport
+from django.contrib.contenttypes.models import ContentType
 
 term = Terminal()
 
@@ -22,7 +23,7 @@ def migrate_contributor(note):
 
     d = {
         'object_id': source.pk,
-        'content_type_id': 34,
+        'content_type_id': ContentType.objects.get(app_label="diamm_data", model="source").pk,
         'accepted': True,
         'note': 'Migrated from Filemaker.',
         'credit': credit,
