@@ -23,7 +23,8 @@ class SourceDetail(generics.RetrieveAPIView):
 
     def get(self, request, *args, **kwargs):
         if request.accepted_renderer.format == "html":
-            return response.Response({'pk': kwargs['pk']})
+            source_name = Source.objects.get(id=kwargs['pk']).display_name
+            return response.Response({'pk': kwargs['pk'], 'display_name': source_name})
         return super(SourceDetail, self).get(request, args, kwargs)
 
 
