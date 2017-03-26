@@ -7,8 +7,6 @@ class SourceNote(models.Model):
         ordering = ('type',)
 
     GENERAL_NOTE = 1
-    RISM_NOTE = 2
-    CCM_NOTE = 3
     EXTENT_NOTE = 4
     PHYSICAL_NOTE = 5
     BINDING_NOTE = 6
@@ -24,6 +22,8 @@ class SourceNote(models.Model):
     CONTENTS_NOTE = 16
     SURFACE_NOTE = 17
     DIAMM_NOTE = 18
+    RISM_NOTE = 97  # was 2
+    CCM_NOTE = 98   # was 3
     PRIVATE_NOTE = 99
 
     NOTE_TYPES = (
