@@ -121,7 +121,6 @@ class SolrPaginator:
         """
         # e.g., page 3: ((3 - 1) * 20) + 1, start = 41
         # remainder = 0 if page_num == 1 else 1  # page 1 starts at result 0; page 2 starts at result 11
-        print(page_num, self.num_pages)
         if self.num_pages != 0 and page_num > self.num_pages:
             raise PageRangeOutOfBoundsException()
 
