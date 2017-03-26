@@ -4,6 +4,7 @@ from django.db import models
 class SourceBibliography(models.Model):
     class Meta:
         app_label = "diamm_data"
+        verbose_name_plural = "Source Bibliographies"
         # ordering = ('bibliography__authors__bibliography_author__last_name',)
 
     source = models.ForeignKey("diamm_data.Source",
