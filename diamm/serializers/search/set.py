@@ -27,14 +27,15 @@ class SetSearchSerializer(serpy.Serializer):
     # add archive names to sets so that people can search for "partbooks oxford" or "trinity college partbooks"
     def get_archives_ss(self, obj):
         if obj.sources.count() > 0:
-            return list(obj.sources.all().select_related('archive').distinct().values_list('archive__name', flat=True))
+            archives_set = set(obj.sources.all().select_related('archive').distinct().values_list('archive__name', 'archive__city__name'))
+            return [", ".join(entry) for entry in archives_set]
         else:
             return None
 
     # add archive cities so that people can search for e.g., 'london partbooks' or 'cambridge partbooks'
     def get_archives_cities_ss(self, obj):
         if obj.sources.count() > 0:
-            return list(obj.sources.all().select_related('archive__city').distinct().values_list('archive__city__name', flat=True))
+            return list(set(obj.sources.all().select_related('archive__city').distinct().values_list('archive__city__name', flat=True)))
         else:
             return None
 
