@@ -44,8 +44,12 @@ class Archive(models.Model):
 
     def __str__(self):
         if self.city:
-            return "{0} ({1})".format(self.name, self.city.name)
+            return "{0}, {1}".format(self.name, self.city.name)
         return "{0}".format(self.name)
+
+    @property
+    def display_name(self):
+        return str(self)
 
     @property
     def public_notes(self):
