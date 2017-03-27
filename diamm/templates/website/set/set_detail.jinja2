@@ -9,7 +9,16 @@
         <div class="column">
             <h2 class="title is-2">Set: {{ content.cluster_shelfmark }}</h2>
             <h3 class="subtitle">{{ content.type }}</h3>
-            <hr />
+            <div>
+                <h4 class="title is-5">Holding archives</h4>
+                {% set comma = joiner("; ") %}
+                {%- for group in content.sources | groupby('archive_name') -%}
+                    {{ comma() }}{{ group.grouper }}
+                {%- endfor -%}
+            </div>
+            {% if content.description %}
+                {{ content.description | markdown | safe }}
+            {% endif %}
             {% if content.sources %}
                 <h3 class="title is-4">Sources</h3>
                 <div class="archive-sources">
@@ -38,4 +47,12 @@
             {% endif %}
         </div>
     </div>
+    {% if request.user.is_staff %}
+        <div class="columns">
+            <div class="column">
+                <a class="button" href="/admin/diamm_data/set/{{ content.pk }}">Edit</a>
+            </div>
+        </div>
+    {% endif %}
+
 {% endblock %}
