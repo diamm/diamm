@@ -11,6 +11,7 @@ from django_extensions.admin import ForeignKeyAutocompleteAdmin
 class ProblemReportAdmin(ForeignKeyAutocompleteAdmin):
     list_display = ('get_contributor', 'get_entity', 'created', 'accepted')
     search_fields = ('contributor__last_name', 'contributor__first_name', 'contributor__username')
+    list_filter = ("accepted",)
 
     related_search_fields = {
         'contributor': ('last_name', 'first_name', 'username'),

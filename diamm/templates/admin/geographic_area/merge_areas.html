@@ -3,10 +3,10 @@
 {% block content %}
     <form action="" method="post">
         {% csrf_token %}
-        <input type="hidden" name="action" value="merge_people_action">
+        <input type="hidden" name="action" value="merge_areas_action">
         <input type="hidden" name="do_action" value="yes">
 
-        <h2 class="warning">Merge people records</h2>
+        <h2 class="warning">Merge area records</h2>
         <p>
             You are about to perform a merge on these records. <strong>This is not reversible.</strong>
             The <code>Keep Old</code> checkbox will not delete the merged records after merging. It is recommended that
@@ -20,13 +20,13 @@
 
         {% with target=objects.first rest=objects|slice:"1:" %}
             <h3>Target</h3>
-            <p>{{ target.last_name }}, {{ target.first_name }} -- {{ target.legacy_id }}</p>
+            <p>{{ target.name }} -- {{ target.legacy_id }}</p>
             <input type="hidden" name="_selected_action" value="{{ target.pk }}">
 
             <h3>From</h3>
             <ul>
                 {% for entry in rest %}
-                    <li>{{ entry.last_name }}, {{ entry.first_name }} -- {{ entry.legacy_id }}</li>
+                    <li>{{ entry.name }} -- {{ entry.legacy_id }}</li>
                     <input type="hidden" name="_selected_action" value="{{ entry.pk }}">
                 {% endfor %}
             </ul>

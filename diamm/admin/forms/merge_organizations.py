@@ -1,5 +1,5 @@
 from django import forms
 
 
-class MergePeopleForm(forms.Form):
+class MergeOrganizationsForm(forms.Form):
     keep_old = forms.BooleanField(initial=True, required=False)
