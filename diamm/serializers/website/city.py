@@ -3,6 +3,14 @@ from rest_framework.reverse import reverse
 from diamm.serializers.serializers import ContextSerializer
 
 
+class OrganizationSerializer(ContextSerializer):
+    url = serpy.MethodField()
+    name = serpy.StrField()
+
+    def get_url(self, obj):
+        return reverse('organization-detail', kwargs={"pk": obj.id}, request=self.context['request'])
+
+
 class CountryCitySerializer(ContextSerializer):
     url = serpy.MethodField()
     name = serpy.StrField()
@@ -32,7 +40,8 @@ class CityDetailSerializer(ContextSerializer):
     name = serpy.StrField()
     archives = serpy.MethodField()
     country = serpy.MethodField()
-    provenance_relationships = serpy.MethodField()
+    # provenance_relationships = serpy.MethodField()
+    organizations = serpy.MethodField()
 
     def get_archives(self, obj):
         return ArchiveCitySerializer(obj.archives.all(), many=True, context=self.context).data
@@ -40,8 +49,13 @@ class CityDetailSerializer(ContextSerializer):
     def get_country(self, obj):
         return CountryCitySerializer(obj.parent, context=self.context).data
 
-    def get_provenance_relationships(self, obj):
-        return ProvenanceSerializer(obj.city_sources.all(), many=True, context=self.context).data
+    # def get_provenance_relationships(self, obj):
+    #     return ProvenanceSerializer(obj.city_sources.all(), many=True, context=self.context).data
+
+    def get_organizations(self, obj):
+        return OrganizationSerializer(obj.organizations.all(),
+                                      many=True,
+                                      context=self.context).data
 
     def get_url(self, obj):
         return reverse("city-detail", kwargs={"pk": obj.id}, request=self.context['request'])
