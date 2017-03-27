@@ -124,11 +124,9 @@ class SideBar extends React.Component
         return (
             <div className="facet-sidebar">
                 <ResultCount count={ this.props.count } />
-                { this._anySidebarBlockVisible() ? <div>
-                    <h4 className="title is-5 is-bold">Filter Results</h4>
+                { this._anySidebarBlockVisible() ? <div className="filter-result-title">
+                    Filter Results
                     </div> : "" }
-
-
                 { this._renderComposersFacet() }
                 { this._renderAnonymousFacet() }
                 { this._renderNotationsFacet() }

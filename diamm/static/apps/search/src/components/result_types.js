@@ -53,7 +53,8 @@ export const CompositionResultType = ({result}) =>
                 <span className="result-type"> Composition</span>
             </h3>
             <div>
-                <div>{ result.composers_ssni && <Composers composers={ result.composers_ssni } /> }
+                <div>
+                    { result.composers_ssni && <Composers composers={ result.composers_ssni } /> }
                 </div>
             </div>
         </div>
@@ -83,6 +84,10 @@ export const SetResultType = ({result}) =>
                 <a href={ result.url }>{ result.cluster_shelfmark_s }</a>
                 <span className="result-type"> Set</span>
             </h3>
+            <div>
+                <div>{ result.archives_ss.join(", ") }</div>
+                <div>{ result.sources_ii.length } source{ result.sources_ii.length > 1 ? "s" : ""}</div>
+            </div>
         </div>
     );
 };

@@ -20,7 +20,7 @@ export default class Facet extends React.Component
         return (
             <div className="facet-block">
                 <div className="facet-title">
-                    <h4>{ this.props.title }</h4>
+                    { this.props.title }
                     { this.props.controls }
                 </div>
                 <div className={ bodyClasses }>

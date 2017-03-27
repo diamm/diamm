@@ -12,7 +12,7 @@ class ResultCount extends React.Component
         return (
             <div className="search-results-info">
                 <div className="search-result-count">
-                    { this.props.count } results found.
+                    { this.props.count } result{ this.props.count > 1 ? "s" : ""} found.
                 </div>
                 <button onClick={ () => { this.props.clearAll() } } className="button is-primary">
                     Clear Search
