@@ -16,5 +16,16 @@
                 {{ page.body | richtext }}
             </div>
         </div>
+        {% set children = page.get_children().specific() %}
+        {% if children %}
+        <div class="column is-one-quarter">
+            <h4 class="title is-5">In this section</h4>
+            {% for child in children %}
+            <div>
+                <a href="{{ pageurl(child) }}">{{ child.title }}</a>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
     </div>
 {% endblock %}

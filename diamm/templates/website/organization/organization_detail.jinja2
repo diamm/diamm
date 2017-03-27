@@ -3,9 +3,9 @@
 {% block body %}
     <div class="columns">
         <div class="column">
-            <h1>{{ content.name }}</h1>
+            <h2 class="title is-2">{{ content.name }}</h2>
             {% if content.location %}
-                <h2>
+                <h2 class="subtitle is-3">
                     <a href="{{ content.location.url }}">{{ content.location.name }}</a>
                 </h2>
             {% endif %}
@@ -14,17 +14,16 @@
     <div class="columns">
         <div class="column">
             {% if content.source_provenance %}
-                <h3>Provenance Entries</h3>
+                <h3 class="title is-4">Provenance Entries</h3>
                 <ul>
                     {% for entry in content.source_provenance %}
                         <li><a href="{{ entry.url }}">{{ entry.source }}</a></li>
                     {% endfor %}
                 </ul>
             {% endif %}
-        </div>
-        <div class="column">
+
             {% if content.related_sources %}
-                <h3>Related Sources</h3>
+                <h3 class="title is-4">Related Sources</h3>
                 <ul>
                     {% for entry in content.related_sources %}
                         <li>
@@ -36,10 +35,8 @@
                     {% endfor %}
                 </ul>
             {% endif %}
-        </div>
-        <div class="column">
             {% if content.copied_sources %}
-                <h3>Copied Sources</h3>
+                <h3 class="title is-4">Copied Sources</h3>
                 <ul>
                     {% for entry in content.copied_sources %}
                         <li>
@@ -53,4 +50,11 @@
             {% endif %}
         </div>
     </div>
+    {% if request.user.is_staff %}
+        <div class="columns">
+            <div class="column">
+                <a class="button" href="/admin/diamm_data/organization/{{ content.pk }}">Edit</a>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}
