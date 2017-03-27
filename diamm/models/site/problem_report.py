@@ -22,6 +22,7 @@ class ProblemReport(models.Model):
 
     class Meta:
         app_label = "diamm_site"
+        ordering = ("accepted",)
 
     limit = models.Q(app_label="diamm_data",
                      model="person") | \
