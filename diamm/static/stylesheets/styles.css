@@ -9784,19 +9784,23 @@ tr.selected {
 }
 
 .facet-sidebar .search-result-count {
-  font-weight: 600;
-  padding: 0.5rem;
+  font-weight: 500;
+}
+
+.facet-sidebar .filter-result-title {
+  font-weight: 500;
 }
 
 .facet-sidebar .facet-block {
   border-top: 1px solid #dddede;
-  margin: 1rem 0;
+  margin: 0.6rem 0;
 }
 
 .facet-sidebar .facet-block .facet-title {
   display: flex;
   justify-content: flex-start;
   padding: 0.6rem 0;
+  font-weight: 500;
 }
 
 .facet-sidebar .facet-block .facet-title .facet-show-control {
@@ -9841,7 +9845,7 @@ tr.selected {
 
 .selected-autocomplete-facet {
   font-size: 0.8rem;
-  font-weight: 700;
+  font-weight: 600;
   padding: 0.3rem;
   margin: 0.3rem 0;
   max-width: 80%;

@@ -87,18 +87,23 @@ $search-input-adjust: $search-font-size + 1rem;
     display: flex;
     justify-content: space-between;
   }
+
   .search-result-count {
-    font-weight: 600;
-    padding: 0.5rem;
+    font-weight:500;
+  }
+
+  .filter-result-title {
+    font-weight: 500;
   }
 
   .facet-block {
     border-top: 1px solid $diamm-light-grey;
-    margin: 1rem 0;
+    margin: 0.6rem 0;
     .facet-title {
       display: flex;
       justify-content: flex-start;
       padding: 0.6rem 0;
+      font-weight: 500;
 
       .facet-show-control {
         flex: 1 1 auto;
@@ -143,7 +148,7 @@ $search-input-adjust: $search-font-size + 1rem;
 
 .selected-autocomplete-facet {
   font-size: 0.8rem;
-  font-weight: 700;
+  font-weight: 600;
   padding: 0.3rem;
   margin: 0.3rem 0;
   max-width: 80%;
