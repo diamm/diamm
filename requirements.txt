@@ -53,7 +53,7 @@ python-utils==2.0.1
 pytz==2016.10
 pyzmq==16.0.2
 requests==2.13.0
-serpy==0.1.1
+-e git+https://github.com/ahankinson/serpy.git@84e451ce9586ef0703bfb7edb98115210d35b321#egg=serpy
 simplegeneric==0.8.1
 six==1.10.0
 sqlparse==0.2.2
