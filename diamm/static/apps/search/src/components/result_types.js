@@ -24,7 +24,7 @@ export const PersonResultType = ({result}) =>
 {
     return (
         <div className="search-result">
-            <h3>
+            <h3 className="title is-3">
                 <a href={ result.url }>{ result.name_s }</a>
                 <span className="result-type"> Person</span>
             </h3>
@@ -36,10 +36,14 @@ export const OrganizationResultType = ({result}) =>
 {
     return (
         <div className="search-result">
-            <h3>
+            <h3 className="title is-3">
                 <a href={ result.url }>{ result.name_s }</a>
                 <span className="result-type"> Organization</span>
             </h3>
+            <div>
+                { result.location_s }
+            </div>
+
         </div>
     );
 };
