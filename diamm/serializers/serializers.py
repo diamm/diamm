@@ -1,6 +1,7 @@
 import serpy
 from rest_framework.reverse import reverse
 
+
 class ContextSerializer(serpy.Serializer):
     """
         Used for serializing database objects, extending the base

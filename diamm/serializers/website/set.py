@@ -11,6 +11,9 @@ class SetSourceSerializer(ContextSerializer):
     display_name = serpy.StrField(
         required=False
     )
+    archive_name = serpy.StrField(
+        attr="archive.display_name"
+    )
 
     def get_url(self, obj):
         return reverse('source-detail',
@@ -31,6 +34,9 @@ class SetDetailSerializer(ContextSerializer):
     )
     cluster_shelfmark = serpy.StrField()
     sources = serpy.MethodField()
+    description = serpy.StrField(
+        required=False
+    )
 
     def get_url(self, obj):
         return reverse('set-detail',
@@ -39,7 +45,8 @@ class SetDetailSerializer(ContextSerializer):
 
     def get_sources(self, obj):
         if obj.sources:
-            return [SetSourceSerializer(o, context={'request': self.context['request']}).data
-                    for o in obj.sources.all()]
+            return SetSourceSerializer(obj.sources.all(),
+                                       many=True,
+                                       context={'request': self.context['request']}).data
         else:
             return None

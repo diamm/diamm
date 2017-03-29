@@ -1,5 +1,4 @@
 from django.core.management import BaseCommand
-from diamm.models.data.page import Page
 from diamm.models.data.image import Image
 import pickle
 import ujson
@@ -16,6 +15,8 @@ class Command(BaseCommand):
                     image = Image.objects.get(location=k)
                 except Image.MultipleObjectsReturned:
                     image = Image.objects.filter(location=k).first()
+                except Image.DoesNotExist:
+                    continue
 
                 if not image:
                     print("OH NO NO IMAGE FOUND!")

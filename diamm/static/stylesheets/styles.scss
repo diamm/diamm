@@ -1,96 +1,143 @@
-@import "mixins";
-@import "skeleton/skeleton";
-@import "font-awesome/font-awesome";
-@import "variables";
+@import "../vendor/diva.js/css/diva.min.css";
 @import "fonts";
 @import "colors";
+@import "mixins";
+@import "font-awesome/font-awesome";
+@import "bulma";
+//@import "skeleton/skeleton";
+
+@import "variables";
+@import "list";
 @import "navbar";
 @import "footer";
-@import "tabs";
 @import "edit";
 @import "front";
-@import "contribution";
+@import "archive";
 @import "source";
 @import "search";
-@import "browse";
+@import "bibliography";
 @import "login";
 @import "beta";
-@import "debug";
+@import "cms";
+@import "../vendor/ideal-image-slider/ideal-image-slider.css";
 
 
 html {
   height: 100%;
-  font-size: 1.125em;
+  background-color: $diamm-white;
 }
 
 // Font calculations based on: http://type-scale.com/?size=18&scale=1.414&text=A%20Visual%20Type%20Scale&webfont=Libre+Baskerville&font-family=Alegreya%20Sans&font-weight=400&font-family-headers=&font-weight-headers=inherit&background-color=white&font-color=%23333
 
 body {
-  line-height: 1.45;
-  font-weight: 400;
   font-family: $sans-serif;
   color: $diamm-black;
-
-  min-height: 100%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
 }
 
-.full-width {
-  margin-bottom: 1rem;
-}
-
-li.image-source-list {
-  list-style-type: none;
-}
-
-a {
-  color: $diamm-lt-blue;
-  text-decoration: none;
-  box-sizing: border-box;
-  &:hover {
-    color: $diamm-dk-blue;
-    border-bottom: 1px solid $diamm-dk-blue;
-  }
+.page-body {
+  margin-top: 1rem !important;
+  flex: 1;
 }
 
 p {
-  font-family: $serif;
-  margin-bottom: 1.3em;
-  padding-top: 0.5em;
-  padding-left: 0.3em;
+  margin: 0.8rem 0;
 }
 
-h1, h2, h3, h4 {
-  margin: 1.414em 0 0.5em;
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: normal;
+.tabs li.is-active a {
+  color: $diamm-red;
+  border-bottom-color: $diamm-red;
+}
+.tabs.is-boxed li.is-active {
+  box-shadow: 0 2px 10px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);
 }
 
-h1 {
-  margin-top: 0;
-  font-size: 1.602em;
+a {
+  color: $diamm-dk-blue;
+  text-decoration: none;
+  &:hover {
+    color: $diamm-lt-blue;
+    //background: lighten($diamm-lt-blue, 52%);
+  }
 }
 
-h2 {font-size: 1.424em;}
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  height: 100vh;
+  color: $diamm-red;
 
-h3 {font-size: 1.266em;}
-
-h4 {font-size: 1.125em;}
-
-small, .font_small {font-size: 0.889em;}
-
-.container {
-  flex: 1 0 auto;
+  .spinner-message {
+    justify-content: center;
+    text-align: center;
+    //width: 20%;
+    //height: 20%;
+    color: $diamm-red;
+  }
 }
 
-.pull-right {
-  float: right !important;
+.loading-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 20vh;
 }
 
-.pull-left {
-  float: left !important;
+.no-image {
+  background-color: $diamm-light-grey;
+  border: 1px solid $diamm-grey;
+  width: 100px;
+  height: 140px;
+  margin: 0 auto;
+  //display: flex;
+  //align-items: center;
+  //justify-content: center;
 }
+
+.is-bold {
+  font-weight: $weight-bold !important;
+}
+
+.is-not-bold {
+  font-weight: $weight-normal !important;
+}
+
+//h1, h2, h3, h4, h5,
+//.content h1, .content h2, .content h3, .content h4, .content h5 {
+//  font-weight: 600;
+//}
+
+//.pull-right {
+//  float: right !important;
+//}
+//
+//.pull-left {
+//  float: left !important;
+//}
+
+//button {
+//  @include button();
+//}
+
+//.button.is-primary {
+//  background-color: $diamm-red;
+//}
+//.button.is-primary:hover,
+//.button.is-primary:focus {
+//  background-color: darken($diamm-red, 5%);
+//}
+
+//.richtext-image.left {
+//  float: left;
+//  margin-right: 2rem;
+//}
+//
+//.richtext-image.right {
+//  float: right;
+//  margin-left: 2rem;
+//}
 

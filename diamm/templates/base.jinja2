@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <link rel="search" href="{{ request.scheme }}://{{ request.get_host() }}{{ url('opensearch') }}" type="application/opensearchdescription+xml" title="DIAMM"/>
     {% block title %}
-    <title>Digital Image Archive of Medieval Music :: Home</title>
+    <title>Digital Image Archive of Medieval Music</title>
     {% endblock %}
     <link rel="stylesheet" href="{{ static('stylesheets/styles.css') }}" />
     {% block head %}
     {% endblock %}
 </head>
 <body>
-    {% include "website/blocks/beta_notice.jinja2" %}
+    {# include "website/blocks/beta_notice.jinja2" #}
     {% include "website/blocks/header.jinja2" %}
 
     <div class="full-width">
@@ -19,24 +19,45 @@
         {% endblock %}
     </div>
 
-    <div class="container site-content">
+    <div class="container is-fluid page-body">
         {% block body %}
         {% endblock %}
     </div>
 
-    <footer class="footer" style="text-align: center;">
-        <img src="{{ static('images/oxford.png') }}">
-        <img src="{{ static('images/bodleian.png') }}">
-        <img src="{{ static('images/ba.png') }}">
-        <img src="{{ static('images/johnfell.png') }}">
-        <img src="{{ static('images/ahrc.png') }}">
+    <footer class="footer">
+        <div class="container columns">
+            <div class="column is-two-thirds footer-address">
+                <img src="{{ static('images/headerLogo.png') }}" />
+                <h5 class="title is-5">The Digital Image Archive of Medieval Music</h5>
+                <p>Faculty of Music,<br />
+                    St. Aldates,<br />
+                    Oxford, United Kingdom
+                </p>
+            </div>
+            {# <div class="column">
+                <table>
+                    <tr>
+                        <td><img src="{{ static('images/oxford.png') }}"></td>
+                        <td><img src="{{ static('images/bodleian.png') }}"></td>
+                    </tr>
+                    <tr>
+                        <td><img src="{{ static('images/ba.png') }}"></td>
+                        <td><img src="{{ static('images/johnfell.png') }}"></td>
+                    </tr>
+                    <tr>
+                        <td><img src="{{ static('images/ahrc.png') }}"></td>
+                        <td></td>
+                    </tr>
+                </table>
+            </div> #}
+        </div>
     </footer>
 
-    <script src="{{ static('javascripts/dist/bundle.js') }}" type="application/javascript"></script>
     {% block scripts %}
     {% endblock %}
 
     {% if not debug %}
+
     <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
                     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),

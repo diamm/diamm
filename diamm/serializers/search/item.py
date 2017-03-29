@@ -1,4 +1,27 @@
 import serpy
+import uuid
+
+
+class ItemNotesSearchSerializer(serpy.Serializer):
+    pk = serpy.IntField()
+    id = serpy.MethodField()
+    type = serpy.MethodField()
+
+    note_type_i = serpy.IntField(
+        attr="type"
+    )
+    note_type_s = serpy.StrField(
+        attr="note_type"
+    )
+    note_sni = serpy.StrField(
+        attr="note"
+    )
+
+    def get_id(self, obj):
+        return str(uuid.uuid4())
+
+    def get_type(self, obj):
+        return obj.__class__.__name__.lower()
 
 
 class ItemSearchSerializer(serpy.Serializer):
@@ -55,6 +78,8 @@ class ItemSearchSerializer(serpy.Serializer):
     bibliography_ii = serpy.MethodField()
     voices_ii = serpy.MethodField()
     genres_ss = serpy.MethodField()
+
+    _childDocuments_ = serpy.MethodField()
 
     def get_type(self, obj):
         return obj.__class__.__name__.lower()
@@ -144,3 +169,6 @@ class ItemSearchSerializer(serpy.Serializer):
         if obj.composition:
             return list(obj.composition.genres.values_list('name', flat=True))
         return []
+
+    def get__childDocuments_(self, obj):
+        return ItemNotesSearchSerializer(obj.notes.all(), many=True).data

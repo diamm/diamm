@@ -6,9 +6,6 @@ from diamm.models.diamm_user import CustomUserModel
 class ResetPasswordForm(forms.Form):
     email = forms.EmailField(
         label="E-mail address",
-        widget=forms.EmailInput(
-            attrs={"class": "u-full-width"}
-        )
     )
 
     def clean(self):

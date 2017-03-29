@@ -1,9 +1,13 @@
 from diamm.models.diamm_user import CustomUserModel
-from diamm.models.site.cover_image import CoverImage
-from diamm.models.site.story import Story
-from diamm.models.site.tag import Tag
-from diamm.models.site.contribution import Contribution
-from diamm.models.site.aboutpages import AboutPages
+from diamm.models.site.problem_report import ProblemReport
+from diamm.models.site.commentary import Commentary
+from diamm.models.site.content_page import ContentPage
+from diamm.models.site.news_page import NewsPage
+from diamm.models.site.news_index import NewsIndexPage
+from diamm.models.site.publication_page import PublicationPage
+from diamm.models.site.dissertation_page import DissertationPage
+from diamm.models.site.home_page import HomePage
+
 
 from diamm.models.migrate.legacy_source import LegacySource
 from diamm.models.migrate.legacy_archive import LegacyArchive
@@ -38,6 +42,7 @@ from diamm.models.migrate.legacy_bibliography_item import LegacyBibliographyItem
 from diamm.models.migrate.legacy_cycle_type import LegacyCycleType
 from diamm.models.migrate.legacy_composition_cycle import LegacyCompositionCycle
 from diamm.models.migrate.legacy_composition_cycle_composition import LegacyCompositionCycleComposition
+from diamm.models.migrate.legacy_note import LegacyNote
 
 
 from diamm.models.data.legacy_id import LegacyId  # Yes, this belongs here. Used to track old PKs

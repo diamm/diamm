@@ -1,0 +1,37 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+    <form action="" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="merge_organizations_action">
+        <input type="hidden" name="do_action" value="yes">
+
+        <h2 class="warning">Merge organization records</h2>
+        <p>
+            You are about to perform a merge on these records. <strong>This is not reversible.</strong>
+            The <code>Keep Old</code> checkbox will not delete the merged records after merging. It is recommended that
+            you perform the merge once with the checkbox enabled, review the "target" entry, and then perform the merge again
+            with the checkbox unchecked to remove the other records.
+        </p>
+        <div>
+            <label>{{ form.keep_old }} {{ form.keep_old.label }}</label>
+            {{ form.keep_old.errors }}
+        </div>
+
+        {% with target=objects.first rest=objects|slice:"1:" %}
+            <h3>Target</h3>
+            <p>{{ target.name }} -- {{ target.legacy_id }}</p>
+            <input type="hidden" name="_selected_action" value="{{ target.pk }}">
+
+            <h3>From</h3>
+            <ul>
+                {% for entry in rest %}
+                    <li>{{ entry.name }} -- {{ entry.legacy_id }}</li>
+                    <input type="hidden" name="_selected_action" value="{{ entry.pk }}">
+                {% endfor %}
+            </ul>
+        {% endwith %}
+
+        <input type="submit" class="default" value="Change">
+    </form>
+{% endblock %}

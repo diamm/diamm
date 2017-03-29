@@ -55,6 +55,14 @@ class ImageChildSerializer(serpy.Serializer):
 class PageSearchSerializer(serpy.Serializer):
     type = serpy.MethodField()
     pk = serpy.IntField()
+    page_type_i = serpy.IntField(
+        attr="page_type",
+        required=False
+    )
+    page_type_s = serpy.StrField(
+        attr="page_kind",
+        required=False
+    )
 
     _childDocuments_ = ImageChildSerializer(
         attr="public_images",

@@ -1,3 +1,4 @@
+import sys
 from django.core.management.base import BaseCommand
 from django.core.management import call_command
 from diamm.management.helpers import migrate_regions
@@ -25,6 +26,7 @@ from diamm.management.helpers import migrate_text_and_voice
 from diamm.management.helpers import migrate_voice_type
 from diamm.management.helpers import migrate_notation
 from diamm.management.helpers import migrate_composition_cycle
+from diamm.management.helpers import migrate_commentary
 from diamm.models.data.page_condition import PageCondition
 from diamm.models.data.image_type import ImageType
 from diamm.models.data.organization_type import OrganizationType
@@ -80,6 +82,13 @@ class Command(BaseCommand):
         signals.post_delete.disconnect(delete_source_relationship, sender=SourceRelationship)
         signals.post_delete.disconnect(delete_set, sender=Set)
 
+        raw_input = input("Zeroing the data tables. THIS WILL DELETE EVERYTHING! Press 'y' to continue ")
+        if raw_input != "y":
+            sys.exit(-1)
+
+        call_command('migrate', 'diamm_data', 'zero')
+        call_command('migrate', 'diamm_data')
+
         print("Emptying Fixture tables")
         PageCondition.objects.all().delete()
         ImageType.objects.all().delete()
@@ -113,6 +122,7 @@ class Command(BaseCommand):
         migrate_users.migrate()
         migrate_sets.migrate()
         migrate_composition_cycle.migrate()
+        migrate_commentary.migrate()
 
         print('creating image locations')
         call_command('testing_image_locations')

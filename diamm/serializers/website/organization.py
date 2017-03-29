@@ -4,14 +4,6 @@ from diamm.serializers.serializers import ContextSerializer, ContextDictSerializ
 from diamm.models.data.geographic_area import GeographicArea
 
 
-class OrganizationContributionSerializer(ContextSerializer):
-    contributor = serpy.StrField(
-        attr="contributor.username"
-    )
-    summary = serpy.StrField()
-    updated = serpy.StrField()
-
-
 class OrganizationLocationSerializer(ContextSerializer):
     url = serpy.MethodField()
     name = serpy.StrField(
@@ -94,7 +86,6 @@ class OrganizationDetailSerializer(ContextSerializer):
     copied_sources = serpy.MethodField()
     source_provenance = serpy.MethodField()
     location = serpy.MethodField()
-    contributors = serpy.MethodField()
 
     def get_url(self, obj):
         return reverse('organization-detail',
@@ -110,18 +101,16 @@ class OrganizationDetailSerializer(ContextSerializer):
         return obj.__class__.__name__.lower()
 
     def get_related_sources(self, obj):
-        return [OrganizationSourceRelationshipSerializer(o, context={"request": self.context["request"]}).data
-                for o in obj.solr_relationships]
+        return OrganizationSourceRelationshipSerializer(obj.solr_relationships,
+                                                         many=True,
+                                                         context={"request": self.context["request"]}).data
 
     def get_copied_sources(self, obj):
-        return [OrganizationSourceCopyistSerializer(o, context={"request": self.context['request']}).data
-                for o in obj.solr_copyist]
+        return OrganizationSourceCopyistSerializer(obj.solr_copyist,
+                                                   many=True,
+                                                   context={"request": self.context['request']}).data
 
     def get_source_provenance(self, obj):
-        return [OrganizationSourceProvenanceSerializer(o, context={"request": self.context['request']}).data
-                for o in obj.solr_provenance]
-
-    def get_contributors(self, obj):
-        if obj.contributions.count() > 0:
-            return OrganizationContributionSerializer(obj.contributions.filter(completed=True),
-                                                context={"request": self.context['request']}, many=True).data
+        return OrganizationSourceProvenanceSerializer(obj.solr_provenance,
+                                                      many=True,
+                                                      context={"request": self.context['request']}).data

@@ -103,7 +103,10 @@ def __determine_title(entry, btype):
     elif btype == BibliographyType.CHAPTER_IN_BOOK:
         return entry.chapter
     elif btype == BibliographyType.FESTSCHRIFT:
-        return entry.festschrift
+        if entry.chapter is not None:
+            return entry.chapter
+        else:
+            return entry.booktitle
     elif btype == BibliographyType.DISSERTATION:
         return entry.dissertation
     else:
@@ -175,6 +178,8 @@ def migrate_bibliography(legacy):
     if type.pk == BibliographyType.JOURNAL_ARTICLE and legacy.journal:
         __create_new_publication_entry(legacy.journal, BibliographyPublication.B_PARENT_TITLE, b)
     elif type.pk == BibliographyType.CHAPTER_IN_BOOK:
+        __create_new_publication_entry(legacy.booktitle, BibliographyPublication.B_PARENT_TITLE, b)
+    elif type.pk == BibliographyType.FESTSCHRIFT and legacy.chapter:
         __create_new_publication_entry(legacy.booktitle, BibliographyPublication.B_PARENT_TITLE, b)
 
     if legacy.url:

@@ -10,7 +10,6 @@ def empty_users():
     print(term.magenta("\tEmptying user table"))
     # NB: Don't empty the superuser!
     CustomUserModel.objects.exclude(email="andrew.hankinson@gmail.com").delete()
-    # User.objects.exclude(username="ahankins").all().delete()
 
 
 def migrate_user(entry):

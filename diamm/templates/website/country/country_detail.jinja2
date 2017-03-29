@@ -1,10 +1,14 @@
 {% extends "base.jinja2" %}
 
 {% block body %}
-    <div class="row">
-        <div class="twelve columns">
-            <h1>{{ content.name }}</h1>
-            <h2>Cities</h2>
+    <div class="columns">
+        <div class="column">
+            <h2 class="title">{{ content.name }}</h2>
+        </div>
+    </div>
+    <div class="columns">
+        <div class="column is-one-third">
+            <h3 class="title is-4">Cities</h3>
             <ul>
                 {% for city in content.cities %}
                     <li><a href="{{ city.url }}">{{ city.name }}</a></li>

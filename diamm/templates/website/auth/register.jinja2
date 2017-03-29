@@ -1,20 +1,26 @@
 {% extends "base.jinja2" %}
+{% import "website/blocks/form_field.jinja2" as form_field %}
 
 {% block head %}
     <script src='https://www.google.com/recaptcha/api.js'></script>
 {% endblock %}
 
 {% block body %}
-    <div class="row">
-        <div class="twelve columns offset-by-four">
-            <div class="login-block">
-                <h2>Create an account</h2>
+    <div class="columns">
+        <div class="column is-half is-offset-one-quarter">
+            <div>
+                <h2 class="title">Create an account</h2>
                 <form action="{{ url('register') }}" method="post">
                     {% csrf_token %}
-                    {{ form }}
+                    {{ form_field.format(form.first_name, "text") }}
+                    {{ form_field.format(form.last_name, "text") }}
+                    {{ form_field.format(form.affiliation, "text") }}
+                    {{ form_field.format(form.email, "text") }}
+                    {{ form_field.format(form.password, "password") }}
+                    {{ form_field.format(form.confirm_password, "password") }}
 
-                    <strong>User agreement</strong>
-                    <ul>
+                    <h4 class="title is-4">User agreement</h4>
+                    <ul class="list">
                         <li>You will not communicate the password and username you are given to any other person or any third party for any reason (please apply to <a href='mailto:diamm@music.ox.ac.uk'>diamm@music.ox.ac.uk</a> for teaching/course accounts);</li>
                         <li>You will not download, copy, redistribute or print any image obtained through the DIAMM website, nor use any image from DIAMM for a commercial purpose;</li>
                         <li>You understand that downloading images from the DIAMM website is theft;</li>
@@ -26,9 +32,14 @@
                         <li>You will not infringe any copyright either of the manuscript owners or the image creator;</li>
                         <li>You understand that a breach of the rights or ownership covered in this agreement may result in prosecution under UK law.</li>
                     </ul>
-                    <label><input type="checkbox" name="user-agreement"> I agree</label>
-                    <div class="g-recaptcha" data-sitekey="6Led0RYTAAAAAGXZ4815sqD0qX_h9nsQk8G_zq0b"></div>
-                    <button type="submit">Create account</button>
+                    <p class="control notification">
+                        <label class="checkbox">
+                            <input type="checkbox" name="user-agreement" class="checkbox">
+                            I agree
+                        </label>
+                    </p>
+                    <div class="g-recaptcha is-pulled-left" data-sitekey="6Led0RYTAAAAAGXZ4815sqD0qX_h9nsQk8G_zq0b"></div>
+                    <button type="submit" class="button is-primary is-large is-pulled-right">Create account</button>
                 </form>
             </div>
         </div>

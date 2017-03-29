@@ -5,25 +5,10 @@ from rest_framework import status
 from rest_framework import response
 from drf_ujson.renderers import UJSONRenderer
 from diamm.models.data.source import Source
-from diamm.serializers.website.source import SourceListSerializer, SourceDetailSerializer
+from diamm.serializers.website.source import SourceDetailSerializer
 from diamm.serializers.iiif.manifest import SourceManifestSerializer
 from diamm.serializers.iiif.canvas import CanvasSerializer
 from diamm.serializers.iiif.service import ServiceSerializer
-from diamm.helpers.object_pagination import ObjectPagination
-
-
-class SourceList(generics.ListAPIView):
-    template_name = "website/source/source_list.jinja2"
-    queryset = Source.objects.all()
-    pagination_class = ObjectPagination 
-
-    # For serializing large lists, we only need the minimal serializer,
-    # but for accepting new objects we will pass it through the full serializer.
-    def get_serializer_class(self):
-        if self.request.method == 'GET':
-            return SourceListSerializer
-        elif self.request.method == 'POST':
-            return SourceDetailSerializer
 
 
 class SourceDetail(generics.RetrieveAPIView):
@@ -35,6 +20,12 @@ class SourceDetail(generics.RetrieveAPIView):
         queryset = Source.objects.all()
         queryset = queryset.select_related('archive__city__parent')
         return queryset
+
+    def get(self, request, *args, **kwargs):
+        if request.accepted_renderer.format == "html":
+            source_name = Source.objects.get(id=kwargs['pk']).display_name
+            return response.Response({'pk': kwargs['pk'], 'display_name': source_name})
+        return super(SourceDetail, self).get(request, args, kwargs)
 
 
 class SourceManifest(generics.GenericAPIView):
@@ -100,8 +91,8 @@ class SourceItemDetail(generics.GenericAPIView):
             "rows": 10000,
         }
         structure_res = conn.search("*:*", **structure_query)
-        structures = [ServiceSerializer(s, context={"request": request}).data
-                      for s in structure_res.docs]
+        structures = ServiceSerializer(structure_res.docs[0],
+                                       context={"request": request}).data
 
         return response.Response(structures)
 

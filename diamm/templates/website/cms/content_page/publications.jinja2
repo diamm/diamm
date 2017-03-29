@@ -1,0 +1,27 @@
+{% extends "website/cms/cmsbase.jinja2" %}
+
+{% block cmsbody %}
+    <div class="content">
+        <h1 class="title">{{ page.title }}</h1>
+        {{ page.body | richtext }}
+    </div>
+    <div>
+    <h2 class="title is-3">List of publications</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Prices</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in page.get_children().specific() %}
+                <tr>
+                    <td><a href="{{ p.url }}">{{ p.title }}</a></td>
+                    <td>{% for block in p.pricing %}{% include_block block %}{% endfor %}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+{% endblock %}

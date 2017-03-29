@@ -33,6 +33,16 @@ class Item(models.Model):
                                           blank=True,
                                           null=True,
                                           help_text="The attribution in the source")
+
+    item_title = models.CharField(max_length=1024,
+                                  blank=True,
+                                  null=True,
+                                  help_text="A title for this item record, ONLY if it is NOT linked to a composition.")
+    legacy_composition = models.CharField(max_length=32,
+                                          blank=True,
+                                          null=True,
+                                          help_text="Used only to record a composition that has been converted to an item-only record")
+
     source_incipit = models.TextField(blank=True, null=True,
                                       help_text="The incipit in the source")
     layout = models.IntegerField(choices=LAYOUT_OPTIONS,
@@ -59,6 +69,8 @@ class Item(models.Model):
     def __str__(self):
         if self.composition:
             return "{0}".format(self.composition.title)
+        elif self.item_title:
+            return "{0}".format(self.item_title)
         else:
             return "Works in {0}".format(self.source.display_name)
 

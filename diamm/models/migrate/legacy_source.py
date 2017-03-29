@@ -63,7 +63,6 @@ class LegacySource(models.Model):
     rismreset = models.TextField(db_column='RISMreset', blank=True, null=True)  # Field name made lowercase.
     inventory = models.TextField(blank=True, null=True)
     modification_date = models.TextField(blank=True, null=True)
-    bibliography_done = models.TextField(db_column='BIBLIOGRAPHY_DONE', blank=True, null=True)  # Field name made lowercase.
     stavegauge = models.TextField(db_column='staveGauge', blank=True, null=True)  # Field name made lowercase.
     bibliography_gathered = models.TextField(blank=True, null=True)
     ccmreset_2 = models.TextField(db_column='CCMreset_2', blank=True, null=True)  # Field name made lowercase.
@@ -100,6 +99,7 @@ class LegacySource(models.Model):
     description_rism_james = models.TextField(db_column='description_RISM_James', blank=True, null=True)  # Field name made lowercase.
     description_diamm_james = models.TextField(db_column='description_DIAMM_James', blank=True, null=True)  # Field name made lowercase.
     index = models.TextField(blank=True, null=True)
+    description_prexml_output_for_james = models.TextField(db_column='description_preXML_output_for_James', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False

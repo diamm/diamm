@@ -5,14 +5,6 @@ from rest_framework.reverse import reverse
 from diamm.serializers.serializers import ContextSerializer, ContextDictSerializer
 
 
-class SourceContributionSerializer(ContextSerializer):
-    contributor = serpy.StrField(
-        attr="contributor.username"
-    )
-    summary = serpy.StrField()
-    updated = serpy.StrField()
-
-
 class SourceCatalogueEntrySerializer(ContextSerializer):
     entry = serpy.MethodField()
     order = serpy.IntField()
@@ -33,6 +25,9 @@ class SourceCopyistSerializer(ContextDictSerializer):
     )
     type = serpy.StrField(
         attr="type"
+    )
+    type_s = serpy.StrField(
+        attr="type_s"
     )
 
     def get_copyist(self, obj):
@@ -129,7 +124,7 @@ class SourceSetSerializer(ContextDictSerializer):
     )
 
     def get_sources(self, obj):
-        source_ids = ",".join([str(id) for id in obj['sources_ii']])
+        source_ids = ",".join([str(sid) for sid in obj['sources_ii']])
         connection = pysolr.Solr(settings.SOLR['SERVER'])
         fq = ["type:source", "{!terms f=pk}"+source_ids]
 
@@ -137,7 +132,7 @@ class SourceSetSerializer(ContextDictSerializer):
         if 'source_id' in self.context:
             fq.append("-pk:{0}".format(self.context['source_id']))
 
-        fl = ["pk", "shelfmark_s", "display_name_s"]
+        fl = ["pk", "shelfmark_s", "display_name_s", "cover_image_i"]
         sort = ["shelfmark_ans asc"]
 
         results = connection.search("*:*", fq=fq, fl=fl, sort=sort, rows=10000)
@@ -147,7 +142,14 @@ class SourceSetSerializer(ContextDictSerializer):
                 source_url = reverse('source-detail',
                                      kwargs={"pk": doc['pk']},
                                      request=self.context['request'])
+
                 doc['url'] = source_url
+                if doc.get('cover_image_i'):
+                    doc['cover_image'] = reverse('image-serve-info',
+                                                 kwargs={"pk": doc["cover_image_i"]},
+                                                 request=self.context['request'])
+                else:
+                    doc['cover_image'] = None
 
             return results.docs
         else:
@@ -168,41 +170,111 @@ class SourceBibliographySerializer(ContextDictSerializer):
     )
 
 
-class SourceComposerInventorySerializer(ContextDictSerializer):
-    url = serpy.MethodField()
-    name = serpy.StrField()
-    uncertain = serpy.MethodField()
-    inventory = serpy.MethodField()
+class SourceComposerInventoryCompositionSerializer(ContextDictSerializer):
+    folio_start = serpy.StrField(
+        attr="folio_start_s",
+        required=False
+    )
+    folio_end = serpy.StrField(
+        attr="folio_end_s",
+        required=False
+    )
+    uncertain = serpy.BoolField(
+        attr="uncertain_b",
+        required=False
+    )
 
-    def get_uncertain(self, obj):
-        if 'uncertain' in obj:
-            return obj['uncertain']
+    source_attribution = serpy.MethodField()
+
+    composition = serpy.StrField(
+        attr="composition_s",
+        required=False
+    )
+    url = serpy.MethodField()
+
+    def get_source_attribution(self, obj):
+        if 'source_attribution_i' in obj:
+            return obj['source_attribution_i']
         return None
 
     def get_url(self, obj):
-        if 'pk' in obj and obj['pk']:
-            return reverse('person-detail',
-                           kwargs={"pk": obj['pk']},
-                           request=self.context['request'])
-        return None
+        if 'composition_i' not in obj:
+            return None
+
+        return reverse("composition-detail",
+                       kwargs={"pk": obj['composition_i']},
+                       request=self.context['request'])
+
+
+class SourceComposerInventorySerializer(ContextDictSerializer):
+    url = serpy.MethodField()
+    name = serpy.StrField(
+        attr="composer"
+    )
+    inventory = serpy.MethodField()
 
     def get_inventory(self, obj):
-        return obj['inventory']
+        return SourceComposerInventoryCompositionSerializer(
+            obj['inventory'],
+            many=True,
+            context={"request": self.context['request']}
+        ).data
+
+    def get_url(self, obj):
+        if 'pk' in obj and obj.get('pk'):
+            return reverse('person-detail',
+                           kwargs={"pk": obj['pk']},
+                           request=self.context["request"])
+        return None
+
+
+class SourceInventoryNoteSerializer(serpy.DictSerializer):
+    note = serpy.StrField(
+        attr="note_sni"
+    )
+    note_type = serpy.StrField(
+        attr="note_type_s"
+    )
 
 
 class SourceInventorySerializer(ContextDictSerializer):
     pk = serpy.IntField()
     url = serpy.MethodField()
     num_voices = serpy.MethodField()
+    genres = serpy.MethodField()
     folio_start = serpy.MethodField()
     folio_end = serpy.MethodField()
     composition = serpy.MethodField()
     composers = serpy.MethodField()
     bibliography = serpy.MethodField()
+    voices = serpy.MethodField()
+    pages = serpy.MethodField()
+    source_attribution = serpy.MethodField()
+    notes = serpy.MethodField()
+
+    def get_pages(self, obj):
+        if 'pages_ii' in obj:
+            return obj['pages_ii']
+        return None
+
+    def get_source_attribution(self, obj):
+        if 'source_attribution_s' in obj:
+            return obj['source_attribution_s']
+        return None
 
     def get_num_voices(self, obj):
         if 'num_voices_s' in obj:
             return obj['num_voices_s']
+        return None
+
+    def get_genres(self, obj):
+        if 'genres_ss' in obj:
+            return obj['genres_ss']
+        return None
+
+    def get_notes(self, obj):
+        if '_childDocuments_' in obj:
+            return SourceInventoryNoteSerializer(obj['_childDocuments_'], many=True).data
         return None
 
     # @TODO Finish Item Bibliography stuff.
@@ -273,6 +345,23 @@ class SourceInventorySerializer(ContextDictSerializer):
 
         return out
 
+    def get_voices(self, obj):
+        if not obj.get('voices_ii', None):
+            return None
+
+        connection = pysolr.Solr(settings.SOLR['SERVER'])
+        id_list = ",".join(str(x) for x in obj.get('voices_ii'))
+        fq = ["type:voice", "{!terms f=pk}"+id_list]
+        fl = ["mensuration_s",
+              "mensuration_text_s",
+              "clef_s",
+              "languages_ss",
+              "voice_text_s",
+              "voice_type_s"]
+
+        voice_res = connection.search("*:*", fq=fq, fl=fl, rows=10000)
+        return voice_res.docs
+
 
 class SourceArchiveSerializer(ContextSerializer):
     url = serpy.MethodField()
@@ -299,6 +388,7 @@ class SourceArchiveSerializer(ContextSerializer):
 
 class SourceNoteSerializer(ContextSerializer):
     note = serpy.StrField()
+    author = serpy.StrField()
     type = serpy.IntField()
     pk = serpy.IntField()
     note_type = serpy.StrField()
@@ -353,6 +443,12 @@ class SourceDetailSerializer(ContextSerializer):
     source_type = serpy.StrField(
         attr="type"
     )
+    format = serpy.StrField(
+        required=False
+    )
+    measurements = serpy.StrField(
+        required=False
+    )
     type = serpy.MethodField()
     cover_image_info = serpy.MethodField(
         required=False
@@ -360,6 +456,9 @@ class SourceDetailSerializer(ContextSerializer):
     manifest_url = serpy.MethodField()
     inventory_provided = serpy.BoolField()
     public_images = serpy.BoolField()
+    numbering_system_type = serpy.StrField(
+        attr="numbering_system_type"
+    )
 
     has_images = serpy.MethodField()
     inventory = serpy.MethodField()
@@ -371,7 +470,7 @@ class SourceDetailSerializer(ContextSerializer):
     relationships = serpy.MethodField()
     copyists = serpy.MethodField()
     catalogue_entries = serpy.MethodField()
-    contributors = serpy.MethodField()
+    # iiif_manifest = serpy.MethodField()
 
     links = SourceURLSerializer(
         attr="links.all",
@@ -393,10 +492,7 @@ class SourceDetailSerializer(ContextSerializer):
         call=True,
         many=True
     )
-    notes = SourceNoteSerializer(
-        attr="public_notes",
-        many=True
-    )
+    notes = serpy.MethodField()
 
     def get_type(self, obj):
         return obj.__class__.__name__.lower()
@@ -405,6 +501,11 @@ class SourceDetailSerializer(ContextSerializer):
         return reverse('source-detail',
                        kwargs={"pk": obj.pk},
                        request=self.context['request'])
+
+    def get_notes(self, obj):
+        return SourceNoteSerializer(obj.public_notes.order_by('type', 'sort'),
+                                    many=True,
+                                    context={"request": self.context['request']}).data
 
     def get_cover_image_info(self, obj):
         try:
@@ -441,44 +542,44 @@ class SourceDetailSerializer(ContextSerializer):
                        request=self.context['request'])
 
     def get_inventory(self, obj):
-        items = obj.solr_inventory
-        inventory = [SourceInventorySerializer(i, context={"request": self.context['request']}).data
-                        for i in items]
-        return inventory
+        return SourceInventorySerializer(obj.solr_inventory,
+                                         many=True,
+                                         context={"request": self.context['request']}).data
 
     def get_composer_inventory(self, obj):
-        items = obj.inventory_by_composer
-        inventory = [SourceComposerInventorySerializer(i, context={"request": self.context['request']}).data for i in items]
-        return inventory
+        return SourceComposerInventorySerializer(obj.inventory_by_composer,
+                                                 many=True,
+                                                 context={"request": self.context['request']}).data
 
     def get_uninventoried(self, obj):
-        items = obj.solr_uninventoried
-        inventory = [SourceInventorySerializer(i, context={"request": self.context['request']}).data
-                        for i in items]
-        return inventory
+        return SourceInventorySerializer(obj.solr_uninventoried,
+                                         many=True,
+                                         context={"request": self.context['request']}).data
 
     def get_archive(self, obj):
-        return SourceArchiveSerializer(
-            obj.archive,
-            context={"request": self.context['request']}
-        ).data
+        return SourceArchiveSerializer(obj.archive,
+                                       context={"request": self.context['request']}).data
 
     def get_sets(self, obj):
-        set_res = obj.solr_sets
-        return [SourceSetSerializer(s, context={"request": self.context['request'],
-                                                "source_id": obj.pk}).data for s in set_res]
+        return SourceSetSerializer(obj.solr_sets,
+                                   many=True,
+                                   context={"request": self.context['request'],
+                                            "source_id": obj.pk}).data
 
     def get_provenance(self, obj):
-        prov_res = obj.solr_provenance
-        return [SourceProvenanceSerializer(s, context={"request": self.context['request']}).data for s in prov_res]
+        return SourceProvenanceSerializer(obj.solr_provenance,
+                                          many=True,
+                                          context={"request": self.context['request']}).data
 
     def get_relationships(self, obj):
-        rel_res = obj.solr_relationships
-        return [SourceRelationshipSerializer(s, context={"request": self.context['request']}).data for s in rel_res]
+        return SourceRelationshipSerializer(obj.solr_relationships,
+                                            many=True,
+                                            context={"request": self.context['request']}).data
 
     def get_copyists(self, obj):
-        cop_res = obj.solr_copyists
-        return [SourceCopyistSerializer(s, context={"request": self.context['request']}).data for s in cop_res]
+        return SourceCopyistSerializer(obj.solr_copyists,
+                                       many=True,
+                                       context={"request": self.context['request']}).data
 
     def get_catalogue_entries(self, obj):
         if obj.catalogue_entries.count() > 0:
@@ -486,8 +587,3 @@ class SourceDetailSerializer(ContextSerializer):
                                                   context={"request": self.context['request']},
                                                   many=True).data
         return []
-
-    def get_contributors(self, obj):
-        if obj.contributions.count() > 0:
-            return SourceContributionSerializer(obj.contributions.filter(completed=True),
-                                                context={"request": self.context['request']}, many=True).data

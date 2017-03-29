@@ -1,22 +1,58 @@
 {% extends "base.jinja2" %}
 
+{% block title %}
+    <title>Digital Image Archive of Medieval Music :: {{ content.cluster_shelfmark }}</title>
+{% endblock %}
+
 {% block body %}
-    <div class="row">
-        <div class="sixteen columns">
-            <h1>{{ content.cluster_shelfmark }}</h1>
+    <div class="columns">
+        <div class="column">
+            <h2 class="title is-2">Set: {{ content.cluster_shelfmark }}</h2>
+            <h3 class="subtitle">{{ content.type }}</h3>
+            <div>
+                <h4 class="title is-5">Holding archives</h4>
+                {% set comma = joiner("; ") %}
+                {%- for group in content.sources | groupby('archive_name') -%}
+                    {{ comma() }}{{ group.grouper }}
+                {%- endfor -%}
+            </div>
+            {% if content.description %}
+                {{ content.description | markdown | safe }}
+            {% endif %}
             {% if content.sources %}
-                <h2>Sources</h2>
-                <ul>
-                {% for source in content.sources %}
-                    <li class="image-source-list">
-                        {% if source.has_images and source.public_images %}
-                            <i class="fa fa-picture-o" aria-hidden="true"></i>
-                        {% endif %}
-                        <a href="{{ source.url }}">{{ source.display_name }}</a>
-                    </li>
-                {% endfor %}
-                </ul>
+                <h3 class="title is-4">Sources</h3>
+                <div class="archive-sources">
+                    {% for source in content.sources %}
+                        <div class="box">
+                            {% if source.cover_image %}
+                                <a href="{{ source.url }}">
+                                    <img src="{{ source.cover_image }}" />
+                                </a>
+                            {% else %}
+                                <div class="no-image">
+                                    <div>
+                                        <i class="fa fa-eye-slash"></i>
+                                    </div>
+                                    <div>
+                                        <small>No images available</small>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            <div>
+                                <a href="{{ source.url }}">{{ source.display_name }}</a> ({{ source.archive_name }})
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
             {% endif %}
         </div>
     </div>
+    {% if request.user.is_staff %}
+        <div class="columns">
+            <div class="column">
+                <a class="button" href="/admin/diamm_data/set/{{ content.pk }}">Edit</a>
+            </div>
+        </div>
+    {% endif %}
+
 {% endblock %}

@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 
+
 class SourceCopyist(models.Model):
     class Meta:
         app_label = "diamm_data"

@@ -5,34 +5,79 @@
 {% endblock %}
 
 {% block body %}
-    <div class="row">
-        <div class="sixteen columns">
-            <h1>{{ content.title }}</h1>
-            <h2>Composers</h2>
-            <ul>
-            {% for composer in content.composers %}
-                <li>
+    <div class="columns">
+        <div class="column">
+            <h1 class="title is-2">{{ content.title }}</h1>
+            <h3 class="subtitle">
+                {% for composer in content.composers %}
                     <a href="{{ composer.url }}">{{ composer.full_name }} </a>
                     {% if composer.uncertain %}
                         (uncertain)
                     {% endif %}
-                </li>
-            {% endfor %}
-            </ul>
-            <h2>Appears in</h2>
-            <ul>
-            {% for source in content.sources %}
-                <li class="image-source-list">
-                    {% if source.has_images and source.public_images %}
-                        <i class="fa fa-picture-o" aria-hidden="true"></i>
-                    {% endif %}
-                    <a href="{{ source.url }}">{{ source.display_name }}</a>
-                </li>
-            {% endfor %}
-            </ul>
+                {% endfor %}
+            </h3>
+            {% if content.genres %}
+                <p>
+                    <strong>Genres: </strong>{{ content.genres | join(", ") }}
+
+                </p>
+            {% endif %}
         </div>
     </div>
-    {% include 'website/blocks/contribution.jinja2' %}
+    {% if content.cycles %}
+    <div class="columns">
+        <div class="column">
+            <h3 class="title is-4">Cycles</h3>
+            {% for cycle in content.cycles %}
+                <h4 class="subtitle is-5">{{ cycle.title }} ({{ cycle.type }})</h4>
+                <ul>
+                {% for composition in cycle.compositions %}
+                    <li><a href="{{ composition.url }}">{{ composition.title }}</a></li>
+                {% endfor %}
+                </ul>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    <div class="columns">
+        <div class="column">
+            <h3 class="title is-4">Sources</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Source</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for source in content.sources %}
+                    <tr>
+                        <td>
+                            {% if source.has_images and source.public_images %}
+                                <i class="fa fa-picture-o" aria-hidden="true"></i>
+                            {% endif %}
+                            <a href="{{ source.url }}">{{ source.display_name }}</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% if content.bibliography %}
+    <div class="columns">
+        <div class="column">
+            <h3 class="title is-4">Bibliography</h3>
+            {% for item in content.bibliography %}
+                <p>{{ item.citation | safe }} pp. {{ item.pages }}.</p>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    {% if request.user.is_staff %}
+        {% with edit_path="/admin/diamm_data/composition/" %}
+            {% include "website/blocks/edit_bar.jinja2"  %}
+        {% endwith %}
+    {% endif %}
 {% endblock %}
 
 

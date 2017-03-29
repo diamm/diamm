@@ -1,14 +1,16 @@
 import requests
 import ujson
-import uuid
 from django.views.generic.edit import FormView
 from django.http.response import HttpResponse
 from django.core.mail import send_mail
 from django.conf import settings
+from django.core import signing
 from rest_framework import status
 from rest_framework.reverse import reverse
 from diamm.forms.create_account_form import CreateAccountForm
 from diamm.models.diamm_user import CustomUserModel
+
+REGISTRATION_SALT = getattr(settings, "REGISTRATION_SALT", "registration")
 
 
 class CreateAccount(FormView):
@@ -26,6 +28,8 @@ class CreateAccount(FormView):
 
     def form_valid(self, form):
         response = super(CreateAccount, self).form_valid(form)
+
+        print("Validating form")
 
         if not 'g-recaptcha-response' in self.request.POST:
             # Something funny is going on -- we've received a POST request without the Recaptcha
@@ -62,7 +66,6 @@ class CreateAccount(FormView):
         first_name = form.cleaned_data.get('first_name')
         last_name = form.cleaned_data.get('last_name')
         password = form.cleaned_data.get('password')
-        activation_key = str(uuid.uuid4())
 
         d = {
             'affiliation': affiliation,
@@ -77,6 +80,11 @@ class CreateAccount(FormView):
             **d
         )
 
+        activation_key = signing.dumps(
+            obj=getattr(u, u.USERNAME_FIELD),
+            salt=REGISTRATION_SALT
+        )
+
         if settings.DEBUG:
             to_address = "andrew.hankinson@gmail.com"
         else:
@@ -88,8 +96,8 @@ class CreateAccount(FormView):
                 first_name=first_name,
                 last_name=last_name,
                 hostname="https://{0}".format(settings.HOSTNAME),
-                confirmation_link=reverse('activate',
-                                          kwargs={"uuid": activation_key},
+                confirmation_link=reverse('registration_activate',
+                                          kwargs={"activation_key": activation_key},
                                           request=self.request)
             ),
             settings.DEFAULT_FROM_EMAIL,

@@ -23,5 +23,5 @@ class HTMLRenderer(TemplateHTMLRenderer):
             template_names = self.get_template_names(response, view)
             template = self.resolve_template(template_names)
 
-        context = self.resolve_context({'content': data}, request, response)
+        context = self.get_template_context({'content': data}, renderer_context)
         return template_render(template, context, request=request)

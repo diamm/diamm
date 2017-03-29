@@ -1,7 +1,16 @@
-footer {
-  border-top: 3px double $diamm-med-grey;
-  background: $diamm-white;
-  height: 100px;
-  padding: 1.25rem;
-  margin-top: 1rem;
+.footer {
+  margin-top: 2rem;
+  background-color: $diamm-grey;
+  margin-bottom: 0;
+}
+
+.footer-address {
+  color: #fff;
+  text-align: left;
+  .title {
+    color: #fff;
+  }
+  img {
+    width: 100px;
+  }
 }

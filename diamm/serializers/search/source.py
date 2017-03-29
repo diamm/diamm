@@ -24,10 +24,6 @@ class SourceSearchSerializer(serpy.Serializer):
     shelfmark_s = serpy.StrField(
         attr='shelfmark'
     )
-    # Alphanumeric sort field
-    shelfmark_ans = serpy.StrField(
-        attr='shelfmark'
-    )
     name_s = serpy.StrField(
         attr="name",
         required=False
@@ -88,15 +84,11 @@ class SourceSearchSerializer(serpy.Serializer):
         required=False
     )
     composers_ss = serpy.MethodField()
-    cover_image_i = serpy.IntField(
-        attr='cover_image_id',
-        required=False
-    )
+    cover_image_i = serpy.MethodField()
     public_images_b = serpy.MethodField()
     external_images_b = serpy.BoolField(
         attr="has_external_images"
     )
-
 
     def get_type(self, obj):
         return obj.__class__.__name__.lower()
@@ -106,6 +98,12 @@ class SourceSearchSerializer(serpy.Serializer):
             return list(obj.identifiers.values_list('identifier', flat=True))
         else:
             return []
+
+    def get_cover_image_i(self, obj):
+        c = obj.cover
+        if c:
+            return c.get('id')
+        return None
 
     def get_notations_ss(self, obj):
         if obj.notations.count() > 0:
@@ -121,7 +119,7 @@ class SourceSearchSerializer(serpy.Serializer):
 
     def get_sets_ssni(self, obj):
         """
-            PK|Name for the sets this source belongs to except project sets (type=7)
+            PK|Name for the sets this source belongs to, except project sets (type=7)
         """
         if obj.sets.count() > 0:
             sourcesets = obj.sets.values_list("pk", "cluster_shelfmark")

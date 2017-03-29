@@ -1,15 +1,23 @@
 {% extends "base.jinja2" %}
+{% import "website/blocks/form_field.jinja2" as form_field %}
 
 {% block body %}
-    <div class="row">
-        <div class="offset-by-five eleven columns">
-            <div class="login-block">
-                <h2>Reset password</h2>
-                <p>Forgotten your password? Enter your email address below, and we'll email instructions for setting a new one.</p>
-                <p>NB: Accounts on the beta website are independent from diamm.ac.uk, and resetting your password on this site will not affect your account details on the old site.</p>
-                <form method="post">{% csrf_token %}
-                    {{ form }}
-                    <button type="submit">Reset</button>
+    <div class="columns">
+        <div class="column is-half is-offset-one-quarter">
+            <div>
+                <h2 class="title">Reset password</h2>
+                <p>
+                    Forgotten your password? Enter your email address below, and we'll send instructions for setting a new one.
+                </p>
+                <form method="post" class="reset">
+                    {% csrf_token %}
+                    {{ form_field.format(form.email, "text") }}
+                    <div class="field">
+                        <input class="input" type="hidden" name="next" value="/reset/sent/" />
+                    </div>
+                    <div class="field is-pulled-right">
+                        <button type="submit" class="button is-primary">Reset</button>
+                    </div>
                 </form>
             </div>
         </div>

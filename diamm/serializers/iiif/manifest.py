@@ -123,14 +123,13 @@ class SourceManifestSerializer(ContextDictSerializer):
         # images_ss:[* TO *] ensures that only records with images attached are returned.
         canvas_query = {
             "fq": ["type:page", "source_i:{0}".format(obj['pk']), "images_ss:[* TO *]"],
-            "fl": ["id", "pk", "source_i", "numeration_s", "items_ii",
-                   "[child parentFilter=type:page childFilter=image_type_i:1 childFilter=type:image]"],
-            "sort": "sort_order_i asc, numeration_ans asc",
+            "fl": ["id", "pk", "source_i", "numeration_s", "items_ii", "page_type_i",
+                   "[child parentFilter=type:page childFilter=type:image]"],
+            "sort": "sort_order_i asc, image_type_i asc, numeration_ans asc",
             "rows": 10000
         }
         canvas_res = conn.search("*:*", **canvas_query)
-        canvases = [CanvasSerializer(c, context={"request": self.context['request']}).data
-                    for c in canvas_res.docs]
+        canvases = CanvasSerializer(canvas_res.docs, many=True, context={"request": self.context['request']}).data
 
         label = "Default"
         source_id = obj['pk']
@@ -173,7 +172,9 @@ class SourceManifestSerializer(ContextDictSerializer):
             "rows": 10000,
         }
         structure_res = conn.search("*:*", **structure_query)
-        structures = [StructureSerializer(s, context={"request": self.context["request"]}).data
-                      for s in structure_res.docs]
+
+        structures = StructureSerializer(structure_res.docs,
+                                         context={"request": self.context["request"]},
+                                         many=True).data
 
         return structures

@@ -1,10 +1,12 @@
 {% extends "base.jinja2" %}
 
 {% block body %}
-    <div class="row">
-        <div class="twelve columns">
-            <h1>{{ content.name }}, <a href="{{ content.country.url }}">{{ content.country.name }}</a></h1>
-            <h2>Archives</h2>
+    <div class="columns">
+        <div class="column">
+            <h2 class="title">{{ content.name }}, <a href="{{ content.country.url }}">{{ content.country.name }}</a></h2>
+
+            {% if content.archives %}
+            <h3 class="title is-4">Archives</h3>
             <ul>
                 {% for archive in content.archives %}
                     <li>
@@ -12,6 +14,18 @@
                     </li>
                 {% endfor %}
             </ul>
+            {% endif %}
+
+            {% if content.organizations %}
+                <h3 class="title is-4">Organizations</h3>
+                <ul>
+                    {% for organization in content.organizations %}
+                    <li>
+                        <a href="{{ organization.url }}">{{ organization.name }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

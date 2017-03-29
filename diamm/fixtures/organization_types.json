@@ -54,5 +54,26 @@
     "fields": {
       "name": "Court"
     }
+  },
+  {
+    "model": "diamm_data.OrganizationType",
+    "pk": 9,
+    "fields": {
+      "name": "Library, Archive"
+    }
+  },
+  {
+    "model": "diamm_data.OrganizationType",
+    "pk": 10,
+    "fields": {
+      "name": "Company, Corporation"
+    }
+  },
+  {
+    "model": "diamm_data.OrganizationType",
+    "pk": 11,
+    "fields": {
+      "name": "Educational institution"
+    }
   }
 ]

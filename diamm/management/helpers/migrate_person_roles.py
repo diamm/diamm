@@ -10,9 +10,8 @@ from blessings import Terminal
 
 term = Terminal()
 
-## NB: This must be run after all the people have been migrated!
 
-
+# NB: This must be run after all the people have been migrated!
 def empty_roles():
     print(term.magenta("\tEmptying role table"))
     Role.objects.all().delete()
@@ -20,6 +19,9 @@ def empty_roles():
 
 
 def migrate_role(entry):
+    if entry.pk == 0:
+        return
+
     print(term.green("\tMigrating role ID {0}".format(entry.pk)))
     d = {
         'id': entry.pk,
@@ -86,10 +88,10 @@ def migrate():
     update_table()
 
     # NB: Don't try to migrate the organizations.
-    for entry in LegacyPerson.objects.exclude(alaffiliationkey=0).exclude(type='institution'):
+    for entry in LegacyPerson.objects.exclude(alaffiliationkey=0).exclude(type='institution').exclude(alaffiliationkey=None):
         attach_person_to_role(entry)
 
-    for entry in LegacyCopyist.objects.exclude(alaffiliationkey=0):
+    for entry in LegacyCopyist.objects.exclude(alaffiliationkey=0).exclude(alaffiliationkey=None):
         attach_copyist_to_role(entry)
 
     print(term.blue("Done creating and attaching people to roles"))

@@ -11,7 +11,7 @@ class Person(models.Model):
         ordering = ["last_name", "first_name"]
 
     last_name = models.CharField(max_length=512,
-                                 help_text="Last name, or full name if it does not follow modern conventions, e.g., 'Louis of Bavaria'")
+                                 help_text="Last name, or full name if it does not follow convention, e.g., 'Louis of Bavaria'")
     first_name = models.CharField(max_length=512, blank=True, null=True)
     title = models.CharField(max_length=512, blank=True, null=True,
                              help_text="Personal title, e.g., Duke, Count, Pope.")
@@ -21,13 +21,12 @@ class Person(models.Model):
     latest_year_approximate = models.BooleanField(default=False)
 
     legacy_id = models.CharField(max_length=64)
-    roles = models.ManyToManyField("diamm_data.Role",
-                                   through="diamm_data.PersonRole")
+    # roles = models.ManyToManyField("diamm_data.Role",
+    #                                through="diamm_data.PersonRole")
 
     sources_copied = GenericRelation("diamm_data.SourceCopyist")
     sources_related = GenericRelation("diamm_data.SourceRelationship")
     sources_provenance = GenericRelation("diamm_data.SourceProvenance")
-    contributions = GenericRelation("diamm_site.Contribution")
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

@@ -1,10 +1,11 @@
 from django.contrib import admin
 from diamm.models.data.voice import Voice
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
+from reversion.admin import VersionAdmin
 
 
 @admin.register(Voice)
-class VoiceAdmin(ForeignKeyAutocompleteAdmin):
+class VoiceAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     def get_queryset(self, request):
         queryset = super(VoiceAdmin, self).get_queryset(request)
         queryset = queryset.select_related('item__composition', 'mensuration', 'type', 'clef')

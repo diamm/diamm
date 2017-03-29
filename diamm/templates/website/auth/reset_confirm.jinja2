@@ -1,17 +1,26 @@
 {% extends "base.jinja2" %}
+{% import "website/blocks/form_field.jinja2" as form_field %}
 
 {% block body %}
-    {% if validlink %}
-        <p>Please enter your new password twice so we can verify you typed it in correctly.</p>
-        <form method="post">{% csrf_token %}
-            {{ form.new_password1.errors }}
-            <p class="aligned wide"><label for="id_new_password1">New password:</label>{{ form.new_password1 }}</p>
-            {{ form.new_password2.errors }}
-            <p class="aligned wide"><label for="id_new_password2">Confirm password:</label>{{ form.new_password2 }}</p>
-            <p><input type="submit" value="Change my password" /></p>
-        </form>
-    {% else %}
-        <p>The password reset link was invalid, possibly because it has already been used.  Please request a new password reset.</p>
-    {% endif %}
-
+    <div class="columns">
+        <div class="column is-half is-offset-one-quarter">
+            {% if validlink %}
+                <h2 class="title">Reset your password</h2>
+                <p>Please enter your new password twice so we can verify you typed it in correctly.</p>
+                <form method="post">{% csrf_token %}
+                    <div class="field">
+                        {{ form_field.format(form.new_password1, "password") }}
+                    </div>
+                    <div class="field">
+                        {{ form_field.format(form.new_password2, "password") }}
+                    </div>
+                    <div class="field">
+                        <button class="button is-primary">Change my password</button>
+                    </div>
+                </form>
+            {% else %}
+                <p>The password reset link was invalid, possibly because it has already been used.  Please request a new password reset.</p>
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}

@@ -2,7 +2,6 @@ from django.core.management.base import BaseCommand
 from django.conf import settings
 import pysolr
 from blessings import Terminal
-import progressbar
 
 from diamm.models.data.source import Source
 from diamm.serializers.search.source import SourceSearchSerializer
@@ -32,28 +31,17 @@ from diamm.models.data.item_bibliography import ItemBibliography
 from diamm.serializers.search.item_bibliography import ItemBibliographySearchSerializer
 from diamm.models.data.voice import Voice
 from diamm.serializers.search.voice import VoiceSearchSerializer
+from diamm.serializers.search.composer_inventory import ComposerInventorySearchSerializer
 
 term = Terminal()
-
-
-class Writer:
-    def __init__(self, location):
-        self.location = location
-
-    def write(self, string):
-        with term.location(*self.location):
-            print(string)
 
 
 class Command(BaseCommand):
     def _index(self, objects, name_field, serializer):
         num_sources = objects.count()
-        writer = Writer((1, 1))
-        pbar = progressbar.ProgressBar(fd=writer, max_value=num_sources)
 
         docs = []
         for i, obj in enumerate(objects):
-            pbar.update(i)
             if not name_field:
                 name = "Object {0}".format(obj.pk)
             else:
@@ -76,13 +64,12 @@ class Command(BaseCommand):
 
         # ensure any leftovers are added
         self.solrconn.add(docs)
-        pbar.finish()
 
     def _index_sources(self):
         self.stdout.write(term.blue('Indexing Sources'))
         self.solrconn.delete(q="type:source")
-        objs = Source.objects.all().order_by('pk').select_related('archive__city__parent')
-        objs = objs.prefetch_related('pages__images', 'sets', 'identifiers', 'copyists', 'inventory__composition')
+        objs = Source.objects.all().order_by('pk').select_related('archive__city__parent', "cover_image")
+        # objs = objs.prefetch_related('pages__images', 'sets', 'identifiers', 'copyists', 'inventory__composition')
         self._index(objs, 'shelfmark', SourceSearchSerializer)
 
     def _index_inventories(self):
@@ -165,6 +152,41 @@ class Command(BaseCommand):
         objs = Voice.objects.all()
         self._index(objs, "", VoiceSearchSerializer)
 
+    def _index_composers_inventory(self):
+        """ This one is a bit different, since it's not
+            directly bound to a model, but as a shortcut
+            to expensive on-the-fly operations.
+        """
+        self.stdout.write(term.blue("Indexing composer inventories"))
+        self.solrconn.delete(q="type:composerinventory")
+        fields = [
+            'composition__composers__composer__last_name',
+            'composition__composers__composer__first_name',
+            'composition__composers__composer__pk',
+            'composition__composers__uncertain',
+            'composition__title',
+            'source_id',
+            'source__shelfmark',
+            'source__name',
+            'source__archive__siglum',
+            'composition__pk',
+            'folio_start',
+            'folio_end',
+            'source_attribution'
+        ]
+        pk = 1
+        objs = Source.objects.all().order_by('pk').select_related('archive__city__parent')
+        for source in objs:
+            self.stdout.write(term.green("Indexing {0}".format(source.display_name)))
+            res = [list(o) for o in source.inventory.values_list(*fields)]
+            for o in res:
+                o.append(pk)
+                pk += 1
+
+            data = ComposerInventorySearchSerializer(res, many=True).data
+            self.solrconn.add(data)
+
+
     def handle(self, *args, **kwargs):
         self.solrconn = pysolr.Solr(settings.SOLR['SERVER'])
         self._index_sources()
@@ -181,6 +203,7 @@ class Command(BaseCommand):
         self._index_source_relationship()
         self._index_source_copyists()
         self._index_item_bibliographies()
+        self._index_composers_inventory()
 
         raw_input = input('Done indexing. Press any key to exit.')
 

@@ -60,6 +60,7 @@ class LegacyImage(models.Model):
     orderno = models.DecimalField(db_column='orderNo', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
     checked = models.TextField(blank=True, null=True)
     folio_alt = models.TextField(blank=True, null=True)
+    type = models.TextField(blank=True, null=True)
 
     class Meta:
         managed = False

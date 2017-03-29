@@ -12,3 +12,7 @@ class Cycle(models.Model):
 
     def __str__(self):
         return "{0}".format(self.title)
+
+    @property
+    def anonymous(self):
+        return self.composer is None

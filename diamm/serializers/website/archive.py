@@ -13,16 +13,23 @@ class SourceArchiveSerializer(ContextDictSerializer):
     public_images = serpy.BoolField(
         attr="public_images_b"
     )
+    cover_image = serpy.MethodField()
 
     def get_url(self, obj):
         return reverse('source-detail',
                        kwargs={"pk": obj['pk']},
                        request=self.context['request'])
 
-    # def get_has_images(self, obj):
-    #     if obj.pages.count() > 0:
-    #         return True
-    #     return False
+    def get_cover_image(self, obj):
+        if not obj.get('cover_image_i'):
+            return None
+
+        return reverse('image-serve',
+                       kwargs={"pk": obj['cover_image_i'],
+                               "region": "full",
+                               "size": "100,",
+                               "rotation": 0},
+                       request=self.context['request'])
 
 
 class CityArchiveSerializer(ContextSerializer):
@@ -40,6 +47,7 @@ class CityArchiveSerializer(ContextSerializer):
 
 class ArchiveDetailSerializer(ContextSerializer):
     url = serpy.MethodField()
+    pk = serpy.IntField()
     sources = serpy.MethodField()
     city = serpy.MethodField()
     former_name = serpy.StrField(
@@ -66,17 +74,3 @@ class ArchiveDetailSerializer(ContextSerializer):
     def get_logo(self, obj):
         if obj.logo:
             return obj.logo.url
-
-class ArchiveListSerializer(ContextSerializer):
-    url = serpy.MethodField()
-    city = serpy.MethodField()
-    name = serpy.StrField()
-
-    def get_url(self, obj):
-        return reverse('archive-detail',
-                       kwargs={"pk": obj.pk},
-                       request=self.context['request'])
-
-    def get_city(self, obj):
-        return CityArchiveSerializer(obj.city, context={'request': self.context['request']}).data
-

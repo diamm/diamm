@@ -1,27 +1,46 @@
 {% extends "base.jinja2" %}
 
 {% block body %}
-    <div class="row">
-        <div class="sixteen columns">
-            <h1>{{ content.name }} ({{ content.siglum }})</h1>
+    <div class="columns">
+        <div class="column is-two-thirds">
+            <h1 class="title">{{ content.name }} ({{ content.siglum }})</h1>
+            <h2 class="subtitle"><a href="{{ content.city.url }}">{{ content.city.name }}</a>, {{ content.city.country }}</h2>
+        </div>
+        <div class="column">
+            {% if content.logo %}
             <img src="{{ content.logo }}" />
-            <h2><a href="{{ content.city.url }}">{{ content.city.name }}</a>, {{ content.city.country }}</h2>
-            {% if content.website %}
-                <p><a href="http://{{ content.website }}">{{ content.name }} website</a></p>
-            {% endif %}
-            {% if content.sources %}
-                <h3>Sources in this Archive</h3>
-                <ul>
-                    {% for source in content.sources %}
-                        <li class="image-source-list">
-                            {% if source.has_images and source.public_images %}
-                                <i class="fa fa-picture-o" aria-hidden="true"></i>
-                            {% endif %}
-                            <a href="{{ source.url }}">{{ source.display_name }}</a>
-                        </li>
-                    {% endfor %}
-                </ul>
             {% endif %}
         </div>
     </div>
+    <div class="columns">
+        <div class="column content">
+            {% if content.website %}
+                <p>
+                    <strong>Archive website: </strong><a href="http://{{ content.website }}">{{ content.name }}</a>
+                </p>
+            {% endif %}
+            {% if content.sources %}
+                <h3 class="title is-4">Sources in this Archive</h3>
+                <div class="archive-sources">
+                    {% for source in content.sources %}
+                        <div class="box">
+                            {% if source.cover_image %}
+                                <a href="{{ source.url }}">
+                                    <img src="{{ source.cover_image }}" />
+                                </a>
+                            {% endif %}
+                            <div>
+                                <a href="{{ source.url }}">{{ source.display_name }}</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    {% if request.user.is_staff %}
+        {% with edit_path="/admin/diamm_data/archive/" %}
+            {% include "website/blocks/edit_bar.jinja2"  %}
+        {% endwith %}
+    {% endif %}
 {% endblock %}

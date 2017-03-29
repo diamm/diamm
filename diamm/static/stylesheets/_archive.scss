@@ -1,0 +1,13 @@
+.archive-sources {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+
+  .box {
+    flex: 0 0 auto;
+    margin: 8px;
+    text-align: center;
+    width: 180px;
+    height: 280px;
+  }
+}

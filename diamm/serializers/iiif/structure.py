@@ -15,7 +15,8 @@ class StructureSerializer(ContextDictSerializer):
         value="sc:Range"
     )
     label = serpy.StrField(
-        attr='composition_s'
+        attr='composition_s',
+        required=False
     )
 
     service = serpy.MethodField()

@@ -53,20 +53,39 @@ INSTALLED_APPS = [
     'django_jinja',
     'django_jinja.contrib._humanize',
     'pagedown',
-    'debug_toolbar',
+    # 'debug_toolbar',
+
+    # wagtail config for CMS
+    'wagtail.wagtailforms',
+    'wagtail.wagtailredirects',
+    'wagtail.wagtailembeds',
+    'wagtail.wagtailsites',
+    'wagtail.wagtailusers',
+    'wagtail.wagtailsnippets',
+    'wagtail.wagtaildocs',
+    'wagtail.wagtailimages',
+    'wagtail.wagtailsearch',
+    'wagtail.wagtailadmin',
+    'wagtail.wagtailcore',
+
+    'modelcluster',
+    'taggit'
 ]
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    # 'django.middleware.cache.UpdateCacheMiddleware',
+    'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
-    # 'django.middleware.cache.FetchFromCacheMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'wagtail.wagtailcore.middleware.SiteMiddleware',
+    'wagtail.wagtailredirects.middleware.RedirectMiddleware',
 ]
 
 ROOT_URLCONF = 'diamm.urls'
@@ -88,6 +107,12 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
+            ],
+            "extensions": DEFAULT_EXTENSIONS + [
+                'wagtail.wagtailcore.jinja2tags.core',
+                'wagtail.wagtailadmin.jinja2tags.userbar',
+                'wagtail.wagtailimages.jinja2tags.images',
+                "django_jinja.builtins.extensions.DjangoFiltersExtension"
             ]
         }
     },
@@ -112,11 +137,14 @@ WSGI_APPLICATION = 'diamm.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
-DATABASE_ROUTERS = ['diamm.router.LegacyRouter']
+DATABASE_ROUTERS = ['diamm.router.DatabaseRouter']
+
+# Some records fail with too many fields if this check is not disabled.
+DATA_UPLOAD_MAX_NUMBER_FIELDS = None
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
-AUTH_USER_MODEL = "auth.CustomUserModel"
+AUTH_USER_MODEL = "diamm_site.CustomUserModel"
 LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = "/account/"
 
@@ -155,12 +183,18 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# CACHES = {
-#     'default': {
-#         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-#         'LOCATION': 'diamm_cache_table',
-#     }
-# }
+CACHES = {
+    'default': {
+        'BACKEND': 'django_pylibmc.memcached.PyLibMCCache',
+        'LOCATION': 'localhost:11211',
+        'TIMEOUT': 500,
+        'BINARY': True,
+        'OPTIONS': {  # Maps to pylibmc "behaviors"
+            'tcp_nodelay': True,
+            'ketama': True
+        }
+    }
+}
 
 JINJA2_ENVIRONMENT_OPTIONS = {
     'trim_blocks': True,
@@ -177,9 +211,24 @@ REST_FRAMEWORK = {
     ),
 }
 
+INTERFACE_FACETS = {
+    "cities": "facet_cities_ss",
+    "genres": "genres_ss",
+    "notations": "notations_ss",
+    "composers": "composers_ss",
+    "archive_locations": ["country_s", "city_s"],  # an array creates a pivot facet
+    "source_type": "source_type_s",
+    "has_inventory": "inventory_provided_b",
+    "organization_type": "organization_type_s",
+    "location": "location_s",
+    "archive": "archive_s",
+    "anonymous": "anonymous_b",
+    "source_date_range": "facet_date_range_ii"
+}
+
 SOLR = {
     'SERVER': "http://localhost:8983/solr/diamm/",
-    'PAGE_SIZE': REST_FRAMEWORK['PAGE_SIZE'],
+    'PAGE_SIZE': REST_FRAMEWORK['PAGE_SIZE'],  # use the same page size as DRF for consistency
     'DEFAULT_OPERATOR': 'AND',
     'INDEX_TYPES': {
         'SOURCE': {
@@ -196,16 +245,46 @@ SOLR = {
         'set',
         'composition'
     ],
-    'FACET_FIELDS': [
+    'FACET_FIELDS': [  # Use the interface facets to define public-facing facet fields.
         '{!ex=type}type',
-        '{!ex=type}public_images_b'
+        '{!ex=type}public_images_b',
     ],
+    'FACET_PIVOTS': [],
+    'FACET_SORT': {   # custom sorting for certain facets (default is by count; index is alphanumeric)
+        "f.composers_ss.facet.sort": "index",
+        "f.country_s.facet.sort": "index",
+        "f.city_s.facet.sort": "index",
+        "f.name_s.facet.sort": "index",
+        "f.genres_ss.facet.sort": "index",
+        "f.archive_s.facet.sort": "index"
+    },
     'FULLTEXT_QUERYFIELDS': [    # Boosting these fields allows more common methods of referring to a MSS to bubble up in the search results.
         'text',
         'source_boost_tns^10',  # Boost specific fields for source records that may be used at query time.
         'archive_boost_tns^5'
-    ]
+    ],
+    'TYPE_SORTS': {
+        'archive': 'name_ans asc',
+        'set': 'cluster_shelfmark_ans asc',
+        'person': 'name_ans asc',
+        'organization': 'name_ans asc',
+        'composition': 'title_ans asc',
+        'source': 'shelfmark_ans asc',
+        'sources_with_images': 'shelfmark_ans asc'
+    }
 }
+
+# do some manipulation to get the interface facets into the Solr configuration
+# We assign the solr output key to the key of the interface facet dict for
+# consistent reference, and so we can more easily work with it in the search response
+# handler.
+for k, v in INTERFACE_FACETS.items():
+    if isinstance(v, list):
+        pfacet = "{{!key={k}}}{v}".format(k=k, v=",".join(v))
+        SOLR['FACET_PIVOTS'].append(pfacet)
+    else:
+        facet = "{{!key={k}}}{v}".format(k=k, v=v)
+        SOLR['FACET_FIELDS'].append(facet)
 
 IIIF = {
     "THUMBNAIL_WIDTH": "250,"   # The constrained width of thumbnail images
@@ -223,6 +302,10 @@ MAIL = {
     """
 }
 
+ACCOUNT_ACTIVATION_DAYS = 7
+REGISTRATION_OPEN = True
+REGISTRATION_SALT = "afs;lkasjdfi8&(*&(askjdfhalskdfls79a87fa68asdfashh"
+WAGTAIL_SITE_NAME = 'Digital Image Archive of Medieval Music'
 
 if DEBUG:
     SILENCED_SYSTEM_CHECKS = []

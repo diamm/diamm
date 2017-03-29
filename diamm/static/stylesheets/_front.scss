@@ -1,37 +1,103 @@
-$position-adjust: -1rem;
+.front-search-box {
+  margin-top: 2.5rem;
 
-.front-content {
-  margin-top: $position-adjust;
+  input {
+    height: 3rem;
+    font-size: 1.4rem;
+  }
+
 }
 
-.front-hero {
-  position: relative;
+.search-overlay {
+  //border: 1px solid #f00;
+  position: absolute;
+  top: 100px;
+  left: 15%;
+  z-index: 20;
+  width: 80%;
+  height: 196px;
+  filter: drop-shadow(1px 1px 1px $diamm-black);
 
-  img {
-    border-bottom: 3px solid $diamm-red;
-  }
-  .search {
-    position: absolute;
+  .diamm-logo {
+    display: inline-block;
+    position: relative;
     width: 100%;
-    margin: 0 auto;
-    top: 200px;
-    height: 4rem;
-    .strapline {
-      @include rounded();
-      background: rgba($diamm-black, 0.7);
-      text-align: center;
-      margin: 0 auto;
-      width: 40%;
-      height: 60px;
-      line-height: 60px;
-      vertical-align: middle;
-      color: $diamm-white;
+    height: 196px;
+    z-index: 20;
+    //border: 1px solid #0f0;
+  }
+
+  .front-search {
+    z-index: 21;
+    position: relative;
+    display: inline-block;
+    //border: 1px solid #00f;
+    width: 60%;
+    @media screen and (min-width: 1200px) {
+      bottom: 80%;
+      left: 30%;
+      margin-left: 2rem;
     }
-    .search-box {
-      background: none;
-      //form {
-      //  margin-top: 1.5em;
-      //}
+
+    @media screen and (max-width: 1199px) {
+      bottom: 30%;
     }
+
+    input {
+      width: 100%;
+      height: 2.5rem;
+      font-size: 1.4rem;
+    }
+  }
+
+
+}
+
+#slider {
+  a {
+    &:hover {
+      background-repeat: no-repeat;
+      background-position: 50% 50%;
+      background-size: cover;
+    }
+  }
+}
+
+.diamm-description {
+  font-size: 1.2rem;
+  p {
+    border-top: 2px solid $diamm-red;
+    border-bottom: 2px solid $diamm-red;
+    margin: 0.5em;
+    padding: 0.8em;
+  }
+}
+
+.diamm-front {
+  .title {
+    margin-bottom: 0.5rem;
+  }
+  article {
+    margin-bottom: 0.8rem;
+  }
+  .publications-intro {
+    margin-bottom: 0.8rem;
+  }
+
+  .media + .media {
+    border-top: none;
+    margin-top: 0.3rem;
+    padding-top: 0.3rem;
+  }
+
+  .front-sidebar {
+    .front-sidebar-block {
+      margin-bottom: 1rem;
+    }
+  }
+}
+
+.diamm-news {
+  .news-story {
   }
 }

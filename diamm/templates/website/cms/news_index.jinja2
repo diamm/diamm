@@ -1,0 +1,32 @@
+{% extends "website/cms/cmsbase.jinja2" %}
+
+{% block title %}
+    <title>Digital Image Archive of Medieval Music :: News</title>
+{% endblock %}
+
+{% block cmsbody %}
+    <div class="columns">
+        <div class="column">
+            <h2 class="title is-2">
+                News
+            </h2>
+        </div>
+    </div>
+    <div class="columns">
+        <div class="column">
+            {% for p in page.get_children().specific() %}
+                <article>
+                    <h3 class="title is-4">
+                        <a href="{{ pageurl(p) }}">{{ p.title }}</a>
+                    </h3>
+                    <h4 class="subtitle is-6" style="margin-bottom: 0;">
+                        Posted {{ p.first_published_at | naturalday() }} by {{ p.owner.full_name }}
+                    </h4>
+                    <p style="margin-top: 0.5rem;">{{ p.summary }} <br />
+                        <a href="{{ pageurl(p) }}">Read more...</a>
+                    </p>
+                </article>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

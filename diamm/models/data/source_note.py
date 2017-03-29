@@ -7,8 +7,6 @@ class SourceNote(models.Model):
         ordering = ('type',)
 
     GENERAL_NOTE = 1
-    RISM_NOTE = 2
-    CCM_NOTE = 3
     EXTENT_NOTE = 4
     PHYSICAL_NOTE = 5
     BINDING_NOTE = 6
@@ -23,6 +21,9 @@ class SourceNote(models.Model):
     DECORATION_NOTE = 15
     CONTENTS_NOTE = 16
     SURFACE_NOTE = 17
+    DIAMM_NOTE = 18
+    RISM_NOTE = 97  # was 2
+    CCM_NOTE = 98   # was 3
     PRIVATE_NOTE = 99
 
     NOTE_TYPES = (
@@ -43,6 +44,7 @@ class SourceNote(models.Model):
         (DECORATION_NOTE, 'Decoration Note'),
         (CONTENTS_NOTE, 'Contents Note'),
         (SURFACE_NOTE, 'Surface Note'),
+        (DIAMM_NOTE, "DIAMM Note"),
         (PRIVATE_NOTE, 'Private Note')
     )
 
@@ -50,6 +52,10 @@ class SourceNote(models.Model):
     note = models.TextField()
     source = models.ForeignKey("diamm_data.Source",
                                related_name="notes")
+    sort = models.IntegerField(default=0)
+
+    # Authority for the note
+    author = models.CharField(max_length=255, blank=True, null=True)
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

@@ -15,12 +15,16 @@ class SolrResultException(BaseException):
     pass
 
 
+class PageRangeOutOfBoundsException(BaseException):
+    pass
+
+
 class SolrPaginator:
     """
         Takes in a SolrSearch object (pre-execute) and manages
         a paginated list of Solr results.
     """
-    def __init__(self, query, filters, sorts, request, *args, **kwargs):
+    def __init__(self, query, filters, exclusive_filters, sorts, request, *args, **kwargs):
         # The query is the value of the fulltext q-field.
         self.query = query
         self.request = request
@@ -32,16 +36,20 @@ class SolrPaginator:
             'facet': 'true',
             'facet.field': settings.SOLR['FACET_FIELDS'],
             'facet.mincount': 1,
+            'facet.limit': -1,
+            'facet.pivot': settings.SOLR['FACET_PIVOTS'],
             'hl': 'true',
             'defType': 'edismax',
-            'qf': settings.SOLR['FULLTEXT_QUERYFIELDS']
+            'qf': settings.SOLR['FULLTEXT_QUERYFIELDS'],
         }
+        self.qopts.update(settings.SOLR['FACET_SORT'])
 
         if sorts:
-            self.qopts.update(sorts)
+            self.qopts['sort'] = sorts
+
+        fqlist = list()
 
         if filters:
-            fqlist = list()
             for k, v in filters.items():
                 # If a list is passed in for a field, assume that we want to OR the filters to produce a listing from
                 # all the values; if not, assume it's a restriction.
@@ -52,9 +60,20 @@ class SolrPaginator:
                 else:
                     fqlist.append("{0}:{1}".format(k, v))
 
-            self.qopts.update({
-                'fq': fqlist
-            })
+        if exclusive_filters:
+            for k, v in exclusive_filters.items():
+                # unlike the previous filters, this will be ANDed and not ORed
+                if isinstance(v, list):
+                    fqlist.append(" AND ".join(["{0}:{1}".format(k, field) for field in v]))
+                else:
+                    fqlist.append("{0}:{1}".format(k, v))
+
+        # update our fq query opts with the values from our filters.
+        self.qopts.update({
+            'fq': fqlist
+        })
+
+
 
         self.solr = pysolr.Solr(settings.SOLR['SERVER'])
 
@@ -102,6 +121,9 @@ class SolrPaginator:
         """
         # e.g., page 3: ((3 - 1) * 20) + 1, start = 41
         # remainder = 0 if page_num == 1 else 1  # page 1 starts at result 0; page 2 starts at result 11
+        if self.num_pages != 0 and page_num > self.num_pages:
+            raise PageRangeOutOfBoundsException()
+
         start = ((page_num - 1) * self.page_size)
         self._fetch_page(start=start)
         return SolrPage(self.result, page_num, self)
@@ -124,6 +146,7 @@ class SolrPage:
             ('query', self.paginator.query),
             ('types', self.type_list),
             ('results', self.object_list),
+            ('facets', self.facet_list)
         ])
 
     @property
@@ -152,13 +175,20 @@ class SolrPage:
         return OrderedDict(filtered_facets)
 
     @property
+    def facet_list(self):
+        solr_facets = self.result.facets.get('facet_fields', None)
+        pivot_facets = self.result.facets.get('facet_pivot', None)
+        facets = {key: value for (key, value) in solr_facets.items() if key in settings.INTERFACE_FACETS}
+        facets.update(pivot_facets)
+        return facets
+
+    @property
     def object_list(self):
         docs = self.result.docs
         highlights = self.result.highlighting
         # Generate fully qualified URLs for the resources in Solr when the results are returned.
         # This way we don't have to store the full URL in Solr.
         for obj in docs:
-            # Filter out any result objects that are not of the type we want to display
             url = reverse("{0}-detail".format(obj['type']),
                           kwargs={'pk': obj['pk']},
                           request=self.paginator.request)
@@ -172,18 +202,18 @@ class SolrPage:
 
     @property
     def pagination(self):
-        pages = {}
-        for pnum in range(self.paginator.num_pages):
-            url = self.paginator.request.build_absolute_uri()
-            pg_url = replace_query_param(url, 'page', pnum + 1)
-            pages[pnum + 1] = pg_url
+        # pages = {}
+        # for pnum in range(self.paginator.num_pages):
+        #     url = self.paginator.request.build_absolute_uri()
+        #     pg_url = replace_query_param(url, 'page', pnum + 1)
+        #     pages[pnum + 1] = pg_url
 
         return OrderedDict([
             ('next', self.next_url),
             ('previous', self.previous_url),
             ('current_page', self.number),
             ('num_pages', self.paginator.num_pages),
-            ('pages', pages)
+            # ('pages', pages)
         ])
 
     @property

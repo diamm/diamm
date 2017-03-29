@@ -44,8 +44,12 @@ class Archive(models.Model):
 
     def __str__(self):
         if self.city:
-            return "{0} ({1})".format(self.name, self.city.name)
+            return "{0}, {1}".format(self.name, self.city.name)
         return "{0}".format(self.name)
+
+    @property
+    def display_name(self):
+        return str(self)
 
     @property
     def public_notes(self):
@@ -61,7 +65,7 @@ class Archive(models.Model):
         conn = pysolr.Solr(settings.SOLR['SERVER'])
         q = {
             "fq": ['type:source', 'archive_i:{0}'.format(self.pk)],
-            "fl": ["pk", "public_images_b", 'display_name_s'],
+            "fl": ["pk", "public_images_b", 'display_name_s', 'cover_image_i'],
             "rows": 10000,
             "sort": ["shelfmark_ans asc"]
         }

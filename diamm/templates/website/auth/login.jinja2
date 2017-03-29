@@ -1,15 +1,28 @@
 {% extends "base.jinja2" %}
+{% import "website/blocks/form_field.jinja2" as form_field %}
 
 {% block body %}
-    <div class="row">
-        <div class="offset-by-five eleven columns">
-            <div class="login-block">
-                <h2>Login</h2>
-                <form action="{{ url('login') }}" method="post">
+    <div class="columns" style="align-items: center">
+        <div class="column is-half is-offset-one-quarter">
+            <div>
+                <h2 class="title">Log in</h2>
+                <form action="{{ url('login') }}" method="post" class="login">
                     {% csrf_token %}
-                    {{ form }}
-                    <input type="hidden" name="next" value="{{ next }}" />
-                    <button type="submit">Log in</button>
+                    {% if form.non_field_errors() %}
+                        <div class="notification is-danger">
+                            {{ form.non_field_errors() }}
+                        </div>
+                    {% endif %}
+                    {{ form_field.format(form.username, "text") }}
+                    {{ form_field.format(form.password, "password") }}
+
+                    <input class="input" type="hidden" name="next" value="{{ next }}" />
+
+                    <div class="field is-grouped is-pulled-right">
+                        <p class="control">
+                            <button type="submit" class="button is-primary">Log in</button>
+                        </p>
+                    </div>
                 </form>
 
                 <p>
@@ -20,7 +33,7 @@
                     <a href="{{ url('reset') }}">Recover a forgotten password.</a>
                 </p>
                 <p>
-                    <a href="{{ url('register') }}">Register for an account</a>
+                    <a href="{{ url('register') }}">Register for a free account</a>
                 </p>
             </div>
         </div>

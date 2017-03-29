@@ -1,8 +1,0 @@
-<div>
-    {%  if result.location_s %}
-        {{  result.location_s }}
-    {% endif %}
-    {%  if result.sources_related_ss %}
-        <p>Related to {{ result.sources_related_s | length }} source{{ result.sources_related_s | length | pluralize }}</p>
-    {% endif %}
-</div>

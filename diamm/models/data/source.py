@@ -1,8 +1,5 @@
-from itertools import groupby
-from operator import itemgetter
 from django.db import models
 from django.conf import settings
-from django.contrib.contenttypes.fields import GenericRelation
 import pysolr
 
 
@@ -34,6 +31,18 @@ class Source(models.Model):
         (OTHER, 'Other')
     )
 
+    MIXED_NUMBERING_SYSTEM = 1
+    FOLIATION_NUMBERING_SYSTEM = 2
+    PAGINATION_NUMBERING_SYSTEM = 3
+    NO_NUMBERING_SYSTEM = 4
+
+    NUMBERING_SYSTEM = (
+        (MIXED_NUMBERING_SYSTEM, "Mixed Foliation and Pagination"),
+        (FOLIATION_NUMBERING_SYSTEM, "Foliation"),
+        (PAGINATION_NUMBERING_SYSTEM, "Pagination"),
+        (NO_NUMBERING_SYSTEM, "None / Unknown")
+    )
+
     id = models.AutoField(primary_key=True)  # migrate old ID
     archive = models.ForeignKey('diamm_data.Archive', related_name="sources")
     name = models.CharField(max_length=255, blank=True, null=True)
@@ -46,21 +55,21 @@ class Source(models.Model):
     start_date = models.IntegerField(blank=True, null=True,
                                      help_text="""Enter the start year as a four digit integer. If
                                      the precise year is not known, enter it rounding DOWN to the closest
-                                     decade, and then century. Examples: 1456, 1450, 1400.
+                                     known decade, and then century. Examples: 1456, 1450, 1400.
                                      """)
     end_date = models.IntegerField(blank=True, null=True,
                                    help_text="""Enter the end year as a four digit integer. If the
                                    precise year is not known, enter it rounding UP to the
-                                   closest decade, and then century. Examples: 1456, 1460, 1500.
+                                   closest known decade, and then century. Examples: 1456, 1460, 1500.
                                    """)
     date_statement = models.CharField(max_length=512, blank=True, null=True)
     cover_image = models.ForeignKey("diamm_data.Image", blank=True, null=True)
     format = models.CharField(max_length=255, blank=True, null=True)
     measurements = models.CharField(max_length=512, blank=True, null=True)
+    numbering_system = models.IntegerField(choices=NUMBERING_SYSTEM, blank=True, null=True)
     public = models.BooleanField(default=False, help_text="Source Description is Public")
     public_images = models.BooleanField(default=False, help_text="Source Images are Public")
     notations = models.ManyToManyField("diamm_data.Notation", blank=True)
-    contributions = GenericRelation("diamm_site.Contribution")
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -85,8 +94,15 @@ class Source(models.Model):
         return d[self.surface]
 
     @property
+    def numbering_system_type(self):
+        if not self.numbering_system:
+            return None
+        d = dict(self.NUMBERING_SYSTEM)
+        return d[self.numbering_system]
+
+    @property
     def public_notes(self):
-        return self.notes.exclude(type=99)  # exclude private notes
+        return self.notes.exclude(type=99).order_by('sort')  # exclude private notes
 
     @property
     def date_notes(self):
@@ -106,14 +122,20 @@ class Source(models.Model):
         """
             If a cover image is set, returns the ID for that; else it chooses a random page with an image attached.
         """
+        if not self.public_images:
+            return None
+
         cover_obj = {}
         if self.cover_image:
             cover_obj['id'] = self.cover_image.id
             cover_obj['label'] = self.cover_image.page.numeration
             return cover_obj
         else:
+            if self.pages.count() == 0:
+                return None
+
             p = self.pages.order_by("?").only('numeration').first()
-            i = p.images.filter(type=1).only('id', 'public').first()
+            i = p.images.filter(type=1, iiif_response_cache__isnull=False).only('id', 'public').first()
             if i and i.public:
                 cover_obj['id'] = i.id
                 cover_obj['label'] = p.numeration
@@ -173,10 +195,12 @@ class Source(models.Model):
               'folio_start_s',
               'folio_end_s',
               'num_voices_s',
+              'genres_ss',
               'pages_ii',
-              'pages_ssni'
+              'pages_ssni',
               'source_attribution_s',
               'voices_ii',
+              "[child parentFilter=type:item childFilter=type:itemnote]",
               'pk']
         # Set rows to an extremely high number so we get all of the item records in one go.
         item_results = connection.search("*:*", fq=fq, fl=fl, sort="folio_start_ans asc", rows=10000)
@@ -211,48 +235,42 @@ class Source(models.Model):
 
     @property
     def inventory_by_composer(self):
-        """
-            inventory: [{
-                    composer: Bar, Foo,
-                    url: http://foo/bar
-                    pieces: [{
-                        title: blahblah,
-                        url: http://blahblah
-                    },etc.]
-                }
-        """
-        inventory = self.solr_inventory
+        connection = pysolr.Solr(settings.SOLR['SERVER'])
+        fq = ["type:composerinventory",
+              "source_i:{0}".format(self.pk)]
+        gp = {
+            "group": "true",
+            "group.field": "composer_s",
+            "group.limit": "10000",
+            "group.sort": "composition_s asc"
+        }
+        sort = ["composer_s asc"]
 
-        sortable_inventory = []
+        res = connection.search("*:*",
+                                fq=fq,
+                                sort=sort,
+                                rows=10000,
+                                **gp)
 
-        for item in inventory:
-            for c in item['composers_ssni']:
-                new_item = (c, c.lower(), item)
-                sortable_inventory.append(new_item)
+        expanded = res.grouped['composer_s']['groups']
+        reslist = []
 
-        sorted_inventory = sorted(sortable_inventory, key=itemgetter(1))
-        grouped_inventory = groupby(sorted_inventory, itemgetter(0))
+        for doc in expanded:
+            composer = doc['groupValue']
+            inventory = doc['doclist']['docs']
 
-        output = []
-        for namefield, group in grouped_inventory:
-            name, pk, uncertain = namefield.split("|")
-            obj = {
-                "pk": pk,
-                "name": name,
-                "inventory": []
-            }
+            composer_pk = None
+            if inventory:
+                # get composer pk from the first record.
+                composer_pk = inventory[0].get('composer_i', None)
 
-            if uncertain:
-                if uncertain == "True":
-                    obj["uncertain"] = True
-                else:
-                    obj["uncertain"] = False
+            reslist.append({
+                'composer': composer,
+                'pk': composer_pk,
+                'inventory': inventory
+            })
 
-            for item in group:
-                obj["inventory"].append(item[2])
-
-            output.append(obj)
-        return output
+        return reslist
 
     @property
     def solr_bibliography(self):
@@ -323,7 +341,8 @@ class Source(models.Model):
     def solr_relationships(self):
         connection = pysolr.Solr(settings.SOLR['SERVER'])
         fq = ['type:sourcerelationship', 'source_i:{0}'.format(self.pk)]
-        rel_results = connection.search("*:*", fq=fq, rows=10000)
+        sort = ["related_entity_s asc"]
+        rel_results = connection.search("*:*", fq=fq, sort=sort, rows=10000)
 
         if rel_results.hits > 0:
             return rel_results.docs
@@ -333,7 +352,8 @@ class Source(models.Model):
     def solr_copyists(self):
         connection = pysolr.Solr(settings.SOLR['SERVER'])
         fq = ['type:sourcecopyist', 'source_i:{0}'.format(self.pk)]
-        copyist_results = connection.search("*:*", fq=fq, rows=10000)
+        sort = ["copyist_s asc"]
+        copyist_results = connection.search("*:*", fq=fq, sort=sort, rows=10000)
 
         if copyist_results.hits > 0:
             return copyist_results.docs
