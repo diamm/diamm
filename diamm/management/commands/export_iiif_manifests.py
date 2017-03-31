@@ -1,5 +1,4 @@
 from django.core.management import BaseCommand
-from django.conf import settings
 from diamm.models.data.source import Source
 
 IIIF_BASE_URL = "https://{0}/sources/{1}/manifest/"
