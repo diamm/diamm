@@ -3,7 +3,6 @@ diamm.iml
 __pycache__/*
 .DS_Store
 *.pyc
-diamm/diamm_data/migrations/*
 solr/data
 diamm/static/javascripts/jspm_packages
 diamm/static/javascripts/node_modules
