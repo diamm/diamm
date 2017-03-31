@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.views.decorators.cache import never_cache
 from rest_framework import generics
 from rest_framework import response
 from rest_framework import status
@@ -8,6 +9,7 @@ from diamm.helpers.solr_pagination import SolrPaginator, SolrResultException, Pa
 class SearchView(generics.GenericAPIView):
     template_name = "website/search/search.jinja2"
 
+    @never_cache
     def get(self, request, *args, **kwargs):
         query = request.GET.get('q', None)
         filters = {}
