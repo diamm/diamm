@@ -189,45 +189,45 @@ export const ItemNotes = ({notes}) =>
 const Langs = ({langs}) =>
 {
     return (
-        <p>
+        <div>
             <strong>Languages: </strong>{ langs.join(", ") }
-        </p>
+        </div>
     );
 };
 
 const Mensur = ({mensuration}) =>
 {
     return (
-        <p>
+        <div>
             <strong>Mensuration: </strong>{ mensuration }
-        </p>
+        </div>
     );
 };
 
 const Clef = ({clef}) =>
 {
     return (
-        <p>
+        <div>
             <strong>Clef: </strong>{ clef }
-        </p>
+        </div>
     );
 };
 
 const VoiceType = ({voicetype}) =>
 {
     return (
-        <p>
+        <div>
             <strong>Voice: </strong>{ voicetype }
-        </p>
+        </div>
     );
 };
 
 const VoiceText = ({voicetext}) =>
 {
     return (
-        <p>
+        <div>
             <strong>Voice Text: </strong>{ voicetext }
-        </p>
+        </div>
     );
 };
 

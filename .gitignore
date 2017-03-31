@@ -5,7 +5,6 @@ __pycache__/*
 *.pyc
 diamm/diamm_data/migrations/*
 solr/data
-diamm/diamm_site/migrations
 diamm/static/javascripts/jspm_packages
 diamm/static/javascripts/node_modules
 diamm/static/javascripts/dist
