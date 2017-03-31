@@ -23,9 +23,6 @@ UPLOAD_DIR = os.path.join(BASE_DIR, 'uploads')
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
 ALLOWED_HOSTS = [
     '*'
 ]
@@ -211,6 +208,9 @@ REST_FRAMEWORK = {
     ),
 }
 
+# These fields are exposed as facets to the front-end. Note that their
+# presence here is a prerequisite to there being a facet block in the
+# React search application.
 INTERFACE_FACETS = {
     "cities": "facet_cities_ss",
     "genres": "genres_ss",
