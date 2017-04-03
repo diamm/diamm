@@ -44,7 +44,7 @@ export function submitCorrectionReport (text, sourceId)
         {
             dispatch({
                 type: CORRECTION_REPORT_SUBMITTED
-            })
+            });
         });
     }
 }
