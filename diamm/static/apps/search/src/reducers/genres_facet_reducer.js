@@ -7,7 +7,7 @@ import {
 
 
 const INITIAL_STATE = {
-    show_all: false,
+    showAll: false,
     active: [],
     facetValue: null
 };

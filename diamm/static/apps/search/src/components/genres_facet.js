@@ -2,9 +2,9 @@ import React from "react"
 import _ from "lodash";
 import { connect } from "react-redux";
 import Facet from "./facets";
-import {
-    toggleFacetShowAll
-} from "../actions/facets";
+// import {
+//     toggleFacetShowAll
+// } from "../actions/facets";
 import {
     FACET_UPDATE_GENRE_TOGGLE
 } from "../constants";
@@ -44,10 +44,10 @@ class GenresFacet extends React.Component
         this.props.performGenreSearch();
     }
 
-    toggleShowAll (toggle)
-    {
-        this.props.toggleFacetShowAll(!toggle, FACET_UPDATE_GENRE_TOGGLE)
-    }
+    // toggleShowAll (toggle)
+    // {
+    //     this.props.toggleFacetShowAll(!toggle, FACET_UPDATE_GENRE_TOGGLE)
+    // }
 
     _showControls ()
     {
@@ -100,7 +100,7 @@ function mapStateToProps (state)
 }
 
 const mapDispatchToProps = {
-    toggleFacetShowAll,
+    // toggleFacetShowAll,
     addGenreToActive,
     removeGenreFromActive,
     clearActiveGenres,
