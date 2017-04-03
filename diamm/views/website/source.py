@@ -1,10 +1,12 @@
 import pysolr
 from django.conf import settings
+from django.shortcuts import get_object_or_404, redirect
 from rest_framework import generics
 from rest_framework import status
 from rest_framework import response
 from drf_ujson.renderers import UJSONRenderer
 from diamm.models.data.source import Source
+from diamm.models.data.item import Item
 from diamm.serializers.website.source import SourceDetailSerializer
 from diamm.serializers.iiif.manifest import SourceManifestSerializer
 from diamm.serializers.iiif.canvas import CanvasSerializer
@@ -96,5 +98,12 @@ class SourceItemDetail(generics.GenericAPIView):
 
         return response.Response(structures)
 
+
+# Linking to items directly is no longer supported; however, we can redirect to the
+# source for that item.
+def legacy_item_redirect(request, item_id):
+    legacy_item = get_object_or_404(Item, pk=item_id)
+    source_id = legacy_item.source.pk
+    return redirect('source-detail', pk=source_id, permanent=True)
 
 

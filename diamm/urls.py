@@ -29,7 +29,7 @@ from diamm.views.user import ProfileView, ProfileEditView
 from diamm.views.website.search import SearchView
 from diamm.views.website.set import SetDetail
 from diamm.views.website.source import (
-    SourceDetail, SourceManifest, SourceCanvasDetail
+    SourceDetail, SourceManifest, SourceCanvasDetail, legacy_item_redirect
 )
 from diamm.views.website.source import SourceRangeDetail, SourceItemDetail
 from diamm.views.website.archive import ArchiveDetail
@@ -53,6 +53,9 @@ from wagtail.wagtailcore import urls as wagtail_urls
 urlpatterns = [
     url(r'^search.xml$', TemplateView.as_view(template_name='opensearch.jinja2',
                                               content_type="application/opensearchdescription+xml"), name='opensearch'),
+    # url(r'^sitemap\.xml$', ),
+    url(r'^robots\.txt$', TemplateView.as_view(template_name='robots.txt', content_type="text/plain"), name='robots-txt'),
+
     url(r'^admin/', admin.site.urls),
     # url(r'^beta/$', TemplateView.as_view(template_name="beta.jinja2"), name="beta"),
     # url(r'^introduction/$', TemplateView.as_view(template_name="introduction.jinja2"), name="introduction"),
@@ -103,6 +106,7 @@ urlpatterns = [
     url(r'^sources/(?P<source_id>[0-9]+)/canvas/(?P<page_id>[0-9]+)/$', SourceCanvasDetail.as_view(), name="source-canvas-detail"),
     url(r'^sources/(?P<source_id>[0-9]+)/range/(?P<item_id>[0-9]+)/$', SourceRangeDetail.as_view(), name="source-range-detail"),
     url(r'^sources/(?P<source_id>[0-9]+)/item/(?P<item_id>[0-9]+)/$', SourceItemDetail.as_view(), name="source-item-detail"),
+    url(r'^items/(?P<item_id>[0-9]+)/$', legacy_item_redirect),
 
     url(r'^archives/(?P<pk>[0-9]+)/$', ArchiveDetail.as_view(), name="archive-detail"),
     url(r'^cities/$', CityList.as_view(), name="city-list"),
