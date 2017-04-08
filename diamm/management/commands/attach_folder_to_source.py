@@ -25,6 +25,10 @@ def _check_input(imagename, filenames):
         if not inp:
             inp = possible_default
 
+        # Allow the user to choose to delete this image. Use with caution.
+        if inp == 'd':
+            return inp
+
         if inp not in filenames:
             print(term.red("{0} is not in the list of filenames. Please try again.".format(inp)))
             continue
@@ -73,7 +77,7 @@ class Command(BaseCommand):
 
             if file_errors:
                 print(term.red('There were errors. Before any database changes are made, would you like to exit and fix them?'))
-                cont = input("Type 'c' to continue or 'q' to quit")
+                cont = input("Type 'c' to continue or 'q' to quit: ")
                 if cont == "q":
                     sys.exit("Quitting.")
 
@@ -82,6 +86,16 @@ class Command(BaseCommand):
                 for err in file_errors:
                     new_fn = _check_input(err[1], fns)
                     img_to_fix = Image.objects.get(pk=err[0])
+
+                    if new_fn == 'd':
+                        # the user has chosen to delete this file
+                        print(term.red("You have chose to delete {0}. Are you sure?"))
+                        inp = input("Type 'yep' if you're sure; anything else will exit.")
+                        if inp is not 'yep':
+                            sys.exit('Exiting without deleting anything')
+                        else:
+                            img_to_fix.delete()
+
                     img_to_fix.legacy_filename = new_fn
                     img_to_fix.save()
 
