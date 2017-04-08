@@ -6,6 +6,17 @@ import {
     submitCorrectionReport
 } from "../actions/corrections"
 
+const ThankYou = ({submitted}) =>
+{
+    if (!submitted)
+        return null;
+
+    return (<div className="notification is-success">
+        Your contribution has been sent for review. Thank you.
+    </div>)
+};
+
+
 
 class Correction extends React.Component
 {
@@ -27,6 +38,7 @@ class Correction extends React.Component
         return (
             <div className="columns">
                 <div className="column is-two-thirds content">
+                    <ThankYou submitted={ this.props.submitted } />
                     <p>Use this form to report a correction or contribute to the source record for <strong>{ this.props.sourceTitle }</strong>.
                         Your submission will be reviewed by DIAMM staff and, if accepted you will be acknowledged in the "Contributors"
                         section of the source record.
@@ -60,7 +72,8 @@ function mapStateToProps (state)
     return {
         sourceTitle: state.source.display_name,
         sourcePK: state.source.pk,
-        noteContents: state.corrections.noteContents
+        noteContents: state.corrections.noteContents,
+        submitted: state.corrections.submitted
     };
 }
 

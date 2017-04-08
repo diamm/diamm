@@ -18,6 +18,7 @@ import NotationsFacet from "./notations_facet";
 import SourceTypeFacet from "./source_type_facet";
 import HasInventoryFacet from "./has_inventory_facet";
 import AnonymousFacet from "./anonymous_facet";
+import OrganizationTypeFacet from "./organization_type_facet";
 
 import ResultCount from "./result_count";
 
@@ -91,6 +92,19 @@ class SideBar extends React.Component
         }
     }
 
+    _renderOrganizationTypesFacet ()
+    {
+        if (this.props.organizationTypes && this.props.organizationTypes.length > 0)
+        {
+            return (
+                <OrganizationTypeFacet
+                    organization_types={ this.props.organizationTypes }
+                    showAll={ this.props.showAllOrganizationTypes }
+                />
+            )
+        }
+    }
+
     _renderComposersFacet ()
     {
         if (this.props.composers && this.props.composers.length > 0)
@@ -109,8 +123,8 @@ class SideBar extends React.Component
                   this.props.anonymous.length > 0 ||
                   this.props.hasInventory.length > 0 ||
                   this.props.notations.length > 0 ||
-                  this.props.archiveLocations.length > 0;
-        console.log(vis);
+                  this.props.archiveLocations.length > 0 ||
+                  this.props.organizationTypes.length > 0;
         return vis
     }
 
@@ -134,6 +148,7 @@ class SideBar extends React.Component
                 { this._renderSourceTypeFacet() }
                 { this._renderGenresFacet() }
                 { this._renderArchiveLocationsFacet() }
+                { this._renderOrganizationTypesFacet() }
             </div>
         )
     }
@@ -150,9 +165,10 @@ function mapStateToProps (state)
         sourceTypes: state.results.facets.source_type,
         hasInventory: state.results.facets.has_inventory,
         anonymous: state.results.facets.anonymous,
-
         genres: state.results.facets.genres,
-        showAllGenres: state.currentFacets.genres.show_all,
+        showAllGenres: state.currentFacets.genres.showAll,
+        organizationTypes: state.results.facets.organization_type,
+        showAllOrganizationTypes: state.currentFacets.organizationTypes.showAll,
 
         archiveLocations: state.results.facets.archive_locations,
         archiveActiveParent: state.currentFacets.archiveLocations.activeParent,

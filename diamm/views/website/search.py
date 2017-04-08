@@ -89,6 +89,11 @@ class SearchView(generics.GenericAPIView):
                 'anonymous_b': request.GET.get('anonymous', None)
             })
 
+        if 'orgtype' in request.GET:
+            filters.update({
+                'organization_type_s': "\"{0}\"".format(request.GET.get('orgtype', None))
+            })
+
         # adjusts the sorting for each type, but defaults to sorting empty queries
         # by archive_city so that sources sort to the top alphabetically by the
         # city where they are held.
