@@ -87,12 +87,12 @@ def refetch_iiif_info(modeladmin, request, queryset):
     for img in queryset:
         location = img.location
         url = urljoin(location + "/", "info.json")
-        print(url)
+
         r = requests.get(url, headers={
             "referer": "https://{0}".format(settings.HOSTNAME),
             "X-DIAMM": settings.DIAMM_IMAGE_KEY
         })
-        print(r.status_code)
+
         if 200 <= r.status_code < 300:
             j = r.json()
             img.iiif_response_cache = ujson.dumps(j)
