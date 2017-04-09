@@ -40,7 +40,7 @@ class Description extends React.Component
                             <NumberingSystemType numbering_system_type={ this.props.numbering_system_type } />
                             <Format format={ this.props.format } />
                             <Measurements measurements={ this.props.measurements } />
-                            <OtherIdentifiers indentifiers={ this.props.identifiers } />
+                            <OtherIdentifiers identifiers={ this.props.identifiers } />
                             <Notations notations={ this.props.notations } />
                             <InventoryProvided inventory_provided={ this.props.inventory_provided }/>
                             <Copyists copyists={ this.props.copyists } />
