@@ -228,6 +228,7 @@ INTERFACE_FACETS = {
 
 SOLR = {
     'SERVER': "http://localhost:8983/solr/diamm/",
+    'INDEX_SERVER': "http://localhost:8983/solr/diamm_ingest/",  # Indexing core. This is then swapped for the live one.
     'PAGE_SIZE': REST_FRAMEWORK['PAGE_SIZE'],  # use the same page size as DRF for consistency
     'DEFAULT_OPERATOR': 'AND',
     'INDEX_TYPES': {

@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.conf import settings
+import requests
 import pysolr
 from blessings import Terminal
 
@@ -186,9 +187,9 @@ class Command(BaseCommand):
             data = ComposerInventorySearchSerializer(res, many=True).data
             self.solrconn.add(data)
 
-
     def handle(self, *args, **kwargs):
-        self.solrconn = pysolr.Solr(settings.SOLR['SERVER'])
+        self.solrconn = pysolr.Solr(settings.SOLR['INDEX_SERVER'])
+
         self._index_sources()
         self._index_inventories()
         self._index_archives()
@@ -205,5 +206,6 @@ class Command(BaseCommand):
         self._index_item_bibliographies()
         self._index_composers_inventory()
 
-        raw_input = input('Done indexing. Press any key to exit.')
-
+        print("Swapping ingest and live cores")
+        r = requests.get('http://localhost:8983/solr/admin/cores?action=SWAP&core=diamm&other=diamm_ingest')
+        print("Done swapping. Status code: {0}".format(r.status_code))
