@@ -25,8 +25,8 @@ def _check_input(imagename, filenames):
         if not inp:
             inp = possible_default
 
-        # Allow the user to choose to delete this image. Use with caution.
-        if inp == 'd':
+        # Allow the user to choose to delete or keep this image without matching a filename. Use with caution.
+        if inp in ('d', 'k'):
             return inp
 
         if inp not in filenames:
@@ -44,6 +44,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         csvfile = options['csvfile']
+
+        logfile = "{0}.log".format(os.path.splitext(os.path.basename(csvfile.name))[0])
+        logf_handle = open(logfile, 'w')
+
         datareader = csv.DictReader(csvfile)
         print(term.green('Pre-checking spreadsheet for possible errors'))
 
@@ -62,7 +66,8 @@ class Command(BaseCommand):
                 source = Source.objects.get(pk=source)
             except Source.DoesNotExist:
                 sys.exit("source {0} does not exist. Please check this entry and re-try".format(source))
-            print(term.cyan("Found source {0}".format(source.display_name)))
+            print(term.cyan("Found source {0}\n".format(term.white(source.display_name))))
+            logf_handle.write("=== {0} ===\n".format(source.display_name))
 
             # get filenames in directory
             files = glob.glob(os.path.join(foldername, "*.jpx"))
@@ -72,29 +77,31 @@ class Command(BaseCommand):
 
             for image in images:
                 if image[1] not in fns:
-                    print(term.red("\tImage {0} (pk {1}) in the database is not in the list of available files.".format(image[1], image[0])))
+                    print(term.red("NOT_FOUND:\tImage {t.white}{0}{t.red} (pk {1}) in the database is not in the list of available files.".format(image[1], image[0], t=term)))
+                    file_errors.append(image)
+
+                if re.match(r'.*\s+.*', image[1]):
+                    print(term.red("SPACES_IN_NAME:\tThere were spaces in Image {t.white}{0}{t.red} (pk {1})".format(image[1], image[0], t=term)))
                     file_errors.append(image)
 
             if file_errors:
-                print(term.red('There were errors. Before any database changes are made, would you like to exit and fix them?'))
-                cont = input("Type 'c' to continue or 'q' to quit: ")
+                print(term.red('\nThere were errors. Before any database changes are made, would you like to exit and fix them?'))
+                cont = input("Type 'q' to quit or any key to continue: ")
                 if cont == "q":
                     sys.exit("Quitting.")
 
-                print(term.yellow("\tFixing errors."))
+                print(term.yellow("\tFixing errors. 'k' will keep image entries, even if they're not found."))
 
                 for err in file_errors:
                     new_fn = _check_input(err[1], fns)
                     img_to_fix = Image.objects.get(pk=err[0])
 
-                    if new_fn == 'd':
-                        # the user has chosen to delete this file
-                        print(term.red("You have chose to delete {0}. Are you sure?"))
-                        inp = input("Type 'yep' if you're sure; anything else will exit.")
-                        if inp is not 'yep':
-                            sys.exit('Exiting without deleting anything')
-                        else:
-                            img_to_fix.delete()
+                    if new_fn == 'k':
+                        logf_handle.write("Image not found, but will be kept: {0}/{1}.jpx [Source {2} ({3})]\n".format(folder, err[1], source.pk, source.display_name))
+                        print(term.yellow("\tKeeping the image in the database, but this *will* break things. Setting it to private to minimize the damage."))
+                        img_to_fix.public = False
+                        img_to_fix.save()
+                        continue
 
                     img_to_fix.legacy_filename = new_fn
                     img_to_fix.save()
@@ -119,7 +126,15 @@ class Command(BaseCommand):
                         j = r.json()
                         image.iiif_response_cache = ujson.dumps(j)
                         image.save()
+                    elif r.status_code == 404:
+                        print(term.red("LOG: \t404 not found for {0}.".format(location)))
+                        logf_handle.write("{0}/{1}.jpx was not found. [Source {2} ({3})]\n".format(folder, image.legacy_filename, source.pk, source.display_name))
                     else:
-                        print(term.red("There was a problem fetching {0}".format(location)))
-                        print(term.red("The error code was {0}".format(r.status_code)))
+                        print(term.red("\tThere was a problem fetching {0}".format(location)))
+                        print(term.red("\tThe error code was {0}".format(r.status_code)))
+                        logf_handle.write("Error code {0} when fetching {1}/{2}.jpx\n".format(r.status_code, folder, image.legacy_filename))
+
             print(term.blue("\tDone {0}".format(source.display_name)))
+            print(term.blue("===========================================\n"))
+
+        logf_handle.close()
