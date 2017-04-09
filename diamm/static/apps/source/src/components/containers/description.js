@@ -79,7 +79,7 @@ export const OtherIdentifiers = ({identifiers}) =>
             <th>Other Identifiers</th>
             <td>
                 <ul className="no-style">
-                    { this.props.identifiers.map((identifier, idx) => {
+                    { identifiers.map((identifier, idx) => {
                         return (
                             <li key={ idx }>
                                 <strong>
