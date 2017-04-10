@@ -79,19 +79,17 @@ export function fetchActiveRanges (ranges)
                     return response.json()
                 }).then((data) =>
                 {
-                    dispatch(clearPageContents);
+                    dispatch({
+                        type: IIIF_CLEAR_PAGE_CONTENTS
+                    });
+
                     dispatch({
                         type: IIIF_ADD_TO_PAGE_CONTENTS,
                         item: data
-                    })
+                    });
                 });
         });
     };
-
-    // return {
-    //     type: IIIF_SET_CURRENTLY_ACTIVE_RANGES,
-    //     ranges
-    // }
 }
 
 export function setCurrentlyActiveCanvas (canvas)
