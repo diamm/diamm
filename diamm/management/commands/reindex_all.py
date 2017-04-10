@@ -207,5 +207,10 @@ class Command(BaseCommand):
         self._index_composers_inventory()
 
         print("Swapping ingest and live cores")
-        r = requests.get('http://localhost:8983/solr/admin/cores?action=SWAP&core=diamm&other=diamm_ingest')
-        print("Done swapping. Status code: {0}".format(r.status_code))
+        inp = input("Press y to continue; anything else will exit without doing anything: ")
+
+        if inp == 'y':
+            r = requests.get('http://localhost:8983/solr/admin/cores?action=SWAP&core=diamm&other=diamm_ingest')
+            print("Done swapping. Status code: {0}".format(r.status_code))
+
+        print("Exited without swapping cores.")
