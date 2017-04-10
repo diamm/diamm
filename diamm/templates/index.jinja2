@@ -4,6 +4,29 @@
 {% block head %}
     <link rel="stylesheet" href="{{ static('vendor/ideal-image-slider/ideal-image-slider.css') }}" />
     <link rel="stylesheet" href="{{ static('vendor/ideal-image-slider/iis-default-theme.css') }}" />
+    <script type="application/ld+json">
+    {
+      "@context": "http://schema.org",
+      "@type": "Organization",
+      "name": "Digital Image Archive of Medieval Music",
+      "url": "https://www.diamm.ac.uk",
+      "telephone": "+44 (0)1865 241323",
+      "address": {
+        "@type": "PostalAddress",
+        "name": "Faculty of Music",
+        "addressCountry": "UK",
+        "addressLocality": "Oxford",
+        "postalCode": "OX1 1DB",
+        "streetAddress": "St. Aldates"
+      },
+      "email": "diamm@music.ox.ac.uk",
+      "parentOrganization": [{
+        "@type": "Organization",
+        "name": "University of Oxford",
+        "url": "http://www.ox.ac.uk"
+      }]
+    }
+    </script>
 {% endblock %}
 
 {% block fullwidth %}

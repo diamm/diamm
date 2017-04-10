@@ -1,6 +1,7 @@
 from django.contrib import admin
 from diamm.models.data.composition import Composition
 from diamm.models.data.composition_composer import CompositionComposer
+from diamm.models.data.item import Item
 from diamm.models.data.composition_bibliography import CompositionBibliography
 from reversion.admin import VersionAdmin
 
@@ -19,11 +20,17 @@ class ComposerInline(admin.TabularInline):
     raw_id_fields = ('composer',)
 
 
+class ItemInline(admin.StackedInline):
+    model = Item
+    extra = 0
+    raw_id_fields = ('source', 'composition', 'pages')
+
+
 @admin.register(Composition)
 class CompositionAdmin(VersionAdmin):
     list_display = ('title', 'get_composers', 'get_genres')
     search_fields = ('title', 'composers__composer__last_name')
-    inlines = (ComposerInline, BibliographyInline)
+    inlines = (ComposerInline, BibliographyInline, ItemInline)
     list_filter = ('anonymous',)
 
     def get_composers(self, obj):

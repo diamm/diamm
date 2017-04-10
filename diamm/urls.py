@@ -23,6 +23,7 @@ from django.contrib.auth.views import (
     password_reset, password_reset_done, password_reset_confirm, password_reset_complete,
     password_change, password_change_done, login, logout
 )
+from django.contrib.sitemaps.views import sitemap
 from diamm.views.auth import CreateAccount
 from registration.backends.hmac.views import ActivationView
 from diamm.views.user import ProfileView, ProfileEditView
@@ -49,11 +50,22 @@ from wagtail.wagtailadmin import urls as wagtailadmin_urls
 from wagtail.wagtaildocs import urls as wagtaildocs_urls
 from wagtail.wagtailcore import urls as wagtail_urls
 
+from django.contrib.sitemaps import views as sitemap_views
+from diamm.sitemaps.source_sitemap import SourceSitemap
+from diamm.sitemaps.static_sitemap import StaticSitemap
+
+
+sitemaps = {
+    "static": StaticSitemap(),
+    "source": SourceSitemap()
+}
 
 urlpatterns = [
     url(r'^search.xml$', TemplateView.as_view(template_name='opensearch.jinja2',
                                               content_type="application/opensearchdescription+xml"), name='opensearch'),
-    # url(r'^sitemap\.xml$', ),
+    url(r'^sitemap\.xml$', sitemap_views.index, {'sitemaps': sitemaps}),
+    url(r'^sitemap-(?P<section>.*)\.xml$', sitemap_views.sitemap, {'sitemaps': sitemaps},
+        name='django.contrib.sitemaps.views.sitemap'),
     url(r'^robots\.txt$', TemplateView.as_view(template_name='robots.txt', content_type="text/plain"), name='robots-txt'),
 
     url(r'^admin/', admin.site.urls),
