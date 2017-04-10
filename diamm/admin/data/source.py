@@ -81,8 +81,17 @@ class CountryListFilter(admin.SimpleListFilter):
 class SourceAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     view_on_site = True
     save_on_top = True
-    list_display = ('shelfmark', 'name', 'get_city', 'get_archive', 'public', 'public_images', 'inventory_provided', 'sort_order')
-    search_fields = ('identifiers__identifier', 'name', 'archive__name', 'archive__siglum', 'archive__city__name', 'shelfmark')
+    list_display = ('shelfmark',
+                    'name',
+                    'get_city',
+                    'get_archive',
+                    'public',
+                    'public_images',
+                    'inventory_provided',
+                    'sort_order')
+    search_fields = ('identifiers__identifier',
+                     'name', 'archive__name', 'archive__siglum', 'archive__city__name', 'shelfmark',
+                     "pk")
     inlines = (IdentifiersInline, NotesInline, URLsInline,
                BibliographyInline, SourceRelationshipInline)
     list_filter = (CountryListFilter, InventoryFilter)
