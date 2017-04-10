@@ -34,7 +34,8 @@ DATABASES = {
         'HOST': 'localhost',
         'PORT': '5432',
         'USER': 'diamm_data',
-        'PASSWORD': ''
+        'PASSWORD': '',
+        'CONN_MAX_AGE': 600
     },
     'migrate': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -42,6 +43,7 @@ DATABASES = {
         'HOST': 'localhost',
         'PORT': '5432',
         'USER': 'diamm_data',
-        'PASSWORD': ''
+        'PASSWORD': '',
+        'CONN_MAX_AGE': 600
     }
 }
