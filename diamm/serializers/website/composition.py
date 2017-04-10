@@ -114,7 +114,7 @@ class CompositionDetailSerializer(ContextSerializer):
 
     def get_sources(self, obj):
         if obj.sources:
-            return CompositionSourceSerializer(obj.sources.all(),
+            return CompositionSourceSerializer(obj.sources.all().order_by('source__sort_order'),
                                                context={'request': self.context['request']},
                                                many=True).data
         else:
