@@ -21,7 +21,7 @@ class ProblemReportAdmin(ForeignKeyAutocompleteAdmin):
         if obj.contributor and obj.contributor.last_name and obj.contributor.first_name:
             return "{0} {1}".format(obj.contributor.first_name, obj.contributor.last_name)
         elif obj.contributor:
-            return "{0}".format(obj.contributor.username)
+            return "{0}".format(obj.contributor.get_username())
         else:
             return "{0}".format(obj.credit)
     get_contributor.short_description = "contributor"
