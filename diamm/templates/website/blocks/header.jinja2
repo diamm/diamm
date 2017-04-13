@@ -1,8 +1,8 @@
 <header class="site-header">
-    <nav role="navigation" class="nav">
+    <nav class="nav">
         <div class="nav-left">
             <a href="/" class="nav-item is-brand">
-                <img src="{{ static('images/headerLogo.png') }}" />
+                <img src="{{ static('images/headerLogo.png') }}" alt="DIAMM Logo" />
             </a>
             <div class="dropdown-menu-parent">
                 <a href="/about" class="nav-item">About DIAMM</a>
@@ -29,6 +29,11 @@
                             <div>
                                 <a href="{{ url('logout') }}">Log out</a>
                             </div>
+                            {% if request.user.is_superuser %}
+                            <div>
+                                <a href="/admin">Admin Interface</a>
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
