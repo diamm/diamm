@@ -29,6 +29,11 @@
                             <div>
                                 <a href="{{ url('logout') }}">Log out</a>
                             </div>
+                            {% if request.user.is_superuser %}
+                            <div>
+                                <a href="/admin">Admin Interface</a>
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
