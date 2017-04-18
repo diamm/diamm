@@ -29,8 +29,6 @@ class CreateAccount(FormView):
     def form_valid(self, form):
         response = super(CreateAccount, self).form_valid(form)
 
-        print("Validating form")
-
         if not 'g-recaptcha-response' in self.request.POST:
             # Something funny is going on -- we've received a POST request without the Recaptcha
             # value. Bail with a client error.
