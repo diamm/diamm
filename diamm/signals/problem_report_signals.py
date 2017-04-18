@@ -6,7 +6,6 @@ from diamm.models.diamm_user import CustomUserModel
 from django.db.models.signals import post_save
 
 
-
 @receiver(post_save, sender=ProblemReport)
 def send_thank_you_email(sender, instance, created, **kwargs):
     if not created:
@@ -43,12 +42,15 @@ def send_admin_notification_email(sender, instance, created, **kwargs):
 
     name = reporter.full_name
     record = reported_entity.display_name
-    recipients = CustomUserModel.objects.filter(is_staff=True).values_list("email", flat=True)
+    if settings.DEBUG:
+        recipients = [settings.ADMIN_EMAIL]
+    else:
+        recipients = CustomUserModel.objects.filter(is_staff=True).values_list("email", flat=True)
 
     email_message = settings.MAIL["CORRECTION_ADMIN"].format(
         name=name,
         record=record,
-        review_url="https://{0}/admin/diamm_site/problemreport/{1}/".format(settings.HOSTNAME, reported_entity.pk)
+        review_url="https://{0}/admin/diamm_site/problemreport/{1}/".format(settings.HOSTNAME, instance.pk)
     )
 
     send_mail(

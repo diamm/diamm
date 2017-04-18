@@ -84,7 +84,7 @@ class CreateAccount(FormView):
         )
 
         if settings.DEBUG:
-            to_address = "andrew.hankinson@gmail.com"
+            to_address = settings.ADMIN_EMAIL
         else:
             to_address = email
 
