@@ -44,7 +44,7 @@ class BibliographyInline(admin.TabularInline):
 class ItemAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     list_display = ('get_source', 'get_composition', 'get_composers',
                     'folio_start', 'folio_end')
-    search_fields = ("source__name", "source__identifiers__identifier",
+    search_fields = ("source__name", "source__identifiers__identifier", "source__shelfmark",
                      "composition__title", "pk")
     # list_filter = (AggregateComposerListFilter,)
     inlines = (BibliographyInline, ItemNoteInline)
