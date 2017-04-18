@@ -51,3 +51,11 @@ class ProblemReport(models.Model):
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        if self.contributor:
+            return self.contributor.full_name
+        elif self.credit:
+            return self.credit
+        else:
+            return "Anonymous Submission"
