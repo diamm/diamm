@@ -296,37 +296,50 @@ IIIF = {
 
 MAIL = {
     "CONFIRMATION_MESSAGE": """
-    Dear {first_name} {last_name},
+Dear {first_name} {last_name},
 
-    Please confirm your new account on {hostname} by clicking on the following link:
+Please confirm your new account on {hostname} by clicking on the following link:
 
-    {confirmation_link}
+{confirmation_link}
 
-    Note that this link will expire after 24 hours and you will need to have a new confirmation e-mail sent to you.
+Note that this link will expire after 24 hours and you will need to have a new confirmation e-mail sent to you.
+
+---
+The Digital Image Archive of Medieval Music
+https://www.diamm.ac.uk
+diamm@music.ox.ac.uk
     """,
 
     "CORRECTION_THANK_YOU": """
-    Dear {name},
+Dear {name},
     
-    Thank you for submitting a correction to "{record}". We will review your submission and contact you if any 
-    further information is needed. 
+Thank you for submitting a correction to "{record}". We will review your submission and contact you if any further information is needed. 
     
-    Should your correction be accepted, your name will be credited under the "Contributors" section for this record.
-    You can view your contributions on your user profile page.
+Should your correction be accepted, your name will be credited under the "Contributors" section for this record. You can view your contributions, both active and pending, on your user profile page.
+
+---
+The Digital Image Archive of Medieval Music
+https://www.diamm.ac.uk
+diamm@music.ox.ac.uk
     """,
 
     "CORRECTION_ADMIN": """
-    Dear colleague,
+Dear colleague,
     
-    A new correction report for "{record}" has been submitted by {name}.
+A new correction report for "{record}" has been submitted by {name}.
     
-    This report is available for review at {review_url}.
+This report is available for review at {review_url}.
+
+---
+The Digital Image Archive of Medieval Music
+https://www.diamm.ac.uk
+diamm@music.ox.ac.uk
+
     """
 }
 
-ACCOUNT_ACTIVATION_DAYS = 7
-REGISTRATION_OPEN = True
-REGISTRATION_SALT = "afs;lkasjdfi8&(*&(askjdfhalskdfls79a87fa68asdfashh"
+# ACCOUNT_ACTIVATION_DAYS = 7
+# REGISTRATION_OPEN = True
 WAGTAIL_SITE_NAME = 'Digital Image Archive of Medieval Music'
 
 if DEBUG:
