@@ -9,6 +9,11 @@
                 <p>
                     Forgotten your password? Enter your email address below, and we'll send instructions for setting a new one.
                 </p>
+                <p>
+                    Note: If you do not receive an e-mail, you may be using an a different address than the one we have
+                    on file. You can try again with a different address, or <a href="{{ url('register') }}">sign up
+                    for a new account</a>.
+                </p>
                 <form method="post" class="reset">
                     {% csrf_token %}
                     {{ form_field.format(form.email, "text") }}
