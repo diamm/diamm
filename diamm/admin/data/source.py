@@ -13,7 +13,7 @@ from django.utils.translation import ugettext_lazy as _
 from pagedown.widgets import AdminPagedownWidget
 
 
-class SourceRelationshipInline(admin.TabularInline):
+class SourceRelationshipInline(admin.StackedInline):
     model = SourceRelationship
     extra = 0
 
