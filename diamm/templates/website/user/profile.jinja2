@@ -3,7 +3,7 @@
 {% block body %}
     <div class="columns">
         <div class="column">
-            <h2 class="title is-2">Hello {{ content.full_name }}</h2>
+            <h2 class="title is-2">Hello, {{ content.full_name }}</h2>
             {% if content.affiliation %}
             <h3 class="subtitle">{{ content.affiliation }}</h3>
             {% endif %}
@@ -65,8 +65,57 @@
         </div>
     </div>
     <div class="columns">
+        {% if content.pending_contributions %}
         <div class="column">
-            <h3 class="title">Contributions</h3>
+            <h3 class="title">Pending Contributions</h3>
+            <p>These contributions are still pending review by DIAMM staff.</p>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Record</th>
+                    <th>Your Report</th>
+                    <th>Summary of Changes</th>
+                    <th>Date</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for contribution in content.pending_contributions %}
+                    <tr>
+                        <td><a href="{{ contribution.record.url }}">{{ contribution.record.name }}</a></td>
+                        <td>{{ contribution.note }}</td>
+                        <td>{{ contribution.summary }}</td>
+                        <td>{{ contribution.created }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
         </div>
+        {% endif %}
+
+        {% if content.contributions %}
+        <div class="column">
+            <h3 class="title">Accepted Contributions</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Record</th>
+                        <th>Your Report</th>
+                        <th>Summary of Changes</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for contribution in content.contributions %}
+                    <tr>
+                        <td><a href="{{ contribution.record.url }}">{{ contribution.record.name }}</a></td>
+                        <td>{{ contribution.note }}</td>
+                        <td>{{ contribution.summary }}</td>
+                        <td>{{ contribution.created }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
     </div>
 {% endblock %}
