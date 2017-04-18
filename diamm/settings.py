@@ -303,6 +303,24 @@ MAIL = {
     {confirmation_link}
 
     Note that this link will expire after 24 hours and you will need to have a new confirmation e-mail sent to you.
+    """,
+
+    "CORRECTION_THANK_YOU": """
+    Dear {name},
+    
+    Thank you for submitting a correction to "{record}". We will review your submission and contact you if any 
+    further information is needed. 
+    
+    Should your correction be accepted, your name will be credited under the "Contributors" section for this record.
+    You can view your contributions on your user profile page.
+    """,
+
+    "CORRECTION_ADMIN": """
+    Dear colleague,
+    
+    A new correction report for "{record}" has been submitted by {name}.
+    
+    This report is available for review at {review_url}.
     """
 }
 
