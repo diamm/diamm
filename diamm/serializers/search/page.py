@@ -9,7 +9,8 @@ class ImageChildSerializer(serpy.Serializer):
     id = serpy.MethodField()
 
     location_s = serpy.StrField(
-        attr="location"
+        attr="location",
+        required=False
     )
     image_type_i = serpy.IntField(
         attr="type.pk"

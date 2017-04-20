@@ -10,3 +10,4 @@ import diamm.signals.source_provenance_signals
 import diamm.signals.source_relationship_signals
 import diamm.signals.page_signals
 import diamm.signals.item_signals
+import diamm.signals.problem_report_signals

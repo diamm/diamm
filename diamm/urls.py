@@ -24,6 +24,8 @@ from django.contrib.auth.views import (
     password_change, password_change_done, login, logout
 )
 from django.contrib.sitemaps.views import sitemap
+from django_jinja import views as jinja_views
+
 from diamm.views.auth import CreateAccount
 from registration.backends.hmac.views import ActivationView
 from diamm.views.user import ProfileView, ProfileEditView
@@ -54,6 +56,11 @@ from django.contrib.sitemaps import views as sitemap_views
 from diamm.sitemaps.source_sitemap import SourceSitemap
 from diamm.sitemaps.static_sitemap import StaticSitemap
 
+handler404 = jinja_views.PageNotFound.as_view()
+handler403 = jinja_views.PermissionDenied.as_view()
+handler400 = jinja_views.ErrorView.as_view()
+handler500 = jinja_views.ServerError.as_view()
+
 
 sitemaps = {
     "static": StaticSitemap(),
@@ -69,7 +76,6 @@ urlpatterns = [
     url(r'^robots\.txt$', TemplateView.as_view(template_name='robots.txt', content_type="text/plain"), name='robots-txt'),
 
     url(r'^admin/', admin.site.urls),
-    # url(r'^beta/$', TemplateView.as_view(template_name="beta.jinja2"), name="beta"),
     # url(r'^introduction/$', TemplateView.as_view(template_name="introduction.jinja2"), name="introduction"),
     # url(r'^technical/$', TemplateView.as_view(template_name="technical.jinja2"), name="technical"),
 

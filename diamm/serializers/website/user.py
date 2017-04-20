@@ -6,6 +6,21 @@ from diamm.serializers import serializers
 
 class UserContributionsSerializer(serializers.ContextSerializer):
     summary = serpy.StrField(required=False)
+    created = serpy.StrField()
+    note = serpy.StrField(required=False)
+    status = serpy.BoolField(
+        attr="accepted"
+    )
+    record = serpy.MethodField()
+
+    def get_record(self, obj):
+        return {
+            "name": obj.record.display_name,
+            "url": reverse('source-detail',
+                           kwargs={"pk": obj.record.pk},
+                           request=self.context['request'])
+        }
+
 
 
 class UserCommentSerializer(serializers.ContextSerializer):
@@ -51,6 +66,7 @@ class UserSerializer(serializers.ContextSerializer):
     )
     comments = serpy.MethodField()
     contributions = serpy.MethodField()
+    pending_contributions = serpy.MethodField()
 
     def get_url(self, obj):
         return reverse(
@@ -67,3 +83,8 @@ class UserSerializer(serializers.ContextSerializer):
         return UserContributionsSerializer(obj.problem_reports.filter(accepted=True),
                                            many=True,
                                            context={"request": self.context['request']}).data
+
+    def get_pending_contributions(self, obj):
+        return UserContributionsSerializer(obj.problem_reports.filter(accepted=False),
+                                           many=True,
+                                           context={"request": self.context["request"]}).data

@@ -5,10 +5,11 @@ from diamm.models.data.source import Source
 from diamm.models.data.organization import Organization
 from diamm.models.data.composition import Composition
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
+from reversion.admin import VersionAdmin
 
 
 @admin.register(ProblemReport)
-class ProblemReportAdmin(ForeignKeyAutocompleteAdmin):
+class ProblemReportAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     list_display = ('get_contributor', 'get_entity', 'created', 'accepted')
     search_fields = ('contributor__last_name', 'contributor__first_name', 'contributor__username')
     list_filter = ("accepted",)

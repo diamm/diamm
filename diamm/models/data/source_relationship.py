@@ -26,3 +26,6 @@ class SourceRelationship(models.Model):
 
     relationship_type = models.ForeignKey("diamm_data.SourceRelationshipType")
     uncertain = models.BooleanField(default=False)
+
+    def __str__(self):
+        return "{0} ({1})".format(self.related_entity, self.relationship_type.name)

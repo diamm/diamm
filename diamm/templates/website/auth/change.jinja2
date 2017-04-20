@@ -5,7 +5,6 @@
     <div class="columns">
         <div class="column is-half is-offset-one-quarter">
             <h2 class="title">Change Password</h2>
-            <p>NB: Accounts on the beta website are independent from diamm.ac.uk, and resetting your password on this site will not affect your account details on the old site.</p>
             <form method="post">
                 {% csrf_token %}
                 {{ form_field.format(form.old_password, "password") }}

@@ -3,6 +3,7 @@ import os
 DEBUG = False
 
 HOSTNAME = "www.diamm.ac.uk"
+ADMIN_EMAIL = "admin@example.com"
 
 MEDIA_URL = "https://{0}/media/".format(HOSTNAME)
 MEDIA_ROOT = os.path.join(
@@ -18,6 +19,8 @@ GOOGLE_RECAPTCHA_ADDRESS = ""
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = ''
+# Registration Activation Salt
+REGISTRATION_SALT = ""
 
 EMAIL_USE_TLS = True
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
