@@ -343,4 +343,5 @@ diamm@music.ox.ac.uk
 WAGTAIL_SITE_NAME = 'Digital Image Archive of Medieval Music'
 
 if DEBUG:
+    MIDDLEWARE_CLASSES = ["diamm.middleware.logging.QueryCountDebugMiddleware"] + MIDDLEWARE_CLASSES
     SILENCED_SYSTEM_CHECKS = []
