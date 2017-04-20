@@ -346,3 +346,39 @@ WAGTAIL_SITE_NAME = 'Digital Image Archive of Medieval Music'
 if DEBUG:
     MIDDLEWARE_CLASSES = ["diamm.middleware.logging.QueryCountDebugMiddleware"] + MIDDLEWARE_CLASSES
     SILENCED_SYSTEM_CHECKS = []
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
+    },
+    'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler'
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'django.db.backends': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+        },
+        'diamm.middleware.logging': {
+            "handlers": ["console"],
+            "level": "DEBUG"
+        }
+    }
+}
