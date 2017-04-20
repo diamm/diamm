@@ -25,7 +25,11 @@ class SourceDetail(generics.RetrieveAPIView):
 
     def get(self, request, *args, **kwargs):
         if request.accepted_renderer.format == "html":
-            source_name = Source.objects.get(id=kwargs['pk']).display_name
+            try:
+                source_name = Source.objects.get(id=kwargs['pk']).display_name
+            except Source.DoesNotExist:
+                return response.Response(status=status.HTTP_404_NOT_FOUND, template_name="404.jinja2")
+
             return response.Response({'pk': kwargs['pk'], 'display_name': source_name})
         return super(SourceDetail, self).get(request, args, kwargs)
 
