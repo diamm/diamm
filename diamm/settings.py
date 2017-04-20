@@ -196,6 +196,7 @@ STATIC_URL = '/static/'
 #     }
 # }
 
+DEFAULT_JINJA2_TEMPLATE_EXTENSION = ".jinja2"
 JINJA2_ENVIRONMENT_OPTIONS = {
     'trim_blocks': True,
     'autoescape': True,
