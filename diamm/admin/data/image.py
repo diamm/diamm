@@ -104,10 +104,11 @@ refetch_iiif_info.short_description = "Re-Fetch IIIF Image Info"
 @admin.register(Image)
 class ImageAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     form = ImageAdminForm
-    list_display = ('legacy_filename', 'location', 'get_type', 'public')
+    list_display = ('pk', 'legacy_filename', 'location', 'get_type', 'public')
     list_filter = ("type__name", ImageSourceListFilter, IIIFDataListFilter, 'public')
     # filter_horizontal = ('items',)
-    search_fields = ('legacy_filename',)
+    list_editable = ('legacy_filename', 'location')
+    search_fields = ('legacy_filename', 'page__source__id', 'page__source__shelfmark', 'page__source__name')
     inlines = (ImageNoteInline,)
     actions = (refetch_iiif_info,)
 
