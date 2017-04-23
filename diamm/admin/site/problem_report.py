@@ -11,12 +11,25 @@ from reversion.admin import VersionAdmin
 @admin.register(ProblemReport)
 class ProblemReportAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     list_display = ('get_contributor', 'get_entity', 'created', 'accepted')
-    search_fields = ('contributor__last_name', 'contributor__first_name', 'contributor__username')
-    list_filter = ("accepted",)
+    search_fields = ('contributor__last_name',
+                     'contributor__first_name',
+                     'contributor__email',
+                     'credit',
+                     '=object_id')
+    list_filter = ("accepted", "content_type")
 
     related_search_fields = {
         'contributor': ('last_name', 'first_name', 'username'),
     }
+    fields = ('content_type',
+              'object_id',
+              'get_entity',
+              'note',
+              'accepted',
+              'summary',
+              'credit',
+              'contributor')
+    readonly_fields = ('content_type', 'object_id', 'get_entity',)
 
     def get_contributor(self, obj):
         if obj.contributor and obj.contributor.last_name and obj.contributor.first_name:

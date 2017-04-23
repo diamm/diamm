@@ -91,14 +91,14 @@ class SourceAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
                     'inventory_provided',
                     'sort_order')
     search_fields = ('identifiers__identifier',
-                     'name', 'archive__name', 'archive__siglum', 'archive__city__name', 'shelfmark',
-                     "pk")
+                     'name', 'archive__name',
+                     'archive__siglum', 'archive__city__name', 'shelfmark',
+                     "=pk")
     inlines = (IdentifiersInline, NotesInline, URLsInline,
                BibliographyInline, SourceRelationshipInline)
     list_filter = (CountryListFilter, InventoryFilter)
     list_editable = ('sort_order',)
     # actions = (sort_sources,)
-
     formfield_overrides = {
         models.TextField: {'widget': AdminPagedownWidget}
     }
