@@ -19,7 +19,6 @@ class CountryListFilter(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         countries = GeographicArea.objects.filter(Q(type=GeographicArea.COUNTRY) | Q(type=GeographicArea.STATE))
-        print(countries)
         return [(c.pk, c.name) for c in countries]
 
     def queryset(self, request, queryset):
