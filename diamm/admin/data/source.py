@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.db import models
+from rest_framework.reverse import reverse
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
 from diamm.models.data.geographic_area import GeographicArea
 from diamm.models.data.source import Source
@@ -114,3 +115,6 @@ class SourceAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     def get_archive(self, obj):
         return "{0}".format(obj.archive.name)
     get_archive.short_description = "Archive"
+
+    def view_on_site(self, obj):
+        return reverse('source-detail', kwargs={"pk": obj.pk})
