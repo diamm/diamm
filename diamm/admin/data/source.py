@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.db import models
+from rest_framework.reverse import reverse
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
 from diamm.models.data.geographic_area import GeographicArea
 from diamm.models.data.source import Source
@@ -90,14 +91,14 @@ class SourceAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
                     'inventory_provided',
                     'sort_order')
     search_fields = ('identifiers__identifier',
-                     'name', 'archive__name', 'archive__siglum', 'archive__city__name', 'shelfmark',
-                     "pk")
+                     'name', 'archive__name',
+                     'archive__siglum', 'archive__city__name', 'shelfmark',
+                     "=pk")
     inlines = (IdentifiersInline, NotesInline, URLsInline,
                BibliographyInline, SourceRelationshipInline)
     list_filter = (CountryListFilter, InventoryFilter)
     list_editable = ('sort_order',)
     # actions = (sort_sources,)
-
     formfield_overrides = {
         models.TextField: {'widget': AdminPagedownWidget}
     }
@@ -114,3 +115,6 @@ class SourceAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     def get_archive(self, obj):
         return "{0}".format(obj.archive.name)
     get_archive.short_description = "Archive"
+
+    def view_on_site(self, obj):
+        return reverse('source-detail', kwargs={"pk": obj.pk})

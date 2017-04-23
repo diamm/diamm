@@ -8,7 +8,7 @@ from reversion.admin import VersionAdmin
 @admin.register(SourceNote)
 class SourceNoteAdmin(VersionAdmin):
     list_display = ('get_source', 'note_type')
-    search_fields = ('source__shelfmark', 'source__name')
+    search_fields = ('source__shelfmark', 'source__name', '=source__id')
     list_filter = ('type',)
 
     formfield_overrides = {

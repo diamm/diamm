@@ -14,7 +14,7 @@ class ImageInline(admin.StackedInline):
 @admin.register(Page)
 class PageAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     list_display = ('get_source', 'numeration', 'page_type', 'legacy_id')
-    search_fields = ('source__shelfmark', 'source__name', 'source__id')
+    search_fields = ('source__shelfmark', 'source__name', '=source__id')
     list_editable = ('page_type',)
     inlines = [ImageInline]
 

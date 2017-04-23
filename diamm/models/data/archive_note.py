@@ -4,6 +4,7 @@ from django.db import models
 class ArchiveNote(models.Model):
     class Meta:
         app_label = "diamm_data"
+        ordering = ('archive__name',)
 
     PRIVATE = 1
     OTHER_NAMES = 2
@@ -20,3 +21,9 @@ class ArchiveNote(models.Model):
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+
+    @property
+    def note_type(self):
+        d = dict(self.NOTE_TYPES)
+        return d[self.type]
+

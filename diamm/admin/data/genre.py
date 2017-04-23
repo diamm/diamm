@@ -6,3 +6,4 @@ from reversion.admin import VersionAdmin
 @admin.register(Genre)
 class GenreAdmin(VersionAdmin):
     list_display = ('name',)
+    search_fields = ('name',)

@@ -5,4 +5,5 @@ from reversion.admin import VersionAdmin
 
 @admin.register(ArchiveNote)
 class ArchiveNoteAdmin(VersionAdmin):
-    pass
+    list_display = ('archive', 'note_type')
+    search_fields = ('archive__name',)

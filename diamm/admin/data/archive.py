@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.db.models import Q
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
 from diamm.models.data.archive import Archive
 from diamm.models.data.archive_note import ArchiveNote
@@ -13,11 +14,12 @@ class ArchiveNoteInline(admin.TabularInline):
 
 
 class CountryListFilter(admin.SimpleListFilter):
-    title = _('Country')
+    title = _('Country or State')
     parameter_name = 'country'
 
     def lookups(self, request, model_admin):
-        countries = GeographicArea.objects.filter(type=GeographicArea.COUNTRY)
+        countries = GeographicArea.objects.filter(Q(type=GeographicArea.COUNTRY) | Q(type=GeographicArea.STATE))
+        print(countries)
         return [(c.pk, c.name) for c in countries]
 
     def queryset(self, request, queryset):
