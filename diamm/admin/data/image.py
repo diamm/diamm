@@ -108,7 +108,7 @@ class ImageAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     list_filter = ("type__name", ImageSourceListFilter, IIIFDataListFilter, 'public')
     # filter_horizontal = ('items',)
     list_editable = ('legacy_filename', 'location')
-    search_fields = ('legacy_filename', 'page__source__id', 'page__source__shelfmark', 'page__source__name')
+    search_fields = ('legacy_filename', '=page__source__id', 'page__source__shelfmark', 'page__source__name')
     inlines = (ImageNoteInline,)
     actions = (refetch_iiif_info,)
 
