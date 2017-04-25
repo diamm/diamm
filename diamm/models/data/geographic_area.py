@@ -29,7 +29,7 @@ class GeographicArea(models.Model):
                                you can specify this here. For regions where their historical provenance has changed 
                                (e.g., Alsace and France or Germany; Vienna and Austria or Prussia), you should choose the
                                current affiliation.""")
-    variant_names = models.CharField(max_length=255, blank=True, null=True)
+    variant_names = models.CharField(max_length=255, blank=True, null=True, help_text="Separate names with a comma.")
 
     # Legacy ID is composed of the legacy model and the PK, so 'legacy_city.4' or 'legacy_country.10'
     # This provides cross referencing between new and old objects.
