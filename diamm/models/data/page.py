@@ -33,7 +33,7 @@ class Page(models.Model):
 
     class Meta:
         app_label = "diamm_data"
-        ordering = ["source__shelfmark", "numeration"]
+        ordering = ["source__shelfmark", "sort_order"]
 
     source = models.ForeignKey("diamm_data.Source",
                                related_name="pages")
