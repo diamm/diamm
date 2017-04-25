@@ -16,7 +16,7 @@ class AutocompleteComponent extends React.Component {
         return (
             <Autocomplete
                 value={ this.props.value }
-                items={ this.props.items }
+                items={ this.props.items.sort( (a, b) => { return a[0].toLowerCase().localeCompare(b[0].toLowerCase() )}) }
                 inputProps={ { placeholder: this.props.placeholder, type: "text", className: "input" }}
                 wrapperStyle={ {} }
                 menuStyle={{
