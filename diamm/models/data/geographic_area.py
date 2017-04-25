@@ -26,11 +26,10 @@ class GeographicArea(models.Model):
                                blank=True,
                                null=True,
                                help_text="""If the area is subordinate to another (e.g., city to country),
-                               you can specify this here. Note that you should adhere to the pattern of only providing one-level-deep parent relationships,
-                               e.g., Cities should always belong to Countries, and not to regions or states. Regions should also only belong to a
-                               single Country, even if they border two countries. Thus the parent should always point to an object of type "Country".
-                               For regions where their historical provenance has changed (e.g., Alsace and France or Germany; Vienna and Austria or Prussia), you should choose the
+                               you can specify this here. For regions where their historical provenance has changed 
+                               (e.g., Alsace and France or Germany; Vienna and Austria or Prussia), you should choose the
                                current affiliation.""")
+    variant_names = models.CharField(max_length=255, blank=True, null=True)
 
     # Legacy ID is composed of the legacy model and the PK, so 'legacy_city.4' or 'legacy_country.10'
     # This provides cross referencing between new and old objects.
