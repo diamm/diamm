@@ -24,6 +24,7 @@ class CanvasSerializer(ContextDictSerializer):
     def get_width(self, obj):
         if not '_childDocuments_' in obj:
             return 0
+        # Get the dimensions from the first image in the result list, which should be the primary image.
         obj['_childDocuments_'].sort(key=operator.itemgetter('image_type_i'))
         return obj['_childDocuments_'][0]['width_i']
 
