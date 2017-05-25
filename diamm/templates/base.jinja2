@@ -10,6 +10,17 @@
     {% endblock %}
 </head>
 <body>
+    {% if messages %}
+        <div class="columns is-marginless">
+            <div class="column is-marginless is-paddingless">
+                {% for message in messages %}
+                    <div class="notification is-info">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
     {# include "website/blocks/beta_notice.jinja2" #}
     {% include "website/blocks/header.jinja2" %}
 
