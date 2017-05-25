@@ -71,7 +71,7 @@ export const NumberingSystemType = ({numbering_system_type}) =>
 
 export const OtherIdentifiers = ({identifiers}) =>
 {
-    if (!identifiers)
+    if (identifiers.length === 0)
         return null;
 
     return (
