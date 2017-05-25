@@ -11,3 +11,4 @@ import diamm.signals.source_relationship_signals
 import diamm.signals.page_signals
 import diamm.signals.item_signals
 import diamm.signals.problem_report_signals
+import diamm.signals.geographic_area_signals
