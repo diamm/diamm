@@ -33,7 +33,7 @@ class GeographicArea(models.Model):
 
     # Legacy ID is composed of the legacy model and the PK, so 'legacy_city.4' or 'legacy_country.10'
     # This provides cross referencing between new and old objects.
-    legacy_id = models.ManyToManyField("diamm_data.LegacyId", blank=True, null=True)
+    legacy_id = models.ManyToManyField("diamm_data.LegacyId", blank=True)
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
