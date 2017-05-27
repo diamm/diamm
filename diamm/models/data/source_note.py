@@ -42,7 +42,7 @@ class SourceNote(models.Model):
         (RULING_NOTE, 'Ruling'),
         (FOLIATION_NOTE, 'Foliation'),
         (DECORATION_NOTE, 'Decoration'),
-        (CONTENTS_NOTE, 'Contents'),
+        (CONTENTS_NOTE, 'Index'),
         (SURFACE_NOTE, 'Surface'),
         (DIAMM_NOTE, "DIAMM Note"),
         (PRIVATE_NOTE, 'Private Note')
