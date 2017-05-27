@@ -2,6 +2,7 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 import { Link } from "react-router";
 import { IMAGES_ROUTE } from "../../routes";
+import { CCM_NOTE_TYPE } from "../../constants";
 
 /*
 * React components for the Description tab. Factored out here
@@ -265,6 +266,19 @@ export const Notes = ({notes, showEdit}) =>
     return (
         <div className="notes">
             { notes.map( (note, idx) => {
+                let thisNote;
+
+                if (note.type === CCM_NOTE_TYPE)
+                {
+                    // Displays the CCM disclaimer before the note.
+                    let disclaimer = "**This information is reproduced here by kind permission of the publishers. It is COPYRIGHT and copying/reproduction of any of this content without permission may result in legal action.**";
+                    thisNote = `${disclaimer}\n\n${note.note}`;
+                }
+                else
+                {
+                    thisNote = `${note.note}`;
+                }
+
                 return (
                     <section key={ idx }>
                         <h5 className="title is-5">
@@ -273,7 +287,7 @@ export const Notes = ({notes, showEdit}) =>
                                 <sup><a href={ `/admin/diamm_data/sourcenote/${note.pk}/` }>Edit</a></sup>
                             }
                         </h5>
-                        <ReactMarkdown source={ note.note } />
+                        <ReactMarkdown source={ thisNote } />
                     </section>
                 );
             })}
