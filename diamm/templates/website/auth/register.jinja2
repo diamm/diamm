@@ -9,6 +9,11 @@
     <div class="columns">
         <div class="column is-half is-offset-one-quarter">
             <div>
+                {% if form.non_field_errors() %}
+                    <div class="notification is-primary">
+                        {{ form.non_field_errors() }}
+                    </div>
+                {% endif %}
                 <h2 class="title">Create an account</h2>
                 <form action="{{ url('register') }}" method="post">
                     {% csrf_token %}
