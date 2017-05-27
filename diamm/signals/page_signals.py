@@ -17,3 +17,13 @@ def index_image(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Page)
 def index_page(sender, instance, created, **kwargs):
     solr_index(PageSearchSerializer, instance)
+
+
+@receiver(post_delete, sender=Image)
+def delete_image(sender, instance, **kwargs):
+    solr_delete(instance)
+
+
+@receiver(post_delete, sender=Page)
+def delete_page(sender, instance, **kwargs):
+    solr_delete(instance)

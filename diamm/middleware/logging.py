@@ -2,7 +2,6 @@ from django.db import connection
 import logging
 
 logger = logging.getLogger(__name__)
-print(__name__)
 
 
 class QueryCountDebugMiddleware(object):

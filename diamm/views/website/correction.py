@@ -1,5 +1,4 @@
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Q
 from rest_framework import generics
 from rest_framework import permissions
 from rest_framework import response

@@ -1,5 +1,4 @@
 import serpy
-from rest_framework.reverse import reverse
 
 
 class ContextSerializer(serpy.Serializer):

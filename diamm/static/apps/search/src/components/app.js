@@ -26,7 +26,7 @@ class App extends React.Component
         }
 
         /*
-         * Cause a search query to fire only once every 500ms, so that we don't overload the server
+         * Cause a search query to fire only once every 800ms, so that we don't overload the server
          * handling every keypress.
          * */
         const searchTermChange = debounce(

@@ -5,6 +5,7 @@ from django.http.response import HttpResponse
 from django.core.mail import send_mail
 from django.conf import settings
 from django.core import signing
+from django.contrib import messages
 from rest_framework import status
 from rest_framework.reverse import reverse
 from diamm.forms.create_account_form import CreateAccountForm
@@ -102,5 +103,7 @@ class CreateAccount(FormView):
             [to_address],
             fail_silently=False
         )
+
+        messages.success(self.request, "Thank you. You should receive a confirmation e-mail shortly.")
 
         return response

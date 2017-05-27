@@ -68,13 +68,10 @@ class OrganizationAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     update_organization_action.short_description = "Update organization type"
 
     def merge_organizations_action(self, request, queryset):
-        print('merging organizations')
-
         if 'do_action' in request.POST:
             form = MergeOrganizationsForm(request.POST)
 
             if form.is_valid():
-                print('form is valid')
                 keep_old = form.cleaned_data['keep_old']
                 target = queryset.first()
                 remainder = list(queryset[1:])

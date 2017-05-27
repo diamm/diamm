@@ -93,7 +93,7 @@ class PageSearchSerializer(serpy.Serializer):
 
     def get_images_ss(self, obj):
         if obj.images.count() > 0:
-            return list(obj.images.all().values_list('location', flat=True))
+            return list(obj.images.filter(public=True).values_list('location', flat=True))
         else:
             return []
 

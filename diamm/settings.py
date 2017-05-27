@@ -339,8 +339,6 @@ diamm@music.ox.ac.uk
     """
 }
 
-# ACCOUNT_ACTIVATION_DAYS = 7
-# REGISTRATION_OPEN = True
 WAGTAIL_SITE_NAME = 'Digital Image Archive of Medieval Music'
 
 if DEBUG:

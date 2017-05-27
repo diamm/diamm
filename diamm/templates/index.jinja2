@@ -2,8 +2,6 @@
 
 
 {% block head %}
-    <link rel="stylesheet" href="{{ static('vendor/ideal-image-slider/ideal-image-slider.css') }}" />
-    <link rel="stylesheet" href="{{ static('vendor/ideal-image-slider/iis-default-theme.css') }}" />
     <script type="application/ld+json">
     {
       "@context": "http://schema.org",
@@ -90,6 +88,9 @@
 {% endblock %}
 
 {% block scripts %}
+    <!-- <link rel="stylesheet" href="{{ static('vendor/ideal-image-slider/ideal-image-slider.css') }}" /> -->
+    <link rel="stylesheet" href="{{ static('vendor/ideal-image-slider/iis-default-theme.css') }}" />
+
     <script type="application/javascript" src="{{ static('vendor/ideal-image-slider/ideal-image-slider.min.js') }}"></script>
     <script type="application/javascript" src="{{ static('vendor/ideal-image-slider/iis-captions.js') }}"></script>
     <script>
