@@ -20,6 +20,7 @@ class SearchView(generics.GenericAPIView):
         # by archive_city_s so that sources sort to the top.
         if not query:
             query = "*:*"
+            sorts.append('archive_city_s asc')
 
         filters.update({
             '{!tag=type}type': settings.SOLR['SEARCH_TYPES']
@@ -32,8 +33,6 @@ class SearchView(generics.GenericAPIView):
             filters.update({
                 '{!tag=type}type': settings.SOLR['SEARCH_TYPES']
             })
-            sorts.append('archive_city_s asc')
-
         elif type_query and type_query in settings.SOLR['SEARCH_TYPES']:
             filters.update({
                 '{!tag=type}type': type_query
@@ -94,13 +93,9 @@ class SearchView(generics.GenericAPIView):
                 'organization_type_s': "\"{0}\"".format(request.GET.get('orgtype', None))
             })
 
-        # adjusts the sorting for each type, but defaults to sorting empty queries
-        # by archive_city so that sources sort to the top alphabetically by the
-        # city where they are held.
+        # adjusts the sorting for each type
         if type_query in settings.SOLR['TYPE_SORTS'].keys():
             sorts.append(settings.SOLR['TYPE_SORTS'][type_query])
-        else:
-            sorts.append('archive_city_s asc')
 
         try:
             page_num = int(request.GET.get('page', 1))
