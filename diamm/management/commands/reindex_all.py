@@ -39,10 +39,11 @@ term = Terminal()
 
 class Command(BaseCommand):
     def _index(self, objects, name_field, serializer):
-        num_sources = objects.count()
+        num_objs = objects.count()
+        i = 0
 
         docs = []
-        for i, obj in enumerate(objects):
+        for obj in objects.iterator():
             if not name_field:
                 name = "Object {0}".format(obj.pk)
             else:
@@ -62,6 +63,7 @@ class Command(BaseCommand):
                 self.solrconn.add(docs)
                 del docs
                 docs = []
+            i += 1
 
         # ensure any leftovers are added
         self.solrconn.add(docs)
@@ -176,7 +178,8 @@ class Command(BaseCommand):
             'source_attribution'
         ]
         pk = 1
-        objs = Source.objects.all().order_by('pk').select_related('archive__city__parent')
+        objs = Source.objects.all().order_by('pk').select_related('archive__city__parent').iterator()
+
         for source in objs:
             self.stdout.write(term.green("Indexing {0}".format(source.display_name)))
             res = [list(o) for o in source.inventory.values_list(*fields)]
