@@ -47,7 +47,7 @@ class PersonSourceCopyistSerializer(ContextDictSerializer):
         attr="source_s"
     )
     public_images = serpy.BoolField(
-        attr="public_images_b",
+        attr="source_public_images_b",
         required=False
     )
 
@@ -73,7 +73,7 @@ class PersonSourceRelationshipSerializer(ContextDictSerializer):
         attr="source_s"
     )
     public_images = serpy.BoolField(
-        attr="public_images_b",
+        attr="source_public_images_b",
         required=False
     )
 

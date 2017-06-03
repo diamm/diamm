@@ -146,14 +146,14 @@ class Source(models.Model):
     @property
     def composers(self):
         composer_names = []
-        for item in self.inventory.filter(source__id=self.pk).select_related('composition').prefetch_related('unattributed_composers'):
+        for item in self.inventory.filter(source__id=self.pk).select_related('composition').iterator():
             if not item.composition:
                 if item.unattributed_composers.count() > 0:
-                    for itcomposer in item.unattributed_composers.all():
+                    for itcomposer in item.unattributed_composers.all().iterator():
                         composer_names.append(itcomposer.composer.full_name)
                     continue
             else:
-                for composer in item.composition.composers.all():
+                for composer in item.composition.composers.all().iterator():
                     composer_names.append(composer.composer_name)
 
         composer_names = list(set(composer_names))
@@ -169,7 +169,7 @@ class Source(models.Model):
     @property
     def compositions(self):
         composition_names = []
-        for item in self.inventory.all().select_related('composition'):
+        for item in self.inventory.all().select_related('composition').iterator():
             if not item.composition:
                 continue
             composition_names.append(item.composition.title)

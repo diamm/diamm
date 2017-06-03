@@ -22,7 +22,7 @@ class SourceRelationshipSerializer(serpy.Serializer):
     uncertain_b = serpy.BoolField(
         attr="uncertain"
     )
-    public_images_b = serpy.BoolField(
+    source_public_images_b = serpy.BoolField(
         attr="source.public_images"
     )
 

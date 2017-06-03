@@ -1,33 +1,25 @@
 from django.contrib import admin
 from django.template.defaultfilters import truncatewords
+from django.forms import ModelForm
 from diamm.models.data.item import Item
+from diamm.models.data.page import Page
 from diamm.models.data.item_bibliography import ItemBibliography
 from diamm.models.data.item_note import ItemNote
 from reversion.admin import VersionAdmin
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
 
 
-# class AggregateComposerListFilter(admin.SimpleListFilter):
-#     title = _('Aggregate Composer')
-#     parameter_name = 'aggregate'
-#
-#     def lookups(self, request, model_admin):
-#         """
-#             Since we're filtering against null (below) we reverse the values; that is,
-#             "True" is that isnull is False, and vice versa. Also note that self.value()
-#             only ever spits out strings...
-#         """
-#         return (
-#             ("True", _("No Aggregate Records")),
-#             ("False", _("Only Aggregate Records"))
-#         )
-#
-#     def queryset(self, request, queryset):
-#         val = self.value()
-#         if not val or val == "True":
-#             return queryset
-#         elif val == "False":
-#             return queryset.filter(aggregate_composer__isnull=False)
+# This custom form will reduce the number of options for the pages to only those
+# pages that are linked to the same source.
+class ItemAdminForm(ModelForm):
+    class Meta:
+        model = Item
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(ItemAdminForm, self).__init__(*args, **kwargs)
+        self.fields['pages'].queryset = Page.objects.filter(source=self.instance.source)
+
 
 class ItemNoteInline(admin.TabularInline):
     model = ItemNote
@@ -42,6 +34,7 @@ class BibliographyInline(admin.TabularInline):
 
 @admin.register(Item)
 class ItemAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
+    form = ItemAdminForm
     list_display = ('get_source', 'get_composition', 'get_composers',
                     'folio_start', 'folio_end')
     search_fields = ("source__name", "source__identifiers__identifier", "source__shelfmark",
