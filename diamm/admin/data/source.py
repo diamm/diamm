@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.db import models
+from django.db.models import Q
 from rest_framework.reverse import reverse
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
 from diamm.models.data.geographic_area import GeographicArea
@@ -69,7 +70,7 @@ class CountryListFilter(admin.SimpleListFilter):
     parameter_name = 'country'
 
     def lookups(self, request, model_admin):
-        countries = GeographicArea.objects.filter(type=GeographicArea.COUNTRY)
+        countries = GeographicArea.objects.filter(Q(type=GeographicArea.COUNTRY) | Q(type=GeographicArea.STATE))
         return [(c.pk, c.name) for c in countries]
 
     def queryset(self, request, queryset):
