@@ -86,13 +86,13 @@ class ItemSearchSerializer(serpy.Serializer):
 
     def get_pages_ii(self, obj):
         if obj.pages.count() > 0:
-            return list(obj.pages.all().values_list('pk', flat=True))
+            return list(obj.pages.values_list('pk', flat=True))
         else:
             return []
 
     def get_pages_ssni(self, obj):
         if obj.pages.count() > 0:
-            pages = obj.pages.all().values_list('pk', 'numeration')
+            pages = obj.pages.values_list('pk', 'numeration')
             page_strs = ["{0}|{1}".format(o[0], o[1]) for o in pages]
             return page_strs
         else:
