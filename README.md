@@ -14,4 +14,4 @@ The [Django REST Framework](http://www.django-rest-framework.org) forms a crucia
 
 The site is served with the NginX web server and the gunicorn FastCGI application server. The images are served using the [IIP Image Server](http://iipimage.sourceforge.net/documentation/server/). 
 
-All of our images are available as IIIF Image API endpoints, and we deliver IIIF Presentation API manifests for every source with images. The only caveat is that you must be authenticated with a username and password to access these, due to licensing restrictions with our partner libraries.
+All of our images are available as [IIIF Image API](http://iiif.io/api/image/2.1/) endpoints, and we deliver [IIIF Presentation API](http://iiif.io/api/presentation/2.1/) manifests for every source with images. The only caveat is that you must be authenticated with a username and password to access these, due to licensing restrictions with our partner libraries.
