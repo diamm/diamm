@@ -38,10 +38,6 @@ class Item(models.Model):
                                   blank=True,
                                   null=True,
                                   help_text="A title for this item record, ONLY if it is NOT linked to a composition.")
-    legacy_composition = models.CharField(max_length=32,
-                                          blank=True,
-                                          null=True,
-                                          help_text="Used only to record a composition that has been converted to an item-only record")
 
     source_incipit = models.TextField(blank=True, null=True,
                                       help_text="The incipit in the source")
@@ -55,13 +51,18 @@ class Item(models.Model):
 
     legacy_position_ms = models.CharField(max_length=256, blank=True, null=True)  # transfer for ordering, but we should be able to find a better way to do this.
     source_order = models.IntegerField(blank=True, null=True)
-    page_order = models.IntegerField(default=0)
+    page_order = models.IntegerField(default=0, blank=True, null=True)
 
     incipit = models.FileField(
         upload_to=os.path.join(settings.MEDIA_ROOT, 'rism', 'incipits'),
         storage=OverwriteStorage(),
         blank=True, null=True
     )
+
+    legacy_composition = models.CharField(max_length=32,
+                                          blank=True,
+                                          null=True,
+                                          help_text="Used only to record a composition that has been converted to an item-only record")
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
