@@ -18,7 +18,10 @@ class ItemAdminForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(ItemAdminForm, self).__init__(*args, **kwargs)
-        self.fields['pages'].queryset = Page.objects.filter(source=self.instance.source).order_by('sort_order')
+
+        # If we are editing an existing record, show only the pages of the attached source.
+        if self.instance.pk:
+            self.fields['pages'].queryset = Page.objects.filter(source=self.instance.source).select_related('source').order_by('sort_order')
 
 
 class ItemNoteInline(admin.TabularInline):
@@ -46,7 +49,7 @@ class ItemAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
 
     related_search_fields = {
         "composition": ("title",),
-        "source": ("shelfmark",)
+        "source": ("shelfmark", "name", "pk")
     }
 
     def get_source(self, obj):
