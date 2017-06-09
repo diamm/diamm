@@ -20,8 +20,12 @@ class ItemAdminForm(ModelForm):
         super(ItemAdminForm, self).__init__(*args, **kwargs)
 
         # If we are editing an existing record, show only the pages of the attached source.
+        # If we don't have a source attached, show an empty queryset so that no pages show up to add.
+        # This helps reduce confusion around what pages are available to add to this item.
         if self.instance.pk:
             self.fields['pages'].queryset = Page.objects.filter(source=self.instance.source).select_related('source').order_by('sort_order')
+        else:
+            self.fields['pages'].queryset = Page.objects.none()
 
 
 class ItemNoteInline(admin.TabularInline):
