@@ -90,7 +90,8 @@ def refetch_iiif_info(modeladmin, request, queryset):
 
         r = requests.get(url, headers={
             "referer": "https://{0}".format(settings.HOSTNAME),
-            "X-DIAMM": settings.DIAMM_IMAGE_KEY
+            "X-DIAMM": settings.DIAMM_IMAGE_KEY,
+            "User-Agent": settings.DIAMM_UA
         })
 
         if 200 <= r.status_code < 300:
