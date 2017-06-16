@@ -87,6 +87,7 @@ class SearchView(generics.GenericAPIView):
             filters.update({
                 'anonymous_b': request.GET.get('anonymous', None)
             })
+            sorts.append("title_ans asc")
 
         if 'orgtype' in request.GET:
             filters.update({
