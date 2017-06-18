@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router";
 import ReactMarkdown from "react-markdown";
-import dateFormat from "dateformat";
+import moment from "moment";
 
 import {
     COMMENTARY_ROUTE,
@@ -60,7 +60,7 @@ const Comment = ({comment}) =>
                     <span>{ comment.author } </span>
                     { comment.author_is_staff && <span className="tag is-small is-primary">DIAMM Staff</span>}
                 </h3>
-                <h4 className="subtitle is-6">{ dateFormat(comment.created, "dddd, mmmm dS, yyyy, h:MM:ss TT") }</h4>
+                <h4 className="subtitle is-6">{ moment(comment.created, "YYYY-MM-DD HH-mm-ss.SSSSSSZ").format("dddd, Do MMMM, YYYY, HH:MM:ss") }</h4>
                 <ReactMarkdown source={ comment.comment } />
             </div>
         </article>

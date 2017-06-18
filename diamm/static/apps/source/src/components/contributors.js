@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
-import dateFormat from "dateformat";
+import moment from "moment";
+
 import {
     fetchContributors
 } from "../actions/contributors";
@@ -41,7 +42,7 @@ class Contributors extends React.Component
                                 <div className="media-content">
                                     <div className="content">
                                         <h3 className="title is-5"><span>{ contributor }</span></h3>
-                                        <h4 className="subtitle is-6">{ dateFormat(entry.updated, "dddd, mmmm dS, yyyy, h:MM:ss TT") }</h4>
+                                        <h4 className="subtitle is-6">{ moment(<entry className="updated"></entry>, "YYYY-MM-DD HH-mm-ss.SSSSSSZ").format("dddd, Do MMMM, YYYY, HH:MM:ss") }</h4>
                                         <p>{ entry.summary }</p>
                                     </div>
                                 </div>
