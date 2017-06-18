@@ -75,7 +75,7 @@ class InventoryByOrder extends React.Component
                                             <Foliation
                                                 folio_start={ entry.folio_start }
                                                 folio_end={ entry.folio_end }
-                                                show_quicklook={ (this.props.user !== null && entry.pages && entry.pages.length > 0) }
+                                                show_quicklook={ (this.props.user !== null && this.props.source.public_images && entry.pages && entry.pages.length > 0) }
                                             />
                                         </td>
                                         <td className="item-details">
@@ -103,7 +103,8 @@ function mapStateToProps (state)
         public_images: state.source.public_images,
         has_images: state.source.has_images,
         user: state.user,
-        showDetail: state.inventory.activeSourceOrderItem
+        showDetail: state.inventory.activeSourceOrderItem,
+        source: state.source
     }
 }
 

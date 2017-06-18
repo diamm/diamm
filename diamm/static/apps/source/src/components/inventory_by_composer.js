@@ -37,7 +37,7 @@ class InventoryByComposer extends React.Component
                                                         <Foliation
                                                             folio_start={ cmp.folio_start }
                                                             folio_end={ cmp.folio_end }
-                                                            show_quicklook={ (this.props.user !== null && entry.pages && entry.pages.length > 0) }
+                                                            show_quicklook={ (this.props.user !== null && this.props.source.public_images && entry.pages && entry.pages.length > 0) }
                                                         />
                                                     </li>
                                                 );
@@ -59,7 +59,8 @@ function mapStateToProps (state)
 {
     return {
         inventory: state.source.composer_inventory,
-        user: state.user
+        user: state.user,
+        source: state.source
     }
 }
 
