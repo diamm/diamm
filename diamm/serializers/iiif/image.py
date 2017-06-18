@@ -5,7 +5,9 @@ from diamm.serializers.fields import StaticField
 
 
 class ImageResourceSerializer(ContextDictSerializer):
-    id = serpy.MethodField()
+    id = serpy.MethodField(
+        label="@id"
+    )
     type = StaticField(
         label="@type",
         value="dctypes:Image"
