@@ -68,7 +68,7 @@ class InventoryAlphabetical extends React.Component
                                         <Foliation
                                             folio_start={ entry.folio_start }
                                             folio_end={ entry.folio_end }
-                                            show_quicklook={ (this.props.user !== null && entry.pages && entry.pages.length > 0) }
+                                            show_quicklook={ (this.props.user.is_authenticated !== false && this.props.source.public_images && entry.pages && entry.pages.length > 0) }
                                         />
                                     </td>
                                 </tr>
@@ -97,7 +97,8 @@ function mapStateToProps (state)
     return {
         alphabetical: alphaSortInventory(state),
         showDetail: state.inventory.activeAlphaOrderItem,
-        user: state.user
+        user: state.user,
+        source: state.source
     }
 }
 

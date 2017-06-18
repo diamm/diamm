@@ -83,11 +83,14 @@ class SearchView(generics.GenericAPIView):
                 'facet_date_range_ii': "[{0} TO {1}]".format(start, end)
             })
 
+        # Filter search by Anonymous Compositions
         if 'anonymous' in request.GET:
             filters.update({
                 'anonymous_b': request.GET.get('anonymous', None)
             })
+            sorts.append("title_ans asc")
 
+        # Filter search by organization type
         if 'orgtype' in request.GET:
             filters.update({
                 'organization_type_s': "\"{0}\"".format(request.GET.get('orgtype', None))
