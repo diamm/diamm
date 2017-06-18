@@ -2,9 +2,9 @@ import { SET_USER_INFO } from "../constants";
 
 const INITIAL_STATE = {
     username: null,
-    isAuthenticated: null,
-    isStaff: null,
-    isSuperuser: null
+    isAuthenticated: false,
+    isStaff: false,
+    isSuperuser: false
 };
 
 export default function (state = INITIAL_STATE, action)

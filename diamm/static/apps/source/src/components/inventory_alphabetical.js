@@ -68,7 +68,7 @@ class InventoryAlphabetical extends React.Component
                                         <Foliation
                                             folio_start={ entry.folio_start }
                                             folio_end={ entry.folio_end }
-                                            show_quicklook={ (this.props.user !== null && this.props.source.public_images && entry.pages && entry.pages.length > 0) }
+                                            show_quicklook={ (this.props.user.is_authenticated !== false && this.props.source.public_images && entry.pages && entry.pages.length > 0) }
                                         />
                                     </td>
                                 </tr>
