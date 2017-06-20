@@ -99,7 +99,7 @@ class Details extends React.Component
                             <Foliation
                                 folio_start={ folio_start }
                                 folio_end={ folio_end }
-                                show_quicklook={ (this.props.user !== null && pages && pages.length > 0) }
+                                show_quicklook={ (this.props.user.is_authenticated !== false && this.props.source.public_images && pages && pages.length > 0) }
                             />
                         </div>
                         <Genres genres={ genres }/>
@@ -120,7 +120,8 @@ class Details extends React.Component
 function mapStateToProps (state)
 {
     return {
-        user: state.user
+        user: state.user,
+        source: state.source
     }
 }
 
