@@ -7,7 +7,7 @@ from diamm.helpers.storage import OverwriteStorage
 class Item(models.Model):
     class Meta:
         app_label = "diamm_data"
-        ordering = ("folio_start",)
+        ordering = ("source_order", "folio_start")
 
     L_SCORE = 1
     L_PARTS = 2
