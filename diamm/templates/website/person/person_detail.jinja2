@@ -15,18 +15,6 @@
             {% endif %}
         </div>
     </div>
-    {% if content.biography %}
-    <div class="columns">
-        <div class="column">
-            <h3 class="title is-3">Biography</h3>
-            <div class="content">
-            {% for note in content.biography %}
-                {{ note.note | markdown | safe }}
-            {% endfor %}
-            </div>
-        </div>
-    </div>
-    {% endif %}
     <div class="columns">
         <div class="column">
             {% if content.compositions %}
