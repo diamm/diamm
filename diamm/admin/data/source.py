@@ -2,7 +2,6 @@ from django.contrib import admin
 from django.db import models
 from django.db.models import Q
 from rest_framework.reverse import reverse
-from django_extensions.admin import ForeignKeyAutocompleteAdmin
 from diamm.models.data.geographic_area import GeographicArea
 from diamm.models.data.source import Source
 from diamm.models.data.source_identifier import SourceIdentifier
@@ -13,17 +12,18 @@ from diamm.models.data.source_relationship import SourceRelationship
 from reversion.admin import VersionAdmin
 from django.utils.translation import ugettext_lazy as _
 from pagedown.widgets import AdminPagedownWidget
+from salmonella.admin import SalmonellaMixin
 
 
-class SourceRelationshipInline(admin.StackedInline):
+class SourceRelationshipInline(SalmonellaMixin, admin.StackedInline):
     model = SourceRelationship
     extra = 0
 
 
-class BibliographyInline(admin.TabularInline):
+class BibliographyInline(SalmonellaMixin, admin.TabularInline):
     model = SourceBibliography
     extra = 0
-    raw_id_fields = ('bibliography',)
+    salmonella_fields = ('bibliography',)
 
 
 class IdentifiersInline(admin.TabularInline):
@@ -80,8 +80,7 @@ class CountryListFilter(admin.SimpleListFilter):
 
 
 @admin.register(Source)
-class SourceAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
-    view_on_site = True
+class SourceAdmin(SalmonellaMixin, VersionAdmin):
     save_on_top = True
     list_display = ('shelfmark',
                     'name',
@@ -100,13 +99,10 @@ class SourceAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     list_filter = (CountryListFilter, InventoryFilter)
     list_editable = ('sort_order',)
     # actions = (sort_sources,)
+    salmonella_fields = ('cover_image', 'archive')
+
     formfield_overrides = {
         models.TextField: {'widget': AdminPagedownWidget}
-    }
-
-    related_search_fields = {
-        'archive': ('name', 'city__name', 'city__parent__name'),
-        'cover_image': ('location', 'legacy_filename', 'page__numeration')
     }
 
     def get_city(self, obj):

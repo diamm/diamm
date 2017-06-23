@@ -10,26 +10,27 @@ from diamm.admin.forms.merge_organizations import MergeOrganizationsForm
 from diamm.admin.merge_models import merge
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
 from reversion.admin import VersionAdmin
+from salmonella.admin import SalmonellaMixin
 
 
-class CopiedSourcesInline(GenericTabularInline):
+class CopiedSourcesInline(SalmonellaMixin, GenericTabularInline):
     verbose_name = "Source Copied"
     verbose_name_plural = "Sources Copied"
     model = SourceCopyist
     extra = 0
-    raw_id_fields = ('source',)
+    salmonella_fields = ('source',)
 
 
 class RelatedSourcesInline(GenericTabularInline):
     model = SourceRelationship
     extra = 0
-    raw_id_fields = ('source',)
+    salmonella_fields = ('source',)
 
 
 class ProvenanceSourcesInline(GenericTabularInline):
     model = SourceProvenance
     extra = 0
-    raw_id_fields = ('source', 'city', 'country', 'region', 'protectorate')
+    salmonella_fields = ('source', 'city', 'country', 'region', 'protectorate')
 
 
 @admin.register(Organization)

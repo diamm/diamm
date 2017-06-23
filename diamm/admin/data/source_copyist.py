@@ -1,7 +1,27 @@
 from django.contrib import admin
 from diamm.models.data.source_copyist import SourceCopyist
+from diamm.models.data.person import Person
+from diamm.models.data.organization import Organization
+from salmonella.admin import SalmonellaMixin
 
 
 @admin.register(SourceCopyist)
-class SourceCopyistAdmin(admin.ModelAdmin):
-    pass
+class SourceCopyistAdmin(SalmonellaMixin, admin.ModelAdmin):
+    list_display = ('get_source', 'get_copyist', 'copyist_type', 'uncertain')
+    list_filter = ('type',)
+    salmonella_fields = ('source',)
+
+    def get_source(self, obj):
+        return "{0}".format(obj.source.display_name)
+    get_source.short_description = "source"
+
+    def get_copyist(self, obj):
+        if isinstance(obj.copyist, Organization):
+            return "{0} (organization)".format(obj.copyist.name)
+        elif isinstance(obj.copyist, Person):
+            return "{0} (person)".format(obj.copyist.full_name)
+        else:
+            return None
+
+    get_copyist.short_description = "Related Copyist"
+

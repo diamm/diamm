@@ -2,12 +2,13 @@ from django.contrib import admin
 from diamm.models.data.cycle import Cycle
 from diamm.models.data.composition_cycle import CompositionCycle
 from reversion.admin import VersionAdmin
+from salmonella.admin import SalmonellaMixin
 
 
-class CompositionCycleInline(admin.TabularInline):
+class CompositionCycleInline(SalmonellaMixin, admin.TabularInline):
     model = CompositionCycle
     extra = 0
-    raw_id_fields = ('composition',)
+    salmonella_fields = ('composition',)
 
 
 @admin.register(Cycle)
