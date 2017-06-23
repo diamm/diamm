@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.sitemaps',
+    'salmonella',
     'diamm',
     'diamm.diamm_data',
     'diamm.diamm_migrate',
