@@ -31,7 +31,7 @@ class CompositionAdmin(VersionAdmin):
     list_display = ('title', 'get_composers', 'appears_in')
     search_fields = ('title', 'composers__composer__last_name')
     inlines = (ComposerInline, BibliographyInline, ItemInline)
-    list_filter = ('anonymous',)
+    list_filter = ('anonymous', 'genres')
 
     def get_composers(self, obj):
         c = "; ".join([c.composer.full_name for c in obj.composers.all()])
