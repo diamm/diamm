@@ -83,9 +83,7 @@ export const OtherIdentifiers = ({identifiers}) =>
                     { identifiers.map((identifier, idx) => {
                         return (
                             <li key={ idx }>
-                                <strong>
-                                    { identifier.identifier_type }:
-                                </strong> { identifier.identifier }
+                                { identifier.identifier_type }: { identifier.identifier }
                             </li>
                         );
                     })}
