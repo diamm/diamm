@@ -8,7 +8,7 @@ class SourceCatalogueEntry(models.Model):
     """
     class Meta:
         app_label = "diamm_data"
-        verbose_name_plural = "Source Catalogue Entries"
+        verbose_name_plural = "Source catalogue entries"
         ordering = ('entry',)
 
     order = models.IntegerField(default=1)
