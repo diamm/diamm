@@ -10,11 +10,11 @@ from reversion.admin import VersionAdmin
 class SourceRelationshipAdmin(SalmonellaMixin, VersionAdmin):
     list_display = ('get_source', 'get_related_entity', 'relationship_type')
     salmonella_fields = ('source',)
+    list_filter = ('relationship_type',)
 
-    # search_fields = ('source__name',
-    #                  'source__identifiers__identifier',
-    #                  'source__archive__name',
-    #                  'person__last_name')
+    search_fields = ('source__name',
+                     'source__identifiers__identifier',
+                     'source__archive__name')
     #
     # related_search_fields = {
     #     'source': ('name', 'identifiers__identifier', 'archive__name'),
