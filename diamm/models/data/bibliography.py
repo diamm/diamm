@@ -4,8 +4,9 @@ from django.db import models
 class Bibliography(models.Model):
     class Meta:
         app_label = "diamm_data"
-        verbose_name = "Bibliography Entry"
-        verbose_name_plural = "Bibliography Entries"
+        verbose_name = "Bibliography entry"
+        verbose_name_plural = "Bibliography entries"
+        ordering = ('created',)
 
     title = models.CharField(max_length=1024)
     # authors = models.ManyToManyField("diamm_data.BibliographyAuthorRole")
