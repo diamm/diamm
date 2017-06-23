@@ -7,7 +7,6 @@ from urllib.parse import urljoin
 from diamm.models.data.image import Image
 from diamm.models.data.image_note import ImageNote
 from diamm.models.data.page import Page
-from django_extensions.admin import ForeignKeyAutocompleteAdmin
 from reversion.admin import VersionAdmin
 from django.utils.translation import ugettext_lazy as _
 
@@ -103,7 +102,7 @@ refetch_iiif_info.short_description = "Re-Fetch IIIF Image Info"
 
 
 @admin.register(Image)
-class ImageAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
+class ImageAdmin(VersionAdmin):
     form = ImageAdminForm
     list_display = ('pk', 'legacy_filename', 'location', 'get_type', 'public')
     list_filter = ("type__name", ImageSourceListFilter, IIIFDataListFilter, 'public')
