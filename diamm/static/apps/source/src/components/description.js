@@ -60,6 +60,7 @@ class Description extends React.Component
                     <CoverImage
                         show={ this.props.cover_image_info && this.props.has_images && this.props.public_images }
                         info={ this.props.cover_image_info }
+                        authenticated={ this.props.userIsAuthenticated }
                     />
                 </div>
             </div>

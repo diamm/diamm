@@ -293,20 +293,36 @@ export const Notes = ({notes, showEdit}) =>
     );
 };
 
-export const CoverImage = ({show, info}) =>
+export const CoverImage = ({show, info, authenticated}) =>
 {
     if (!show)
         return null;
 
+    let link = null;
+    if (authenticated)
+    {
+        link = (<Link to={ {pathname: IMAGES_ROUTE, query: {p: info.label}} }>
+            <img src={ `${info.url}full/350,/0/default.jpg` } />
+        </Link>);
+    }
+    else
+    {
+        link = (<a href={ `/login/?next=${window.location.pathname}` }>
+            <img src={ `${info.url}full/350,/0/default.jpg` } />
+        </a>);
+    }
+
     return (
         <figure className="card">
             <div className="card-image">
-                <Link to={ {pathname: IMAGES_ROUTE, query: {p: info.label}} }>
-                    <img src={ `${info.url}full/350,/0/default.jpg` } />
-                </Link>
+                <figure className="image">
+                    { link }
+                </figure>
             </div>
             <div className="card-content">
-                <p className="title is-5">{ info.label }</p>
+                <div className="content">
+                    <p className="title is-5">{ info.label }</p>
+                </div>
             </div>
         </figure>
     );
