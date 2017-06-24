@@ -1,12 +1,13 @@
 from django.contrib import admin
 from diamm.models.data.bibliography_author import BibliographyAuthor
 from diamm.models.data.bibliography_author_role import BibliographyAuthorRole
+from salmonella.admin import SalmonellaMixin
 
 
-class BibliographyInline(admin.TabularInline):
+class BibliographyInline(SalmonellaMixin, admin.TabularInline):
     model = BibliographyAuthorRole
     extra = 0
-    raw_id_fields = ('bibliography_entry',)
+    salmonella_fields = ('bibliography_entry',)
 
 
 @admin.register(BibliographyAuthor)

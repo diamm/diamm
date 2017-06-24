@@ -28,10 +28,10 @@ class ItemInline(admin.StackedInline):
 
 @admin.register(Composition)
 class CompositionAdmin(VersionAdmin):
-    list_display = ('title', 'get_composers', 'get_genres')
+    list_display = ('title', 'get_composers', 'appears_in')
     search_fields = ('title', 'composers__composer__last_name')
     inlines = (ComposerInline, BibliographyInline, ItemInline)
-    list_filter = ('anonymous',)
+    list_filter = ('anonymous', 'genres')
 
     def get_composers(self, obj):
         c = "; ".join([c.composer.full_name for c in obj.composers.all()])
@@ -43,3 +43,13 @@ class CompositionAdmin(VersionAdmin):
         g = ", ".join([g.name for g in obj.genres.all()])
         return "{0}".format(g)
     get_genres.short_description = "Genres"
+
+    def appears_in(self, obj):
+        if obj.sources.count() == 0:
+            return None
+        sources = ["<a href='/admin/diamm_data/source/{0}/change'>{1} {2}</a><br />".format(x[0], x[1], x[2]) for x in obj.sources.values_list('source__pk',
+                                                                                                         'source__archive__siglum',
+                                                                                                         'source__shelfmark')]
+        return "".join(sources)
+    appears_in.short_descriptino = "Appears in"
+    appears_in.allow_tags = True

@@ -4,6 +4,7 @@ from diamm.admin.site.commentary import CommentaryAdmin
 
 from diamm.admin.data.source import SourceAdmin
 from diamm.admin.data.source_catalogue_entry import SourceCatalogueEntryAdmin
+from diamm.admin.data.source_relationship_type import SourceRelationshipTypeAdmin
 from diamm.admin.data.page import PageAdmin
 from diamm.admin.data.page_note import PageNoteAdmin
 from diamm.admin.data.source_relationship import SourceRelationshipAdmin
@@ -14,6 +15,8 @@ from diamm.admin.data.archive import ArchiveAdmin
 from diamm.admin.data.archive_note import ArchiveNoteAdmin
 from diamm.admin.data.genre import GenreAdmin
 from diamm.admin.data.person import PersonAdmin
+from diamm.admin.data.person_role import PersonRoleAdmin
+from diamm.admin.data.role import RoleAdmin
 from diamm.admin.data.organization import OrganizationAdmin
 from diamm.admin.data.organization_type import OrganizationTypeAdmin
 from diamm.admin.data.bibliography import BibliographyAdmin

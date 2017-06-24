@@ -7,6 +7,7 @@ from diamm.models.data.item_bibliography import ItemBibliography
 from diamm.models.data.item_note import ItemNote
 from reversion.admin import VersionAdmin
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
+from salmonella.admin import SalmonellaMixin
 
 
 # This custom form will reduce the number of options for the pages to only those
@@ -33,14 +34,14 @@ class ItemNoteInline(admin.TabularInline):
     extra = 0
 
 
-class BibliographyInline(admin.TabularInline):
+class BibliographyInline(SalmonellaMixin, admin.TabularInline):
     model = ItemBibliography
     extra = 0
-    raw_id_fields = ('bibliography',)
+    salmonella_fields = ('bibliography',)
 
 
 @admin.register(Item)
-class ItemAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
+class ItemAdmin(SalmonellaMixin, VersionAdmin, ForeignKeyAutocompleteAdmin):
     form = ItemAdminForm
     list_display = ('get_source', 'get_composition', 'get_composers',
                     'folio_start', 'folio_end')
@@ -50,11 +51,7 @@ class ItemAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     inlines = (BibliographyInline, ItemNoteInline)
     filter_horizontal = ['pages']
     # exclude = ("pages",)
-
-    related_search_fields = {
-        "composition": ("title",),
-        "source": ("shelfmark", "name", "pk")
-    }
+    salmonella_fields = ('source', 'composition')
 
     def get_source(self, obj):
         return "{0}".format(obj.source.display_name)

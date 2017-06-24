@@ -42,7 +42,7 @@ class Contributors extends React.Component
                                 <div className="media-content">
                                     <div className="content">
                                         <h3 className="title is-5"><span>{ contributor }</span></h3>
-                                        <h4 className="subtitle is-6">{ moment(<entry className="updated"></entry>, "YYYY-MM-DD HH-mm-ss.SSSSSSZ").format("dddd, Do MMMM, YYYY, HH:MM:ss") }</h4>
+                                        <h4 className="subtitle is-6">{ moment(entry.updated, "YYYY-MM-DD HH-mm-ss.SSSSSSZ").format("dddd, Do MMMM, YYYY") }</h4>
                                         <p>{ entry.summary }</p>
                                     </div>
                                 </div>

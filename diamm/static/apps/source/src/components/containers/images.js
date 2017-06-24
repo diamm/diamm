@@ -1,13 +1,9 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Link } from "react-router";
 import {
     Composers,
     Genres
 } from "./inventory";
-import {
-    IMAGES_ROUTE
-} from "../../routes";
 
 
 class PageCompositionDetails extends React.Component

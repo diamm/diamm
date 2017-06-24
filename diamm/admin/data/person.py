@@ -14,14 +14,15 @@ from diamm.models.data.organization import Organization
 from diamm.admin.forms.merge_people import MergePeopleForm
 from diamm.admin.merge_models import merge
 from reversion.admin import VersionAdmin
+from salmonella.admin import SalmonellaMixin
 
 
-class CompositionsInline(admin.TabularInline):
+class CompositionsInline(SalmonellaMixin, admin.TabularInline):
     verbose_name = "Composition"
     verbose_name_plural = "Compositions"
     model = CompositionComposer
     extra = 0
-    raw_id_fields = ('composition',)
+    salmonella_fields = ('composition',)
 
 
 class PersonNoteInline(admin.TabularInline):
@@ -35,32 +36,32 @@ class PersonNoteInline(admin.TabularInline):
     }
 
 
-class PersonRoleInline(admin.TabularInline):
+class PersonRoleInline(SalmonellaMixin, admin.TabularInline):
     verbose_name = "Role"
     verbose_name_plural = "Roles"
     model = PersonRole
     extra = 0
-    raw_id_fields = ('role',)
+    salmonella_fields = ('role',)
 
 
-class CopiedSourcesInline(GenericTabularInline):
+class CopiedSourcesInline(SalmonellaMixin, GenericTabularInline):
     verbose_name = "Source Copied"
     verbose_name_plural = "Sources Copied"
     model = SourceCopyist
     extra = 0
-    raw_id_fields = ('source',)
+    salmonella_fields = ('source',)
 
 
-class RelatedSourcesInline(GenericTabularInline):
+class RelatedSourcesInline(SalmonellaMixin, GenericTabularInline):
     model = SourceRelationship
     extra = 0
-    raw_id_fields = ('source',)
+    salmonella_fields = ('source',)
 
 
-class ProvenanceSourcesInline(GenericTabularInline):
+class ProvenanceSourcesInline(SalmonellaMixin, GenericTabularInline):
     model = SourceProvenance
     extra = 0
-    raw_id_fields = ('source', 'city', 'country', 'region', 'protectorate')
+    salmonella_fields = ('source', 'city', 'country', 'region', 'protectorate')
 
 
 def migrate_to_organization(modeladmin, request, queryset):
