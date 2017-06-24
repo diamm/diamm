@@ -235,7 +235,7 @@ export const Voices = ({voices, num_voices}) =>
 {
     return (
         <div>
-            <h4>Voices</h4>
+            <p className="is-bold">Voices</p>
 
             { num_voices &&
                 <span><strong>Number of Voices:</strong> { num_voices }</span>}
