@@ -6,9 +6,11 @@ from diamm.serializers.search.page import PageSearchSerializer
 from diamm.helpers.solr_helpers import solr_delete, solr_index
 
 
-# When an image record is saved we need to re-index the entire page since images are indexed as children of pages.
+# When an image record is saved we need to re-index the entire page since
+# images are indexed as children of pages.
 @receiver(post_save, sender=Image)
 def index_image(sender, instance, created, **kwargs):
+    # delete the page instance. It will be re-added when we index the page.
     solr_delete(instance)
     if instance.page:
         solr_index(PageSearchSerializer, instance.page)
