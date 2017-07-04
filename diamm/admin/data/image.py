@@ -103,6 +103,7 @@ refetch_iiif_info.short_description = "Re-Fetch IIIF Image Info"
 
 @admin.register(Image)
 class ImageAdmin(VersionAdmin):
+    save_on_top = True
     form = ImageAdminForm
     list_display = ('pk', 'legacy_filename', 'location', 'get_type', 'public')
     list_filter = ("type__name", ImageSourceListFilter, IIIFDataListFilter, 'public')

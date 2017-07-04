@@ -101,6 +101,7 @@ migrate_to_organization.short_description = "Migrate Person to Organization"
 
 @admin.register(Person)
 class PersonAdmin(VersionAdmin):
+    save_on_top = True
     list_display = ('last_name', 'first_name', 'earliest_year', 'latest_year', 'legacy_id')
     search_fields = ('last_name', 'first_name')
     inlines = (PersonNoteInline, PersonRoleInline,

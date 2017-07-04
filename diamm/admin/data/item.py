@@ -42,6 +42,7 @@ class BibliographyInline(SalmonellaMixin, admin.TabularInline):
 
 @admin.register(Item)
 class ItemAdmin(SalmonellaMixin, VersionAdmin, ForeignKeyAutocompleteAdmin):
+    save_on_top = True
     form = ItemAdminForm
     list_display = ('get_source', 'get_composition', 'get_composers',
                     'folio_start', 'folio_end')

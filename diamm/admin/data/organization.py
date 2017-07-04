@@ -35,6 +35,7 @@ class ProvenanceSourcesInline(GenericTabularInline):
 
 @admin.register(Organization)
 class OrganizationAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
+    save_on_top = True
     list_display = ('name', 'location', 'type', 'legacy_id')
     list_filter = ('type',)
     search_fields = ('name',)

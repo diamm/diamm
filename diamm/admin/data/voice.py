@@ -6,6 +6,7 @@ from reversion.admin import VersionAdmin
 
 @admin.register(Voice)
 class VoiceAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
+    save_on_top = True
     def get_queryset(self, request):
         queryset = super(VoiceAdmin, self).get_queryset(request)
         queryset = queryset.select_related('item__composition', 'mensuration', 'type', 'clef')

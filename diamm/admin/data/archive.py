@@ -29,6 +29,7 @@ class CountryListFilter(admin.SimpleListFilter):
 
 @admin.register(Archive)
 class ArchiveAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
+    save_on_top = True
     list_display = ('name', 'get_city', 'get_country', 'siglum',)
     search_fields = ('name', 'siglum', 'city__name', 'city__parent__name')
     list_filter = (CountryListFilter,)
