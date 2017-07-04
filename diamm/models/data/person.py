@@ -20,7 +20,7 @@ class Person(models.Model):
     latest_year = models.IntegerField(blank=True, null=True)
     latest_year_approximate = models.BooleanField(default=False)
 
-    legacy_id = models.CharField(max_length=64)
+    legacy_id = models.CharField(max_length=64, blank=True, null=True)
     # roles = models.ManyToManyField("diamm_data.Role",
     #                                through="diamm_data.PersonRole")
 
