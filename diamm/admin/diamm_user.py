@@ -96,6 +96,7 @@ class UserAdmin(BaseUserAdmin):
 
     list_display = ('email', 'affiliation', 'is_active', 'is_staff', 'legacy_username', 'last_login')
     list_filter = ('is_staff', 'is_active', 'is_superuser')
+
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         (_('Personal info'), {'fields': ('first_name', 'last_name', 'affiliation')}),
@@ -103,12 +104,14 @@ class UserAdmin(BaseUserAdmin):
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
         (_('Administration'), {'fields': ('legacy_id',)})
     )
+
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
             'fields': ('email', 'password1', 'password2')
         })
     )
+
     search_fields = ('email', 'affiliation', 'last_name', 'first_name')
     ordering = ('date_joined',)
 
