@@ -8,7 +8,6 @@ from diamm.models.data.source_relationship import SourceRelationship
 from diamm.models.data.source_provenance import SourceProvenance
 from diamm.admin.forms.merge_organizations import MergeOrganizationsForm
 from diamm.admin.merge_models import merge
-from django_extensions.admin import ForeignKeyAutocompleteAdmin
 from reversion.admin import VersionAdmin
 from salmonella.admin import SalmonellaMixin
 
@@ -34,7 +33,7 @@ class ProvenanceSourcesInline(GenericTabularInline):
 
 
 @admin.register(Organization)
-class OrganizationAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
+class OrganizationAdmin(SalmonellaMixin, VersionAdmin):
     save_on_top = True
     list_display = ('name', 'location', 'type', 'legacy_id')
     list_filter = ('type',)
@@ -42,10 +41,7 @@ class OrganizationAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
     inlines = (CopiedSourcesInline, ProvenanceSourcesInline, RelatedSourcesInline)
     actions = ['update_organization_action', 'merge_organizations_action']
 
-    related_search_fields = {
-        'location': ('name', 'parent__name'),
-        'archive': ('name', 'city__name')
-    }
+    salmonella_fields = ('location', 'archive')
 
     def update_organization_action(self, request, queryset):
         if 'do_action' in request.POST:
