@@ -14,12 +14,12 @@ class ImageInline(admin.StackedInline):
 @admin.register(Page)
 class PageAdmin(SalmonellaMixin, VersionAdmin):
     save_on_top = True
+    salmonella_fields = ("source",)
     list_display = ('get_source', 'numeration', 'page_type', 'sort_order')
-    search_fields = ('source__shelfmark', 'source__name', '=source__id')
+    search_fields = ('source__shelfmark', 'source__name', 'source__archive__siglum', '=source__id')
     list_editable = ('numeration', 'page_type', 'sort_order')
     inlines = [ImageInline]
 
-    salmonella_fields = ("source",)
 
     def get_source(self, obj):
         return "{0}".format(obj.source.display_name)
