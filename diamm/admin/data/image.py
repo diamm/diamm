@@ -9,6 +9,8 @@ from diamm.models.data.image_note import ImageNote
 from diamm.models.data.page import Page
 from reversion.admin import VersionAdmin
 from django.utils.translation import ugettext_lazy as _
+from django.forms import TextInput, Textarea
+from django.db import models
 
 
 class ImageAdminForm(forms.ModelForm):
@@ -103,6 +105,7 @@ refetch_iiif_info.short_description = "Re-Fetch IIIF Image Info"
 
 @admin.register(Image)
 class ImageAdmin(VersionAdmin):
+    save_on_top = True
     form = ImageAdminForm
     list_display = ('pk', 'legacy_filename', 'location', 'get_type', 'public')
     list_filter = ("type__name", ImageSourceListFilter, IIIFDataListFilter, 'public')
@@ -111,6 +114,9 @@ class ImageAdmin(VersionAdmin):
     search_fields = ('legacy_filename', '=page__source__id', 'page__source__shelfmark', 'page__source__name')
     inlines = (ImageNoteInline,)
     actions = (refetch_iiif_info,)
+    formfield_overrides = {
+        models.CharField: {'widget': TextInput(attrs={'size': '160'})},
+    }
 
     def get_type(self, obj):
         return "{0}".format(obj.type.name)

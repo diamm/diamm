@@ -45,7 +45,8 @@ def send_admin_notification_email(sender, instance, created, **kwargs):
     if settings.DEBUG:
         recipients = [settings.ADMIN_EMAIL]
     else:
-        recipients = CustomUserModel.objects.filter(is_staff=True).values_list("email", flat=True)
+        # Send reports to all people in the 'Editors' group
+        recipients = CustomUserModel.objects.filter(groups__name__in=['Editors']).values_list("email", flat=True)
 
     email_message = settings.MAIL["CORRECTION_ADMIN"].format(
         name=name,

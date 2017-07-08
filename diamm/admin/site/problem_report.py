@@ -4,12 +4,12 @@ from diamm.models.data.person import Person
 from diamm.models.data.source import Source
 from diamm.models.data.organization import Organization
 from diamm.models.data.composition import Composition
-from django_extensions.admin import ForeignKeyAutocompleteAdmin
+from salmonella.admin import SalmonellaMixin
 from reversion.admin import VersionAdmin
 
 
 @admin.register(ProblemReport)
-class ProblemReportAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
+class ProblemReportAdmin(SalmonellaMixin, VersionAdmin):
     list_display = ('get_contributor', 'get_entity', 'created', 'accepted')
     search_fields = ('contributor__last_name',
                      'contributor__first_name',
@@ -18,9 +18,8 @@ class ProblemReportAdmin(VersionAdmin, ForeignKeyAutocompleteAdmin):
                      '=object_id')
     list_filter = ("accepted", "content_type")
 
-    related_search_fields = {
-        'contributor': ('last_name', 'first_name', 'username'),
-    }
+    salmonella_fields = ("contributor",)
+
     fields = ('content_type',
               'object_id',
               'get_entity',

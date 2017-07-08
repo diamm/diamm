@@ -28,6 +28,7 @@ class ItemInline(admin.StackedInline):
 
 @admin.register(Composition)
 class CompositionAdmin(VersionAdmin):
+    save_on_top = True
     list_display = ('title', 'get_composers', 'appears_in')
     search_fields = ('title', 'composers__composer__last_name')
     inlines = (ComposerInline, BibliographyInline, ItemInline)

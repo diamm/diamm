@@ -6,5 +6,5 @@ from django_jinja import library
 @library.render_with("website/blocks/latest_news.jinja2")
 def latest_news():
     return {
-        "news": NewsPage.objects.filter(live=True).order_by('-first_published_at')[:3]
+        "news": NewsPage.objects.filter(live=True).order_by('-first_published_at')[:4]
     }
