@@ -46,7 +46,7 @@ class ItemAdmin(SalmonellaMixin, VersionAdmin):
     list_display = ('get_source', 'get_composition', 'get_composers',
                     'folio_start', 'folio_end')
     search_fields = ("source__name", "source__identifiers__identifier", "source__shelfmark",
-                     "composition__title", "pk")
+                     "composition__title", "=source__pk")
     # list_filter = (AggregateComposerListFilter,)
     inlines = (BibliographyInline, ItemNoteInline)
     filter_horizontal = ['pages']
