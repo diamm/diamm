@@ -104,6 +104,7 @@ class SourceAdmin(SalmonellaMixin, VersionAdmin):
                BibliographyInline, SourceRelationshipInline, PagesInline)
     list_filter = (CountryListFilter, InventoryFilter)
     list_editable = ('sort_order',)
+    filter_horizontal = ['notations']
     # actions = (sort_sources,)
     salmonella_fields = ('cover_image', 'archive')
 
