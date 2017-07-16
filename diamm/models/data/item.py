@@ -5,6 +5,13 @@ from diamm.helpers.storage import OverwriteStorage
 
 
 class Item(models.Model):
+    ITEM_TITLE_HELP = """A title for this item record, ONLY if it is NOT linked to a composition. This is for
+                         supplying a name to otherwise untitled things (e.g., "blank page") or 
+                         for non-musical titles ("A Poem").
+                         
+                         Use the Source Attribution field to record variant titles for compositions.
+                 """
+
     class Meta:
         app_label = "diamm_data"
         ordering = ("source_order", "folio_start")
@@ -37,7 +44,7 @@ class Item(models.Model):
     item_title = models.CharField(max_length=1024,
                                   blank=True,
                                   null=True,
-                                  help_text="A title for this item record, ONLY if it is NOT linked to a composition.")
+                                  help_text=ITEM_TITLE_HELP)
 
     source_incipit = models.TextField(blank=True, null=True,
                                       help_text="The incipit in the source")
