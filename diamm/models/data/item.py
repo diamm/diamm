@@ -61,7 +61,7 @@ class Item(models.Model):
     page_order = models.IntegerField(default=0, blank=True, null=True)
 
     incipit = models.FileField(
-        upload_to=os.path.join(settings.MEDIA_ROOT, 'rism', 'incipits'),
+        upload_to='rism/incipits/',
         storage=OverwriteStorage(),
         blank=True, null=True
     )
