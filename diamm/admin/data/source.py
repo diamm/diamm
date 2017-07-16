@@ -9,6 +9,7 @@ from diamm.models.data.source_note import SourceNote
 from diamm.models.data.source_url import SourceURL
 from diamm.models.data.source_bibliography import SourceBibliography
 from diamm.models.data.source_relationship import SourceRelationship
+from diamm.models.data.page import Page
 from reversion.admin import VersionAdmin
 from django.utils.translation import ugettext_lazy as _
 from pagedown.widgets import AdminPagedownWidget
@@ -38,6 +39,11 @@ class NotesInline(admin.TabularInline):
     formfield_overrides = {
         models.TextField: {'widget': AdminPagedownWidget}
     }
+
+
+class PagesInline(admin.TabularInline):
+    model = Page
+    extra = 0
 
 
 class URLsInline(admin.TabularInline):
@@ -95,7 +101,7 @@ class SourceAdmin(SalmonellaMixin, VersionAdmin):
                      'archive__siglum', 'archive__city__name', 'shelfmark',
                      "=pk")
     inlines = (IdentifiersInline, NotesInline, URLsInline,
-               BibliographyInline, SourceRelationshipInline)
+               BibliographyInline, SourceRelationshipInline, PagesInline)
     list_filter = (CountryListFilter, InventoryFilter)
     list_editable = ('sort_order',)
     # actions = (sort_sources,)
