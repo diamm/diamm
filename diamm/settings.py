@@ -53,7 +53,6 @@ INSTALLED_APPS = [
     'django_jinja',
     'django_jinja.contrib._humanize',
     'pagedown',
-    # 'debug_toolbar',
 
     # wagtail config for CMS
     'wagtail.wagtailforms',
@@ -83,7 +82,6 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'wagtail.wagtailcore.middleware.SiteMiddleware',
     'wagtail.wagtailredirects.middleware.RedirectMiddleware',
