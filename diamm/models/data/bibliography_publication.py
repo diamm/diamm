@@ -1,7 +1,6 @@
 from django.db import models
 
 
-
 class BibliographyPublication(models.Model):
     """
         This class stores additional publication info about a bibliography entry.

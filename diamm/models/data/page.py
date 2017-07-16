@@ -30,7 +30,6 @@ class Page(models.Model):
         (SECONDARY, "Secondary")
     )
 
-
     class Meta:
         app_label = "diamm_data"
         ordering = ["source__shelfmark", "sort_order"]
