@@ -15,8 +15,9 @@ Including another URLconf
     3. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
 from django.conf.urls import url, include
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, RedirectView
 from django.contrib import admin
+from django.contrib.staticfiles.storage import staticfiles_storage
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.views import (
@@ -69,6 +70,10 @@ sitemaps = {
 }
 
 urlpatterns = [
+    url(r'^favicon.ico$', RedirectView.as_view(
+        url=staticfiles_storage.url('favicon.ico'),
+        permanent=False
+    ), name="favicon"),
     url(r'^search.xml$', TemplateView.as_view(template_name='opensearch.jinja2',
                                               content_type="application/opensearchdescription+xml"), name='opensearch'),
     url(r'^sitemap\.xml$', sitemap_views.index, {'sitemaps': sitemaps}),
