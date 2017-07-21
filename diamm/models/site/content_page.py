@@ -29,7 +29,6 @@ class ContentPage(Page):
 
     def get_template(self, request, *args, **kwargs):
         if self.tmpl:
-            print(os.path.relpath(self.tmpl, os.path.join(settings.BASE_DIR, 'diamm', 'templates')))
             return os.path.relpath(self.tmpl, os.path.join(settings.BASE_DIR, 'diamm', 'templates'))
         return "website/cms/content_page.jinja2"
 

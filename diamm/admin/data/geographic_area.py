@@ -1,6 +1,5 @@
 from django.contrib import admin, messages
 from django.shortcuts import render
-from django_extensions.admin import ForeignKeyAutocompleteAdmin
 from diamm.models.data.geographic_area import GeographicArea
 from reversion.admin import VersionAdmin
 from diamm.admin.forms.merge_areas import MergeAreasForm

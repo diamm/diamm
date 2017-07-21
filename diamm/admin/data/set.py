@@ -14,6 +14,7 @@ class SetBibliographyInline(admin.TabularInline):
 
 @admin.register(Set)
 class SetAdmin(VersionAdmin):
+    save_on_top = True
     list_display = ('cluster_shelfmark', 'set_type')
     list_filter = ('type',)
     search_fields = ('cluster_shelfmark', 'sources__shelfmark', 'sources__name')

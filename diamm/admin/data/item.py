@@ -6,7 +6,6 @@ from diamm.models.data.page import Page
 from diamm.models.data.item_bibliography import ItemBibliography
 from diamm.models.data.item_note import ItemNote
 from reversion.admin import VersionAdmin
-from django_extensions.admin import ForeignKeyAutocompleteAdmin
 from salmonella.admin import SalmonellaMixin
 
 
@@ -41,12 +40,13 @@ class BibliographyInline(SalmonellaMixin, admin.TabularInline):
 
 
 @admin.register(Item)
-class ItemAdmin(SalmonellaMixin, VersionAdmin, ForeignKeyAutocompleteAdmin):
+class ItemAdmin(SalmonellaMixin, VersionAdmin):
+    save_on_top = True
     form = ItemAdminForm
     list_display = ('get_source', 'get_composition', 'get_composers',
                     'folio_start', 'folio_end')
     search_fields = ("source__name", "source__identifiers__identifier", "source__shelfmark",
-                     "composition__title", "pk")
+                     "composition__title", "=source__pk")
     # list_filter = (AggregateComposerListFilter,)
     inlines = (BibliographyInline, ItemNoteInline)
     filter_horizontal = ['pages']
