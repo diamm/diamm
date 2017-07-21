@@ -3,27 +3,39 @@ from diamm.models.data.composition import Composition
 from diamm.models.data.composition_composer import CompositionComposer
 from diamm.models.data.item import Item
 from diamm.models.data.composition_bibliography import CompositionBibliography
+from diamm.models.data.composition_cycle import CompositionCycle
+from salmonella.admin import SalmonellaMixin
 from reversion.admin import VersionAdmin
 
 
-class BibliographyInline(admin.TabularInline):
-    verbose_name = "Composition Bibliography"
-    verbose_name_plural = "Composition Bibliographies"
+class BibliographyInline(SalmonellaMixin, admin.TabularInline):
+    verbose_name = "Bibliography"
+    verbose_name_plural = "Bibliographies"
     model = CompositionBibliography
     extra = 0
-    raw_id_fields = ('bibliography',)
+    salmonella_fields = ('bibliography',)
 
 
 class ComposerInline(admin.TabularInline):
+    verbose_name = "Composer"
+    verbose_name_plural = "Composers"
     model = CompositionComposer
     extra = 0
     raw_id_fields = ('composer',)
 
 
-class ItemInline(admin.StackedInline):
+class ItemInline(SalmonellaMixin, admin.StackedInline):
     model = Item
     extra = 0
-    raw_id_fields = ('source', 'composition', 'pages')
+    salmonella_fields = ('source', 'pages')
+
+
+class CycleInline(SalmonellaMixin, admin.StackedInline):
+    verbose_name = "Cycle"
+    verbose_name_plural = "Cycles"
+    model = CompositionCycle
+    extra = 0
+    salmonella_fields = ('cycle',)
 
 
 @admin.register(Composition)
@@ -31,7 +43,7 @@ class CompositionAdmin(VersionAdmin):
     save_on_top = True
     list_display = ('title', 'get_composers', 'appears_in')
     search_fields = ('title', 'composers__composer__last_name')
-    inlines = (ComposerInline, BibliographyInline, ItemInline)
+    inlines = (ComposerInline, CycleInline, BibliographyInline, ItemInline)
     list_filter = ('anonymous', 'genres')
 
     def get_composers(self, obj):
