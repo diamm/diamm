@@ -9,7 +9,7 @@ from diamm.models.data.image_note import ImageNote
 from diamm.models.data.page import Page
 from reversion.admin import VersionAdmin
 from django.utils.translation import ugettext_lazy as _
-from django.forms import TextInput, Textarea
+from django.forms import TextInput
 from django.db import models
 
 
