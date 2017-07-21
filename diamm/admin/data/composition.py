@@ -28,6 +28,7 @@ class ItemInline(SalmonellaMixin, admin.StackedInline):
     model = Item
     extra = 0
     salmonella_fields = ('source', 'pages')
+    classes = ['collapse']
 
 
 class CycleInline(SalmonellaMixin, admin.StackedInline):
