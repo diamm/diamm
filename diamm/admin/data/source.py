@@ -1,6 +1,11 @@
 from django.contrib import admin
 from django.db import models
 from django.db.models import Q
+from django.forms import TextInput, Textarea
+from django.utils.translation import ugettext_lazy as _
+from reversion.admin import VersionAdmin
+from pagedown.widgets import AdminPagedownWidget
+from salmonella.admin import SalmonellaMixin
 from rest_framework.reverse import reverse
 from diamm.models.data.geographic_area import GeographicArea
 from diamm.models.data.source import Source
@@ -10,10 +15,6 @@ from diamm.models.data.source_url import SourceURL
 from diamm.models.data.source_bibliography import SourceBibliography
 from diamm.models.data.source_relationship import SourceRelationship
 from diamm.models.data.page import Page
-from reversion.admin import VersionAdmin
-from django.utils.translation import ugettext_lazy as _
-from pagedown.widgets import AdminPagedownWidget
-from salmonella.admin import SalmonellaMixin
 
 
 class SourceRelationshipInline(SalmonellaMixin, admin.StackedInline):
@@ -25,6 +26,10 @@ class BibliographyInline(SalmonellaMixin, admin.TabularInline):
     model = SourceBibliography
     extra = 0
     salmonella_fields = ('bibliography',)
+    formfield_overrides = {
+        models.CharField: {'widget': TextInput(attrs={'size': '160'})},
+        models.TextField: {'widget': Textarea(attrs={'rows': 2, 'cols': 40})}
+    }
 
 
 class IdentifiersInline(admin.TabularInline):
