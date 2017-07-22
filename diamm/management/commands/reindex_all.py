@@ -32,7 +32,7 @@ from diamm.models.data.item_bibliography import ItemBibliography
 from diamm.serializers.search.item_bibliography import ItemBibliographySearchSerializer
 from diamm.models.data.voice import Voice
 from diamm.serializers.search.voice import VoiceSearchSerializer
-from diamm.serializers.search.composer_inventory import ComposerInventorySearchSerializer
+from diamm.serializers.search.composer_inventory import ComposerInventorySearchSerializer, FIELDS_TO_INDEX
 
 term = Terminal()
 
@@ -175,38 +175,34 @@ class Command(BaseCommand):
             'composition__pk',
             'folio_start',
             'folio_end',
-            'source_attribution'
+            'source_attribution',
+            'pk'  # item pk
         ]
-        pk = 1
         objs = Source.objects.all().order_by('pk').select_related('archive__city__parent').iterator()
 
         for source in objs:
             self.stdout.write(term.green("Indexing {0}".format(source.display_name)))
-            res = [list(o) for o in source.inventory.values_list(*fields)]
-            for o in res:
-                o.append(pk)
-                pk += 1
-
+            res = [list(o) for o in source.inventory.values_list(*FIELDS_TO_INDEX)]
             data = ComposerInventorySearchSerializer(res, many=True).data
             self.solrconn.add(data)
 
     def handle(self, *args, **kwargs):
         self.solrconn = pysolr.Solr(settings.SOLR['INDEX_SERVER'])
 
-        self._index_sources()
-        self._index_inventories()
-        self._index_archives()
-        self._index_people()
-        self._index_organizations()
-        self._index_compositions()
-        self._index_bibliography()
-        self._index_pages()
-        self._index_sets()
-        self._index_voices()
-        self._index_source_provenance()
-        self._index_source_relationship()
-        self._index_source_copyists()
-        self._index_item_bibliographies()
+        # self._index_sources()
+        # self._index_inventories()
+        # self._index_archives()
+        # self._index_people()
+        # self._index_organizations()
+        # self._index_compositions()
+        # self._index_bibliography()
+        # self._index_pages()
+        # self._index_sets()
+        # self._index_voices()
+        # self._index_source_provenance()
+        # self._index_source_relationship()
+        # self._index_source_copyists()
+        # self._index_item_bibliographies()
         self._index_composers_inventory()
 
         print("Swapping ingest and live cores")

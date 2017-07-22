@@ -1,7 +1,7 @@
+import random
 import serpy
 from diamm.serializers.serializers import ContextSerializer
 from diamm.serializers.fields import StaticField
-import time
 
 """
     An inventory by composer, where every 'composer' field is an array (possible
@@ -43,7 +43,26 @@ COMPOSITION_PK = 9
 FOLIO_START = 10
 FOLIO_END = 11
 SOURCE_ATTRIBUTION = 12
-PK = 13
+ITEM_PK = 13
+
+# These fields will be used in two places, so they are stored centrally here and then
+# imported in the reindexing signal and in the reindex_all script.
+FIELDS_TO_INDEX = [
+    'composition__composers__composer__last_name',
+    'composition__composers__composer__first_name',
+    'composition__composers__composer__pk',
+    'composition__composers__uncertain',
+    'composition__title',
+    'source_id',
+    'source__shelfmark',
+    'source__name',
+    'source__archive__siglum',
+    'composition__pk',
+    'folio_start',
+    'folio_end',
+    'source_attribution',
+    'pk'  # item pk
+]
 
 
 class ComposerInventorySearchSerializer(ContextSerializer):
@@ -60,9 +79,13 @@ class ComposerInventorySearchSerializer(ContextSerializer):
     folio_start_s = serpy.MethodField()
     folio_end_s = serpy.MethodField()
     source_attribution_s = serpy.MethodField()
+    item_i = serpy.MethodField()
 
+    # The PK for this table does not map directly on to any
+    # database entity, so we can instead generate a random integer
+    # and use that.
     def get_pk(self, obj):
-        return obj[PK]
+        return random.randrange(10000000)
 
     def get_composer_s(self, obj):
         if obj[LAST_NAME] and obj[FIRST_NAME]:
@@ -97,3 +120,6 @@ class ComposerInventorySearchSerializer(ContextSerializer):
 
     def get_source_attribution_s(self, obj):
         return obj[SOURCE_ATTRIBUTION]
+
+    def get_item_i(self, obj):
+        return obj[ITEM_PK]
