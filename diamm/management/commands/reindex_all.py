@@ -162,22 +162,6 @@ class Command(BaseCommand):
         """
         self.stdout.write(term.blue("Indexing composer inventories"))
         self.solrconn.delete(q="type:composerinventory")
-        fields = [
-            'composition__composers__composer__last_name',
-            'composition__composers__composer__first_name',
-            'composition__composers__composer__pk',
-            'composition__composers__uncertain',
-            'composition__title',
-            'source_id',
-            'source__shelfmark',
-            'source__name',
-            'source__archive__siglum',
-            'composition__pk',
-            'folio_start',
-            'folio_end',
-            'source_attribution',
-            'pk'  # item pk
-        ]
         objs = Source.objects.all().order_by('pk').select_related('archive__city__parent').iterator()
 
         for source in objs:
@@ -189,20 +173,20 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         self.solrconn = pysolr.Solr(settings.SOLR['INDEX_SERVER'])
 
-        # self._index_sources()
-        # self._index_inventories()
-        # self._index_archives()
-        # self._index_people()
-        # self._index_organizations()
-        # self._index_compositions()
-        # self._index_bibliography()
-        # self._index_pages()
-        # self._index_sets()
-        # self._index_voices()
-        # self._index_source_provenance()
-        # self._index_source_relationship()
-        # self._index_source_copyists()
-        # self._index_item_bibliographies()
+        self._index_sources()
+        self._index_inventories()
+        self._index_archives()
+        self._index_people()
+        self._index_organizations()
+        self._index_compositions()
+        self._index_bibliography()
+        self._index_pages()
+        self._index_sets()
+        self._index_voices()
+        self._index_source_provenance()
+        self._index_source_relationship()
+        self._index_source_copyists()
+        self._index_item_bibliographies()
         self._index_composers_inventory()
 
         print("Swapping ingest and live cores")
