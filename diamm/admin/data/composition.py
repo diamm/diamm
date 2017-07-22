@@ -16,12 +16,12 @@ class BibliographyInline(SalmonellaMixin, admin.TabularInline):
     salmonella_fields = ('bibliography',)
 
 
-class ComposerInline(admin.TabularInline):
+class ComposerInline(SalmonellaMixin, admin.TabularInline):
     verbose_name = "Composer"
     verbose_name_plural = "Composers"
     model = CompositionComposer
     extra = 0
-    raw_id_fields = ('composer',)
+    salmonella_fields = ('composer',)
 
 
 class ItemInline(SalmonellaMixin, admin.StackedInline):
