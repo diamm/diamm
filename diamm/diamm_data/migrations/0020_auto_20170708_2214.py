@@ -8,7 +8,8 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('diamm_data', '0019_auto_20170623_2305'),
+        # ('diamm_data', '0019_auto_20170623_2305'),
+        ('diamm_data', '0020_auto_20170609_1636')
     ]
 
     operations = [
@@ -18,3 +19,4 @@ class Migration(migrations.Migration):
             field=models.CharField(blank=True, max_length=64, null=True),
         ),
     ]
+
