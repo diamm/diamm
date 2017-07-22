@@ -54,9 +54,26 @@ const ImagesMenuLink = ({authenticated, active, route, title, show=true}) =>
     {
         return (
             <li className="unauthenticated-image-link">
-                <a href={ `/login/?next=${window.location.pathname}` }>Images (Log in to view)</a>
+                <a href={ `/login/?next=${window.location.pathname}%23/images` }>Images (Log in to view)</a>
             </li>
         );
+    }
+
+    return <MenuLink active={ active } route={ route } title={ title } />;
+};
+
+const ContributeMenuLink = ({authenticated, active, route, title, show=true}) =>
+{
+    if (!show)
+        return null;
+
+    if (!authenticated)
+    {
+        return (
+            <li className="unauthenticated-contribute-link">
+                <a href={ `/login/?next=${window.location.pathname}%23/corrections` }>Contribute a Change</a>
+            </li>
+        )
     }
 
     return <MenuLink active={ active } route={ route } title={ title } />;
@@ -169,11 +186,11 @@ class App extends React.Component
                             <div className="level-right">
                                 <div className="tabs">
                                     <ul>
-                                        <MenuLink
+                                        <ContributeMenuLink
+                                            authenticated={ (this.props.user !== null && this.props.user.isAuthenticated) }
                                             active={ isActive(CORRECTIONS_ROUTE, true) }
                                             route={ CORRECTIONS_ROUTE }
                                             title="Contribute a Change"
-                                            show={ this.props.userIsAuthenticated }
                                         />
                                         <ExternalMenuLink
                                             active={ false }
