@@ -35,6 +35,8 @@ class ItemNoteInline(admin.TabularInline):
 
 
 class BibliographyInline(SalmonellaMixin, admin.TabularInline):
+    verbose_name_plural = "Bibliography"
+    verbose_name = "Bibliography"
     model = ItemBibliography
     extra = 0
     salmonella_fields = ('bibliography',)
@@ -55,7 +57,7 @@ class ItemAdmin(SalmonellaMixin, VersionAdmin):
     search_fields = ("source__name", "source__identifiers__identifier", "source__shelfmark",
                      "composition__title", "=source__pk")
     # list_filter = (AggregateComposerListFilter,)
-    inlines = (BibliographyInline, ItemNoteInline, ItemComposerInline)
+    inlines = (ItemNoteInline, ItemComposerInline, BibliographyInline)
     filter_horizontal = ['pages']
     # exclude = ("pages",)
     salmonella_fields = ('source', 'composition')
