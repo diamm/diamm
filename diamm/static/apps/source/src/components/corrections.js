@@ -52,11 +52,14 @@ class Correction extends React.Component
                         rows="7"
                         value={ this.props.noteContents }
                         className="textarea"
+                        disabled={ this.props.submitting }
                     />
                     <p className="control is-pulled-right">
                         <button
+                            ref="submitButton"
                             className="button is-primary"
                             onClick={ () => this.onSubmit() }
+                            disabled={ this.props.submitting }
                         >
                             Submit
                         </button>
@@ -73,7 +76,8 @@ function mapStateToProps (state)
         sourceTitle: state.source.display_name,
         sourcePK: state.source.pk,
         noteContents: state.corrections.noteContents,
-        submitted: state.corrections.submitted
+        submitted: state.corrections.submitted,
+        submitting: state.corrections.submitting
     };
 }
 

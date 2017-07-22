@@ -2,6 +2,7 @@ import {
     CORRECTION_REPORT_SUBMITTED,
     UPDATE_CORRECTION_REPORT_TEXT,
     SERVER_BASE_URL,
+    CORRECTION_REPORT_SUBMITTING
 } from "../constants";
 import Cookie from "js-cookie";
 import {
@@ -21,6 +22,10 @@ export function submitCorrectionReport (text, sourceId)
 {
     return (dispatch) =>
     {
+        dispatch({
+            type: CORRECTION_REPORT_SUBMITTING
+        });
+
         let url = `${SERVER_BASE_URL}${CORRECTIONS_ROUTE}/`;
         let csrftoken = Cookie.get('csrftoken');
         return fetch(url, {
