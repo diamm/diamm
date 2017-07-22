@@ -1,9 +1,12 @@
-from django.contrib import admin
+from django.contrib import admin, messages
+from django.shortcuts import render
 from diamm.models.data.composition import Composition
 from diamm.models.data.composition_composer import CompositionComposer
 from diamm.models.data.item import Item
 from diamm.models.data.composition_bibliography import CompositionBibliography
 from diamm.models.data.composition_cycle import CompositionCycle
+from diamm.admin.forms.merge_compositions import MergeCompositionsForm
+from diamm.admin.merge_models import merge
 from salmonella.admin import SalmonellaMixin
 from reversion.admin import VersionAdmin
 
@@ -46,6 +49,7 @@ class CompositionAdmin(VersionAdmin):
     search_fields = ('title', 'composers__composer__last_name')
     inlines = (ComposerInline, CycleInline, BibliographyInline, ItemInline)
     list_filter = ('anonymous', 'genres')
+    actions = ["merge_compositions_action"]
 
     def get_composers(self, obj):
         c = "; ".join([c.composer.full_name for c in obj.composers.all()])
@@ -67,3 +71,38 @@ class CompositionAdmin(VersionAdmin):
         return "".join(sources)
     appears_in.short_descriptino = "Appears in"
     appears_in.allow_tags = True
+
+    def merge_compositions_action(self, request, queryset):
+        if 'do_action' in request.POST:
+            form = MergeCompositionsForm(request.POST)
+
+            if form.is_valid():
+                keep_old = form.cleaned_data['keep_old']
+                target = queryset.first()
+                remainder = list(queryset[1:])
+                merged = merge(target, remainder, keep_old=keep_old)
+
+                # Trigger saves for solr
+                # for relationship in merged.
+                for relationship in merged.composers.all():
+                    relationship.save()
+
+                for relationship in merged.sources.all():
+                    relationship.save()
+
+                for relationship in merged.bibliography.all():
+                    relationship.save()
+
+                messages.success(request, "Objects successfully merged")
+                return
+            else:
+                messages.error(request, "There was an error merging these compositions")
+        else:
+            form = MergeCompositionsForm()
+
+        return render(request,
+                      'admin/composition/merge_compositions.html', {
+                        'objects': queryset,
+                        'form': form
+                      })
+    merge_compositions_action.short_description = "Merge Compositions"
