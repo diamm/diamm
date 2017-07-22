@@ -13,9 +13,9 @@ class SourceInline(admin.TabularInline):
 
 
 class AuthorsInline(SalmonellaMixin, admin.TabularInline):
-    salmonella_fields = ('bibliography_author',)
     model = BibliographyAuthorRole
     extra = 0
+    salmonella_fields = ('bibliography_author',)
 
 
 class PublicationInline(admin.TabularInline):

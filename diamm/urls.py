@@ -15,15 +15,15 @@ Including another URLconf
     3. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
 from django.conf.urls import url, include
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, RedirectView
 from django.contrib import admin
+from django.contrib.staticfiles.storage import staticfiles_storage
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.views import (
     password_reset, password_reset_done, password_reset_confirm, password_reset_complete,
     password_change, password_change_done, login, logout
 )
-from django.contrib.sitemaps.views import sitemap
 from django_jinja import views as jinja_views
 
 from diamm.views.auth import CreateAccount
@@ -55,6 +55,7 @@ from wagtail.wagtailcore import urls as wagtail_urls
 from django.contrib.sitemaps import views as sitemap_views
 from diamm.sitemaps.source_sitemap import SourceSitemap
 from diamm.sitemaps.static_sitemap import StaticSitemap
+from diamm.sitemaps.archive_sitemap import ArchiveSitemap
 
 handler404 = jinja_views.PageNotFound.as_view()
 handler403 = jinja_views.PermissionDenied.as_view()
@@ -64,10 +65,15 @@ handler500 = jinja_views.ServerError.as_view()
 
 sitemaps = {
     "static": StaticSitemap(),
-    "source": SourceSitemap()
+    "source": SourceSitemap(),
+    "archive": ArchiveSitemap()
 }
 
 urlpatterns = [
+    url(r'^favicon.ico$', RedirectView.as_view(
+        url=staticfiles_storage.url('favicon.ico'),
+        permanent=False
+    ), name="favicon"),
     url(r'^search.xml$', TemplateView.as_view(template_name='opensearch.jinja2',
                                               content_type="application/opensearchdescription+xml"), name='opensearch'),
     url(r'^sitemap\.xml$', sitemap_views.index, {'sitemaps': sitemaps}),

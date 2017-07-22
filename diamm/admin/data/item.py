@@ -5,6 +5,7 @@ from diamm.models.data.item import Item
 from diamm.models.data.page import Page
 from diamm.models.data.item_bibliography import ItemBibliography
 from diamm.models.data.item_note import ItemNote
+from diamm.models.data.item_composer import ItemComposer
 from reversion.admin import VersionAdmin
 from salmonella.admin import SalmonellaMixin
 
@@ -39,6 +40,12 @@ class BibliographyInline(SalmonellaMixin, admin.TabularInline):
     salmonella_fields = ('bibliography',)
 
 
+class ItemComposerInline(SalmonellaMixin, admin.TabularInline):
+    model = ItemComposer
+    extra = 0
+    salmonella_fields = ('composer',)
+
+
 @admin.register(Item)
 class ItemAdmin(SalmonellaMixin, VersionAdmin):
     save_on_top = True
@@ -48,7 +55,7 @@ class ItemAdmin(SalmonellaMixin, VersionAdmin):
     search_fields = ("source__name", "source__identifiers__identifier", "source__shelfmark",
                      "composition__title", "=source__pk")
     # list_filter = (AggregateComposerListFilter,)
-    inlines = (BibliographyInline, ItemNoteInline)
+    inlines = (BibliographyInline, ItemNoteInline, ItemComposerInline)
     filter_horizontal = ['pages']
     # exclude = ("pages",)
     salmonella_fields = ('source', 'composition')

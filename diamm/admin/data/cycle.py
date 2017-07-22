@@ -7,6 +7,8 @@ from salmonella.admin import SalmonellaMixin
 
 class CompositionCycleInline(SalmonellaMixin, admin.TabularInline):
     model = CompositionCycle
+    verbose_name = "Composition"
+    verbose_name_plural = "Compositions"
     extra = 0
     salmonella_fields = ('composition',)
 

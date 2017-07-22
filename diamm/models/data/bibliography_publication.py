@@ -1,7 +1,6 @@
 from django.db import models
 
 
-
 class BibliographyPublication(models.Model):
     """
         This class stores additional publication info about a bibliography entry.
@@ -31,6 +30,7 @@ class BibliographyPublication(models.Model):
     B_FESTSCHRIFT_FOR = 12
     B_PLACE_PUBLICATION = 13
     B_NUMBER_OF_VOLUMES = 14
+    B_INTL_NUM = 15
 
 
     PUBLICATION_INFO_TYPE = (
@@ -46,7 +46,8 @@ class BibliographyPublication(models.Model):
         (B_TRANSLATOR, "Translator Statement"),
         (B_FESTSCHRIFT_FOR, "Festschrift Dedicatee"),
         (B_PLACE_PUBLICATION, "Place of Publication"),
-        (B_NUMBER_OF_VOLUMES, "Number of Volumes in Series")
+        (B_NUMBER_OF_VOLUMES, "Number of Volumes in Series"),
+        (B_INTL_NUM, "ISBN/ISSN/ISMN")
     )
 
     entry = models.CharField(max_length=2048)

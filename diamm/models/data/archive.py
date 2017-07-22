@@ -33,7 +33,7 @@ class Archive(models.Model):
     website = models.CharField(max_length=1024, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
     logo = models.FileField(
-            upload_to=os.path.join(settings.MEDIA_ROOT, 'archives'),
+            upload_to='archives/',
             storage=OverwriteStorage(),
             blank=True, null=True
     )

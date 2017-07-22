@@ -40,6 +40,7 @@ class ProblemReport(models.Model):
     record = GenericForeignKey()
 
     note = models.TextField()
+    internal_note = models.TextField(blank=True, null=True, help_text="DIAMM Staff notes")
 
     # NB: To be filled out by DIAMM staff and used to build the contributions list for each record.
     accepted = models.BooleanField(default=False, help_text="If the change has been accepted as substantive by DIAMM staff, check this box. This will add the record to the linked source's Contributors area.")

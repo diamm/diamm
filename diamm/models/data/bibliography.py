@@ -18,4 +18,7 @@ class Bibliography(models.Model):
     updated = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return "{0}".format(self.abbreviation)
+        if self.authors.count() > 0:
+            auth = ", ".join(self.authors.values_list('bibliography_author__last_name', flat=True))
+            return "{0}: {1}".format(auth, self.title)
+        return "{0}".format(self.title)

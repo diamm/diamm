@@ -20,7 +20,6 @@ class PageAdmin(SalmonellaMixin, VersionAdmin):
     list_editable = ('numeration', 'page_type', 'sort_order')
     inlines = [ImageInline]
 
-
     def get_source(self, obj):
         return "{0}".format(obj.source.display_name)
     get_source.short_description = "source"

@@ -30,7 +30,6 @@ class Page(models.Model):
         (SECONDARY, "Secondary")
     )
 
-
     class Meta:
         app_label = "diamm_data"
         ordering = ["source__shelfmark", "sort_order"]
@@ -44,8 +43,8 @@ class Page(models.Model):
     legacy_id = models.CharField(max_length=64, blank=True, null=True)
 
     # This may be refactored to allow for multiple page sort orders, but for now we'll stick with one
-    sort_order = models.IntegerField(default=0)
-    page_type = models.IntegerField(choices=PAGE_TYPE_CHOICES, blank=True, null=True)
+    sort_order = models.IntegerField(default=0, blank=True, null=True)
+    page_type = models.IntegerField(choices=PAGE_TYPE_CHOICES, default=PAGE, blank=True, null=True)
 
     def __str__(self):
         return "{0}".format(self.numeration)
