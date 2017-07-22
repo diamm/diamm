@@ -42,3 +42,6 @@ class BibliographyAuthorRole(models.Model):
                                            related_name="authors")
     role = models.IntegerField(choices=ROLES)
     position = models.IntegerField(default=1, help_text="""The position of this author in the author list.""")
+
+    def __str__(self):
+        return "{0}".format(self.bibliography_author)
