@@ -6,7 +6,9 @@ import {
     UPDATE_PRIVATE_COMMENT_TEXT,
     UPDATE_PUBLIC_COMMENT_TEXT,
     CLEAR_PRIVATE_COMMENT_TEXT,
-    CLEAR_PUBLIC_COMMENT_TEXT
+    CLEAR_PUBLIC_COMMENT_TEXT,
+    COMMENT_SUBMITTED,
+    COMMENT_SUBMITTING
 } from "../constants"
 import Cookie from "js-cookie";
 
@@ -51,6 +53,9 @@ export function postComment (comment, privacy, objtype, objpk)
 {
     return (dispatch) =>
     {
+        dispatch({
+            type: COMMENT_SUBMITTING
+        });
         let url = `${SERVER_BASE_URL}${COMMENTARY_ROUTE}/`;
         let csrftoken = Cookie.get('csrftoken');
 
@@ -79,6 +84,10 @@ export function postComment (comment, privacy, objtype, objpk)
                         type: CLEAR_PRIVATE_COMMENT_TEXT
                     })
             }
+
+            dispatch({
+                type: COMMENT_SUBMITTED
+            });
 
             dispatch(
                 fetchCommentary(objpk, objtype)

@@ -52,6 +52,7 @@ class Commentary extends React.Component
                             rows="7"
                             value={ this.props.commentText }
                             className="textarea"
+                            disabled={ this.props.submitting }
                         />
                     </p>
                     <p className="control is-pulled-right">
@@ -63,6 +64,7 @@ class Commentary extends React.Component
                                 'source',
                                 this.props.sourceId)
                             }
+                            disabled={ this.props.submitting }
                         >
                             Post a { this.props.commentaryType } comment
                         </button>
@@ -113,7 +115,9 @@ function mapStateToProps (state)
         publicComments: state.commentary.public,
         privateComments: state.commentary.private,
         sourceId: state.source.pk,
-        isAuthenticated: state.user.isAuthenticated
+        isAuthenticated: state.user.isAuthenticated,
+        submitted: state.commentary.submitted,
+        submitting: state.commentary.submitting
     }
 }
 
