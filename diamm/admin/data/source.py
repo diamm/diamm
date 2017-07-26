@@ -7,6 +7,7 @@ from reversion.admin import VersionAdmin
 from pagedown.widgets import AdminPagedownWidget
 from salmonella.admin import SalmonellaMixin
 from rest_framework.reverse import reverse
+from diamm.models.data.item import Item
 from diamm.models.data.geographic_area import GeographicArea
 from diamm.models.data.source import Source
 from diamm.models.data.source_identifier import SourceIdentifier
@@ -54,6 +55,19 @@ class PagesInline(admin.TabularInline):
 class URLsInline(admin.TabularInline):
     model = SourceURL
     extra = 0
+
+
+class ItemInline(admin.TabularInline):
+    model = Item
+    extra = 0
+    classes = ('collapse',)
+    # salmonella_fields = ('composition', 'pages')
+    fields = ('id', 'composition', 'get_composers', 'source_order',)
+    readonly_fields = ('id', 'composition', 'get_composers')
+
+    def get_composers(self, obj):
+        if obj.composition:
+            return "{0}".format(obj.composition.composer_names)
 
 
 class InventoryFilter(admin.SimpleListFilter):
@@ -106,7 +120,7 @@ class SourceAdmin(SalmonellaMixin, VersionAdmin):
                      'archive__siglum', 'archive__city__name', 'shelfmark',
                      "=pk")
     inlines = (IdentifiersInline, NotesInline, URLsInline,
-               BibliographyInline, SourceRelationshipInline, PagesInline)
+               BibliographyInline, SourceRelationshipInline, PagesInline, ItemInline)
     list_filter = (CountryListFilter, InventoryFilter)
     list_editable = ('sort_order',)
     filter_horizontal = ['notations']
