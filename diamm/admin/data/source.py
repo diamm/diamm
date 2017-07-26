@@ -25,6 +25,8 @@ class SourceRelationshipInline(SalmonellaMixin, admin.StackedInline):
 
 class BibliographyInline(SalmonellaMixin, admin.TabularInline):
     model = SourceBibliography
+    verbose_name_plural = "Bibliography Entries"
+    verbose_name = "Bibliography Entry"
     extra = 0
     salmonella_fields = ('bibliography',)
     formfield_overrides = {
@@ -50,6 +52,7 @@ class NotesInline(admin.TabularInline):
 class PagesInline(admin.TabularInline):
     model = Page
     extra = 0
+    classes = ('collapse',)
 
 
 class URLsInline(admin.TabularInline):
