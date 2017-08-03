@@ -1,6 +1,6 @@
 import pysolr
 from django.dispatch import receiver
-from django.db.models.signals import post_save, post_delete
+from django.db.models.signals import post_save, post_delete, m2m_changed
 from django.conf import settings
 from diamm.models.data.item import Item
 from diamm.helpers.solr_helpers import solr_delete, solr_index
@@ -62,3 +62,12 @@ def delete_item(sender, instance, **kwargs):
         solr_index(CompositionSearchSerializer, instance.composition)
 
     __composer_inventory_delete(instance)
+
+
+# If pages have been added / removed from this item, catch them and re-index the item.
+@receiver(m2m_changed, sender=Item.pages.through)
+def index_item_page_relationships(sender, instance, action, reverse, model, pk_set, **kwargs):
+    if action in ('post_add', 'post_remove'):
+        solr_index(ItemSearchSerializer, instance)
+
+

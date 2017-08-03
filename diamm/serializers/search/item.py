@@ -85,18 +85,12 @@ class ItemSearchSerializer(serpy.Serializer):
         return obj.__class__.__name__.lower()
 
     def get_pages_ii(self, obj):
-        if obj.pages.count() > 0:
-            return list(obj.pages.values_list('pk', flat=True))
-        else:
-            return []
+        return list(obj.pages.values_list('pk', flat=True))
 
     def get_pages_ssni(self, obj):
-        if obj.pages.count() > 0:
-            pages = obj.pages.values_list('pk', 'numeration')
-            page_strs = ["{0}|{1}".format(o[0], o[1]) for o in pages]
-            return page_strs
-        else:
-            return []
+        pages = obj.pages.values_list('pk', 'numeration')
+        page_strs = ["{0}|{1}".format(o[0], o[1]) for o in pages]
+        return page_strs
 
     def get_composition_i(self, obj):
         if obj.composition:
