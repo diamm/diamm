@@ -12,7 +12,6 @@ from diamm.helpers.solr_helpers import solr_index, solr_index_many
 # in Solr, we don't need to have a delete method.
 @receiver(post_save, sender=GeographicArea)
 def index_geo_area(sender, instance, created, **kwargs):
-    print('reindexing stuff')
     solr_index_many(ArchiveSearchSerializer, instance.archives.all())
     solr_index_many(OrganizationSearchSerializer, instance.organizations.all())
     # This iterates through the SourceProvenance records, so we need to grab the source from each of them
