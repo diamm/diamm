@@ -24,6 +24,7 @@ class ProblemReportAdmin(SalmonellaMixin, VersionAdmin):
               'object_id',
               'get_entity',
               'note',
+              'internal_note',
               'accepted',
               'summary',
               'credit',

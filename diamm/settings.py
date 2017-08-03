@@ -334,7 +334,26 @@ The Digital Image Archive of Medieval Music
 https://www.diamm.ac.uk
 diamm@music.ox.ac.uk
 
-    """
+    """,
+    "ISSUE_RESOLVED": """
+Dear {name},
+
+The issue with "{record}" you reported has been marked as fixed. A summary of your contribution will appear on the record as follows:
+
+{summary}
+
+Thank you for your contribution.
+
+---
+Your original report:
+
+{original_report}
+
+---
+The Digital Image Archive of Medieval Music
+https://www.diamm.ac.uk
+diamm@music.ox.ac.uk 
+"""
 }
 
 WAGTAIL_SITE_NAME = 'Digital Image Archive of Medieval Music'
