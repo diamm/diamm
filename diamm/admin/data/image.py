@@ -115,7 +115,8 @@ class ImageAdmin(VersionAdmin):
     inlines = (ImageNoteInline,)
     actions = (refetch_iiif_info,)
     formfield_overrides = {
-        models.CharField: {'widget': TextInput(attrs={'size': '160'})},
+        models.CharField: {'widget': TextInput(attrs={'size': '80'})},
+        models.URLField: {'widget': TextInput(attrs={'size': '160'})}
     }
 
     def get_type(self, obj):
