@@ -103,17 +103,48 @@ def refetch_iiif_info(modeladmin, request, queryset):
 refetch_iiif_info.short_description = "Re-Fetch IIIF Image Info"
 
 
+def make_selected_images_public(modeladmin, request, queryset):
+    queryset.update(public=True)
+make_selected_images_public.short_description = "Make selected images public"
+
+
+def make_selected_images_private(modeladmin, request, queryset):
+    queryset.update(public=False)
+make_selected_images_private.short_description = "Make selected images private"
+
+
 @admin.register(Image)
 class ImageAdmin(VersionAdmin):
     save_on_top = True
     form = ImageAdminForm
-    list_display = ('pk', 'legacy_filename', 'location', 'get_type', 'public')
-    list_filter = ("type__name", ImageSourceListFilter, IIIFDataListFilter, 'public')
-    # filter_horizontal = ('items',)
-    list_editable = ('legacy_filename', 'location')
-    search_fields = ('legacy_filename', '=page__source__id', 'page__source__shelfmark', 'page__source__name')
+    list_display = ('pk', 'public', 'legacy_filename', 'location', 'get_type')
+    list_filter = (
+        "type__name",
+        ImageSourceListFilter,
+        IIIFDataListFilter,
+        'public'
+    )
+
+    list_editable = (
+        'legacy_filename',
+        'location'
+    )
+
+    search_fields = (
+        'legacy_filename',
+        '=page__source__id',
+        'page__source__shelfmark',
+        'page__source__name'
+    )
+
     inlines = (ImageNoteInline,)
-    actions = (refetch_iiif_info,)
+
+    actions = (
+        refetch_iiif_info,
+        make_selected_images_public,
+        make_selected_images_private
+    )
+
     formfield_overrides = {
         models.CharField: {'widget': TextInput(attrs={'size': '80'})},
         models.URLField: {'widget': TextInput(attrs={'size': '160'})}
