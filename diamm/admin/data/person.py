@@ -121,14 +121,10 @@ class PersonAdmin(VersionAdmin):
         return qset
 
     def merge_people_action(self, request, queryset):
-        print('merging people')
-
         if 'do_action' in request.POST:
-            print('do action called')
             form = MergePeopleForm(request.POST)
 
             if form.is_valid():
-                print('form is valid')
                 keep_old = form.cleaned_data['keep_old']
                 target = queryset.first()
                 remainder = list(queryset[1:])
@@ -148,17 +144,12 @@ class PersonAdmin(VersionAdmin):
                     sprovenance.save()
 
                 messages.success(request, "Objects successfully merged.")
-                print('returning in form is valid.')
                 return
             else:
                 messages.error(request, "There was an error")
-                print('form is not valid')
-
         else:
-            print('not in post')
             form = MergePeopleForm()
 
-        print('returning render')
         return render(request,
                       'admin/person/merge_people.html', {
                           'objects': queryset,
