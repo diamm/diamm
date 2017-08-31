@@ -69,7 +69,7 @@ class CompositionAdmin(VersionAdmin):
                                                                                                          'source__archive__siglum',
                                                                                                          'source__shelfmark')]
         return "".join(sources)
-    appears_in.short_descriptino = "Appears in"
+    appears_in.short_description = "Appears in"
     appears_in.allow_tags = True
 
     def merge_compositions_action(self, request, queryset):
