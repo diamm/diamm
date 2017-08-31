@@ -84,6 +84,12 @@ class ItemInline(admin.TabularInline):
         return '<a href="{0}">{1}</a>'.format(change_url, obj.pk)
     link_id_field.allow_tags = True
 
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
 
 class InventoryFilter(admin.SimpleListFilter):
     title = _('Inventory')
