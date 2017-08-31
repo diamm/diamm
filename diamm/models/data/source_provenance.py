@@ -39,3 +39,9 @@ class SourceProvenance(models.Model):
     object_id = models.PositiveIntegerField(blank=True, null=True)
     entity = GenericForeignKey()
     entity_uncertain = models.BooleanField(default=False)
+
+    def __str__(self):
+        source_name = self.source.display_name
+        places = filter(None, [self.city, self.country, self.protectorate, self.region])
+        places = [str(x) for x in places]
+        return "{0} ({1})".format(source_name, ", ".join(places))
