@@ -16,6 +16,8 @@ class Page(models.Model):
     SCROLL = 8
     ADDITIONAL = 9
     SECONDARY = 10
+    PASTEDOWN = 11
+    OFFSET = 12
 
     PAGE_TYPE_CHOICES = (
         (PAGE, "Page"),
@@ -27,6 +29,8 @@ class Page(models.Model):
         (FRAGMENT, "Fragment(s)"),
         (SCROLL, "Scroll"),
         (ADDITIONAL, "Additional"),
+        (PASTEDOWN, "Pastedown"),
+        (OFFSET, "Offset"),
         (SECONDARY, "Secondary")
     )
 

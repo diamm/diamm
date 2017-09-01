@@ -21,6 +21,7 @@ from diamm.models.data.source_note import SourceNote
 from diamm.models.data.source_url import SourceURL
 from diamm.models.data.source_bibliography import SourceBibliography
 from diamm.models.data.source_relationship import SourceRelationship
+from diamm.models.data.source_provenance import SourceProvenance
 from diamm.models.data.page import Page
 from diamm.signals.item_signals import index_item, delete_item
 
@@ -28,6 +29,13 @@ from diamm.signals.item_signals import index_item, delete_item
 class SourceRelationshipInline(SalmonellaMixin, admin.StackedInline):
     model = SourceRelationship
     extra = 0
+
+
+class SourceProvenanceInline(SalmonellaMixin, admin.StackedInline):
+    model = SourceProvenance
+    extra = 0
+    verbose_name = "Provenance"
+    verbose_name_plural = "Provenance"
 
 
 class BibliographyInline(SalmonellaMixin, admin.TabularInline):
@@ -84,6 +92,12 @@ class ItemInline(admin.TabularInline):
         return '<a href="{0}">{1}</a>'.format(change_url, obj.pk)
     link_id_field.allow_tags = True
 
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
 
 class InventoryFilter(admin.SimpleListFilter):
     title = _('Inventory')
@@ -135,7 +149,7 @@ class SourceAdmin(SalmonellaMixin, VersionAdmin):
                      'archive__siglum', 'archive__city__name', 'shelfmark',
                      "=pk")
     inlines = (IdentifiersInline, NotesInline, URLsInline,
-               BibliographyInline, SourceRelationshipInline, PagesInline, ItemInline)
+               BibliographyInline, SourceRelationshipInline, SourceProvenanceInline, PagesInline, ItemInline)
     list_filter = (CountryListFilter, InventoryFilter)
     list_editable = ('sort_order',)
     filter_horizontal = ['notations']
