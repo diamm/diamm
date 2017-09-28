@@ -104,7 +104,7 @@ class ComposerInventorySearchSerializer(ContextSerializer):
         return obj[SOURCE_ID]
 
     def get_uncertain_b(self, obj):
-        return obj[UNCERTAIN]
+        return obj[UNCERTAIN] is True
 
     def get_composition_s(self, obj):
         return obj[COMPOSITION_TITLE]
