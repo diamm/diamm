@@ -9,12 +9,16 @@
         <div class="column">
             <h1 class="title is-2">{{ content.title }}</h1>
             <h3 class="subtitle">
-                {% for composer in content.composers %}
-                    <a href="{{ composer.url }}">{{ composer.full_name }} </a>
-                    {% if composer.uncertain %}
-                        (uncertain)
-                    {% endif %}
-                {% endfor %}
+                {% if content.composers %}
+                    {% for composer in content.composers %}
+                        <a href="{{ composer.url }}">{{ composer.full_name }} </a>
+                        {% if composer.uncertain %}
+                            (uncertain)
+                        {% endif %}
+                    {% endfor %}
+                {% elif content.anonymous %}
+                    Anonymous
+                {% endif %}
             </h3>
             {% if content.genres %}
                 <p>

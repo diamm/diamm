@@ -94,6 +94,10 @@ class CompositionComposerSerializer(ContextSerializer):
 
 
 class CompositionDetailSerializer(ContextSerializer):
+    anonymous = serpy.BoolField(
+        attr="anonymous",
+        required=False
+    )
     composers = serpy.MethodField()
     sources = serpy.MethodField()
     type = serpy.MethodField()
