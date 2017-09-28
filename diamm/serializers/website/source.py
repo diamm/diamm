@@ -21,7 +21,8 @@ class SourceCatalogueEntrySerializer(ContextSerializer):
 class SourceCopyistSerializer(ContextDictSerializer):
     copyist = serpy.MethodField()
     uncertain = serpy.BoolField(
-        attr="uncertain_b"
+        attr="uncertain_b",
+        required=False
     )
     type = serpy.StrField(
         attr="type"
@@ -43,7 +44,8 @@ class SourceCopyistSerializer(ContextDictSerializer):
 class SourceRelationshipSerializer(ContextDictSerializer):
     related_entity = serpy.MethodField()
     uncertain = serpy.BoolField(
-        attr="uncertain_b"
+        attr="uncertain_b",
+        required=False
     )
     relationship_type = serpy.StrField(
         attr="relationship_type_s"
