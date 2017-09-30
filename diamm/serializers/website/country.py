@@ -8,7 +8,7 @@ class CountryStateSerializer(ContextSerializer):
     name = serpy.StrField()
 
     def get_url(self, obj):
-        return reverse("country-detail", kwargs={"pk": obj.id}, request=self.context['request'])
+        return reverse("region-detail", kwargs={"pk": obj.id}, request=self.context['request'])
 
 
 class CountryRegionSerializer(ContextSerializer):
