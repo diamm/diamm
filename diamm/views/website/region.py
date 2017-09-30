@@ -8,7 +8,7 @@ from diamm.renderers.html_renderer import HTMLRenderer
 
 class RegionDetail(generics.RetrieveAPIView):
     template_name = "website/region/region_detail.jinja2"
-    queryset = GeographicArea.objects.filter(Q(type=GeographicArea.REGION))
+    queryset = GeographicArea.objects.filter(Q(type=GeographicArea.REGION) | Q(type=GeographicArea.STATE))
     serializer_class = RegionDetailSerializer
     renderer_classes = (HTMLRenderer, renderers.JSONRenderer)
 
