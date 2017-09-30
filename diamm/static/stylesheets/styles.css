@@ -9439,7 +9439,6 @@ tr.selected {
 }
 
 .source-details th, .source-details td {
-  border-bottom: none;
   padding: 3px;
 }
 
