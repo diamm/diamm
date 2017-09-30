@@ -8,18 +8,16 @@
     <div class="columns">
         <div class="column">
             <h2 class="title is-3">{{ content.name }}</h2>
+            {% if content.location %}
+            <h3 class="subtitle is-4"><a href="{{ content.location.url }}">{{ content.location.name }}</a>{{ ", {0}".format(content.location.parent) if content.location.parent }}
+            </h3>
+            {% endif %}
         </div>
     </div>
     <div class="columns">
         <div class="column">
             <table class="table">
                 <tbody>
-                    {% if content.location %}
-                    <tr>
-                        <th>Location</th>
-                        <td><a href="{{ content.location.url }}">{{ content.location.name }}</a></td>
-                    </tr>
-                    {% endif %}
                     {% if content.source_provenance %}
                     <tr>
                         <th>Provenance Entries</th>

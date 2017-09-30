@@ -12,7 +12,8 @@
     </div>
     <div class="columns">
         <div class="column">
-            <table class="table">
+            <p>Use this page to browse countries, cities, states, and regions in the DIAMM database.</p>
+            <table class="table is-narrow">
                 <thead>
                     <tr>
                         <th>Country</th>
@@ -28,7 +29,7 @@
                             <a href="{{ country.url }}">{{ country.name }}</a>
                         </td>
                         <td>
-                            <table class="table">
+                            <table class="table is-narrow">
                                 <tbody>
                                     {% for city in country.cities %}
                                         <tr>
@@ -42,7 +43,7 @@
                         </td>
                         <td>
                             {% if country.states %}
-                            <table class="table">
+                            <table class="table is-narrow">
                                 <tbody>
                                 {% for state in country.states %}
                                 <tr>
@@ -57,7 +58,7 @@
                         </td>
                         <td>
                             {% if country.regions %}
-                            <table class="table">
+                            <table class="table is-narrow">
                                 <tbody>
                                     {% for region in country.regions %}
                                     <tr>

@@ -9,6 +9,9 @@ class OrganizationLocationSerializer(ContextSerializer):
     name = serpy.StrField(
         attr='name'
     )
+    parent = serpy.StrField(
+        attr="parent"
+    )
 
     def get_url(self, obj):
         view_type = None

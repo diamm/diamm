@@ -8,14 +8,14 @@ from diamm.renderers.html_renderer import HTMLRenderer
 
 class CountryDetail(generics.RetrieveAPIView):
     template_name = "website/country/country_detail.jinja2"
-    queryset = GeographicArea.objects.filter(Q(type=GeographicArea.COUNTRY) | Q(type=GeographicArea.STATE))
+    queryset = GeographicArea.objects.filter(Q(type=GeographicArea.COUNTRY))
     serializer_class = CountryDetailSerializer
     renderer_classes = (HTMLRenderer, renderers.JSONRenderer)
 
 
 class CountryList(generics.ListAPIView):
     template_name = "website/country/country_list.jinja2"
-    queryset = GeographicArea.objects.filter(Q(type=GeographicArea.COUNTRY) | Q(type=GeographicArea.STATE))
+    queryset = GeographicArea.objects.filter(Q(type=GeographicArea.COUNTRY)).select_related('parent')
     serializer_class = CountryDetailSerializer
     renderer_classes = (HTMLRenderer, renderers.JSONRenderer)
     pagination_class = None
