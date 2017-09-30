@@ -7,7 +7,8 @@
 {% block body %}
     <div class="columns">
         <div class="column">
-            <h2 class="title is-3">{{ content.name }}, <a href="{{ content.country.url }}">{{ content.country.name }}</a></h2>
+            <h2 class="title is-3">{{ content.name }}</h2>
+            <h3 class="subtitle is-4"><a href="{{ content.country.url }}">{{ content.country.name }}</a></h3>
         </div>
     </div>
     {% if content.variant_names %}
@@ -25,7 +26,6 @@
     </div>
     {% endif %}
 
-
     <div class="columns">
         <div class="column is-half">
             <h3 class="title is-4">Archives</h3>
@@ -36,7 +36,7 @@
                 <tbody>
                     {% for archive in content.archives %}
                     <tr>
-                        <td><a href="{{ archive.url }}">{{ archive.name }}</a></td>
+                        <td><a href="{{ archive.url }}">{{ archive.name }}</a> {{ "({0})".format(archive.siglum) if archive.siglum else "" }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -67,9 +67,9 @@
         </div>
     </div>
     <div class="columns">
-        <div class="column">
+        <div class="column is-half">
             <h3 class="title is-4">Provenance</h3>
-            <p>Source origins</p>
+            <p>Sources that have had their origins in this city.</p>
             {% if content.provenance %}
                 <table class="table">
                     <tbody>
@@ -77,6 +77,9 @@
                     <tr>
                         <td>
                             <a href="{{ source.url }}">{{ source.name }}</a>
+                            {% if source.city_uncertain %}
+                            (uncertain)
+                            {% endif %}
                         </td>
                     </tr>
                     {% endfor %}

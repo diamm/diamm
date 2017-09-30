@@ -6,16 +6,15 @@ from diamm.serializers.serializers import ContextSerializer
 class CityProvenanceSerializer(ContextSerializer):
     url = serpy.MethodField()
     name = serpy.MethodField()
-    relationship = serpy.MethodField()
+    city_uncertain = serpy.BoolField()
+    earliest_year = serpy.IntField()
+    latest_year = serpy.IntField()
 
     def get_url(self, obj):
         return reverse('source-detail', kwargs={"pk": obj.source.id}, request=self.context['request'])
 
     def get_name(self, obj):
         return "{0}".format(obj.source.display_name)
-
-    def get_relationship(self, obj):
-        return None
 
 
 class OrganizationSerializer(ContextSerializer):
@@ -37,6 +36,7 @@ class CountryCitySerializer(ContextSerializer):
 class ArchiveCitySerializer(ContextSerializer):
     url = serpy.MethodField()
     name = serpy.StrField()
+    siglum = serpy.StrField()
 
     def get_url(self, obj):
         return reverse("archive-detail", kwargs={"pk": obj.id}, request=self.context['request'])
