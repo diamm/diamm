@@ -1,7 +1,22 @@
 import serpy
 from rest_framework.reverse import reverse
 from diamm.serializers.serializers import ContextSerializer
-from diamm.serializers.website.provenance import ProvenanceSerializer
+
+
+class CountryStateSerializer(ContextSerializer):
+    url = serpy.MethodField()
+    name = serpy.StrField()
+
+    def get_url(self, obj):
+        return reverse("country-detail", kwargs={"pk": obj.id}, request=self.context['request'])
+
+
+class CountryRegionSerializer(ContextSerializer):
+    url = serpy.MethodField()
+    name = serpy.StrField()
+
+    def get_url(self, obj):
+        return reverse("region-detail", kwargs={"pk": obj.id}, request=self.context['request'])
 
 
 class CountryCitySerializer(ContextSerializer):
@@ -22,16 +37,21 @@ class CountryListSerializer(ContextSerializer):
 
 class CountryDetailSerializer(ContextSerializer):
     url = serpy.MethodField()
+    pk = serpy.IntField()
     name = serpy.StrField()
     cities = serpy.MethodField()
     regions = serpy.MethodField()
+    states = serpy.MethodField()
     provenance_relationships = serpy.MethodField()
 
     def get_cities(self, obj):
         return CountryCitySerializer(obj.cities.all(), many=True, context=self.context).data
 
     def get_regions(self, obj):
-        return obj.regions.values_list('name', flat=True)
+        return CountryRegionSerializer(obj.regions.all(), many=True, context=self.context).data
+
+    def get_states(self, obj):
+        return CountryStateSerializer(obj.states.all(), many=True, context=self.context).data
 
     def get_url(self, obj):
         return reverse("country-detail", kwargs={"pk": obj.id}, request=self.context['request'])

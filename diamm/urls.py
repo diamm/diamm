@@ -37,7 +37,8 @@ from diamm.views.website.source import (
 from diamm.views.website.source import SourceRangeDetail, SourceItemDetail
 from diamm.views.website.archive import ArchiveDetail
 from diamm.views.website.city import CityList, CityDetail
-from diamm.views.website.country import CountryDetail
+from diamm.views.website.country import CountryDetail, CountryList
+from diamm.views.website.region import RegionDetail
 from diamm.views.website.person import PersonDetail, legacy_composer_redirect
 from diamm.views.website.organization import OrganizationDetail
 from diamm.views.website.composition import CompositionDetail
@@ -137,6 +138,8 @@ urlpatterns = [
     url(r'^cities/$', CityList.as_view(), name="city-list"),
     url(r'^cities/(?P<pk>[0-9]+)/$', CityDetail.as_view(), name="city-detail"),
     url(r'^countries/(?P<pk>[0-9]+)/$', CountryDetail.as_view(), name="country-detail"),
+    url(r'^countries/$', CountryList.as_view(), name="country-list"),
+    url(r'^regions/(?P<pk>[0-9]+)/$', RegionDetail.as_view(), name="region-detail"),
 
     # url(r'^people/$', PersonList.as_view(), name="person-list"),
     url(r'^people/(?P<pk>[0-9]+)/$', PersonDetail.as_view(), name="person-detail"),

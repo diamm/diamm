@@ -11,3 +11,11 @@ class CountryDetail(generics.RetrieveAPIView):
     queryset = GeographicArea.objects.filter(Q(type=GeographicArea.COUNTRY) | Q(type=GeographicArea.STATE))
     serializer_class = CountryDetailSerializer
     renderer_classes = (HTMLRenderer, renderers.JSONRenderer)
+
+
+class CountryList(generics.ListAPIView):
+    template_name = "website/country/country_list.jinja2"
+    queryset = GeographicArea.objects.filter(Q(type=GeographicArea.COUNTRY) | Q(type=GeographicArea.STATE))
+    serializer_class = CountryDetailSerializer
+    renderer_classes = (HTMLRenderer, renderers.JSONRenderer)
+    pagination_class = None
