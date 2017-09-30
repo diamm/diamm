@@ -25,7 +25,7 @@ class PublicationInline(admin.TabularInline):
 
 @admin.register(Bibliography)
 class BibliographyAdmin(VersionAdmin):
-    list_display = ('get_authors', 'title', 'year', 'abbreviation')
+    list_display = ('get_authors', 'title', 'year', 'abbreviation', 'created')
     list_filter = ('type__name',)
     search_fields = ('title', 'authors__bibliography_author__last_name', 'abbreviation')
     inlines = (AuthorsInline, PublicationInline)

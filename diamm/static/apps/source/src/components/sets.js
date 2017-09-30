@@ -9,7 +9,7 @@ const Sources = ({sources}) =>
                 let src;
                 if (source.cover_image !== null)
                 {
-                    src = <img src={`${source.cover_image}full/100,/0/default.jpg` } />;
+                    src = <img src={`${ source.cover_image }full/100,/0/default.jpg` } />;
                 }
                 else
                 {
@@ -50,8 +50,8 @@ class Sets extends React.Component
                     { this.props.sets.map( (set, idx) =>{
                         return (
                             <div key={ idx }>
-                                <h2 className="title is-3">Set: { set.cluster_shelfmark }</h2>
-                                <h3 className="subtitle is-5"><strong>Type: </strong>{ set.set_type }</h3>
+                                <h3 className="title is-4">Set: { set.cluster_shelfmark }</h3>
+                                <h4 className="subtitle is-5"><strong>Type: </strong>{ set.set_type }</h4>
                                 <Sources sources={ set.sources } />
                             </div>
                         );

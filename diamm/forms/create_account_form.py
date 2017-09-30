@@ -12,7 +12,7 @@ class CreateAccountForm(forms.Form):
         required=True,
     )
     affiliation = forms.CharField(
-        required=True,
+        required=False,
     )
     email = forms.EmailField(
         required=True,

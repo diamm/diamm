@@ -6,6 +6,7 @@ from diamm.models.data.item import Item
 from diamm.models.data.composition_bibliography import CompositionBibliography
 from diamm.models.data.composition_cycle import CompositionCycle
 from diamm.admin.forms.merge_compositions import MergeCompositionsForm
+from diamm.admin.forms.assign_genre import AssignGenreForm
 from diamm.admin.merge_models import merge
 from salmonella.admin import SalmonellaMixin
 from reversion.admin import VersionAdmin
@@ -49,7 +50,7 @@ class CompositionAdmin(VersionAdmin):
     search_fields = ('title', 'composers__composer__last_name')
     inlines = (ComposerInline, CycleInline, BibliographyInline, ItemInline)
     list_filter = ('anonymous', 'genres')
-    actions = ["merge_compositions_action"]
+    actions = ["merge_compositions_action", "assign_genre_action"]
 
     def get_composers(self, obj):
         c = "; ".join([c.composer.full_name for c in obj.composers.all()])
@@ -106,3 +107,23 @@ class CompositionAdmin(VersionAdmin):
                         'form': form
                       })
     merge_compositions_action.short_description = "Merge Compositions"
+
+    def assign_genre_action(self, request, queryset):
+        if 'do_action' in request.POST:
+            form = AssignGenreForm(request.POST)
+
+            if form.is_valid():
+                genre = form.cleaned_data['genre']
+                updated = queryset.update(genre=genre)
+                messages.success(request, "{0} compositions were updated".format(updated))
+            else:
+                messages.error(request, "The submitted form was not valid")
+        else:
+            form = AssignGenreForm()
+
+        return render(request,
+                      'admin/composition/assign_genre.html', {
+                        'objects': queryset,
+                        'form': form
+                      })
+    assign_genre_action.short_description = "Assign Genre to Compositions"

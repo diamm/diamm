@@ -7,58 +7,64 @@
 {% block body %}
     <div class="columns">
         <div class="column">
-            <h1 class="title is-2">{{ content.title }}</h1>
-            <h3 class="subtitle">
-                {% for composer in content.composers %}
-                    <a href="{{ composer.url }}">{{ composer.full_name }} </a>
-                    {% if composer.uncertain %}
-                        (uncertain)
-                    {% endif %}
-                {% endfor %}
-            </h3>
-            {% if content.genres %}
-                <p>
-                    <strong>Genres: </strong>{{ content.genres | join(", ") }}
-
-                </p>
-            {% endif %}
+            <h2 class="title is-3">{{ content.title }}</h2>
         </div>
     </div>
-    {% if content.cycles %}
     <div class="columns">
         <div class="column">
-            <h3 class="title is-4">Cycles</h3>
-            {% for cycle in content.cycles %}
-                <h4 class="subtitle is-5">{{ cycle.title }} ({{ cycle.type }})</h4>
-                <ul>
-                {% for composition in cycle.compositions %}
-                    <li><a href="{{ composition.url }}">{{ composition.title }}</a></li>
-                {% endfor %}
-                </ul>
-            {% endfor %}
-        </div>
-    </div>
-    {% endif %}
-    <div class="columns">
-        <div class="column">
-            <h3 class="title is-4">Sources</h3>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Source</th>
-                    </tr>
-                </thead>
+            <table class="source-details">
                 <tbody>
-                    {% for source in content.sources %}
                     <tr>
+                        <th>Composer{% if content.composers | length > 1 %}s{% endif %}</th>
                         <td>
-                            {% if source.has_images and source.public_images %}
-                                <i class="fa fa-picture-o" aria-hidden="true"></i>
-                            {% endif %}
-                            <a href="{{ source.url }}">{{ source.display_name }}</a>
+                        {% if content.composers %}
+                            {% for composer in content.composers %}
+                                <a href="{{ composer.url }}">{{ composer.full_name }} </a>
+                                {% if composer.uncertain %}
+                                    (uncertain)
+                                {% endif %}
+                            {% endfor %}
+                        {% elif content.anonymous %}
+                            Anonymous
+                        {% endif %}
                         </td>
                     </tr>
-                    {% endfor %}
+                    {% if content.genres %}
+                    <tr>
+                        <th>Genre{% if content.genres | length > 1 %}s{% endif %}</th>
+                        <td>{{ content.genres | join(", ") }}</td>
+                    </tr>
+                    {% endif %}
+                    {% if content.cycles %}
+                    <tr>
+                        <th>Cycles</th>
+                        <td>
+                            {% for cycle in content.cycles %}
+                                <dl>
+                                    <dt>{{ cycle.title }} ({{ cycle.type }})</dt>
+                                    <dd>
+                                        {% for composition in cycle.compositions %}
+                                            <div><a href="{{ composition.url }}">{{ composition.title }}</a></div>
+                                        {% endfor %}
+                                    </dd>
+                                </dl>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    {% endif %}
+                    <tr>
+                        <th>Appears in</th>
+                        <td>
+                            {% for source in content.sources %}
+                                <div>
+                                    {% if source.has_images and source.public_images %}
+                                        <i class="fa fa-picture-o" aria-hidden="true"></i>
+                                    {% endif %}
+                                    <a href="{{ source.url }}">{{ source.display_name }}</a>
+                                </div>
+                            {% endfor %}
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>

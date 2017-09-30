@@ -38,9 +38,14 @@ def image_serve(request, pk, region=None, size=None, rotation=None, *args, **kwa
     if 'location_s' not in result:
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
-    location = result['location_s']
-    referer = "{0}://{1}".format(request.scheme, request.get_host())
+    # In some cases the string 'None' gets indexed to Solr.
+    # It shouldn't happen, but this will guard against it if it does.
+    if result['location_s'] == 'None':
+        return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
+    location = result['location_s']
+
+    referer = "{0}://{1}".format(request.scheme, request.get_host())
     if region and size and rotation:
         location = "{0}/{1}/{2}/{3}/default.jpg".format(location, region, size, rotation)
 

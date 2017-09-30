@@ -7,29 +7,90 @@
 {% block body %}
     <div class="columns">
         <div class="column">
-            <h2 class="title">{{ content.name }}, <a href="{{ content.country.url }}">{{ content.country.name }}</a></h2>
+            <h2 class="title is-3">{{ content.name }}, <a href="{{ content.country.url }}">{{ content.country.name }}</a></h2>
+        </div>
+    </div>
+    {% if content.variant_names %}
+    <div class="columns">
+        <div class="column is-half">
+            <table class="source-details">
+                <tbody>
+                    <tr>
+                        <th>Variant names</th>
+                        <td>{{ content.variant_names }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
 
-            {% if content.archives %}
+
+    <div class="columns">
+        <div class="column is-half">
             <h3 class="title is-4">Archives</h3>
-            <ul>
-                {% for archive in content.archives %}
-                    <li>
-                        <a href="{{ archive.url }}">{{ archive.name }}</a>
-                    </li>
-                {% endfor %}
-            </ul>
-            {% endif %}
+            <p>Archives are the current holding institutions of sources.</p>
+            {% if content.archives %}
 
-            {% if content.organizations %}
-                <h3 class="title is-4">Organizations</h3>
-                <ul>
-                    {% for organization in content.organizations %}
-                    <li>
-                        <a href="{{ organization.url }}">{{ organization.name }}</a>
-                    </li>
+            <table class="table">
+                <tbody>
+                    {% for archive in content.archives %}
+                    <tr>
+                        <td><a href="{{ archive.url }}">{{ archive.name }}</a></td>
+                    </tr>
                     {% endfor %}
-                </ul>
+                </tbody>
+            </table>
+            {% else %}
+                <p>No Archives</p>
+            {% endif %}
+        </div>
+        <div class="column">
+            <h3 class="title is-4">Organizations</h3>
+            <p>
+                Organizations are corporate entities that have been involved in the history of a source,
+                typically as an owner, creator, or seller.
+            </p>
+            {% if content.organizations %}
+                <table class="table">
+                    <tbody>
+                    {% for organization in content.organizations %}
+                        <tr>
+                            <td><a href="{{ organization.url }}">{{ organization.name }}</a></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No Organizations</p>
             {% endif %}
         </div>
     </div>
+    <div class="columns">
+        <div class="column">
+            <h3 class="title is-4">Provenance</h3>
+            <p>Source origins</p>
+            {% if content.provenance %}
+                <table class="table">
+                    <tbody>
+                    {% for source in content.provenance %}
+                    <tr>
+                        <td>
+                            <a href="{{ source.url }}">{{ source.name }}</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No Sources</p>
+            {% endif %}
+        </div>
+    </div>
+    {% if request.user.is_staff %}
+        {% with edit_path="/admin/diamm_data/geographicarea/" %}
+            {% include "website/blocks/edit_bar.jinja2" %}
+        {% endwith %}
+    {% endif %}
+
 {% endblock %}

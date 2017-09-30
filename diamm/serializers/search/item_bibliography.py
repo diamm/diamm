@@ -26,7 +26,7 @@ class ItemBibliographySearchSerializer(serpy.Serializer):
             needed to render the citation on request.
         """
         template = get_template('website/bibliography/bibliography_entry.jinja2')
-        citation = template._template.render(content=obj.bibliography)
+        citation = template.template.render(content=obj.bibliography)
         citation = re.sub('\n', '', citation)
         citation = re.sub('\s+', ' ', citation)
         citation = citation.strip()

@@ -1,9 +1,18 @@
 {% extends "base.jinja2" %}
 
+{% block title %}
+    <title>Digital Image Archive of Medieval Music :: {{ content.name }}</title>
+{% endblock %}
+
 {% block body %}
     <div class="columns">
         <div class="column">
             <h2 class="title">{{ content.name }}</h2>
         </div>
     </div>
+    {% if request.user.is_staff %}
+        {% with edit_path="/admin/diamm_data/geographicarea/" %}
+            {% include "website/blocks/edit_bar.jinja2" %}
+        {% endwith %}
+    {% endif %}
 {% endblock %}

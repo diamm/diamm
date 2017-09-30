@@ -7,12 +7,12 @@
 {% block body %}
     <div class="columns">
         <div class="column is-two-thirds">
-            <h1 class="title">{{ content.name }} ({{ content.siglum }})</h1>
-            <h2 class="subtitle"><a href="{{ content.city.url }}">{{ content.city.name }}</a>, {{ content.city.country }}</h2>
+            <h2 class="title is-3">{{ content.name }} ({{ content.siglum }})</h2>
+            <h3 class="subtitle is-4"><a href="{{ content.city.url }}">{{ content.city.name }}</a>, {{ content.city.country }}</h3>
         </div>
         <div class="column">
             {% if content.logo %}
-            <img src="{{ content.logo }}" />
+            <img src="{{ content.logo }}" style="max-height: 150px;" class="is-pulled-right" />
             {% endif %}
         </div>
     </div>
@@ -23,25 +23,47 @@
                     <strong>Archive website: </strong><a href="http://{{ content.website }}">{{ content.name }}</a>
                 </p>
             {% endif %}
-            {% if content.sources %}
-                <h3 class="title is-4">Sources in this Archive</h3>
-                <div class="archive-sources">
-                    {% for source in content.sources %}
-                        <div class="box">
-                            {% if source.cover_image %}
-                                <a href="{{ source.url }}">
-                                    <img src="{{ source.cover_image }}" />
-                                </a>
-                            {% endif %}
-                            <div>
-                                <a href="{{ source.url }}">{{ source.display_name }}</a>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
         </div>
     </div>
+    {% if content.sources %}
+    <div class="columns">
+        <div class="column">
+            <h3 class="title is-4">Sources in this Archive</h3>
+            <table class="table">
+                <thead>
+                    <th></th>
+                    <th>Source name</th>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Surface</th>
+                </thead>
+                <tbody>
+                {% for source in content.sources %}
+                    <tr>
+                        <td>
+                            {% if source.public_images %}
+                            <i class="fa fa-picture-o" />
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ source.url }}">{{ source.display_name }}</a>
+                        </td>
+                        <td>
+                            {{ source.date_statement if source.date_statement else "-" }}
+                        </td>
+                        <td>
+                            {{ source.source_type if source.source_type else "-" }}
+                        </td>
+                        <td>
+                            {{ source.surface if source.surface else "-" }}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
     {% if request.user.is_staff %}
         {% with edit_path="/admin/diamm_data/archive/" %}
             {% include "website/blocks/edit_bar.jinja2"  %}

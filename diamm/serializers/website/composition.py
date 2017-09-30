@@ -11,7 +11,7 @@ class CompositionBibliographySerializer(ContextSerializer):
 
     def get_citation(self, obj):
         template = get_template("website/bibliography/bibliography_entry.jinja2")
-        citation = template._template.render(content=obj.bibliography)
+        citation = template.template.render(content=obj.bibliography)
         # strip out any newlines from the templating process
         citation = re.sub('\n', '', citation)
         # strip out multiple spaces
@@ -94,6 +94,10 @@ class CompositionComposerSerializer(ContextSerializer):
 
 
 class CompositionDetailSerializer(ContextSerializer):
+    anonymous = serpy.BoolField(
+        attr="anonymous",
+        required=False
+    )
     composers = serpy.MethodField()
     sources = serpy.MethodField()
     type = serpy.MethodField()
