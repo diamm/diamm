@@ -10,8 +10,18 @@
                     {{ get_menu() }}
                 </div>
             </div>
-            <div>
+            <div class="dropdown-menu-parent">
                 <a href="{{ url('search') }}" class="nav-item">Search & Browse</a>
+                <div class="dropdown-menu right-menu is-1-column">
+                    <div class="dropdown-menu-section">
+                        <div>
+                            <a href="{{ url('search') }}">Search the Database</a>
+                        </div>
+                        <div>
+                            <a href="{{ url('country-list') }}">Browse by Country</a>
+                        </div>
+                    </div>
+                </div>
             </div>
 
         </div>
