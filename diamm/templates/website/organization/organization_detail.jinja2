@@ -7,58 +7,72 @@
 {% block body %}
     <div class="columns">
         <div class="column">
-            <h2 class="title is-2">{{ content.name }}</h2>
-            {% if content.location %}
-                <h2 class="subtitle is-3">
-                    <a href="{{ content.location.url }}">{{ content.location.name }}</a>
-                </h2>
-            {% endif %}
+            <h2 class="title is-3">{{ content.name }}</h2>
         </div>
     </div>
     <div class="columns">
         <div class="column">
-            {% if content.source_provenance %}
-                <h3 class="title is-4">Provenance Entries</h3>
-                <ul>
-                    {% for entry in content.source_provenance %}
-                        <li><a href="{{ entry.url }}">{{ entry.source }}</a></li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-
-            {% if content.related_sources %}
-                <h3 class="title is-4">Related Sources</h3>
-                <ul>
-                    {% for entry in content.related_sources %}
-                        <li>
-                            {{ "?" if entry.uncertain else "" }}
-                            <a href="{{ entry.url }}">
-                                {{ entry.source }}
-                            </a> ({{ entry.relationship }})
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-            {% if content.copied_sources %}
-                <h3 class="title is-4">Copied Sources</h3>
-                <ul>
-                    {% for entry in content.copied_sources %}
-                        <li>
-                            {{ "?" if entry.uncertain else "" }}
-                            <a href="{{ entry.url }}">
-                                {{ entry.source }}
-                            </a> ({{ entry.type }})
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
+            <table class="table">
+                <tbody>
+                    {% if content.location %}
+                    <tr>
+                        <th>Location</th>
+                        <td><a href="{{ content.location.url }}">{{ content.location.name }}</a></td>
+                    </tr>
+                    {% endif %}
+                    {% if content.source_provenance %}
+                    <tr>
+                        <th>Provenance Entries</th>
+                        <td>
+                            <ul>
+                                {% for entry in content.source_provenance %}
+                                    <li><a href="{{ entry.url }}">{{ entry.source }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                    {% endif %}
+                    {% if content.related_sources %}
+                    <tr>
+                        <th>Related sources</th>
+                        <td>
+                            <ul>
+                            {% for entry in content.related_sources %}
+                                <li>
+                                    {{ "?" if entry.uncertain else "" }}
+                                    <a href="{{ entry.url }}">
+                                        {{ entry.source }}
+                                    </a> ({{ entry.relationship }})
+                                </li>
+                            {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                    {% endif %}
+                    {% if content.copied_sources %}
+                    <tr>
+                        <th>Copied Sources</th>
+                        <td>
+                            <ul>
+                                {% for entry in content.copied_sources %}
+                                    <li>
+                                        {{ "?" if entry.uncertain else "" }}
+                                        <a href="{{ entry.url }}">
+                                            {{ entry.source }}
+                                        </a> ({{ entry.type }})
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
         </div>
     </div>
     {% if request.user.is_staff %}
-        <div class="columns">
-            <div class="column">
-                <a class="button" href="/admin/diamm_data/organization/{{ content.pk }}">Edit</a>
-            </div>
-        </div>
+        {% with edit_path="/admin/diamm_data/organization/" %}
+            {% include "website/blocks/edit_bar.jinja2" %}
+        {% endwith %}
     {% endif %}
 {% endblock %}
