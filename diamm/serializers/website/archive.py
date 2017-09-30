@@ -13,7 +13,24 @@ class SourceArchiveSerializer(ContextDictSerializer):
     public_images = serpy.BoolField(
         attr="public_images_b"
     )
-    cover_image = serpy.MethodField()
+    cover_image = serpy.MethodField(
+        required=False
+    )
+
+    source_type = serpy.StrField(
+        attr="source_type_s",
+        required=False
+    )
+
+    date_statement = serpy.StrField(
+        attr="date_statement_s",
+        required=False
+    )
+
+    surface = serpy.StrField(
+        attr="surface_type_s",
+        required=False
+    )
 
     def get_url(self, obj):
         return reverse('source-detail',

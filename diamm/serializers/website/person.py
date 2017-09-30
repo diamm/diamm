@@ -8,11 +8,13 @@ class PersonRoleSerializer(ContextSerializer):
     earliest_year = serpy.StrField(
         required=False
     )
+    earliest_year_approximate = serpy.BoolField()
+    latest_year_approximate = serpy.BoolField()
     latest_year = serpy.StrField(
         required=False
     )
     role = serpy.StrField(
-        attr="role.name"
+        attr="role_description"
     )
     note = serpy.StrField(
         required=False
@@ -133,7 +135,7 @@ class PersonDetailSerializer(ContextSerializer):
     latest_year_approximate = serpy.BoolField(
         required=False
     )
-    biography = serpy.MethodField()
+    # biography = serpy.MethodField()
     variant_names = serpy.MethodField()
     roles = serpy.MethodField()
 
@@ -160,8 +162,8 @@ class PersonDetailSerializer(ContextSerializer):
     def get_type(self, obj):
         return obj.__class__.__name__.lower()
 
-    def get_biography(self, obj):
-        return PersonNoteSerializer(obj.notes.filter(type=PersonNote.BIOGRAPHY, public=True), many=True).data
+    # def get_biography(self, obj):
+    #     return PersonNoteSerializer(obj.notes.filter(type=PersonNote.BIOGRAPHY, public=True), many=True).data
 
     def get_variant_names(self, obj):
         return obj.notes.filter(type=PersonNote.VARIANT_NAME_NOTE, public=True).values_list('note', flat=True)

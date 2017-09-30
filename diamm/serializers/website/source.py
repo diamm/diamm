@@ -209,11 +209,15 @@ class SourceComposerInventoryCompositionSerializer(ContextDictSerializer):
 
 
 class SourceComposerInventorySerializer(ContextDictSerializer):
-    url = serpy.MethodField()
+    url = serpy.MethodField(
+        required=False
+    )
     name = serpy.StrField(
         attr="composer"
     )
-    inventory = serpy.MethodField()
+    inventory = serpy.MethodField(
+        required=False
+    )
 
     def get_inventory(self, obj):
         return SourceComposerInventoryCompositionSerializer(
@@ -242,17 +246,39 @@ class SourceInventoryNoteSerializer(serpy.DictSerializer):
 class SourceInventorySerializer(ContextDictSerializer):
     pk = serpy.IntField()
     url = serpy.MethodField()
-    num_voices = serpy.MethodField()
-    genres = serpy.MethodField()
-    folio_start = serpy.MethodField()
-    folio_end = serpy.MethodField()
-    composition = serpy.MethodField()
-    composers = serpy.MethodField()
-    bibliography = serpy.MethodField()
-    voices = serpy.MethodField()
-    pages = serpy.MethodField()
-    source_attribution = serpy.MethodField()
-    notes = serpy.MethodField()
+    num_voices = serpy.MethodField(
+        required=False
+    )
+    genres = serpy.MethodField(
+        required=False
+    )
+    folio_start = serpy.MethodField(
+        required=False
+    )
+    folio_end = serpy.MethodField(
+        required=False
+    )
+    composition = serpy.MethodField(
+        required=False
+    )
+    composers = serpy.MethodField(
+        required=False
+    )
+    bibliography = serpy.MethodField(
+        required=False
+    )
+    voices = serpy.MethodField(
+        required=False
+    )
+    pages = serpy.MethodField(
+        required=False
+    )
+    source_attribution = serpy.MethodField(
+        required=False
+    )
+    notes = serpy.MethodField(
+        required=False
+    )
 
     def get_pages(self, obj):
         if 'pages_ii' in obj:
@@ -436,7 +462,9 @@ class SourceDetailSerializer(ContextSerializer):
     name = serpy.StrField(
         required=False
     )
-    display_name = serpy.StrField()
+    display_name = serpy.StrField(
+        required=False
+    )
     shelfmark = serpy.StrField()
     surface_type = serpy.StrField(
         required=False
@@ -455,23 +483,45 @@ class SourceDetailSerializer(ContextSerializer):
     cover_image_info = serpy.MethodField(
         required=False
     )
-    manifest_url = serpy.MethodField()
+    manifest_url = serpy.MethodField(
+        required=False
+    )
     inventory_provided = serpy.BoolField()
     public_images = serpy.BoolField()
     numbering_system_type = serpy.StrField(
         attr="numbering_system_type"
     )
 
-    has_images = serpy.MethodField()
-    inventory = serpy.MethodField()
-    composer_inventory = serpy.MethodField()
-    uninventoried = serpy.MethodField()
-    archive = serpy.MethodField()
-    sets = serpy.MethodField()
-    provenance = serpy.MethodField()
-    relationships = serpy.MethodField()
-    copyists = serpy.MethodField()
-    catalogue_entries = serpy.MethodField()
+    has_images = serpy.MethodField(
+        required=False
+    )
+    inventory = serpy.MethodField(
+        required=False
+    )
+    composer_inventory = serpy.MethodField(
+        required=False
+    )
+    uninventoried = serpy.MethodField(
+        required=False
+    )
+    archive = serpy.MethodField(
+        required=False
+    )
+    sets = serpy.MethodField(
+        required=False
+    )
+    provenance = serpy.MethodField(
+        required=False
+    )
+    relationships = serpy.MethodField(
+        required=False
+    )
+    copyists = serpy.MethodField(
+        required=False
+    )
+    catalogue_entries = serpy.MethodField(
+        required=False
+    )
     # iiif_manifest = serpy.MethodField()
 
     links = SourceURLSerializer(
@@ -494,7 +544,9 @@ class SourceDetailSerializer(ContextSerializer):
         call=True,
         many=True
     )
-    notes = serpy.MethodField()
+    notes = serpy.MethodField(
+        required=False
+    )
 
     def get_type(self, obj):
         return obj.__class__.__name__.lower()
