@@ -3,6 +3,14 @@ from rest_framework.reverse import reverse
 from diamm.serializers.serializers import ContextSerializer
 
 
+class RegionCitySerializer(ContextSerializer):
+    url = serpy.MethodField()
+    name = serpy.StrField()
+
+    def get_url(self, obj):
+        return reverse('city-detail', kwargs={"pk": obj.id}, request=self.context['request'])
+
+
 class RegionOrganizationSerializer(ContextSerializer):
     url = serpy.MethodField()
     name = serpy.StrField()
@@ -31,12 +39,18 @@ class RegionDetailSerializer(ContextSerializer):
     name = serpy.StrField()
     parent = serpy.StrField()
     organizations = serpy.MethodField()
+    cities = serpy.MethodField()
     provenance = serpy.MethodField()
 
     def get_organizations(self, obj):
         return RegionOrganizationSerializer(obj.organizations.all(),
                                             many=True,
                                             context=self.context).data
+
+    def get_cities(self, obj):
+        return RegionCitySerializer(obj.cities.select_related('parent'),
+                                    many=True,
+                                    context=self.context).data
 
     def get_provenance(self, obj):
         return RegionProvenanceSerializer(obj.region_sources.select_related('source'),
