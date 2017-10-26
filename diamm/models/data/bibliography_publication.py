@@ -31,7 +31,7 @@ class BibliographyPublication(models.Model):
     B_PLACE_PUBLICATION = 13
     B_NUMBER_OF_VOLUMES = 14
     B_INTL_NUM = 15
-
+    B_NOTE = 99
 
     PUBLICATION_INFO_TYPE = (
         (B_VOLUME_NO, "Volume Number"),
@@ -47,7 +47,8 @@ class BibliographyPublication(models.Model):
         (B_FESTSCHRIFT_FOR, "Festschrift Dedicatee"),
         (B_PLACE_PUBLICATION, "Place of Publication"),
         (B_NUMBER_OF_VOLUMES, "Number of Volumes in Series"),
-        (B_INTL_NUM, "ISBN/ISSN/ISMN")
+        (B_INTL_NUM, "ISBN/ISSN/ISMN"),
+        (B_NOTE, "General Note")
     )
 
     entry = models.CharField(max_length=2048)
