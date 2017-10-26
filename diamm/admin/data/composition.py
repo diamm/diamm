@@ -46,8 +46,8 @@ class CycleInline(SalmonellaMixin, admin.StackedInline):
 @admin.register(Composition)
 class CompositionAdmin(VersionAdmin):
     save_on_top = True
-    list_display = ('title', 'get_composers', 'appears_in')
-    search_fields = ('title', 'composers__composer__last_name')
+    list_display = ('title', 'get_composers', 'appears_in', 'id')
+    search_fields = ('=id', 'title', 'composers__composer__last_name')
     inlines = (ComposerInline, CycleInline, BibliographyInline, ItemInline)
     list_filter = ('anonymous', 'genres')
     actions = ["merge_compositions_action", "assign_genre_action"]
