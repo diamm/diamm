@@ -286,6 +286,9 @@ export const Notes = ({notes, showEdit}) =>
                             }
                         </h5>
                         <ReactMarkdown source={ thisNote } />
+                        <div className="note-author">
+                            { note.author !== "DIAMM, 2017" ? note.author : "" }
+                        </div>
                     </section>
                 );
             })}

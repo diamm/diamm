@@ -1,6 +1,7 @@
 import serpy
 from rest_framework.reverse import reverse
 from diamm.serializers.serializers import ContextSerializer
+from diamm.models.data.geographic_area import GeographicArea
 
 
 class CountryStateSerializer(ContextSerializer):
@@ -60,7 +61,10 @@ class CountryDetailSerializer(ContextSerializer):
                                       context=self.context).data
 
     def get_url(self, obj):
-        return reverse("country-detail", kwargs={"pk": obj.id}, request=self.context['request'])
+        if obj.type == GeographicArea.STATE:
+            return reverse("region-detail", kwargs={"pk": obj.id}, request=self.context['request'])
+        else:
+            return reverse("country-detail", kwargs={"pk": obj.id}, request=self.context['request'])
 
     def get_provenance_relationships(self, obj):
         pass
