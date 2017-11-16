@@ -7,8 +7,12 @@ class CityProvenanceSerializer(ContextSerializer):
     url = serpy.MethodField()
     name = serpy.MethodField()
     city_uncertain = serpy.BoolField()
-    earliest_year = serpy.IntField()
-    latest_year = serpy.IntField()
+    earliest_year = serpy.IntField(
+        required=False
+    )
+    latest_year = serpy.IntField(
+        required=False
+    )
 
     def get_url(self, obj):
         return reverse('source-detail', kwargs={"pk": obj.source.id}, request=self.context['request'])
@@ -79,8 +83,8 @@ class CityDetailSerializer(ContextSerializer):
 
     def get_provenance(self, obj):
         return CityProvenanceSerializer(obj.city_sources.all(),
-                                     many=True,
-                                     context=self.context).data
+                                        many=True,
+                                        context=self.context).data
 
     def get_url(self, obj):
         return reverse("city-detail", kwargs={"pk": obj.id}, request=self.context['request'])
