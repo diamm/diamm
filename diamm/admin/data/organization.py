@@ -20,13 +20,13 @@ class CopiedSourcesInline(SalmonellaMixin, GenericTabularInline):
     salmonella_fields = ('source',)
 
 
-class RelatedSourcesInline(GenericTabularInline):
+class RelatedSourcesInline(SalmonellaMixin, GenericTabularInline):
     model = SourceRelationship
     extra = 0
     salmonella_fields = ('source',)
 
 
-class ProvenanceSourcesInline(GenericTabularInline):
+class ProvenanceSourcesInline(SalmonellaMixin, GenericTabularInline):
     model = SourceProvenance
     extra = 0
     salmonella_fields = ('source', 'city', 'country', 'region', 'protectorate')
