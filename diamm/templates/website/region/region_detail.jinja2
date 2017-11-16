@@ -13,6 +13,22 @@
             {% endif %}
         </div>
     </div>
+    {% if content.cities %}
+    <div class="columns">
+        <div class="column is-half">
+            <h3 class="title is-4">Cities</h3>
+            <table class="table">
+                <tbody>
+                {% for city in content.cities %}
+                <tr>
+                    <td><a href="{{ city.url }}">{{ city.name }}</a></td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
     {% if content.provenance %}
     <div class="columns">
         <div class="column is-half">
