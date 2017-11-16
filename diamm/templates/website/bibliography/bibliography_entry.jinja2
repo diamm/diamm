@@ -25,7 +25,7 @@
     {% for person_rel in people -%}
         {% set person = person_rel.bibliography_author -%}
         {% set personkey = person_rel.bibliography_author.pk %}
-        {% if loop.last -%}
+        {% if loop.length > 1 and loop.last -%}
  &nbsp;and <a href="{{ url('author-detail', pk=personkey) }}">{{ person.first_name }} {{ person.last_name }}</a>
         {%- else -%}
  <a href="{{ url('author-detail', pk=personkey) }}">{{ person.first_name }} {{ person.last_name }}</a>{% if loop.length > 2 -%}, {% endif %}
@@ -140,7 +140,7 @@
         {% set ser = series(content) -%}
 
         {% if ser -%}{{ ser }}.&nbsp;{%- endif  %}
-        {% if eds -%}{{ eds }},{%- endif %}
+        {% if eds -%}{{ eds }},&nbsp;{%- endif %}
         {% if vols -%}{{ vols }}{%- endif %}
         {% if pg -%}{{ pg }}.{%- endif %}
         {% if pub -%}&nbsp;{{ pub }}.{%- endif %}
