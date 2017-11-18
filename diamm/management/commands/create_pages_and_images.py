@@ -38,7 +38,18 @@ NON_FOLIATED_NAMES = {
     "rearfly1v": "Rear fly 1v",
     "rearfly2r": "Rear fly 2r",
     "rearfly2v": "Rear fly 2v",
-    "stitchingr_w": "Stitching recto"
+    "stitchingr_w": "Stitching recto",
+    "back": "Back",
+    "bkboard": "Back board",
+    "bkfly_verso": "Back fly verso",
+    "bkfly_w": "Back fly watermark",
+    "bkfly": "Back fly",
+    "frfly": "Front fly",
+    "front": "Front",
+    "frontflyverso": "Front fly verso",
+    "insidefrontboard": "Inside front board",
+    "spine": "Spine",
+    "test": "Test"
 }
 
 TYPE_MAP = {
@@ -136,6 +147,10 @@ class Command(BaseCommand):
                 continue
 
             re_match = re.match(page_name_regex, image_name)
+            if not re_match:
+                log.warning(term.yellow("No matches found for {0}. It will be skipped."))
+                continue
+
             pname = re_match.group("pname")
             special_type = re_match.group("spctype")
 
