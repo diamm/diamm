@@ -30,4 +30,4 @@ class Image(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return "{0}".format(self.legacy_filename)
+        return "{0}".format(self.location)
