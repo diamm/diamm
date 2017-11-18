@@ -136,10 +136,8 @@ class Command(BaseCommand):
                 continue
 
             re_match = re.match(page_name_regex, image_name)
-            sigla = re_match.group("sig")
             pname = re_match.group("pname")
             special_type = re_match.group("spctype")
-            ext = re_match.group("ext")
 
             log.debug(term.green("Parsing filename: Page name: {pname}, Special type: {spctype}".format(pname=pname, spctype=special_type)))
 
