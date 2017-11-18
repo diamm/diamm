@@ -68,6 +68,7 @@ class PagesInline(admin.TabularInline):
     model = Page
     extra = 0
     classes = ('collapse',)
+    fields = ('numeration', 'sort_order', 'page_type')
 
 
 class URLsInline(admin.TabularInline):
@@ -75,13 +76,13 @@ class URLsInline(admin.TabularInline):
     extra = 0
 
 
-class ItemInline(admin.TabularInline):
+class ItemInline(SalmonellaMixin, admin.TabularInline):
     model = Item
     extra = 0
     classes = ('collapse',)
-    # salmonella_fields = ('composition', 'pages')
+    salmonella_fields = ('composition',)
     fields = ('link_id_field', 'folio_start', 'folio_end', 'composition', 'get_composers', 'source_order',)
-    readonly_fields = ('link_id_field', 'folio_start', 'folio_end', 'composition', 'get_composers')
+    readonly_fields = ('link_id_field', 'get_composers')
 
     def get_composers(self, obj):
         if obj.composition:
@@ -91,12 +92,6 @@ class ItemInline(admin.TabularInline):
         change_url = reverse('admin:diamm_data_item_change', args=(obj.pk,))
         return '<a href="{0}">{1}</a>'.format(change_url, obj.pk)
     link_id_field.allow_tags = True
-
-    def has_add_permission(self, request):
-        return False
-
-    def has_delete_permission(self, request, obj=None):
-        return False
 
 
 class InventoryFilter(admin.SimpleListFilter):

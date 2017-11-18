@@ -43,7 +43,8 @@ NON_FOLIATED_NAMES = {
 
 TYPE_MAP = {
     None: ImageType.objects.get(pk=ImageType.PRIMARY),
-    "_w": ImageType.objects.get(pk=ImageType.WATERMARK)
+    "_w": ImageType.objects.get(pk=ImageType.WATERMARK),
+    "_a": ImageType.objects.get(pk=ImageType.ALT_SHOT)
 }
 
 
@@ -180,7 +181,8 @@ class Command(BaseCommand):
                 "page": pg,
                 "type": imtype,
                 "location": loc,
-                "public": True
+                "public": True,
+                "iiif_response_cache": iiif_resp
             }
 
             if not dryrun:
