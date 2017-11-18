@@ -29,13 +29,13 @@ NON_FOLIATED_NAMES = {
     "backcover": "Back cover",
     "frontcover_1": "Front cover (1)",
     "frontcover": "Front cover",
-    "frontflyrecto": "Front fly recto",
+    "frontflyrecto": "Front fly r",
     "frontflyrecto_w": "Front fly recto (watermark)",
-    "frontflyverso": "Front fly verso",
+    "frontflyverso": "Front fly v",
     "frontfly": "Front fly",
-    "frontfly_v": "Front fly (verso)",
+    "frontfly_v": "Front fly v",
     "frontfly2": "Front fly 2",
-    "frontfly2_v": "Front fly 2 (verso)",
+    "frontfly2_v": "Front fly 2v",
     "frfly": "Front fly",
     "frontfly1r": "Front fly 1r",
     "frontfly1v": "Front fly 1v",
@@ -44,6 +44,18 @@ NON_FOLIATED_NAMES = {
     "insidebackcover": "Inside back cover",
     "insidefrontcover": "Inside front cover",
     "insidefrontcover_1": "Inside front cover (1)",
+    "bkfly_verso": "Back fly verso",
+    "bkfly_w": "Back fly watermark",
+    "bkfly": "Back fly",
+    "backfly": "Back fly",
+    "backfly1v": "Back fly 1v",
+    "backfly1r": "Back fly 1r",
+    "backfly2r": "Back fly 2r",
+    "backfly2v": "Back fly 2v",
+    "backfly3r": "Back fly 3r",
+    "backfly3v": "Back fly 3v",
+    "backfly4r": "Back fly 4r",
+    "backfly4v": "Back fly 4v",
     "rearfly": "Rear fly",
     "rearfly1": "Rear fly",
     "rearfly_w": "Rear fly (watermark)",
@@ -54,10 +66,6 @@ NON_FOLIATED_NAMES = {
     "stitchingr_w": "Stitching recto",
     "back": "Back",
     "bkboard": "Back board",
-    "bkfly_verso": "Back fly verso",
-    "bkfly_w": "Back fly watermark",
-    "bkfly": "Back fly",
-    "backfly": "Back fly",
     "front": "Front",
     "insidefrontboard": "Inside front board",
     "spine": "Spine",
@@ -66,6 +74,7 @@ NON_FOLIATED_NAMES = {
     "pastedown_w": "Pastedown (watermark)",
     "colourpatch": "Colour patch",
     "index": "Index",
+    "index_v": "Index v",
     "i": "i",
     "i_v": "i v",
     "ii": "ii",
@@ -139,7 +148,15 @@ class Command(BaseCommand):
             sys.exit(-1)
 
         # Try to parse the filename for info.
-        page_name_regex = re.compile(r"(?P<sig>.*)_(?P<pname>(\d{3}[r|v])|(" + "|".join(NON_FOLIATED_NAMES.keys()) + r"))(?P<spctype>_w|_a)?(?P<ext>.jpx)")
+        # Matches filenames of format:
+        #   GB-Lcm_ms1070_133v.jpx
+        #   GB-Lcm_ms1070_133v_w.jpx
+        #   GB-Lcm_ms1070_backcover.jpx
+        #   E-Sco_5-1-43_back.jpx
+        #   E-Sco_5-5-20_039r_a.jpx
+        #   E-MOsb_MS1085_115br.jpx
+        # As well as those with the non-foliated names in them (see the keys for NON_FOLIATED_NAMES
+        page_name_regex = re.compile(r"(?P<sig>.*)_(?P<pname>(\d{3}b?[r|v])|(" + "|".join(NON_FOLIATED_NAMES.keys()) + r"))(?P<spctype>_w|_a)?(?P<ext>.jpx)")
 
         for order, imagepath in enumerate(files):
             log.info(term.magenta("------- New image {0} --------".format(imagepath)))
