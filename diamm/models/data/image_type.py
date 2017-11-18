@@ -20,6 +20,7 @@ class ImageType(models.Model):
     ALT_FOCUS = 11
     ALT_SHOT = 12
     RAKING_LIGHT = 13
+    TOP_HALF_OF_PAGE = 14
 
     name = models.CharField(max_length=512)
 
