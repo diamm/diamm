@@ -8,6 +8,7 @@ from diamm.models.data.item_note import ItemNote
 from diamm.models.data.item_composer import ItemComposer
 from reversion.admin import VersionAdmin
 from salmonella.admin import SalmonellaMixin
+from django.utils.translation import ugettext_lazy as _
 
 
 # This custom form will reduce the number of options for the pages to only those
@@ -48,12 +49,37 @@ class ItemComposerInline(SalmonellaMixin, admin.TabularInline):
     salmonella_fields = ('composer',)
 
 
+class AttachedToPagesListFilter(admin.SimpleListFilter):
+    title = _("Attached to Pages")
+    parameter_name = "page_att"
+
+    def lookups(self, request, model_admin):
+        return (
+            ("False", _("Not attached to pages")),
+            ("True", _("Attached to pages"))
+        )
+
+    def queryset(self, request, queryset):
+        val = self.value()
+
+        if not val:
+            return queryset
+
+        if val == "True":
+            return queryset.filter(pages__isnull=False)
+        elif val == "False":
+            return queryset.filter(pages__isnull=True)
+
+
 @admin.register(Item)
 class ItemAdmin(SalmonellaMixin, VersionAdmin):
     save_on_top = True
     form = ItemAdminForm
     list_display = ('get_source', 'get_composition', 'get_composers',
-                    'folio_start', 'folio_end')
+                    'folio_start', 'folio_end', 'pages_attached')
+    list_filter = (
+        AttachedToPagesListFilter,
+    )
     search_fields = ("source__name", "source__identifiers__identifier", "source__shelfmark",
                      "composition__title", "=source__pk")
     # list_filter = (AggregateComposerListFilter,)
@@ -62,9 +88,14 @@ class ItemAdmin(SalmonellaMixin, VersionAdmin):
     # exclude = ("pages",)
     salmonella_fields = ('source', 'composition')
 
+    def pages_attached(self, obj):
+        return obj.pages.count() > 0
+    pages_attached.short_description = "Pages Linked"
+    pages_attached.boolean = True
+
     def get_source(self, obj):
         return "{0}".format(obj.source.display_name)
-    get_source.short_description = "source"
+    get_source.short_description = "Source"
     get_source.admin_order_field = "source__shelfmark"
 
     def get_composers(self, obj):
