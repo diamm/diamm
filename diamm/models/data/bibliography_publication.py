@@ -36,7 +36,7 @@ class BibliographyPublication(models.Model):
     PUBLICATION_INFO_TYPE = (
         (B_VOLUME_NO, "Volume Number"),
         (B_PARENT_TITLE, "Title of Parent Entry (i.e., Book title, Journal title)"),
-        (B_PUBLISHER, "Title and Location of Publisher"),
+        (B_PUBLISHER, "Publisher"),
         (B_PAGES, "Pages"),
         (B_UNIVERSITY, "University and Department (for Dissertations)"),
         (B_DEGREE, "Degree (for Dissertations)"),
