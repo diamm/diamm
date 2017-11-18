@@ -85,7 +85,9 @@ NON_FOLIATED_NAMES = {
     "bottomedge": "Bottom edge",
     "edges": "Edges",
     "foreedge": "Fore edge",
-    "topedge": "Top edge"
+    "topedge": "Top edge",
+    "edge": "Edge",
+    "edge_1": "Edge"
 }
 
 TYPE_MAP = {
