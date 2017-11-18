@@ -148,7 +148,15 @@ class Command(BaseCommand):
             sys.exit(-1)
 
         # Try to parse the filename for info.
-        page_name_regex = re.compile(r"(?P<sig>.*)_(?P<pname>(\d{3}[r|v])|(" + "|".join(NON_FOLIATED_NAMES.keys()) + r"))(?P<spctype>_w|_a)?(?P<ext>.jpx)")
+        # Matches filenames of format:
+        #   GB-Lcm_ms1070_133v.jpx
+        #   GB-Lcm_ms1070_133v_w.jpx
+        #   GB-Lcm_ms1070_backcover.jpx
+        #   E-Sco_5-1-43_back.jpx
+        #   E-Sco_5-5-20_039r_a.jpx
+        #   E-MOsb_MS1085_115br.jpx
+        # As well as those with the non-foliated names in them (see the keys for NON_FOLIATED_NAMES
+        page_name_regex = re.compile(r"(?P<sig>.*)_(?P<pname>(\d{3}b?[r|v])|(" + "|".join(NON_FOLIATED_NAMES.keys()) + r"))(?P<spctype>_w|_a)?(?P<ext>.jpx)")
 
         for order, imagepath in enumerate(files):
             log.info(term.magenta("------- New image {0} --------".format(imagepath)))
