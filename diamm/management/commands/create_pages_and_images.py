@@ -110,7 +110,8 @@ class Command(BaseCommand):
             sys.exit(-1)
 
         # Check how many images are in the images folder.
-        files = glob.glob(os.path.join(folderpath, "*.jpx"))
+        files = sorted(glob.glob(os.path.join(folderpath, "*.jpx")))
+
         if len(files) == 0:
             log.error(term.red("There were no JPX files in {0}. Exiting.".format(foldername)))
             sys.exit(-1)
@@ -148,7 +149,7 @@ class Command(BaseCommand):
 
             re_match = re.match(page_name_regex, image_name)
             if not re_match:
-                log.warning(term.yellow("No matches found for {0}. It will be skipped."))
+                log.warning(term.yellow("No matches found for {0}. It will be skipped.".format(image_name)))
                 continue
 
             pname = re_match.group("pname")
