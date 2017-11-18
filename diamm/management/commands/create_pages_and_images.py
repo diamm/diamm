@@ -117,7 +117,7 @@ class Command(BaseCommand):
             sys.exit(-1)
 
         # Try to parse the filename for info.
-        page_name_regex = re.compile(r"(?P<sig>.*)_(?P<pname>(\d{3}[r|v])|(" + "|".join(NON_FOLIATED_NAMES.keys()) + r"))(?P<spctype>_w)?(?P<ext>.jpx)")
+        page_name_regex = re.compile(r"(?P<sig>.*)_(?P<pname>(\d{3}[r|v])|(" + "|".join(NON_FOLIATED_NAMES.keys()) + r"))(?P<spctype>_w|_a)?(?P<ext>.jpx)")
 
         for order, imagepath in enumerate(files):
             log.info(term.magenta("------- New image {0} --------".format(imagepath)))
