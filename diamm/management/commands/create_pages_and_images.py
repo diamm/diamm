@@ -28,12 +28,16 @@ log = logging.getLogger(__name__)
 NON_FOLIATED_NAMES = {
     "backcover": "Back cover",
     "frontcover_1": "Front cover (1)",
+    "frontcover": "Front cover",
     "frontfly1r": "Front fly 1r",
     "frontfly1v": "Front fly 1v",
     "frontfly2r": "Front fly 2r",
     "frontfly2v": "Front fly 2v",
     "insidebackcover": "Inside back cover",
     "insidefrontcover": "Inside front cover",
+    "rearfly": "Rear fly",
+    "rearfly1": "Rear fly",
+    "rearfly_w": "Rear fly (watermark)",
     "rearfly1r": "Rear fly 1r",
     "rearfly1v": "Rear fly 1v",
     "rearfly2r": "Rear fly 2r",
@@ -46,10 +50,14 @@ NON_FOLIATED_NAMES = {
     "bkfly": "Back fly",
     "frfly": "Front fly",
     "front": "Front",
+    "frontflyrecto": "Front fly recto",
+    "frontflyrecto_w": "Front fly recto (watermark)",
     "frontflyverso": "Front fly verso",
     "insidefrontboard": "Inside front board",
     "spine": "Spine",
-    "test": "Test"
+    "test": "Test",
+    "pastedown_w": "Pastedown (watermark)",
+    "colourpatch": "Colour patch"
 }
 
 TYPE_MAP = {
