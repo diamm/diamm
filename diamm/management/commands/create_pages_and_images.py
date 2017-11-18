@@ -56,6 +56,7 @@ NON_FOLIATED_NAMES = {
     "insidefrontboard": "Inside front board",
     "spine": "Spine",
     "test": "Test",
+    "frontpastedown_w": "Front pastedown (watermark)",
     "pastedown_w": "Pastedown (watermark)",
     "colourpatch": "Colour patch"
 }
