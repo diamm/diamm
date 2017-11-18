@@ -68,6 +68,7 @@ class PagesInline(admin.TabularInline):
     model = Page
     extra = 0
     classes = ('collapse',)
+    fields = ('numeration', 'sort_order', 'page_type')
 
 
 class URLsInline(admin.TabularInline):
