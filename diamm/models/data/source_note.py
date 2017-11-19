@@ -1,4 +1,9 @@
 from django.db import models
+from datetime import datetime
+
+
+def get_default_author():
+    return "DIAMM, {0}".format(datetime.now().year)
 
 
 class SourceNote(models.Model):
@@ -55,7 +60,7 @@ class SourceNote(models.Model):
     sort = models.IntegerField(default=0)
 
     # Authority for the note
-    author = models.CharField(max_length=255, blank=True, null=True)
+    author = models.CharField(max_length=255, default=get_default_author, blank=True, null=True)
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

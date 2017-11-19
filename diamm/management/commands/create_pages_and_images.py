@@ -150,7 +150,7 @@ class Command(BaseCommand):
         # Check whether source has pages attached already
         num_pages = src.pages.count()
         if num_pages > 0:
-            log.error(term.red("Source already has {0} page records. This should only be run on sources with no existing page records."))
+            log.error(term.red("Source already has {0} page records. This should only be run on sources with no existing page records.".format(num_pages)))
             sys.exit(-1)
 
         # Check how many images are in the images folder.
