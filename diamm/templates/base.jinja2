@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="search" href="{{ request.scheme }}://{{ request.get_host() }}{{ url('opensearch') }}" type="application/opensearchdescription+xml" title="DIAMM"/>
+    <link rel="stylesheet" href="{{ static('stylesheets/styles.css') }}" />
     {% block title %}
     <title>Digital Image Archive of Medieval Music</title>
     {% endblock %}
@@ -65,8 +66,6 @@
             </div> #}
         </div>
     </footer>
-    <link rel="stylesheet" href="{{ static('stylesheets/styles.css') }}" />
-
     {% block scripts %}
     {% endblock %}
     {% if not debug %}
