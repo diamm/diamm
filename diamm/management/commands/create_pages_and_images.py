@@ -82,6 +82,7 @@ NON_FOLIATED_NAMES = {
     "colourpatch": "Colour patch",
     "index": "Index",
     "index_v": "Index v",
+    "descr": "Description",
     "i": "i",
     "i_v": "i v",
     "ii": "ii",
@@ -93,7 +94,15 @@ NON_FOLIATED_NAMES = {
     "foreedge": "Fore edge",
     "topedge": "Top edge",
     "edge": "Edge",
-    "edge_1": "Edge"
+    "edge_1": "Edge",
+    "Av_a": "A v",
+    "Av": "A v",
+    "B": "B",
+    "Bv": "Bv",
+    "C": "C",
+    "Cv": "Cv",
+    "D": "D",
+    "Dv": "Dv"
 }
 
 TYPE_MAP = {
