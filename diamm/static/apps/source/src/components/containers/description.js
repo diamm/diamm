@@ -287,7 +287,7 @@ export const Notes = ({notes, showEdit}) =>
                         </h5>
                         <ReactMarkdown source={ thisNote } />
                         <div className="note-author">
-                            { (note.author.indexOf("DIAMM") !== -1 || note.author !== "None") ? note.author : "" }
+                            { (note.author.indexOf("DIAMM") === -1 || note.author !== "None") ? note.author : "" }
                         </div>
                     </section>
                 );
