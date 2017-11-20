@@ -23,8 +23,12 @@ class RegionProvenanceSerializer(ContextSerializer):
     url = serpy.MethodField()
     name = serpy.MethodField()
     region_uncertain = serpy.BoolField()
-    earliest_year = serpy.IntField()
-    latest_year = serpy.IntField()
+    earliest_year = serpy.IntField(
+        required=False
+    )
+    latest_year = serpy.IntField(
+        required=False
+    )
 
     def get_url(self, obj):
         return reverse('source-detail', kwargs={"pk": obj.source.id}, request=self.context['request'])
