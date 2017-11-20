@@ -95,6 +95,7 @@ NON_FOLIATED_NAMES = {
     "topedge": "Top edge",
     "edge": "Edge",
     "edge_1": "Edge",
+    "A": "A",
     "Av_a": "A v",
     "Av": "A v",
     "B": "B",
