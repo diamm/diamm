@@ -1,7 +1,9 @@
 from django.contrib import admin, messages
 from django.shortcuts import render
+from django.db import models
 from diamm.models.data.composition import Composition
 from diamm.models.data.composition_composer import CompositionComposer
+from diamm.models.data.composition_note import CompositionNote
 from diamm.models.data.item import Item
 from diamm.models.data.composition_bibliography import CompositionBibliography
 from diamm.models.data.composition_cycle import CompositionCycle
@@ -9,6 +11,7 @@ from diamm.admin.forms.merge_compositions import MergeCompositionsForm
 from diamm.admin.forms.assign_genre import AssignGenreForm
 from diamm.admin.merge_models import merge
 from salmonella.admin import SalmonellaMixin
+from pagedown.widgets import AdminPagedownWidget
 from reversion.admin import VersionAdmin
 
 
@@ -35,6 +38,11 @@ class ItemInline(SalmonellaMixin, admin.StackedInline):
     classes = ['collapse']
 
 
+class NoteInline(admin.TabularInline):
+    model = CompositionNote
+    extra = 0
+
+
 class CycleInline(SalmonellaMixin, admin.StackedInline):
     verbose_name = "Cycle"
     verbose_name_plural = "Cycles"
@@ -48,7 +56,7 @@ class CompositionAdmin(VersionAdmin):
     save_on_top = True
     list_display = ('title', 'get_composers', 'appears_in', 'id')
     search_fields = ('=id', 'title', 'composers__composer__last_name')
-    inlines = (ComposerInline, CycleInline, BibliographyInline, ItemInline)
+    inlines = (ComposerInline, NoteInline, CycleInline, BibliographyInline, ItemInline)
     list_filter = ('anonymous', 'genres')
     actions = ["merge_compositions_action", "assign_genre_action"]
 

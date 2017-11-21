@@ -66,6 +66,7 @@ from diamm.models.data.source_provenance import SourceProvenance
 from diamm.models.data.source_relationship import SourceRelationship
 from diamm.models.data.source_relationship_type import SourceRelationshipType
 from diamm.models.data.composition import Composition
+from diamm.models.data.composition_note import CompositionNote
 from diamm.models.data.composition_composer import CompositionComposer
 from diamm.models.data.genre import Genre
 from diamm.models.data.item import Item
