@@ -1,7 +1,9 @@
 from django.contrib import admin, messages
 from django.shortcuts import render
+from django.db import models
 from diamm.models.data.composition import Composition
 from diamm.models.data.composition_composer import CompositionComposer
+from diamm.models.data.composition_note import CompositionNote
 from diamm.models.data.item import Item
 from diamm.models.data.composition_bibliography import CompositionBibliography
 from diamm.models.data.composition_cycle import CompositionCycle
@@ -9,6 +11,7 @@ from diamm.admin.forms.merge_compositions import MergeCompositionsForm
 from diamm.admin.forms.assign_genre import AssignGenreForm
 from diamm.admin.merge_models import merge
 from salmonella.admin import SalmonellaMixin
+from pagedown.widgets import AdminPagedownWidget
 from reversion.admin import VersionAdmin
 
 
@@ -33,6 +36,15 @@ class ItemInline(SalmonellaMixin, admin.StackedInline):
     extra = 0
     salmonella_fields = ('source', 'pages')
     classes = ['collapse']
+
+
+class NoteInline(admin.TabularInline):
+    model = CompositionNote
+    extra = 0
+
+    formfield_overrides = {
+        models.TextField: {'widget': AdminPagedownWidget}
+    }
 
 
 class CycleInline(SalmonellaMixin, admin.StackedInline):
