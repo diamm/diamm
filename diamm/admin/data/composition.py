@@ -42,10 +42,6 @@ class NoteInline(admin.TabularInline):
     model = CompositionNote
     extra = 0
 
-    formfield_overrides = {
-        models.TextField: {'widget': AdminPagedownWidget}
-    }
-
 
 class CycleInline(SalmonellaMixin, admin.StackedInline):
     verbose_name = "Cycle"
@@ -60,7 +56,7 @@ class CompositionAdmin(VersionAdmin):
     save_on_top = True
     list_display = ('title', 'get_composers', 'appears_in', 'id')
     search_fields = ('=id', 'title', 'composers__composer__last_name')
-    inlines = (ComposerInline, CycleInline, BibliographyInline, ItemInline)
+    inlines = (ComposerInline, NoteInline, CycleInline, BibliographyInline, ItemInline)
     list_filter = ('anonymous', 'genres')
     actions = ["merge_compositions_action", "assign_genre_action"]
 
