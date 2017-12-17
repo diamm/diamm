@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<schema name="diamm" version="1.5">
+<schema name="diamm" version="1.6">
     <field name="_version_" type="long" indexed="true" stored="true" />
-    <field name="_root_" type="string" indexed="true" stored="false" />
+    <field name="_root_" type="uuid" indexed="true" stored="false" />
     <field name="id" type="uuid" indexed="true" stored="true" required="true" multiValued="false" />
     <field name="type" type="string" indexed="true" stored="true" required="true" multiValued="false" />
     <field name="pk" type="int" indexed="true" stored="true" required="true"/>
