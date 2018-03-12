@@ -264,7 +264,18 @@ export const Notes = ({notes, showEdit}) =>
     return (
         <div className="notes">
             { notes.map( (note, idx) => {
-                let thisNote;
+                let thisNote, noteAuthor;
+
+                if (note.hasOwnProperty('author') && note.author.indexOf('DIAMM') === -1 && note.author !== "None")
+                {
+                    console.log(note.author);
+                    noteAuthor = note.author;
+                }
+                else
+                {
+                    noteAuthor = "";
+                }
+
 
                 if (note.type === CCM_NOTE_TYPE)
                 {
@@ -287,7 +298,7 @@ export const Notes = ({notes, showEdit}) =>
                         </h5>
                         <ReactMarkdown source={ thisNote } />
                         <div className="note-author">
-                            { (note.author.indexOf("DIAMM") === -1 || note.author !== "None") ? note.author : "" }
+                            { noteAuthor }
                         </div>
                     </section>
                 );
