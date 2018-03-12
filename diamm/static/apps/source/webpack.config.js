@@ -52,7 +52,7 @@ function productionPlugins()
             }
         }),
         new webpack.optimize.UglifyJsPlugin(),
-        new webpack.IgnorePlugin(/^\.\/locale$/, [/moment$/]),
+        new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
         new webpack.optimize.OccurrenceOrderPlugin(true),
         new webpack.ProvidePlugin({
             'diva': 'diva',
