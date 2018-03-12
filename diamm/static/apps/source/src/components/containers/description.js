@@ -268,7 +268,6 @@ export const Notes = ({notes, showEdit}) =>
 
                 if (note.hasOwnProperty('author') && note.author.indexOf('DIAMM') === -1 && note.author !== "None")
                 {
-                    console.log(note.author);
                     noteAuthor = note.author;
                 }
                 else
