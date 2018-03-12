@@ -31,6 +31,9 @@ class BibliographyPublication(models.Model):
     B_PLACE_PUBLICATION = 13
     B_NUMBER_OF_VOLUMES = 14
     B_INTL_NUM = 15
+    B_CONFERENCE_NAME = 16
+    B_CONFERENCE_LOCATION = 17
+    B_CONFERENCE_DATE = 18
     B_NOTE = 99
 
     PUBLICATION_INFO_TYPE = (
@@ -48,6 +51,9 @@ class BibliographyPublication(models.Model):
         (B_PLACE_PUBLICATION, "Place of Publication"),
         (B_NUMBER_OF_VOLUMES, "Number of Volumes in Series"),
         (B_INTL_NUM, "ISBN/ISSN/ISMN"),
+        (B_CONFERENCE_NAME, "Conference name"),
+        (B_CONFERENCE_LOCATION, "Conference location"),
+        (B_CONFERENCE_DATE, "Conference date"),
         (B_NOTE, "General Note")
     )
 

@@ -50,20 +50,25 @@
 {{ year | default('n.d') }}.
 {%- endmacro -%}
 
+{%- macro punctuate(title) -%}
+    {% if title.endswith(('.', '?', '!')) -%}
+{{ title }}
+    {%- else -%}
+{{ title }}.
+    {%- endif %}
+{%- endmacro -%}
+
 {%- macro first_title(content) %}
     {# journal, book, or festschrift -#}
-    {%- if content.type.pk in (6, 2) -%}
-    <em>{{ content.title }}.</em>
+    {%- if content.type.pk in (5, 6, 2) -%}
+    <em>{{ punctuate(content.title) }}</em>
     {%- elif content.type.pk in (5,) and content.publication_info.filter(type=2).count() > 0 -%}
     {# chapter in a festschrift #}
-    {{ content.title }}.
-    {%- elif content.type.pk in (5,) -%}
-    {# festschrift #}
-    <em>{{ content.title }}</em>
+    {{ punctuate(content.title) }}
     {%- else -%}
-    {# journal article, book chapter, dissertation -#}
-    {{ content.title }}.
-    {%- endif %}
+    {# journal article, book chapter, dissertation, conference -#}
+    {{ punctuate(content.title) }}
+    {%- endif -%}
 {% endmacro -%}
 
 {%- macro other_titles(content) %}
@@ -126,6 +131,19 @@
     {%- endif %}
 {% endmacro -%}
 
+{%- macro conference(content) -%}
+    {% set conf_name = content.publication_info.filter(type=16)|first -%}
+    {% set conf_loc = content.publication_info.filter(type=17)|first -%}
+    {% set conf_date = content.publication_info.filter(type=18)|first -%}
+    {%- if conf_name and conf_loc and conf_date -%}
+        Paper delivered at {{ conf_name.entry }}, {{ conf_loc.entry }}. {{ conf_date.entry }}
+    {%- elif conf_name and conf_loc -%}
+        Paper delivered at {{ conf_name.entry }}, {{ conf_loc.entry }}
+    {%- elif conf_name -%}
+        Paper delivered at {{ conf_name.entry }}
+    {%- endif -%}
+{%- endmacro -%}
+
 {%- macro publication_info(content) %}
     {% if content.type.pk == 1 -%}
         {# journal #}
@@ -148,7 +166,10 @@
         {# dissertation #}
         {% set deg = degree(content) -%}
         {% if deg -%}{{ deg }}.{%- endif %}
-    {%- endif %}
+    {%- elif content.type.pk == 7 -%}
+        {% set cnf = conference(content) %}
+        {%- if cnf -%}{{ cnf }}.{%- endif -%}
+    {%- endif -%}
 {% endmacro -%}
 
 {{ authors(content) }} {{ year(content.year) }} {{ first_title(content) }} {{ other_titles(content) }} {{ publication_info(content) }}
