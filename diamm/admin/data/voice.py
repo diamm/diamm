@@ -13,6 +13,7 @@ class VoiceAdmin(SalmonellaMixin, VersionAdmin):
         queryset = queryset.select_related('item__composition', 'mensuration', 'type', 'clef')
         return queryset
 
-    list_display = ['item', 'type', 'mensuration', 'clef']
-    list_filter = ['type', 'mensuration', 'clef']
+    list_display = ['item', 'type', 'mensuration', 'clef', 'item_id']
+    list_filter = ['type', 'mensuration', 'clef', 'languages']
+    search_fields = ('item__composition__title', 'item__source__shelfmark', 'item__source__name', '=item__id')
     salmonella_fields = ("type", "clef", "mensuration", "item", "standard_text")
