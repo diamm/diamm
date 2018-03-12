@@ -14,6 +14,7 @@ class SetSourceSerializer(ContextSerializer):
     archive_name = serpy.StrField(
         attr="archive.display_name"
     )
+    cover = serpy.MethodField()
 
     def get_url(self, obj):
         return reverse('source-detail',
@@ -24,6 +25,19 @@ class SetSourceSerializer(ContextSerializer):
         if obj.pages.count() > 0:
             return True
         return False
+
+    def get_cover(self, obj):
+        try:
+            cover_obj = obj.cover
+        except AttributeError:
+            return None
+
+        if not cover_obj:
+            return None
+
+        return reverse('image-serve-info',
+                       kwargs={"pk": cover_obj['id']},
+                       request=self.context['request'])
 
 
 class SetDetailSerializer(ContextSerializer):
