@@ -4,6 +4,7 @@ from django.db import models
 class CompositionComposer(models.Model):
     class Meta:
         app_label = "diamm_data"
+        ordering = ("composition__title",)
 
     composition = models.ForeignKey("diamm_data.Composition",
                                     related_name="composers")
