@@ -4,7 +4,7 @@ import DebounceInput from "react-debounce-input";
 import {
     updateCorrectionReportText,
     submitCorrectionReport
-} from "../actions/corrections"
+} from "../actions/corrections";
 
 const ThankYou = ({submitted}) =>
 {
@@ -35,6 +35,14 @@ class Correction extends React.Component
 
     render ()
     {
+        // Prevent users from pulling up the correction view without being authenticated.
+        // Redirects them to the login page.
+        if (!this.props.userIsAuthenticated)
+        {
+            window.location = `/login/?next=${window.location.pathname}#/corrections`;
+            return null;
+        }
+
         return (
             <div className="columns">
                 <div className="column is-two-thirds content">
@@ -77,7 +85,8 @@ function mapStateToProps (state)
         sourcePK: state.source.pk,
         noteContents: state.corrections.noteContents,
         submitted: state.corrections.submitted,
-        submitting: state.corrections.submitting
+        submitting: state.corrections.submitting,
+        userIsAuthenticated: state.user.isAuthenticated
     };
 }
 

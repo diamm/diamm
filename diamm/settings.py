@@ -272,8 +272,8 @@ SOLR = {
         'person': 'name_ans asc',
         'organization': 'name_ans asc',
         'composition': 'title_ans asc',
-        'source': 'shelfmark_ans asc',
-        'sources_with_images': 'shelfmark_ans asc'
+        'source': 'archive_city_s asc',
+        'sources_with_images': 'archive_city_s asc'
     }
 }
 

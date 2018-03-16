@@ -68,6 +68,14 @@ class Images extends React.Component
 
     render()
     {
+        // Prevent users from pulling up the correction view without being authenticated.
+        // Redirects them to the login page.
+        if (!this.props.userIsAuthenticated)
+        {
+            window.location = `/login/?next=${window.location.pathname}#/images`;
+            return null;
+        }
+
         return (
             <div className="columns">
                 <div className="column is-three-quarters">
@@ -93,8 +101,8 @@ function mapStateToProps (state)
         manifestURL: state.source.manifest_url,
         manifest: state.manifest,
         rangeLookup: state.image_view.ranges,
-        activeCanvasLabel: state.image_view.activeCanvasLabel
-
+        activeCanvasLabel: state.image_view.activeCanvasLabel,
+        userIsAuthenticated: state.user.isAuthenticated
     }
 }
 

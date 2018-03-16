@@ -46,9 +46,9 @@
             <div class="archive-sources">
                 {% for source in content.sources %}
                     <div class="box">
-                        {% if source.cover_image %}
+                        {% if source.public_images %}
                             <a href="{{ source.url }}">
-                                <img src="{{ source.cover_image }}" />
+                                <img src="{{ source.cover }}" />
                             </a>
                         {% else %}
                             <div class="no-image">

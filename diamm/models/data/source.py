@@ -115,7 +115,7 @@ class Source(models.Model):
             on another website
         """
         # type 4 is the links to external images
-        return self.links.filter(type=4).count() > 0
+        return self.links.filter(type=4).exists()
 
     @property
     def cover(self):

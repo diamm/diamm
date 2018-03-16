@@ -20,13 +20,18 @@ class SearchView(generics.GenericAPIView):
         # by archive_city_s so that sources sort to the top.
         if not query:
             query = "*:*"
-            sorts.append('archive_city_s asc')
 
         filters.update({
             '{!tag=type}type': settings.SOLR['SEARCH_TYPES']
         })
 
         type_query = request.GET.get('type', None)
+
+        # adjusts the sorting for each type
+        if type_query and type_query in settings.SOLR['TYPE_SORTS'].keys():
+            sorts.append(settings.SOLR['TYPE_SORTS'][type_query])
+        else:
+            sorts.append('archive_city_s asc')
 
         # if we have an active query but want all types.
         if query and type_query == "all":
@@ -47,9 +52,9 @@ class SearchView(generics.GenericAPIView):
             filters.update({
                 'country_s': "\"{0}\"".format(request.GET.get('country_s'))
             })
-        if 'city_s' in request.GET:
+        if 'cities' in request.GET:
             filters.update({
-                'city_s': "\"{0}\"".format(request.GET.get('city_s'))
+                'city_s': "\"{0}\"".format(request.GET.get('cities')),
             })
 
         if 'composer' in request.GET:
@@ -88,17 +93,14 @@ class SearchView(generics.GenericAPIView):
             filters.update({
                 'anonymous_b': request.GET.get('anonymous', None)
             })
-            sorts.append("title_ans asc")
+            # Overwrite the first sort
+            sorts[0] = "title_ans asc"
 
         # Filter search by organization type
         if 'orgtype' in request.GET:
             filters.update({
                 'organization_type_s': "\"{0}\"".format(request.GET.get('orgtype', None))
             })
-
-        # adjusts the sorting for each type
-        if type_query in settings.SOLR['TYPE_SORTS'].keys():
-            sorts.append(settings.SOLR['TYPE_SORTS'][type_query])
 
         try:
             page_num = int(request.GET.get('page', 1))
