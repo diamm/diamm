@@ -38,6 +38,9 @@ class SourceCopyist(models.Model):
     object_id = models.PositiveIntegerField()
     copyist = GenericForeignKey()
 
+    def __str__(self):
+        return "{0} ({1})".format(self.copyist, self.copyist_type)
+
     @property
     def copyist_type(self):
         if not self.type:
