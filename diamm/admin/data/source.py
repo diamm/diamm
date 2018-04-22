@@ -21,9 +21,15 @@ from diamm.models.data.source_note import SourceNote
 from diamm.models.data.source_url import SourceURL
 from diamm.models.data.source_bibliography import SourceBibliography
 from diamm.models.data.source_relationship import SourceRelationship
+from diamm.models.data.source_copyist import SourceCopyist
 from diamm.models.data.source_provenance import SourceProvenance
 from diamm.models.data.page import Page
 from diamm.signals.item_signals import index_item, delete_item
+
+
+class SourceCopyistInline(SalmonellaMixin, admin.StackedInline):
+    model = SourceCopyist
+    extra = 0
 
 
 class SourceRelationshipInline(SalmonellaMixin, admin.StackedInline):
@@ -144,7 +150,8 @@ class SourceAdmin(SalmonellaMixin, VersionAdmin):
                      'archive__siglum', 'archive__city__name', 'shelfmark',
                      "=pk")
     inlines = (IdentifiersInline, NotesInline, URLsInline,
-               BibliographyInline, SourceRelationshipInline, SourceProvenanceInline, PagesInline, ItemInline)
+               BibliographyInline, SourceRelationshipInline, SourceCopyistInline,
+               SourceProvenanceInline, PagesInline, ItemInline)
     list_filter = (CountryListFilter, InventoryFilter)
     list_editable = ('sort_order',)
     filter_horizontal = ['notations']
