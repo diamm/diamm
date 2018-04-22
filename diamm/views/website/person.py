@@ -1,5 +1,5 @@
 from django.db.models import Prefetch
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from rest_framework import generics
 from diamm.models.data.person import Person
 from diamm.models.data.composition import Composition
@@ -23,5 +23,6 @@ class PersonDetail(generics.RetrieveAPIView):
 # call will handle redirections to the new records.
 def legacy_composer_redirect(request, legacy_id):
     legacy_lookup = "legacy_composer.{0}".format(legacy_id)
-    person = Person.objects.get(legacy_id=legacy_lookup)
+    person = get_object_or_404(Person, legacy_id=legacy_lookup)
+
     return redirect('person-detail', pk=person.pk)
