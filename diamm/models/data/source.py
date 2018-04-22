@@ -86,6 +86,19 @@ class Source(models.Model):
         return "{0} {1}".format(self.archive.siglum, self.__str__())
 
     @property
+    def display_summary(self):
+        date_stmt = self.date_statement if self.date_statement else ""
+        summary = self.display_name if self.display_name else ""
+
+        if date_stmt:
+            summary = "{0}; {1}".format(summary, date_stmt)
+
+        if self.notes.filter(type=1).exists():
+            summary = "{0}; {1}".format(summary, self.notes.filter(type=1).first().note)
+
+        return summary
+
+    @property
     def surface_type(self):
         if not self.surface:
             return None
