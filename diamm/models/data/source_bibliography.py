@@ -14,3 +14,6 @@ class SourceBibliography(models.Model):
     primary_study = models.BooleanField(default=False)
     notes = models.TextField(blank=True, null=True)
     pages = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return "{0}".format(self.bibliography.title)
