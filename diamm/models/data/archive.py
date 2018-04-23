@@ -14,7 +14,8 @@ class Archive(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=512, default="S.N.")
     city = models.ForeignKey('diamm_data.GeographicArea',
-                             related_name="archives", blank=True, null=True)
+                             related_name="archives", on_delete=models.CASCADE,
+                             blank=True, null=True)
     siglum = models.CharField(max_length=64, blank=True, null=True)
     librarian = models.CharField(max_length=255, blank=True, null=True)
     secondary_contact = models.CharField(max_length=255, blank=True, null=True)

@@ -24,7 +24,7 @@ class Commentary(models.Model):
     )
 
     comment = models.TextField()
-    author = models.ForeignKey(CustomUserModel, related_name="commentaries")
+    author = models.ForeignKey(CustomUserModel, related_name="commentaries", on_delete=models.CASCADE)
     comment_type = models.IntegerField(choices=COMMENT_TYPE_OPTIONS)
 
     limit = models.Q(app_label='diamm_data', model="source") | models.Q(app_label="diamm_data", model="page")

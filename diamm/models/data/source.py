@@ -44,7 +44,7 @@ class Source(models.Model):
     )
 
     id = models.AutoField(primary_key=True)  # migrate old ID
-    archive = models.ForeignKey('diamm_data.Archive', related_name="sources")
+    archive = models.ForeignKey('diamm_data.Archive', related_name="sources", on_delete=models.CASCADE)
     name = models.CharField(max_length=255, blank=True, null=True)
     shelfmark = models.CharField(max_length=255, blank=True, null=True)
     type = models.CharField(max_length=255, blank=True, null=True, help_text="""A brief description of the source,
@@ -63,7 +63,7 @@ class Source(models.Model):
                                    closest known decade, and then century. Examples: 1456, 1460, 1500.
                                    """)
     date_statement = models.CharField(max_length=512, blank=True, null=True)
-    cover_image = models.ForeignKey("diamm_data.Image", blank=True, null=True)
+    cover_image = models.ForeignKey("diamm_data.Image", blank=True, null=True, on_delete=models.CASCADE)
     format = models.CharField(max_length=255, blank=True, null=True)
     measurements = models.CharField(max_length=512, blank=True, null=True)
     numbering_system = models.IntegerField(choices=NUMBERING_SYSTEM, blank=True, null=True)

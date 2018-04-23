@@ -26,7 +26,8 @@ class ItemNote(models.Model):
     type = models.IntegerField(choices=NOTE_TYPE)
     note = models.TextField()
     item = models.ForeignKey("diamm_data.Item",
-                             related_name="notes")
+                             related_name="notes",
+                             on_delete=models.CASCADE)
 
     @property
     def note_type(self):

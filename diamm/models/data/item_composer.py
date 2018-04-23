@@ -10,9 +10,11 @@ class ItemComposer(models.Model):
                             and should not be used otherwise."""
 
     item = models.ForeignKey("diamm_data.Item",
-                             related_name="unattributed_composers")
+                             related_name="unattributed_composers",
+                             on_delete=models.CASCADE)
     composer = models.ForeignKey("diamm_data.Person",
                                  related_name="unattributed_works",
-                                 help_text=COMPOSER_HELP_TEXT)
+                                 help_text=COMPOSER_HELP_TEXT,
+                                 on_delete=models.CASCADE)
     uncertain = models.BooleanField(default=False)
     note = models.TextField(blank=True, null=True)

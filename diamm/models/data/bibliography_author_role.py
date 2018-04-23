@@ -37,9 +37,11 @@ class BibliographyAuthorRole(models.Model):
     )
 
     bibliography_author = models.ForeignKey('diamm_data.BibliographyAuthor',
-                                            related_name="bibliography_entries")
+                                            related_name="bibliography_entries",
+                                            on_delete=models.CASCADE)
     bibliography_entry = models.ForeignKey("diamm_data.Bibliography",
-                                           related_name="authors")
+                                           related_name="authors",
+                                           on_delete=models.CASCADE)
     role = models.IntegerField(choices=ROLES)
     position = models.IntegerField(default=1, help_text="""The position of this author in the author list.""")
 

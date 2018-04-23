@@ -13,8 +13,11 @@ class Image(models.Model):
     page = models.ForeignKey("diamm_data.Page",
                              blank=True,
                              null=True,
-                             related_name="images")
-    type = models.ForeignKey("diamm_data.ImageType", blank=True, null=True)
+                             related_name="images",
+                             on_delete=models.CASCADE)
+    type = models.ForeignKey("diamm_data.ImageType",
+                             blank=True, null=True,
+                             on_delete=models.CASCADE)
     location = models.URLField(max_length=1024, blank=True, null=True)
 
     # folio = models.CharField(max_length=256, blank=True, null=True)

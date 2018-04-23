@@ -7,8 +7,11 @@ class Cycle(models.Model):
         ordering = ('title',)
 
     title = models.CharField(max_length=256)
-    composer = models.ForeignKey("diamm_data.Person", blank=True, null=True)
-    type = models.ForeignKey("diamm_data.CycleType")
+    composer = models.ForeignKey("diamm_data.Person",
+                                 blank=True, null=True,
+                                 on_delete=models.CASCADE)
+    type = models.ForeignKey("diamm_data.CycleType",
+                             on_delete=models.CASCADE)
 
     def __str__(self):
         return "{0}".format(self.title)

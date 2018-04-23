@@ -16,13 +16,20 @@ class Organization(models.Model):
 
     name = models.CharField(max_length=1024, default="s.n.")
     variant_names = models.CharField(max_length=1024, blank=True, null=True)
-    type = models.ForeignKey("diamm_data.OrganizationType", default=1)
+    type = models.ForeignKey("diamm_data.OrganizationType", default=1,
+                             on_delete=models.CASCADE)
     legacy_id = models.CharField(max_length=64, blank=True, null=True)
-    location = models.ForeignKey("diamm_data.GeographicArea", blank=True, null=True, related_name="organizations")
+    location = models.ForeignKey("diamm_data.GeographicArea",
+                                 blank=True, null=True,
+                                 related_name="organizations",
+                                 on_delete=models.CASCADE)
     note = models.TextField(blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    archive = models.ForeignKey("diamm_data.Archive", blank=True, null=True, help_text=ARCHIVE_HELP_TEXT)
+    archive = models.ForeignKey("diamm_data.Archive",
+                                blank=True, null=True,
+                                help_text=ARCHIVE_HELP_TEXT,
+                                on_delete=models.CASCADE)
 
     sources_copied = GenericRelation("diamm_data.SourceCopyist")
     sources_related = GenericRelation("diamm_data.SourceRelationship")

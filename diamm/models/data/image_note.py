@@ -19,5 +19,6 @@ class ImageNote(models.Model):
 
     type = models.IntegerField(choices=NOTE_TYPE)
     note = models.TextField()
-    image = models.ForeignKey("diamm_data.Image")
+    image = models.ForeignKey("diamm_data.Image",
+                              on_delete=models.CASCADE)
 

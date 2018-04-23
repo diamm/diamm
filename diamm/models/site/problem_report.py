@@ -47,7 +47,10 @@ class ProblemReport(models.Model):
     summary = models.TextField(help_text="A summary of the change that was contributed by the user. Used to automatically build a contributor's entry for the record",
                                blank=True, null=True)
 
-    contributor = models.ForeignKey(CustomUserModel, related_name="problem_reports", blank=True, null=True, help_text=contributor_help)
+    contributor = models.ForeignKey(CustomUserModel,
+                                    related_name="problem_reports",
+                                    blank=True, null=True, help_text=contributor_help,
+                                    on_delete=models.CASCADE)
     credit = models.CharField(max_length=255, blank=True, null=True, help_text=credit_help)
 
     created = models.DateTimeField(auto_now_add=True)

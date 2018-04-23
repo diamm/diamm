@@ -17,7 +17,8 @@ class ArchiveNote(models.Model):
     type = models.IntegerField(choices=NOTE_TYPES)
     note = models.TextField()
     archive = models.ForeignKey("diamm_data.Archive",
-                               related_name="notes")
+                                related_name="notes",
+                                on_delete=models.CASCADE)
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

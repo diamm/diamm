@@ -23,7 +23,8 @@ class SourceIdentifier(models.Model):
     type = models.IntegerField(choices=IDENTIFIER_TYPES)
     note = models.TextField(blank=True, null=True)
     source = models.ForeignKey("diamm_data.Source",
-                               related_name="identifiers")
+                               related_name="identifiers",
+                               on_delete=models.CASCADE)
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
