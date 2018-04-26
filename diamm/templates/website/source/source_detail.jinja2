@@ -21,7 +21,7 @@
     <div id="source-body"
          data-source-id="{{ content.pk }}"
          data-source-name="{{ content.display_name }}"
-         data-is-authenticated="{{ request.user.is_authenticated() }}"
+         data-is-authenticated="{{ request.user.is_authenticated }}"
          {% if request.user.is_authenticated %}
              data-username="{{ request.user.full_name }}"
              data-is-staff="{{ request.user.is_staff }}"

@@ -585,7 +585,7 @@ class SourceDetailSerializer(ContextSerializer):
 
     def get_manifest_url(self, obj):
         # Return None if the document has no public images
-        if not self.context['request'].user.is_authenticated():
+        if not self.context['request'].user.is_authenticated:
             return None
 
         if not self.get_has_images(obj):
