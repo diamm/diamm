@@ -49,9 +49,9 @@ from diamm.views.catalogue.catalogue import CatalogueView
 from diamm.views.website.correction import CorrectionCreate
 from diamm.views.website.contributor import ContributorList
 
-from wagtail.wagtailadmin import urls as wagtailadmin_urls
-from wagtail.wagtaildocs import urls as wagtaildocs_urls
-from wagtail.wagtailcore import urls as wagtail_urls
+from wagtail.admin import urls as wagtailadmin_urls
+from wagtail.documents import urls as wagtaildocs_urls
+from wagtail.core import urls as wagtail_urls
 
 from django.contrib.sitemaps import views as sitemap_views
 from diamm.sitemaps.source_sitemap import SourceSitemap
