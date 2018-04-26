@@ -1,7 +1,7 @@
 from django.contrib import admin
 from diamm.models.data.page import Page
 from diamm.models.data.image import Image
-from salmonella.admin import SalmonellaMixin
+from dynamic_raw_id.admin import DynamicRawIDMixin
 from reversion.admin import VersionAdmin
 
 
@@ -12,9 +12,9 @@ class ImageInline(admin.StackedInline):
 
 
 @admin.register(Page)
-class PageAdmin(SalmonellaMixin, VersionAdmin):
+class PageAdmin(DynamicRawIDMixin, VersionAdmin):
     save_on_top = True
-    salmonella_fields = ("source",)
+    dynamic_raw_id_fields = ("source",)
     list_display = ('get_source', 'numeration', 'page_type', 'sort_order')
     search_fields = ('source__shelfmark', 'source__name', 'source__archive__siglum', '=source__id')
     list_editable = ('numeration', 'page_type', 'sort_order')

@@ -3,7 +3,7 @@ from diamm.models.data.bibliography import Bibliography
 from diamm.models.data.bibliography_author_role import BibliographyAuthorRole
 from diamm.models.data.bibliography_publication import BibliographyPublication
 from diamm.models.data.source_bibliography import SourceBibliography
-from salmonella.admin import SalmonellaMixin
+from dynamic_raw_id.admin import DynamicRawIDMixin
 from reversion.admin import VersionAdmin
 
 
@@ -12,10 +12,10 @@ class SourceInline(admin.TabularInline):
     extra = 0
 
 
-class AuthorsInline(SalmonellaMixin, admin.TabularInline):
+class AuthorsInline(DynamicRawIDMixin, admin.TabularInline):
     model = BibliographyAuthorRole
     extra = 0
-    salmonella_fields = ('bibliography_author',)
+    dynamic_raw_id_fields = ('bibliography_author',)
 
 
 class PublicationInline(admin.TabularInline):

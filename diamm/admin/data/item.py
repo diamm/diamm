@@ -7,7 +7,7 @@ from diamm.models.data.item_bibliography import ItemBibliography
 from diamm.models.data.item_note import ItemNote
 from diamm.models.data.item_composer import ItemComposer
 from reversion.admin import VersionAdmin
-from salmonella.admin import SalmonellaMixin
+from dynamic_raw_id.admin import DynamicRawIDMixin
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -35,18 +35,18 @@ class ItemNoteInline(admin.TabularInline):
     extra = 0
 
 
-class BibliographyInline(SalmonellaMixin, admin.TabularInline):
+class BibliographyInline(DynamicRawIDMixin, admin.TabularInline):
     verbose_name_plural = "Bibliography"
     verbose_name = "Bibliography"
     model = ItemBibliography
     extra = 0
-    salmonella_fields = ('bibliography',)
+    dynamic_raw_id_fields = ('bibliography',)
 
 
-class ItemComposerInline(SalmonellaMixin, admin.TabularInline):
+class ItemComposerInline(DynamicRawIDMixin, admin.TabularInline):
     model = ItemComposer
     extra = 0
-    salmonella_fields = ('composer',)
+    dynamic_raw_id_fields = ('composer',)
 
 
 class AttachedToPagesListFilter(admin.SimpleListFilter):
@@ -72,7 +72,7 @@ class AttachedToPagesListFilter(admin.SimpleListFilter):
 
 
 @admin.register(Item)
-class ItemAdmin(SalmonellaMixin, VersionAdmin):
+class ItemAdmin(DynamicRawIDMixin, VersionAdmin):
     save_on_top = True
     form = ItemAdminForm
     list_display = ('get_source', 'get_composition', 'get_composers',
@@ -86,7 +86,7 @@ class ItemAdmin(SalmonellaMixin, VersionAdmin):
     inlines = (ItemNoteInline, ItemComposerInline, BibliographyInline)
     filter_horizontal = ['pages']
     # exclude = ("pages",)
-    salmonella_fields = ('source', 'composition')
+    dynamic_raw_id_fields = ('source', 'composition')
 
     def pages_attached(self, obj):
         return obj.pages.count() > 0

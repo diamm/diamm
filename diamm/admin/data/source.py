@@ -10,7 +10,7 @@ from django.shortcuts import render, redirect
 from django.utils.translation import ugettext_lazy as _
 from reversion.admin import VersionAdmin
 from pagedown.widgets import AdminPagedownWidget
-from salmonella.admin import SalmonellaMixin
+from dynamic_raw_id.admin import DynamicRawIDMixin
 from rest_framework.reverse import reverse
 from diamm.admin.forms.copy_inventory import CopyInventoryForm
 from diamm.models.data.item import Item
@@ -27,29 +27,29 @@ from diamm.models.data.page import Page
 from diamm.signals.item_signals import index_item, delete_item
 
 
-class SourceCopyistInline(SalmonellaMixin, admin.StackedInline):
+class SourceCopyistInline(DynamicRawIDMixin, admin.StackedInline):
     model = SourceCopyist
     extra = 0
 
 
-class SourceRelationshipInline(SalmonellaMixin, admin.StackedInline):
+class SourceRelationshipInline(DynamicRawIDMixin, admin.StackedInline):
     model = SourceRelationship
     extra = 0
 
 
-class SourceProvenanceInline(SalmonellaMixin, admin.StackedInline):
+class SourceProvenanceInline(DynamicRawIDMixin, admin.StackedInline):
     model = SourceProvenance
     extra = 0
     verbose_name = "Provenance"
     verbose_name_plural = "Provenance"
 
 
-class BibliographyInline(SalmonellaMixin, admin.TabularInline):
+class BibliographyInline(DynamicRawIDMixin, admin.TabularInline):
     model = SourceBibliography
     verbose_name_plural = "Bibliography Entries"
     verbose_name = "Bibliography Entry"
     extra = 0
-    salmonella_fields = ('bibliography',)
+    dynamic_raw_id_fields = ('bibliography',)
     formfield_overrides = {
         models.CharField: {'widget': TextInput(attrs={'size': '160'})},
         models.TextField: {'widget': Textarea(attrs={'rows': 2, 'cols': 40})}
@@ -82,11 +82,11 @@ class URLsInline(admin.TabularInline):
     extra = 0
 
 
-class ItemInline(SalmonellaMixin, admin.TabularInline):
+class ItemInline(DynamicRawIDMixin, admin.TabularInline):
     model = Item
     extra = 0
     classes = ('collapse',)
-    salmonella_fields = ('composition',)
+    dynamic_raw_id_fields = ('composition',)
     fields = ('link_id_field', 'folio_start', 'folio_end', 'composition', 'get_composers', 'source_order',)
     readonly_fields = ('link_id_field', 'get_composers')
 
@@ -135,7 +135,7 @@ class CountryListFilter(admin.SimpleListFilter):
 
 
 @admin.register(Source)
-class SourceAdmin(SalmonellaMixin, VersionAdmin):
+class SourceAdmin(DynamicRawIDMixin, VersionAdmin):
     save_on_top = True
     list_display = ('shelfmark',
                     'name',
@@ -156,7 +156,7 @@ class SourceAdmin(SalmonellaMixin, VersionAdmin):
     list_editable = ('sort_order',)
     filter_horizontal = ['notations']
     # actions = (sort_sources,)
-    salmonella_fields = ('cover_image', 'archive')
+    dynamic_raw_id_fields = ('cover_image', 'archive')
 
     formfield_overrides = {
         models.TextField: {'widget': AdminPagedownWidget}

@@ -10,31 +10,31 @@ from diamm.models.data.composition_cycle import CompositionCycle
 from diamm.admin.forms.merge_compositions import MergeCompositionsForm
 from diamm.admin.forms.assign_genre import AssignGenreForm
 from diamm.admin.merge_models import merge
-from salmonella.admin import SalmonellaMixin
+from dynamic_raw_id.admin import DynamicRawIDMixin
 from pagedown.widgets import AdminPagedownWidget
 from reversion.admin import VersionAdmin
 
 
-class BibliographyInline(SalmonellaMixin, admin.TabularInline):
+class BibliographyInline(DynamicRawIDMixin, admin.TabularInline):
     verbose_name = "Bibliography"
     verbose_name_plural = "Bibliographies"
     model = CompositionBibliography
     extra = 0
-    salmonella_fields = ('bibliography',)
+    dynamic_raw_id_fields = ('bibliography',)
 
 
-class ComposerInline(SalmonellaMixin, admin.TabularInline):
+class ComposerInline(DynamicRawIDMixin, admin.TabularInline):
     verbose_name = "Composer"
     verbose_name_plural = "Composers"
     model = CompositionComposer
     extra = 0
-    salmonella_fields = ('composer',)
+    dynamic_raw_id_fields = ('composer',)
 
 
-class ItemInline(SalmonellaMixin, admin.StackedInline):
+class ItemInline(DynamicRawIDMixin, admin.StackedInline):
     model = Item
     extra = 0
-    salmonella_fields = ('source', 'pages')
+    dynamic_raw_id_fields = ('source', 'pages')
     classes = ['collapse']
 
 
@@ -43,12 +43,12 @@ class NoteInline(admin.TabularInline):
     extra = 0
 
 
-class CycleInline(SalmonellaMixin, admin.StackedInline):
+class CycleInline(DynamicRawIDMixin, admin.StackedInline):
     verbose_name = "Cycle"
     verbose_name_plural = "Cycles"
     model = CompositionCycle
     extra = 0
-    salmonella_fields = ('cycle',)
+    dynamic_raw_id_fields = ('cycle',)
 
 
 @admin.register(Composition)

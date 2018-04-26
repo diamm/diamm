@@ -4,12 +4,12 @@ from diamm.models.data.person import Person
 from diamm.models.data.source import Source
 from diamm.models.data.organization import Organization
 from diamm.models.data.composition import Composition
-from salmonella.admin import SalmonellaMixin
+from dynamic_raw_id.admin import DynamicRawIDMixin
 from reversion.admin import VersionAdmin
 
 
 @admin.register(ProblemReport)
-class ProblemReportAdmin(SalmonellaMixin, VersionAdmin):
+class ProblemReportAdmin(DynamicRawIDMixin, VersionAdmin):
     list_display = ('get_contributor', 'get_entity', 'created', 'accepted')
     search_fields = ('contributor__last_name',
                      'contributor__first_name',
@@ -18,7 +18,7 @@ class ProblemReportAdmin(SalmonellaMixin, VersionAdmin):
                      '=object_id')
     list_filter = ("accepted", "content_type")
 
-    salmonella_fields = ("contributor",)
+    dynamic_raw_id_fields = ("contributor",)
 
     fields = ('content_type',
               'object_id',

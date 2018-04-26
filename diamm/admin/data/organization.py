@@ -9,31 +9,31 @@ from diamm.models.data.source_provenance import SourceProvenance
 from diamm.admin.forms.merge_organizations import MergeOrganizationsForm
 from diamm.admin.merge_models import merge
 from reversion.admin import VersionAdmin
-from salmonella.admin import SalmonellaMixin
+from dynamic_raw_id.admin import DynamicRawIDMixin
 
 
-class CopiedSourcesInline(SalmonellaMixin, GenericTabularInline):
+class CopiedSourcesInline(DynamicRawIDMixin, GenericTabularInline):
     verbose_name = "Source Copied"
     verbose_name_plural = "Sources Copied"
     model = SourceCopyist
     extra = 0
-    salmonella_fields = ('source',)
+    dynamic_raw_id_fields = ('source',)
 
 
-class RelatedSourcesInline(SalmonellaMixin, GenericTabularInline):
+class RelatedSourcesInline(DynamicRawIDMixin, GenericTabularInline):
     model = SourceRelationship
     extra = 0
-    salmonella_fields = ('source',)
+    dynamic_raw_id_fields = ('source',)
 
 
-class ProvenanceSourcesInline(SalmonellaMixin, GenericTabularInline):
+class ProvenanceSourcesInline(DynamicRawIDMixin, GenericTabularInline):
     model = SourceProvenance
     extra = 0
-    salmonella_fields = ('source', 'city', 'country', 'region', 'protectorate')
+    dynamic_raw_id_fields = ('source', 'city', 'country', 'region', 'protectorate')
 
 
 @admin.register(Organization)
-class OrganizationAdmin(SalmonellaMixin, VersionAdmin):
+class OrganizationAdmin(DynamicRawIDMixin, VersionAdmin):
     save_on_top = True
     list_display = ('name', 'location', 'type', 'legacy_id')
     list_filter = ('type',)
@@ -41,7 +41,7 @@ class OrganizationAdmin(SalmonellaMixin, VersionAdmin):
     inlines = (CopiedSourcesInline, ProvenanceSourcesInline, RelatedSourcesInline)
     actions = ['update_organization_action', 'merge_organizations_action']
 
-    salmonella_fields = ('location', 'archive')
+    dynamic_raw_id_fields = ('location', 'archive')
 
     def update_organization_action(self, request, queryset):
         if 'do_action' in request.POST:

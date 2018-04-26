@@ -83,7 +83,7 @@ urlpatterns = [
     url(r'^robots\.txt$', TemplateView.as_view(template_name='robots.txt', content_type="text/plain"), name='robots-txt'),
 
     url(r'^admin/', admin.site.urls),
-    url(r'^admin/salmonella/', include('salmonella.urls')),
+    url(r'^admin/dynamic_raw_id/', include('dynamic_raw_id.urls')),
     # url(r'^introduction/$', TemplateView.as_view(template_name="introduction.jinja2"), name="introduction"),
     # url(r'^technical/$', TemplateView.as_view(template_name="technical.jinja2"), name="technical"),
 
