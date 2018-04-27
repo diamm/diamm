@@ -15,6 +15,7 @@ django-treebeard==4.3
 djangorestframework==3.8.2
 draftjs-exporter==2.0.0
 drf-ujson==1.2
+gunicorn==19.7.1
 html5lib==0.999999999
 idna==2.6
 Jinja2==2.10
