@@ -9,8 +9,10 @@ if (process.env.NODE_ENV !== `production`) {
     middlewares.push(logger);
 }
 
-export default function configureStore (initialState)
+export default function configureStore (initialState, history)
 {
+    middlewares.unshift(history);
+
     return createStore(
         rootReducer,
         initialState,

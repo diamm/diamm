@@ -1,17 +1,19 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
-import { Router, useRouterHistory } from "react-router";
-import { createHashHistory } from "history";
-import { syncHistoryWithStore } from "react-router-redux";
+// import { Router } from "react-router";
+import createHistory from "history/createBrowserHistory";
+import { ConnectedRouter, routerMiddleware } from "react-router-redux";
 
 import configureStore from "./store";
 import routes from "./routes";
 import { setActiveTab } from "./actions/index";
 
-export const store = configureStore({});
-const appHistory = useRouterHistory(createHashHistory)();
-const history = syncHistoryWithStore(appHistory, store);
+const history = createHistory();
+const historyMiddleware = routerMiddleware(history);
+
+export const store = configureStore({}, historyMiddleware);
+// const appHistory = useRouterHistory(createHashHistory)();
 
 const PUSH = "PUSH";
 const POP = "POP";
@@ -33,9 +35,9 @@ history.listen( (location) => {
 
 ReactDOM.render(
     <Provider store={ store } >
-        <Router history={ history } >
+        <ConnectedRouter history={ history } >
             { routes }
-        </Router>
+        </ConnectedRouter>
     </Provider>,
     document.getElementById("source-body")
 );
