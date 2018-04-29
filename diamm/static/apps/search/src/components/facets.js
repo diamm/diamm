@@ -1,12 +1,13 @@
 import React from "react";
 import classNames from "classnames";
+import PropTypes from "prop-types";
 
 export default class Facet extends React.Component
 {
     static propTypes = {
-        title: React.PropTypes.string.isRequired,
-        controls: React.PropTypes.node,
-        bodyClasses: React.PropTypes.string
+        title: PropTypes.string.isRequired,
+        controls: PropTypes.node,
+        bodyClasses: PropTypes.string
     };
 
     render ()

@@ -8,6 +8,7 @@ import {
 import { Link } from "react-router";
 import { openQuickLookView } from "../../actions/index";
 import { store } from "../../index";
+import PropTypes from "prop-types";
 
 
 const InventoryMenuItem = ({active, route, title, show=true}) =>
@@ -25,7 +26,7 @@ const InventoryMenuItem = ({active, route, title, show=true}) =>
 export class InventoryMenu extends React.Component
 {
     static contextTypes = {
-        router: React.PropTypes.object
+        router: PropTypes.object
     };
 
     render()

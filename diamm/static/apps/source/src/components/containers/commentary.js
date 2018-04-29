@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router";
 import ReactMarkdown from "react-markdown";
+import PropTypes from "prop-types";
 import moment from "moment";
 
 import {
@@ -24,7 +25,7 @@ const CommentaryMenuItem = ({active, route, title, show=true}) =>
 export class CommentaryMenu extends React.Component
 {
     static contextTypes = {
-        router: React.PropTypes.object
+        router: PropTypes.object
     };
 
     render ()

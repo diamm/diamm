@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router";
+import PropTypes from "prop-types";
 import {
     ROOT_ROUTE,
     INVENTORY_ROUTE,
@@ -83,7 +84,7 @@ const ContributeMenuLink = ({authenticated, active, route, title, show=true}) =>
 class App extends React.Component
 {
     static contextTypes = {
-        router: React.PropTypes.object
+        router: PropTypes.object
     };
 
     componentWillMount ()
