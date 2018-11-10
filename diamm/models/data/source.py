@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 import pysolr
+from diamm.helpers.solr_helpers import SolrManager
 
 
 class Source(models.Model):
@@ -199,7 +200,7 @@ class Source(models.Model):
     # where a composer is mentioned but not attached to a composition.
     @property
     def solr_inventory(self):
-        connection = pysolr.Solr(settings.SOLR['SERVER'])
+        connection = SolrManager(settings.SOLR['SERVER'])
         fq = ['type:item', 'source_i:{0}'.format(self.pk), 'composition_i:[* TO *]']
         fl = ['bibliography_ii',
               'composers_ssni',
@@ -216,16 +217,14 @@ class Source(models.Model):
               "[child parentFilter=type:item childFilter=type:itemnote]",
               'pk']
         # Set rows to an extremely high number so we get all of the item records in one go.
-        item_results = connection.search("*:*", fq=fq, fl=fl, sort="folio_start_ans asc", rows=10000)
-        if item_results.docs:
-            return item_results.docs
-        return []
+        connection.search("*:*", fq=fq, fl=fl, sort="folio_start_ans asc", rows=100)
+        return list(connection.results)
 
     # Like solr_inventory, but retrieves only inventory items that do not have a composition attached, i.e., composers
     #  that appear in a source but are not attached to a particular one.
     @property
     def solr_uninventoried(self):
-        connection = pysolr.Solr(settings.SOLR['SERVER'])
+        connection = SolrManager(settings.SOLR['SERVER'])
         fq = ['type:item', 'source_i:{0}'.format(self.pk), '-composition_i:[* TO *]']
         fl = ['bibliography_ii',
               'composers_ssni',
@@ -241,10 +240,8 @@ class Source(models.Model):
               'pk']
         sort = ["composer_ans asc"]
         # Set rows to an extremely high number so we get all of the item records in one go.
-        item_results = connection.search("*:*", fq=fq, fl=fl, sort=sort, rows=10000)
-        if item_results.docs:
-            return item_results.docs
-        return []
+        connection.search("*:*", fq=fq, fl=fl, sort=sort, rows=100)
+        return list(connection.results)
 
     @property
     def inventory_by_composer(self):
@@ -290,11 +287,11 @@ class Source(models.Model):
         # Grab a list of the ids for this record
         bibl = self.bibliographies.select_related('bibliography').values_list('bibliography__id', 'primary_study', 'pages', 'notes').order_by('bibliography__authors__bibliography_author__last_name').distinct()
         id_list = ",".join([str(x[0]) for x in bibl])
-        connection = pysolr.Solr(settings.SOLR['SERVER'])
+        connection = SolrManager(settings.SOLR['SERVER'])
         fq = ['type:bibliography', "{!terms f=pk}"+id_list]
-        bibliography_results = connection.search("*:*", fq=fq, sort="year_ans desc, sort_ans asc", rows=10000)
+        connection.search("*:*", fq=fq, sort="year_ans desc, sort_ans asc", rows=100)
 
-        if bibliography_results.hits == 0:
+        if connection.hits == 0:
             return []
 
         mapping = {}
@@ -307,67 +304,56 @@ class Source(models.Model):
 
             mapping[itm[0]] = additional_info
 
-        for res in bibliography_results.docs:
+        reslist = []
+        for res in connection.results:
             if res['pk'] in mapping:
                 res['primary_study'] = mapping[res['pk']][0]
                 res['pages'] = mapping[res['pk']][1]
                 res['notes'] = mapping[res['pk']][2]
+            reslist.append(res)
 
-        return bibliography_results.docs
+        return reslist
 
     @property
     def solr_pages(self):
         # List the pages from their Solr records
-        connection = pysolr.Solr(settings.SOLR['SERVER'])
+        connection = SolrManager(settings.SOLR['SERVER'])
         fq = ['type:page', 'source_i:{0}'.format(self.pk)]
-        page_results = connection.search("*:*", fq=fq, sort="numeration_ans asc", rows=10000)
-        if page_results.docs:
-            return page_results.docs
-        return []
+        connection.search("*:*", fq=fq, sort="numeration_ans asc", rows=100)
+        return list(connection.results)
 
     @property
     def solr_sets(self):
-        connection = pysolr.Solr(settings.SOLR['SERVER'])
+        connection = SolrManager(settings.SOLR['SERVER'])
         fq = ['type:set', 'sources_ii:{0}'.format(self.pk)]
         fl = ["id", "pk", "cluster_shelfmark_s", "sources_ii", "set_type_s"]
         sort = ["shelfmark_ans asc"]
 
-        set_results = connection.search("*:*", fq=fq, fl=fl, sort=sort, rows=10000)
-
-        if set_results.hits > 0:
-            return set_results.docs
-        return []
+        connection.search("*:*", fq=fq, fl=fl, sort=sort, rows=100)
+        return list(connection.results)
 
     @property
     def solr_provenance(self):
-        connection = pysolr.Solr(settings.SOLR['SERVER'])
+        connection = SolrManager(settings.SOLR['SERVER'])
         fq = ['type:sourceprovenance', 'source_i:{0}'.format(self.pk)]
         sort = ['earliest_year_i asc', 'country_s asc']
 
-        provenance_results = connection.search("*:*", fq=fq, sort=sort, rows=10000)
-
-        if provenance_results.hits > 0:
-            return provenance_results.docs
-        return []
+        connection.search("*:*", fq=fq, sort=sort, rows=100)
+        return list(connection.results)
 
     @property
     def solr_relationships(self):
-        connection = pysolr.Solr(settings.SOLR['SERVER'])
+        connection = SolrManager(settings.SOLR['SERVER'])
         fq = ['type:sourcerelationship', 'source_i:{0}'.format(self.pk)]
         sort = ["related_entity_s asc"]
-        rel_results = connection.search("*:*", fq=fq, sort=sort, rows=10000)
-
-        if rel_results.hits > 0:
-            return rel_results.docs
-        return []
+        connection.search("*:*", fq=fq, sort=sort, rows=100)
+        return list(connection.results)
 
     @property
     def solr_copyists(self):
-        connection = pysolr.Solr(settings.SOLR['SERVER'])
+        connection = SolrManager(settings.SOLR['SERVER'])
         fq = ['type:sourcecopyist', 'source_i:{0}'.format(self.pk)]
         sort = ["copyist_s asc"]
-        copyist_results = connection.search("*:*", fq=fq, sort=sort, rows=10000)
+        connection.search("*:*", fq=fq, sort=sort, rows=100)
 
-        if copyist_results.hits > 0:
-            return copyist_results.docs
-        return []
+        return list(connection.results)

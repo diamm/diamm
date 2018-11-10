@@ -1,7 +1,11 @@
-import serpy
+from typing import List, Optional, Dict
+
 import pysolr
+import serpy
 from django.conf import settings
 from rest_framework.reverse import reverse
+
+from diamm.helpers.solr_helpers import SolrManager
 from diamm.serializers.serializers import ContextSerializer, ContextDictSerializer
 
 
@@ -9,7 +13,7 @@ class SourceCatalogueEntrySerializer(ContextSerializer):
     entry = serpy.MethodField()
     order = serpy.IntField()
 
-    def get_entry(self, obj):
+    def get_entry(self, obj) -> str:
         request = self.context['request']
         return "{0}://{1}/media/rism/catalogue/{2}".format(
             request.scheme,
@@ -31,7 +35,7 @@ class SourceCopyistSerializer(ContextDictSerializer):
         attr="type_s"
     )
 
-    def get_copyist(self, obj):
+    def get_copyist(self, obj) -> Dict:
         url = reverse('{0}-detail'.format(obj['copyist_type_s']),
                       kwargs={"pk": int(obj['copyist_pk_i'])},
                       request=self.context['request'])
@@ -125,9 +129,9 @@ class SourceSetSerializer(ContextDictSerializer):
         attr="set_type_s"
     )
 
-    def get_sources(self, obj):
+    def get_sources(self, obj) -> List:
         source_ids = ",".join([str(sid) for sid in obj['sources_ii']])
-        connection = pysolr.Solr(settings.SOLR['SERVER'])
+        connection = SolrManager(settings.SOLR['SERVER'])
         fq = ["type:source", "{!terms f=pk}"+source_ids]
 
         # Filter out the current source from the list of returned sources.
@@ -137,10 +141,13 @@ class SourceSetSerializer(ContextDictSerializer):
         fl = ["pk", "shelfmark_s", "display_name_s", "cover_image_i"]
         sort = ["shelfmark_ans asc"]
 
-        results = connection.search("*:*", fq=fq, fl=fl, sort=sort, rows=10000)
+        connection.search("*:*", fq=fq, fl=fl, sort=sort, rows=100)
 
-        if results.hits > 0:
-            for doc in results.docs:
+        resultlist = []
+
+        if connection.hits > 0:
+            for doc in connection.results:
+
                 source_url = reverse('source-detail',
                                      kwargs={"pk": doc['pk']},
                                      request=self.context['request'])
@@ -153,7 +160,9 @@ class SourceSetSerializer(ContextDictSerializer):
                 else:
                     doc['cover_image'] = None
 
-            return results.docs
+                resultlist.append(doc)
+
+            return resultlist
         else:
             return []
 
@@ -194,7 +203,7 @@ class SourceComposerInventoryCompositionSerializer(ContextDictSerializer):
     )
     url = serpy.MethodField()
 
-    def get_source_attribution(self, obj):
+    def get_source_attribution(self, obj) -> Optional[str]:
         if 'source_attribution_i' in obj:
             return obj['source_attribution_i']
         return None
@@ -307,15 +316,15 @@ class SourceInventorySerializer(ContextDictSerializer):
 
     # @TODO Finish Item Bibliography stuff.
     def get_bibliography(self, obj):
-        connection = pysolr.Solr(settings.SOLR['SERVER'])
+        connection = SolrManager(settings.SOLR['SERVER'])
         fq = ["type:itembibliography", "item_i:{0}".format(obj['pk'])]
         sort = ["prerendered_s asc"]
         fl = ["pages_s", "prerendered_s", "notes_s"]
 
-        bibliography_res = connection.search("*:*", fq=fq, fl=fl, sort=sort, rows=10000)
+        connection.search("*:*", fq=fq, fl=fl, sort=sort, rows=100)
 
-        if bibliography_res.hits > 0:
-            return bibliography_res.docs
+        if connection.hits > 0:
+            return list(connection.results)
         else:
             return None
 
@@ -373,11 +382,11 @@ class SourceInventorySerializer(ContextDictSerializer):
 
         return out
 
-    def get_voices(self, obj):
+    def get_voices(self, obj) -> List:
         if not obj.get('voices_ii', None):
             return None
 
-        connection = pysolr.Solr(settings.SOLR['SERVER'])
+        connection = SolrManager(settings.SOLR['SERVER'])
         id_list = ",".join(str(x) for x in obj.get('voices_ii'))
         fq = ["type:voice", "{!terms f=pk}"+id_list]
         fl = ["mensuration_s",
@@ -387,8 +396,8 @@ class SourceInventorySerializer(ContextDictSerializer):
               "voice_text_s",
               "voice_type_s"]
 
-        voice_res = connection.search("*:*", fq=fq, fl=fl, rows=10000)
-        return voice_res.docs
+        connection.search("*:*", fq=fq, fl=fl, rows=100)
+        return list(connection.results)
 
 
 class SourceArchiveSerializer(ContextSerializer):

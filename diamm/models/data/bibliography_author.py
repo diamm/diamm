@@ -1,6 +1,6 @@
-import pysolr
 from django.conf import settings
 from django.db import models
+from diamm.helpers.solr_helpers import SolrManager
 
 
 class BibliographyAuthor(models.Model):
@@ -22,12 +22,9 @@ class BibliographyAuthor(models.Model):
 
     @property
     def solr_bibliography(self):
-        connection = pysolr.Solr(settings.SOLR['SERVER'])
+        connection = SolrManager(settings.SOLR['SERVER'])
         fq = ["type:bibliography", "authors_ii:{0}".format(self.pk)]
         sort = "year_ans desc, sort_ans asc"
 
-        bibl_res = connection.search("*:*", fq=fq, sort=sort, rows=10000)
-
-        if bibl_res.hits > 0:
-            return bibl_res.docs
-        return []
+        connection.search("*:*", fq=fq, sort=sort, rows=100)
+        return list(connection.results)

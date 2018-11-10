@@ -7,15 +7,15 @@
 #    most browsers will refuse to cross-load secure and insecure content). This also
 #    simplifies loading images into a canvas.
 import serpy
-import pysolr
 from django.conf import settings
 from django.template.defaultfilters import truncatewords
 from rest_framework.reverse import reverse
-from diamm.serializers.serializers import ContextDictSerializer
+
+from diamm.helpers.solr_helpers import SolrManager
 from diamm.serializers.fields import StaticField
 from diamm.serializers.iiif.canvas import CanvasSerializer
 from diamm.serializers.iiif.structure import StructureSerializer
-
+from diamm.serializers.serializers import ContextDictSerializer
 
 METADATA_MAPPING = {
     'name_s': 'Name',
@@ -116,7 +116,7 @@ class SourceManifestSerializer(ContextDictSerializer):
         }
 
     def get_sequences(self, obj):
-        conn = pysolr.Solr(settings.SOLR['SERVER'])
+        conn = SolrManager(settings.SOLR['SERVER'])
 
         # image_type_i:1 in the field list transformer childFilter ensures that
         # only the primary images (type 1) are returned.
@@ -126,10 +126,11 @@ class SourceManifestSerializer(ContextDictSerializer):
             "fl": ["id", "pk", "source_i", "numeration_s", "items_ii", "page_type_i",
                    "[child parentFilter=type:page childFilter=type:image]"],
             "sort": "sort_order_i asc, image_type_i asc, numeration_ans asc",
-            "rows": 10000
+            "rows": 100
         }
-        canvas_res = conn.search("*:*", **canvas_query)
-        canvases = CanvasSerializer(canvas_res.docs, many=True, context={"request": self.context['request']}).data
+        conn.search("*:*", **canvas_query)
+
+        canvases = CanvasSerializer(conn.results, many=True, context={"request": self.context['request']}).data
 
         label = "Default"
         source_id = obj['pk']
@@ -162,18 +163,18 @@ class SourceManifestSerializer(ContextDictSerializer):
             }
 
     def get_structures(self, obj):
-        conn = pysolr.Solr(settings.SOLR['SERVER'])
+        conn = SolrManager(settings.SOLR['SERVER'])
 
         # The pages_ii query ensures we retrieve only those records that have images associated with them.
         structure_query = {
             "fq": ["type:item", "source_i:{0}".format(obj['pk']), "pages_ii:[* TO *]"],
             "fl": ["pages_ii", "pages_ssni", "source_i", "pk", "composition_s"],
             "sort": "folio_start_ans asc",
-            "rows": 10000,
+            "rows": 100,
         }
-        structure_res = conn.search("*:*", **structure_query)
+        conn.search("*:*", **structure_query)
 
-        structures = StructureSerializer(structure_res.docs,
+        structures = StructureSerializer(conn.results,
                                          context={"request": self.context["request"]},
                                          many=True).data
 
