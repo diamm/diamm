@@ -109,11 +109,13 @@ class SearchView(generics.GenericAPIView):
 
         try:
             paginator = SolrPaginator(query, filters, exclusive_filters, sorts, request)
-            page = paginator.page(page_num)
         except SolrResultException as e:
             # We assume that an exception raised by Solr is the result of a bad request by the client,
             #  so we bubble up a 400 with a message about why it went wrong.
             return response.Response({'message': repr(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            page = paginator.page(page_num)
         except PageRangeOutOfBoundsException:
             # If requesting past the number of pages, punt the user back to page 1.
             page = paginator.page(1)
