@@ -1,7 +1,7 @@
 var path = require('path');
 var webpack = require('webpack');
 var sharedJQueryPath = require.resolve('jquery');
-const buildMode = (process.env.NODE_ENV === "production") ? 'production' : 'development';
+const buildMode = process.env.NODE_ENV;
 
 module.exports = {
     entry: [
