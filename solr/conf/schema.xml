@@ -60,7 +60,6 @@
 
     <!-- copy composition title -->
     <copyField source="title_s" dest="text" />
-    <copyField source="voice_text_txt" dest="text" />
 
     <!-- analyzed fields for boosting from substrings -->
     <copyField source="name_s" dest="source_boost_tns" />
