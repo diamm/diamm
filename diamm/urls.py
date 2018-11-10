@@ -21,13 +21,13 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.views import (
-    password_reset, password_reset_done, password_reset_confirm, password_reset_complete,
-    password_change, password_change_done, login, logout
+    PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView,
+    PasswordChangeView, PasswordChangeDoneView, LoginView, LogoutView
 )
 from django_jinja import views as jinja_views
 
 from diamm.views.auth import CreateAccount
-from registration.backends.hmac.views import ActivationView
+from django_registration.backends.activation.views import ActivationView
 from diamm.views.user import ProfileView, ProfileEditView
 from diamm.views.website.search import SearchView
 from diamm.views.website.set import SetDetail
@@ -88,25 +88,25 @@ urlpatterns = [
     # url(r'^technical/$', TemplateView.as_view(template_name="technical.jinja2"), name="technical"),
 
     # Authentication and account resets
-    url(r'^login/$', login,
+    url(r'^login/$', LoginView.as_view(),
         {"template_name": 'website/auth/login.jinja2'}, name="login"),
-    url(r'^logout/$', logout,
+    url(r'^logout/$', LogoutView.as_view(),
         {"next_page": "/"}, name="logout"),
     url(r'^register/$', CreateAccount.as_view(), name="register"),
-    url(r'^reset/$', password_reset,
+    url(r'^reset/$', PasswordResetView.as_view(),
         {'template_name': 'website/auth/reset.jinja2',
          'from_email': settings.DEFAULT_FROM_EMAIL}, name="reset"),
-    url(r'^reset/sent/$', password_reset_done,
+    url(r'^reset/sent/$', PasswordResetDoneView.as_view(),
         {"template_name": "website/auth/reset_sent.jinja2"}, name="password_reset_done"),
-    url(r'^reset/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$', password_reset_confirm,
+    url(r'^reset/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$', PasswordResetConfirmView.as_view(),
         {'post_reset_redirect': '/reset/complete/',
          'template_name': "website/auth/reset_confirm.jinja2"}, name="password_reset_confirm"),
-    url(r'^reset/complete/$', password_reset_complete,
+    url(r'^reset/complete/$', PasswordResetCompleteView.as_view(),
         {'template_name': "website/auth/reset_complete.jinja2"}),
-    url(r'^change/$', password_change,
+    url(r'^change/$', PasswordChangeView.as_view(),
         {"template_name": 'website/auth/change.jinja2',
          "post_change_redirect": "/change/complete/"}, name="password-change"),
-    url(r'^change/complete/$', password_change_done,
+    url(r'^change/complete/$', PasswordChangeDoneView.as_view(),
         {"template_name": "website/auth/change_complete.jinja2"},
         name="password-change-done"),
     url(r'activate/(?P<activation_key>[-:\w]+)/$',
