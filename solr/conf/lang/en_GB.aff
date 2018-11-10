@@ -1,0 +1,2538 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<title>en_GB.aff\en - libreoffice/dictionaries - main, development dictionaries repository</title>
+<meta name='generator' content='cgit v1.1'/>
+<meta name='robots' content='index, nofollow'/>
+<link rel='stylesheet' type='text/css' href='https://cgit.freedesktop.org/cgit.css'/>
+<link rel='shortcut icon' href='/favicon.ico'/>
+<link rel='alternate' title='Atom feed' href='https://cgit.freedesktop.org/libreoffice/dictionaries/atom/en/en_GB.aff?h=master' type='application/atom+xml'/>
+<link rel='vcs-git' href='git://anongit.freedesktop.org/libreoffice/dictionaries' title='libreoffice/dictionaries Git repository'/>
+<link rel='vcs-git' href='ssh://git.freedesktop.org/git/libreoffice/dictionaries' title='libreoffice/dictionaries Git repository'/>
+<link rel='vcs-git' href='https://anongit.freedesktop.org/git/libreoffice/dictionaries.git' title='libreoffice/dictionaries Git repository'/>
+</head>
+<body>
+<div id='cgit'><table id='header'>
+<tr>
+<td class='logo' rowspan='2'><a href='/'><img src='https://cgit.freedesktop.org/logo.png' alt='cgit logo'/></a></td>
+<td class='main'><a href='/'>index</a> : <a title='libreoffice/dictionaries' href='/libreoffice/dictionaries/'>libreoffice/dictionaries</a></td><td class='form'><form method='get'>
+<select name='h' onchange='this.form.submit();'>
+<option value='distro/collabora/cp-4.0'>distro/collabora/cp-4.0</option>
+<option value='distro/collabora/cp-4.1'>distro/collabora/cp-4.1</option>
+<option value='distro/collabora/cp-4.2'>distro/collabora/cp-4.2</option>
+<option value='distro/collabora/cp-4.3'>distro/collabora/cp-4.3</option>
+<option value='distro/collabora/cp-4.4'>distro/collabora/cp-4.4</option>
+<option value='distro/collabora/cp-5.0'>distro/collabora/cp-5.0</option>
+<option value='distro/collabora/cp-5.1'>distro/collabora/cp-5.1</option>
+<option value='distro/collabora/cp-5.3'>distro/collabora/cp-5.3</option>
+<option value='distro/collabora/cp-6.0'>distro/collabora/cp-6.0</option>
+<option value='distro/collabora/lof-4.3'>distro/collabora/lof-4.3</option>
+<option value='distro/collabora/lov-4.4'>distro/collabora/lov-4.4</option>
+<option value='distro/collabora/lov-5.0'>distro/collabora/lov-5.0</option>
+<option value='distro/collabora/lov-5.1'>distro/collabora/lov-5.1</option>
+<option value='distro/collabora/lov-5.2'>distro/collabora/lov-5.2</option>
+<option value='distro/suse/suse-3.6'>distro/suse/suse-3.6</option>
+<option value='distro/suse/suse-3.6.3'>distro/suse/suse-3.6.3</option>
+<option value='distro/suse/suse-4.0'>distro/suse/suse-4.0</option>
+<option value='distro/suse/suse-4.0.3'>distro/suse/suse-4.0.3</option>
+<option value='feature/gbuild_dictionaries'>feature/gbuild_dictionaries</option>
+<option value='feature/submodules'>feature/submodules</option>
+<option value='libreoffice-3-5'>libreoffice-3-5</option>
+<option value='libreoffice-3-5-0'>libreoffice-3-5-0</option>
+<option value='libreoffice-3-5-1'>libreoffice-3-5-1</option>
+<option value='libreoffice-3-5-2'>libreoffice-3-5-2</option>
+<option value='libreoffice-3-5-3'>libreoffice-3-5-3</option>
+<option value='libreoffice-3-5-4'>libreoffice-3-5-4</option>
+<option value='libreoffice-3-5-5'>libreoffice-3-5-5</option>
+<option value='libreoffice-3-5-6'>libreoffice-3-5-6</option>
+<option value='libreoffice-3-5-7'>libreoffice-3-5-7</option>
+<option value='libreoffice-3-6'>libreoffice-3-6</option>
+<option value='libreoffice-3-6-0'>libreoffice-3-6-0</option>
+<option value='libreoffice-3-6-1'>libreoffice-3-6-1</option>
+<option value='libreoffice-3-6-2'>libreoffice-3-6-2</option>
+<option value='libreoffice-3-6-3'>libreoffice-3-6-3</option>
+<option value='libreoffice-3-6-4'>libreoffice-3-6-4</option>
+<option value='libreoffice-3-6-5'>libreoffice-3-6-5</option>
+<option value='libreoffice-3-6-6'>libreoffice-3-6-6</option>
+<option value='libreoffice-3-6-7'>libreoffice-3-6-7</option>
+<option value='libreoffice-3.5.3.1'>libreoffice-3.5.3.1</option>
+<option value='libreoffice-3.5.5.1'>libreoffice-3.5.5.1</option>
+<option value='libreoffice-3.5.6.1'>libreoffice-3.5.6.1</option>
+<option value='libreoffice-3.5.99.1'>libreoffice-3.5.99.1</option>
+<option value='libreoffice-4-0'>libreoffice-4-0</option>
+<option value='libreoffice-4-0-0'>libreoffice-4-0-0</option>
+<option value='libreoffice-4-0-1'>libreoffice-4-0-1</option>
+<option value='libreoffice-4-0-2'>libreoffice-4-0-2</option>
+<option value='libreoffice-4-0-3'>libreoffice-4-0-3</option>
+<option value='libreoffice-4-0-4'>libreoffice-4-0-4</option>
+<option value='libreoffice-4-0-5'>libreoffice-4-0-5</option>
+<option value='libreoffice-4-0-6'>libreoffice-4-0-6</option>
+<option value='libreoffice-4-1'>libreoffice-4-1</option>
+<option value='libreoffice-4-1-0'>libreoffice-4-1-0</option>
+<option value='libreoffice-4-1-1'>libreoffice-4-1-1</option>
+<option value='libreoffice-4-1-2'>libreoffice-4-1-2</option>
+<option value='libreoffice-4-1-3'>libreoffice-4-1-3</option>
+<option value='libreoffice-4-1-4'>libreoffice-4-1-4</option>
+<option value='libreoffice-4-1-5'>libreoffice-4-1-5</option>
+<option value='libreoffice-4-1-6'>libreoffice-4-1-6</option>
+<option value='libreoffice-4-2'>libreoffice-4-2</option>
+<option value='libreoffice-4-2-0'>libreoffice-4-2-0</option>
+<option value='libreoffice-4-2-1'>libreoffice-4-2-1</option>
+<option value='libreoffice-4-2-2'>libreoffice-4-2-2</option>
+<option value='libreoffice-4-2-3'>libreoffice-4-2-3</option>
+<option value='libreoffice-4-2-4'>libreoffice-4-2-4</option>
+<option value='libreoffice-4-2-5'>libreoffice-4-2-5</option>
+<option value='libreoffice-4-2-6'>libreoffice-4-2-6</option>
+<option value='libreoffice-4-2-7'>libreoffice-4-2-7</option>
+<option value='libreoffice-4-2-8'>libreoffice-4-2-8</option>
+<option value='libreoffice-4-3'>libreoffice-4-3</option>
+<option value='libreoffice-4-3-0'>libreoffice-4-3-0</option>
+<option value='libreoffice-4-3-1'>libreoffice-4-3-1</option>
+<option value='libreoffice-4-3-2'>libreoffice-4-3-2</option>
+<option value='libreoffice-4-3-3'>libreoffice-4-3-3</option>
+<option value='libreoffice-4-3-4'>libreoffice-4-3-4</option>
+<option value='libreoffice-4-3-5'>libreoffice-4-3-5</option>
+<option value='libreoffice-4-3-6'>libreoffice-4-3-6</option>
+<option value='libreoffice-4-3-7'>libreoffice-4-3-7</option>
+<option value='libreoffice-4-4'>libreoffice-4-4</option>
+<option value='libreoffice-4-4-0'>libreoffice-4-4-0</option>
+<option value='libreoffice-4-4-1'>libreoffice-4-4-1</option>
+<option value='libreoffice-4-4-2'>libreoffice-4-4-2</option>
+<option value='libreoffice-4-4-3'>libreoffice-4-4-3</option>
+<option value='libreoffice-4-4-4'>libreoffice-4-4-4</option>
+<option value='libreoffice-4-4-5'>libreoffice-4-4-5</option>
+<option value='libreoffice-4-4-6'>libreoffice-4-4-6</option>
+<option value='libreoffice-4-4-7'>libreoffice-4-4-7</option>
+<option value='libreoffice-5-0'>libreoffice-5-0</option>
+<option value='libreoffice-5-0-0'>libreoffice-5-0-0</option>
+<option value='libreoffice-5-0-1'>libreoffice-5-0-1</option>
+<option value='libreoffice-5-0-2'>libreoffice-5-0-2</option>
+<option value='libreoffice-5-0-3'>libreoffice-5-0-3</option>
+<option value='libreoffice-5-0-4'>libreoffice-5-0-4</option>
+<option value='libreoffice-5-0-5'>libreoffice-5-0-5</option>
+<option value='libreoffice-5-0-6'>libreoffice-5-0-6</option>
+<option value='libreoffice-5-1'>libreoffice-5-1</option>
+<option value='libreoffice-5-1-0'>libreoffice-5-1-0</option>
+<option value='libreoffice-5-1-1'>libreoffice-5-1-1</option>
+<option value='libreoffice-5-1-2'>libreoffice-5-1-2</option>
+<option value='libreoffice-5-1-3'>libreoffice-5-1-3</option>
+<option value='libreoffice-5-1-4'>libreoffice-5-1-4</option>
+<option value='libreoffice-5-1-5'>libreoffice-5-1-5</option>
+<option value='libreoffice-5-1-6'>libreoffice-5-1-6</option>
+<option value='libreoffice-5-2'>libreoffice-5-2</option>
+<option value='libreoffice-5-2-0'>libreoffice-5-2-0</option>
+<option value='libreoffice-5-2-1'>libreoffice-5-2-1</option>
+<option value='libreoffice-5-2-2'>libreoffice-5-2-2</option>
+<option value='libreoffice-5-2-3'>libreoffice-5-2-3</option>
+<option value='libreoffice-5-2-4'>libreoffice-5-2-4</option>
+<option value='libreoffice-5-2-5'>libreoffice-5-2-5</option>
+<option value='libreoffice-5-2-6'>libreoffice-5-2-6</option>
+<option value='libreoffice-5-2-7'>libreoffice-5-2-7</option>
+<option value='libreoffice-5-3'>libreoffice-5-3</option>
+<option value='libreoffice-5-3-0'>libreoffice-5-3-0</option>
+<option value='libreoffice-5-3-1'>libreoffice-5-3-1</option>
+<option value='libreoffice-5-3-2'>libreoffice-5-3-2</option>
+<option value='libreoffice-5-3-3'>libreoffice-5-3-3</option>
+<option value='libreoffice-5-3-4'>libreoffice-5-3-4</option>
+<option value='libreoffice-5-3-5'>libreoffice-5-3-5</option>
+<option value='libreoffice-5-3-6'>libreoffice-5-3-6</option>
+<option value='libreoffice-5-3-7'>libreoffice-5-3-7</option>
+<option value='libreoffice-5-4'>libreoffice-5-4</option>
+<option value='libreoffice-5-4-0'>libreoffice-5-4-0</option>
+<option value='libreoffice-5-4-1'>libreoffice-5-4-1</option>
+<option value='libreoffice-5-4-2'>libreoffice-5-4-2</option>
+<option value='libreoffice-5-4-3'>libreoffice-5-4-3</option>
+<option value='libreoffice-5-4-4'>libreoffice-5-4-4</option>
+<option value='libreoffice-5-4-5'>libreoffice-5-4-5</option>
+<option value='libreoffice-5-4-6'>libreoffice-5-4-6</option>
+<option value='libreoffice-5-4-7'>libreoffice-5-4-7</option>
+<option value='libreoffice-6-0'>libreoffice-6-0</option>
+<option value='libreoffice-6-0-0'>libreoffice-6-0-0</option>
+<option value='libreoffice-6-0-1'>libreoffice-6-0-1</option>
+<option value='libreoffice-6-0-2'>libreoffice-6-0-2</option>
+<option value='libreoffice-6-0-3'>libreoffice-6-0-3</option>
+<option value='libreoffice-6-0-4'>libreoffice-6-0-4</option>
+<option value='master' selected='selected'>master</option>
+</select> <input type='submit' value='switch'/></form></td></tr>
+<tr><td class='sub'>main, development dictionaries repository</td><td class='sub right'>root</td></tr></table>
+<table class='tabs'><tr><td>
+<a href='/libreoffice/dictionaries/'>summary</a><a href='/libreoffice/dictionaries/refs/'>refs</a><a href='/libreoffice/dictionaries/log/en/en_GB.aff'>log</a><a class='active' href='/libreoffice/dictionaries/tree/en/en_GB.aff'>tree</a><a href='/libreoffice/dictionaries/commit/en/en_GB.aff'>commit</a><a href='/libreoffice/dictionaries/diff/en/en_GB.aff'>diff</a></td><td class='form'><form class='right' method='get' action='/libreoffice/dictionaries/log/en/en_GB.aff'>
+<select name='qt'>
+<option value='grep'>log msg</option>
+<option value='author'>author</option>
+<option value='committer'>committer</option>
+<option value='range'>range</option>
+</select>
+<input class='txt' type='text' size='10' name='q' value=''/>
+<input type='submit' value='search'/>
+</form>
+</td></tr></table>
+<div class='path'>path: <a href='/libreoffice/dictionaries/tree/'>root</a>/<a href='/libreoffice/dictionaries/tree/en'>en</a>/<a href='/libreoffice/dictionaries/tree/en/en_GB.aff'>en_GB.aff</a></div><div class='content'>blob: 4d1eb440672074b2a1e1af3644b7af5215da8f86 (<a href='/libreoffice/dictionaries/plain/en/en_GB.aff'>plain</a>)
+<table summary='blob content' class='blob'>
+<tr><td class='linenumbers'><pre><a id='n1' href='#n1'>1</a>
+<a id='n2' href='#n2'>2</a>
+<a id='n3' href='#n3'>3</a>
+<a id='n4' href='#n4'>4</a>
+<a id='n5' href='#n5'>5</a>
+<a id='n6' href='#n6'>6</a>
+<a id='n7' href='#n7'>7</a>
+<a id='n8' href='#n8'>8</a>
+<a id='n9' href='#n9'>9</a>
+<a id='n10' href='#n10'>10</a>
+<a id='n11' href='#n11'>11</a>
+<a id='n12' href='#n12'>12</a>
+<a id='n13' href='#n13'>13</a>
+<a id='n14' href='#n14'>14</a>
+<a id='n15' href='#n15'>15</a>
+<a id='n16' href='#n16'>16</a>
+<a id='n17' href='#n17'>17</a>
+<a id='n18' href='#n18'>18</a>
+<a id='n19' href='#n19'>19</a>
+<a id='n20' href='#n20'>20</a>
+<a id='n21' href='#n21'>21</a>
+<a id='n22' href='#n22'>22</a>
+<a id='n23' href='#n23'>23</a>
+<a id='n24' href='#n24'>24</a>
+<a id='n25' href='#n25'>25</a>
+<a id='n26' href='#n26'>26</a>
+<a id='n27' href='#n27'>27</a>
+<a id='n28' href='#n28'>28</a>
+<a id='n29' href='#n29'>29</a>
+<a id='n30' href='#n30'>30</a>
+<a id='n31' href='#n31'>31</a>
+<a id='n32' href='#n32'>32</a>
+<a id='n33' href='#n33'>33</a>
+<a id='n34' href='#n34'>34</a>
+<a id='n35' href='#n35'>35</a>
+<a id='n36' href='#n36'>36</a>
+<a id='n37' href='#n37'>37</a>
+<a id='n38' href='#n38'>38</a>
+<a id='n39' href='#n39'>39</a>
+<a id='n40' href='#n40'>40</a>
+<a id='n41' href='#n41'>41</a>
+<a id='n42' href='#n42'>42</a>
+<a id='n43' href='#n43'>43</a>
+<a id='n44' href='#n44'>44</a>
+<a id='n45' href='#n45'>45</a>
+<a id='n46' href='#n46'>46</a>
+<a id='n47' href='#n47'>47</a>
+<a id='n48' href='#n48'>48</a>
+<a id='n49' href='#n49'>49</a>
+<a id='n50' href='#n50'>50</a>
+<a id='n51' href='#n51'>51</a>
+<a id='n52' href='#n52'>52</a>
+<a id='n53' href='#n53'>53</a>
+<a id='n54' href='#n54'>54</a>
+<a id='n55' href='#n55'>55</a>
+<a id='n56' href='#n56'>56</a>
+<a id='n57' href='#n57'>57</a>
+<a id='n58' href='#n58'>58</a>
+<a id='n59' href='#n59'>59</a>
+<a id='n60' href='#n60'>60</a>
+<a id='n61' href='#n61'>61</a>
+<a id='n62' href='#n62'>62</a>
+<a id='n63' href='#n63'>63</a>
+<a id='n64' href='#n64'>64</a>
+<a id='n65' href='#n65'>65</a>
+<a id='n66' href='#n66'>66</a>
+<a id='n67' href='#n67'>67</a>
+<a id='n68' href='#n68'>68</a>
+<a id='n69' href='#n69'>69</a>
+<a id='n70' href='#n70'>70</a>
+<a id='n71' href='#n71'>71</a>
+<a id='n72' href='#n72'>72</a>
+<a id='n73' href='#n73'>73</a>
+<a id='n74' href='#n74'>74</a>
+<a id='n75' href='#n75'>75</a>
+<a id='n76' href='#n76'>76</a>
+<a id='n77' href='#n77'>77</a>
+<a id='n78' href='#n78'>78</a>
+<a id='n79' href='#n79'>79</a>
+<a id='n80' href='#n80'>80</a>
+<a id='n81' href='#n81'>81</a>
+<a id='n82' href='#n82'>82</a>
+<a id='n83' href='#n83'>83</a>
+<a id='n84' href='#n84'>84</a>
+<a id='n85' href='#n85'>85</a>
+<a id='n86' href='#n86'>86</a>
+<a id='n87' href='#n87'>87</a>
+<a id='n88' href='#n88'>88</a>
+<a id='n89' href='#n89'>89</a>
+<a id='n90' href='#n90'>90</a>
+<a id='n91' href='#n91'>91</a>
+<a id='n92' href='#n92'>92</a>
+<a id='n93' href='#n93'>93</a>
+<a id='n94' href='#n94'>94</a>
+<a id='n95' href='#n95'>95</a>
+<a id='n96' href='#n96'>96</a>
+<a id='n97' href='#n97'>97</a>
+<a id='n98' href='#n98'>98</a>
+<a id='n99' href='#n99'>99</a>
+<a id='n100' href='#n100'>100</a>
+<a id='n101' href='#n101'>101</a>
+<a id='n102' href='#n102'>102</a>
+<a id='n103' href='#n103'>103</a>
+<a id='n104' href='#n104'>104</a>
+<a id='n105' href='#n105'>105</a>
+<a id='n106' href='#n106'>106</a>
+<a id='n107' href='#n107'>107</a>
+<a id='n108' href='#n108'>108</a>
+<a id='n109' href='#n109'>109</a>
+<a id='n110' href='#n110'>110</a>
+<a id='n111' href='#n111'>111</a>
+<a id='n112' href='#n112'>112</a>
+<a id='n113' href='#n113'>113</a>
+<a id='n114' href='#n114'>114</a>
+<a id='n115' href='#n115'>115</a>
+<a id='n116' href='#n116'>116</a>
+<a id='n117' href='#n117'>117</a>
+<a id='n118' href='#n118'>118</a>
+<a id='n119' href='#n119'>119</a>
+<a id='n120' href='#n120'>120</a>
+<a id='n121' href='#n121'>121</a>
+<a id='n122' href='#n122'>122</a>
+<a id='n123' href='#n123'>123</a>
+<a id='n124' href='#n124'>124</a>
+<a id='n125' href='#n125'>125</a>
+<a id='n126' href='#n126'>126</a>
+<a id='n127' href='#n127'>127</a>
+<a id='n128' href='#n128'>128</a>
+<a id='n129' href='#n129'>129</a>
+<a id='n130' href='#n130'>130</a>
+<a id='n131' href='#n131'>131</a>
+<a id='n132' href='#n132'>132</a>
+<a id='n133' href='#n133'>133</a>
+<a id='n134' href='#n134'>134</a>
+<a id='n135' href='#n135'>135</a>
+<a id='n136' href='#n136'>136</a>
+<a id='n137' href='#n137'>137</a>
+<a id='n138' href='#n138'>138</a>
+<a id='n139' href='#n139'>139</a>
+<a id='n140' href='#n140'>140</a>
+<a id='n141' href='#n141'>141</a>
+<a id='n142' href='#n142'>142</a>
+<a id='n143' href='#n143'>143</a>
+<a id='n144' href='#n144'>144</a>
+<a id='n145' href='#n145'>145</a>
+<a id='n146' href='#n146'>146</a>
+<a id='n147' href='#n147'>147</a>
+<a id='n148' href='#n148'>148</a>
+<a id='n149' href='#n149'>149</a>
+<a id='n150' href='#n150'>150</a>
+<a id='n151' href='#n151'>151</a>
+<a id='n152' href='#n152'>152</a>
+<a id='n153' href='#n153'>153</a>
+<a id='n154' href='#n154'>154</a>
+<a id='n155' href='#n155'>155</a>
+<a id='n156' href='#n156'>156</a>
+<a id='n157' href='#n157'>157</a>
+<a id='n158' href='#n158'>158</a>
+<a id='n159' href='#n159'>159</a>
+<a id='n160' href='#n160'>160</a>
+<a id='n161' href='#n161'>161</a>
+<a id='n162' href='#n162'>162</a>
+<a id='n163' href='#n163'>163</a>
+<a id='n164' href='#n164'>164</a>
+<a id='n165' href='#n165'>165</a>
+<a id='n166' href='#n166'>166</a>
+<a id='n167' href='#n167'>167</a>
+<a id='n168' href='#n168'>168</a>
+<a id='n169' href='#n169'>169</a>
+<a id='n170' href='#n170'>170</a>
+<a id='n171' href='#n171'>171</a>
+<a id='n172' href='#n172'>172</a>
+<a id='n173' href='#n173'>173</a>
+<a id='n174' href='#n174'>174</a>
+<a id='n175' href='#n175'>175</a>
+<a id='n176' href='#n176'>176</a>
+<a id='n177' href='#n177'>177</a>
+<a id='n178' href='#n178'>178</a>
+<a id='n179' href='#n179'>179</a>
+<a id='n180' href='#n180'>180</a>
+<a id='n181' href='#n181'>181</a>
+<a id='n182' href='#n182'>182</a>
+<a id='n183' href='#n183'>183</a>
+<a id='n184' href='#n184'>184</a>
+<a id='n185' href='#n185'>185</a>
+<a id='n186' href='#n186'>186</a>
+<a id='n187' href='#n187'>187</a>
+<a id='n188' href='#n188'>188</a>
+<a id='n189' href='#n189'>189</a>
+<a id='n190' href='#n190'>190</a>
+<a id='n191' href='#n191'>191</a>
+<a id='n192' href='#n192'>192</a>
+<a id='n193' href='#n193'>193</a>
+<a id='n194' href='#n194'>194</a>
+<a id='n195' href='#n195'>195</a>
+<a id='n196' href='#n196'>196</a>
+<a id='n197' href='#n197'>197</a>
+<a id='n198' href='#n198'>198</a>
+<a id='n199' href='#n199'>199</a>
+<a id='n200' href='#n200'>200</a>
+<a id='n201' href='#n201'>201</a>
+<a id='n202' href='#n202'>202</a>
+<a id='n203' href='#n203'>203</a>
+<a id='n204' href='#n204'>204</a>
+<a id='n205' href='#n205'>205</a>
+<a id='n206' href='#n206'>206</a>
+<a id='n207' href='#n207'>207</a>
+<a id='n208' href='#n208'>208</a>
+<a id='n209' href='#n209'>209</a>
+<a id='n210' href='#n210'>210</a>
+<a id='n211' href='#n211'>211</a>
+<a id='n212' href='#n212'>212</a>
+<a id='n213' href='#n213'>213</a>
+<a id='n214' href='#n214'>214</a>
+<a id='n215' href='#n215'>215</a>
+<a id='n216' href='#n216'>216</a>
+<a id='n217' href='#n217'>217</a>
+<a id='n218' href='#n218'>218</a>
+<a id='n219' href='#n219'>219</a>
+<a id='n220' href='#n220'>220</a>
+<a id='n221' href='#n221'>221</a>
+<a id='n222' href='#n222'>222</a>
+<a id='n223' href='#n223'>223</a>
+<a id='n224' href='#n224'>224</a>
+<a id='n225' href='#n225'>225</a>
+<a id='n226' href='#n226'>226</a>
+<a id='n227' href='#n227'>227</a>
+<a id='n228' href='#n228'>228</a>
+<a id='n229' href='#n229'>229</a>
+<a id='n230' href='#n230'>230</a>
+<a id='n231' href='#n231'>231</a>
+<a id='n232' href='#n232'>232</a>
+<a id='n233' href='#n233'>233</a>
+<a id='n234' href='#n234'>234</a>
+<a id='n235' href='#n235'>235</a>
+<a id='n236' href='#n236'>236</a>
+<a id='n237' href='#n237'>237</a>
+<a id='n238' href='#n238'>238</a>
+<a id='n239' href='#n239'>239</a>
+<a id='n240' href='#n240'>240</a>
+<a id='n241' href='#n241'>241</a>
+<a id='n242' href='#n242'>242</a>
+<a id='n243' href='#n243'>243</a>
+<a id='n244' href='#n244'>244</a>
+<a id='n245' href='#n245'>245</a>
+<a id='n246' href='#n246'>246</a>
+<a id='n247' href='#n247'>247</a>
+<a id='n248' href='#n248'>248</a>
+<a id='n249' href='#n249'>249</a>
+<a id='n250' href='#n250'>250</a>
+<a id='n251' href='#n251'>251</a>
+<a id='n252' href='#n252'>252</a>
+<a id='n253' href='#n253'>253</a>
+<a id='n254' href='#n254'>254</a>
+<a id='n255' href='#n255'>255</a>
+<a id='n256' href='#n256'>256</a>
+<a id='n257' href='#n257'>257</a>
+<a id='n258' href='#n258'>258</a>
+<a id='n259' href='#n259'>259</a>
+<a id='n260' href='#n260'>260</a>
+<a id='n261' href='#n261'>261</a>
+<a id='n262' href='#n262'>262</a>
+<a id='n263' href='#n263'>263</a>
+<a id='n264' href='#n264'>264</a>
+<a id='n265' href='#n265'>265</a>
+<a id='n266' href='#n266'>266</a>
+<a id='n267' href='#n267'>267</a>
+<a id='n268' href='#n268'>268</a>
+<a id='n269' href='#n269'>269</a>
+<a id='n270' href='#n270'>270</a>
+<a id='n271' href='#n271'>271</a>
+<a id='n272' href='#n272'>272</a>
+<a id='n273' href='#n273'>273</a>
+<a id='n274' href='#n274'>274</a>
+<a id='n275' href='#n275'>275</a>
+<a id='n276' href='#n276'>276</a>
+<a id='n277' href='#n277'>277</a>
+<a id='n278' href='#n278'>278</a>
+<a id='n279' href='#n279'>279</a>
+<a id='n280' href='#n280'>280</a>
+<a id='n281' href='#n281'>281</a>
+<a id='n282' href='#n282'>282</a>
+<a id='n283' href='#n283'>283</a>
+<a id='n284' href='#n284'>284</a>
+<a id='n285' href='#n285'>285</a>
+<a id='n286' href='#n286'>286</a>
+<a id='n287' href='#n287'>287</a>
+<a id='n288' href='#n288'>288</a>
+<a id='n289' href='#n289'>289</a>
+<a id='n290' href='#n290'>290</a>
+<a id='n291' href='#n291'>291</a>
+<a id='n292' href='#n292'>292</a>
+<a id='n293' href='#n293'>293</a>
+<a id='n294' href='#n294'>294</a>
+<a id='n295' href='#n295'>295</a>
+<a id='n296' href='#n296'>296</a>
+<a id='n297' href='#n297'>297</a>
+<a id='n298' href='#n298'>298</a>
+<a id='n299' href='#n299'>299</a>
+<a id='n300' href='#n300'>300</a>
+<a id='n301' href='#n301'>301</a>
+<a id='n302' href='#n302'>302</a>
+<a id='n303' href='#n303'>303</a>
+<a id='n304' href='#n304'>304</a>
+<a id='n305' href='#n305'>305</a>
+<a id='n306' href='#n306'>306</a>
+<a id='n307' href='#n307'>307</a>
+<a id='n308' href='#n308'>308</a>
+<a id='n309' href='#n309'>309</a>
+<a id='n310' href='#n310'>310</a>
+<a id='n311' href='#n311'>311</a>
+<a id='n312' href='#n312'>312</a>
+<a id='n313' href='#n313'>313</a>
+<a id='n314' href='#n314'>314</a>
+<a id='n315' href='#n315'>315</a>
+<a id='n316' href='#n316'>316</a>
+<a id='n317' href='#n317'>317</a>
+<a id='n318' href='#n318'>318</a>
+<a id='n319' href='#n319'>319</a>
+<a id='n320' href='#n320'>320</a>
+<a id='n321' href='#n321'>321</a>
+<a id='n322' href='#n322'>322</a>
+<a id='n323' href='#n323'>323</a>
+<a id='n324' href='#n324'>324</a>
+<a id='n325' href='#n325'>325</a>
+<a id='n326' href='#n326'>326</a>
+<a id='n327' href='#n327'>327</a>
+<a id='n328' href='#n328'>328</a>
+<a id='n329' href='#n329'>329</a>
+<a id='n330' href='#n330'>330</a>
+<a id='n331' href='#n331'>331</a>
+<a id='n332' href='#n332'>332</a>
+<a id='n333' href='#n333'>333</a>
+<a id='n334' href='#n334'>334</a>
+<a id='n335' href='#n335'>335</a>
+<a id='n336' href='#n336'>336</a>
+<a id='n337' href='#n337'>337</a>
+<a id='n338' href='#n338'>338</a>
+<a id='n339' href='#n339'>339</a>
+<a id='n340' href='#n340'>340</a>
+<a id='n341' href='#n341'>341</a>
+<a id='n342' href='#n342'>342</a>
+<a id='n343' href='#n343'>343</a>
+<a id='n344' href='#n344'>344</a>
+<a id='n345' href='#n345'>345</a>
+<a id='n346' href='#n346'>346</a>
+<a id='n347' href='#n347'>347</a>
+<a id='n348' href='#n348'>348</a>
+<a id='n349' href='#n349'>349</a>
+<a id='n350' href='#n350'>350</a>
+<a id='n351' href='#n351'>351</a>
+<a id='n352' href='#n352'>352</a>
+<a id='n353' href='#n353'>353</a>
+<a id='n354' href='#n354'>354</a>
+<a id='n355' href='#n355'>355</a>
+<a id='n356' href='#n356'>356</a>
+<a id='n357' href='#n357'>357</a>
+<a id='n358' href='#n358'>358</a>
+<a id='n359' href='#n359'>359</a>
+<a id='n360' href='#n360'>360</a>
+<a id='n361' href='#n361'>361</a>
+<a id='n362' href='#n362'>362</a>
+<a id='n363' href='#n363'>363</a>
+<a id='n364' href='#n364'>364</a>
+<a id='n365' href='#n365'>365</a>
+<a id='n366' href='#n366'>366</a>
+<a id='n367' href='#n367'>367</a>
+<a id='n368' href='#n368'>368</a>
+<a id='n369' href='#n369'>369</a>
+<a id='n370' href='#n370'>370</a>
+<a id='n371' href='#n371'>371</a>
+<a id='n372' href='#n372'>372</a>
+<a id='n373' href='#n373'>373</a>
+<a id='n374' href='#n374'>374</a>
+<a id='n375' href='#n375'>375</a>
+<a id='n376' href='#n376'>376</a>
+<a id='n377' href='#n377'>377</a>
+<a id='n378' href='#n378'>378</a>
+<a id='n379' href='#n379'>379</a>
+<a id='n380' href='#n380'>380</a>
+<a id='n381' href='#n381'>381</a>
+<a id='n382' href='#n382'>382</a>
+<a id='n383' href='#n383'>383</a>
+<a id='n384' href='#n384'>384</a>
+<a id='n385' href='#n385'>385</a>
+<a id='n386' href='#n386'>386</a>
+<a id='n387' href='#n387'>387</a>
+<a id='n388' href='#n388'>388</a>
+<a id='n389' href='#n389'>389</a>
+<a id='n390' href='#n390'>390</a>
+<a id='n391' href='#n391'>391</a>
+<a id='n392' href='#n392'>392</a>
+<a id='n393' href='#n393'>393</a>
+<a id='n394' href='#n394'>394</a>
+<a id='n395' href='#n395'>395</a>
+<a id='n396' href='#n396'>396</a>
+<a id='n397' href='#n397'>397</a>
+<a id='n398' href='#n398'>398</a>
+<a id='n399' href='#n399'>399</a>
+<a id='n400' href='#n400'>400</a>
+<a id='n401' href='#n401'>401</a>
+<a id='n402' href='#n402'>402</a>
+<a id='n403' href='#n403'>403</a>
+<a id='n404' href='#n404'>404</a>
+<a id='n405' href='#n405'>405</a>
+<a id='n406' href='#n406'>406</a>
+<a id='n407' href='#n407'>407</a>
+<a id='n408' href='#n408'>408</a>
+<a id='n409' href='#n409'>409</a>
+<a id='n410' href='#n410'>410</a>
+<a id='n411' href='#n411'>411</a>
+<a id='n412' href='#n412'>412</a>
+<a id='n413' href='#n413'>413</a>
+<a id='n414' href='#n414'>414</a>
+<a id='n415' href='#n415'>415</a>
+<a id='n416' href='#n416'>416</a>
+<a id='n417' href='#n417'>417</a>
+<a id='n418' href='#n418'>418</a>
+<a id='n419' href='#n419'>419</a>
+<a id='n420' href='#n420'>420</a>
+<a id='n421' href='#n421'>421</a>
+<a id='n422' href='#n422'>422</a>
+<a id='n423' href='#n423'>423</a>
+<a id='n424' href='#n424'>424</a>
+<a id='n425' href='#n425'>425</a>
+<a id='n426' href='#n426'>426</a>
+<a id='n427' href='#n427'>427</a>
+<a id='n428' href='#n428'>428</a>
+<a id='n429' href='#n429'>429</a>
+<a id='n430' href='#n430'>430</a>
+<a id='n431' href='#n431'>431</a>
+<a id='n432' href='#n432'>432</a>
+<a id='n433' href='#n433'>433</a>
+<a id='n434' href='#n434'>434</a>
+<a id='n435' href='#n435'>435</a>
+<a id='n436' href='#n436'>436</a>
+<a id='n437' href='#n437'>437</a>
+<a id='n438' href='#n438'>438</a>
+<a id='n439' href='#n439'>439</a>
+<a id='n440' href='#n440'>440</a>
+<a id='n441' href='#n441'>441</a>
+<a id='n442' href='#n442'>442</a>
+<a id='n443' href='#n443'>443</a>
+<a id='n444' href='#n444'>444</a>
+<a id='n445' href='#n445'>445</a>
+<a id='n446' href='#n446'>446</a>
+<a id='n447' href='#n447'>447</a>
+<a id='n448' href='#n448'>448</a>
+<a id='n449' href='#n449'>449</a>
+<a id='n450' href='#n450'>450</a>
+<a id='n451' href='#n451'>451</a>
+<a id='n452' href='#n452'>452</a>
+<a id='n453' href='#n453'>453</a>
+<a id='n454' href='#n454'>454</a>
+<a id='n455' href='#n455'>455</a>
+<a id='n456' href='#n456'>456</a>
+<a id='n457' href='#n457'>457</a>
+<a id='n458' href='#n458'>458</a>
+<a id='n459' href='#n459'>459</a>
+<a id='n460' href='#n460'>460</a>
+<a id='n461' href='#n461'>461</a>
+<a id='n462' href='#n462'>462</a>
+<a id='n463' href='#n463'>463</a>
+<a id='n464' href='#n464'>464</a>
+<a id='n465' href='#n465'>465</a>
+<a id='n466' href='#n466'>466</a>
+<a id='n467' href='#n467'>467</a>
+<a id='n468' href='#n468'>468</a>
+<a id='n469' href='#n469'>469</a>
+<a id='n470' href='#n470'>470</a>
+<a id='n471' href='#n471'>471</a>
+<a id='n472' href='#n472'>472</a>
+<a id='n473' href='#n473'>473</a>
+<a id='n474' href='#n474'>474</a>
+<a id='n475' href='#n475'>475</a>
+<a id='n476' href='#n476'>476</a>
+<a id='n477' href='#n477'>477</a>
+<a id='n478' href='#n478'>478</a>
+<a id='n479' href='#n479'>479</a>
+<a id='n480' href='#n480'>480</a>
+<a id='n481' href='#n481'>481</a>
+<a id='n482' href='#n482'>482</a>
+<a id='n483' href='#n483'>483</a>
+<a id='n484' href='#n484'>484</a>
+<a id='n485' href='#n485'>485</a>
+<a id='n486' href='#n486'>486</a>
+<a id='n487' href='#n487'>487</a>
+<a id='n488' href='#n488'>488</a>
+<a id='n489' href='#n489'>489</a>
+<a id='n490' href='#n490'>490</a>
+<a id='n491' href='#n491'>491</a>
+<a id='n492' href='#n492'>492</a>
+<a id='n493' href='#n493'>493</a>
+<a id='n494' href='#n494'>494</a>
+<a id='n495' href='#n495'>495</a>
+<a id='n496' href='#n496'>496</a>
+<a id='n497' href='#n497'>497</a>
+<a id='n498' href='#n498'>498</a>
+<a id='n499' href='#n499'>499</a>
+<a id='n500' href='#n500'>500</a>
+<a id='n501' href='#n501'>501</a>
+<a id='n502' href='#n502'>502</a>
+<a id='n503' href='#n503'>503</a>
+<a id='n504' href='#n504'>504</a>
+<a id='n505' href='#n505'>505</a>
+<a id='n506' href='#n506'>506</a>
+<a id='n507' href='#n507'>507</a>
+<a id='n508' href='#n508'>508</a>
+<a id='n509' href='#n509'>509</a>
+<a id='n510' href='#n510'>510</a>
+<a id='n511' href='#n511'>511</a>
+<a id='n512' href='#n512'>512</a>
+<a id='n513' href='#n513'>513</a>
+<a id='n514' href='#n514'>514</a>
+<a id='n515' href='#n515'>515</a>
+<a id='n516' href='#n516'>516</a>
+<a id='n517' href='#n517'>517</a>
+<a id='n518' href='#n518'>518</a>
+<a id='n519' href='#n519'>519</a>
+<a id='n520' href='#n520'>520</a>
+<a id='n521' href='#n521'>521</a>
+<a id='n522' href='#n522'>522</a>
+<a id='n523' href='#n523'>523</a>
+<a id='n524' href='#n524'>524</a>
+<a id='n525' href='#n525'>525</a>
+<a id='n526' href='#n526'>526</a>
+<a id='n527' href='#n527'>527</a>
+<a id='n528' href='#n528'>528</a>
+<a id='n529' href='#n529'>529</a>
+<a id='n530' href='#n530'>530</a>
+<a id='n531' href='#n531'>531</a>
+<a id='n532' href='#n532'>532</a>
+<a id='n533' href='#n533'>533</a>
+<a id='n534' href='#n534'>534</a>
+<a id='n535' href='#n535'>535</a>
+<a id='n536' href='#n536'>536</a>
+<a id='n537' href='#n537'>537</a>
+<a id='n538' href='#n538'>538</a>
+<a id='n539' href='#n539'>539</a>
+<a id='n540' href='#n540'>540</a>
+<a id='n541' href='#n541'>541</a>
+<a id='n542' href='#n542'>542</a>
+<a id='n543' href='#n543'>543</a>
+<a id='n544' href='#n544'>544</a>
+<a id='n545' href='#n545'>545</a>
+<a id='n546' href='#n546'>546</a>
+<a id='n547' href='#n547'>547</a>
+<a id='n548' href='#n548'>548</a>
+<a id='n549' href='#n549'>549</a>
+<a id='n550' href='#n550'>550</a>
+<a id='n551' href='#n551'>551</a>
+<a id='n552' href='#n552'>552</a>
+<a id='n553' href='#n553'>553</a>
+<a id='n554' href='#n554'>554</a>
+<a id='n555' href='#n555'>555</a>
+<a id='n556' href='#n556'>556</a>
+<a id='n557' href='#n557'>557</a>
+<a id='n558' href='#n558'>558</a>
+<a id='n559' href='#n559'>559</a>
+<a id='n560' href='#n560'>560</a>
+<a id='n561' href='#n561'>561</a>
+<a id='n562' href='#n562'>562</a>
+<a id='n563' href='#n563'>563</a>
+<a id='n564' href='#n564'>564</a>
+<a id='n565' href='#n565'>565</a>
+<a id='n566' href='#n566'>566</a>
+<a id='n567' href='#n567'>567</a>
+<a id='n568' href='#n568'>568</a>
+<a id='n569' href='#n569'>569</a>
+<a id='n570' href='#n570'>570</a>
+<a id='n571' href='#n571'>571</a>
+<a id='n572' href='#n572'>572</a>
+<a id='n573' href='#n573'>573</a>
+<a id='n574' href='#n574'>574</a>
+<a id='n575' href='#n575'>575</a>
+<a id='n576' href='#n576'>576</a>
+<a id='n577' href='#n577'>577</a>
+<a id='n578' href='#n578'>578</a>
+<a id='n579' href='#n579'>579</a>
+<a id='n580' href='#n580'>580</a>
+<a id='n581' href='#n581'>581</a>
+<a id='n582' href='#n582'>582</a>
+<a id='n583' href='#n583'>583</a>
+<a id='n584' href='#n584'>584</a>
+<a id='n585' href='#n585'>585</a>
+<a id='n586' href='#n586'>586</a>
+<a id='n587' href='#n587'>587</a>
+<a id='n588' href='#n588'>588</a>
+<a id='n589' href='#n589'>589</a>
+<a id='n590' href='#n590'>590</a>
+<a id='n591' href='#n591'>591</a>
+<a id='n592' href='#n592'>592</a>
+<a id='n593' href='#n593'>593</a>
+<a id='n594' href='#n594'>594</a>
+<a id='n595' href='#n595'>595</a>
+<a id='n596' href='#n596'>596</a>
+<a id='n597' href='#n597'>597</a>
+<a id='n598' href='#n598'>598</a>
+<a id='n599' href='#n599'>599</a>
+<a id='n600' href='#n600'>600</a>
+<a id='n601' href='#n601'>601</a>
+<a id='n602' href='#n602'>602</a>
+<a id='n603' href='#n603'>603</a>
+<a id='n604' href='#n604'>604</a>
+<a id='n605' href='#n605'>605</a>
+<a id='n606' href='#n606'>606</a>
+<a id='n607' href='#n607'>607</a>
+<a id='n608' href='#n608'>608</a>
+<a id='n609' href='#n609'>609</a>
+<a id='n610' href='#n610'>610</a>
+<a id='n611' href='#n611'>611</a>
+<a id='n612' href='#n612'>612</a>
+<a id='n613' href='#n613'>613</a>
+<a id='n614' href='#n614'>614</a>
+<a id='n615' href='#n615'>615</a>
+<a id='n616' href='#n616'>616</a>
+<a id='n617' href='#n617'>617</a>
+<a id='n618' href='#n618'>618</a>
+<a id='n619' href='#n619'>619</a>
+<a id='n620' href='#n620'>620</a>
+<a id='n621' href='#n621'>621</a>
+<a id='n622' href='#n622'>622</a>
+<a id='n623' href='#n623'>623</a>
+<a id='n624' href='#n624'>624</a>
+<a id='n625' href='#n625'>625</a>
+<a id='n626' href='#n626'>626</a>
+<a id='n627' href='#n627'>627</a>
+<a id='n628' href='#n628'>628</a>
+<a id='n629' href='#n629'>629</a>
+<a id='n630' href='#n630'>630</a>
+<a id='n631' href='#n631'>631</a>
+<a id='n632' href='#n632'>632</a>
+<a id='n633' href='#n633'>633</a>
+<a id='n634' href='#n634'>634</a>
+<a id='n635' href='#n635'>635</a>
+<a id='n636' href='#n636'>636</a>
+<a id='n637' href='#n637'>637</a>
+<a id='n638' href='#n638'>638</a>
+<a id='n639' href='#n639'>639</a>
+<a id='n640' href='#n640'>640</a>
+<a id='n641' href='#n641'>641</a>
+<a id='n642' href='#n642'>642</a>
+<a id='n643' href='#n643'>643</a>
+<a id='n644' href='#n644'>644</a>
+<a id='n645' href='#n645'>645</a>
+<a id='n646' href='#n646'>646</a>
+<a id='n647' href='#n647'>647</a>
+<a id='n648' href='#n648'>648</a>
+<a id='n649' href='#n649'>649</a>
+<a id='n650' href='#n650'>650</a>
+<a id='n651' href='#n651'>651</a>
+<a id='n652' href='#n652'>652</a>
+<a id='n653' href='#n653'>653</a>
+<a id='n654' href='#n654'>654</a>
+<a id='n655' href='#n655'>655</a>
+<a id='n656' href='#n656'>656</a>
+<a id='n657' href='#n657'>657</a>
+<a id='n658' href='#n658'>658</a>
+<a id='n659' href='#n659'>659</a>
+<a id='n660' href='#n660'>660</a>
+<a id='n661' href='#n661'>661</a>
+<a id='n662' href='#n662'>662</a>
+<a id='n663' href='#n663'>663</a>
+<a id='n664' href='#n664'>664</a>
+<a id='n665' href='#n665'>665</a>
+<a id='n666' href='#n666'>666</a>
+<a id='n667' href='#n667'>667</a>
+<a id='n668' href='#n668'>668</a>
+<a id='n669' href='#n669'>669</a>
+<a id='n670' href='#n670'>670</a>
+<a id='n671' href='#n671'>671</a>
+<a id='n672' href='#n672'>672</a>
+<a id='n673' href='#n673'>673</a>
+<a id='n674' href='#n674'>674</a>
+<a id='n675' href='#n675'>675</a>
+<a id='n676' href='#n676'>676</a>
+<a id='n677' href='#n677'>677</a>
+<a id='n678' href='#n678'>678</a>
+<a id='n679' href='#n679'>679</a>
+<a id='n680' href='#n680'>680</a>
+<a id='n681' href='#n681'>681</a>
+<a id='n682' href='#n682'>682</a>
+<a id='n683' href='#n683'>683</a>
+<a id='n684' href='#n684'>684</a>
+<a id='n685' href='#n685'>685</a>
+<a id='n686' href='#n686'>686</a>
+<a id='n687' href='#n687'>687</a>
+<a id='n688' href='#n688'>688</a>
+<a id='n689' href='#n689'>689</a>
+<a id='n690' href='#n690'>690</a>
+<a id='n691' href='#n691'>691</a>
+<a id='n692' href='#n692'>692</a>
+<a id='n693' href='#n693'>693</a>
+<a id='n694' href='#n694'>694</a>
+<a id='n695' href='#n695'>695</a>
+<a id='n696' href='#n696'>696</a>
+<a id='n697' href='#n697'>697</a>
+<a id='n698' href='#n698'>698</a>
+<a id='n699' href='#n699'>699</a>
+<a id='n700' href='#n700'>700</a>
+<a id='n701' href='#n701'>701</a>
+<a id='n702' href='#n702'>702</a>
+<a id='n703' href='#n703'>703</a>
+<a id='n704' href='#n704'>704</a>
+<a id='n705' href='#n705'>705</a>
+<a id='n706' href='#n706'>706</a>
+<a id='n707' href='#n707'>707</a>
+<a id='n708' href='#n708'>708</a>
+<a id='n709' href='#n709'>709</a>
+<a id='n710' href='#n710'>710</a>
+<a id='n711' href='#n711'>711</a>
+<a id='n712' href='#n712'>712</a>
+<a id='n713' href='#n713'>713</a>
+<a id='n714' href='#n714'>714</a>
+<a id='n715' href='#n715'>715</a>
+<a id='n716' href='#n716'>716</a>
+<a id='n717' href='#n717'>717</a>
+<a id='n718' href='#n718'>718</a>
+<a id='n719' href='#n719'>719</a>
+<a id='n720' href='#n720'>720</a>
+<a id='n721' href='#n721'>721</a>
+<a id='n722' href='#n722'>722</a>
+<a id='n723' href='#n723'>723</a>
+<a id='n724' href='#n724'>724</a>
+<a id='n725' href='#n725'>725</a>
+<a id='n726' href='#n726'>726</a>
+<a id='n727' href='#n727'>727</a>
+<a id='n728' href='#n728'>728</a>
+<a id='n729' href='#n729'>729</a>
+<a id='n730' href='#n730'>730</a>
+<a id='n731' href='#n731'>731</a>
+<a id='n732' href='#n732'>732</a>
+<a id='n733' href='#n733'>733</a>
+<a id='n734' href='#n734'>734</a>
+<a id='n735' href='#n735'>735</a>
+<a id='n736' href='#n736'>736</a>
+<a id='n737' href='#n737'>737</a>
+<a id='n738' href='#n738'>738</a>
+<a id='n739' href='#n739'>739</a>
+<a id='n740' href='#n740'>740</a>
+<a id='n741' href='#n741'>741</a>
+<a id='n742' href='#n742'>742</a>
+<a id='n743' href='#n743'>743</a>
+<a id='n744' href='#n744'>744</a>
+<a id='n745' href='#n745'>745</a>
+<a id='n746' href='#n746'>746</a>
+<a id='n747' href='#n747'>747</a>
+<a id='n748' href='#n748'>748</a>
+<a id='n749' href='#n749'>749</a>
+<a id='n750' href='#n750'>750</a>
+<a id='n751' href='#n751'>751</a>
+<a id='n752' href='#n752'>752</a>
+<a id='n753' href='#n753'>753</a>
+<a id='n754' href='#n754'>754</a>
+<a id='n755' href='#n755'>755</a>
+<a id='n756' href='#n756'>756</a>
+<a id='n757' href='#n757'>757</a>
+<a id='n758' href='#n758'>758</a>
+<a id='n759' href='#n759'>759</a>
+<a id='n760' href='#n760'>760</a>
+<a id='n761' href='#n761'>761</a>
+<a id='n762' href='#n762'>762</a>
+<a id='n763' href='#n763'>763</a>
+<a id='n764' href='#n764'>764</a>
+<a id='n765' href='#n765'>765</a>
+<a id='n766' href='#n766'>766</a>
+<a id='n767' href='#n767'>767</a>
+<a id='n768' href='#n768'>768</a>
+<a id='n769' href='#n769'>769</a>
+<a id='n770' href='#n770'>770</a>
+<a id='n771' href='#n771'>771</a>
+<a id='n772' href='#n772'>772</a>
+<a id='n773' href='#n773'>773</a>
+<a id='n774' href='#n774'>774</a>
+<a id='n775' href='#n775'>775</a>
+<a id='n776' href='#n776'>776</a>
+<a id='n777' href='#n777'>777</a>
+<a id='n778' href='#n778'>778</a>
+<a id='n779' href='#n779'>779</a>
+<a id='n780' href='#n780'>780</a>
+<a id='n781' href='#n781'>781</a>
+<a id='n782' href='#n782'>782</a>
+<a id='n783' href='#n783'>783</a>
+<a id='n784' href='#n784'>784</a>
+<a id='n785' href='#n785'>785</a>
+<a id='n786' href='#n786'>786</a>
+<a id='n787' href='#n787'>787</a>
+<a id='n788' href='#n788'>788</a>
+<a id='n789' href='#n789'>789</a>
+<a id='n790' href='#n790'>790</a>
+<a id='n791' href='#n791'>791</a>
+<a id='n792' href='#n792'>792</a>
+<a id='n793' href='#n793'>793</a>
+<a id='n794' href='#n794'>794</a>
+<a id='n795' href='#n795'>795</a>
+<a id='n796' href='#n796'>796</a>
+<a id='n797' href='#n797'>797</a>
+<a id='n798' href='#n798'>798</a>
+<a id='n799' href='#n799'>799</a>
+<a id='n800' href='#n800'>800</a>
+<a id='n801' href='#n801'>801</a>
+<a id='n802' href='#n802'>802</a>
+<a id='n803' href='#n803'>803</a>
+<a id='n804' href='#n804'>804</a>
+<a id='n805' href='#n805'>805</a>
+<a id='n806' href='#n806'>806</a>
+<a id='n807' href='#n807'>807</a>
+<a id='n808' href='#n808'>808</a>
+<a id='n809' href='#n809'>809</a>
+<a id='n810' href='#n810'>810</a>
+<a id='n811' href='#n811'>811</a>
+<a id='n812' href='#n812'>812</a>
+<a id='n813' href='#n813'>813</a>
+<a id='n814' href='#n814'>814</a>
+<a id='n815' href='#n815'>815</a>
+<a id='n816' href='#n816'>816</a>
+<a id='n817' href='#n817'>817</a>
+<a id='n818' href='#n818'>818</a>
+<a id='n819' href='#n819'>819</a>
+<a id='n820' href='#n820'>820</a>
+<a id='n821' href='#n821'>821</a>
+<a id='n822' href='#n822'>822</a>
+<a id='n823' href='#n823'>823</a>
+<a id='n824' href='#n824'>824</a>
+<a id='n825' href='#n825'>825</a>
+<a id='n826' href='#n826'>826</a>
+<a id='n827' href='#n827'>827</a>
+<a id='n828' href='#n828'>828</a>
+<a id='n829' href='#n829'>829</a>
+<a id='n830' href='#n830'>830</a>
+<a id='n831' href='#n831'>831</a>
+<a id='n832' href='#n832'>832</a>
+<a id='n833' href='#n833'>833</a>
+<a id='n834' href='#n834'>834</a>
+<a id='n835' href='#n835'>835</a>
+<a id='n836' href='#n836'>836</a>
+<a id='n837' href='#n837'>837</a>
+<a id='n838' href='#n838'>838</a>
+<a id='n839' href='#n839'>839</a>
+<a id='n840' href='#n840'>840</a>
+<a id='n841' href='#n841'>841</a>
+<a id='n842' href='#n842'>842</a>
+<a id='n843' href='#n843'>843</a>
+<a id='n844' href='#n844'>844</a>
+<a id='n845' href='#n845'>845</a>
+<a id='n846' href='#n846'>846</a>
+<a id='n847' href='#n847'>847</a>
+<a id='n848' href='#n848'>848</a>
+<a id='n849' href='#n849'>849</a>
+<a id='n850' href='#n850'>850</a>
+<a id='n851' href='#n851'>851</a>
+<a id='n852' href='#n852'>852</a>
+<a id='n853' href='#n853'>853</a>
+<a id='n854' href='#n854'>854</a>
+<a id='n855' href='#n855'>855</a>
+<a id='n856' href='#n856'>856</a>
+<a id='n857' href='#n857'>857</a>
+<a id='n858' href='#n858'>858</a>
+<a id='n859' href='#n859'>859</a>
+<a id='n860' href='#n860'>860</a>
+<a id='n861' href='#n861'>861</a>
+<a id='n862' href='#n862'>862</a>
+<a id='n863' href='#n863'>863</a>
+<a id='n864' href='#n864'>864</a>
+<a id='n865' href='#n865'>865</a>
+<a id='n866' href='#n866'>866</a>
+<a id='n867' href='#n867'>867</a>
+<a id='n868' href='#n868'>868</a>
+<a id='n869' href='#n869'>869</a>
+<a id='n870' href='#n870'>870</a>
+<a id='n871' href='#n871'>871</a>
+<a id='n872' href='#n872'>872</a>
+<a id='n873' href='#n873'>873</a>
+<a id='n874' href='#n874'>874</a>
+<a id='n875' href='#n875'>875</a>
+<a id='n876' href='#n876'>876</a>
+<a id='n877' href='#n877'>877</a>
+<a id='n878' href='#n878'>878</a>
+<a id='n879' href='#n879'>879</a>
+<a id='n880' href='#n880'>880</a>
+<a id='n881' href='#n881'>881</a>
+<a id='n882' href='#n882'>882</a>
+<a id='n883' href='#n883'>883</a>
+<a id='n884' href='#n884'>884</a>
+<a id='n885' href='#n885'>885</a>
+<a id='n886' href='#n886'>886</a>
+<a id='n887' href='#n887'>887</a>
+<a id='n888' href='#n888'>888</a>
+<a id='n889' href='#n889'>889</a>
+<a id='n890' href='#n890'>890</a>
+<a id='n891' href='#n891'>891</a>
+<a id='n892' href='#n892'>892</a>
+<a id='n893' href='#n893'>893</a>
+<a id='n894' href='#n894'>894</a>
+<a id='n895' href='#n895'>895</a>
+<a id='n896' href='#n896'>896</a>
+<a id='n897' href='#n897'>897</a>
+<a id='n898' href='#n898'>898</a>
+<a id='n899' href='#n899'>899</a>
+<a id='n900' href='#n900'>900</a>
+<a id='n901' href='#n901'>901</a>
+<a id='n902' href='#n902'>902</a>
+<a id='n903' href='#n903'>903</a>
+<a id='n904' href='#n904'>904</a>
+<a id='n905' href='#n905'>905</a>
+<a id='n906' href='#n906'>906</a>
+<a id='n907' href='#n907'>907</a>
+<a id='n908' href='#n908'>908</a>
+<a id='n909' href='#n909'>909</a>
+<a id='n910' href='#n910'>910</a>
+<a id='n911' href='#n911'>911</a>
+<a id='n912' href='#n912'>912</a>
+<a id='n913' href='#n913'>913</a>
+<a id='n914' href='#n914'>914</a>
+<a id='n915' href='#n915'>915</a>
+<a id='n916' href='#n916'>916</a>
+<a id='n917' href='#n917'>917</a>
+<a id='n918' href='#n918'>918</a>
+<a id='n919' href='#n919'>919</a>
+<a id='n920' href='#n920'>920</a>
+<a id='n921' href='#n921'>921</a>
+<a id='n922' href='#n922'>922</a>
+<a id='n923' href='#n923'>923</a>
+<a id='n924' href='#n924'>924</a>
+<a id='n925' href='#n925'>925</a>
+<a id='n926' href='#n926'>926</a>
+<a id='n927' href='#n927'>927</a>
+<a id='n928' href='#n928'>928</a>
+<a id='n929' href='#n929'>929</a>
+<a id='n930' href='#n930'>930</a>
+<a id='n931' href='#n931'>931</a>
+<a id='n932' href='#n932'>932</a>
+<a id='n933' href='#n933'>933</a>
+<a id='n934' href='#n934'>934</a>
+<a id='n935' href='#n935'>935</a>
+<a id='n936' href='#n936'>936</a>
+<a id='n937' href='#n937'>937</a>
+<a id='n938' href='#n938'>938</a>
+<a id='n939' href='#n939'>939</a>
+<a id='n940' href='#n940'>940</a>
+<a id='n941' href='#n941'>941</a>
+<a id='n942' href='#n942'>942</a>
+<a id='n943' href='#n943'>943</a>
+<a id='n944' href='#n944'>944</a>
+<a id='n945' href='#n945'>945</a>
+<a id='n946' href='#n946'>946</a>
+<a id='n947' href='#n947'>947</a>
+<a id='n948' href='#n948'>948</a>
+<a id='n949' href='#n949'>949</a>
+<a id='n950' href='#n950'>950</a>
+<a id='n951' href='#n951'>951</a>
+<a id='n952' href='#n952'>952</a>
+<a id='n953' href='#n953'>953</a>
+<a id='n954' href='#n954'>954</a>
+<a id='n955' href='#n955'>955</a>
+<a id='n956' href='#n956'>956</a>
+<a id='n957' href='#n957'>957</a>
+<a id='n958' href='#n958'>958</a>
+<a id='n959' href='#n959'>959</a>
+<a id='n960' href='#n960'>960</a>
+<a id='n961' href='#n961'>961</a>
+<a id='n962' href='#n962'>962</a>
+<a id='n963' href='#n963'>963</a>
+<a id='n964' href='#n964'>964</a>
+<a id='n965' href='#n965'>965</a>
+<a id='n966' href='#n966'>966</a>
+<a id='n967' href='#n967'>967</a>
+<a id='n968' href='#n968'>968</a>
+<a id='n969' href='#n969'>969</a>
+<a id='n970' href='#n970'>970</a>
+<a id='n971' href='#n971'>971</a>
+<a id='n972' href='#n972'>972</a>
+<a id='n973' href='#n973'>973</a>
+<a id='n974' href='#n974'>974</a>
+<a id='n975' href='#n975'>975</a>
+<a id='n976' href='#n976'>976</a>
+<a id='n977' href='#n977'>977</a>
+<a id='n978' href='#n978'>978</a>
+<a id='n979' href='#n979'>979</a>
+<a id='n980' href='#n980'>980</a>
+<a id='n981' href='#n981'>981</a>
+<a id='n982' href='#n982'>982</a>
+<a id='n983' href='#n983'>983</a>
+<a id='n984' href='#n984'>984</a>
+<a id='n985' href='#n985'>985</a>
+<a id='n986' href='#n986'>986</a>
+<a id='n987' href='#n987'>987</a>
+<a id='n988' href='#n988'>988</a>
+<a id='n989' href='#n989'>989</a>
+<a id='n990' href='#n990'>990</a>
+<a id='n991' href='#n991'>991</a>
+<a id='n992' href='#n992'>992</a>
+<a id='n993' href='#n993'>993</a>
+<a id='n994' href='#n994'>994</a>
+<a id='n995' href='#n995'>995</a>
+<a id='n996' href='#n996'>996</a>
+<a id='n997' href='#n997'>997</a>
+<a id='n998' href='#n998'>998</a>
+<a id='n999' href='#n999'>999</a>
+<a id='n1000' href='#n1000'>1000</a>
+<a id='n1001' href='#n1001'>1001</a>
+<a id='n1002' href='#n1002'>1002</a>
+<a id='n1003' href='#n1003'>1003</a>
+<a id='n1004' href='#n1004'>1004</a>
+<a id='n1005' href='#n1005'>1005</a>
+<a id='n1006' href='#n1006'>1006</a>
+<a id='n1007' href='#n1007'>1007</a>
+<a id='n1008' href='#n1008'>1008</a>
+<a id='n1009' href='#n1009'>1009</a>
+<a id='n1010' href='#n1010'>1010</a>
+<a id='n1011' href='#n1011'>1011</a>
+<a id='n1012' href='#n1012'>1012</a>
+<a id='n1013' href='#n1013'>1013</a>
+<a id='n1014' href='#n1014'>1014</a>
+<a id='n1015' href='#n1015'>1015</a>
+<a id='n1016' href='#n1016'>1016</a>
+<a id='n1017' href='#n1017'>1017</a>
+<a id='n1018' href='#n1018'>1018</a>
+<a id='n1019' href='#n1019'>1019</a>
+<a id='n1020' href='#n1020'>1020</a>
+<a id='n1021' href='#n1021'>1021</a>
+<a id='n1022' href='#n1022'>1022</a>
+<a id='n1023' href='#n1023'>1023</a>
+<a id='n1024' href='#n1024'>1024</a>
+<a id='n1025' href='#n1025'>1025</a>
+<a id='n1026' href='#n1026'>1026</a>
+<a id='n1027' href='#n1027'>1027</a>
+<a id='n1028' href='#n1028'>1028</a>
+<a id='n1029' href='#n1029'>1029</a>
+<a id='n1030' href='#n1030'>1030</a>
+<a id='n1031' href='#n1031'>1031</a>
+<a id='n1032' href='#n1032'>1032</a>
+<a id='n1033' href='#n1033'>1033</a>
+<a id='n1034' href='#n1034'>1034</a>
+<a id='n1035' href='#n1035'>1035</a>
+<a id='n1036' href='#n1036'>1036</a>
+<a id='n1037' href='#n1037'>1037</a>
+<a id='n1038' href='#n1038'>1038</a>
+<a id='n1039' href='#n1039'>1039</a>
+<a id='n1040' href='#n1040'>1040</a>
+<a id='n1041' href='#n1041'>1041</a>
+<a id='n1042' href='#n1042'>1042</a>
+<a id='n1043' href='#n1043'>1043</a>
+<a id='n1044' href='#n1044'>1044</a>
+<a id='n1045' href='#n1045'>1045</a>
+<a id='n1046' href='#n1046'>1046</a>
+<a id='n1047' href='#n1047'>1047</a>
+<a id='n1048' href='#n1048'>1048</a>
+<a id='n1049' href='#n1049'>1049</a>
+<a id='n1050' href='#n1050'>1050</a>
+<a id='n1051' href='#n1051'>1051</a>
+<a id='n1052' href='#n1052'>1052</a>
+<a id='n1053' href='#n1053'>1053</a>
+<a id='n1054' href='#n1054'>1054</a>
+<a id='n1055' href='#n1055'>1055</a>
+<a id='n1056' href='#n1056'>1056</a>
+<a id='n1057' href='#n1057'>1057</a>
+<a id='n1058' href='#n1058'>1058</a>
+<a id='n1059' href='#n1059'>1059</a>
+<a id='n1060' href='#n1060'>1060</a>
+<a id='n1061' href='#n1061'>1061</a>
+<a id='n1062' href='#n1062'>1062</a>
+<a id='n1063' href='#n1063'>1063</a>
+<a id='n1064' href='#n1064'>1064</a>
+<a id='n1065' href='#n1065'>1065</a>
+<a id='n1066' href='#n1066'>1066</a>
+<a id='n1067' href='#n1067'>1067</a>
+<a id='n1068' href='#n1068'>1068</a>
+<a id='n1069' href='#n1069'>1069</a>
+<a id='n1070' href='#n1070'>1070</a>
+<a id='n1071' href='#n1071'>1071</a>
+<a id='n1072' href='#n1072'>1072</a>
+<a id='n1073' href='#n1073'>1073</a>
+<a id='n1074' href='#n1074'>1074</a>
+<a id='n1075' href='#n1075'>1075</a>
+<a id='n1076' href='#n1076'>1076</a>
+<a id='n1077' href='#n1077'>1077</a>
+<a id='n1078' href='#n1078'>1078</a>
+<a id='n1079' href='#n1079'>1079</a>
+<a id='n1080' href='#n1080'>1080</a>
+<a id='n1081' href='#n1081'>1081</a>
+<a id='n1082' href='#n1082'>1082</a>
+<a id='n1083' href='#n1083'>1083</a>
+<a id='n1084' href='#n1084'>1084</a>
+<a id='n1085' href='#n1085'>1085</a>
+<a id='n1086' href='#n1086'>1086</a>
+<a id='n1087' href='#n1087'>1087</a>
+<a id='n1088' href='#n1088'>1088</a>
+<a id='n1089' href='#n1089'>1089</a>
+<a id='n1090' href='#n1090'>1090</a>
+<a id='n1091' href='#n1091'>1091</a>
+<a id='n1092' href='#n1092'>1092</a>
+<a id='n1093' href='#n1093'>1093</a>
+<a id='n1094' href='#n1094'>1094</a>
+<a id='n1095' href='#n1095'>1095</a>
+<a id='n1096' href='#n1096'>1096</a>
+<a id='n1097' href='#n1097'>1097</a>
+<a id='n1098' href='#n1098'>1098</a>
+<a id='n1099' href='#n1099'>1099</a>
+<a id='n1100' href='#n1100'>1100</a>
+<a id='n1101' href='#n1101'>1101</a>
+<a id='n1102' href='#n1102'>1102</a>
+<a id='n1103' href='#n1103'>1103</a>
+<a id='n1104' href='#n1104'>1104</a>
+<a id='n1105' href='#n1105'>1105</a>
+<a id='n1106' href='#n1106'>1106</a>
+<a id='n1107' href='#n1107'>1107</a>
+<a id='n1108' href='#n1108'>1108</a>
+<a id='n1109' href='#n1109'>1109</a>
+<a id='n1110' href='#n1110'>1110</a>
+<a id='n1111' href='#n1111'>1111</a>
+<a id='n1112' href='#n1112'>1112</a>
+<a id='n1113' href='#n1113'>1113</a>
+<a id='n1114' href='#n1114'>1114</a>
+<a id='n1115' href='#n1115'>1115</a>
+<a id='n1116' href='#n1116'>1116</a>
+<a id='n1117' href='#n1117'>1117</a>
+<a id='n1118' href='#n1118'>1118</a>
+<a id='n1119' href='#n1119'>1119</a>
+<a id='n1120' href='#n1120'>1120</a>
+<a id='n1121' href='#n1121'>1121</a>
+<a id='n1122' href='#n1122'>1122</a>
+<a id='n1123' href='#n1123'>1123</a>
+<a id='n1124' href='#n1124'>1124</a>
+<a id='n1125' href='#n1125'>1125</a>
+<a id='n1126' href='#n1126'>1126</a>
+<a id='n1127' href='#n1127'>1127</a>
+<a id='n1128' href='#n1128'>1128</a>
+<a id='n1129' href='#n1129'>1129</a>
+<a id='n1130' href='#n1130'>1130</a>
+<a id='n1131' href='#n1131'>1131</a>
+<a id='n1132' href='#n1132'>1132</a>
+<a id='n1133' href='#n1133'>1133</a>
+<a id='n1134' href='#n1134'>1134</a>
+<a id='n1135' href='#n1135'>1135</a>
+<a id='n1136' href='#n1136'>1136</a>
+<a id='n1137' href='#n1137'>1137</a>
+<a id='n1138' href='#n1138'>1138</a>
+<a id='n1139' href='#n1139'>1139</a>
+<a id='n1140' href='#n1140'>1140</a>
+<a id='n1141' href='#n1141'>1141</a>
+<a id='n1142' href='#n1142'>1142</a>
+<a id='n1143' href='#n1143'>1143</a>
+<a id='n1144' href='#n1144'>1144</a>
+<a id='n1145' href='#n1145'>1145</a>
+<a id='n1146' href='#n1146'>1146</a>
+<a id='n1147' href='#n1147'>1147</a>
+<a id='n1148' href='#n1148'>1148</a>
+<a id='n1149' href='#n1149'>1149</a>
+<a id='n1150' href='#n1150'>1150</a>
+<a id='n1151' href='#n1151'>1151</a>
+<a id='n1152' href='#n1152'>1152</a>
+<a id='n1153' href='#n1153'>1153</a>
+<a id='n1154' href='#n1154'>1154</a>
+<a id='n1155' href='#n1155'>1155</a>
+<a id='n1156' href='#n1156'>1156</a>
+<a id='n1157' href='#n1157'>1157</a>
+<a id='n1158' href='#n1158'>1158</a>
+<a id='n1159' href='#n1159'>1159</a>
+<a id='n1160' href='#n1160'>1160</a>
+<a id='n1161' href='#n1161'>1161</a>
+<a id='n1162' href='#n1162'>1162</a>
+<a id='n1163' href='#n1163'>1163</a>
+<a id='n1164' href='#n1164'>1164</a>
+<a id='n1165' href='#n1165'>1165</a>
+<a id='n1166' href='#n1166'>1166</a>
+<a id='n1167' href='#n1167'>1167</a>
+<a id='n1168' href='#n1168'>1168</a>
+<a id='n1169' href='#n1169'>1169</a>
+<a id='n1170' href='#n1170'>1170</a>
+<a id='n1171' href='#n1171'>1171</a>
+<a id='n1172' href='#n1172'>1172</a>
+<a id='n1173' href='#n1173'>1173</a>
+<a id='n1174' href='#n1174'>1174</a>
+<a id='n1175' href='#n1175'>1175</a>
+<a id='n1176' href='#n1176'>1176</a>
+<a id='n1177' href='#n1177'>1177</a>
+<a id='n1178' href='#n1178'>1178</a>
+<a id='n1179' href='#n1179'>1179</a>
+<a id='n1180' href='#n1180'>1180</a>
+</pre></td>
+<td class='lines'><pre><code># Affix file for British English MySpell dictionary.
+# Also suitable as basis for Commonwealth and European English.
+# Built from scratch for MySpell. Released under LGPL.
+#
+# Sources used to verify the spelling of the words
+# Marco Pinto included in the dictionary:
+#   1) Oxford Dictionaries;    4) Wiktionary (used with caution);
+#   2) Collins Dictionary;     5) Wikipedia (used with caution);   
+#   3) Macmillan Dictionary;   6) Physical dictionaries.
+#
+# Main difficulties developing this dictionary:
+#   1) Proper names;
+#   2) Possessive forms;
+#   3) Plurals.
+#
+# David Bartlett, Andrew Brown, Marco A.G.Pinto.
+# R 2.54, 2017-11-01
+
+SET UTF-8
+
+TRY esiaénrtolcdugmfphbyvkw-'.zqjxSNRTLCGDMFPHBEAUYOIVKWóöâôZQJXÅçèîêàïüäñ
+
+NOSUGGEST !
+
+# ordinal numbers
+COMPOUNDMIN 1
+# only in compounds: 1th, 2th, 3th
+ONLYINCOMPOUND _
+# compound rules:
+# 1. [0-9]*1[0-9]th (10th, 11th, 12th, 56714th, etc.)
+# 2. [0-9]*[02-9](1st|2nd|3rd|[4-9]th) (21st, 22nd, 123rd, 1234th, etc.)
+COMPOUNDRULE 2
+COMPOUNDRULE #*0{
+COMPOUNDRULE #*@}
+WORDCHARS 0123456789’
+
+REP 27
+REP f ph
+REP ph f
+REP f gh
+REP f ugh
+REP gh f
+REP ff ugh
+REP uf ough
+REP uff ough
+REP k ch
+REP ch k
+REP dg j
+REP j dg
+REP w ugh
+REP ness ity
+REP leness ility
+REP ness ivity
+REP eness ity
+REP og ogue
+REP ck qu
+REP ck que
+REP eg e.g.
+REP ie i.e.
+REP t ght
+REP ght t
+REP ok OK
+REP ts ce
+REP ce ts
+
+PFX A Y 2
+PFX A 0 re [^e] 
+PFX A 0 re- e 
+PFX a Y 1
+PFX a 0 mis . 
+PFX I Y 4
+PFX I 0 il l 
+PFX I 0 ir r 
+PFX I 0 im [bmp] 
+PFX I 0 in [^blmpr] 
+PFX c Y 1
+PFX c 0 over . 
+PFX U Y 1
+PFX U 0 un . 
+PFX C Y 2
+PFX C 0 de [^e] 
+PFX C 0 de- e 
+PFX E Y 1
+PFX E 0 dis . 
+PFX F Y 5
+PFX F 0 com [bmp]
+PFX F 0 co [aeiouh]
+PFX F 0 cor r
+PFX F 0 col l
+PFX F 0 con [^abehilmopru]. 
+PFX K Y 1
+PFX K 0 pre . 
+PFX e Y 1
+PFX e 0 out . 
+PFX f Y 2
+PFX f 0 under [^r] 
+PFX f 0 under- r 
+PFX O Y 1
+PFX O 0 non- . 
+PFX 4 Y 1
+PFX 4 0 trans . 
+
+SFX V Y 15
+SFX V 0 tive [aio] 
+SFX V b ptive b 
+SFX V d sive d 
+SFX V be ptive be 
+SFX V e tive ce 
+SFX V de sive de 
+SFX V ke cative ke 
+SFX V e ptive me 
+SFX V e ive [st]e 
+SFX V e ative [^bcdkmst]e 
+SFX V 0 lative [aeiou]l 
+SFX V 0 ative [^aeiou]l 
+SFX V 0 ive [st] 
+SFX V y icative y 
+SFX V 0 ative [^abdeilosty] 
+SFX v Y 15
+SFX v 0 tively [aio] 
+SFX v b ptively b 
+SFX v d sively d 
+SFX v be ptively be 
+SFX v e tively ce 
+SFX v de sively de 
+SFX v ke catively ke 
+SFX v e ptively me 
+SFX v e ively [st]e 
+SFX v e atively [^bcdkmst]e 
+SFX v 0 latively [aeiou]l 
+SFX v 0 atively [^aeiou]l 
+SFX v 0 ively [st] 
+SFX v y icatively y 
+SFX v 0 atively [^abdeilosty] 
+SFX u Y 15
+SFX u 0 tiveness [aio] 
+SFX u b ptiveness b 
+SFX u d siveness d 
+SFX u be ptiveness be 
+SFX u e tiveness ce 
+SFX u de siveness de 
+SFX u ke cativeness ke 
+SFX u e ptiveness me 
+SFX u e iveness [st]e 
+SFX u e ativeness [^bcdkmst]e 
+SFX u 0 lativeness [aeiou]l 
+SFX u 0 ativeness [^aeiou]l 
+SFX u 0 iveness [st] 
+SFX u y icativeness y 
+SFX u 0 ativeness [^abdeilosty] 
+SFX N Y 26
+SFX N b ption b 
+SFX N d sion d 
+SFX N be ption be 
+SFX N e tion ce 
+SFX N de sion de 
+SFX N ke cation ke 
+SFX N e ption ume 
+SFX N e mation [^u]me 
+SFX N e ion [^o]se 
+SFX N e ition ose 
+SFX N e ation [iou]te 
+SFX N e ion [^iou]te 
+SFX N e ation [^bcdkmst]e 
+SFX N el ulsion el 
+SFX N 0 lation [aiou]l 
+SFX N 0 ation [^aeiou]l 
+SFX N 0 mation [aeiou]m 
+SFX N 0 ation [^aeiou]m 
+SFX N er ration er 
+SFX N 0 ation [^e]r 
+SFX N 0 ion [sx] 
+SFX N t ssion mit 
+SFX N 0 ion [^m]it 
+SFX N 0 ation [^i]t 
+SFX N y ication y 
+SFX N 0 ation [^bdelmrstxy] 
+SFX n Y 28
+SFX n 0 tion a 
+SFX n e tion ce 
+SFX n ke cation ke 
+SFX n e ation [iou]te 
+SFX n e ion [^iou]te 
+SFX n e ation [^ckt]e 
+SFX n el ulsion el 
+SFX n 0 lation [aiou]l 
+SFX n 0 ation [^aeiou]l 
+SFX n er ration er 
+SFX n 0 ation [^e]r 
+SFX n y ation py 
+SFX n y ication [^p]y 
+SFX n 0 ation [^aelry] 
+SFX n 0 tions a 
+SFX n e tions ce 
+SFX n ke cations ke 
+SFX n e ations [iou]te 
+SFX n e ions [^iou]te 
+SFX n e ations [^ckt]e 
+SFX n el ulsions el 
+SFX n 0 lations [aiou]l 
+SFX n 0 ations [^aeiou]l 
+SFX n er rations er 
+SFX n 0 ations [^e]r 
+SFX n y ations py 
+SFX n y ications [^p]y 
+SFX n 0 ations [^aelry] 
+SFX X Y 26
+SFX X b ptions b 
+SFX X d sions d 
+SFX X be ptions be 
+SFX X e tions ce 
+SFX X ke cations ke 
+SFX X de sions de 
+SFX X e ptions ume 
+SFX X e mations [^u]me 
+SFX X e ions [^o]se 
+SFX X e itions ose 
+SFX X e ations [iou]te 
+SFX X e ions [^iou]te 
+SFX X e ations [^bcdkmst]e 
+SFX X el ulsions el 
+SFX X 0 lations [aiou]l 
+SFX X 0 ations [^aeiou]l 
+SFX X 0 mations [aeiou]m 
+SFX X 0 ations [^aeiou]m 
+SFX X er rations er 
+SFX X 0 ations [^e]r 
+SFX X 0 ions [sx] 
+SFX X t ssions mit 
+SFX X 0 ions [^m]it 
+SFX X 0 ations [^i]t 
+SFX X y ications y 
+SFX X 0 ations [^bdelmrstxy] 
+SFX x Y 40
+SFX x b ptional b 
+SFX x d sional d 
+SFX x be ptional be 
+SFX x e tional ce 
+SFX x ke cational ke 
+SFX x de sional de 
+SFX x e ional [^o]se 
+SFX x e itional ose 
+SFX x e ional te 
+SFX x e ational [^bcdkst]e 
+SFX x el ulsional el 
+SFX x 0 lational [aiou]l 
+SFX x 0 ational [^aeiou]l 
+SFX x er rational er 
+SFX x 0 ational [^e]r 
+SFX x 0 ional [sx] 
+SFX x 0 ional [^n]t 
+SFX x 0 ational nt 
+SFX x y icational y 
+SFX x 0 ational [^bdelrstxy] 
+SFX x b ptionally b 
+SFX x d sionally d 
+SFX x be ptionally be 
+SFX x e tionally ce 
+SFX x ke cationally ke 
+SFX x de sionally de 
+SFX x e ionally [^o]se 
+SFX x e itionally ose 
+SFX x e ionally te 
+SFX x e ationally [^bcdkst]e 
+SFX x el ulsionally el 
+SFX x 0 lationally [aiou]l 
+SFX x 0 ationally [^aeiou]l 
+SFX x er rationally er 
+SFX x 0 ationally [^e]r 
+SFX x 0 ionally [sx] 
+SFX x 0 ionally [^n]t 
+SFX x 0 ationally nt 
+SFX x y icationally y 
+SFX x 0 ationally [^bdelrstxy] 
+SFX H N 13
+SFX H y ieth y 
+SFX H ree ird ree 
+SFX H ve fth ve 
+SFX H e th [^ev]e 
+SFX H 0 h t 
+SFX H 0 th [^ety] 
+SFX H y ieths y 
+SFX H ree irds ree 
+SFX H ve fths ve 
+SFX H e ths [^ev]e 
+SFX H 0 hs t 
+SFX H 0 ths [^ety] 
+SFX H 0 fold . 
+SFX Y Y 9
+SFX Y 0 ally ic 
+SFX Y 0 ly [^i]c 
+SFX Y e y [^aeiou]le 
+SFX Y 0 ly [aeiou]le 
+SFX Y 0 ly [^l]e 
+SFX Y 0 y [^aeiou]l 
+SFX Y y ily [^aeiou]y 
+SFX Y 0 ly [aeiou][ly] 
+SFX Y 0 ly [^cely] 
+SFX G Y 24
+SFX G e ing [^eioy]e 
+SFX G 0 ing [eoy]e 
+SFX G ie ying ie 
+SFX G 0 bing [^aeio][aeiou]b 
+SFX G 0 king [^aeio][aeiou]c 
+SFX G 0 ding [^aeio][aeiou]d 
+SFX G 0 fing [^aeio][aeiou]f 
+SFX G 0 ging [^aeio][aeiou]g 
+SFX G 0 king [^aeio][aeiou]k 
+SFX G 0 ling [^aeio][eiou]l 
+SFX G 0 ing [aeio][eiou]l 
+SFX G 0 ling [^aeo]al 
+SFX G 0 ing [aeo]al 
+SFX G 0 ming [^aeio][aeiou]m 
+SFX G 0 ning [^aeio][aeiou]n 
+SFX G 0 ping [^aeio][aeiou]p 
+SFX G 0 ring [^aeio][aeiou]r 
+SFX G 0 sing [^aeio][aeiou]s 
+SFX G 0 ting [^aeio][aeiou]t 
+SFX G 0 ving [^aeio][aeiou]v 
+SFX G 0 zing [^aeio][aeiou]z 
+SFX G 0 ing [aeio][aeiou][bcdfgkmnprstvz] 
+SFX G 0 ing [^aeiou][bcdfgklmnprstvz] 
+SFX G 0 ing [^ebcdfgklmnprstvz] 
+SFX J Y 25
+SFX J e ings [^eioy]e 
+SFX J 0 ings [eoy]e 
+SFX J ie yings ie 
+SFX J 0 bings [^aeio][aeiou]b 
+SFX J 0 king [^aeio][aeiou]c 
+SFX J 0 dings [^aeio][aeiou]d 
+SFX J 0 fings [^aeio][aeiou]f 
+SFX J 0 gings [^aeio][aeiou]g 
+SFX J 0 kings [^aeio][aeiou]k 
+SFX J 0 lings [^aeio][eiou]l 
+SFX J 0 ings [aeio][eiou]l 
+SFX J 0 lings [^aeo]al 
+SFX J 0 ings [aeo]al 
+SFX J 0 mings [^aeio][aeiou]m 
+SFX J 0 nings [^aeio][aiou]n 
+SFX J 0 pings [^aeio][aeiou]p 
+SFX J 0 rings [^aeio][aiou]r 
+SFX J 0 sings [^aeio][aeiou]s 
+SFX J 0 tings [^aeio][aiou]t 
+SFX J 0 vings [^aeio][aeiou]v 
+SFX J 0 zings [^aeio][aeiou]z 
+SFX J 0 ings [^aeio]e[nrt] 
+SFX J 0 ings [aeio][aeiou][bcdfgkmnprstvz] 
+SFX J 0 ings [^aeiou][bcdfgklmnprstvz] 
+SFX J 0 ings [^ebcdfgklmnprstvz] 
+SFX k Y 8
+SFX k e ingly [^eioy]e 
+SFX k 0 ingly [eoy]e 
+SFX k ie yingly ie 
+SFX k 0 kingly [^aeio][aeiou]c 
+SFX k 0 lingly [^aeio][aeiou]l 
+SFX k 0 ingly [aeio][aeiou][cl] 
+SFX k 0 ingly [^aeiou][cl] 
+SFX k 0 ingly [^ecl] 
+SFX D Y 25
+SFX D 0 d [^e]e 
+SFX D e d ee 
+SFX D 0 bed [^aeio][aeiou]b 
+SFX D 0 ked [^aeio][aeiou]c 
+SFX D 0 ded [^aeio][aeiou]d 
+SFX D 0 fed [^aeio][aeiou]f 
+SFX D 0 ged [^aeio][aeiou]g 
+SFX D 0 ked [^aeio][aeiou]k 
+SFX D 0 led [^aeio][eiou]l 
+SFX D 0 ed [aeio][eiou]l 
+SFX D 0 led [^aeo]al 
+SFX D 0 ed [aeo]al 
+SFX D 0 med [^aeio][aeiou]m 
+SFX D 0 ned [^aeio][aeiou]n 
+SFX D 0 ped [^aeio][aeiou]p 
+SFX D 0 red [^aeio][aeiou]r 
+SFX D 0 sed [^aeio][aeiou]s 
+SFX D 0 ted [^aeio][aeiou]t 
+SFX D 0 ved [^aeio][aeiou]v 
+SFX D 0 zed [^aeio][aeiou]z 
+SFX D y ied [^aeiou]y 
+SFX D 0 ed [aeiou]y 
+SFX D 0 ed [aeio][aeiou][bcdfgkmnprstvz] 
+SFX D 0 ed [^aeiou][bcdfgklmnprstvz] 
+SFX D 0 ed [^ebcdfgklmnprstvyz] 
+SFX d Y 16
+SFX d 0 d e 
+SFX d 0 ked [^aeio][aeiou]c 
+SFX d 0 led [^aeio][aeiou]l 
+SFX d y ied [^aeiou]y 
+SFX d 0 ed [aeiou]y 
+SFX d 0 ed [aeio][aeiou][cl] 
+SFX d 0 ed [^aeiou][cl] 
+SFX d 0 ed [^ecly] 
+SFX d e ing [^eioy]e 
+SFX d 0 ing [eoy]e 
+SFX d ie ying ie 
+SFX d 0 king [^aeio][aeiou]c 
+SFX d 0 ling [^aeio][aeiou]l 
+SFX d 0 ing [aeio][aeiou][cl] 
+SFX d 0 ing [^aeiou][cl] 
+SFX d 0 ing [^ecl] 
+SFX h Y 22
+SFX h 0 dly e 
+SFX h 0 bedly [^aeio][aeiou]b 
+SFX h 0 kedly [^aeio][aeiou]c 
+SFX h 0 dedly [^aeio][aeiou]d 
+SFX h 0 fedly [^aeio][aeiou]f 
+SFX h 0 gedly [^aeio][aeiou]g 
+SFX h 0 kedly [^aeio][aeiou]k 
+SFX h 0 ledly [^aeio][aeiou]l 
+SFX h 0 medly [^aeio][aeiou]m 
+SFX h 0 nedly [^aeio][aiou]n 
+SFX h 0 pedly [^aeio][aeiou]p 
+SFX h 0 redly [^aeio][aiou]r 
+SFX h 0 sedly [^aeio][aeiou]s 
+SFX h 0 tedly [^aeio][aiou]t 
+SFX h 0 vedly [^aeio][aeiou]v 
+SFX h 0 zedly [^aeio][aeiou]z 
+SFX h 0 edly [^aeio]e[nrt] 
+SFX h y iedly [^aeiou]y 
+SFX h 0 edly [aeiou]y 
+SFX h 0 edly [aeio][aeiou][bcdfgklmnprstvz] 
+SFX h 0 edly [^aeiou][bcdfgklmnprstvz] 
+SFX h 0 edly [^ebcdfgklmnprstvyz] 
+SFX i Y 22
+SFX i 0 dness e 
+SFX i 0 bedness [^aeio][aeiou]b 
+SFX i 0 kedness [^aeio][aeiou]c 
+SFX i 0 dedness [^aeio][aeiou]d 
+SFX i 0 fedness [^aeio][aeiou]f 
+SFX i 0 gedness [^aeio][aeiou]g 
+SFX i 0 kedness [^aeio][aeiou]k 
+SFX i 0 ledness [^aeio][aeiou]l 
+SFX i 0 medness [^aeio][aeiou]m 
+SFX i 0 nedness [^aeio][aiou]n 
+SFX i 0 pedness [^aeio][aeiou]p 
+SFX i 0 redness [^aeio][aiou]r 
+SFX i 0 sedness [^aeio][aeiou]s 
+SFX i 0 tedness [^aeio][aiou]t 
+SFX i 0 vedness [^aeio][aeiou]v 
+SFX i 0 zedness [^aeio][aeiou]z 
+SFX i 0 edness [^aeio]e[nrt] 
+SFX i y iedness [^aeiou]y 
+SFX i 0 edness [aeiou]y 
+SFX i 0 edness [aeio][aeiou][bcdfgklmnprstvz] 
+SFX i 0 edness [^aeiou][bcdfgklmnprstvz] 
+SFX i 0 edness [^ebcdfgklmnprstvyz] 
+SFX T Y 42
+SFX T 0 r e 
+SFX T 0 st e
+SFX T 0 ber [^aeio][aeiou]b 
+SFX T 0 best [^aeio][aeiou]b
+SFX T 0 ker [^aeio][aeiou]c 
+SFX T 0 kest [^aeio][aeiou]c
+SFX T 0 der [^aeio][aeiou]d 
+SFX T 0 dest [^aeio][aeiou]d
+SFX T 0 fer [^aeio][aeiou]f 
+SFX T 0 fest [^aeio][aeiou]f
+SFX T 0 ger [^aeio][aeiou]g 
+SFX T 0 gest [^aeio][aeiou]g
+SFX T 0 ker [^aeio][aeiou]k 
+SFX T 0 kest [^aeio][aeiou]k
+SFX T 0 ler [^aeio][aeiou]l 
+SFX T 0 lest [^aeio][aeiou]l
+SFX T 0 mer [^aeio][aeiou]m 
+SFX T 0 mest [^aeio][aeiou]m
+SFX T 0 ner [^aeio][aeiou]n 
+SFX T 0 nest [^aeio][aeiou]n
+SFX T 0 per [^aeio][aeiou]p 
+SFX T 0 pest [^aeio][aeiou]p
+SFX T 0 rer [^aeio][aeiou]r 
+SFX T 0 rest [^aeio][aeiou]r
+SFX T 0 ser [^aeio][aeiou]s 
+SFX T 0 sest [^aeio][aeiou]s
+SFX T 0 ter [^aeio][aeiou]t 
+SFX T 0 test [^aeio][aeiou]t
+SFX T 0 ver [^aeio][aeiou]v 
+SFX T 0 vest [^aeio][aeiou]v
+SFX T 0 zer [^aeio][aeiou]z 
+SFX T 0 zest [^aeio][aeiou]z
+SFX T y ier [^aeiou]y 
+SFX T y iest [^aeiou]y
+SFX T 0 er [aeiou]y 
+SFX T 0 est [aeiou]y
+SFX T 0 er [aeio][aeiou][bcdfgklmnprstvz]
+SFX T 0 er [^aeiou][bcdfgklmnprstvz]
+SFX T 0 er [^ebcdfgklmnprstvyz]
+SFX T 0 est [aeio][aeiou][bcdfgklmnprstvz]
+SFX T 0 est [^aeiou][bcdfgklmnprstvz]
+SFX T 0 est [^ebcdfgklmnprstvyz]
+SFX R Y 72
+SFX R 0 r e 
+SFX R 0 rs e 
+SFX R 0 ber [^aeio][aeiou]b 
+SFX R 0 bers [^aeio][aeiou]b 
+SFX R 0 ker [^aeio][aeiou]c 
+SFX R 0 kers [^aeio][aeiou]c 
+SFX R 0 der [^aeio][aeiou]d 
+SFX R 0 ders [^aeio][aeiou]d 
+SFX R 0 fer [^aeio][aeiou]f 
+SFX R 0 fers [^aeio][aeiou]f 
+SFX R 0 ger [^aeio][aeiou]g 
+SFX R 0 gers [^aeio][aeiou]g 
+SFX R 0 ker [^aeio][aeiou]k 
+SFX R 0 kers [^aeio][aeiou]k 
+SFX R 0 ler [^aeio][eiou]l 
+SFX R 0 er [aeio][eiou]l 
+SFX R 0 ler [^aeo]al 
+SFX R 0 er [aeo]al 
+SFX R 0 lers [^aeio][eiou]l 
+SFX R 0 ers [aeio][eiou]l 
+SFX R 0 lers [^aeo]al 
+SFX R 0 ers [aeo]al 
+SFX R 0 mer [^aeio][aeiou]m 
+SFX R 0 mers [^aeio][aeiou]m 
+SFX R 0 ner [^aeio][aeiou]n 
+SFX R 0 ners [^aeio][aeiou]n 
+SFX R 0 per [^aeio][aeiou]p 
+SFX R 0 pers [^aeio][aeiou]p 
+SFX R 0 rer [^aeio][aeiou]r 
+SFX R 0 rers [^aeio][aeiou]r 
+SFX R 0 ser [^aeio][aeiou]s 
+SFX R 0 sers [^aeio][aeiou]s 
+SFX R 0 ter [^aeio][aeiou]t 
+SFX R 0 ters [^aeio][aeiou]t 
+SFX R 0 ver [^aeio][aeiou]v 
+SFX R 0 vers [^aeio][aeiou]v 
+SFX R 0 zer [^aeio][aeiou]z 
+SFX R 0 zers [^aeio][aeiou]z 
+SFX R y ier [^aeiou]y 
+SFX R y iers [^aeiou]y 
+SFX R 0 er [aeiou]y 
+SFX R 0 ers [aeiou]y 
+SFX R 0 er [aeio][aeiou][bcdfgkmnprstvz] 
+SFX R 0 ers [aeio][aeiou][bcdfgkmnprstvz] 
+SFX R 0 er [^aeiou][bcdfgklmnprstvz] 
+SFX R 0 ers [^aeiou][bcdfgklmnprstvz] 
+SFX R 0 er [^ebcdfgklmnprstvyz] 
+SFX R 0 ers [^ebcdfgklmnprstvyz] 
+SFX R 0 r's e 
+SFX R 0 ber's [^aeio][aeiou]b 
+SFX R 0 ker's [^aeio][aeiou]c 
+SFX R 0 der's [^aeio][aeiou]d 
+SFX R 0 fer's [^aeio][aeiou]f 
+SFX R 0 ger's [^aeio][aeiou]g 
+SFX R 0 ker's [^aeio][aeiou]k 
+SFX R 0 ler's [^aeio][eiou]l 
+SFX R 0 er's [aeio][eiou]l 
+SFX R 0 ler's [^aeo]al 
+SFX R 0 er's [aeo]al 
+SFX R 0 mer's [^aeio][aeiou]m 
+SFX R 0 ner's [^aeio][aeiou]n 
+SFX R 0 per's [^aeio][aeiou]p 
+SFX R 0 rer's [^aeio][aeiou]r 
+SFX R 0 ser's [^aeio][aeiou]s 
+SFX R 0 ter's [^aeio][aeiou]t 
+SFX R 0 ver's [^aeio][aeiou]v 
+SFX R 0 zer's [^aeio][aeiou]z 
+SFX R y ier's [^aeiou]y 
+SFX R 0 er's [aeiou]y 
+SFX R 0 er's [aeio][aeiou][bcdfgkmnprstvz] 
+SFX R 0 er's [^aeiou][bcdfgklmnprstvz] 
+SFX R 0 er's [^ebcdfgklmnprstvyz] 
+SFX r Y 24
+SFX r 0 r e 
+SFX r 0 ler [^aeio][aeiou]l 
+SFX r 0 ker [^aeio][aeiou]c 
+SFX r y ier [^aeiou]y 
+SFX r 0 er [aeiou]y 
+SFX r 0 er [aeio][aeiou][cl] 
+SFX r 0 er [^aeiou][cl] 
+SFX r 0 er [^ecly] 
+SFX r 0 rs e 
+SFX r 0 lers [^aeio][aeiou]l 
+SFX r 0 kers [^aeio][aeiou]c 
+SFX r y iers [^aeiou]y 
+SFX r 0 ers [aeiou]y 
+SFX r 0 ers [aeio][aeiou][cl] 
+SFX r 0 ers [^aeiou][cl] 
+SFX r 0 ers [^ecly] 
+SFX r 0 r's e 
+SFX r 0 ler's [^aeio][aeiou]l 
+SFX r 0 ker's [^aeio][aeiou]c 
+SFX r y ier's [^aeiou]y 
+SFX r 0 er's [aeiou]y 
+SFX r 0 er's [aeio][aeiou][cl] 
+SFX r 0 er's [^aeiou][cl] 
+SFX r 0 er's [^ecly] 
+SFX S Y 9
+SFX S y ies [^aeiou]y 
+SFX S 0 s [aeiou]y 
+SFX S 0 es [sxz] 
+SFX S 0 es [cs]h 
+SFX S 0 s [^cs]h 
+SFX S 0 s [ae]u 
+SFX S 0 x [ae]u 
+SFX S 0 s [^ae]u 
+SFX S 0 s [^hsuxyz]
+SFX P Y 6
+SFX P y iness [^aeiou]y 
+SFX P 0 ness [aeiou]y 
+SFX P 0 ness [^y] 
+SFX P y iness's [^aeiou]y 
+SFX P 0 ness's [aeiou]y 
+SFX P 0 ness's [^y] 
+SFX m Y 20
+SFX m 0 sman [bdknmt] 
+SFX m 0 sman [aeiou][bdklmnt]e 
+SFX m 0 man [^aeiou][bdklmnt]e 
+SFX m 0 man [^bdklmnt]e 
+SFX m 0 man [^bdeknmt] 
+SFX m 0 smen [bdknmt] 
+SFX m 0 smen [aeiou][bdklmnt]e 
+SFX m 0 men [^aeiou][bdklmnt]e 
+SFX m 0 men [^bdklmnt]e 
+SFX m 0 men [^bdeknmt] 
+SFX m 0 sman's [bdknmt] 
+SFX m 0 sman's [aeiou][bdklmnt]e 
+SFX m 0 man's [^aeiou][bdklmnt]e 
+SFX m 0 man's [^bdklmnt]e 
+SFX m 0 man's [^bdeknmt] 
+SFX m 0 smen's [bdknmt] 
+SFX m 0 smen's [aeiou][bdklmnt]e 
+SFX m 0 men's [^aeiou][bdklmnt]e 
+SFX m 0 men's [^bdklmnt]e 
+SFX m 0 men's [^bdeknmt] 
+SFX 5 Y 15
+SFX 5 0 swoman [bdknmt] 
+SFX 5 0 swoman [aeiou][bdklmnt]e 
+SFX 5 0 woman [^aeiou][bdklmnt]e 
+SFX 5 0 woman [^bdklmnt]e 
+SFX 5 0 woman [^bdeknmt] 
+SFX 5 0 swomen [bdknmt] 
+SFX 5 0 swomen [aeiou][bdklmnt]e 
+SFX 5 0 women [^aeiou][bdklmnt]e 
+SFX 5 0 women [^bdklmnt]e 
+SFX 5 0 women [^bdeknmt] 
+SFX 5 0 swoman's [bdknmt] 
+SFX 5 0 swoman's [aeiou][bdklmnt]e 
+SFX 5 0 woman's [^aeiou][bdklmnt]e 
+SFX 5 0 woman's [^bdklmnt]e 
+SFX 5 0 woman's [^bdeknmt] 
+SFX 6 Y 3
+SFX 6 y iful [^aeiou]y 
+SFX 6 0 ful [aeiou]y 
+SFX 6 0 ful [^y] 
+SFX j Y 3
+SFX j y ifully [^aeiou]y 
+SFX j 0 fully [aeiou]y 
+SFX j 0 fully [^y] 
+SFX p Y 5
+SFX p y iless [^aeiou]y 
+SFX p 0 less [aeiou]y 
+SFX p 0 ess ll 
+SFX p 0 less [^l]l 
+SFX p 0 less [^ly] 
+SFX Q Y 44
+SFX Q 0 tise a 
+SFX Q e ise [^l]e 
+SFX Q le ilise [^aeiou]le 
+SFX Q e ise [aeiou]le 
+SFX Q um ise um 
+SFX Q 0 ise [^u]m 
+SFX Q s se is 
+SFX Q 0 ise [^i]s 
+SFX Q y ise [^aeiou]y 
+SFX Q 0 ise [aeiou]y 
+SFX Q 0 ise [^aemsy] 
+SFX Q 0 tises a 
+SFX Q e ises [^l]e 
+SFX Q le ilises [^aeiou]le 
+SFX Q e ises [aeiou]le 
+SFX Q um ises um 
+SFX Q 0 ises [^u]m 
+SFX Q s ses is 
+SFX Q 0 ises [^i]s 
+SFX Q y ises [^aeiou]y 
+SFX Q 0 ises [aeiou]y 
+SFX Q 0 ises [^aemsy] 
+SFX Q 0 tised a 
+SFX Q e ised [^l]e 
+SFX Q le ilised [^aeiou]le 
+SFX Q e ised [aeiou]le 
+SFX Q um ised um 
+SFX Q 0 ised [^u]m 
+SFX Q s sed is 
+SFX Q 0 ised [^i]s 
+SFX Q y ised [^aeiou]y 
+SFX Q 0 ised [aeiou]y 
+SFX Q 0 ised [^aemsy] 
+SFX Q 0 tising a 
+SFX Q e ising [^l]e 
+SFX Q le ilising [^aeiou]le 
+SFX Q e ising [aeiou]le 
+SFX Q um ising um 
+SFX Q 0 ising [^u]m 
+SFX Q s sing is 
+SFX Q 0 ising [^i]s 
+SFX Q y ising [^aeiou]y 
+SFX Q 0 ising [aeiou]y 
+SFX Q 0 ising [^aemsy] 
+SFX 8 Y 44
+SFX 8 0 tize a 
+SFX 8 e ize [^l]e 
+SFX 8 le ilize [^aeiou]le 
+SFX 8 e ize [aeiou]le 
+SFX 8 um ize um 
+SFX 8 0 ize [^u]m 
+SFX 8 s ze is 
+SFX 8 0 ize [^i]s 
+SFX 8 y ize [^aeiou]y 
+SFX 8 0 ize [aeiou]y 
+SFX 8 0 ize [^aemsy] 
+SFX 8 0 tizes a 
+SFX 8 e izes [^l]e 
+SFX 8 le ilizes [^aeiou]le 
+SFX 8 e izes [aeiou]le 
+SFX 8 um izes um 
+SFX 8 0 izes [^u]m 
+SFX 8 s zes is 
+SFX 8 0 izes [^i]s 
+SFX 8 y izes [^aeiou]y 
+SFX 8 0 izes [aeiou]y 
+SFX 8 0 izes [^aemsy] 
+SFX 8 0 tized a 
+SFX 8 e ized [^l]e 
+SFX 8 le ilized [^aeiou]le 
+SFX 8 e ized [aeiou]le 
+SFX 8 um ized um 
+SFX 8 0 ized [^u]m 
+SFX 8 s zed is 
+SFX 8 0 ized [^i]s 
+SFX 8 y ized [^aeiou]y 
+SFX 8 0 ized [aeiou]y 
+SFX 8 0 ized [^aemsy] 
+SFX 8 0 tizing a 
+SFX 8 e izing [^l]e 
+SFX 8 le ilizing [^aeiou]le 
+SFX 8 e izing [aeiou]le 
+SFX 8 um izing um 
+SFX 8 0 izing [^u]m 
+SFX 8 s zing is 
+SFX 8 0 izing [^i]s 
+SFX 8 y izing [^aeiou]y 
+SFX 8 0 izing [aeiou]y 
+SFX 8 0 izing [^aemsy] 
+SFX q Y 22
+SFX q 0 tisation a 
+SFX q e isation [^l]e 
+SFX q le ilisation [^aeiou]le 
+SFX q e isation [aeiou]le 
+SFX q um isation um 
+SFX q 0 isation [^u]m 
+SFX q s sation is 
+SFX q 0 isation [^i]s 
+SFX q y isation [^aeiou]y 
+SFX q 0 isation [aeiou]y 
+SFX q 0 isation [^aemsy] 
+SFX q 0 tisations a 
+SFX q e isations [^l]e 
+SFX q le ilisations [^aeiou]le 
+SFX q e isations [aeiou]le 
+SFX q um isations um 
+SFX q 0 isations [^u]m 
+SFX q s sations is 
+SFX q 0 isations [^i]s 
+SFX q y isations [^aeiou]y 
+SFX q 0 isations [aeiou]y 
+SFX q 0 isations [^aemsy] 
+SFX - Y 22
+SFX - 0 tization a 
+SFX - e ization [^l]e 
+SFX - le ilization [^aeiou]le 
+SFX - e ization [aeiou]le 
+SFX - um ization um 
+SFX - 0 ization [^u]m 
+SFX - s zation is 
+SFX - 0 ization [^i]s 
+SFX - y ization [^aeiou]y 
+SFX - 0 ization [aeiou]y 
+SFX - 0 ization [^aemsy] 
+SFX - 0 tizations a 
+SFX - e izations [^l]e 
+SFX - le ilizations [^aeiou]le 
+SFX - e izations [aeiou]le 
+SFX - um izations um 
+SFX - 0 izations [^u]m 
+SFX - s zations is 
+SFX - 0 izations [^i]s 
+SFX - y izations [^aeiou]y 
+SFX - 0 izations [aeiou]y 
+SFX - 0 izations [^aemsy] 
+SFX s Y 33
+SFX s 0 tiser a 
+SFX s e iser [^l]e 
+SFX s le iliser [^aeiou]le 
+SFX s e iser [aeiou]le 
+SFX s um iser um 
+SFX s 0 iser [^u]m 
+SFX s s ser is 
+SFX s 0 iser [^i]s 
+SFX s y iser [^aeiou]y 
+SFX s 0 iser [aeiou]y 
+SFX s 0 iser [^aemsy] 
+SFX s 0 tisers a 
+SFX s e isers [^l]e 
+SFX s le ilisers [^aeiou]le 
+SFX s e isers [aeiou]le 
+SFX s um isers um 
+SFX s 0 isers [^u]m 
+SFX s s sers is 
+SFX s 0 isers [^i]s 
+SFX s y isers [^aeiou]y 
+SFX s 0 isers [aeiou]y 
+SFX s 0 isers [^aemsy] 
+SFX s 0 tiser's a 
+SFX s e iser's [^l]e 
+SFX s le iliser's [^aeiou]le 
+SFX s e iser's [aeiou]le 
+SFX s um iser's um 
+SFX s 0 iser's [^u]m 
+SFX s s ser's is 
+SFX s 0 iser's [^i]s 
+SFX s y iser's [^aeiou]y 
+SFX s 0 iser's [aeiou]y 
+SFX s 0 iser's [^aemsy] 
+SFX 9 Y 33
+SFX 9 0 tizer a 
+SFX 9 e izer [^l]e 
+SFX 9 le ilizer [^aeiou]le 
+SFX 9 e izer [aeiou]le 
+SFX 9 um izer um 
+SFX 9 0 izer [^u]m 
+SFX 9 s zer is 
+SFX 9 0 izer [^i]s 
+SFX 9 y izer [^aeiou]y 
+SFX 9 0 izer [aeiou]y 
+SFX 9 0 izer [^aemsy] 
+SFX 9 0 tizers a 
+SFX 9 e izers [^l]e 
+SFX 9 le ilizers [^aeiou]le 
+SFX 9 e izers [aeiou]le 
+SFX 9 um izers um 
+SFX 9 0 izers [^u]m 
+SFX 9 s zers is 
+SFX 9 0 izers [^i]s 
+SFX 9 y izers [^aeiou]y 
+SFX 9 0 izers [aeiou]y 
+SFX 9 0 izers [^aemsy] 
+SFX 9 0 tizer's a 
+SFX 9 e izer's [^l]e 
+SFX 9 le ilizer's [^aeiou]le 
+SFX 9 e izer's [aeiou]le 
+SFX 9 um izer's um 
+SFX 9 0 izer's [^u]m 
+SFX 9 s zer's is 
+SFX 9 0 izer's [^i]s 
+SFX 9 y izer's [^aeiou]y 
+SFX 9 0 izer's [aeiou]y 
+SFX 9 0 izer's [^aemsy] 
+SFX t Y 22
+SFX t 0 tisable a 
+SFX t e isable [^l]e 
+SFX t le ilisable [^aeiou]le 
+SFX t e isable [aeiou]le 
+SFX t um isable um 
+SFX t 0 isable [^u]m 
+SFX t s sable is 
+SFX t 0 isable [^i]s 
+SFX t y isable [^aeiou]y 
+SFX t 0 isable [aeiou]y 
+SFX t 0 isable [^aemsy] 
+SFX t 0 tisability a 
+SFX t e isability [^l]e 
+SFX t le ilisability [^aeiou]le 
+SFX t e isability [aeiou]le 
+SFX t um isability um 
+SFX t 0 isability [^u]m 
+SFX t s sability is 
+SFX t 0 isability [^i]s 
+SFX t y isability [^aeiou]y 
+SFX t 0 isability [aeiou]y 
+SFX t 0 isability [^aemsy] 
+SFX + Y 22
+SFX + 0 tizable a 
+SFX + e izable [^l]e 
+SFX + le ilizable [^aeiou]le 
+SFX + e izable [aeiou]le 
+SFX + um izable um 
+SFX + 0 izable [^u]m 
+SFX + s zable is 
+SFX + 0 izable [^i]s 
+SFX + y izable [^aeiou]y 
+SFX + 0 izable [aeiou]y 
+SFX + 0 izable [^aemsy] 
+SFX + 0 tizability a 
+SFX + e izability [^l]e 
+SFX + le ilizability [^aeiou]le 
+SFX + e izability [aeiou]le 
+SFX + um izability um 
+SFX + 0 izability [^u]m 
+SFX + s zability is 
+SFX + 0 izability [^i]s 
+SFX + y izability [^aeiou]y 
+SFX + 0 izability [aeiou]y 
+SFX + 0 izability [^aemsy] 
+SFX M Y 1
+SFX M 0 's . 
+SFX B Y 48
+SFX B e able [^acegilotu]e 
+SFX B 0 able [acegilou]e 
+SFX B te ble ate 
+SFX B e able [^a]te 
+SFX B 0 bable [^aeio][aeiou]b 
+SFX B 0 kable [^aeio][aeiou]c 
+SFX B 0 dable [^aeio][aeiou]d 
+SFX B 0 fable [^aeio][aeiou]f 
+SFX B 0 gable [^aeio][aeiou]g 
+SFX B 0 kable [^aeio][aeiou]k 
+SFX B 0 lable [^aeio][aeiou]l 
+SFX B 0 mable [^aeio][aeiou]m 
+SFX B 0 nable [^aeio][aeiou]n 
+SFX B 0 pable [^aeio][aeiou]p 
+SFX B 0 rable [^aeio][aeiou]r 
+SFX B 0 sable [^aeio][aeiou]s 
+SFX B 0 table [^aeio][aeiou]t 
+SFX B 0 vable [^aeio][aeiou]v 
+SFX B 0 zable [^aeio][aeiou]z 
+SFX B 0 able [aeio][aeiou][bcdfgklmnprstvz] 
+SFX B 0 able [^aeiou][bcdfgklmnprstvz] 
+SFX B y iable [^aeiou]y 
+SFX B 0 able [aeiou]y 
+SFX B 0 able [^ebcdfgklmnprstvzy] 
+SFX B e ability [^acegilotu]e 
+SFX B 0 ability [acegilou]e 
+SFX B te bility ate 
+SFX B e ability [^a]te 
+SFX B 0 bability [^aeio][aeiou]b 
+SFX B 0 kability [^aeio][aeiou]c 
+SFX B 0 dability [^aeio][aeiou]d 
+SFX B 0 fability [^aeio][aeiou]f 
+SFX B 0 gability [^aeio][aeiou]g 
+SFX B 0 kability [^aeio][aeiou]k 
+SFX B 0 lability [^aeio][aeiou]l 
+SFX B 0 mability [^aeio][aeiou]m 
+SFX B 0 nability [^aeio][aeiou]n 
+SFX B 0 pability [^aeio][aeiou]p 
+SFX B 0 rability [^aeio][aeiou]r 
+SFX B 0 sability [^aeio][aeiou]s 
+SFX B 0 tability [^aeio][aeiou]t 
+SFX B 0 vability [^aeio][aeiou]v 
+SFX B 0 zability [^aeio][aeiou]z 
+SFX B 0 ability [aeio][aeiou][bcdfgklmnprstvz] 
+SFX B 0 ability [^aeiou][bcdfgklmnprstvz] 
+SFX B y iability [^aeiou]y 
+SFX B 0 ability [aeiou]y 
+SFX B 0 ability [^ebcdfgklmnprstvzy] 
+SFX 7 Y 9
+SFX 7 e able [acegilou]e 
+SFX 7 0 able [^acegilou]e 
+SFX 7 0 kable [^aeio][aeiou]c 
+SFX 7 0 lable [^aeio][aeiou]l 
+SFX 7 0 able [aeio][aeiou][cl] 
+SFX 7 0 able [^aeiou][cl] 
+SFX 7 y iable [^aeiou]y 
+SFX 7 0 able [aeiou]y 
+SFX 7 0 able [^cely] 
+SFX g Y 9
+SFX g e ability [^acegilou]e 
+SFX g 0 ability [acegilou]e 
+SFX g 0 kability [^aeio][aeiou]c 
+SFX g 0 lability [^aeio][aeiou]l 
+SFX g 0 ability [aeio][aeiou][cl] 
+SFX g 0 ability [^aeiou][cl] 
+SFX g y iability [^aeiou]y 
+SFX g 0 ability [aeiou]y 
+SFX g 0 ability [^cely] 
+SFX l Y 9
+SFX l e ably [^acegilou]e 
+SFX l 0 ably [acegilou]e 
+SFX l 0 kably [^aeio][aeiou]c 
+SFX l 0 lably [^aeio][aeiou]l 
+SFX l 0 ably [aeio][aeiou][cl] 
+SFX l 0 ably [^aeiou][cl] 
+SFX l y iably [^aeiou]y 
+SFX l 0 ably [aeiou]y 
+SFX l 0 ably [^cely] 
+SFX b Y 3
+SFX b e ible [^aeiou]e 
+SFX b 0 ible [aeiou]e 
+SFX b 0 ible [^e] 
+SFX L Y 12
+SFX L 0 ament m 
+SFX L y iment [^aeiou]y 
+SFX L 0 ment [aeiou]y 
+SFX L 0 ment [^my] 
+SFX L 0 aments m 
+SFX L y iments [^aeiou]y 
+SFX L 0 ments [aeiou]y 
+SFX L 0 ments [^my] 
+SFX L 0 ament's m 
+SFX L y iment's [^aeiou]y 
+SFX L 0 ment's [aeiou]y 
+SFX L 0 ment's [^my] 
+SFX Z Y 22
+SFX Z e y [^aeiouy]e 
+SFX Z 0 y [aeiouy]e 
+SFX Z 0 ey [aiouy] 
+SFX Z 0 by [^aeio][aeiou]b 
+SFX Z 0 ky [^aeio][aeiou]c 
+SFX Z 0 dy [^aeio][aeiou]d 
+SFX Z 0 fy [^aeio][aeiou]f 
+SFX Z 0 gy [^aeio][aeiou]g 
+SFX Z 0 ky [^aeio][aeiou]k 
+SFX Z 0 ly [^aeio][aeiou]l 
+SFX Z 0 my [^aeio][aeiou]m 
+SFX Z 0 ny [^aeio][aiou]n 
+SFX Z 0 py [^aeio][aeiou]p 
+SFX Z 0 ry [^aeio][aiou]r 
+SFX Z 0 sy [^aeio][aeiou]s 
+SFX Z 0 ty [^aeio][aiou]t 
+SFX Z 0 vy [^aeio][aeiou]v 
+SFX Z 0 zy [^aeio][aeiou]z 
+SFX Z 0 y [^aeio]e[nrt] 
+SFX Z 0 y [aeio][aeiou][bcdfgklmnprstvz] 
+SFX Z 0 y [^aeiou][bcdfgklmnprstvz] 
+SFX Z 0 y [^aebcdfgiklmnoprstuvyz] 
+SFX 2 Y 21
+SFX 2 e iness [^aeiouy]e 
+SFX 2 0 iness [aeiouy]e 
+SFX 2 0 biness [^aeio][aeiou]b 
+SFX 2 0 kiness [^aeio][aeiou]c 
+SFX 2 0 diness [^aeio][aeiou]d 
+SFX 2 0 finess [^aeio][aeiou]f 
+SFX 2 0 giness [^aeio][aeiou]g 
+SFX 2 0 kiness [^aeio][aeiou]k 
+SFX 2 0 liness [^aeio][aeiou]l 
+SFX 2 0 miness [^aeio][aeiou]m 
+SFX 2 0 niness [^aeio][aiou]n 
+SFX 2 0 piness [^aeio][aeiou]p 
+SFX 2 0 riness [^aeio][aiou]r 
+SFX 2 0 siness [^aeio][aeiou]s 
+SFX 2 0 tiness [^aeio][aiou]t 
+SFX 2 0 viness [^aeio][aeiou]v 
+SFX 2 0 ziness [^aeio][aeiou]z 
+SFX 2 0 iness [^aeio]e[nrt] 
+SFX 2 0 iness [aeio][aeiou][bcdfgklmnprstvz] 
+SFX 2 0 iness [^aeiou][bcdfgklmnprstvz] 
+SFX 2 0 iness [^ebcdfgklmnprstvz] 
+SFX z Y 24
+SFX z e ily [^aeiouy]e 
+SFX z 0 ily [aeiouy]e 
+SFX z 0 ily [aiou]y 
+SFX z ey ily ey 
+SFX z y ily [^aeiou]y 
+SFX z 0 bily [^aeio][aeiou]b 
+SFX z 0 kily [^aeio][aeiou]c 
+SFX z 0 dily [^aeio][aeiou]d 
+SFX z 0 fily [^aeio][aeiou]f 
+SFX z 0 gily [^aeio][aeiou]g 
+SFX z 0 kily [^aeio][aeiou]k 
+SFX z 0 lily [^aeio][aeiou]l 
+SFX z 0 mily [^aeio][aeiou]m 
+SFX z 0 nily [^aeio][aiou]n 
+SFX z 0 pily [^aeio][aeiou]p 
+SFX z 0 rily [^aeio][aiou]r 
+SFX z 0 sily [^aeio][aeiou]s 
+SFX z 0 tily [^aeio][aiou]t 
+SFX z 0 vily [^aeio][aeiou]v 
+SFX z 0 zily [^aeio][aeiou]z 
+SFX z 0 ily [^aeio]e[nrt] 
+SFX z 0 ily [aeio][aeiou][bcdfgklmnprstvyz] 
+SFX z 0 ily [^aeiou][bcdfgklmnprstvyz] 
+SFX z 0 ily [^ebcdfgklmnprstvyz] 
+SFX y Y 15
+SFX y e ory te 
+SFX y e atory [mr]e 
+SFX y e ary se 
+SFX y 0 ry [^mrst]e 
+SFX y 0 ory [^aeous]t 
+SFX y 0 ry [aeous]t 
+SFX y 0 ery h 
+SFX y 0 atory [^i]m 
+SFX y im matory im 
+SFX y 0 ory s 
+SFX y 0 ary ion 
+SFX y 0 ry [^i]on 
+SFX y 0 nery [aiu]n 
+SFX y 0 ry [^aiou]n 
+SFX y 0 ry [^ehmstn] 
+SFX O Y 12
+SFX O 0 l a 
+SFX O e al [^bcgv]e 
+SFX O e ial [bcgv]e 
+SFX O 0 ial [bcrx] 
+SFX O um al um 
+SFX O 0 al [^u]m 
+SFX O y al ty 
+SFX O y ial [^t]y 
+SFX O 0 ual [px]t 
+SFX O 0 tal [iu]t 
+SFX O 0 al [^ipux]t 
+SFX O 0 al [^aebcrtxmy] 
+SFX o Y 12
+SFX o 0 lly a 
+SFX o e ally [^bcgv]e 
+SFX o e ially [bcgv]e 
+SFX o 0 ially [bcrx] 
+SFX o um ally um 
+SFX o 0 ally [^u]m 
+SFX o y ally ty 
+SFX o y ially [^t]y 
+SFX o 0 ually [px]t 
+SFX o 0 tally [iu]t 
+SFX o 0 ally [^ipux]t 
+SFX o 0 ally [^aebcrtxmy] 
+SFX W Y 21
+SFX W ce tific ce 
+SFX W e atic me 
+SFX W se tic se 
+SFX W le ic ble 
+SFX W e ic [^b]le 
+SFX W e ic [^clms]e 
+SFX W 0 lic [ay]l 
+SFX W 0 ic [^ay]l 
+SFX W us ic us 
+SFX W 0 tic [^u]s 
+SFX W er ric er 
+SFX W 0 ic [^e]r 
+SFX W 0 atic [aeiou]m 
+SFX W 0 ic [^aeiou]m 
+SFX W 0 tic ma 
+SFX W a ic [^m]a 
+SFX W y etic thy 
+SFX W y ic [^t]hy 
+SFX W y tic sy 
+SFX W y ic [^hs]y 
+SFX W 0 ic [^aelmrsy] 
+SFX w Y 9
+SFX w e ical e 
+SFX w er rical er 
+SFX w 0 ical [^e]r 
+SFX w 0 atical [aeiou]m 
+SFX w 0 ical [^aeiou]m 
+SFX w 0 tical ma 
+SFX w a ical [^m]a 
+SFX w y ical y 
+SFX w 0 ical [^aemry] 
+SFX 1 Y 9
+SFX 1 e ically e 
+SFX 1 er rically er 
+SFX 1 0 ically [^e]r 
+SFX 1 0 atically [aeiou]m 
+SFX 1 0 ically [^aeiou]m 
+SFX 1 0 tically ma 
+SFX 1 a ically [^m]a 
+SFX 1 y ically y 
+SFX 1 0 ically [^aemry] 
+SFX 3 Y 21
+SFX 3 e ist [^aceiou]e 
+SFX 3 ce tist ce 
+SFX 3 0 ist [aeiou]e 
+SFX 3 y ist [^aeioubp]y 
+SFX 3 0 ist [aeioubp]y 
+SFX 3 o ist o 
+SFX 3 0 ists [^eoy] 
+SFX 3 e ists [^aceiou]e 
+SFX 3 ce tists ce 
+SFX 3 0 ists [aeiou]e 
+SFX 3 y ists [^aeioubp]y 
+SFX 3 0 ists [aeioubp]y 
+SFX 3 o ists o 
+SFX 3 0 ists [^eoy] 
+SFX 3 e ist's [^aceiou]e 
+SFX 3 ce tist's ce 
+SFX 3 0 ist's [aeiou]e 
+SFX 3 y ist's [^aeioubp]y 
+SFX 3 0 ist's [aeioubp]y 
+SFX 3 o ist's o 
+SFX 3 0 ist's [^eoy] 
+</code></pre></td></tr></table>
+</div> <!-- class=content -->
+<div class='footer'>generated by <a href='https://git.zx2c4.com/cgit/about/'>cgit v1.1</a> at 2018-05-03 11:47:36 +0000</div>
+</div> <!-- id=cgit -->
+</body>
+</html>
