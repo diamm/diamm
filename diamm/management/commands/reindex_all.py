@@ -60,13 +60,13 @@ class Command(BaseCommand):
             # This saves expensive calls out to Solr so it should make
             # indexing quite quick.
             if i % 100 == 0:
-                self.solrconn.add(docs)
+                self.solrconn.add(docs, commit=False)
                 del docs
                 docs = []
             i += 1
 
         # ensure any leftovers are added
-        self.solrconn.add(docs)
+        self.solrconn.add(docs, commit=False)
 
     def _index_sources(self):
         self.stdout.write(term.blue('Indexing Sources'))
