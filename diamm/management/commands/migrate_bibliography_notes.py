@@ -19,7 +19,12 @@ class Command(BaseCommand):
                 continue
 
             print("Updating {0}".format(row['bibliographyKey']))
-            brec = Bibliography.objects.get(pk=row['bibliographyKey'])
+            try:
+                brec = Bibliography.objects.get(pk=row['bibliographyKey'])
+            except Bibliography.DoesNotExist:
+                print("Bibliography {0} does not exist".format(row['bibliographyKey']))
+                continue
+
             b = {
                 'entry': row['notes_old'],
                 'type': BibliographyPublication.B_NOTE,
