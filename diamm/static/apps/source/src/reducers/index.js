@@ -1,5 +1,5 @@
 import { combineReducers } from "redux";
-import { routerReducer as routing } from "react-router-redux";
+import { routerReducer } from "react-router-redux";
 import sourceReducer from "./source_reducer";
 import userReducer from "./user_reducer";
 import tabsReducer from "./tabs_reducer";
@@ -22,7 +22,7 @@ const rootReducer = combineReducers({
     corrections: correctionsReducer,
     inventory: inventoryReducer,
     contributors: contributorsReducer,
-    routing
+    routing: routerReducer
 });
 
 export default rootReducer;

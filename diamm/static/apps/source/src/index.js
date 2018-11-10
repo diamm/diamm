@@ -1,15 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
-// import { Router } from "react-router";
-import createHistory from "history/createBrowserHistory";
-import { ConnectedRouter, routerMiddleware } from "react-router-redux";
+import { HashRouter } from "react-router-dom";
+import createBrowserHistory from "history/createBrowserHistory";
+import { routerMiddleware } from "react-router-redux";
 
 import configureStore from "./store";
 import routes from "./routes";
 import { setActiveTab } from "./actions/index";
 
-const history = createHistory();
+const history = createBrowserHistory();
 const historyMiddleware = routerMiddleware(history);
 
 export const store = configureStore({}, historyMiddleware);
@@ -24,20 +24,23 @@ const POP = "POP";
 * action and dispatching the action to set the active tab state.
 *
 * */
-history.listen( (location) => {
+history.listen( (location, action) => {
     // we're only interested in the 'PUSH' actions
-    if (location.action === POP)
+    console.log(location);
+    console.log(action);
+
+    if (action === POP)
         return null;
 
-    store.dispatch(setActiveTab(location))
+    store.dispatch(setActiveTab(location));
 });
 
 
 ReactDOM.render(
     <Provider store={ store } >
-        <ConnectedRouter history={ history } >
+        <HashRouter history={ history } >
             { routes }
-        </ConnectedRouter>
+        </HashRouter>
     </Provider>,
     document.getElementById("source-body")
 );

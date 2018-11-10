@@ -1,6 +1,7 @@
 var path = require('path');
 var webpack = require('webpack');
 var sharedJQueryPath = require.resolve('jquery');
+const buildMode = (process.env.NODE_ENV === "production") ? 'production' : 'development';
 
 module.exports = {
     entry: [
@@ -9,9 +10,11 @@ module.exports = {
         './src/index.js'
     ],
     output: {
-        filename: "./dist/bundle.js",
+        path: path.join(__dirname, 'dist'),
+        filename: 'bundle.js'
     },
-    devtool: (process.env.NODE_ENV === "production") ? "cheap-module-source-map" : "eval-source-map",
+    mode: buildMode,
+    devtool: (buildMode === "production") ? 'cheap-source-map' : 'cheap-module-eval-source-map',
     resolve: {
         extensions: [".js", ".jsx"],
         alias: {
@@ -23,22 +26,36 @@ module.exports = {
         }
     },
     module: {
-        loaders: [
-            {
-                test: /\.json$/,
-                loaders: ['json-loader']
-            },
-            {
+        rules: [{
+            test: /\.js$/,
+            exclude: /node_modules/,
+            use: {
                 loader: "babel-loader",
-                include: [
-                    path.resolve(__dirname, "src")
-                ],
-                query: {
-                    presets: ["react", "es2015", "stage-1"],
+                options: {
+                    presets: ['react', 'stage-1']
                 }
             }
-        ]
+        }]
     },
+    // module: {
+    //
+    //     loaders: [
+    //         {
+    //             test: /\.json$/,
+    //             loaders: ['json-loader']
+    //         },
+    //         {
+    //             loader: "babel-loader",
+    //             include: [
+    //                 path.resolve(__dirname, "src")
+    //             ],
+    //             query: {
+    //                 presets: ["react", "es2015", "stage-1"],
+    //             }
+    //         }
+    //     ]
+    // },
+    //
     plugins: (process.env.NODE_ENV === "production") ? productionPlugins() : developmentPlugins()
 };
 

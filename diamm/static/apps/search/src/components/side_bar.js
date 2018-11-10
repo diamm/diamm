@@ -19,6 +19,7 @@ import SourceTypeFacet from "./source_type_facet";
 import HasInventoryFacet from "./has_inventory_facet";
 import AnonymousFacet from "./anonymous_facet";
 import OrganizationTypeFacet from "./organization_type_facet";
+import CitiesFacet from "./cities_facet";
 
 import ResultCount from "./result_count";
 
@@ -46,6 +47,16 @@ class SideBar extends React.Component
             return (
                 <NotationsFacet />
             );
+        }
+    }
+
+    _renderCitiesFacet ()
+    {
+        if (this.props.cities && this.props.cities.length > 0)
+        {
+            return (
+                <CitiesFacet />
+            )
         }
     }
 
@@ -123,6 +134,7 @@ class SideBar extends React.Component
                   this.props.anonymous.length > 0 ||
                   this.props.hasInventory.length > 0 ||
                   this.props.notations.length > 0 ||
+                  this.props.cities.length > 0 ||
                   this.props.archiveLocations.length > 0 ||
                   this.props.organizationTypes.length > 0;
         return vis
@@ -144,6 +156,7 @@ class SideBar extends React.Component
                 { this._renderComposersFacet() }
                 { this._renderAnonymousFacet() }
                 { this._renderNotationsFacet() }
+                {/*{ this._renderCitiesFacet() }*/}
                 { this._renderHasInventoryFacet() }
                 { this._renderSourceTypeFacet() }
                 { this._renderGenresFacet() }
@@ -166,6 +179,7 @@ function mapStateToProps (state)
         hasInventory: state.results.facets.has_inventory,
         anonymous: state.results.facets.anonymous,
         genres: state.results.facets.genres,
+        cities: state.results.facets.cities,
         showAllGenres: state.currentFacets.genres.showAll,
         organizationTypes: state.results.facets.organization_type,
         showAllOrganizationTypes: state.currentFacets.organizationTypes.showAll,

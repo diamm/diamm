@@ -1,5 +1,6 @@
 import React from "react";
-import { Link } from "react-router";
+import { matchPath } from "react-router";
+import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import {
     ROOT_ROUTE,
@@ -125,8 +126,11 @@ class App extends React.Component
                 </div>
             );        }
 
-        let isActive = this.context.router.isActive;
-
+        // let isActive = this.context.router.isActive;
+        let isActive = matchPath;
+        console.log(location.hash);
+        console.log(INVENTORY_ROUTE);
+        console.log(isActive(location.pathname, {path: INVENTORY_ROUTE, strict: true}));
         return (
             <div>
                 <Title />
@@ -137,14 +141,14 @@ class App extends React.Component
                                 <div className="tabs">
                                 <ul className="source-section-selector">
                                     <MenuLink
-                                        active={ isActive(ROOT_ROUTE, true) }
+                                        active={ isActive(location.pathname, {path: ROOT_ROUTE}) }
                                         route={ ROOT_ROUTE }
                                         title="Description"
                                     />
                                     <MenuLink
-                                        active={ isActive(INVENTORY_ROUTE, true) ||
-                                                 isActive(INVENTORY_ROUTE_BY_COMPOSER, true) ||
-                                                 isActive(INVENTORY_ROUTE_ALPHABETICAL, true) }
+                                        active={ isActive(location.pathname, {path: INVENTORY_ROUTE}) ||
+                                                 isActive(INVENTORY_ROUTE_BY_COMPOSER, {strict: true}) ||
+                                                 isActive(INVENTORY_ROUTE_ALPHABETICAL, {strict: true}) }
                                         route={ INVENTORY_ROUTE }
                                         title="Inventory"
                                         show={ this.props.source.inventory.length !== 0 || this.props.source.uninventoried.length !== 0 }

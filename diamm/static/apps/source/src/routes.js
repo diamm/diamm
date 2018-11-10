@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, IndexRoute } from "react-router";
+import { Route, IndexRoute, Switch } from "react-router";
 import App from "./components/app";
 import Description from "./components/description";
 import InventoryByOrder from "./components/inventory_by_order";
@@ -28,17 +28,19 @@ export const COMMENTARY_ROUTE_PRIVATE = `${COMMENTARY_ROUTE}/private`;
 
 
 export default (
-    <Route path={ ROOT_ROUTE } component={ App }>
-        <IndexRoute component={ Description } />
-        <Route path={ INVENTORY_ROUTE } component={ InventoryByOrder } />
-        <Route path={ INVENTORY_ROUTE_BY_COMPOSER } component={ InventoryByComposer } />
-        <Route path={ INVENTORY_ROUTE_ALPHABETICAL } component={ InventoryAlphabetical } />
-        <Route path={ IMAGES_ROUTE } component={ Images } />
-        <Route path={ SETS_ROUTE } component={ Sets } />
-        <Route path={ BIBLIOGRAPHY_ROUTE } component={ Bibliography } />
-        <Route path={ CONTRIBUTORS_ROUTE } component={ Contributors } />
-        <Route path={ COMMENTARY_ROUTE } component={ CommentaryPublic } />
-        <Route path={ COMMENTARY_ROUTE_PRIVATE } component={ CommentaryPrivate } />
-        <Route path={ CORRECTIONS_ROUTE } component={ Corrections } />
-    </Route>
+    <Switch>
+        <App>
+            <Route exact path={ ROOT_ROUTE } component={ Description } />
+            <Route path={ INVENTORY_ROUTE } component={ InventoryByOrder } />
+            <Route path={ INVENTORY_ROUTE_BY_COMPOSER } component={ InventoryByComposer } />
+            <Route path={ INVENTORY_ROUTE_ALPHABETICAL } component={ InventoryAlphabetical } />
+            <Route path={ IMAGES_ROUTE } component={ Images } />
+            <Route path={ SETS_ROUTE } component={ Sets } />
+            <Route path={ BIBLIOGRAPHY_ROUTE } component={ Bibliography } />
+            <Route path={ CONTRIBUTORS_ROUTE } component={ Contributors } />
+            <Route path={ COMMENTARY_ROUTE } component={ CommentaryPublic } />
+            <Route path={ COMMENTARY_ROUTE_PRIVATE } component={ CommentaryPrivate } />
+            <Route path={ CORRECTIONS_ROUTE } component={ Corrections } />
+        </App>
+    </Switch>
 );

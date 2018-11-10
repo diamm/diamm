@@ -1,11 +1,11 @@
 import React from "react";
 import {
+    IMAGES_ROUTE,
     INVENTORY_ROUTE,
-    INVENTORY_ROUTE_BY_COMPOSER,
     INVENTORY_ROUTE_ALPHABETICAL,
-    IMAGES_ROUTE
+    INVENTORY_ROUTE_BY_COMPOSER
 } from "../../routes";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import { openQuickLookView } from "../../actions/index";
 import { store } from "../../index";
 import PropTypes from "prop-types";
