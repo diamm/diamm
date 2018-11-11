@@ -13,7 +13,7 @@ module.exports = {
         path: path.join(__dirname, 'dist'),
         filename: 'bundle.js'
     },
-    devtool: (buildMode === "production") ? "source-map" : "eval-source-map",
+    devtool: (buildMode === "production") ? 'cheap-source-map' : 'cheap-module-eval-source-map',
     resolve: {
         extensions: [".js", ".jsx"],
     },
