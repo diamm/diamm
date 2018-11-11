@@ -9,6 +9,10 @@ class PersonSearchSerializer(ContextSerializer):
     name_s = serpy.StrField(
         attr="full_name"
     )
+    # Copy the full name to a sorting field
+    display_name_ans = serpy.StrField(
+        attr="full_name"
+    )
     last_name_s = serpy.StrField(
         attr="last_name"
     )

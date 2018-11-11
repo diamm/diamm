@@ -9,6 +9,7 @@ class ArchiveSearchSerializer(ContextSerializer):
     city_s = serpy.StrField(attr="city.name")
     city_variants_ss = serpy.MethodField()
     name_s = serpy.StrField(attr="name")
+    display_name_ans = serpy.StrField(attr="name")
     country_s = serpy.StrField(attr="city.parent.name", required=False)
     siglum_s = serpy.StrField(attr="siglum")
 

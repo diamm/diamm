@@ -10,9 +10,13 @@ class SetSearchSerializer(serpy.Serializer):
     )
 
     # allow sorting by alpha-numeric shelfmark.
-    # cluster_shelfmark_ans = serpy.StrField(
-    #     attr="cluster_shelfmark"
-    # )
+    cluster_shelfmark_ans = serpy.StrField(
+        attr="cluster_shelfmark"
+    )
+
+    display_name_ans = serpy.StrField(
+        attr="cluster_shelfmark"
+    )
 
     sources_ii = serpy.MethodField()
     set_type_s = serpy.StrField(
