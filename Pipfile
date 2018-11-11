@@ -21,6 +21,7 @@ ujson = "*"
 serpy = "*"
 drf-ujson = "*"
 "markdown2" = "*"
+blessings = "*"
 
 [dev-packages]
 
