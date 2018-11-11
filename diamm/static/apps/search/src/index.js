@@ -3,15 +3,15 @@ import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import { Router } from "react-router";
 import createBrowserHistory from 'history/createBrowserHistory';
-import { syncHistoryWithStore } from "react-router-redux";
+import { routerMiddleware } from "react-router-redux";
 
 import configureStore from "./store";
 import routes from "./routes";
 
-const histobj = createBrowserHistory();
+const history = createBrowserHistory();
+const historyMiddleware = routerMiddleware(history);
 
-export const store = configureStore({});
-const history = syncHistoryWithStore(histobj, store);
+export const store = configureStore({}, historyMiddleware);
 
 
 ReactDOM.render(
