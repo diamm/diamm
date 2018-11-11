@@ -8,6 +8,8 @@ from diamm.models.data.image import Image
 from diamm.models.data.image_note import ImageNote
 from diamm.models.data.page import Page
 from reversion.admin import VersionAdmin
+# from import_export.admin import ImportMixin
+# from diamm.resources.image_resource import ImageResource
 from django.utils.translation import ugettext_lazy as _
 from django.forms import TextInput
 from django.db import models
@@ -132,6 +134,7 @@ class ImageAdmin(VersionAdmin):
 
     search_fields = (
         'legacy_filename',
+        'location',
         '=page__source__id',
         'page__source__shelfmark',
         'page__source__name'
