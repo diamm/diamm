@@ -73,8 +73,6 @@ class SolrPaginator:
             'fq': fqlist
         })
 
-
-
         self.solr = pysolr.Solr(settings.SOLR['SERVER'])
 
         # Fetch the requested page.
