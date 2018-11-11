@@ -8,10 +8,6 @@ import {
 
 class SearchBar extends React.Component
 {
-    static contextTypes = {
-        router: React.PropTypes.object
-    };
-
     componentDidMount ()
     {
         // set the search box value in a way that does not trigger the onChange
