@@ -238,7 +238,7 @@ class Source(models.Model):
               'source_attribution_s',
               'voices_ii',
               'pk']
-        sort = ["composer_ans asc"]
+        sort = "composer_ans asc"
         # Set rows to an extremely high number so we get all of the item records in one go.
         connection.search("*:*", fq=fq, fl=fl, sort=sort, rows=100)
         return list(connection.results)
@@ -254,7 +254,7 @@ class Source(models.Model):
             "group.limit": "10000",
             "group.sort": "composition_s asc"
         }
-        sort = ["composer_s asc"]
+        sort = "composer_s asc"
 
         res = connection.search("*:*",
                                 fq=fq,
@@ -327,7 +327,7 @@ class Source(models.Model):
         connection = SolrManager(settings.SOLR['SERVER'])
         fq = ['type:set', 'sources_ii:{0}'.format(self.pk)]
         fl = ["id", "pk", "cluster_shelfmark_s", "sources_ii", "set_type_s"]
-        sort = ["shelfmark_ans asc"]
+        sort = "shelfmark_ans asc"
 
         connection.search("*:*", fq=fq, fl=fl, sort=sort, rows=100)
         return list(connection.results)
@@ -336,7 +336,7 @@ class Source(models.Model):
     def solr_provenance(self):
         connection = SolrManager(settings.SOLR['SERVER'])
         fq = ['type:sourceprovenance', 'source_i:{0}'.format(self.pk)]
-        sort = ['earliest_year_i asc', 'country_s asc']
+        sort = 'earliest_year_i asc, country_s asc'
 
         connection.search("*:*", fq=fq, sort=sort, rows=100)
         return list(connection.results)
@@ -345,7 +345,7 @@ class Source(models.Model):
     def solr_relationships(self):
         connection = SolrManager(settings.SOLR['SERVER'])
         fq = ['type:sourcerelationship', 'source_i:{0}'.format(self.pk)]
-        sort = ["related_entity_s asc"]
+        sort = "related_entity_s asc"
         connection.search("*:*", fq=fq, sort=sort, rows=100)
         return list(connection.results)
 
@@ -353,7 +353,7 @@ class Source(models.Model):
     def solr_copyists(self):
         connection = SolrManager(settings.SOLR['SERVER'])
         fq = ['type:sourcecopyist', 'source_i:{0}'.format(self.pk)]
-        sort = ["copyist_s asc"]
+        sort = "copyist_s asc"
         connection.search("*:*", fq=fq, sort=sort, rows=100)
 
         return list(connection.results)

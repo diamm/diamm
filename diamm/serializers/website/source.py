@@ -139,7 +139,7 @@ class SourceSetSerializer(ContextDictSerializer):
             fq.append("-pk:{0}".format(self.context['source_id']))
 
         fl = ["pk", "shelfmark_s", "display_name_s", "cover_image_i"]
-        sort = ["shelfmark_ans asc"]
+        sort = "shelfmark_ans asc"
 
         connection.search("*:*", fq=fq, fl=fl, sort=sort, rows=100)
 
@@ -318,15 +318,11 @@ class SourceInventorySerializer(ContextDictSerializer):
     def get_bibliography(self, obj):
         connection = SolrManager(settings.SOLR['SERVER'])
         fq = ["type:itembibliography", "item_i:{0}".format(obj['pk'])]
-        sort = ["prerendered_s asc"]
+        sort = "prerendered_s asc"
         fl = ["pages_s", "prerendered_s", "notes_s"]
 
         connection.search("*:*", fq=fq, fl=fl, sort=sort, rows=100)
-
-        if connection.hits > 0:
-            return list(connection.results)
-        else:
-            return None
+        return list(connection.results)
 
     def get_folio_end(self, obj):
         if 'folio_end_s' in obj:
@@ -382,7 +378,7 @@ class SourceInventorySerializer(ContextDictSerializer):
 
         return out
 
-    def get_voices(self, obj) -> List:
+    def get_voices(self, obj) -> Optional[List]:
         if not obj.get('voices_ii', None):
             return None
 
