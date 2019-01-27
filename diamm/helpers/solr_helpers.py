@@ -81,18 +81,18 @@ class SolrManager:
     Once `search()` has been called users can iterate through the `results` property and it will transparently
     fire off requests for the next page (technically, the next cursor mark) before yielding a result.
     """
-    def __init__(self, url: AnyStr, curs_sort_statement: AnyStr = "id asc") -> None:
+    def __init__(self, url: str, curs_sort_statement: str = "id asc") -> None:
         self._conn: pysolr.Solr = pysolr.Solr(url)
         self._res: Optional[pysolr.Results] = None
         self._curs_sort_statement: str = curs_sort_statement
         self._hits: int = 0
-        self._q: Optional[AnyStr] = None
+        self._q: Optional[str] = None
         self._q_kwargs: Dict = {}
-        self._cursorMark: AnyStr = "*"
+        self._cursorMark: str = "*"
         self._idx: int = 0
         self._page_idx: int = 0
 
-    def search(self, q: AnyStr, **kwargs) -> None:
+    def search(self, q: str, **kwargs) -> None:
         """
         Shadows pysolr.Solr.search, but with additional housekeeping that manages
         the results object and stores the query parameters so that they can be used
