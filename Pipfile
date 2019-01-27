@@ -4,8 +4,8 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-django = "*"
-wagtail = "*"
+django = "==2.1.5"
+wagtail = "==2.4"
 djangorestframework = "*"
 django-extensions = "*"
 werkzeug = "*"
@@ -21,9 +21,11 @@ ujson = "*"
 serpy = "*"
 drf-ujson = "*"
 "markdown2" = "*"
-blessings = "*"
+gunicorn = "*"
 
 [dev-packages]
+blessings = "*"
+ipython = "*"
 
 [requires]
-python_version = "3.6"
+python_version = "3"
