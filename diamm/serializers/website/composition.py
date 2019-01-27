@@ -67,13 +67,28 @@ class CompositionSourceSerializer(ContextSerializer):
     public_images = serpy.BoolField(
         attr="source.public_images"
     )
+    folios = serpy.MethodField()
+
+    def get_folios(self, obj):
+        folio_start = obj.folio_start
+        folio_end = obj.folio_end
+
+        folios = ""
+
+        if folio_start:
+            folios += "{0}".format(folio_start)
+
+        if folio_end and folio_start != folio_end:
+            folios += "—{0}".format(folio_end)
+
+        return folios
 
     def get_url(self, obj):
         return reverse('source-detail',
                        kwargs={"pk": obj.source.pk},
                        request=self.context['request'])
 
-    def get_has_images(self,obj):
+    def get_has_images(self, obj):
         if obj.pages.count() > 0:
             return True
         return False
