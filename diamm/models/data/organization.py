@@ -44,7 +44,7 @@ class Organization(models.Model):
         fq = ['type:sourcecopyist',
               'copyist_type_s:organization',
               'copyist_pk_i:{0}'.format(self.pk)]
-        sort = ["source_ans asc"]
+        sort = "source_ans asc"
         connection.search("*:*", fq=fq, sort=sort, rows=100)
 
         return list(connection.results)
@@ -55,7 +55,7 @@ class Organization(models.Model):
         fq = ['type:sourcerelationship',
               'related_entity_type_s:organization',
               'related_entity_pk_i:{0}'.format(self.pk)]
-        sort = ["source_ans asc"]
+        sort = "source_ans asc"
         connection.search("*:*", fq=fq, sort=sort, rows=100)
 
         return list(connection.results)
@@ -66,6 +66,6 @@ class Organization(models.Model):
         fq = ['type:sourceprovenance',
               'entity_type_s:organization',
               'entity_pk_i:{0}'.format(self.pk)]
-        sort = ["source_ans asc"]
+        sort = "source_ans asc"
         connection.search("*:*", fq=fq, sort=sort, rows=100)
         return list(connection.results)
