@@ -14,7 +14,8 @@ Including another URLconf
     2. Import the include() function: from django.conf.urls import url, include
     3. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
-from django.conf.urls import url, include
+from django.conf.urls import include
+from django.urls import path, re_path
 from django.views.generic import TemplateView, RedirectView
 from django.contrib import admin
 from django.contrib.staticfiles.storage import staticfiles_storage
@@ -45,7 +46,6 @@ from diamm.views.website.composition import CompositionDetail
 from diamm.views.website.image import image_serve
 from diamm.views.website.bibliography_author import BibliographyAuthorDetail
 from diamm.views.website.commentary import CommentaryList
-from diamm.views.catalogue.catalogue import CatalogueView
 from diamm.views.website.correction import CorrectionCreate
 from diamm.views.website.contributor import ContributorList
 
@@ -71,103 +71,94 @@ sitemaps = {
 }
 
 urlpatterns = [
-    url(r'^favicon.ico$', RedirectView.as_view(
+    path('favicon.ico', RedirectView.as_view(
         url=staticfiles_storage.url('favicon.ico'),
         permanent=False
     ), name="favicon"),
-    url(r'^search.xml$', TemplateView.as_view(template_name='opensearch.jinja2',
+    path('search.xml', TemplateView.as_view(template_name='opensearch.jinja2',
                                               content_type="application/opensearchdescription+xml"), name='opensearch'),
-    url(r'^sitemap\.xml$', sitemap_views.index, {'sitemaps': sitemaps}),
-    url(r'^sitemap-(?P<section>.*)\.xml$', sitemap_views.sitemap, {'sitemaps': sitemaps},
-        name='django.contrib.sitemaps.views.sitemap'),
-    url(r'^robots\.txt$', TemplateView.as_view(template_name='robots.txt', content_type="text/plain"), name='robots-txt'),
+    path('sitemap.xml', sitemap_views.index, {'sitemaps': sitemaps}),
+    path('sitemap-<str:section>.xml', sitemap_views.sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
+    path('robots.txt', TemplateView.as_view(template_name='robots.txt', content_type="text/plain"), name='robots-txt'),
 
-    url(r'^admin/', admin.site.urls),
-    url(r'^admin/dynamic_raw_id/', include('dynamic_raw_id.urls')),
+    path('admin/', admin.site.urls),
+    path('admin/dynamic_raw_id/', include('dynamic_raw_id.urls')),
     # url(r'^introduction/$', TemplateView.as_view(template_name="introduction.jinja2"), name="introduction"),
     # url(r'^technical/$', TemplateView.as_view(template_name="technical.jinja2"), name="technical"),
 
     # Authentication and account resets
-    url(r'^login/$', LoginView.as_view(),
-        {"template_name": 'website/auth/login.jinja2'}, name="login"),
-    url(r'^logout/$', LogoutView.as_view(),
-        {"next_page": "/"}, name="logout"),
-    url(r'^register/$', CreateAccount.as_view(), name="register"),
-    url(r'^reset/$', PasswordResetView.as_view(),
-        {'template_name': 'website/auth/reset.jinja2',
-         'from_email': settings.DEFAULT_FROM_EMAIL}, name="reset"),
-    url(r'^reset/sent/$', PasswordResetDoneView.as_view(),
-        {"template_name": "website/auth/reset_sent.jinja2"}, name="password_reset_done"),
-    url(r'^reset/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$', PasswordResetConfirmView.as_view(),
-        {'post_reset_redirect': '/reset/complete/',
-         'template_name': "website/auth/reset_confirm.jinja2"}, name="password_reset_confirm"),
-    url(r'^reset/complete/$', PasswordResetCompleteView.as_view(),
-        {'template_name': "website/auth/reset_complete.jinja2"}),
-    url(r'^change/$', PasswordChangeView.as_view(),
-        {"template_name": 'website/auth/change.jinja2',
-         "post_change_redirect": "/change/complete/"}, name="password-change"),
-    url(r'^change/complete/$', PasswordChangeDoneView.as_view(),
-        {"template_name": "website/auth/change_complete.jinja2"},
-        name="password-change-done"),
-    url(r'activate/(?P<activation_key>[-:\w]+)/$',
+    path('login/', LoginView.as_view(template_name='website/auth/login.jinja2'), name="login"),
+    path('logout/', LogoutView.as_view(next_page="/"), name="logout"),
+    path('register/', CreateAccount.as_view(), name="register"),
+    path('reset/', PasswordResetView.as_view(template_name='website/auth/reset.jinja2',
+                                             from_email=settings.DEFAULT_FROM_EMAIL), name="reset"),
+    path('reset/sent/', PasswordResetDoneView.as_view(template_name="website/auth/reset_sent.jinja2"), name="password_reset_done"),
+    re_path(r'^reset/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/',
+            PasswordResetConfirmView.as_view(template_name="website/auth/reset_confirm.jinja2",
+                                             success_url='/reset/complete/'), name="password_reset_confirm"),
+    path('reset/complete/', PasswordResetCompleteView.as_view(template_name="website/auth/reset_complete.jinja2")),
+    path('change/', PasswordChangeView.as_view(template_name='website/auth/change.jinja2',
+                                               success_url="/change/complete/"), name="password-change"),
+    path('change/complete/', PasswordChangeDoneView.as_view(template_name="website/auth/change_complete.jinja2"), name="password-change-done"),
+    re_path(r'activate/(?P<activation_key>[-:\w]+)/$',
             ActivationView.as_view(
                 template_name="website/auth/activation.jinja2"
             ),
-        name='registration_activate'),
-    url(r'activate/complete/$', TemplateView.as_view(
+            name='registration_activate'),
+    path('activate/complete/', TemplateView.as_view(
         template_name="website/auth/activation.jinja2"
     ), name='registration_activation_complete'),
 
 
-    url(r'^account/$', ProfileView.as_view(), name="user-account"),
-    url(r'^account/edit/$', ProfileEditView.as_view(), name="user-account-edit"),
+    path('account/', ProfileView.as_view(), name="user-account"),
+    path('account/edit/', ProfileEditView.as_view(), name="user-account-edit"),
 
     # public website
-    url(r'^search/$', SearchView.as_view(), name="search"),
-    url(r'^sources/(?P<pk>[0-9]+)/$', SourceDetail.as_view(), name="source-detail"),
-    url(r'^sources/(?P<pk>[0-9]+)/manifest/$', SourceManifest.as_view(), name="source-manifest"),
+    path('search/', SearchView.as_view(), name="search"),
+    path('sources/<int:pk>/', SourceDetail.as_view(), name="source-detail"),
+    path('sources/<int:pk>/manifest/', SourceManifest.as_view(), name="source-manifest"),
 
     # IIIF URIs. These do not necessarily always resolve, but are configured in the URLs so that they can reflect
     #  the host and protocol of the request.
-    url(r'^sources/(?P<source_id>[0-9]+)/canvas/(?P<page_id>[0-9]+)/$', SourceCanvasDetail.as_view(), name="source-canvas-detail"),
-    url(r'^sources/(?P<source_id>[0-9]+)/range/(?P<item_id>[0-9]+)/$', SourceRangeDetail.as_view(), name="source-range-detail"),
-    url(r'^sources/(?P<source_id>[0-9]+)/item/(?P<item_id>[0-9]+)/$', SourceItemDetail.as_view(), name="source-item-detail"),
-    url(r'^items/(?P<item_id>[0-9]+)/$', legacy_item_redirect),
+    path('sources/<int:source_id>/canvas/<int:page_id>/', SourceCanvasDetail.as_view(), name="source-canvas-detail"),
+    path('sources/<int:source_id>/range/<int:item_id>/', SourceRangeDetail.as_view(), name="source-range-detail"),
+    path('sources/<int:source_id>/item/<int:item_id>/', SourceItemDetail.as_view(), name="source-item-detail"),
+    path('items/<int:item_id>/', legacy_item_redirect),
 
-    url(r'^archives/(?P<pk>[0-9]+)/$', ArchiveDetail.as_view(), name="archive-detail"),
-    url(r'^cities/$', CityList.as_view(), name="city-list"),
-    url(r'^cities/(?P<pk>[0-9]+)/$', CityDetail.as_view(), name="city-detail"),
-    url(r'^countries/(?P<pk>[0-9]+)/$', CountryDetail.as_view(), name="country-detail"),
-    url(r'^countries/$', CountryList.as_view(), name="country-list"),
-    url(r'^regions/(?P<pk>[0-9]+)/$', RegionDetail.as_view(), name="region-detail"),
+    path('archives/<int:pk>/', ArchiveDetail.as_view(), name="archive-detail"),
+    path('cities/', CityList.as_view(), name="city-list"),
+    path('cities/<int:pk>/', CityDetail.as_view(), name="city-detail"),
+    path('countries/<int:pk>/', CountryDetail.as_view(), name="country-detail"),
+    path('countries/', CountryList.as_view(), name="country-list"),
+    path('regions/<int:pk>/', RegionDetail.as_view(), name="region-detail"),
 
     # url(r'^people/$', PersonList.as_view(), name="person-list"),
-    url(r'^people/(?P<pk>[0-9]+)/$', PersonDetail.as_view(), name="person-detail"),
-    url(r'^organizations/(?P<pk>[0-9]+)/$', OrganizationDetail.as_view(), name="organization-detail"),
-    url(r'^composers/(?P<legacy_id>[0-9]+)/$', legacy_composer_redirect),
-    url(r'^compositions/(?P<pk>[0-9]+)/$', CompositionDetail.as_view(), name="composition-detail"),
+    path('people/<int:pk>/', PersonDetail.as_view(), name="person-detail"),
+    path('organizations/<int:pk>/', OrganizationDetail.as_view(), name="organization-detail"),
+    path('composers/<int:pk>/', legacy_composer_redirect),
+    path('compositions/<int:pk>/', CompositionDetail.as_view(), name="composition-detail"),
 
-    url(r'^sets/(?P<pk>[0-9]+)/$', SetDetail.as_view(), name="set-detail"),
+    path('sets/<int:pk>/', SetDetail.as_view(), name="set-detail"),
 
-    url(r'^authors/(?P<pk>[0-9]+)/$', BibliographyAuthorDetail.as_view(), name="author-detail"),
+    path('authors/<int:pk>/', BibliographyAuthorDetail.as_view(), name="author-detail"),
 
-    url(r'^images/(?P<pk>[0-9]+)/(?:(?P<region>.*)/(?P<size>.*)/(?P<rotation>.*)/default\.jpg)$', image_serve, name="image-serve"),
-    url(r'^images/(?P<pk>[0-9]+)/$', image_serve, name="image-serve-info"),
+    re_path(r'^images/(?P<pk>[0-9]+)/(?:(?P<region>.*)/(?P<size>.*)/(?P<rotation>.*)/default\.jpg)$', image_serve, name="image-serve"),
+    path('images/<int:pk>/', image_serve, name="image-serve-info"),
 
-    url(r'^commentary/$', CommentaryList.as_view(), name="commentary-list"),
+    path('commentary/', CommentaryList.as_view(), name="commentary-list"),
 
     # Two views on the same content; see the problem_report model for clarification.
-    url(r'^corrections/$', CorrectionCreate.as_view(), name="correction-create"),
-    url(r'^contributors/$', ContributorList.as_view(), name="contributor-list"),
+    path('corrections/', CorrectionCreate.as_view(), name="correction-create"),
+    path('contributors/', ContributorList.as_view(), name="contributor-list"),
 
     # Cataloguing view
-    url(r'^catalogue/(.*)$', CatalogueView.as_view(), name="catalogue-view"),
+    # url(r'^catalogue/(.*)$', CatalogueView.as_view(), name="catalogue-view"),
 
     # Any routes that are not matched by the previous are routed to the Wagtail module
     #  which acts as a CMS for the non-database content.
-    url(r'^cms/', include(wagtailadmin_urls)),
-    url(r'^documents/', include(wagtaildocs_urls)),
-    url(r'', include(wagtail_urls)),
+    path('cms/', include(wagtailadmin_urls)),
+    path('documents/', include(wagtaildocs_urls)),
+    path('', include(wagtail_urls)),
 ]
 if settings.DEBUG:
     urlpatterns += static("/media/", document_root=settings.MEDIA_ROOT)
