@@ -34,7 +34,6 @@ class PersonSearchSerializer(ContextSerializer):
         required=False
     )
     variant_names_ss = serpy.MethodField()
-    genres_ss = serpy.MethodField()
     compositions_ss = serpy.MethodField()
 
     def get_role_ss(self, obj):
@@ -48,9 +47,6 @@ class PersonSearchSerializer(ContextSerializer):
 
     def get_type(self, obj):
         return obj.__class__.__name__.lower()
-
-    def get_genres_ss(self, obj):
-        return list(obj.compositions.filter(composition__genres__isnull=False).values_list('composition__genres__name', flat=True).distinct())
 
     def get_compositions_ss(self, obj):
         return list(obj.compositions.all().values_list('composition__title', flat=True).distinct())
