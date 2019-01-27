@@ -12,6 +12,7 @@ from reversion.admin import VersionAdmin
 from pagedown.widgets import AdminPagedownWidget
 from dynamic_raw_id.admin import DynamicRawIDMixin
 from rest_framework.reverse import reverse
+from diamm.admin.filters.input_filter import InputFilter
 from diamm.admin.forms.copy_inventory import CopyInventoryForm
 from diamm.models.data.item import Item
 from diamm.models.data.geographic_area import GeographicArea
@@ -134,6 +135,15 @@ class CountryListFilter(admin.SimpleListFilter):
         return queryset.filter(archive__city__parent__pk=self.value())
 
 
+class ArchiveKeyFilter(InputFilter):
+    parameter_name = "archive"
+    title = "Archive Key"
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(archive__id__exact=self.value())
+
+
 @admin.register(Source)
 class SourceAdmin(DynamicRawIDMixin, VersionAdmin):
     save_on_top = True
@@ -152,7 +162,11 @@ class SourceAdmin(DynamicRawIDMixin, VersionAdmin):
     inlines = (IdentifiersInline, NotesInline, URLsInline,
                BibliographyInline, SourceRelationshipInline, SourceCopyistInline,
                SourceProvenanceInline, PagesInline, ItemInline)
-    list_filter = (CountryListFilter, InventoryFilter)
+    list_filter = (
+        ArchiveKeyFilter,
+        CountryListFilter,
+        InventoryFilter
+    )
     list_editable = ('sort_order',)
     filter_horizontal = ['notations']
     # actions = (sort_sources,)

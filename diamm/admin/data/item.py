@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.template.defaultfilters import truncatewords
 from django.forms import ModelForm
+from diamm.admin.filters.input_filter import InputFilter
 from diamm.models.data.item import Item
 from diamm.models.data.page import Page
 from diamm.models.data.item_bibliography import ItemBibliography
@@ -71,13 +72,34 @@ class AttachedToPagesListFilter(admin.SimpleListFilter):
             return queryset.filter(pages__isnull=True)
 
 
+class SourceKeyFilter(InputFilter):
+    parameter_name = "source"
+    title = "Source Key"
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(source__id__exact=self.value())
+
+
+class CompositionKeyFilter(InputFilter):
+    parameter_name = "composition"
+    title = "Composition Key"
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(composition__id__exact=self.value())
+
+
 @admin.register(Item)
 class ItemAdmin(DynamicRawIDMixin, VersionAdmin):
     save_on_top = True
     form = ItemAdminForm
     list_display = ('get_source', 'get_composition', 'get_composers',
-                    'folio_start', 'folio_end', 'pages_attached')
+                    'folio_start', 'folio_end', 'source_order', 'pages_attached')
+    list_editable = ('source_order',)
     list_filter = (
+        SourceKeyFilter,
+        CompositionKeyFilter,
         AttachedToPagesListFilter,
     )
     search_fields = ("source__name", "source__identifiers__identifier", "source__shelfmark",
