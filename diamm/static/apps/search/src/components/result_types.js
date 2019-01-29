@@ -10,7 +10,7 @@ export const SourceResultType = ({result}) =>
             </h3>
             <div>
                 <div>{ result.archive_city_s }, { result.archive_s }</div>
-                <div>{ result.source_type_s }{ result.date_statement_s ? `, ${result.date_statement_s}` : ""}{ result.surface_type_s ? `, ${result.surface_type_s}` : ""}.</div>
+                <div>{ result.source_type_s }{ result.date_statement_s ? `, ${result.date_statement_s}` : ""}{ result.surface_type_s ? `, ${result.surface_type_s}` : ""}</div>
                 <div>
                     { result.number_of_composers_i ? `${result.number_of_composers_i} composers inventoried. ` : " " }
                     { result.number_of_compositions_i ? `Contains ${result.number_of_compositions_i} pieces. ` : " " }
@@ -58,7 +58,7 @@ export const CompositionResultType = ({result}) =>
             </h3>
             <div>
                 <div>
-                    { result.composers_ssni && <Composers composers={ result.composers_ssni } /> }
+                    { result.composers_ssni ? <Composers composers={ result.composers_ssni } /> : "Anonymous" }
                 </div>
             </div>
         </div>
