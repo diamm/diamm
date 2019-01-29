@@ -4,6 +4,7 @@ import {
 } from "./containers/inventory";
 import Inventory from "./inventory";
 import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
 
 
 class InventoryByComposer extends React.Component
@@ -64,4 +65,4 @@ function mapStateToProps (state)
     }
 }
 
-export default connect(mapStateToProps)(InventoryByComposer);
+export default withRouter(connect(mapStateToProps)(InventoryByComposer));

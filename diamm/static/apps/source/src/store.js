@@ -1,21 +1,27 @@
-import { createStore, applyMiddleware } from "redux";
-import rootReducer from "./reducers";
+import { compose, createStore, applyMiddleware } from "redux";
+import { routerMiddleware } from 'connected-react-router'
+import createRootReducer from "./reducers";
 import thunk from "redux-thunk";
+import createHashHistory from "history/createHashHistory";
 
-let middlewares = [thunk];
+export const history = createHashHistory();
+
+let middlewares = [thunk, routerMiddleware(history)];
 
 if (process.env.NODE_ENV !== `production`) {
     const { logger } = require(`redux-logger`);
     middlewares.push(logger);
 }
 
-export default function configureStore (initialState, history)
+export default function configureStore (initialState)
 {
-    middlewares.unshift(history);
-
-    return createStore(
-        rootReducer,
+    const store = createStore(
+        createRootReducer(history),
         initialState,
-        applyMiddleware(...middlewares)
+        compose(
+            applyMiddleware(...middlewares)
+        ),
     );
+
+    return store;
 }

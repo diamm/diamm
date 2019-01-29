@@ -22,6 +22,7 @@ import { connect } from "react-redux";
 
 import Title from "./title";
 import { fetchSourceInfo, setUserInfo } from "../actions/index";
+import { isActive } from "../routes";
 
 const MenuLink = ({active, route, title, show=true}) =>
 {
@@ -81,7 +82,6 @@ const ContributeMenuLink = ({authenticated, active, route, title, show=true}) =>
     return <MenuLink active={ active } route={ route } title={ title } />;
 };
 
-
 class App extends React.Component
 {
     static contextTypes = {
@@ -127,10 +127,6 @@ class App extends React.Component
             );        }
 
         // let isActive = this.context.router.isActive;
-        let isActive = matchPath;
-        console.log(location.hash);
-        console.log(INVENTORY_ROUTE);
-        console.log(isActive(location.pathname, {path: INVENTORY_ROUTE, strict: true}));
         return (
             <div>
                 <Title />
@@ -141,21 +137,21 @@ class App extends React.Component
                                 <div className="tabs">
                                 <ul className="source-section-selector">
                                     <MenuLink
-                                        active={ isActive(location.pathname, {path: ROOT_ROUTE}) }
+                                        active={ isActive(location.hash, ROOT_ROUTE) }
                                         route={ ROOT_ROUTE }
                                         title="Description"
                                     />
                                     <MenuLink
-                                        active={ isActive(location.pathname, {path: INVENTORY_ROUTE}) ||
-                                                 isActive(INVENTORY_ROUTE_BY_COMPOSER, {strict: true}) ||
-                                                 isActive(INVENTORY_ROUTE_ALPHABETICAL, {strict: true}) }
+                                        active={ isActive(location.hash, INVENTORY_ROUTE) ||
+                                                 isActive(location.hash, INVENTORY_ROUTE_BY_COMPOSER) ||
+                                                 isActive(location.hash, INVENTORY_ROUTE_ALPHABETICAL) }
                                         route={ INVENTORY_ROUTE }
                                         title="Inventory"
                                         show={ this.props.source.inventory.length !== 0 || this.props.source.uninventoried.length !== 0 }
                                     />
                                     <ImagesMenuLink
                                         authenticated={ (this.props.user !== null && this.props.user.isAuthenticated) }
-                                        active={ isActive(IMAGES_ROUTE, true) }
+                                        active={ isActive(location.hash, IMAGES_ROUTE) }
                                         route={ IMAGES_ROUTE }
                                         title="Images"
                                         show={
@@ -163,25 +159,25 @@ class App extends React.Component
                                         }
                                     />
                                     <MenuLink
-                                        active={ isActive(SETS_ROUTE, true) }
+                                        active={ isActive(location.hash, SETS_ROUTE) }
                                         route={ SETS_ROUTE }
                                         title="Sets"
                                         show={ this.props.source.sets.length !== 0 }
                                     />
                                     <MenuLink
-                                        active={ isActive(BIBLIOGRAPHY_ROUTE, true) }
+                                        active={ isActive(location.hash, BIBLIOGRAPHY_ROUTE) }
                                         route={ BIBLIOGRAPHY_ROUTE }
                                         title="Bibliography"
                                         show={ this.props.source.bibliography.length !== 0 }
                                     />
                                     <MenuLink
-                                        active={ isActive(COMMENTARY_ROUTE, true) ||
-                                                 isActive(COMMENTARY_ROUTE_PRIVATE, true) }
+                                        active={ isActive(location.hash, COMMENTARY_ROUTE) ||
+                                                 isActive(location.hash, COMMENTARY_ROUTE_PRIVATE) }
                                         route={ COMMENTARY_ROUTE }
                                         title="Commentary"
                                     />
                                     <MenuLink
-                                        active={ isActive(CONTRIBUTORS_ROUTE, true) }
+                                        active={ isActive(location.hash, CONTRIBUTORS_ROUTE) }
                                         route={ CONTRIBUTORS_ROUTE }
                                         title="Contributors"
                                     />
@@ -193,7 +189,7 @@ class App extends React.Component
                                     <ul>
                                         <ContributeMenuLink
                                             authenticated={ (this.props.user !== null && this.props.user.isAuthenticated) }
-                                            active={ isActive(CORRECTIONS_ROUTE, true) }
+                                            active={ isActive(location.hash, CORRECTIONS_ROUTE) }
                                             route={ CORRECTIONS_ROUTE }
                                             title="Contribute a Change"
                                         />
@@ -219,6 +215,7 @@ function mapStateToProps (state)
 {
     return {
         source: state.source,
+        location: state.router.location,
         user: state.user,
         userIsStaff: state.user.isStaff,
         userIsAuthenticated: state.user.isAuthenticated

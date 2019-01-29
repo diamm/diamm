@@ -91,7 +91,10 @@ class Commentary extends React.Component
                         <nav className="level">
                             <div className="level-left">
                                 <div className="level-item">
-                                    <CommentaryMenu isAuthenticated={ this.props.isAuthenticated } />
+                                    <CommentaryMenu
+                                        location={ this.props.location }
+                                        isAuthenticated={ this.props.isAuthenticated }
+                                    />
                                 </div>
                             </div>
                         </nav>
@@ -117,7 +120,8 @@ function mapStateToProps (state)
         sourceId: state.source.pk,
         isAuthenticated: state.user.isAuthenticated,
         submitted: state.commentary.submitted,
-        submitting: state.commentary.submitting
+        submitting: state.commentary.submitting,
+        location: state.router.location
     }
 }
 
