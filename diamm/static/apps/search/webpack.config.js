@@ -1,11 +1,12 @@
 var path = require('path');
 var webpack = require('webpack');
-const buildMode = process.env.NODE_ENV;
+const buildMode = process.env.NODE_ENV ? process.env.NODE_ENV : "development";
 
 module.exports = {
     mode: buildMode,
     entry: [
-        'babel-polyfill',
+        '@babel/polyfill',
+        "@ungap/url-search-params",
         'whatwg-fetch',
         './src/index.js'
     ],
@@ -27,8 +28,11 @@ module.exports = {
             use: {
                 loader: "babel-loader",
                 options: {
-                    presets: ['react', 'stage-1']
-                }
+                    presets: ['@babel/react'],
+                    plugins: [
+                        "@babel/plugin-proposal-class-properties"
+                    ]
+                },
             }
         }]
     },
@@ -45,10 +49,7 @@ function productionPlugins()
             }
         }),
         new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-        new webpack.optimize.OccurrenceOrderPlugin(true),
-        new webpack.ProvidePlugin({
-            URLSearchParams: "url-search-params"
-        }),
+        new webpack.optimize.OccurrenceOrderPlugin(true)
     ]
 }
 
@@ -59,9 +60,6 @@ function developmentPlugins()
             'process.env': {
                 NODE_ENV: JSON.stringify(process.env.NODE_ENV)
             }
-        }),
-        new webpack.ProvidePlugin({
-            URLSearchParams: "url-search-params"
         })
     ]
 }
