@@ -1,7 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
 import Result from "./result";
-import "url-search-params";
 import ReactPaginate from 'react-paginate';
 import {
     performSearch
@@ -36,6 +35,10 @@ class Results extends React.Component
             )
         }
 
+        let params = new URLSearchParams(window.location.search);
+        let pstr = params.get('page');
+        let pnum = pstr !== null ? parseInt(pstr, 10) : 1;
+
         return (
             <div className="search-results">
                 { this.props.results.map( (result) => {
@@ -43,10 +46,12 @@ class Results extends React.Component
                 })}
                 <nav className="pagination">
                     <ReactPaginate
-                        pageNum={ this.props.pagination.num_pages }
+                        pageCount={ this.props.pagination.num_pages }
                         pageRangeDisplayed={ 5 }
                         marginPagesDisplayed={ 4 }
-                        clickCallback={ this.handlePaginationClick.bind(this) }
+                        disableInitialCallback={ true }
+                        initialPage={ pnum - 1 }
+                        onPageChange={ this.handlePaginationClick.bind(this) }
                         containerClassName="pagination-list"
                         nextLabel={ "\u00BB" }
                         previousLabel={ "\u00AB" }
