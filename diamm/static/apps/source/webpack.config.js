@@ -1,11 +1,12 @@
 var path = require('path');
 var webpack = require('webpack');
 var sharedJQueryPath = require.resolve('jquery');
-const buildMode = process.env.NODE_ENV;
+const buildMode = process.env.NODE_ENV ? process.env.NODE_ENV : "development";
 
 module.exports = {
     entry: [
-        'babel-polyfill',
+        '@babel/polyfill',
+        "@ungap/url-search-params",
         'whatwg-fetch',
         './src/index.js'
     ],
@@ -14,6 +15,9 @@ module.exports = {
         filename: 'bundle.js'
     },
     mode: buildMode,
+    performance: {
+        hints: false
+    },
     devtool: (buildMode === "production") ? 'cheap-source-map' : 'cheap-module-eval-source-map',
     resolve: {
         extensions: [".js", ".jsx"],
@@ -32,8 +36,11 @@ module.exports = {
             use: {
                 loader: "babel-loader",
                 options: {
-                    presets: ['react', 'stage-1']
-                }
+                    presets: ['@babel/react'],
+                    plugins: [
+                        "@babel/plugin-proposal-class-properties"
+                    ]
+                },
             }
         }]
     },
@@ -68,7 +75,6 @@ function productionPlugins()
                 NODE_ENV: JSON.stringify(process.env.NODE_ENV)
             }
         }),
-        new webpack.optimize.UglifyJsPlugin(),
         new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
         new webpack.optimize.OccurrenceOrderPlugin(true),
         new webpack.ProvidePlugin({
@@ -76,7 +82,6 @@ function productionPlugins()
             '$': sharedJQueryPath,
             'jQuery': sharedJQueryPath,
             'window.jQuery': sharedJQueryPath,
-            URLSearchParams: "url-search-params"
         })
     ]
 }
@@ -94,7 +99,6 @@ function developmentPlugins()
             '$': sharedJQueryPath,
             'jQuery': sharedJQueryPath,
             'window.jQuery': sharedJQueryPath,
-            URLSearchParams: "url-search-params"
         })
     ]
 }
