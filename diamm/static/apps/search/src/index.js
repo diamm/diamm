@@ -1,23 +1,19 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
-import { Router } from "react-router";
-import createBrowserHistory from 'history/createBrowserHistory';
-import { routerMiddleware } from "react-router-redux";
+import { Route } from "react-router";
+import { BrowserRouter as Router } from "react-router-dom";
 
 import configureStore from "./store";
-import routes from "./routes";
+import App from "./components/app";
 
-const history = createBrowserHistory();
-const historyMiddleware = routerMiddleware(history);
-
-export const store = configureStore({}, historyMiddleware);
-
+export const store = configureStore({});
+export const ROOT_ROUTE = "/search/";
 
 ReactDOM.render(
     <Provider store={ store }>
-        <Router history={ history }>
-            { routes }
+        <Router>
+            <Route path={ ROOT_ROUTE } component={ App } />
         </Router>
     </Provider>,
     document.getElementById("search-body")
