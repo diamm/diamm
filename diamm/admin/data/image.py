@@ -4,6 +4,7 @@ from django.conf import settings
 import requests
 import ujson
 from urllib.parse import urljoin
+from diamm.admin.filters.input_filter import InputFilter
 from diamm.models.data.image import Image
 from diamm.models.data.image_note import ImageNote
 from diamm.models.data.page import Page
@@ -86,6 +87,15 @@ class ImageNoteInline(admin.TabularInline):
     extra = 0
 
 
+class SourceKeyFilter(InputFilter):
+    parameter_name = "source"
+    title = "Source Key"
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(page__source__id__exact=self.value())
+
+
 def refetch_iiif_info(modeladmin, request, queryset):
     for img in queryset:
         location = img.location
@@ -121,6 +131,7 @@ class ImageAdmin(VersionAdmin):
     form = ImageAdminForm
     list_display = ('pk', 'public', 'legacy_filename', 'location', 'get_type')
     list_filter = (
+        SourceKeyFilter,
         "type__name",
         ImageSourceListFilter,
         IIIFDataListFilter,
