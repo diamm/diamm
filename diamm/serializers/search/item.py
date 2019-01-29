@@ -55,6 +55,10 @@ class ItemSearchSerializer(serpy.Serializer):
         attr="source_incipit",
         required=False
     )
+    source_order_i = serpy.IntField(
+        attr="source_order",
+        required=False
+    )
 
     folio_start_s = serpy.StrField(
         attr="folio_start",
