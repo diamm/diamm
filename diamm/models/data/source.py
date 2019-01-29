@@ -217,7 +217,7 @@ class Source(models.Model):
               "[child parentFilter=type:item childFilter=type:itemnote]",
               'pk']
         # Set rows to an extremely high number so we get all of the item records in one go.
-        connection.search("*:*", fq=fq, fl=fl, sort="folio_start_ans asc", rows=100)
+        connection.search("*:*", fq=fq, fl=fl, sort="source_order_i asc, folio_start_ans asc")
         return list(connection.results)
 
     # Like solr_inventory, but retrieves only inventory items that do not have a composition attached, i.e., composers
@@ -240,7 +240,7 @@ class Source(models.Model):
               'pk']
         sort = "composer_ans asc"
         # Set rows to an extremely high number so we get all of the item records in one go.
-        connection.search("*:*", fq=fq, fl=fl, sort=sort, rows=100)
+        connection.search("*:*", fq=fq, fl=fl, sort=sort)
         return list(connection.results)
 
     @property
@@ -259,7 +259,6 @@ class Source(models.Model):
         res = connection.search("*:*",
                                 fq=fq,
                                 sort=sort,
-                                rows=10000,
                                 **gp)
 
         expanded = res.grouped['composer_s']['groups']
@@ -289,7 +288,7 @@ class Source(models.Model):
         id_list = ",".join([str(x[0]) for x in bibl])
         connection = SolrManager(settings.SOLR['SERVER'])
         fq = ['type:bibliography', "{!terms f=pk}"+id_list]
-        connection.search("*:*", fq=fq, sort="year_ans desc, sort_ans asc", rows=100)
+        connection.search("*:*", fq=fq, sort="year_ans desc, sort_ans asc")
 
         if connection.hits == 0:
             return []

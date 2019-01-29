@@ -66,7 +66,7 @@ class Person(models.Model):
     def solr_relationships(self):
         connection = SolrManager(settings.SOLR['SERVER'])
         fq = ['type:sourcerelationship', 'related_entity_type_s:person', 'related_entity_pk_i:{0}'.format(self.pk)]
-        sort = ["source_ans asc"]
+        sort = "source_ans asc"
 
         connection.search("*:*", fq=fq, sort=sort, rows=100)
         return list(connection.results)
@@ -75,7 +75,7 @@ class Person(models.Model):
     def solr_copyist(self):
         connection = SolrManager(settings.SOLR['SERVER'])
         fq = ['type:sourcecopyist', 'copyist_type_s:person', 'copyist_pk_i:{0}'.format(self.pk)]
-        sort = ["source_ans asc"]
+        sort = "source_ans asc"
 
         connection.search("*:*", fq=fq, sort=sort, rows=100)
         return list(connection.results)
@@ -85,7 +85,7 @@ class Person(models.Model):
         connection = SolrManager(settings.SOLR['SERVER'])
         uncertain_ids = self.compositions.filter(uncertain=True).values_list('composition__pk', flat=True)
         fq = ['type:composition', 'composers_ii:{0}'.format(self.pk)]
-        sort = ['title_s asc']
+        sort = "title_s asc"
         connection.search("*:*", fq=fq, sort=sort, rows=100)
 
         reslist = []
