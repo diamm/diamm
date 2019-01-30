@@ -13,6 +13,7 @@ class SourceCopyist(models.Model):
     LIMINARY_TEXT = 4
     ILLUMINATOR = 5
     TEXT_AND_MUSIC = 6
+    UNKNOWN = 7
 
     SOURCE_COPYIST_TYPES = (
         (MUSIC_COPYIST, "Music"),
@@ -20,7 +21,8 @@ class SourceCopyist(models.Model):
         (INDEXER, "Indexer"),
         (LIMINARY_TEXT, "Liminary Text"),
         (ILLUMINATOR, "Illuminator"),
-        (TEXT_AND_MUSIC, "Text and Music")
+        (TEXT_AND_MUSIC, "Text and Music"),
+        (UNKNOWN, "Unknown")
     )
 
     source = models.ForeignKey("diamm_data.Source",
