@@ -1,5 +1,5 @@
 import React from "react";
-import {Route, IndexRoute, Switch, matchPath} from "react-router";
+import {Route, Switch, matchPath} from "react-router";
 import App from "./components/app";
 import Description from "./components/description";
 import InventoryByOrder from "./components/inventory_by_order";
