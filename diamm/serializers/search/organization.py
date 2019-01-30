@@ -9,7 +9,10 @@ class OrganizationSearchSerializer(serpy.Serializer):
     location_s = serpy.MethodField()
 
     name_s = serpy.StrField(
-        attr="name",
+        attr="name"
+    )
+    display_name_ans = serpy.StrField(
+        attr="name"
     )
     organization_type_s = serpy.StrField(
         attr="type",

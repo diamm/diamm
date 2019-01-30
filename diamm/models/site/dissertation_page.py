@@ -1,8 +1,8 @@
 from django.db import models
-from wagtail.wagtailcore.models import Page
-from wagtail.wagtailcore import fields
-from wagtail.wagtailadmin.edit_handlers import FieldPanel
-from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
+from wagtail.core.models import Page
+from wagtail.core import fields
+from wagtail.admin.edit_handlers import FieldPanel
+from wagtail.documents.edit_handlers import DocumentChooserPanel
 
 
 class DissertationPage(Page):

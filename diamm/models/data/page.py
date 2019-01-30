@@ -39,7 +39,8 @@ class Page(models.Model):
         ordering = ["source__shelfmark", "sort_order"]
 
     source = models.ForeignKey("diamm_data.Source",
-                               related_name="pages")
+                               related_name="pages",
+                               on_delete=models.CASCADE)
 
     numeration = models.CharField(max_length=64, help_text="""The folio or page number. If there are many different systems in use,
                                                            choose one and put the others in the note field.""")

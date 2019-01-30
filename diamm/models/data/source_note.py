@@ -56,7 +56,8 @@ class SourceNote(models.Model):
     type = models.IntegerField(choices=NOTE_TYPES)
     note = models.TextField()
     source = models.ForeignKey("diamm_data.Source",
-                               related_name="notes")
+                               related_name="notes",
+                               on_delete=models.CASCADE)
     sort = models.IntegerField(default=0)
 
     # Authority for the note

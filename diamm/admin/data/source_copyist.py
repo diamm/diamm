@@ -2,14 +2,14 @@ from django.contrib import admin
 from diamm.models.data.source_copyist import SourceCopyist
 from diamm.models.data.person import Person
 from diamm.models.data.organization import Organization
-from salmonella.admin import SalmonellaMixin
+from dynamic_raw_id.admin import DynamicRawIDMixin
 
 
 @admin.register(SourceCopyist)
-class SourceCopyistAdmin(SalmonellaMixin, admin.ModelAdmin):
+class SourceCopyistAdmin(DynamicRawIDMixin, admin.ModelAdmin):
     list_display = ('get_source', 'get_copyist', 'copyist_type', 'uncertain')
     list_filter = ('type',)
-    salmonella_fields = ('source',)
+    dynamic_raw_id_fields = ('source',)
 
     def get_source(self, obj):
         return "{0}".format(obj.source.display_name)

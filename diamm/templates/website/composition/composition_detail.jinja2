@@ -60,7 +60,7 @@
                                     {% if source.has_images and source.public_images %}
                                         <i class="fa fa-picture-o" aria-hidden="true"></i>
                                     {% endif %}
-                                    <a href="{{ source.url }}">{{ source.display_name }}</a>
+                                    <a href="{{ source.url }}">{{ source.display_name }}</a> {% if source.folios %}({{ source.folios }}){% endif %}
                                 </div>
                             {% endfor %}
                         </td>

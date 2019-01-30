@@ -28,4 +28,5 @@ exec ${VIRTUAL_ENV}/bin/gunicorn ${DJANGO_WSGI_MODULE}:application \
   --name $NAME \
   --workers $NUM_WORKERS \
   --user=$USER --group=$GROUP \
-  --bind=unix:$SOCKFILE
+  --bind=unix:$SOCKFILE \
+  --timeout 300

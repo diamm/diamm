@@ -1,13 +1,16 @@
 import React from "react";
 import {
+    IMAGES_ROUTE,
     INVENTORY_ROUTE,
-    INVENTORY_ROUTE_BY_COMPOSER,
     INVENTORY_ROUTE_ALPHABETICAL,
-    IMAGES_ROUTE
+    INVENTORY_ROUTE_BY_COMPOSER
 } from "../../routes";
-import { Link } from "react-router";
+import { Link, withRouter } from "react-router-dom";
+import { connect } from "react-redux";
 import { openQuickLookView } from "../../actions/index";
 import { store } from "../../index";
+import { isActive } from "../../routes";
+import PropTypes from "prop-types";
 
 
 const InventoryMenuItem = ({active, route, title, show=true}) =>
@@ -22,16 +25,14 @@ const InventoryMenuItem = ({active, route, title, show=true}) =>
     );
 };
 
-export class InventoryMenu extends React.Component
+class InventoryMenu extends React.Component
 {
     static contextTypes = {
-        router: React.PropTypes.object
+        router: PropTypes.object
     };
 
     render()
     {
-        let isActive = this.context.router.isActive;
-
         // a source is uninventoried if it has entries in the 'uninventoried' key AND it has no entries in the inventory.
         let isUninventoried = this.props.uninventoried.length > 0 && this.props.source_order.length === 0;
 
@@ -39,19 +40,19 @@ export class InventoryMenu extends React.Component
             <div className="tabs">
                 <ul>
                     <InventoryMenuItem
-                        active={ isActive(INVENTORY_ROUTE) }
+                        active={ isActive(this.props.location.pathname, INVENTORY_ROUTE) }
                         route={ INVENTORY_ROUTE }
                         title={ isUninventoried ? "Uninventoried" : "Source Order" }
                         show={ this.props.source_order.length > 0 || isUninventoried }
                     />
                     <InventoryMenuItem
-                        active={ isActive(INVENTORY_ROUTE_BY_COMPOSER) }
+                        active={ isActive(this.props.location.pathname, INVENTORY_ROUTE_BY_COMPOSER) }
                         route={ INVENTORY_ROUTE_BY_COMPOSER }
                         title="By Composer (A-Z)"
                         show={ this.props.source_order.length > 0 }  // <-- don't bother showing the composers if there is nothing in the source.
                     />
                     <InventoryMenuItem
-                        active={ isActive(INVENTORY_ROUTE_ALPHABETICAL) }
+                        active={ isActive(this.props.location.pathname, INVENTORY_ROUTE_ALPHABETICAL) }
                         route={ INVENTORY_ROUTE_ALPHABETICAL }
                         title="By Composition (A-Z)"
                         show={ this.props.source_order.length > 0 }
@@ -61,6 +62,16 @@ export class InventoryMenu extends React.Component
         );
     }
 }
+
+function mapStateToProps (state)
+{
+    return {
+        location: state.router.location
+    }
+}
+
+export default withRouter(connect(mapStateToProps)(InventoryMenu))
+
 
 const onQuickLook = (url) =>
 {

@@ -1,11 +1,13 @@
 import React from "react";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
+import PropTypes from "prop-types";
 import moment from "moment";
 
 import {
     COMMENTARY_ROUTE,
-    COMMENTARY_ROUTE_PRIVATE
+    COMMENTARY_ROUTE_PRIVATE,
+    isActive
 } from "../../routes";
 
 const CommentaryMenuItem = ({active, route, title, show=true}) =>
@@ -24,23 +26,21 @@ const CommentaryMenuItem = ({active, route, title, show=true}) =>
 export class CommentaryMenu extends React.Component
 {
     static contextTypes = {
-        router: React.PropTypes.object
+        router: PropTypes.object
     };
 
     render ()
     {
-        let isActive = this.context.router.isActive;
-
         return (
             <div className="tabs">
                 <ul>
                     <CommentaryMenuItem
-                        active={ isActive(COMMENTARY_ROUTE) }
+                        active={ isActive(this.props.location.hash, COMMENTARY_ROUTE) }
                         route={ COMMENTARY_ROUTE }
                         title="Public Comments"
                     />
                     <CommentaryMenuItem
-                        active={ isActive(COMMENTARY_ROUTE_PRIVATE) }
+                        active={ isActive(this.props.location.hash, COMMENTARY_ROUTE_PRIVATE) }
                         route={ COMMENTARY_ROUTE_PRIVATE }
                         title="Private Comments"
                         show={ this.props.isAuthenticated }

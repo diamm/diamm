@@ -10,6 +10,33 @@
     {% endblock %}
     {% block head %}
     {% endblock %}
+    <script type="application/json">
+    {
+        "@context": "http://schema.org",
+        "@type": "Organization",
+        "name": "Digital Image Archive of Medieval Music",
+        "url": "https://www.diamm.ac.uk",
+        "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "United Kingdom",
+            "addressLocality": "Oxford",
+            "addressRegion": "Oxfordshire",
+            "streetAddress": "St. Aldates",
+            "postalCode": "OX1 1DB"
+        }
+        "contactPoint": [{
+            "@type": "ContactPoint",
+            "telephone": "+44 (0)1865 241323",
+            "contactType": "customer service",
+            "email": "diamm@music.ox.ac.uk",
+            "hoursAvailable": {
+                "@type": "OpeningHoursSpecification",
+                "opens": "10:00:00Z+00:00",
+                "closes": "19:00:00Z+00:00"
+            }
+        }]
+    }
+    </script>
 </head>
 <body>
     {% if messages %}
@@ -41,10 +68,10 @@
             <div class="column is-two-thirds footer-address">
                 <img src="{{ static('images/headerLogo.png') }}" alt="DIAMM Logo" />
                 <h5 class="title is-5">The Digital Image Archive of Medieval Music</h5>
-                <p>University of Oxford,<br />
-                    Faculty of Music,<br />
-                    St. Aldates,<br />
-                    Oxford, OX1 1DB,<br />
+                <p>University of Oxford<br />
+                    Faculty of Music<br />
+                    St. Aldates<br />
+                    Oxford, OX1 1DB<br />
                     United Kingdom
                 </p>
             </div>

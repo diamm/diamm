@@ -14,7 +14,8 @@ class SourceCatalogueEntry(models.Model):
     order = models.IntegerField(default=1)
     entry = models.CharField(max_length=16)
     source = models.ForeignKey("diamm_data.Source",
-                               related_name="catalogue_entries")
+                               related_name="catalogue_entries",
+                               on_delete=models.CASCADE)
 
     def __str__(self):
         return "{0}".format(self.entry)

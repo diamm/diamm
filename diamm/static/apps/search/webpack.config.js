@@ -1,37 +1,42 @@
 var path = require('path');
 var webpack = require('webpack');
+const buildMode = process.env.NODE_ENV ? process.env.NODE_ENV : "development";
 
 module.exports = {
+    mode: buildMode,
     entry: [
-        'babel-polyfill',
+        '@babel/polyfill',
+        "@ungap/url-search-params",
         'whatwg-fetch',
         './src/index.js'
     ],
     output: {
-        filename: "./dist/bundle.js",
+        path: path.join(__dirname, 'dist'),
+        filename: 'bundle.js'
     },
-    devtool: (process.env.NODE_ENV === "production") ? "source-map" : "eval-source-map",
+    devtool: (buildMode === "production") ? 'cheap-source-map' : 'cheap-module-eval-source-map',
     resolve: {
         extensions: [".js", ".jsx"],
     },
-    module: {
-        loaders: [
-            {
-                test: /\.json$/,
-                loaders: ['json-loader']
-            },
-            {
-                loader: "babel-loader",
-                include: [
-                    path.resolve(__dirname, "src")
-                ],
-                query: {
-                    presets: ["react", "es2015", "stage-1"],
-                }
-            }
-        ]
+    optimization: {
+        minimize: (buildMode === "production"),
     },
-    plugins: (process.env.NODE_ENV === "production") ? productionPlugins() : developmentPlugins()
+    module: {
+        rules: [{
+            test: /\.js$/,
+            exclude: /node_modules/,
+            use: {
+                loader: "babel-loader",
+                options: {
+                    presets: ['@babel/react'],
+                    plugins: [
+                        "@babel/plugin-proposal-class-properties"
+                    ]
+                },
+            }
+        }]
+    },
+    plugins: (buildMode === "production") ? productionPlugins() : developmentPlugins()
 };
 
 
@@ -40,22 +45,21 @@ function productionPlugins()
     return [
         new webpack.DefinePlugin({
             'process.env': {
-                NODE_ENV: JSON.stringify("production")
+                NODE_ENV: JSON.stringify(process.env.NODE_ENV)
             }
         }),
-        new webpack.optimize.UglifyJsPlugin(),
-        new webpack.optimize.OccurrenceOrderPlugin(true),
-        new webpack.ProvidePlugin({
-            URLSearchParams: "url-search-params"
-        }),
+        new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+        new webpack.optimize.OccurrenceOrderPlugin(true)
     ]
 }
 
 function developmentPlugins()
 {
     return [
-        new webpack.ProvidePlugin({
-            URLSearchParams: "url-search-params"
+        new webpack.DefinePlugin({
+            'process.env': {
+                NODE_ENV: JSON.stringify(process.env.NODE_ENV)
+            }
         })
     ]
 }

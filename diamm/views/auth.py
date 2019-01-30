@@ -23,7 +23,7 @@ class CreateAccount(FormView):
         """
             If a user is already logged in, prevent them from accessing this form.
         """
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             return HttpResponse(status=status.HTTP_403_FORBIDDEN)
         return super(CreateAccount, self).get(request, *args, **kwargs)
 

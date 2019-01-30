@@ -27,7 +27,7 @@
         </div>
         <div class="nav-right">
             <a href="http://www.oxforduniversitystores.co.uk/product-catalogue/music-faculty-diamm/music-faculty-diamm-publications/donation-help-to-keep-wwwdiammacuk-free" class="nav-item nav-highlight">Donate</a>
-            {% if user.is_authenticated() %}
+            {% if user.is_authenticated %}
                 <div class="dropdown-menu-parent">
                     <a href="{{ url('user-account') }}" class="nav-item">Your account</a>
                     <div class="dropdown-menu left-menu account-menu">

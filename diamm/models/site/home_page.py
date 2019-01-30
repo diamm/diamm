@@ -1,9 +1,9 @@
-from wagtail.wagtailcore.models import Page
-from wagtail.wagtailcore.fields import StreamField
-from wagtail.wagtailcore import blocks
-from wagtail.wagtailimages.blocks import ImageChooserBlock
-from wagtail.wagtailcore.fields import RichTextField
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, StreamFieldPanel
+from wagtail.core.models import Page
+from wagtail.core.fields import StreamField
+from wagtail.core import blocks
+from wagtail.images.blocks import ImageChooserBlock
+from wagtail.core.fields import RichTextField
+from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel
 
 
 class HomePage(Page):

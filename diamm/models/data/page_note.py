@@ -20,7 +20,8 @@ class PageNote(models.Model):
     type = models.IntegerField(choices=NOTE_TYPE)
     note = models.TextField()
     page = models.ForeignKey("diamm_data.Page",
-                             related_name="notes")
+                             related_name="notes",
+                             on_delete=models.CASCADE)
 
     @property
     def note_type(self):

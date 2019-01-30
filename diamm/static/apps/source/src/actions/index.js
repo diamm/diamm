@@ -41,7 +41,7 @@ export function fetchSourceInfo (sourceId)
 {
     return (dispatch) =>
     {
-        return fetch(`${SERVER_BASE_URL}sources/${sourceId}/`, {
+        return fetch(`${SERVER_BASE_URL}/sources/${sourceId}/`, {
                 headers: {
                     "Accept": "application/json"
                 },

@@ -3,6 +3,7 @@ import Inventory from "./inventory";
 import { connect } from "react-redux";
 import _ from "lodash";
 import { createSelector } from "reselect";
+import { withRouter } from "react-router-dom";
 
 import {
     QuickLook,
@@ -33,6 +34,8 @@ class InventoryAlphabetical extends React.Component
 
     render()
     {
+        console.log('alphabetical inventory render!');
+
         return (
             <Inventory>
                 <div className="column">
@@ -103,4 +106,4 @@ function mapStateToProps (state)
 }
 
 
-export default connect(mapStateToProps, { showAlphaInventoryDetailsForItem })(InventoryAlphabetical);
+export default withRouter(connect(mapStateToProps, { showAlphaInventoryDetailsForItem })(InventoryAlphabetical));

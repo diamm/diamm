@@ -1,17 +1,27 @@
 {% extends "base.jinja2" %}
 
 {% block title %}
-    <title>Digital Image Archive of Medieval Music :: {{ content.display_name }}</title>
+    <title>{{ content.display_name }} - DIAMM</title>
 {% endblock %}
 
 {% block head %}
+    <meta name="description" content="{{ content.display_summary }}">
+    <script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "Thing",
+        "url": "{{ request.build_absolute_uri }}",
+        "name": "{{ content.display_name }}",
+        "description": "{{ content.display_summary }}"
+    }
+    </script>
 {% endblock %}
 
 {% block body %}
     <div id="source-body"
          data-source-id="{{ content.pk }}"
          data-source-name="{{ content.display_name }}"
-         data-is-authenticated="{{ request.user.is_authenticated() }}"
+         data-is-authenticated="{{ request.user.is_authenticated }}"
          {% if request.user.is_authenticated %}
              data-username="{{ request.user.full_name }}"
              data-is-staff="{{ request.user.is_staff }}"

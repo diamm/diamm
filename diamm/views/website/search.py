@@ -31,7 +31,7 @@ class SearchView(generics.GenericAPIView):
         if type_query and type_query in settings.SOLR['TYPE_SORTS'].keys():
             sorts.append(settings.SOLR['TYPE_SORTS'][type_query])
         else:
-            sorts.append('archive_city_s asc')
+            sorts.append('display_name_s asc')
 
         # if we have an active query but want all types.
         if query and type_query == "all":
@@ -107,13 +107,17 @@ class SearchView(generics.GenericAPIView):
         except ValueError:
             page_num = 1
 
+        sorts_str = ", ".join(sorts)
+
         try:
-            paginator = SolrPaginator(query, filters, exclusive_filters, sorts, request)
-            page = paginator.page(page_num)
+            paginator = SolrPaginator(query, filters, exclusive_filters, sorts_str, request)
         except SolrResultException as e:
             # We assume that an exception raised by Solr is the result of a bad request by the client,
             #  so we bubble up a 400 with a message about why it went wrong.
             return response.Response({'message': repr(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            page = paginator.page(page_num)
         except PageRangeOutOfBoundsException:
             # If requesting past the number of pages, punt the user back to page 1.
             page = paginator.page(1)

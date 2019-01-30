@@ -64,7 +64,7 @@ class CommentaryList(generics.ListCreateAPIView):
             raise
 
         visibility_filter = Q(comment_type=Commentary.PUBLIC)
-        if self.request.user.is_authenticated():
+        if self.request.user.is_authenticated:
             visibility_filter |= Q(author=self.request.user)
 
         queryset = Commentary.objects.filter(

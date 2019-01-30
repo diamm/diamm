@@ -23,7 +23,8 @@ class Item(models.Model):
     )
 
     source = models.ForeignKey('diamm_data.Source',
-                               related_name="inventory")
+                               related_name="inventory",
+                               on_delete=models.CASCADE)
 
     pages = models.ManyToManyField("diamm_data.Page",
                                    related_name="items",
@@ -32,7 +33,8 @@ class Item(models.Model):
     composition = models.ForeignKey("diamm_data.Composition",
                                     related_name="sources",
                                     blank=True,
-                                    null=True)
+                                    null=True,
+                                    on_delete=models.CASCADE)
 
     source_attribution = models.CharField(max_length=1024,
                                           blank=True,

@@ -1,13 +1,14 @@
 from django.contrib import admin
 from django.template.defaultfilters import truncatewords
 from django.forms import ModelForm
+from diamm.admin.filters.input_filter import InputFilter
 from diamm.models.data.item import Item
 from diamm.models.data.page import Page
 from diamm.models.data.item_bibliography import ItemBibliography
 from diamm.models.data.item_note import ItemNote
 from diamm.models.data.item_composer import ItemComposer
 from reversion.admin import VersionAdmin
-from salmonella.admin import SalmonellaMixin
+from dynamic_raw_id.admin import DynamicRawIDMixin
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -35,18 +36,18 @@ class ItemNoteInline(admin.TabularInline):
     extra = 0
 
 
-class BibliographyInline(SalmonellaMixin, admin.TabularInline):
+class BibliographyInline(DynamicRawIDMixin, admin.TabularInline):
     verbose_name_plural = "Bibliography"
     verbose_name = "Bibliography"
     model = ItemBibliography
     extra = 0
-    salmonella_fields = ('bibliography',)
+    dynamic_raw_id_fields = ('bibliography',)
 
 
-class ItemComposerInline(SalmonellaMixin, admin.TabularInline):
+class ItemComposerInline(DynamicRawIDMixin, admin.TabularInline):
     model = ItemComposer
     extra = 0
-    salmonella_fields = ('composer',)
+    dynamic_raw_id_fields = ('composer',)
 
 
 class AttachedToPagesListFilter(admin.SimpleListFilter):
@@ -71,13 +72,34 @@ class AttachedToPagesListFilter(admin.SimpleListFilter):
             return queryset.filter(pages__isnull=True)
 
 
+class SourceKeyFilter(InputFilter):
+    parameter_name = "source"
+    title = "Source Key"
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(source__id__exact=self.value())
+
+
+class CompositionKeyFilter(InputFilter):
+    parameter_name = "composition"
+    title = "Composition Key"
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(composition__id__exact=self.value())
+
+
 @admin.register(Item)
-class ItemAdmin(SalmonellaMixin, VersionAdmin):
+class ItemAdmin(DynamicRawIDMixin, VersionAdmin):
     save_on_top = True
     form = ItemAdminForm
     list_display = ('get_source', 'get_composition', 'get_composers',
-                    'folio_start', 'folio_end', 'pages_attached')
+                    'folio_start', 'folio_end', 'source_order', 'pages_attached')
+    list_editable = ('source_order',)
     list_filter = (
+        SourceKeyFilter,
+        CompositionKeyFilter,
         AttachedToPagesListFilter,
     )
     search_fields = ("source__name", "source__identifiers__identifier", "source__shelfmark",
@@ -86,7 +108,7 @@ class ItemAdmin(SalmonellaMixin, VersionAdmin):
     inlines = (ItemNoteInline, ItemComposerInline, BibliographyInline)
     filter_horizontal = ['pages']
     # exclude = ("pages",)
-    salmonella_fields = ('source', 'composition')
+    dynamic_raw_id_fields = ('source', 'composition')
 
     def pages_attached(self, obj):
         return obj.pages.count() > 0

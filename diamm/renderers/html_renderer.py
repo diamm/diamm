@@ -1,5 +1,4 @@
 from rest_framework.renderers import TemplateHTMLRenderer
-from rest_framework.compat import template_render
 
 
 class HTMLRenderer(TemplateHTMLRenderer):
@@ -24,4 +23,4 @@ class HTMLRenderer(TemplateHTMLRenderer):
             template = self.resolve_template(template_names)
 
         context = self.get_template_context({'content': data}, renderer_context)
-        return template_render(template, context, request=request)
+        return template.render(context, request=request)

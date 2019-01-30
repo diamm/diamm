@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.sitemaps',
-    'salmonella',
+    'dynamic_raw_id',
     'diamm',
     'diamm.diamm_data',
     'diamm.diamm_site',
@@ -54,24 +54,24 @@ INSTALLED_APPS = [
     'pagedown',
 
     # wagtail config for CMS
-    'wagtail.wagtailforms',
-    'wagtail.wagtailredirects',
-    'wagtail.wagtailembeds',
-    'wagtail.wagtailsites',
-    "wagtail.contrib.wagtailsitemaps",
-    'wagtail.wagtailusers',
-    'wagtail.wagtailsnippets',
-    'wagtail.wagtaildocs',
-    'wagtail.wagtailimages',
-    'wagtail.wagtailsearch',
-    'wagtail.wagtailadmin',
-    'wagtail.wagtailcore',
+    'wagtail.contrib.forms',
+    'wagtail.contrib.redirects',
+    'wagtail.embeds',
+    'wagtail.sites',
+    "wagtail.contrib.sitemaps",
+    'wagtail.users',
+    'wagtail.snippets',
+    'wagtail.documents',
+    'wagtail.images',
+    'wagtail.search',
+    'wagtail.admin',
+    'wagtail.core',
 
     'modelcluster',
     'taggit'
 ]
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     # 'django.middleware.cache.UpdateCacheMiddleware',
@@ -79,11 +79,11 @@ MIDDLEWARE_CLASSES = [
     #'django.middleware.cache.FetchFromCacheMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    # 'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'wagtail.wagtailcore.middleware.SiteMiddleware',
-    'wagtail.wagtailredirects.middleware.RedirectMiddleware',
+    'wagtail.core.middleware.SiteMiddleware',
+    'wagtail.contrib.redirects.middleware.RedirectMiddleware',
 ]
 
 ROOT_URLCONF = 'diamm.urls'
@@ -107,9 +107,9 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
             ],
             "extensions": DEFAULT_EXTENSIONS + [
-                'wagtail.wagtailcore.jinja2tags.core',
-                'wagtail.wagtailadmin.jinja2tags.userbar',
-                'wagtail.wagtailimages.jinja2tags.images',
+                'wagtail.core.jinja2tags.core',
+                'wagtail.admin.jinja2tags.userbar',
+                'wagtail.images.jinja2tags.images',
                 "django_jinja.builtins.extensions.DjangoFiltersExtension"
             ]
         }
@@ -272,8 +272,8 @@ SOLR = {
         'person': 'name_ans asc',
         'organization': 'name_ans asc',
         'composition': 'title_ans asc',
-        'source': 'archive_city_s asc',
-        'sources_with_images': 'archive_city_s asc'
+        'source': 'display_name_s asc, archive_city_s asc',
+        'sources_with_images': 'display_name_s asc, archive_city_s asc'
     }
 }
 
@@ -359,7 +359,7 @@ diamm@music.ox.ac.uk
 WAGTAIL_SITE_NAME = 'Digital Image Archive of Medieval Music'
 
 if DEBUG:
-    MIDDLEWARE_CLASSES = ["diamm.middleware.logging.QueryCountDebugMiddleware"] + MIDDLEWARE_CLASSES
+    MIDDLEWARE = ["diamm.middleware.logging.QueryCountDebugMiddleware"] + MIDDLEWARE
     SILENCED_SYSTEM_CHECKS = []
 
 LOGGING = {

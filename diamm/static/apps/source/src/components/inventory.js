@@ -1,7 +1,9 @@
 import React from "react";
 import { connect } from "react-redux";
-import { InventoryMenu } from "./containers/inventory";
+import { withRouter } from "react-router-dom";
+import InventoryMenu from "./containers/inventory";
 import QuickLook from "./quicklook";
+
 
 class Inventory extends React.Component
 {
@@ -45,8 +47,9 @@ function mapStateToProps (state)
         source_order: state.source.inventory,
         composer_order: state.source.composer_inventory,
         uninventoried: state.source.uninventoried,
-        quicklook: state.quicklook
+        quicklook: state.quicklook,
+        location: state.router.location
     }
 }
 
-export default connect(mapStateToProps)(Inventory);
+export default withRouter(connect(mapStateToProps)(Inventory));

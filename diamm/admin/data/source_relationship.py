@@ -2,14 +2,14 @@ from django.contrib import admin
 from diamm.models.data.source_relationship import SourceRelationship
 from diamm.models.data.person import Person
 from diamm.models.data.organization import Organization
-from salmonella.admin import SalmonellaMixin
+from dynamic_raw_id.admin import DynamicRawIDMixin
 from reversion.admin import VersionAdmin
 
 
 @admin.register(SourceRelationship)
-class SourceRelationshipAdmin(SalmonellaMixin, VersionAdmin):
+class SourceRelationshipAdmin(DynamicRawIDMixin, VersionAdmin):
     list_display = ('get_source', 'get_related_entity', 'relationship_type')
-    salmonella_fields = ('source',)
+    dynamic_raw_id_fields = ('source',)
     list_filter = ('relationship_type',)
 
     search_fields = ('source__name',

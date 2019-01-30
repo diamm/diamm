@@ -4,16 +4,16 @@ from diamm.models.data.geographic_area import GeographicArea
 from reversion.admin import VersionAdmin
 from diamm.admin.forms.merge_areas import MergeAreasForm
 from diamm.admin.merge_models import merge
-from salmonella.admin import SalmonellaMixin
+from dynamic_raw_id.admin import DynamicRawIDMixin
 
 
 @admin.register(GeographicArea)
-class GeographicAreaAdmin(SalmonellaMixin, VersionAdmin):
+class GeographicAreaAdmin(DynamicRawIDMixin, VersionAdmin):
     list_display = ('name', 'area_type', 'get_parent')
     search_fields = ('name',)
     list_filter = ('type',)
     actions = ['merge_areas_action']
-    salmonella_fields = ('parent',)
+    dynamic_raw_id_fields = ('parent',)
 
     def get_parent(self, obj):
         if obj.parent:

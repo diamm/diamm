@@ -16,7 +16,9 @@ class CompositionNote(models.Model):
 
     type = models.IntegerField(choices=NOTE_TYPES)
     note = models.TextField()
-    composition = models.ForeignKey("diamm_data.Composition", related_name="notes")
+    composition = models.ForeignKey("diamm_data.Composition",
+                                    related_name="notes",
+                                    on_delete=models.CASCADE)
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

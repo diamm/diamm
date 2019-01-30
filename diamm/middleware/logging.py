@@ -11,12 +11,19 @@ class QueryCountDebugMiddleware(object):
     status code of 200). It does not currently support
     multi-db setups.
     """
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        return self.get_response(request)
+
     def process_response(self, request, response):
         if response.status_code == 200:
             total_time = 0
 
             for query in connection.queries:
                 query_time = query.get('time')
+                logger.debug(query['sql'])
                 if query_time is None:
                     # django-debug-toolbar monkeypatches the connection
                     # cursor wrapper and adds extra information in each

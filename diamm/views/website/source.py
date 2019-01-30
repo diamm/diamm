@@ -24,13 +24,18 @@ class SourceDetail(generics.RetrieveAPIView):
         return queryset
 
     def get(self, request, *args, **kwargs):
+        # If we're asking for the source detail with HTML, only return a limited amount
+        # of information; the rest will get filled in when the JavaScript application loads
+        # the JSON data.
         if request.accepted_renderer.format == "html":
             try:
-                source_name = Source.objects.get(id=kwargs['pk']).display_name
+                source = Source.objects.get(id=kwargs['pk'])
             except Source.DoesNotExist:
                 return response.Response(status=status.HTTP_404_NOT_FOUND, template_name="404.jinja2")
 
-            return response.Response({'pk': kwargs['pk'], 'display_name': source_name})
+            return response.Response({'pk': kwargs['pk'],
+                                      'display_name': source.display_name,
+                                      'display_summary': source.display_summary})
         return super(SourceDetail, self).get(request, args, kwargs)
 
 

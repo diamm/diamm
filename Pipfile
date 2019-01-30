@@ -1,0 +1,31 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = "==2.1.5"
+wagtail = "==2.4"
+djangorestframework = "*"
+django-extensions = "*"
+werkzeug = "*"
+django-registration = "*"
+django-dynamic-raw-id = "*"
+"jinja2" = "*"
+django-jinja = "*"
+pysolr = "*"
+django-pagedown = "*"
+django-reversion = "*"
+"psycopg2-binary" = "*"
+ujson = "*"
+serpy = "*"
+drf-ujson = "*"
+"markdown2" = "*"
+gunicorn = "*"
+
+[dev-packages]
+blessings = "*"
+ipython = "*"
+
+[requires]
+python_version = "3"

@@ -1,14 +1,15 @@
 import React from "react";
 import Autocomplete from "react-autocomplete";
+import PropTypes from "prop-types";
 
 
 class AutocompleteComponent extends React.Component {
     static propTypes = {
-        value: React.PropTypes.string.isRequired,
-        items: React.PropTypes.array.isRequired,
-        updateCurrentValue: React.PropTypes.func.isRequired,
-        selectCurrentValue: React.PropTypes.func.isRequired,
-        placeholder: React.PropTypes.string.isRequired
+        value: PropTypes.string.isRequired,
+        items: PropTypes.array.isRequired,
+        updateCurrentValue: PropTypes.func.isRequired,
+        selectCurrentValue: PropTypes.func.isRequired,
+        placeholder: PropTypes.string.isRequired
     };
 
     render ()

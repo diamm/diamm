@@ -15,7 +15,8 @@ class SourceRelationship(models.Model):
     limit = models.Q(app_label='diamm_data', model="person") | models.Q(app_label='diamm_data', model='organization')
 
     source = models.ForeignKey("diamm_data.Source",
-                               related_name="relationships")
+                               related_name="relationships",
+                               on_delete=models.CASCADE)
 
     content_type = models.ForeignKey(ContentType,
                                      on_delete=models.CASCADE,
@@ -24,7 +25,7 @@ class SourceRelationship(models.Model):
     object_id = models.PositiveIntegerField()
     related_entity = GenericForeignKey()
 
-    relationship_type = models.ForeignKey("diamm_data.SourceRelationshipType")
+    relationship_type = models.ForeignKey("diamm_data.SourceRelationshipType", on_delete=models.CASCADE)
     uncertain = models.BooleanField(default=False)
 
     def __str__(self):

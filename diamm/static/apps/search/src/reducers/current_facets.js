@@ -8,10 +8,12 @@ import archiveLocations from "./archive_locations_facet_reducer";
 import anonymous from "./anonymous_reducer";
 import dateRange from "./source_date_range_reducer";
 import organizationTypes from "./organization_type_facet_reducer";
+import cities from "./cities_facet_reducer";
 
 
 const currentFacets = combineReducers({
     composers,
+    cities,
     genres,
     archiveLocations,
     notations,
