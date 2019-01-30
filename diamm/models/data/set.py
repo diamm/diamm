@@ -4,7 +4,7 @@ from django.db import models
 class Set(models.Model):
     class Meta:
         app_label = "diamm_data"
-        ordering = ("cluster_shelfmark",)
+        ordering = ("type", "cluster_shelfmark")
 
     PARTBOOKS = 1
     FRAGMENTS = 2

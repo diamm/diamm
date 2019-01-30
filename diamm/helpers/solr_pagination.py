@@ -41,6 +41,7 @@ class SolrPaginator:
             'hl': 'true',
             'defType': 'edismax',
             'qf': settings.SOLR['FULLTEXT_QUERYFIELDS'],
+            'bq': ['type:source^10', 'type:archive^5', 'type:person^1']
         }
         self.qopts.update(settings.SOLR['FACET_SORT'])
 

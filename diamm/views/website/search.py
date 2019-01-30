@@ -14,7 +14,9 @@ class SearchView(generics.GenericAPIView):
         query = request.GET.get('q', None)
         filters = {}
         exclusive_filters = {}  # these will get ANDed... the others will get ORed
-        sorts = []
+        sorts = [
+            "score desc"
+        ]
 
         # On a blank query retrieve everything, but sort
         # by archive_city_s so that sources sort to the top.

@@ -22,10 +22,10 @@ serpy = "*"
 drf-ujson = "*"
 "markdown2" = "*"
 gunicorn = "*"
-
-[dev-packages]
 blessings = "*"
 ipython = "*"
+
+[dev-packages]
 
 [requires]
 python_version = "3"
