@@ -1,6 +1,6 @@
 from django.contrib import admin, messages
 from django.shortcuts import render
-from django.db import models
+from django.utils.safestring import mark_safe
 from diamm.models.data.composition import Composition
 from diamm.models.data.composition_composer import CompositionComposer
 from diamm.models.data.composition_note import CompositionNote
@@ -11,7 +11,6 @@ from diamm.admin.forms.merge_compositions import MergeCompositionsForm
 from diamm.admin.forms.assign_genre import AssignGenreForm
 from diamm.admin.merge_models import merge
 from dynamic_raw_id.admin import DynamicRawIDMixin
-from pagedown.widgets import AdminPagedownWidget
 from reversion.admin import VersionAdmin
 
 
@@ -77,9 +76,8 @@ class CompositionAdmin(VersionAdmin):
         sources = ["<a href='/admin/diamm_data/source/{0}/change'>{1} {2}</a><br />".format(x[0], x[1], x[2]) for x in obj.sources.values_list('source__pk',
                                                                                                          'source__archive__siglum',
                                                                                                          'source__shelfmark')]
-        return "".join(sources)
+        return mark_safe("".join(sources))
     appears_in.short_description = "Appears in"
-    appears_in.allow_tags = True
 
     def merge_compositions_action(self, request, queryset):
         if 'do_action' in request.POST:
