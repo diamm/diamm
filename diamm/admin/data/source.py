@@ -4,7 +4,8 @@ from django.db import models
 from django.db.models import Q
 from django.db.models.signals import post_delete, post_save
 from django.forms import TextInput, Textarea
-from django.conf.urls import url
+from django.urls import path
+from django.utils.safestring import mark_safe
 from django.conf import settings
 from django.shortcuts import render, redirect
 from django.utils.translation import ugettext_lazy as _
@@ -97,8 +98,7 @@ class ItemInline(DynamicRawIDMixin, admin.TabularInline):
 
     def link_id_field(self, obj):
         change_url = reverse('admin:diamm_data_item_change', args=(obj.pk,))
-        return '<a href="{0}">{1}</a>'.format(change_url, obj.pk)
-    link_id_field.allow_tags = True
+        return mark_safe('<a href="{0}">{1}</a>'.format(change_url, obj.pk))
 
 
 class InventoryFilter(admin.SimpleListFilter):
@@ -144,6 +144,15 @@ class ArchiveKeyFilter(InputFilter):
             return queryset.filter(archive__id__exact=self.value())
 
 
+class SourceKeyFilter(InputFilter):
+    parameter_name = "source"
+    title = "Source Key"
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(id__exact=self.value())
+
+
 @admin.register(Source)
 class SourceAdmin(DynamicRawIDMixin, VersionAdmin):
     save_on_top = True
@@ -163,6 +172,7 @@ class SourceAdmin(DynamicRawIDMixin, VersionAdmin):
                BibliographyInline, SourceRelationshipInline, SourceCopyistInline,
                SourceProvenanceInline, PagesInline, ItemInline)
     list_filter = (
+        SourceKeyFilter,
         ArchiveKeyFilter,
         CountryListFilter,
         InventoryFilter
@@ -226,9 +236,9 @@ class SourceAdmin(DynamicRawIDMixin, VersionAdmin):
     def get_urls(self):
         urls = super(SourceAdmin, self).get_urls()
         my_urls = [
-            url(r'^(?P<pk>[0-9]+)/copy_inventory/$',
-                self.admin_site.admin_view(self.copy_inventory_view),
-                name="copy-inventory")
+            path('<int:pk>/copy_inventory/',
+                 self.admin_site.admin_view(self.copy_inventory_view),
+                 name="copy-inventory")
         ]
 
         return my_urls + urls
@@ -237,11 +247,9 @@ class SourceAdmin(DynamicRawIDMixin, VersionAdmin):
         # items = source.
         inventory = source.inventory.all()
         # Delete any items on the target source, and clean it up in Solr.
-        print("Deleting any existing objects")
         target.inventory.all().delete()
         self.__delete_items_from_solr(target)
 
-        print("Indexing items")
         for item in inventory:
             item.pk = None
             item.source = target
@@ -249,7 +257,6 @@ class SourceAdmin(DynamicRawIDMixin, VersionAdmin):
             item.folio_end = None
             item.save()
             item.pages.clear()
-            print("Item {0} saved".format(item.pk))
 
         target.save()
 

@@ -195,7 +195,7 @@ class App extends React.Component
                                         />
                                         <ExternalMenuLink
                                             active={ false }
-                                            route={ `${SERVER_BASE_URL}admin/diamm_data/source/${this.props.source.pk}` }
+                                            route={ `${SERVER_BASE_URL}/admin/diamm_data/source/${this.props.source.pk}` }
                                             title="Edit"
                                             show={ this.props.userIsStaff }
                                         />
