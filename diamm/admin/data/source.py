@@ -144,6 +144,15 @@ class ArchiveKeyFilter(InputFilter):
             return queryset.filter(archive__id__exact=self.value())
 
 
+class SourceKeyFilter(InputFilter):
+    parameter_name = "source"
+    title = "Source Key"
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(id__exact=self.value())
+
+
 @admin.register(Source)
 class SourceAdmin(DynamicRawIDMixin, VersionAdmin):
     save_on_top = True
@@ -163,6 +172,7 @@ class SourceAdmin(DynamicRawIDMixin, VersionAdmin):
                BibliographyInline, SourceRelationshipInline, SourceCopyistInline,
                SourceProvenanceInline, PagesInline, ItemInline)
     list_filter = (
+        SourceKeyFilter,
         ArchiveKeyFilter,
         CountryListFilter,
         InventoryFilter
