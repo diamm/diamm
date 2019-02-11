@@ -189,6 +189,9 @@ class Command(BaseCommand):
         self._index_item_bibliographies()
         self._index_composers_inventory()
 
+        print("Committing changes")
+        c = requests.get('http://localhost:8983/solr/diamm_ingest/update/?commit=true')
+        print("Done committing. Status code: {0}".format(c.status_code))
         print("Swapping ingest and live cores")
         r = requests.get('http://localhost:8983/solr/admin/cores?action=SWAP&core=diamm&other=diamm_ingest')
         print("Done swapping. Status code: {0}".format(r.status_code))
