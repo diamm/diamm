@@ -96,7 +96,9 @@ class ItemAdmin(DynamicRawIDMixin, VersionAdmin):
     form = ItemAdminForm
     list_display = ('get_source', 'get_composition', 'get_composers',
                     'folio_start', 'folio_end', 'source_order', 'pages_attached')
-    list_editable = ('source_order',)
+    list_editable = ('source_order',
+                     'folio_start',
+                     'folio_end')
     list_filter = (
         SourceKeyFilter,
         CompositionKeyFilter,
