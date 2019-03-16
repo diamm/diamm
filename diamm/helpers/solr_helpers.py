@@ -1,5 +1,5 @@
 import logging
-from typing import Optional, Dict, Iterator, AnyStr
+from typing import Optional, Dict, Iterator
 
 import pysolr
 from django.conf import settings
@@ -19,6 +19,7 @@ def __solr_prepare(instances):
         the caller should wrap it in an array of length 1 before passing it in.
     """
     connection = pysolr.Solr(settings.SOLR['SERVER'])
+
     for instance in instances:
         fq = ["type:{0}".format(instance.__class__.__name__.lower()),
               "pk:{0}".format(instance.pk)]
@@ -26,6 +27,7 @@ def __solr_prepare(instances):
         if records.docs:
             for doc in records.docs:
                 connection.delete(id=doc['id'])
+                connection.commit()
 
     return connection
 
@@ -37,6 +39,7 @@ def solr_index(serializer, instance):
 
     # pysolr add takes a list of documents, so we wrap the instance in an array.
     connection.add([data])
+    connection.commit()
 
 
 def solr_index_many(serializer, instances):
@@ -44,6 +47,7 @@ def solr_index_many(serializer, instances):
     serialized = serializer(instances, many=True)
     data = serialized.data
     connection.add(data)
+    connection.commit()
 
 
 def solr_delete(instance):
