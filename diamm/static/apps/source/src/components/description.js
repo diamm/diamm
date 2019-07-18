@@ -35,6 +35,7 @@ class Description extends React.Component
                             <ImageStatus
                                 has_images={ this.props.has_images }
                                 public_images={ this.props.public_images }
+                                links={ this.props.links }
                             />
                             <SurfaceType surface_type={ this.props.surface_type } />
                             <NumberingSystemType numbering_system_type={ this.props.numbering_system_type } />
