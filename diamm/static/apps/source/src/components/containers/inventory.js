@@ -142,7 +142,7 @@ export const Foliation = ({folio_start, folio_end, show_quicklook}) =>
         <span>
             { folio_start }{ (folio_end && folio_start !== folio_end) ? `–${folio_end} ` : " " }
             { show_quicklook &&
-            <Link to={ {pathname: IMAGES_ROUTE, query: {p: folio_start}} }>
+            <Link to={{ pathname: IMAGES_ROUTE, search: `?p=${folio_start}` }}>
                 <span className="icon is-small"><i className="fa fa-file-text-o fa-border quicklook" /></span>
             </Link>}
         </span>
