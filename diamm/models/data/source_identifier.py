@@ -9,14 +9,16 @@ class SourceIdentifier(models.Model):
 
     RISM = 2
     CCM = 3
-    EARP = 4
+    OTHER = 4
     OLIM = 5
+    ALTN = 6
 
     IDENTIFIER_TYPES = (
         (RISM, 'RISM'),
         (CCM, 'CCM'),
-        (EARP, 'EARP'),
-        (OLIM, 'olim (Former shelfmark)')
+        (OTHER, 'Other catalogues/source'),
+        (OLIM, 'olim (Former shelfmark)'),
+        (ALTN, 'Alternative names')
     )
 
     identifier = models.CharField(max_length=255)
