@@ -47,6 +47,10 @@ class ItemSearchSerializer(serpy.Serializer):
     )
     composition_s = serpy.MethodField()
     composition_i = serpy.MethodField()
+    item_title_s = serpy.StrField(
+        attr="item_title",
+        required=False
+    )
     source_attribution_s = serpy.StrField(
         attr="source_attribution",
         required=False
