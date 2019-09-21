@@ -1,3 +1,5 @@
+from typing import Optional, Dict, List
+
 import serpy
 import pysolr
 from django.conf import settings
@@ -19,7 +21,7 @@ class StructureServiceSerializer(ContextDictSerializer):
         label="@id"
     )
 
-    def get_id(self, obj):
+    def get_id(self, obj) -> str:
         return reverse('source-item-detail',
                        kwargs={"source_id": obj['source_i'],
                                "item_id": obj['pk']},
@@ -37,24 +39,32 @@ class ServiceSerializer(ContextDictSerializer):
     type = StaticField(
         value="Item"
     )
-
+    source_attribution = serpy.StrField(
+        attr="source_attribution_s",
+        required=False
+    )
+    item_title = serpy.StrField(
+        attr="item_title_s",
+        required=False
+    )
     composers = serpy.MethodField()
     voices = serpy.MethodField()
     folios = serpy.MethodField()
     composition = serpy.MethodField()
     pages = serpy.MethodField()
 
-    def get_id(self, obj):
+    def get_id(self, obj) -> str:
         return reverse('source-item-detail',
                        kwargs={"source_id": obj['source_i'],
                                "item_id": obj['pk']},
                        request=self.context['request'])
 
-    def get_composers(self, obj):
+    def get_composers(self, obj) -> Optional[List]:
         if 'composers_ssni' not in obj:
-            return []
+            return None
 
         composers = []
+
         for composer in obj['composers_ssni']:
             c = {}
             name, pk, uncertain = composer.split("|")
@@ -74,7 +84,7 @@ class ServiceSerializer(ContextDictSerializer):
             composers.append(c)
         return composers
 
-    def get_voices(self, obj):
+    def get_voices(self, obj) -> Optional[List]:
         id_list = ",".join([str(x) for x in obj['voices_ii']])
         connection = pysolr.Solr(settings.SOLR['SERVER'])
         fq = ["type:voice", "{!terms f=pk}"+id_list]
@@ -82,7 +92,7 @@ class ServiceSerializer(ContextDictSerializer):
         voice_list = connection.search("*:*", fq=fq, sort=sort, rows=100)
 
         if voice_list.hits == 0:
-            return []
+            return None
 
         voices = []
         for voice in voice_list.docs:
@@ -100,11 +110,11 @@ class ServiceSerializer(ContextDictSerializer):
 
         return voices
 
-    def get_folios(self, obj):
-        folios = {}
+    def get_folios(self, obj) -> Dict:
+        f = {}
 
         if 'folio_start_s' in obj:
-            folios['start'] = {
+            f['start'] = {
                 'label': obj['folio_start_s'],
                 '@id': reverse('source-canvas-detail',
                                kwargs={"source_id": obj['source_i'],
@@ -113,7 +123,7 @@ class ServiceSerializer(ContextDictSerializer):
             }
 
         if 'folio_end_s' in obj:
-            folios['end'] = {
+            f['end'] = {
                 'label': obj['folio_end_s'],
                 '@id': reverse('source-canvas-detail',
                                kwargs={'source_id': obj['source_i'],
@@ -121,31 +131,34 @@ class ServiceSerializer(ContextDictSerializer):
                                request=self.context['request'])
             }
 
-        return folios
+        return f
 
-    def get_composition(self, obj):
-        if 'composition_i' in obj:
-            composition = {
-                'title': obj['composition_s'],
-                'genres': obj.get('genres_ss'),
-                '@id': reverse('composition-detail',
-                                kwargs={'pk': obj['composition_i']},
-                                request=self.context['request'])
-            }
-            return composition
-        return None
+    def get_composition(self, obj) -> Optional[Dict]:
+        if 'composition_i' not in obj:
+            return None
 
-    def get_pages(self, obj):
-        if 'pages_ssni' in obj:
-            pages = []
-            for page in obj['pages_ssni']:
-                pk, label = page.split("|")
-                pages.append({
-                    'label': label,
-                    '@id': reverse('source-canvas-detail',
-                                   kwargs={'source_id': obj['source_i'],
-                                           "page_id": pk},
-                                   request=self.context['request'])
-                })
-            return pages
-        return None
+        composition = {
+            'title': obj['composition_s'],
+            'genres': obj.get('genres_ss'),
+            '@id': reverse('composition-detail',
+                           kwargs={'pk': obj['composition_i']},
+                           request=self.context['request'])
+        }
+
+        return composition
+
+    def get_pages(self, obj) -> Optional[List]:
+        if 'pages_ssni' not in obj:
+            return None
+
+        pages = []
+        for page in obj['pages_ssni']:
+            pk, label = page.split("|")
+            pages.append({
+                'label': label,
+                '@id': reverse('source-canvas-detail',
+                               kwargs={'source_id': obj['source_i'],
+                                       "page_id": pk},
+                               request=self.context['request'])
+            })
+        return pages

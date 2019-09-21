@@ -115,6 +115,9 @@ const linkComposerName = (composer) =>
 
 export const Composers = ({composers}) =>
 {
+    if (!composers)
+        return null;
+
     return (
         <div>
             { composers.map( (composer, idx) => {
