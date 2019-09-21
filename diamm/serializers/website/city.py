@@ -82,7 +82,7 @@ class CityDetailSerializer(ContextSerializer):
                                       context=self.context).data
 
     def get_provenance(self, obj):
-        return CityProvenanceSerializer(obj.city_sources.all(),
+        return CityProvenanceSerializer(obj.city_sources.all().select_related('source__archive').order_by('source__archive__name', 'source__sort_order'),
                                         many=True,
                                         context=self.context).data
 
