@@ -328,7 +328,7 @@ Dear colleague,
 A new correction report for "{record}" has been submitted by {name}:
 
 ---
-{report]
+{report}
 ---
     
 This report is available for review at {review_url}.
