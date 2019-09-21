@@ -325,7 +325,11 @@ diamm@music.ox.ac.uk
     "CORRECTION_ADMIN": """
 Dear colleague,
     
-A new correction report for "{record}" has been submitted by {name}.
+A new correction report for "{record}" has been submitted by {name}:
+
+---
+{report]
+---
     
 This report is available for review at {review_url}.
 
