@@ -1,3 +1,4 @@
+from typing import Optional
 from django.contrib import admin
 from diamm.models.site.problem_report import ProblemReport
 from diamm.models.data.person import Person
@@ -5,6 +6,7 @@ from diamm.models.data.source import Source
 from diamm.models.data.organization import Organization
 from diamm.models.data.composition import Composition
 from dynamic_raw_id.admin import DynamicRawIDMixin
+from rest_framework.reverse import reverse
 from reversion.admin import VersionAdmin
 
 
@@ -30,6 +32,12 @@ class ProblemReportAdmin(DynamicRawIDMixin, VersionAdmin):
               'credit',
               'contributor')
     readonly_fields = ('content_type', 'object_id', 'get_entity',)
+
+    def view_on_site(self, obj) -> Optional[str]:
+        if not isinstance(obj.record, Source):
+            return None
+
+        return reverse('source-detail', kwargs={"pk": obj.record.pk})
 
     def get_contributor(self, obj):
         if obj.contributor and obj.contributor.last_name and obj.contributor.first_name:

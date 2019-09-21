@@ -99,6 +99,9 @@ class SourceKeyFilter(InputFilter):
 def refetch_iiif_info(modeladmin, request, queryset):
     for img in queryset:
         location = img.location
+        if not location:
+            continue
+
         url = urljoin(location + "/", "info.json")
 
         r = requests.get(url, headers={
