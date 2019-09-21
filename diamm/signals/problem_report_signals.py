@@ -43,9 +43,10 @@ def send_admin_notification_email(sender, instance, created, **kwargs):
 
     reported_entity = instance.record
     reporter = instance.contributor
-
+    report = instance.note
     name = reporter.full_name
     record = reported_entity.display_name
+
     if settings.DEBUG:
         recipients = [settings.ADMIN_EMAIL]
     else:
@@ -55,11 +56,12 @@ def send_admin_notification_email(sender, instance, created, **kwargs):
     email_message = settings.MAIL["CORRECTION_ADMIN"].format(
         name=name,
         record=record,
+        report=report,
         review_url="https://{0}/admin/diamm_site/problemreport/{1}/".format(settings.HOSTNAME, instance.pk)
     )
 
     send_mail(
-        "A new correction report is available",
+        "A new correction report is available from {0}".format(name),
         email_message,
         FRIENDLY_FROM,
         recipients,

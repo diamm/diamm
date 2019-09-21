@@ -66,6 +66,7 @@ class Details extends React.Component
             voices,
             num_voices,
             bibliography,
+            item_title,
             source_attribution,
             composition,
             composers,

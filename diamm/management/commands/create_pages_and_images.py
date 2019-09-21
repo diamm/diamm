@@ -1,21 +1,23 @@
 """
 Used to create Page and Image entries for new sources.
 """
-import os
-import sys
 import glob
-import re
 import logging
-from django.core.management import BaseCommand
-from django.conf import settings
-import blessings
-import requests
+import os
+import re
+import sys
 import ujson
 from urllib.parse import urljoin
-from diamm.models.data.source import Source
-from diamm.models.data.page import Page
+
+import blessings
+import requests
+from django.conf import settings
+from django.core.management import BaseCommand
+
 from diamm.models.data.image import Image
 from diamm.models.data.image_type import ImageType
+from diamm.models.data.page import Page
+from diamm.models.data.source import Source
 
 term = blessings.Terminal()
 logging.basicConfig(format="[%(asctime)s] [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)",
@@ -109,7 +111,10 @@ NON_FOLIATED_NAMES = {
 TYPE_MAP = {
     None: ImageType.objects.get(pk=ImageType.PRIMARY),
     "_w": ImageType.objects.get(pk=ImageType.WATERMARK),
-    "_a": ImageType.objects.get(pk=ImageType.ALT_SHOT)
+    "_a": ImageType.objects.get(pk=ImageType.ALT_SHOT),
+    "_a2": ImageType.objects.get(pk=ImageType.ALT_SHOT),
+    "_u": ImageType.objects.get(pk=ImageType.COLOUR_UV),
+    "_u2": ImageType.objects.get(pk=ImageType.COLOUR_UV)
 }
 
 

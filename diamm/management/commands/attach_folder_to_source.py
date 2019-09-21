@@ -1,16 +1,18 @@
-from django.core.management.base import BaseCommand
-from django.conf import settings
 import csv
-import os
 import glob
-import sys
-from diamm.models.data.source import Source
-from diamm.models.data.image import Image
-import blessings
+import os
 import re
-import requests
-from urllib.parse import urljoin
+import sys
 import ujson
+from urllib.parse import urljoin
+
+import blessings
+import requests
+from django.conf import settings
+from django.core.management.base import BaseCommand
+
+from diamm.models.data.image import Image
+from diamm.models.data.source import Source
 
 term = blessings.Terminal()
 

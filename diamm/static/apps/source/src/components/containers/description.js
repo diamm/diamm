@@ -9,11 +9,23 @@ import { CCM_NOTE_TYPE } from "../../constants";
 * to help simplify the Description class.
 * */
 
-export const ImageStatus = ({has_images, public_images}) =>
+export const ImageStatus = ({has_images, public_images, links}) =>
 {
     // if the images are available, we don't need to show the message
     if (public_images === true)
         return false;
+
+    let hasExternalImageLink = false;
+
+    if (links !== null)
+    {
+        links.map((lnk, idx ) => {
+            if (lnk.hasOwnProperty("url_type") && lnk.url_type === "External Images")
+            {
+                hasExternalImageLink = true;
+            }
+        });
+    }
 
     if (has_images === false && public_images === false)
     {
@@ -22,6 +34,7 @@ export const ImageStatus = ({has_images, public_images}) =>
                 <th>Image Availability</th>
                 <td>
                     DIAMM does not have images of this source.
+                    { hasExternalImageLink ? `Please refer to the external links below for image availability.` : ``}
                 </td>
             </tr>
         );
@@ -33,6 +46,7 @@ export const ImageStatus = ({has_images, public_images}) =>
                 <th>Image Availability</th>
                 <td>
                     DIAMM has images of this manuscript, but does not yet have permission to put them online.
+                    { hasExternalImageLink ? `Please refer to the external links below for image availability.` : ``}
                 </td>
             </tr>
         );
