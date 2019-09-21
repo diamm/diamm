@@ -50,9 +50,9 @@ class Command(BaseCommand):
                 name = getattr(obj, name_field)
 
             self.stdout.write('{0} {1}: {2} ({3})'.format(term.blue('Indexing'),
-                                                    term.green(obj.__class__.__name__),
-                                                    term.yellow(name),
-                                                    term.yellow(str(obj.pk))))
+                                                          term.green(obj.__class__.__name__),
+                                                          term.yellow(name),
+                                                          term.yellow(str(obj.pk))))
             data = serializer(obj).data
             docs.append(data)
 
