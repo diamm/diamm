@@ -61,7 +61,7 @@ from diamm.sitemaps.archive_sitemap import ArchiveSitemap
 handler404 = jinja_views.PageNotFound.as_view()
 handler403 = jinja_views.PermissionDenied.as_view()
 handler400 = jinja_views.ErrorView.as_view()
-handler500 = jinja_views.ServerError.as_view()
+# handler500 = jinja_views.ServerError.as_view()
 
 
 sitemaps = {
