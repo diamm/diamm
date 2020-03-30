@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, redirect
 from rest_framework import generics
 from rest_framework import status
 from rest_framework import response
-from drf_ujson.renderers import UJSONRenderer
+from diamm.renderers.ujson_renderer import UJSONRenderer
 from diamm.models.data.source import Source
 from diamm.models.data.item import Item
 from diamm.serializers.website.source import SourceDetailSerializer
