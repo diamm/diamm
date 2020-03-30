@@ -16,3 +16,5 @@ env
 /diamm/static/apps/source/dist
 /diamm/static/apps/search/dist
 /solr/core.properties
+.venv
+diamm.egg-info
