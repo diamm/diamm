@@ -32,6 +32,7 @@ class ContentPage(Page):
             return os.path.relpath(self.tmpl, os.path.join(settings.BASE_DIR, 'diamm', 'templates'))
         return "website/cms/content_page.jinja2"
 
+
 ContentPage.content_panels = [
     FieldPanel('title', classname="full title"),
     FieldPanel('body', classname="full"),

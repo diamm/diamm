@@ -1,6 +1,5 @@
 from typing import List, Optional, Dict
 
-import pysolr
 import serpy
 from django.conf import settings
 from rest_framework.reverse import reverse

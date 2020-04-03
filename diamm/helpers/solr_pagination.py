@@ -84,20 +84,20 @@ class SolrPaginator:
         return settings.SOLR['PAGE_SIZE']
 
     @property
-    def count(self):
+    def count(self) -> int:
         if not self.result:
             return 0
 
         return int(self.result.hits)
 
     @property
-    def num_pages(self):
+    def num_pages(self) -> int:
         if self.count == 0:
             return 0
         return int(math.ceil(float(self.count) / float(self.page_size)))
 
     @property
-    def page_range(self):
+    def page_range(self) -> List:
         if self.count == 0:
             return []
         return list(range(1, self.num_pages + 1))
@@ -134,7 +134,7 @@ class SolrPage:
         self.number = page_num
         self.paginator = paginator
 
-    def get_paginated_response(self):
+    def get_paginated_response(self) -> Dict:
         """
             Returns a full response object
         """
@@ -216,45 +216,45 @@ class SolrPage:
         ])
 
     @property
-    def next_url(self):
+    def next_url(self) -> Optional[str]:
         if not self.has_next:
             return None
-        url = self.paginator.request.build_absolute_uri()
+        url: str = self.paginator.request.build_absolute_uri()
         page_number = self.next_page_number
         return replace_query_param(url, 'page', page_number)
 
     @property
-    def previous_url(self):
+    def previous_url(self) -> Optional[str]:
         if not self.has_previous:
             return None
-        url = self.paginator.request.build_absolute_uri()
+        url: str = self.paginator.request.build_absolute_uri()
         page_number = self.previous_page_number
         return replace_query_param(url, 'page', page_number)
 
     @property
-    def has_next(self):
+    def has_next(self) -> int:
         return self.number < self.paginator.num_pages
 
     @property
-    def has_previous(self):
+    def has_previous(self) -> int:
         return self.number > 1
 
     @property
-    def has_other_pages(self):
+    def has_other_pages(self) -> int:
         return self.paginator.num_pages > 1
 
     @property
-    def start_index(self):
+    def start_index(self) -> int:
         return (self.number - 1) * self.paginator.page_size
 
     @property
-    def end_index(self):
+    def end_index(self) -> int:
         return self.start_index + len(self.result.docs) - 1
 
     @property
-    def next_page_number(self):
+    def next_page_number(self) -> int:
         return self.number + 1
 
     @property
-    def previous_page_number(self):
+    def previous_page_number(self) -> int:
         return self.number - 1

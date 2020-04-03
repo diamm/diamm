@@ -1,3 +1,4 @@
+from typing import Optional, List
 import serpy
 from rest_framework.reverse import reverse
 from diamm.serializers.serializers import ContextSerializer
@@ -16,17 +17,17 @@ class SetSourceSerializer(ContextSerializer):
     )
     cover = serpy.MethodField()
 
-    def get_url(self, obj):
+    def get_url(self, obj) -> str:
         return reverse('source-detail',
                        kwargs={"pk": obj.pk},
                        request=self.context['request'])
 
-    def get_has_images(self, obj):
+    def get_has_images(self, obj) -> bool:
         if obj.pages.count() > 0:
             return True
         return False
 
-    def get_cover(self, obj):
+    def get_cover(self, obj) -> Optional[str]:
         try:
             cover_obj = obj.cover
         except AttributeError:
@@ -52,12 +53,12 @@ class SetDetailSerializer(ContextSerializer):
         required=False
     )
 
-    def get_url(self, obj):
+    def get_url(self, obj) -> str:
         return reverse('set-detail',
                        kwargs={"pk": obj.pk},
                        request=self.context['request'])
 
-    def get_sources(self, obj):
+    def get_sources(self, obj) -> Optional[List]:
         if obj.sources:
             return SetSourceSerializer(obj.sources.all(),
                                        many=True,

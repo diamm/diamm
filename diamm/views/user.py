@@ -38,7 +38,7 @@ class ProfileEditView(FormView):
 
         return response
 
-    def get_initial(self):
+    def get_initial(self) -> Dict:
         user = self.request.user
         initial_data = {
             'email': user.email,

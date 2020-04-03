@@ -1,3 +1,4 @@
+from typing import Dict
 import serpy
 from rest_framework.reverse import reverse
 from diamm.serializers.serializers import ContextDictSerializer
@@ -26,12 +27,12 @@ class ImageResourceSerializer(ContextDictSerializer):
     )
     service = serpy.MethodField()
 
-    def get_id(self, obj):
+    def get_id(self, obj: Dict) -> str:
         return reverse('image-serve-info',
                        kwargs={"pk": obj['pk']},
                        request=self.context['request'])
 
-    def get_service(self, obj):
+    def get_service(self, obj: Dict) -> Dict:
         proxied_image_url = reverse('image-serve-info',
                                     kwargs={"pk": obj['pk']},
                                     request=self.context['request'])
@@ -53,7 +54,7 @@ class ImageSerializer(ContextDictSerializer):
     on = serpy.MethodField()
     resource = serpy.MethodField()
 
-    def get_on(self, obj):
+    def get_on(self, obj: Dict) -> str:
         page_id = self.context["page_id"]
         source_id = self.context["source_id"]
         request = self.context["request"]
@@ -63,11 +64,11 @@ class ImageSerializer(ContextDictSerializer):
             request=request
         )
 
-    def get_resource(self, obj):
+    def get_resource(self, obj: Dict) -> Dict:
         doclen = len(obj['_childDocuments_'])
 
         if doclen == 0:
-            return []
+            return {}
 
         if doclen == 1:
             return ImageResourceSerializer(obj['_childDocuments_'][0],
