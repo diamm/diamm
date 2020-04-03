@@ -5,7 +5,7 @@ import requests
 import pysolr
 
 
-def image_serve(request, pk, region=None, size=None, rotation=None, *args, **kwargs):
+def image_serve(request, pk, region=None, size=None, rotation=None, *args, **kwargs) -> HttpResponse:
     """
         This serves as a consistent proxy for all image locations
         in DIAMM. The reason for this is twofold:

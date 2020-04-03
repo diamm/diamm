@@ -23,7 +23,7 @@ class SourceDetail(generics.RetrieveAPIView):
         queryset = queryset.select_related('archive__city__parent')
         return queryset
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs) -> response.Response:
         # If we're asking for the source detail with HTML, only return a limited amount
         # of information; the rest will get filled in when the JavaScript application loads
         # the JSON data.
@@ -42,7 +42,7 @@ class SourceDetail(generics.RetrieveAPIView):
 class SourceManifest(generics.GenericAPIView):
     renderer_classes = (UJSONRenderer,)
 
-    def get(self, request, pk, *args, **kwargs):
+    def get(self, request, pk, *args, **kwargs) -> response.Response:
         conn = pysolr.Solr(settings.SOLR['SERVER'])
         res = conn.search("*:*",
                           fq=["type:source", "pk:{0}".format(pk), 'public_images_b:true'],
@@ -63,7 +63,7 @@ class SourceCanvasDetail(generics.GenericAPIView):
     """
     renderer_classes = (UJSONRenderer,)
 
-    def get(self, request, source_id, page_id):
+    def get(self, request, source_id, page_id) -> response.Response:
         page_fields = [
             "id",
             "pk",
@@ -88,7 +88,7 @@ class SourceRangeDetail(generics.GenericAPIView):
 class SourceItemDetail(generics.GenericAPIView):
     renderer_classes = (UJSONRenderer,)
 
-    def get(self, request, source_id, item_id):
+    def get(self, request, source_id, item_id) -> response.Response:
         conn = pysolr.Solr(settings.SOLR['SERVER'])
 
         # The pages_ii:[* TO *] query ensures we retrieve only
