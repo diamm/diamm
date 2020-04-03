@@ -1,10 +1,11 @@
+from typing import Dict
 from django.views.generic.edit import FormView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from rest_framework import views
-from rest_framework import renderers
 from rest_framework.response import Response
 from diamm.renderers.html_renderer import HTMLRenderer
+from diamm.renderers.ujson_renderer import UJSONRenderer
 from diamm.serializers.website.user import UserSerializer
 from diamm.forms.account_edit_form import AccountEditForm
 
@@ -12,9 +13,9 @@ from diamm.forms.account_edit_form import AccountEditForm
 @method_decorator(login_required, name='dispatch')
 class ProfileView(views.APIView):
     template_name = "website/user/profile.jinja2"
-    renderer_classes = (HTMLRenderer, renderers.JSONRenderer)
+    renderer_classes = (HTMLRenderer, UJSONRenderer)
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs) -> Response:
         user = request.user
         data = UserSerializer(user, context={"request": request}).data
         return Response(data)

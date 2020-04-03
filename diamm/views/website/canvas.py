@@ -1,9 +1,8 @@
 from rest_framework import generics
 from rest_framework import response
 from rest_framework import status
-from rest_framework.reverse import reverse
 from django.conf import settings
-from drf_ujson.renderers import UJSONRenderer
+from diamm.renderers.ujson_renderer import UJSONRenderer
 import pysolr
 
 

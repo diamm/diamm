@@ -3,7 +3,7 @@ from rest_framework import generics
 from rest_framework import permissions
 from rest_framework import response
 from rest_framework import status
-from rest_framework import renderers
+from diamm.renderers.ujson_renderer import UJSONRenderer
 from diamm.models.site.problem_report import ProblemReport
 
 
@@ -12,7 +12,7 @@ from diamm.models.site.problem_report import ProblemReport
 # model for further clarification, and the 'contributors' view for the corresponding
 # functionality for listing contributions.
 class CorrectionCreate(generics.CreateAPIView):
-    renderer_classes = (renderers.JSONRenderer,)
+    renderer_classes = (UJSONRenderer,)
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     # Create a new problem report for an object. The body of the post must contain the following parameters:
@@ -22,7 +22,7 @@ class CorrectionCreate(generics.CreateAPIView):
     #
     # The user filing the problem report will be filed as the user authenticated to send the request.
     #
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs) -> response.Response:
         data = self.request.data
         objtype = data.get('objtype')
         objpk = data.get('objpk')
