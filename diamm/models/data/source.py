@@ -77,17 +77,17 @@ class Source(models.Model):
 
     sort_order = models.IntegerField(blank=True, null=True)
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self.name:
             return "{0} ({1})".format(self.shelfmark, self.name)
         return "{0}".format(self.shelfmark)
 
     @property
-    def display_name(self):
+    def display_name(self) -> str:
         return "{0} {1}".format(self.archive.siglum, self.__str__())
 
     @property
-    def display_summary(self):
+    def display_summary(self) -> str:
         date_stmt = self.date_statement if self.date_statement else ""
         summary = self.display_name if self.display_name else ""
 
@@ -239,7 +239,7 @@ class Source(models.Model):
               'voices_ii',
               'pk']
         sort = "composer_ans asc"
-        # Set rows to an extremely high number so we get all of the item records in one go.
+
         connection.search("*:*", fq=fq, fl=fl, sort=sort)
         return list(connection.results)
 
