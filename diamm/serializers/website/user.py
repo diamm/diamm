@@ -1,8 +1,10 @@
-from typing import Dict, List
+from typing import Dict, List, Optional
 import serpy
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from rest_framework.reverse import reverse
 from diamm.serializers import serializers
+from diamm.models.data.source import Source
 
 
 class UserContributionsSerializer(serializers.ContextSerializer):
@@ -29,9 +31,13 @@ class UserCommentSerializer(serializers.ContextSerializer):
     attachment_type = serpy.MethodField()
     attachment_url = serpy.MethodField()
     created = serpy.MethodField()
-    attachment = serpy.StrField(
-        attr='attachment.display_name'
-    )
+    attachment = serpy.MethodField()
+
+    def get_attachment(self, obj) -> Optional[str]:
+        if isinstance(obj.attachment, Source):
+            return obj.attachment.display_name
+
+        return None
 
     def get_attachment_type(self, obj):
         return obj.attachment._meta.model_name
@@ -75,7 +81,8 @@ class UserSerializer(serializers.ContextSerializer):
         )
 
     def get_comments(self, obj) -> List:
-        return UserCommentSerializer(obj.commentaries.order_by('created').all()[:10],
+        source_type = ContentType.objects.get(app_label="diamm_data", model='source')
+        return UserCommentSerializer(obj.commentaries.order_by('created').filter(content_type=source_type.id)[:10],
                                      many=True,
                                      context={"request": self.context['request']}).data
 
