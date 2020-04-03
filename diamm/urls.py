@@ -161,5 +161,6 @@ urlpatterns = [
     path('', include(wagtail_urls)),
 ]
 if settings.DEBUG:
+    urlpatterns += static("/static/", document_root=settings.STATIC_ROOT)
     urlpatterns += static("/media/", document_root=settings.MEDIA_ROOT)
 
