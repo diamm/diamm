@@ -1,5 +1,6 @@
 import serpy
 import uuid
+from diamm.models.data.item_note import ItemNote
 
 
 class ItemNotesSearchSerializer(serpy.Serializer):
@@ -173,4 +174,4 @@ class ItemSearchSerializer(serpy.Serializer):
         return []
 
     def get__childDocuments_(self, obj):
-        return ItemNotesSearchSerializer(obj.notes.all(), many=True).data
+        return ItemNotesSearchSerializer(obj.notes.exclude(type=ItemNote.CONCORDANCES), many=True).data
