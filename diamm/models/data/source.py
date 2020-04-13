@@ -1,3 +1,4 @@
+from typing import List
 from django.db import models
 from django.conf import settings
 import pysolr
@@ -245,26 +246,17 @@ class Source(models.Model):
 
     @property
     def inventory_by_composer(self):
-        connection = pysolr.Solr(settings.SOLR['SERVER'])
-        fq = ["type:composerinventory",
-              "source_i:{0}".format(self.pk)]
-        gp = {
-            "group": "true",
-            "group.field": "composer_s",
-            "group.limit": "10000",
-            "group.sort": "composition_s asc"
-        }
-        sort = "composer_s asc"
+        connection = SolrManager(settings.SOLR['SERVER'])
 
-        res = connection.search("*:*",
-                                fq=fq,
-                                sort=sort,
-                                **gp)
+        fq: List = ["type:composerinventory",
+                    "source_i:{0}".format(self.pk)]
+        sort: str = "composer_s asc"
 
-        expanded = res.grouped['composer_s']['groups']
+        connection.grouped_search("composer_s", "composition_s asc", "*:*", fq=fq, sort=sort)
+        groups = connection.grouped_results
+
         reslist = []
-
-        for doc in expanded:
+        for doc in groups:
             composer = doc['groupValue']
             inventory = doc['doclist']['docs']
 
