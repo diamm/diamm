@@ -89,6 +89,9 @@ class SourceSearchSerializer(serpy.Serializer):
     composers_ss = serpy.MethodField()
     cover_image_i = serpy.MethodField()
     public_images_b = serpy.MethodField()
+    open_images_b = serpy.BoolField(
+        attr="open_images"
+    )
     external_images_b = serpy.BoolField(
         attr="has_external_images"
     )

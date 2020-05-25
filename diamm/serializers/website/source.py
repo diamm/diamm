@@ -492,6 +492,7 @@ class SourceDetailSerializer(ContextSerializer):
     )
     inventory_provided = serpy.BoolField()
     public_images = serpy.BoolField()
+    open_images = serpy.BoolField()
     numbering_system_type = serpy.StrField(
         attr="numbering_system_type"
     )

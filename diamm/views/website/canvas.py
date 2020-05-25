@@ -45,6 +45,4 @@ class CanvasData(generics.GenericAPIView):
         if not item_res.hits > 0:
             return response.Response([])
 
-        annotation_list = []
-
         return response.Response({})

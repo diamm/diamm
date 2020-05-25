@@ -155,7 +155,7 @@ class App extends React.Component
                                         route={ IMAGES_ROUTE }
                                         title="Images"
                                         show={
-                                            this.props.source.public_images && this.props.source.has_images
+                                            this.props.source.open_images || (this.props.source.public_images && this.props.source.has_images)
                                         }
                                     />
                                     <MenuLink

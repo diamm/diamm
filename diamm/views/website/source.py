@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404, redirect
 from rest_framework import generics
 from rest_framework import status
 from rest_framework import response
+from rest_framework import permissions
 from diamm.renderers.ujson_renderer import UJSONRenderer
 from diamm.models.data.source import Source
 from diamm.models.data.item import Item
@@ -41,6 +42,7 @@ class SourceDetail(generics.RetrieveAPIView):
 
 class SourceManifest(generics.GenericAPIView):
     renderer_classes = (UJSONRenderer,)
+    permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request, pk, *args, **kwargs) -> response.Response:
         conn = pysolr.Solr(settings.SOLR['SERVER'])

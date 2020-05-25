@@ -70,7 +70,8 @@ class Source(models.Model):
     measurements = models.CharField(max_length=512, blank=True, null=True)
     numbering_system = models.IntegerField(choices=NUMBERING_SYSTEM, blank=True, null=True)
     public = models.BooleanField(default=False, help_text="Source Description is Public")
-    public_images = models.BooleanField(default=False, help_text="Source Images are Public")
+    public_images = models.BooleanField(default=False, help_text="Source Images are Public (with login)")
+    open_images = models.BooleanField(default=False, help_text="Source Images are available without login")
     notations = models.ManyToManyField("diamm_data.Notation", blank=True, related_name="sources")
 
     created = models.DateTimeField(auto_now_add=True)
