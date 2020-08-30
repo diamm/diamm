@@ -225,7 +225,7 @@ INTERFACE_FACETS = {
     "location": "location_s",
     "archive": "archive_s",
     "anonymous": "anonymous_b",
-    "source_date_range": "facet_date_range_ii"
+    # "source_date_range": "facet_date_range_ii"
 }
 
 SOLR = {
@@ -249,8 +249,7 @@ SOLR = {
         'composition'
     ],
     'FACET_FIELDS': [  # Use the interface facets to define public-facing facet fields.
-        '{!ex=type}type',
-        '{!ex=type}public_images_b',
+        '{!ex=type}type'
     ],
     'FACET_PIVOTS': [],
     'FACET_SORT': {   # custom sorting for certain facets (default is by count; index is alphanumeric)
