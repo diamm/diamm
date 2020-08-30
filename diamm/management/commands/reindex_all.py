@@ -51,7 +51,7 @@ class Command(BaseCommand):
 
             self.stdout.write('{0} {1}: {2} ({3})'.format(term.blue('Indexing'),
                                                           term.green(obj.__class__.__name__),
-                                                          term.yellow(name),
+                                                          term.yellow(name if name else "[No Shelfmark]"),
                                                           term.yellow(str(obj.pk))))
             data = serializer(obj).data
             docs.append(data)
@@ -78,81 +78,81 @@ class Command(BaseCommand):
     def _index_inventories(self):
         self.stdout.write(term.blue('Indexing Inventories'))
         self.solrconn.delete(q="type:item")
-        objs = Item.objects.all()
+        objs = Item.objects.all().order_by('pk')
         self._index(objs, '', ItemSearchSerializer)
 
     def _index_archives(self):
         self.stdout.write(term.blue('Indexing Archives'))
         self.solrconn.delete(q="type:archive")
-        objs = Archive.objects.all()
+        objs = Archive.objects.all().order_by('pk')
         self._index(objs, 'name', ArchiveSearchSerializer)
 
     def _index_people(self):
         self.stdout.write(term.blue("Indexing People"))
         self.solrconn.delete(q="type:person")
-        objs = Person.objects.all()
+        objs = Person.objects.all().order_by('pk')
         self._index(objs, 'full_name', PersonSearchSerializer)
 
     def _index_compositions(self):
         self.stdout.write(term.blue("Indexing Compositions"))
         self.solrconn.delete(q="type:composition")
-        objs = Composition.objects.all()
+        objs = Composition.objects.all().order_by('pk')
         self._index(objs, 'title', CompositionSearchSerializer)
 
     def _index_organizations(self):
         self.stdout.write(term.blue("Indexing Organizations"))
         self.solrconn.delete(q="type:organization")
-        objs = Organization.objects.all()
+        objs = Organization.objects.all().order_by('pk')
         self._index(objs, 'name', OrganizationSearchSerializer)
 
     def _index_bibliography(self):
         self.stdout.write(term.blue("Indexing Bibliography"))
         self.solrconn.delete(q="type:bibliography")
-        objs = Bibliography.objects.all()
+        objs = Bibliography.objects.all().order_by('pk')
         self._index(objs, 'title', BibliographySearchSerializer)
 
     def _index_pages(self):
         self.stdout.write(term.blue("Indexing Pages"))
         self.solrconn.delete(q="type:page")
         self.solrconn.delete(q="type:image")
-        objs = Page.objects.all()
+        objs = Page.objects.all().order_by('pk')
         self._index(objs, 'numeration', PageSearchSerializer)
 
     def _index_sets(self):
         self.stdout.write(term.blue("Indexing Sets"))
         self.solrconn.delete(q="type:set")
         self.solrconn.delete(q="type:child_source")
-        objs = Set.objects.all()
+        objs = Set.objects.all().order_by('pk')
         self._index(objs, 'cluster_shelfmark', SetSearchSerializer)
 
     def _index_source_provenance(self):
         self.stdout.write(term.blue("Indexing Source Provenance"))
         self.solrconn.delete(q="type:sourceprovenance")
-        objs = SourceProvenance.objects.all()
+        objs = SourceProvenance.objects.all().order_by('pk')
         self._index(objs, '', SourceProvenanceSearchSerializer)
 
     def _index_source_relationship(self):
         self.stdout.write(term.blue("Indexing Source Relationships"))
         self.solrconn.delete(q="type:sourcerelationship")
-        objs = SourceRelationship.objects.all()
+        objs = SourceRelationship.objects.all().order_by('pk')
         self._index(objs, '', SourceRelationshipSerializer)
 
     def _index_source_copyists(self):
         self.stdout.write(term.blue("Indexing Source Copyists"))
         self.solrconn.delete(q="type:sourcecopyist")
-        objs = SourceCopyist.objects.all()
+        objs = SourceCopyist.objects.all().order_by('pk')
         self._index(objs, '', SourceCopyistSearchSerializer)
 
     def _index_item_bibliographies(self):
         self.stdout.write(term.blue("Indexing Item Bibliographies"))
         self.solrconn.delete(q="type:itembibliography")
-        objs = ItemBibliography.objects.all()
+        objs = ItemBibliography.objects.all().order_by('pk')
         self._index(objs, "", ItemBibliographySearchSerializer)
 
     def _index_voices(self):
         self.stdout.write(term.blue("Indexing voices"))
         self.solrconn.delete(q="type:voice")
-        objs = Voice.objects.all()
+        objs = Voice.objects.all().order_by('pk')
         self._index(objs, "", VoiceSearchSerializer)
 
     def _index_composers_inventory(self):
