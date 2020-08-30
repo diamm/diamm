@@ -1,3 +1,4 @@
+from typing import List
 import serpy
 from diamm.models.data.person_note import PersonNote
 from diamm.serializers.serializers import ContextSerializer
@@ -36,18 +37,19 @@ class PersonSearchSerializer(ContextSerializer):
     variant_names_ss = serpy.MethodField()
     compositions_ss = serpy.MethodField()
 
-    def get_role_ss(self, obj):
-        return [role.role for role in obj.roles.all()]
+    def get_role_ss(self, obj) -> List:
+        return [role.role.name for role in obj.roles.all()]
 
-    def get_variant_names_ss(self, obj):
+    def get_variant_names_ss(self, obj) -> List:
         vnames = []
         for n in obj.notes.filter(type=PersonNote.VARIANT_NAME_NOTE):
             vnames = vnames + [o.strip() for o in n.note.split(";")]
+
         return vnames
 
-    def get_type(self, obj):
+    def get_type(self, obj) -> str:
         return obj.__class__.__name__.lower()
 
-    def get_compositions_ss(self, obj):
+    def get_compositions_ss(self, obj) -> List:
         return list(obj.compositions.all().values_list('composition__title', flat=True).distinct())
 
