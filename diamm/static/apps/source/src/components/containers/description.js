@@ -45,8 +45,8 @@ export const ImageStatus = ({has_images, public_images, links}) =>
             <tr>
                 <th>Image Availability</th>
                 <td>
-                    DIAMM has images of this manuscript, but does not yet have permission to put them online.
-                    { hasExternalImageLink ? `Please refer to the external links below for image availability.` : ``}
+                    DIAMM has images of this manuscript but does not yet have permission to put them online.
+                    { hasExternalImageLink ? ` Please refer to the external links below for image availability.` : ``}
                 </td>
             </tr>
         );
