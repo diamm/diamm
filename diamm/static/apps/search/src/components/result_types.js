@@ -5,7 +5,7 @@ export const SourceResultType = ({result}) =>
     return (
         <div className="search-result">
             <h3 className="title is-3">
-                <a href={ result.url }>{ result.display_name }</a>
+                <a href={ result.url }>{ result.heading }</a>
                 <span className="result-type"> Source { result.public_images && <i className="fa fa-file-image-o" />}</span>
             </h3>
             <div>
@@ -25,7 +25,7 @@ export const PersonResultType = ({result}) =>
     return (
         <div className="search-result">
             <h3 className="title is-3">
-                <a href={ result.url }>{ result.name }</a>
+                <a href={ result.url }>{ result.heading }</a>
                 <span className="result-type"> Person</span>
             </h3>
         </div>
@@ -37,7 +37,7 @@ export const OrganizationResultType = ({result}) =>
     return (
         <div className="search-result">
             <h3 className="title is-3">
-                <a href={ result.url }>{ result.name }</a>
+                <a href={ result.url }>{ result.heading }</a>
                 <span className="result-type"> Organization</span>
             </h3>
             <div>
@@ -53,7 +53,7 @@ export const CompositionResultType = ({result}) =>
     return (
         <div className="search-result">
             <h3>
-                <a href={ result.url }>{ result.title }</a>
+                <a href={ result.url }>{ result.heading }</a>
                 <span className="result-type"> Composition</span>
             </h3>
             <div>
@@ -70,7 +70,7 @@ export const ArchiveResultType = ({result}) =>
     return (
         <div className="search-result">
             <h3>
-                <a href={ result.url }>{ result.name } ({ result.siglum })</a>
+                <a href={ result.url }>{ result.heading } ({ result.siglum })</a>
                 <span className="result-type"> Archive</span>
             </h3>
             <div>
@@ -85,12 +85,12 @@ export const SetResultType = ({result}) =>
     return (
         <div className="search-result">
             <h3>
-                <a href={ result.url }>{ result.cluster_shelfmark }</a>
+                <a href={ result.url }>{ result.heading }</a>
                 <span className="result-type"> Set</span>
             </h3>
             <div>
-                <div>{ result.archives.join(", ") }</div>
-                <div>{ result.sources.length } source{ result.sources.length > 1 ? "s" : ""}</div>
+                <div>{ result.archives.join("; ") }</div>
+                <div>{ result.sources } source{ result.sources > 1 ? "s" : ""}</div>
             </div>
         </div>
     );
