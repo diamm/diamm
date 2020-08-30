@@ -18,6 +18,7 @@ class SolrResultObject(object):
 class SolrResultSerializer(ContextDictSerializer):
     pk = serpy.StrField(attr="pk")
     url = serpy.MethodField()
+    heading = serpy.MethodField()
     res_type = serpy.StrField(attr="type", label="type")
     display_name = serpy.StrField(attr="display_name_s", required=False)
     shelfmark = serpy.StrField(attr="shelfmark_s", required=False)
@@ -43,12 +44,29 @@ class SolrResultSerializer(ContextDictSerializer):
     country = serpy.StrField(attr="country_s", required=False)
     cluster_shelfmark = serpy.StrField(attr="cluster_shelfmark_s", required=False)
     archives = serpy.Field(attr="archives_ss", required=False)
-    sources = serpy.Field(attr="sources_ii", required=False)
+    sources = serpy.MethodField()
 
     def get_url(self, obj: Dict) -> str:
         return reverse("{0}-detail".format(obj.get('type')),
                        kwargs={'pk': obj.get("pk")},
                        request=self.context.get('request'))
+
+    def get_heading(self, obj: Dict) -> str:
+        if obj.get('display_name_s'):
+            return obj.get('display_name_s')
+        elif obj.get('name_s'):
+            return obj.get('name_s')
+        elif obj.get('title_s'):
+            return obj.get('title_s')
+        elif obj.get('cluster_shelfmark_s'):
+            return obj.get('cluster_shelfmark_s')
+        else:
+            return "[Unknown Heading]"
+
+    def get_sources(self, obj: Dict) -> Optional[int]:
+        if obj.get('sources_ii'):
+            return len(obj.get("sources_ii"))
+        return None
 
 
 class SolrResultException(BaseException):
