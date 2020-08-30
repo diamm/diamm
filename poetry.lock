@@ -21,7 +21,10 @@ description = "Screen-scraping library"
 name = "beautifulsoup4"
 optional = false
 python-versions = "*"
-version = "4.6.0"
+version = "4.8.2"
+
+[package.dependencies]
+soupsieve = ">=1.2"
 
 [package.extras]
 html5lib = ["html5lib"]
@@ -228,7 +231,7 @@ version = "2.1.7"
 [package.extras]
 html5lib = ["beautifulsoup4 (>=4.4.1,<5)", "html5lib (>=0.999,<=1.0.1)"]
 lxml = ["lxml (>=4.2.0,<5)"]
-testing = ["tox (>=2.3.1)", "markov_draftjs (0.1.1)", "memory-profiler (0.47)", "psutil (5.4.1)", "coverage (>=4.1.0)", "flake8 (>=3.2.0)", "isort (4.2.5)", "beautifulsoup4 (>=4.4.1,<5)", "html5lib (>=0.999,<=1.0.1)", "lxml (>=4.2.0,<5)"]
+testing = ["tox (>=2.3.1)", "markov-draftjs (0.1.1)", "memory-profiler (0.47)", "psutil (5.4.1)", "coverage (>=4.1.0)", "flake8 (>=3.2.0)", "isort (4.2.5)", "beautifulsoup4 (>=4.4.1,<5)", "html5lib (>=0.999,<=1.0.1)", "lxml (>=4.2.0,<5)"]
 
 [[package]]
 category = "main"
@@ -507,6 +510,14 @@ version = "1.14.0"
 
 [[package]]
 category = "main"
+description = "A modern CSS selector implementation for Beautiful Soup."
+name = "soupsieve"
+optional = false
+python-versions = ">=3.5"
+version = "2.0.1"
+
+[[package]]
+category = "main"
 description = "Non-validating SQL parser"
 name = "sqlparse"
 optional = false
@@ -564,14 +575,14 @@ description = "A Django content management system."
 name = "wagtail"
 optional = false
 python-versions = "*"
-version = "2.8"
+version = "2.9.3"
 
 [package.dependencies]
 Django = ">=2.1,<3.1"
-Pillow = ">=4.0.0,<7.0.0"
+Pillow = ">=4.0.0,<8.0.0"
 Unidecode = ">=0.04.14,<2.0"
 Willow = ">=1.3,<1.4"
-beautifulsoup4 = ">=4.5.1,<4.6.1"
+beautifulsoup4 = ">=4.8,<4.9"
 django-modelcluster = ">=5.0,<6.0"
 django-taggit = ">=1.0,<2.0"
 django-treebeard = ">=4.2.0,<5.0"
@@ -580,10 +591,11 @@ draftjs-exporter = ">=2.1.5,<3.0"
 html5lib = ">=0.999,<2"
 l18n = ">=2018.5"
 requests = ">=2.11.1,<3.0"
+xlsxwriter = ">=1.2.8,<2.0"
 
 [package.extras]
 docs = ["pyenchant (1.6.8)", "sphinxcontrib-spelling (>=2.3.0)", "Sphinx (>=1.5.2)", "sphinx-autobuild (>=0.6.0)", "sphinx-rtd-theme (>=0.1.9)"]
-testing = ["python-dateutil (>=2.2)", "pytz (>=2014.7)", "elasticsearch (>=1.0.0,<3.0)", "Jinja2 (>=2.8,<3.0)", "boto3 (>=1.4,<1.5)", "freezegun (>=0.3.8)", "coverage (>=3.7.0)", "flake8 (>=3.6.0)", "isort (4.2.5)", "flake8-blind-except (0.1.1)", "flake8-print (2.0.2)", "jinjalint (>=0.5)", "docutils (0.15)"]
+testing = ["python-dateutil (>=2.2)", "pytz (>=2014.7)", "elasticsearch (>=1.0.0,<3.0)", "Jinja2 (>=2.8,<3.0)", "boto3 (>=1.4,<1.5)", "freezegun (>=0.3.8)", "openpyxl (>=2.6.4)", "coverage (>=3.7.0)", "flake8 (>=3.6.0)", "isort (4.2.5)", "flake8-blind-except (0.1.1)", "flake8-print (2.0.2)", "jinjalint (>=0.5)", "docutils (0.15)", "django-taggit (>=1.3.0,<2.0)"]
 
 [[package]]
 category = "main"
@@ -621,8 +633,17 @@ optional = false
 python-versions = "*"
 version = "1.3"
 
+[[package]]
+category = "main"
+description = "A Python module for creating Excel XLSX files."
+name = "xlsxwriter"
+optional = false
+python-versions = "*"
+version = "1.3.3"
+
 [metadata]
-content-hash = "9dd126074e24ffb52a36e66f1ca9ced424d75cb3952097bd130f0a9280ad859b"
+content-hash = "e2896188c2f2bab57334e75736150337b4f3b6932e5b6d0c614e3742ea353f2d"
+lock-version = "1.0"
 python-versions = "^3.7"
 
 [metadata.files]
@@ -635,9 +656,9 @@ backcall = [
     {file = "backcall-0.1.0.zip", hash = "sha256:bbbf4b1e5cd2bdb08f915895b51081c041bac22394fdfcfdfbe9f14b77c08bf2"},
 ]
 beautifulsoup4 = [
-    {file = "beautifulsoup4-4.6.0-py2-none-any.whl", hash = "sha256:7015e76bf32f1f574636c4288399a6de66ce08fb7b2457f628a8d70c0fbabb11"},
-    {file = "beautifulsoup4-4.6.0-py3-none-any.whl", hash = "sha256:11a9a27b7d3bddc6d86f59fb76afb70e921a25ac2d6cc55b40d072bd68435a76"},
-    {file = "beautifulsoup4-4.6.0.tar.gz", hash = "sha256:808b6ac932dccb0a4126558f7dfdcf41710dd44a4ef497a0bb59a77f9f078e89"},
+    {file = "beautifulsoup4-4.8.2-py2-none-any.whl", hash = "sha256:e1505eeed31b0f4ce2dbb3bc8eb256c04cc2b3b72af7d551a4ab6efd5cbe5dae"},
+    {file = "beautifulsoup4-4.8.2-py3-none-any.whl", hash = "sha256:9fbb4d6e48ecd30bcacc5b63b94088192dcda178513b2ae3c394229f8911b887"},
+    {file = "beautifulsoup4-4.8.2.tar.gz", hash = "sha256:05fd825eb01c290877657a56df4c6e4c311b3965bda790c613a3d6fb01a5462a"},
 ]
 blessings = [
     {file = "blessings-1.7-py2-none-any.whl", hash = "sha256:caad5211e7ba5afe04367cdd4cfc68fa886e2e08f6f35e76b7387d2109ccea6e"},
@@ -686,6 +707,7 @@ django-modelcluster = [
 ]
 django-pagedown = [
     {file = "django-pagedown-2.0.3.tar.gz", hash = "sha256:2558c14167baf05bb5205dccd880d1efc62b3a16530d98b165dc85fc26692eb1"},
+    {file = "django_pagedown-2.0.3-py2-none-any.whl", hash = "sha256:92f45ed52da00526cbdbf8c7cbd33d721f25f7d5757c4be5754d6c41695f7992"},
     {file = "django_pagedown-2.0.3-py3-none-any.whl", hash = "sha256:83b30134131a49358196f8c2f0e2e25d730ee7a820482a7fda5ef386c22b1d6c"},
 ]
 django-registration = [
@@ -708,6 +730,7 @@ djangorestframework = [
     {file = "djangorestframework-3.11.0.tar.gz", hash = "sha256:e782087823c47a26826ee5b6fa0c542968219263fb3976ec3c31edab23a4001f"},
 ]
 draftjs-exporter = [
+    {file = "draftjs_exporter-2.1.7-py3-none-any.whl", hash = "sha256:d415a9964690a2cddb66a31ef32dd46c277e9b80434b94e39e3043188ed83e33"},
     {file = "draftjs_exporter-2.1.7.tar.gz", hash = "sha256:5839cbc29d7bce2fb99837a404ca40c3a07313f2a20e2700de7ad6aa9a9a18fb"},
 ]
 gunicorn = [
@@ -879,6 +902,7 @@ pytz = [
     {file = "pytz-2019.3.tar.gz", hash = "sha256:b02c06db6cf09c12dd25137e563b31700d3b80fcc4ad23abb7a315f2789819be"},
 ]
 requests = [
+    {file = "requests-2.23.0-py2.7.egg", hash = "sha256:5d2d0ffbb515f39417009a46c14256291061ac01ba8f875b90cad137de83beb4"},
     {file = "requests-2.23.0-py2.py3-none-any.whl", hash = "sha256:43999036bfa82904b6af1d99e4882b560e5e2c68e5c4b0aa03b655f3d7d73fee"},
     {file = "requests-2.23.0.tar.gz", hash = "sha256:b3f43d496c6daba4493e7c431722aeb7dbc6288f52a6e04e7b6023b0247817e6"},
 ]
@@ -889,6 +913,10 @@ serpy = [
 six = [
     {file = "six-1.14.0-py2.py3-none-any.whl", hash = "sha256:8f3cd2e254d8f793e7f3d6d9df77b92252b52637291d0f0da013c76ea2724b6c"},
     {file = "six-1.14.0.tar.gz", hash = "sha256:236bdbdce46e6e6a3d61a337c0f8b763ca1e8717c03b369e87a7ec7ce1319c0a"},
+]
+soupsieve = [
+    {file = "soupsieve-2.0.1-py3-none-any.whl", hash = "sha256:1634eea42ab371d3d346309b93df7870a88610f0725d47528be902a0d95ecc55"},
+    {file = "soupsieve-2.0.1.tar.gz", hash = "sha256:a59dc181727e95d25f781f0eb4fd1825ff45590ec8ff49eadfd7f1a537cc0232"},
 ]
 sqlparse = [
     {file = "sqlparse-0.3.1-py2.py3-none-any.whl", hash = "sha256:022fb9c87b524d1f7862b3037e541f68597a730a8843245c349fc93e1643dc4e"},
@@ -916,8 +944,8 @@ urllib3 = [
     {file = "urllib3-1.25.8.tar.gz", hash = "sha256:87716c2d2a7121198ebcb7ce7cccf6ce5e9ba539041cfbaeecfb641dc0bf6acc"},
 ]
 wagtail = [
-    {file = "wagtail-2.8-py3-none-any.whl", hash = "sha256:8ac4a9d7db4d6c37bbd4b298f5fb5a51f5ecc3210daa4afb7ba434a4aa3b468f"},
-    {file = "wagtail-2.8.tar.gz", hash = "sha256:94813e18c0401c303e9ff589987d8e2ee513175e4df32e62ace65afcc4ef2976"},
+    {file = "wagtail-2.9.3-py3-none-any.whl", hash = "sha256:17169ea7c6a2cf2dc8f945f0a967424d7932843087df4897c813868d7f9cddc0"},
+    {file = "wagtail-2.9.3.tar.gz", hash = "sha256:7dba2e5cebee2bb39e4c3db703eeb428b6ba323d72e5fbf384f1ce81f65f7e42"},
 ]
 wcwidth = [
     {file = "wcwidth-0.1.9-py2.py3-none-any.whl", hash = "sha256:cafe2186b3c009a04067022ce1dcd79cb38d8d65ee4f4791b8888d6599d1bbe1"},
@@ -934,4 +962,8 @@ werkzeug = [
 willow = [
     {file = "Willow-1.3-py2.py3-none-any.whl", hash = "sha256:8897a6827c0bb7dee2ac908af53f0d358720bd6032ed20bab3175507e34d739a"},
     {file = "Willow-1.3.tar.gz", hash = "sha256:4f84c46f65b6a1982e63dbd4d94c6bae705ff21f839164c31e105c3e251bec37"},
+]
+xlsxwriter = [
+    {file = "XlsxWriter-1.3.3-py2.py3-none-any.whl", hash = "sha256:88ab71d464e8f6c3923335cc92d6035260aa9e7c8b27fcbb3a5bc07e2c671d22"},
+    {file = "XlsxWriter-1.3.3.tar.gz", hash = "sha256:830cad0a88f0f95e5a8945ee082182aa68ab89e7d9725d0c32c196207634244b"},
 ]
