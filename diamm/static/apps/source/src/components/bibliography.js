@@ -3,8 +3,8 @@ import { connect } from "react-redux";
 
 const Entry = ({entry}) =>
 {
-    let pageInfo = entry.hasOwnProperty("pages") ? `${entry.pages}.` : "";
-    let notes = entry.hasOwnProperty("notes") ? `${entry.notes}.` : "";
+    let pageInfo = entry.hasOwnProperty("pages") ? `&nbsp;Pages: ${entry.pages}.` : "";
+    let notes = entry.hasOwnProperty("notes") ? `&nbsp;Notes: ${entry.notes}.` : "";
 
     return (
         <span>
