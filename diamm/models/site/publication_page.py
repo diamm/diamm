@@ -33,6 +33,7 @@ class PublicationPage(Page):
     template = "website/cms/publication_page.jinja2"
     parent_page_types = ['diamm_site.ContentPage']
 
+
 PublicationPage.content_panels = [
     FieldPanel('title', classname="full title"),
     FieldPanel('body', classname="full"),

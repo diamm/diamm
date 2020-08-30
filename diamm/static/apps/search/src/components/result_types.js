@@ -5,15 +5,15 @@ export const SourceResultType = ({result}) =>
     return (
         <div className="search-result">
             <h3 className="title is-3">
-                <a href={ result.url }>{ result.display_name_s }</a>
-                <span className="result-type"> Source { result.public_images_b && <i className="fa fa-file-image-o" />}</span>
+                <a href={ result.url }>{ result.display_name }</a>
+                <span className="result-type"> Source { result.public_images && <i className="fa fa-file-image-o" />}</span>
             </h3>
             <div>
-                <div>{ result.archive_city_s }, { result.archive_s }</div>
-                <div>{ result.source_type_s }{ result.date_statement_s ? `, ${result.date_statement_s}` : ""}{ result.surface_type_s ? `, ${result.surface_type_s}` : ""}</div>
+                <div>{ result.archive_city }, { result.archive_name }</div>
+                <div>{ result.source_type }{ result.date_statement ? `, ${result.date_statement }` : ""}{ result.surface ? `, ${result.surface }` : ""}</div>
                 <div>
-                    { result.number_of_composers_i ? `${result.number_of_composers_i} composers inventoried. ` : " " }
-                    { result.number_of_compositions_i ? `Contains ${result.number_of_compositions_i} pieces. ` : " " }
+                    { result.number_of_composers ? `${result.number_of_composers} composers inventoried. ` : " " }
+                    { result.number_of_compositions ? `Contains ${result.number_of_compositions} pieces. ` : " " }
                 </div>
             </div>
         </div>
@@ -25,7 +25,7 @@ export const PersonResultType = ({result}) =>
     return (
         <div className="search-result">
             <h3 className="title is-3">
-                <a href={ result.url }>{ result.name_s }</a>
+                <a href={ result.url }>{ result.name }</a>
                 <span className="result-type"> Person</span>
             </h3>
         </div>
@@ -37,11 +37,11 @@ export const OrganizationResultType = ({result}) =>
     return (
         <div className="search-result">
             <h3 className="title is-3">
-                <a href={ result.url }>{ result.name_s }</a>
+                <a href={ result.url }>{ result.name }</a>
                 <span className="result-type"> Organization</span>
             </h3>
             <div>
-                { result.location_s }
+                { result.location }
             </div>
 
         </div>
@@ -53,12 +53,12 @@ export const CompositionResultType = ({result}) =>
     return (
         <div className="search-result">
             <h3>
-                <a href={ result.url }>{ result.title_s }</a>
+                <a href={ result.url }>{ result.title }</a>
                 <span className="result-type"> Composition</span>
             </h3>
             <div>
                 <div>
-                    { result.composers_ssni ? <Composers composers={ result.composers_ssni } /> : "Anonymous" }
+                    { result.composers ? <Composers composers={ result.composers } /> : "Anonymous" }
                 </div>
             </div>
         </div>
@@ -70,11 +70,11 @@ export const ArchiveResultType = ({result}) =>
     return (
         <div className="search-result">
             <h3>
-                <a href={ result.url }>{ result.name_s } ({ result.siglum_s })</a>
+                <a href={ result.url }>{ result.name } ({ result.siglum })</a>
                 <span className="result-type"> Archive</span>
             </h3>
             <div>
-                { result.city_s }, { result.country_s }.
+                { result.city }, { result.country }.
             </div>
         </div>
     );
@@ -85,12 +85,12 @@ export const SetResultType = ({result}) =>
     return (
         <div className="search-result">
             <h3>
-                <a href={ result.url }>{ result.cluster_shelfmark_s }</a>
+                <a href={ result.url }>{ result.cluster_shelfmark }</a>
                 <span className="result-type"> Set</span>
             </h3>
             <div>
-                <div>{ result.archives_ss.join(", ") }</div>
-                <div>{ result.sources_ii.length } source{ result.sources_ii.length > 1 ? "s" : ""}</div>
+                <div>{ result.archives.join(", ") }</div>
+                <div>{ result.sources.length } source{ result.sources.length > 1 ? "s" : ""}</div>
             </div>
         </div>
     );

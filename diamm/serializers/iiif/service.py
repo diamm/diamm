@@ -21,7 +21,7 @@ class StructureServiceSerializer(ContextDictSerializer):
         label="@id"
     )
 
-    def get_id(self, obj) -> str:
+    def get_id(self, obj: Dict) -> str:
         return reverse('source-item-detail',
                        kwargs={"source_id": obj['source_i'],
                                "item_id": obj['pk']},
@@ -53,13 +53,13 @@ class ServiceSerializer(ContextDictSerializer):
     composition = serpy.MethodField()
     pages = serpy.MethodField()
 
-    def get_id(self, obj) -> str:
+    def get_id(self, obj: Dict) -> str:
         return reverse('source-item-detail',
                        kwargs={"source_id": obj['source_i'],
                                "item_id": obj['pk']},
                        request=self.context['request'])
 
-    def get_composers(self, obj) -> Optional[List]:
+    def get_composers(self, obj: Dict) -> Optional[List]:
         if 'composers_ssni' not in obj:
             return None
 
@@ -84,7 +84,7 @@ class ServiceSerializer(ContextDictSerializer):
             composers.append(c)
         return composers
 
-    def get_voices(self, obj) -> Optional[List]:
+    def get_voices(self, obj: Dict) -> Optional[List]:
         id_list = ",".join([str(x) for x in obj['voices_ii']])
         connection = pysolr.Solr(settings.SOLR['SERVER'])
         fq = ["type:voice", "{!terms f=pk}"+id_list]
@@ -110,7 +110,7 @@ class ServiceSerializer(ContextDictSerializer):
 
         return voices
 
-    def get_folios(self, obj) -> Dict:
+    def get_folios(self, obj: Dict) -> Dict:
         f = {}
 
         if 'folio_start_s' in obj:
@@ -133,7 +133,7 @@ class ServiceSerializer(ContextDictSerializer):
 
         return f
 
-    def get_composition(self, obj) -> Optional[Dict]:
+    def get_composition(self, obj: Dict) -> Optional[Dict]:
         if 'composition_i' not in obj:
             return None
 
@@ -147,7 +147,7 @@ class ServiceSerializer(ContextDictSerializer):
 
         return composition
 
-    def get_pages(self, obj) -> Optional[List]:
+    def get_pages(self, obj: Dict) -> Optional[List]:
         if 'pages_ssni' not in obj:
             return None
 

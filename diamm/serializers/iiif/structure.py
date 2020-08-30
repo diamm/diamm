@@ -1,3 +1,4 @@
+from typing import List, Dict, Optional
 import serpy
 from rest_framework.reverse import reverse
 from diamm.serializers.serializers import ContextDictSerializer
@@ -21,7 +22,7 @@ class StructureSerializer(ContextDictSerializer):
 
     service = serpy.MethodField()
 
-    def get_members(self, obj):
+    def get_members(self, obj: Dict) -> Optional[List]:
         if not obj.get('pages_ii'):
             return None
 
@@ -43,11 +44,11 @@ class StructureSerializer(ContextDictSerializer):
 
         return members
 
-    def get_id(self, obj):
+    def get_id(self, obj: Dict) -> str:
         return reverse('source-range-detail',
                        kwargs={"source_id": obj['source_i'],
                                "item_id": obj['pk']},
                        request=self.context['request'])
 
-    def get_service(self, obj):
+    def get_service(self, obj: Dict) -> Dict:
         return StructureServiceSerializer(obj, context={"request": self.context['request']}).data

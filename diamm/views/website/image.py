@@ -1,3 +1,4 @@
+from typing import Dict, Optional
 from django.conf import settings
 from django.http import HttpResponse
 from rest_framework import status
@@ -5,7 +6,7 @@ import requests
 import pysolr
 
 
-def image_serve(request, pk, region=None, size=None, rotation=None, *args, **kwargs):
+def image_serve(request, pk, region=None, size=None, rotation=None, *args, **kwargs) -> HttpResponse:
     """
         This serves as a consistent proxy for all image locations
         in DIAMM. The reason for this is twofold:
@@ -20,9 +21,9 @@ def image_serve(request, pk, region=None, size=None, rotation=None, *args, **kwa
         The images are requested via their database PK, but since we don't necessarily
         want to bother Postgres for this (slow lookup) we'll ask Solr for it.
     """
-
     field_list = [
-        'location_s'
+        'location_s',
+        'open_images_b'
     ]
     conn = pysolr.Solr(settings.SOLR['SERVER'])
     req = conn.search("*:*",
@@ -35,26 +36,25 @@ def image_serve(request, pk, region=None, size=None, rotation=None, *args, **kwa
 
     result = req.docs[0]
 
-    if 'location_s' not in result:
+    if not request.user.is_authenticated or not result.get('open_images_b'):
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
-    # In some cases the string 'None' gets indexed to Solr.
-    # It shouldn't happen, but this will guard against it if it does.
-    if result['location_s'] == 'None':
+    location: Optional[str] = result.get('location_s')
+
+    if not location or location == 'None':
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
-    location = result['location_s']
+    referer: str = "{0}://{1}".format(request.scheme, request.get_host())
 
-    referer = "{0}://{1}".format(request.scheme, request.get_host())
     if region and size and rotation:
-        location = "{0}/{1}/{2}/{3}/default.jpg".format(location, region, size, rotation)
+        location: str = "{0}/{1}/{2}/{3}/default.jpg".format(location, region, size, rotation)
 
     diamm = request.META.get('HTTP_X_DIAMM')
     iiif_id = request.META.get('HTTP_X_IIIF_ID')
-    headers = {'referer': referer,
-               'X-DIAMM': diamm,
-               'X-IIIF-ID': iiif_id,
-               'User-Agent': settings.DIAMM_UA}
+    headers: Dict = {'referer': referer,
+                     'X-DIAMM': diamm,
+                     'X-IIIF-ID': iiif_id,
+                     'User-Agent': settings.DIAMM_UA}
 
     r = requests.get(location, stream=True, headers=headers, verify=True)
 

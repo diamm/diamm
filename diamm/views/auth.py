@@ -19,7 +19,7 @@ class CreateAccount(FormView):
     template_name = "website/auth/register.jinja2"
     success_url = "/"
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs) -> HttpResponse:
         """
             If a user is already logged in, prevent them from accessing this form.
         """

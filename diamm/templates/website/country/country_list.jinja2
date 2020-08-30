@@ -17,9 +17,9 @@
                 <thead>
                     <tr>
                         <th>Country</th>
-                        <th>Cities</th>
                         <th>States</th>
                         <th>Regions</th>
+                        <th>Cities</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -29,17 +29,19 @@
                             <a href="{{ country.url }}">{{ country.name }}</a>
                         </td>
                         <td>
-                            <table class="table is-narrow">
-                                <tbody>
-                                    {% for city in country.cities %}
+                            {% if country.regions %}
+                                <table class="table is-narrow">
+                                    <tbody>
+                                    {% for region in country.regions %}
                                         <tr>
                                             <td>
-                                                <a href="{{ city.url }}">{{ city.name }}</a>
+                                                <a href="{{ region.url }}">{{ region.name }}</a>
                                             </td>
                                         </tr>
                                     {% endfor %}
-                                </tbody>
-                            </table>
+                                    </tbody>
+                                </table>
+                            {% endif %}
                         </td>
                         <td>
                             {% if country.states %}
@@ -57,19 +59,17 @@
                             {% endif %}
                         </td>
                         <td>
-                            {% if country.regions %}
                             <table class="table is-narrow">
                                 <tbody>
-                                    {% for region in country.regions %}
+                                {% for city in country.cities %}
                                     <tr>
                                         <td>
-                                            <a href="{{ region.url }}">{{ region.name }}</a>
+                                            <a href="{{ city.url }}">{{ city.name }}</a>
                                         </td>
                                     </tr>
-                                    {% endfor %}
+                                {% endfor %}
                                 </tbody>
                             </table>
-                            {% endif %}
                         </td>
                     </tr>
                     {% endfor %}

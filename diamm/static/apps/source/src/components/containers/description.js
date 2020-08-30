@@ -360,21 +360,23 @@ export const Contents = ({numInventoried, numComposers, uninventoried}) =>
     if (!numInventoried && !numComposers && !uninventoried)
         return null;
 
-    let nums;
+    let nums = "";
+
     if (numInventoried && numComposers)
     {
-        nums = <span>{ numInventoried } pieces from { numComposers } composers.</span>
+        nums += `${numInventoried} pieces from ${numComposers} composers. `
     }
-    else if (uninventoried)
+
+    if (uninventoried)
     {
-        nums = <span>Contains works from { uninventoried } composers.</span>
+        nums += `Contains ${uninventoried} uninventoried works or miscellaneous sections.`
     }
 
     return (
         <tr>
             <th>Contents</th>
             <td>
-                { nums }
+                <span>{ nums }</span>
             </td>
         </tr>
     );

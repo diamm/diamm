@@ -6,6 +6,7 @@
 #    problems with loading insecure content (DIAMM is served over HTTPS, and
 #    most browsers will refuse to cross-load secure and insecure content). This also
 #    simplifies loading images into a canvas.
+from typing import List, Dict, Optional
 import serpy
 from django.conf import settings
 from django.template.defaultfilters import truncatewords
@@ -65,16 +66,17 @@ class SourceManifestSerializer(ContextDictSerializer):
         required=False
     )
 
-    def get_id(self, obj):
+    def get_id(self, obj: Dict) -> str:
         return reverse('source-manifest',
                        kwargs={'pk': obj['pk']},
                        request=self.context['request'])
 
-    def get_metadata(self, obj):
+    def get_metadata(self, obj: Dict) -> List:
         metadata_entries = []
         for field, label in METADATA_MAPPING.items():
             if field not in obj:
                 continue
+
             value = obj[field]
             if isinstance(value, list):
                 for v in value:
@@ -89,13 +91,13 @@ class SourceManifestSerializer(ContextDictSerializer):
                 })
         return metadata_entries
 
-    def get_description(self, obj):
+    def get_description(self, obj: Dict) -> Optional[str]:
         if 'notes_txt' in obj:
             # return the first note for the description. Truncate it to 300 words
             return truncatewords(obj['notes_txt'][0], 300)
         return None
 
-    def get_see_also(self, obj):
+    def get_see_also(self, obj: Dict) -> Dict:
         source_id = obj['pk']
         source_url = reverse('source-detail',
                              kwargs={'pk': source_id},
@@ -105,7 +107,7 @@ class SourceManifestSerializer(ContextDictSerializer):
             'format': "application/json"
         }
 
-    def get_related(self, obj):
+    def get_related(self, obj: Dict) -> Dict:
         source_id = obj['pk']
         source_url = reverse('source-detail',
                              kwargs={"pk": source_id},
@@ -115,7 +117,7 @@ class SourceManifestSerializer(ContextDictSerializer):
             "format": "text/html"
         }
 
-    def get_sequences(self, obj):
+    def get_sequences(self, obj: Dict) -> List:
         conn = SolrManager(settings.SOLR['SERVER'])
 
         # image_type_i:1 in the field list transformer childFilter ensures that
@@ -146,8 +148,8 @@ class SourceManifestSerializer(ContextDictSerializer):
             "canvases": canvases
         }]
 
-    def get_thumbnail(self, obj):
-        if not 'cover_image_url_sni' in obj:
+    def get_thumbnail(self, obj: Dict) -> Optional[Dict]:
+        if 'cover_image_url_sni' not in obj:
             return None
         else:
             cover_image_url = reverse('image-serve-info',
@@ -162,7 +164,7 @@ class SourceManifestSerializer(ContextDictSerializer):
                 }
             }
 
-    def get_structures(self, obj):
+    def get_structures(self, obj: Dict) -> List:
         conn = SolrManager(settings.SOLR['SERVER'])
 
         # The pages_ii query ensures we retrieve only those records that have images associated with them.

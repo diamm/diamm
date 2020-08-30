@@ -1,3 +1,4 @@
+from typing import Optional, Dict, List
 import serpy
 from rest_framework.reverse import reverse
 from diamm.serializers.serializers import ContextSerializer, ContextDictSerializer
@@ -13,19 +14,18 @@ class OrganizationLocationSerializer(ContextSerializer):
         attr="parent"
     )
 
-    def get_url(self, obj):
+    def get_url(self, obj) -> Optional[str]:
         view_type = None
         if obj.type == GeographicArea.CITY:
             view_type = "city-detail"
         elif obj.type == GeographicArea.COUNTRY:
             view_type = "country-detail"
-
-        if view_type:
-            return reverse(view_type,
-                           kwargs={"pk": obj.pk},
-                           request=self.context['request'])
         else:
             return None
+
+        return reverse(view_type,
+                       kwargs={"pk": obj.pk},
+                       request=self.context['request'])
 
 
 class OrganizationSourceProvenanceSerializer(ContextDictSerializer):
@@ -35,7 +35,7 @@ class OrganizationSourceProvenanceSerializer(ContextDictSerializer):
         attr="source_s"
     )
 
-    def get_url(self, obj):
+    def get_url(self, obj: Dict) -> str:
         return reverse('source-detail',
                        kwargs={"pk": obj['source_i']},
                        request=self.context['request'])
@@ -53,7 +53,7 @@ class OrganizationSourceCopyistSerializer(ContextDictSerializer):
         attr="source_s"
     )
 
-    def get_url(self, obj):
+    def get_url(self, obj: Dict) -> str:
         return reverse('source-detail',
                        kwargs={"pk": obj['source_i']},
                        request=self.context['request'])
@@ -71,7 +71,7 @@ class OrganizationSourceRelationshipSerializer(ContextDictSerializer):
         attr="source_s"
     )
 
-    def get_url(self, obj):
+    def get_url(self, obj: Dict) -> str:
         return reverse('source-detail',
                        kwargs={"pk": obj['source_i']},
                        request=self.context['request'])
@@ -90,30 +90,31 @@ class OrganizationDetailSerializer(ContextSerializer):
     source_provenance = serpy.MethodField()
     location = serpy.MethodField()
 
-    def get_url(self, obj):
+    def get_url(self, obj) -> str:
         return reverse('organization-detail',
                        kwargs={"pk": obj.pk},
                        request=self.context['request'])
 
     def get_location(self, obj):
         if obj.location:
-            return OrganizationLocationSerializer(obj.location, context={"request": self.context["request"]}).data
+            return OrganizationLocationSerializer(obj.location,
+                                                  context={"request": self.context["request"]}).data
         return None
 
     def get_type(self, obj):
         return obj.__class__.__name__.lower()
 
-    def get_related_sources(self, obj):
+    def get_related_sources(self, obj) -> List:
         return OrganizationSourceRelationshipSerializer(obj.solr_relationships,
-                                                         many=True,
-                                                         context={"request": self.context["request"]}).data
+                                                        many=True,
+                                                        context={"request": self.context["request"]}).data
 
-    def get_copied_sources(self, obj):
+    def get_copied_sources(self, obj) -> List:
         return OrganizationSourceCopyistSerializer(obj.solr_copyist,
                                                    many=True,
                                                    context={"request": self.context['request']}).data
 
-    def get_source_provenance(self, obj):
+    def get_source_provenance(self, obj) -> List:
         return OrganizationSourceProvenanceSerializer(obj.solr_provenance,
                                                       many=True,
                                                       context={"request": self.context['request']}).data

@@ -10,7 +10,7 @@ class SearchView(generics.GenericAPIView):
     template_name = "website/search/search.jinja2"
 
     @never_cache
-    def get(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs) -> response.Response:
         query = request.GET.get('q', None)
         filters = {}
         exclusive_filters = {}  # these will get ANDed... the others will get ORed

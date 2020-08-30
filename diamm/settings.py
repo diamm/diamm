@@ -206,7 +206,7 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 20,
     'DEFAULT_RENDERER_CLASSES': (
         'diamm.renderers.html_renderer.HTMLRenderer',
-        'drf_ujson.renderers.UJSONRenderer',
+        'diamm.renderers.ujson_renderer.UJSONRenderer',
     ),
 }
 
