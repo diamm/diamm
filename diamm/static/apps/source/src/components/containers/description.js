@@ -243,16 +243,16 @@ export const Provenance = ({provenance}) =>
                                         { entry.protectorate_uncertain ? "?, ": ", " }
                                     </span>
                                 }
-                                { entry.region &&
-                                    <span>
-                                        { entry.region }
-                                        { entry.region_uncertain ? "? ": ", " }
-                                    </span>
-                                }
                                 { entry.city &&
                                     <span>
                                         { entry.city }
                                         { entry.city_uncertain ? "?, " : ", " }
+                                    </span>
+                                }
+                                { entry.region &&
+                                <span>
+                                        { entry.region }
+                                    { entry.region_uncertain ? "? ": ", " }
                                     </span>
                                 }
                                 { entry.country &&
