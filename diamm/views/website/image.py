@@ -22,8 +22,7 @@ def image_serve(request, pk, region=None, size=None, rotation=None, *args, **kwa
         want to bother Postgres for this (slow lookup) we'll ask Solr for it.
     """
     field_list = [
-        'location_s',
-        'open_images_b'
+        'location_s'
     ]
     conn = pysolr.Solr(settings.SOLR['SERVER'])
     req = conn.search("*:*",
@@ -35,10 +34,6 @@ def image_serve(request, pk, region=None, size=None, rotation=None, *args, **kwa
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
     result = req.docs[0]
-
-    if not request.user.is_authenticated or not result.get('open_images_b'):
-        return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-
     location: Optional[str] = result.get('location_s')
 
     if not location or location == 'None':
