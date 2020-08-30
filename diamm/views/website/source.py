@@ -47,7 +47,7 @@ class SourceManifest(generics.GenericAPIView):
     def get(self, request, pk, *args, **kwargs) -> response.Response:
         conn = pysolr.Solr(settings.SOLR['SERVER'])
         res = conn.search("*:*",
-                          fq=["type:source", "pk:{0}".format(pk), 'public_images_b:true'],
+                          fq=["type:source", "pk:{0}".format(pk)],
                           rows=1)
 
         if res.hits == 0:
