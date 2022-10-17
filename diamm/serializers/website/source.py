@@ -1,6 +1,5 @@
 from typing import List, Optional, Dict
 
-import pysolr
 import serpy
 from django.conf import settings
 from rest_framework.reverse import reverse
@@ -493,6 +492,7 @@ class SourceDetailSerializer(ContextSerializer):
     )
     inventory_provided = serpy.BoolField()
     public_images = serpy.BoolField()
+    open_images = serpy.BoolField()
     numbering_system_type = serpy.StrField(
         attr="numbering_system_type"
     )

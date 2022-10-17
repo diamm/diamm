@@ -78,6 +78,7 @@ function mapStateToProps (state)
         archive: state.source.archive,
         has_images: state.source.has_images,
         public_images: state.source.public_images,
+        open_images: state.source.open_images,
         surface_type: state.source.surface_type,
         numbering_system_type: state.source.numbering_system_type,
         identifiers: state.source.identifiers,

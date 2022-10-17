@@ -4,13 +4,13 @@ from rest_framework import generics
 from rest_framework import permissions
 from rest_framework import response
 from rest_framework import status
-from rest_framework import renderers
+from diamm.renderers.ujson_renderer import UJSONRenderer
 from diamm.models.site.problem_report import ProblemReport
 from diamm.serializers.website.correction import CorrectionSerializer
 
 
 class ContributorList(generics.ListAPIView):
-    renderer_classes = (renderers.JSONRenderer,)
+    renderer_classes = (UJSONRenderer,)
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     serializer_class = CorrectionSerializer
 
@@ -18,7 +18,7 @@ class ContributorList(generics.ListAPIView):
     # pk - The Primary Key of a particular object
     # type - The content type of the object. At present only 'source' is supported.
     #
-    def get(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs) -> response.Response:
         pk = self.request.query_params.get('pk', None)
         objtype = self.request.query_params.get('type', None)
 

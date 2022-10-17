@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User, AbstractBaseUser, PermissionsMixin, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
@@ -80,18 +80,18 @@ class CustomUserModel(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
 
     @property
-    def full_name(self):
+    def full_name(self) -> str:
         return self.get_full_name()
 
-    def get_full_name(self):
+    def get_full_name(self) -> str:
         if not self.last_name:
             return "{0}".format(self.email)
         else:
             full_name = "{0} {1}".format(self.first_name, self.last_name)
             return full_name.strip()
 
-    def get_short_name(self):
+    def get_short_name(self) -> str:
         return self.first_name
 
-    def email_user(self, subject, message, from_email=None, **kwargs):
+    def email_user(self, subject, message, from_email=None, **kwargs) -> str:
         send_mail(subject, message, from_email, [self.email], **kwargs)

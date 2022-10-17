@@ -206,7 +206,7 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 20,
     'DEFAULT_RENDERER_CLASSES': (
         'diamm.renderers.html_renderer.HTMLRenderer',
-        'drf_ujson.renderers.UJSONRenderer',
+        'diamm.renderers.ujson_renderer.UJSONRenderer',
     ),
 }
 
@@ -225,7 +225,7 @@ INTERFACE_FACETS = {
     "location": "location_s",
     "archive": "archive_s",
     "anonymous": "anonymous_b",
-    "source_date_range": "facet_date_range_ii"
+    # "source_date_range": "facet_date_range_ii"
 }
 
 SOLR = {

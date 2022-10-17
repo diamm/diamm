@@ -1,5 +1,5 @@
 import logging
-from typing import Optional, Dict, Iterator
+from typing import Optional, Dict, Iterator, List
 
 import pysolr
 from django.conf import settings
@@ -95,6 +95,15 @@ class SolrManager:
         self._cursorMark: str = "*"
         self._idx: int = 0
         self._page_idx: int = 0
+        # since group queries don't use cursor marks, we need to manually manage
+        # the number of rows we return in the iterator
+        self._group_rows: int = settings.SOLR['PAGE_SIZE']
+        self._gp_kwargs: Dict = {
+            "group": "true",
+            "group.limit": 1000,
+            "group.ngroups": "true",
+        }
+        self._group_name: str = ""
 
     def search(self, q: str, **kwargs) -> None:
         """
@@ -130,6 +139,53 @@ class SolrManager:
             log.warning("A request for number of results was called before a search was initiated")
 
         return self._hits
+
+    def grouped_search(self, group_name: str, group_sort: str, q: str, **kwargs) -> None:
+        self._idx = 0
+        self._page_idx = 0
+        self._q = q
+        self._q_kwargs = kwargs
+        self._group_name = group_name
+        self._gp_kwargs.update({"group.field": self._group_name, "group.sort": group_sort})
+        self._res = self._conn.search(q, start=0, rows=self._group_rows, **self._q_kwargs, **self._gp_kwargs)
+        self._hits = self._res.hits
+
+    @property
+    def grouped_results(self) -> Iterator[Dict]:
+        if self._res is None:
+            log.warning("A request for a group was called before a search was initiated")
+
+        group: Dict = self._res.grouped.get(self._group_name)
+        num_groups: int = group['ngroups']
+        pgno = 0
+
+        while self._idx < num_groups:
+            try:
+                yield self._res.grouped.get(self._group_name)['groups'][self._page_idx]
+            except IndexError:
+                self._page_idx = 0
+                # When we run out
+                # of results on the page, we'll trigger a new
+                # page load, which we can compute by taking the
+                # page number (assuming page 0 start), incrementing by 1, and then multiplying by
+                # the number of rows we should retrieve. On the first
+                # round, we'll start at 0, then the next will start at 21, and then
+                # 41, and then 61, etc.
+                pgno += 1
+                start: int = (pgno * self._group_rows) + 1
+
+                self._res = self._conn.search(self._q, start=start, rows=self._group_rows,
+                                              **self._q_kwargs,
+                                              **self._gp_kwargs)
+
+                gp = self._res.grouped.get(self._group_name)
+                if gp and gp.get('groups'):
+                    yield gp.get('groups')[self._page_idx]
+                else:
+                    break
+
+            self._idx += 1
+            self._page_idx += 1
 
     @property
     def results(self) -> Iterator[Dict]:

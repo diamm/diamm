@@ -1,3 +1,4 @@
+from typing import List, Dict
 import operator
 import serpy
 from rest_framework.reverse import reverse
@@ -21,20 +22,20 @@ class CanvasSerializer(ContextDictSerializer):
     width = serpy.MethodField()
     height = serpy.MethodField()
 
-    def get_width(self, obj):
+    def get_width(self, obj: Dict) -> int:
         if '_childDocuments_' not in obj:
             return 0
         # Get the dimensions from the first image in the result list, which should be the primary image.
         obj['_childDocuments_'].sort(key=operator.itemgetter('image_type_i'))
         return obj['_childDocuments_'][0]['width_i']
 
-    def get_height(self, obj):
+    def get_height(self, obj: Dict) -> int:
         if '_childDocuments_' not in obj:
             return 0
         obj['_childDocuments_'].sort(key=operator.itemgetter('image_type_i'))
         return obj['_childDocuments_'][0]['height_i']
 
-    def get_id(self, obj):
+    def get_id(self, obj: Dict) -> str:
         return reverse(
             "source-canvas-detail",
             kwargs={"source_id": obj['source_i'],
@@ -42,7 +43,7 @@ class CanvasSerializer(ContextDictSerializer):
             request=self.context['request']
         )
 
-    def get_images(self, obj):
+    def get_images(self, obj: Dict) -> List:
         if '_childDocuments_' not in obj:
             return []
 

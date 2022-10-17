@@ -3,8 +3,15 @@ import { connect } from "react-redux";
 
 const Entry = ({entry}) =>
 {
+    let pageInfo = entry.hasOwnProperty("pages") ? ` Pages: ${entry.pages}.` : "";
+    let notes = entry.hasOwnProperty("notes") ? ` Notes: ${entry.notes}.` : "";
+
     return (
-        <span dangerouslySetInnerHTML={{__html: entry.prerendered}} />
+        <span>
+            <span dangerouslySetInnerHTML={{__html: entry.prerendered}} />
+            { pageInfo } { notes }
+        </span>
+
     );
 }
 

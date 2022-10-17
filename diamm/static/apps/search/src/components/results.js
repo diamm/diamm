@@ -41,8 +41,8 @@ class Results extends React.Component
 
         return (
             <div className="search-results">
-                { this.props.results.map( (result) => {
-                    return <Result result={ result } key={ result.id } />
+                { this.props.results.map( (result, idx) => {
+                    return <Result result={ result } key={ idx } />
                 })}
                 <nav className="pagination">
                     <ReactPaginate

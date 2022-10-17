@@ -1,3 +1,4 @@
+from typing import List, Dict, Optional
 import serpy
 from rest_framework.reverse import reverse
 from diamm.serializers.serializers import ContextSerializer
@@ -7,7 +8,7 @@ class RegionCitySerializer(ContextSerializer):
     url = serpy.MethodField()
     name = serpy.StrField()
 
-    def get_url(self, obj):
+    def get_url(self, obj) -> str:
         return reverse('city-detail', kwargs={"pk": obj.id}, request=self.context['request'])
 
 
@@ -15,7 +16,7 @@ class RegionOrganizationSerializer(ContextSerializer):
     url = serpy.MethodField()
     name = serpy.StrField()
 
-    def get_url(self, obj):
+    def get_url(self, obj) -> str:
         return reverse('organization-detail', kwargs={"pk": obj.id}, request=self.context['request'])
 
 
@@ -30,10 +31,10 @@ class RegionProvenanceSerializer(ContextSerializer):
         required=False
     )
 
-    def get_url(self, obj):
+    def get_url(self, obj) -> str:
         return reverse('source-detail', kwargs={"pk": obj.source.id}, request=self.context['request'])
 
-    def get_name(self, obj):
+    def get_name(self, obj) -> str:
         return "{0}".format(obj.source.display_name)
 
 
@@ -46,20 +47,20 @@ class RegionDetailSerializer(ContextSerializer):
     cities = serpy.MethodField()
     provenance = serpy.MethodField()
 
-    def get_organizations(self, obj):
+    def get_organizations(self, obj) -> List:
         return RegionOrganizationSerializer(obj.organizations.all(),
                                             many=True,
                                             context=self.context).data
 
-    def get_cities(self, obj):
+    def get_cities(self, obj) -> List:
         return RegionCitySerializer(obj.cities.select_related('parent'),
                                     many=True,
                                     context=self.context).data
 
-    def get_provenance(self, obj):
+    def get_provenance(self, obj) -> List:
         return RegionProvenanceSerializer(obj.region_sources.select_related('source'),
                                           many=True,
                                           context=self.context).data
 
-    def get_url(self, obj):
+    def get_url(self, obj) -> List:
         return reverse("region-detail", kwargs={"pk": obj.id}, request=self.context['request'])

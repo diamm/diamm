@@ -1,3 +1,4 @@
+from typing import Dict, List
 import serpy
 from rest_framework.reverse import reverse
 from diamm.serializers.serializers import ContextDictSerializer, ContextSerializer
@@ -53,7 +54,7 @@ class PersonSourceCopyistSerializer(ContextDictSerializer):
         required=False
     )
 
-    def get_url(self, obj):
+    def get_url(self, obj: Dict) -> str:
         return reverse("source-detail",
                        kwargs={"pk": obj['source_i']},
                        request=self.context['request'])
@@ -79,7 +80,7 @@ class PersonSourceRelationshipSerializer(ContextDictSerializer):
         required=False
     )
 
-    def get_url(self, obj):
+    def get_url(self, obj: Dict) -> str:
         return reverse('source-detail',
                        kwargs={"pk": obj["source_i"]},
                        request=self.context['request'])
@@ -93,12 +94,12 @@ class PersonCompositionSerializer(ContextDictSerializer):
     uncertain = serpy.BoolField()  # injected in the person model lookup for solr_compositions
     sources = serpy.MethodField()
 
-    def get_url(self, obj):
+    def get_url(self, obj: Dict) -> str:
         return reverse('composition-detail',
                        kwargs={"pk": obj['pk']},
                        request=self.context['request'])
 
-    def get_sources(self, obj):
+    def get_sources(self, obj: Dict) -> List:
         if 'sources_ss' not in obj:
             return []
         sources = []
@@ -139,34 +140,34 @@ class PersonDetailSerializer(ContextSerializer):
     variant_names = serpy.MethodField()
     roles = serpy.MethodField()
 
-    def get_url(self, obj):
+    def get_url(self, obj) -> str:
         return reverse('person-detail',
                        kwargs={"pk": obj.pk},
                        request=self.context['request'])
 
-    def get_compositions(self, obj):
+    def get_compositions(self, obj) -> List:
         return PersonCompositionSerializer(obj.solr_compositions,
                                            context={'request': self.context['request']},
                                            many=True).data
 
-    def get_related_sources(self, obj):
+    def get_related_sources(self, obj) -> List:
         return PersonSourceRelationshipSerializer(obj.solr_relationships,
                                                   context={"request": self.context['request']},
                                                   many=True).data
 
-    def get_copied_sources(self, obj):
+    def get_copied_sources(self, obj) -> List:
         return PersonSourceCopyistSerializer(obj.solr_copyist,
                                              context={"request": self.context['request']},
                                              many=True).data
 
-    def get_type(self, obj):
+    def get_type(self, obj) -> str:
         return obj.__class__.__name__.lower()
 
     # def get_biography(self, obj):
     #     return PersonNoteSerializer(obj.notes.filter(type=PersonNote.BIOGRAPHY, public=True), many=True).data
 
-    def get_variant_names(self, obj):
+    def get_variant_names(self, obj) -> List:
         return obj.notes.filter(type=PersonNote.VARIANT_NAME_NOTE, public=True).values_list('note', flat=True)
 
-    def get_roles(self, obj):
+    def get_roles(self, obj) -> List:
         return PersonRoleSerializer(obj.roles.all(), many=True).data

@@ -1,3 +1,4 @@
+from typing import Optional
 import serpy
 
 
@@ -89,6 +90,9 @@ class SourceSearchSerializer(serpy.Serializer):
     composers_ss = serpy.MethodField()
     cover_image_i = serpy.MethodField()
     public_images_b = serpy.MethodField()
+    open_images_b = serpy.BoolField(
+        attr="open_images"
+    )
     external_images_b = serpy.BoolField(
         attr="has_external_images"
     )
@@ -102,11 +106,9 @@ class SourceSearchSerializer(serpy.Serializer):
         else:
             return []
 
-    def get_cover_image_i(self, obj):
+    def get_cover_image_i(self, obj) -> Optional[int]:
         c = obj.cover
-        if c:
-            return c.get('id')
-        return None
+        return c.get('id') if c else None
 
     def get_notations_ss(self, obj):
         if obj.notations.count() > 0:

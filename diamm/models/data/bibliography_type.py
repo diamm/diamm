@@ -13,6 +13,11 @@ class BibliographyType(models.Model):
     DISSERTATION = 4
     FESTSCHRIFT = 5
     JOURNAL = 6
+    FACSIMILE = 7
+    FACSIMILE_WITH_INTRODUCTION = 8
+    EDITION = 9
+    LETTER = 10
+    REVIEW = 11
 
     name = models.CharField(max_length=512)
 

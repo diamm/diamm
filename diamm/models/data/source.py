@@ -1,3 +1,4 @@
+from typing import List
 from django.db import models
 from django.conf import settings
 import pysolr
@@ -69,7 +70,8 @@ class Source(models.Model):
     measurements = models.CharField(max_length=512, blank=True, null=True)
     numbering_system = models.IntegerField(choices=NUMBERING_SYSTEM, blank=True, null=True)
     public = models.BooleanField(default=False, help_text="Source Description is Public")
-    public_images = models.BooleanField(default=False, help_text="Source Images are Public")
+    public_images = models.BooleanField(default=False, help_text="Source Images are Public (with login)")
+    open_images = models.BooleanField(default=False, help_text="Source Images are available without login")
     notations = models.ManyToManyField("diamm_data.Notation", blank=True, related_name="sources")
 
     created = models.DateTimeField(auto_now_add=True)
@@ -77,17 +79,17 @@ class Source(models.Model):
 
     sort_order = models.IntegerField(blank=True, null=True)
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self.name:
             return "{0} ({1})".format(self.shelfmark, self.name)
         return "{0}".format(self.shelfmark)
 
     @property
-    def display_name(self):
+    def display_name(self) -> str:
         return "{0} {1}".format(self.archive.siglum, self.__str__())
 
     @property
-    def display_summary(self):
+    def display_summary(self) -> str:
         date_stmt = self.date_statement if self.date_statement else ""
         summary = self.display_name if self.display_name else ""
 
@@ -239,32 +241,23 @@ class Source(models.Model):
               'voices_ii',
               'pk']
         sort = "composer_ans asc"
-        # Set rows to an extremely high number so we get all of the item records in one go.
+
         connection.search("*:*", fq=fq, fl=fl, sort=sort)
         return list(connection.results)
 
     @property
     def inventory_by_composer(self):
-        connection = pysolr.Solr(settings.SOLR['SERVER'])
-        fq = ["type:composerinventory",
-              "source_i:{0}".format(self.pk)]
-        gp = {
-            "group": "true",
-            "group.field": "composer_s",
-            "group.limit": "10000",
-            "group.sort": "composition_s asc"
-        }
-        sort = "composer_s asc"
+        connection = SolrManager(settings.SOLR['SERVER'])
 
-        res = connection.search("*:*",
-                                fq=fq,
-                                sort=sort,
-                                **gp)
+        fq: List = ["type:composerinventory",
+                    "source_i:{0}".format(self.pk)]
+        sort: str = "composer_s asc"
 
-        expanded = res.grouped['composer_s']['groups']
+        connection.grouped_search("composer_s", "composition_s asc", "*:*", fq=fq, sort=sort)
+        groups = connection.grouped_results
+
         reslist = []
-
-        for doc in expanded:
+        for doc in groups:
             composer = doc['groupValue']
             inventory = doc['doclist']['docs']
 

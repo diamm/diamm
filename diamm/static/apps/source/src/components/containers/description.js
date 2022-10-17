@@ -45,8 +45,8 @@ export const ImageStatus = ({has_images, public_images, links}) =>
             <tr>
                 <th>Image Availability</th>
                 <td>
-                    DIAMM has images of this manuscript, but does not yet have permission to put them online.
-                    { hasExternalImageLink ? `Please refer to the external links below for image availability.` : ``}
+                    DIAMM has images of this manuscript but does not yet have permission to put them online.
+                    { hasExternalImageLink ? ` Please refer to the external links below for image availability.` : ``}
                 </td>
             </tr>
         );
@@ -243,16 +243,16 @@ export const Provenance = ({provenance}) =>
                                         { entry.protectorate_uncertain ? "?, ": ", " }
                                     </span>
                                 }
-                                { entry.region &&
-                                    <span>
-                                        { entry.region }
-                                        { entry.region_uncertain ? "? ": ", " }
-                                    </span>
-                                }
                                 { entry.city &&
                                     <span>
                                         { entry.city }
                                         { entry.city_uncertain ? "?, " : ", " }
+                                    </span>
+                                }
+                                { entry.region &&
+                                <span>
+                                        { entry.region }
+                                    { entry.region_uncertain ? "? ": ", " }
                                     </span>
                                 }
                                 { entry.country &&
@@ -360,21 +360,23 @@ export const Contents = ({numInventoried, numComposers, uninventoried}) =>
     if (!numInventoried && !numComposers && !uninventoried)
         return null;
 
-    let nums;
+    let nums = "";
+
     if (numInventoried && numComposers)
     {
-        nums = <span>{ numInventoried } pieces from { numComposers } composers.</span>
+        nums += `${numInventoried} pieces from ${numComposers} composers. `
     }
-    else if (uninventoried)
+
+    if (uninventoried)
     {
-        nums = <span>Contains works from { uninventoried } composers.</span>
+        nums += `Contains ${uninventoried} uninventoried works or miscellaneous sections.`
     }
 
     return (
         <tr>
             <th>Contents</th>
             <td>
-                { nums }
+                <span>{ nums }</span>
             </td>
         </tr>
     );
