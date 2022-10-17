@@ -26,9 +26,8 @@ blessings = "^1.7"
 wagtail = "2.15.2"
 
 [tool.poetry.dev-dependencies]
-
-[tool.poetry.group.dev.dependencies]
 ipython = "7.34"
+
 
 [build-system]
 requires = ["poetry>=0.12"]
