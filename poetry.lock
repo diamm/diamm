@@ -679,7 +679,7 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 
 [[package]]
 name = "wagtail"
-version = "2.15"
+version = "2.15.2"
 description = "A Django content management system."
 category = "main"
 optional = false
@@ -689,7 +689,7 @@ python-versions = ">=3.6"
 anyascii = ">=0.1.5"
 beautifulsoup4 = ">=4.8,<4.10"
 Django = ">=3.0,<3.3"
-django-filter = ">=2.2,<3.0"
+django-filter = ">=2.2,<22"
 django-modelcluster = ">=5.2,<6.0"
 django-taggit = ">=1.0,<2.0"
 django-treebeard = ">=4.2.0,<4.5 || >4.5,<5.0"
@@ -697,7 +697,7 @@ djangorestframework = ">=3.11.1,<4.0"
 draftjs-exporter = ">=2.1.5,<3.0"
 html5lib = ">=0.999,<2"
 l18n = ">=2018.5"
-Pillow = ">=4.0.0,<9.0.0"
+Pillow = ">=4.0.0,<10.0.0"
 requests = ">=2.11.1,<3.0"
 tablib = {version = ">=0.14.0", extras = ["xls", "xlsx"]}
 telepath = ">=0.1.1,<1"
@@ -779,7 +779,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "f3d19d6a00bf254668315dbd2b43de2bd3c55ff7ca5a42243e6856bfa517ecd5"
+content-hash = "0ea9f9af8dcec059135d30ce70b4d7fcf31b61361167a07e7104d581ecf00f27"
 
 [metadata.files]
 anyascii = [
@@ -1156,8 +1156,8 @@ urllib3 = [
     {file = "urllib3-1.26.12.tar.gz", hash = "sha256:3fa96cf423e6987997fc326ae8df396db2a8b7c667747d47ddd8ecba91f4a74e"},
 ]
 wagtail = [
-    {file = "wagtail-2.15-py3-none-any.whl", hash = "sha256:5a8f59e46179a7f13b9ba3da3ab1d3c274da373854882741ca507f4bc0131e2f"},
-    {file = "wagtail-2.15.tar.gz", hash = "sha256:2ee964bca4888bd12301c36fa8e22d75fc144b6811c0077d22c642cb9a00a1f2"},
+    {file = "wagtail-2.15.2-py3-none-any.whl", hash = "sha256:9a2c7ceee79f2d1974f021f76b814ba36744e91c732e7e5113a43cfb046e56f1"},
+    {file = "wagtail-2.15.2.tar.gz", hash = "sha256:0086c8bf7fb93e456f15f230f0bfcb3d3945420aa663a8a962c404051da96d46"},
 ]
 wcwidth = [
     {file = "wcwidth-0.2.5-py2.py3-none-any.whl", hash = "sha256:beb4802a9cebb9144e99086eff703a642a13d6a0052920003a230f3294bbe784"},
