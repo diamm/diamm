@@ -1,4 +1,4 @@
-from collections import Iterable
+from typing import Iterable
 from django.db import transaction
 from django.db.models import Model
 from django.apps import apps

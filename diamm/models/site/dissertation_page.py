@@ -1,8 +1,7 @@
 from django.db import models
-from wagtail.core.models import Page
-from wagtail.core import fields
 from wagtail.admin.edit_handlers import FieldPanel
-from wagtail.documents.edit_handlers import DocumentChooserPanel
+from wagtail.core import fields
+from wagtail.core.models import Page
 
 
 class DissertationPage(Page):
@@ -34,5 +33,5 @@ class DissertationPage(Page):
         FieldPanel('university'),
         FieldPanel('year'),
         FieldPanel('degree'),
-        DocumentChooserPanel('attachment')
+        FieldPanel('attachment')
     ]

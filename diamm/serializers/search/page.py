@@ -76,7 +76,7 @@ class PageSearchSerializer(serpy.Serializer):
     numeration_ans = serpy.StrField(
         attr="numeration"
     )
-    sort_order_i = serpy.IntField(
+    sort_order_f = serpy.FloatField(
         attr="sort_order"
     )
     source_i = serpy.IntField(

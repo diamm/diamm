@@ -31,6 +31,7 @@ from diamm.admin.data.source_note import SourceNoteAdmin
 from diamm.admin.data.source_provenance import SourceProvenanceAdmin
 from diamm.admin.data.source_relationship import SourceRelationshipAdmin
 from diamm.admin.data.source_relationship_type import SourceRelationshipTypeAdmin
+from diamm.admin.data.source_bibliography import SourceBibliographyAdmin
 from diamm.admin.data.text import TextAdmin
 from diamm.admin.data.voice import VoiceAdmin
 from diamm.admin.data.voice_type import VoiceTypeAdmin
@@ -38,4 +39,5 @@ from diamm.admin.diamm_user import UserAdmin
 from diamm.admin.diamm_user import UserAdmin
 from diamm.admin.site.commentary import CommentaryAdmin
 from diamm.admin.site.problem_report import ProblemReportAdmin
+
 

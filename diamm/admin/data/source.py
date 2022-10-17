@@ -1,32 +1,37 @@
+from typing import Optional
+
 import pysolr
+from django.conf import settings
 from django.contrib import admin, messages
 from django.db import models
 from django.db.models import Q
 from django.db.models.signals import post_delete, post_save
 from django.forms import TextInput, Textarea
+from django.http import HttpResponse
+from django.shortcuts import render, redirect
 from django.urls import path
 from django.utils.safestring import mark_safe
-from django.conf import settings
-from django.shortcuts import render, redirect
 from django.utils.translation import ugettext_lazy as _
-from reversion.admin import VersionAdmin
-from pagedown.widgets import AdminPagedownWidget
 from dynamic_raw_id.admin import DynamicRawIDMixin
+from pagedown.widgets import AdminPagedownWidget
 from rest_framework.reverse import reverse
+from reversion.admin import VersionAdmin
+
 from diamm.admin.filters.input_filter import InputFilter
 from diamm.admin.forms.copy_inventory import CopyInventoryForm
-from diamm.models.data.item import Item
 from diamm.models.data.geographic_area import GeographicArea
+from diamm.models.data.item import Item
+from diamm.models.data.page import Page
 from diamm.models.data.source import Source
+from diamm.models.data.source_bibliography import SourceBibliography
+from diamm.models.data.source_copyist import SourceCopyist
 from diamm.models.data.source_identifier import SourceIdentifier
 from diamm.models.data.source_note import SourceNote
-from diamm.models.data.source_url import SourceURL
-from diamm.models.data.source_bibliography import SourceBibliography
-from diamm.models.data.source_relationship import SourceRelationship
-from diamm.models.data.source_copyist import SourceCopyist
 from diamm.models.data.source_provenance import SourceProvenance
-from diamm.models.data.page import Page
+from diamm.models.data.source_relationship import SourceRelationship
+from diamm.models.data.source_url import SourceURL
 from diamm.signals.item_signals import index_item, delete_item
+from diamm.signals.page_signals import index_page, delete_page
 
 
 class SourceCopyistInline(DynamicRawIDMixin, admin.StackedInline):
@@ -76,7 +81,12 @@ class PagesInline(admin.TabularInline):
     model = Page
     extra = 0
     classes = ('collapse',)
-    fields = ('numeration', 'sort_order', 'page_type')
+    fields = ('link_id_field', 'numeration', 'sort_order', 'page_type')
+    readonly_fields = ('link_id_field',)
+
+    def link_id_field(self, obj):
+        change_url = reverse('admin:diamm_data_page_change', args=(obj.pk,))
+        return mark_safe('<a href="{0}">{1}</a>'.format(change_url, obj.pk))
 
 
 class URLsInline(admin.TabularInline):
@@ -263,5 +273,5 @@ class SourceAdmin(DynamicRawIDMixin, VersionAdmin):
     # TODO: Objects are not being deleted from Solr.
     def __delete_items_from_solr(self, target):
         connection = pysolr.Solr(settings.SOLR['SERVER'])
-        fq = ["type:item", "source_i:{0}".format(target.pk)]
+        fq = " AND ".join(["type:item", "source_i:{0}".format(target.pk)])
         results = connection.delete(q=fq)

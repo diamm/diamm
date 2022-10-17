@@ -239,6 +239,7 @@ class SolrPage:
         pivot_facets = self.result.facets.get('facet_pivot', None)
         facets: Dict = {key: value for (key, value) in solr_facets.items() if key in settings.INTERFACE_FACETS}
         facets.update(pivot_facets)
+
         return facets
 
     @property

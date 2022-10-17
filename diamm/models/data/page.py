@@ -48,7 +48,7 @@ class Page(models.Model):
     legacy_id = models.CharField(max_length=64, blank=True, null=True)
 
     # This may be refactored to allow for multiple page sort orders, but for now we'll stick with one
-    sort_order = models.IntegerField(default=0, blank=True, null=True)
+    sort_order = models.DecimalField(default=0, blank=True, null=True, decimal_places=3, max_digits=100)
     page_type = models.IntegerField(choices=PAGE_TYPE_CHOICES, default=PAGE, blank=True, null=True)
 
     def __str__(self):

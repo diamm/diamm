@@ -30,6 +30,8 @@ INTERNAL_IPS = (
     '127.0.0.1'
 )
 
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -65,7 +67,7 @@ INSTALLED_APPS = [
     'wagtail.images',
     'wagtail.search',
     'wagtail.admin',
-    'wagtail.core',
+    'wagtail',
 
     'modelcluster',
     'taggit'
@@ -82,7 +84,8 @@ MIDDLEWARE = [
     # 'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'wagtail.core.middleware.SiteMiddleware',
+    'django.contrib.sites.middleware.CurrentSiteMiddleware',
+    # 'wagtail.wagtailcore.middleware.SiteMiddleware',
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
 ]
 
@@ -107,7 +110,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
             ],
             "extensions": DEFAULT_EXTENSIONS + [
-                'wagtail.core.jinja2tags.core',
+                'wagtail.jinja2tags.core',
                 'wagtail.admin.jinja2tags.userbar',
                 'wagtail.images.jinja2tags.images',
                 "django_jinja.builtins.extensions.DjangoFiltersExtension"
@@ -361,6 +364,7 @@ diamm@music.ox.ac.uk
 }
 
 WAGTAIL_SITE_NAME = 'Digital Image Archive of Medieval Music'
+WAGTAILADMIN_BASE_URL = f"{HOSTNAME}"
 
 if DEBUG:
     MIDDLEWARE = ["diamm.middleware.logging.QueryCountDebugMiddleware"] + MIDDLEWARE

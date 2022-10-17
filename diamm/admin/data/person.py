@@ -1,20 +1,21 @@
 from django.contrib import admin, messages
+from django.contrib.contenttypes.admin import GenericTabularInline
 from django.db import models
 from django.shortcuts import render
-from django.contrib.contenttypes.admin import GenericTabularInline
+from dynamic_raw_id.admin import DynamicRawIDMixin
 from pagedown.widgets import AdminPagedownWidget
-from diamm.models.data.person import Person
+from reversion.admin import VersionAdmin
+
+from diamm.admin.forms.merge_people import MergePeopleForm
+from diamm.admin.merge_models import merge
 from diamm.models.data.composition_composer import CompositionComposer
+from diamm.models.data.organization import Organization
+from diamm.models.data.person import Person
 from diamm.models.data.person_note import PersonNote
 from diamm.models.data.person_role import PersonRole
 from diamm.models.data.source_copyist import SourceCopyist
-from diamm.models.data.source_relationship import SourceRelationship
 from diamm.models.data.source_provenance import SourceProvenance
-from diamm.models.data.organization import Organization
-from diamm.admin.forms.merge_people import MergePeopleForm
-from diamm.admin.merge_models import merge
-from reversion.admin import VersionAdmin
-from dynamic_raw_id.admin import DynamicRawIDMixin
+from diamm.models.data.source_relationship import SourceRelationship
 
 
 class CompositionsInline(DynamicRawIDMixin, admin.TabularInline):
