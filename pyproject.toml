@@ -28,7 +28,7 @@ tablib = "3.1.0"
 requests = "2.27.1"
 
 [tool.poetry.dev-dependencies]
-ipython = "7.16.2"
+ipython = "7.16.3"
 
 
 [build-system]
