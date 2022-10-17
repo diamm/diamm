@@ -127,7 +127,7 @@ class SourceManifestSerializer(ContextDictSerializer):
             "fq": ["type:page", "source_i:{0}".format(obj['pk']), "images_ss:[* TO *]"],
             "fl": ["id", "pk", "source_i", "numeration_s", "items_ii", "page_type_i",
                    "[child parentFilter=type:page childFilter=type:image]"],
-            "sort": "sort_order_i asc, image_type_i asc, numeration_ans asc",
+            "sort": "sort_order_f asc, image_type_i asc, numeration_ans asc",
             "rows": 100
         }
         conn.search("*:*", **canvas_query)

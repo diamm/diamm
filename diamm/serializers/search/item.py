@@ -60,7 +60,7 @@ class ItemSearchSerializer(serpy.Serializer):
         attr="source_incipit",
         required=False
     )
-    source_order_i = serpy.IntField(
+    source_order_f = serpy.FloatField(
         attr="source_order",
         required=False
     )

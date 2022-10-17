@@ -1,7 +1,8 @@
 from typing import List
-from django.db import models
+
 from django.conf import settings
-import pysolr
+from django.db import models
+
 from diamm.helpers.solr_helpers import SolrManager
 
 
@@ -219,7 +220,7 @@ class Source(models.Model):
               "[child parentFilter=type:item childFilter=type:itemnote]",
               'pk']
         # Set rows to an extremely high number so we get all of the item records in one go.
-        connection.search("*:*", fq=fq, fl=fl, sort="source_order_i asc, folio_start_ans asc")
+        connection.search("*:*", fq=fq, fl=fl, sort="source_order_f asc, folio_start_ans asc")
         return list(connection.results)
 
     # Like solr_inventory, but retrieves only inventory items that do not have a composition attached, i.e., composers

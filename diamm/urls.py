@@ -81,8 +81,8 @@ urlpatterns = [
     path('sitemap-<str:section>.xml', sitemap_views.sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     path('robots.txt', TemplateView.as_view(template_name='robots.txt', content_type="text/plain"), name='robots-txt'),
 
-    path('admin/', admin.site.urls),
     path('admin/dynamic_raw_id/', include('dynamic_raw_id.urls')),
+    path('admin/', admin.site.urls),
     # url(r'^introduction/$', TemplateView.as_view(template_name="introduction.jinja2"), name="introduction"),
     # url(r'^technical/$', TemplateView.as_view(template_name="technical.jinja2"), name="technical"),
 

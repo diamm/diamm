@@ -1,18 +1,20 @@
+
 from django_jinja import library
 import jinja2
+from wagtail.models import Site
 
 
 @library.global_function
-@jinja2.contextfunction
+@jinja2.pass_context
 def get_site_root(context):
-    return context['request'].site.root_page
+    return Site.find_for_request(context['request']).root_page
 
 
 @library.global_function
 @library.render_with("website/blocks/dropdown_menu.jinja2")
-@jinja2.contextfunction
+@jinja2.pass_context
 def get_menu(context):
-    parent = context['request'].site.root_page
+    parent = Site.find_for_request(context['request']).root_page
     menu_items = parent.get_children().live().in_menu()
     return {
         "menu_items": menu_items,

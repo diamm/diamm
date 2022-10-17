@@ -6,6 +6,8 @@
   "scripts": {
     "develop": "webpack --progress --colors --watch",
     "build": "webpack --progress --colors --optimize-minimize --optimize-occurrence-order --optimize-dedupe",
+    "source:build": "webpack --progress --colors --optimize-minimize --optimize-occurrence-order --optimize-dedupe --config source/webpack.config.js source/src/index.js",
+    "search:build": "webpack --progress --colors --optimize-minimize --optimize-occurrence-order --optimize-dedupe --config search/webpack.config.js search/src/index.js",
     "catalogue:build": "webpack --config catalogue/webpack.config.js --context catalogue -p",
     "catalogue:develop": "webpack --config catalogue/webpack.config.js --context catalogue --progress --colors --watch"
   },
