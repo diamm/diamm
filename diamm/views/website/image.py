@@ -51,7 +51,10 @@ def image_serve(request, pk, region=None, size=None, rotation=None, *args, **kwa
                      'X-IIIF-ID': iiif_id,
                      'User-Agent': settings.DIAMM_UA}
 
-    r = requests.get(location, stream=True, headers=headers, verify=True)
+    try:
+        r = requests.get(location, stream=True, headers=headers, verify=True)
+    except requests.exceptions.ConnectionError as e:
+        return HttpResponse("Connection error", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     # If the response was a 200 (success) pass this along.
     if 200 <= r.status_code < 300:
