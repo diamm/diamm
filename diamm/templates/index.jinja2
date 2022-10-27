@@ -60,7 +60,7 @@
         <div class="column is-two-thirds">
             <div class="columns">
                 <div class="column diamm-description">
-                    {% include_block page.brief_description %}
+                    {{ page.brief_description | richtext }}
                 </div>
             </div>
             <div class="columns">
