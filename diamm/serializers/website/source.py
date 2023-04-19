@@ -203,8 +203,8 @@ class SourceComposerInventoryCompositionSerializer(ContextDictSerializer):
     url = serpy.MethodField()
 
     def get_source_attribution(self, obj) -> Optional[str]:
-        if 'source_attribution_i' in obj:
-            return obj['source_attribution_i']
+        if 'source_attribution_s' in obj:
+            return obj['source_attribution_s']
         return None
 
     def get_url(self, obj):
