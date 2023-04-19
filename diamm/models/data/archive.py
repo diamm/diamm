@@ -17,6 +17,7 @@ class Archive(models.Model):
                              related_name="archives", on_delete=models.CASCADE,
                              blank=True, null=True)
     siglum = models.CharField(max_length=64, blank=True, null=True)
+    former_sigla = models.CharField(max_length=255, blank=True, null=True, help_text="Separated by comma")
     librarian = models.CharField(max_length=255, blank=True, null=True)
     secondary_contact = models.CharField(max_length=255, blank=True, null=True)
     former_name = models.CharField(max_length=512, blank=True, null=True)

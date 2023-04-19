@@ -31,7 +31,7 @@ class CountryListFilter(admin.SimpleListFilter):
 class ArchiveAdmin(DynamicRawIDMixin, VersionAdmin):
     save_on_top = True
     list_display = ('name', 'get_city', 'get_country', 'siglum',)
-    search_fields = ('name', 'siglum', 'city__name', 'city__parent__name')
+    search_fields = ('name', 'siglum', 'former_sigla', 'city__name', 'city__parent__name')
     list_filter = (CountryListFilter,)
     inlines = (ArchiveNoteInline,)
     dynamic_raw_id_fields = ('city',)
