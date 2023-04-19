@@ -18,6 +18,7 @@ class OrganizationSearchSerializer(serpy.Serializer):
         attr="type",
         required=False
     )
+    variant_names_ss = serpy.MethodField()
 
     def get_type(self, obj):
         return obj.__class__.__name__.lower()
@@ -25,5 +26,9 @@ class OrganizationSearchSerializer(serpy.Serializer):
     def get_location_s(self, obj):
         if obj.location:
             return obj.location.name
-        else:
-            return None
+        return None
+
+    def get_variant_names_ss(self, obj):
+        if obj.variant_names:
+            [v.strip() for v in obj.variant_names.split(",")]
+        return None
