@@ -1,15 +1,16 @@
 from django.contrib import admin, messages
-from django.shortcuts import render
 from django.contrib.contenttypes.admin import GenericTabularInline
+from django.shortcuts import render
+from dynamic_raw_id.admin import DynamicRawIDMixin
+from reversion.admin import VersionAdmin
+
+from diamm.admin.forms.merge_organizations import MergeOrganizationsForm
 from diamm.admin.forms.update_organization_type import UpdateOrganizationTypeForm
+from diamm.admin.merge_models import merge
 from diamm.models.data.organization import Organization
 from diamm.models.data.source_copyist import SourceCopyist
-from diamm.models.data.source_relationship import SourceRelationship
 from diamm.models.data.source_provenance import SourceProvenance
-from diamm.admin.forms.merge_organizations import MergeOrganizationsForm
-from diamm.admin.merge_models import merge
-from reversion.admin import VersionAdmin
-from dynamic_raw_id.admin import DynamicRawIDMixin
+from diamm.models.data.source_relationship import SourceRelationship
 
 
 class CopiedSourcesInline(DynamicRawIDMixin, GenericTabularInline):
