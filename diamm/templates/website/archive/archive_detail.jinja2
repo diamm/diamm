@@ -20,7 +20,12 @@
         <div class="column content">
             {% if content.website %}
                 <p>
-                    <strong>Archive website: </strong><a href="http://{{ content.website }}">{{ content.name }}</a>
+                    <strong>Archive website: </strong>
+                    {% if content.website.startswith('http') %}
+                        <a href="{{ content.website }}">{{ content.name }}</a>
+                    {% else %}
+                        <a href="http://{{ content.website }}">{{ content.name }}</a>
+                    {% endif %}
                 </p>
             {% endif %}
         </div>
