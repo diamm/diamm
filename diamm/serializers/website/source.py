@@ -244,10 +244,12 @@ class SourceComposerInventorySerializer(ContextDictSerializer):
 
 class SourceInventoryNoteSerializer(serpy.DictSerializer):
     note = serpy.StrField(
-        attr="note_sni"
+        attr="note_sni",
+        required=False
     )
     note_type = serpy.StrField(
-        attr="note_type_s"
+        attr="note_type_s",
+        required=False
     )
 
 
@@ -473,9 +475,12 @@ class SourceDetailSerializer(ContextSerializer):
     surface_type = serpy.StrField(
         required=False
     )
-    date_statement = serpy.StrField()
+    date_statement = serpy.StrField(
+        required=False
+    )
     source_type = serpy.StrField(
-        attr="type"
+        attr="type",
+        required=False
     )
     format = serpy.StrField(
         required=False
