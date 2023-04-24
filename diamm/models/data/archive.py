@@ -1,7 +1,8 @@
-import os
 import pysolr
-from django.db import models
 from django.conf import settings
+from django.db import models
+from django.urls import reverse
+
 from diamm.helpers.storage import OverwriteStorage
 
 
@@ -45,9 +46,12 @@ class Archive(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        if self.city:
-            return "{0}, {1}".format(self.name, self.city.name)
-        return "{0}".format(self.name)
+        siglum: str = f" ({self.siglum})" if self.siglum else ""
+        city: str = f", {self.city}" if self.city else ""
+        return f"{self.name}{city}{siglum}"
+
+    def get_absolute_url(self):
+        return reverse("archive-detail", kwargs={"pk": self.pk})
 
     @property
     def display_name(self):

@@ -1,6 +1,8 @@
-from django.db import models
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
+from django.db import models
+from django.urls import reverse
+
 from diamm.helpers.solr_helpers import SolrManager
 
 
@@ -57,6 +59,9 @@ class Person(models.Model):
             return "{0} ({1})".format(name_str, date_str)
         else:
             return name_str
+
+    def get_absolute_url(self):
+        return reverse("person-detail", kwargs={"pk": self.pk})
 
     @property
     def full_name(self):

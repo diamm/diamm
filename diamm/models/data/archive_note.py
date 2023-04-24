@@ -8,10 +8,12 @@ class ArchiveNote(models.Model):
 
     PRIVATE = 1
     OTHER_NAMES = 2
+    COMMENTS = 3
 
     NOTE_TYPES = (
         (PRIVATE, 'Private'),
-        (OTHER_NAMES, 'Other Names')
+        (OTHER_NAMES, 'Other Names'),
+        (COMMENTS, 'Comments')
     )
 
     type = models.IntegerField(choices=NOTE_TYPES)
