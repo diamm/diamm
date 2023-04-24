@@ -187,6 +187,7 @@ class SourceAdmin(DynamicRawIDMixin, VersionAdmin):
     filter_horizontal = ['notations']
     # actions = (sort_sources,)
     dynamic_raw_id_fields = ('cover_image', 'archive')
+    view_on_site = True
 
     formfield_overrides = {
         models.TextField: {'widget': AdminPagedownWidget}
@@ -199,9 +200,6 @@ class SourceAdmin(DynamicRawIDMixin, VersionAdmin):
     def get_archive(self, obj):
         return "{0}".format(obj.archive.name)
     get_archive.short_description = "Archive"
-
-    def view_on_site(self, obj):
-        return reverse('source-detail', kwargs={"pk": obj.pk})
 
     def copy_inventory_view(self, request, pk):
         instance = Source.objects.get(pk=pk)

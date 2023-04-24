@@ -111,6 +111,7 @@ class PersonAdmin(VersionAdmin):
     actions = ['merge_people_action']
     # filter_horizontal = ('roles',)
     list_filter = []
+    view_on_site = True
 
     formfield_overrides = {
         models.TextField: {'widget': AdminPagedownWidget}

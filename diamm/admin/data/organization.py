@@ -38,9 +38,10 @@ class OrganizationAdmin(DynamicRawIDMixin, VersionAdmin):
     save_on_top = True
     list_display = ('name', 'location', 'type', 'legacy_id')
     list_filter = ('type',)
-    search_fields = ('name', 'location__name')
+    search_fields = ('name', 'location__name', 'variant_names')
     inlines = (CopiedSourcesInline, ProvenanceSourcesInline, RelatedSourcesInline)
     actions = ['update_organization_action', 'merge_organizations_action']
+    view_on_site = True
 
     dynamic_raw_id_fields = ('location', 'archive')
 

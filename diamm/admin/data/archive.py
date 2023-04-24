@@ -35,6 +35,7 @@ class ArchiveAdmin(DynamicRawIDMixin, VersionAdmin):
     list_filter = (CountryListFilter,)
     inlines = (ArchiveNoteInline,)
     dynamic_raw_id_fields = ('city',)
+    view_on_site = True
 
     def get_city(self, obj):
         return "{0}".format(obj.city.name)
