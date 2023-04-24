@@ -15,7 +15,7 @@ class Title extends React.Component
                     <h3 className="subtitle is-5" style={ { marginBottom: "0.5rem" } }>
                         <a href={ archive.url }>{ archive.name }</a>, <span>{ archive.city }, { archive.country }</span>
                     </h3>
-                    <h4 className="subtitle is-6">{ this.props.source_type }, { this.props.date_statement }</h4>
+                    <h4 className="subtitle is-6">{ this.props.source_type ? `${this.props.source_type}`: '' }{ this.props.date_statement ? `, ${this.props.date_statement}` : '' }</h4>
                 </div>
                 <div className="column source-archive-logo">
                     <a href={ archive.url }>
