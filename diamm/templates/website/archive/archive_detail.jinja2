@@ -16,20 +16,26 @@
             {% endif %}
         </div>
     </div>
+    {% if content.notes %}
+        {% for note in content.notes %}
+            <h4 class="title is-5">{{ note.note_type }}</h4>
+            <p>{{ note.note }}</p>
+        {% endfor %}
+    {% endif %}
+    {% if content.website %}
     <div class="columns">
         <div class="column content">
-            {% if content.website %}
-                <p>
-                    <strong>Archive website: </strong>
-                    {% if content.website.startswith('http') %}
-                        <a href="{{ content.website }}">{{ content.name }}</a>
-                    {% else %}
-                        <a href="http://{{ content.website }}">{{ content.name }}</a>
-                    {% endif %}
-                </p>
-            {% endif %}
+            <p>
+                <strong>Archive website: </strong>
+                {% if content.website.startswith('http') %}
+                    <a href="{{ content.website }}">{{ content.name }}</a>
+                {% else %}
+                    <a href="http://{{ content.website }}">{{ content.name }}</a>
+                {% endif %}
+            </p>
         </div>
     </div>
+    {% endif %}
     {% if content.sources %}
     <div class="columns">
         <div class="column">
