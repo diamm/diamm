@@ -1,3 +1,5 @@
+from typing import List
+
 import serpy
 from rest_framework.reverse import reverse
 from diamm.serializers.serializers import ContextSerializer, ContextDictSerializer
@@ -62,6 +64,12 @@ class CityArchiveSerializer(ContextSerializer):
                        request=self.context['request'])
 
 
+class ArchiveNoteSerializer(ContextSerializer):
+    note = serpy.StrField()
+    note_type = serpy.StrField()
+    type_ = serpy.IntField(attr="type")
+
+
 class ArchiveDetailSerializer(ContextSerializer):
     url = serpy.MethodField()
     pk = serpy.IntField()
@@ -72,8 +80,9 @@ class ArchiveDetailSerializer(ContextSerializer):
     )
     name = serpy.StrField()
     siglum = serpy.StrField()
-    website = serpy.StrField()
+    website = serpy.StrField(required=False)
     logo = serpy.MethodField()
+    notes = serpy.MethodField()
 
     def get_url(self, obj):
         return reverse('archive-detail',
@@ -87,6 +96,10 @@ class ArchiveDetailSerializer(ContextSerializer):
         return SourceArchiveSerializer(obj.solr_sources,
                                        many=True,
                                        context={'request': self.context['request']}).data
+
+    def get_notes(self, obj) -> List:
+        return ArchiveNoteSerializer(obj.notes.exclude(type=1),
+                                     many=True).data
 
     def get_logo(self, obj):
         if obj.logo:
