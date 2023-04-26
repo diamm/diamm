@@ -38,9 +38,9 @@ class BibliographyAdmin(VersionAdmin):
 
         if len(authors) > 2:
             authlist = ", ".join([a.bibliography_author.full_name for a in authors[:2]])
-            return "{0} et al.".format(authlist)
+            return f"{authlist} et al."
         else:
             authlist = ", ".join([a.bibliography_author.full_name for a in authors])
-            return "{0}".format(authlist)
+            return f"{authlist}"
     get_authors.short_description = "Authors"
 

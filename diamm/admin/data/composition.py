@@ -123,7 +123,7 @@ class CompositionAdmin(VersionAdmin):
             if form.is_valid():
                 genre = form.cleaned_data['genre']
                 updated = queryset.update(genre=genre)
-                messages.success(request, "{0} compositions were updated".format(updated))
+                messages.success(request, f"{updated} compositions were updated")
             else:
                 messages.error(request, "The submitted form was not valid")
         else:

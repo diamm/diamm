@@ -1,15 +1,16 @@
 from django.contrib import admin
-from django.template.defaultfilters import truncatewords
 from django.forms import ModelForm
+from django.template.defaultfilters import truncatewords
+from django.utils.translation import ugettext_lazy as _
+from dynamic_raw_id.admin import DynamicRawIDMixin
+from reversion.admin import VersionAdmin
+
 from diamm.admin.filters.input_filter import InputFilter
 from diamm.models.data.item import Item
-from diamm.models.data.page import Page
 from diamm.models.data.item_bibliography import ItemBibliography
-from diamm.models.data.item_note import ItemNote
 from diamm.models.data.item_composer import ItemComposer
-from reversion.admin import VersionAdmin
-from dynamic_raw_id.admin import DynamicRawIDMixin
-from django.utils.translation import ugettext_lazy as _
+from diamm.models.data.item_note import ItemNote
+from diamm.models.data.page import Page
 
 
 # This custom form will reduce the number of options for the pages to only those

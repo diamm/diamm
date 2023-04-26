@@ -1,10 +1,11 @@
 from django.contrib import admin, messages
 from django.shortcuts import render
-from diamm.models.data.geographic_area import GeographicArea
+from dynamic_raw_id.admin import DynamicRawIDMixin
 from reversion.admin import VersionAdmin
+
 from diamm.admin.forms.merge_areas import MergeAreasForm
 from diamm.admin.merge_models import merge
-from dynamic_raw_id.admin import DynamicRawIDMixin
+from diamm.models.data.geographic_area import GeographicArea
 
 
 @admin.register(GeographicArea)
@@ -17,7 +18,7 @@ class GeographicAreaAdmin(DynamicRawIDMixin, VersionAdmin):
 
     def get_parent(self, obj):
         if obj.parent:
-            return "{0}".format(obj.parent.name)
+            return f"{obj.parent_name}"
         return None
     get_parent.short_description = "Parent"
 

@@ -82,7 +82,7 @@ class PagesInline(admin.TabularInline):
 
     def link_id_field(self, obj):
         change_url = reverse('admin:diamm_data_page_change', args=(obj.pk,))
-        return mark_safe('<a href="{0}">{1}</a>'.format(change_url, obj.pk))
+        return mark_safe(f'<a href="{change_url}">{obj.pk}</a>')
 
 
 class URLsInline(admin.TabularInline):
@@ -104,7 +104,7 @@ class ItemInline(DynamicRawIDMixin, admin.TabularInline):
 
     def link_id_field(self, obj):
         change_url = reverse('admin:diamm_data_item_change', args=(obj.pk,))
-        return mark_safe('<a href="{0}">{1}</a>'.format(change_url, obj.pk))
+        return mark_safe(f'<a href="{change_url}">{obj.pk}</a>')
 
 
 class InventoryFilter(admin.SimpleListFilter):
@@ -222,7 +222,7 @@ class SourceAdmin(DynamicRawIDMixin, VersionAdmin):
                     if target.pk == instance.pk:
                         continue
 
-                    print("Copying to {0}".format(target.display_name))
+                    print(f"Copying to {target.display_name}")
                     self.__copy_items_to_source(instance, target)
 
                 messages.success(request, "Inventories successfully copied.")
@@ -269,5 +269,5 @@ class SourceAdmin(DynamicRawIDMixin, VersionAdmin):
     # TODO: Objects are not being deleted from Solr.
     def __delete_items_from_solr(self, target):
         connection = pysolr.Solr(settings.SOLR['SERVER'])
-        fq = " AND ".join(["type:item", "source_i:{0}".format(target.pk)])
+        fq = " AND ".join(["type:item", f"source_i:{target.pk}"])
         results = connection.delete(q=fq)

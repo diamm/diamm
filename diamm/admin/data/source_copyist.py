@@ -12,14 +12,14 @@ class SourceCopyistAdmin(DynamicRawIDMixin, admin.ModelAdmin):
     dynamic_raw_id_fields = ('source',)
 
     def get_source(self, obj):
-        return "{0}".format(obj.source.display_name)
+        return f"{obj.source.display_name}"
     get_source.short_description = "source"
 
     def get_copyist(self, obj):
         if isinstance(obj.copyist, Organization):
-            return "{0} (organization)".format(obj.copyist.name)
+            return f"{obj.copyist.name} (organization)"
         elif isinstance(obj.copyist, Person):
-            return "{0} (person)".format(obj.copyist.full_name)
+            return f"{obj.copyist.full_name} (person)"
         else:
             return None
 

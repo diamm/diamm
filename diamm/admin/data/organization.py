@@ -53,7 +53,7 @@ class OrganizationAdmin(DynamicRawIDMixin, VersionAdmin):
             if form.is_valid():
                 org_type = form.cleaned_data['org_type']
                 updated = queryset.update(type=org_type)
-                messages.success(request, "{0} organizations were updated.".format(updated))
+                messages.success(request, f"{updated} organizations were updated.")
                 return
             else:
                 messages.error(request, "There was an error.")

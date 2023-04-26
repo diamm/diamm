@@ -35,5 +35,5 @@ class PageAdmin(DynamicRawIDMixin, VersionAdmin):
     inlines = [ImageInline]
 
     def get_source(self, obj):
-        return "{0}".format(obj.source.display_name)
+        return f"{obj.source.display_name}"
     get_source.short_description = "source"
