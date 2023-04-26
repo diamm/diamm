@@ -169,7 +169,9 @@ class SourceAdmin(DynamicRawIDMixin, VersionAdmin):
                     'public',
                     'public_images',
                     'inventory_provided',
-                    'sort_order')
+                    'sort_order',
+                    'updated')
+    readonly_fields = ('created', 'updated')
     search_fields = ('identifiers__identifier',
                      'name', 'archive__name',
                      'archive__siglum', 'archive__city__name', 'shelfmark',
