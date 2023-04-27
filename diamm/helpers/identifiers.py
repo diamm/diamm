@@ -10,7 +10,7 @@ class ExternalIdentifiers:
 
 
 IDENTIFIER_TYPES = (
-    (ExternalIdentifiers.RISM, "RISM"),
+    (ExternalIdentifiers.RISM, "RISM Online"),
     (ExternalIdentifiers.VIAF, "VIAF"),
     (ExternalIdentifiers.WIKIDATA, "Wikidata"),
     (ExternalIdentifiers.GND, "GND (Gemeinsame Normdatei)"),
