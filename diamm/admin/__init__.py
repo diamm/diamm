@@ -1,5 +1,6 @@
 from diamm.admin.data.archive import ArchiveAdmin
 from diamm.admin.data.archive_note import ArchiveNoteAdmin
+from diamm.admin.data.archive_identifier import ArchiveIdentifierAdmin
 from diamm.admin.data.bibliography import BibliographyAdmin
 from diamm.admin.data.bibliography_author import BibliographyAuthorAdmin
 from diamm.admin.data.bibliography_type import BibliographyTypeAdmin
@@ -21,6 +22,7 @@ from diamm.admin.data.organization_type import OrganizationTypeAdmin
 from diamm.admin.data.page import PageAdmin
 from diamm.admin.data.page_note import PageNoteAdmin
 from diamm.admin.data.person import PersonAdmin
+from diamm.admin.data.person_identifier import PersonIdentifierAdmin
 from diamm.admin.data.person_note import PersonNoteAdmin
 from diamm.admin.data.person_role import PersonRoleAdmin
 from diamm.admin.data.role import RoleAdmin

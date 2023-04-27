@@ -2,6 +2,7 @@ from django.contrib import admin, messages
 from django.contrib.contenttypes.admin import GenericTabularInline
 from django.db import models
 from django.shortcuts import render
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from dynamic_raw_id.admin import DynamicRawIDMixin
 from pagedown.widgets import AdminPagedownWidget
@@ -43,6 +44,13 @@ class PersonIdentifierInline(admin.TabularInline):
     verbose_name = "Identifier"
     model = PersonIdentifier
     extra = 0
+    readonly_fields = ("get_external_url",)
+
+    @admin.display(description="URL")
+    def get_external_url(self, instance) -> str:
+        if not instance.identifier_type:
+            return ""
+        return mark_safe(f'<a href="{instance.identifier_url}">{instance.identifier_url}</a>')
 
 
 class PersonRoleInline(DynamicRawIDMixin, admin.TabularInline):
