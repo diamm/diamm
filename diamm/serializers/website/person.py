@@ -3,6 +3,7 @@ import serpy
 from rest_framework.reverse import reverse
 from diamm.serializers.serializers import ContextDictSerializer, ContextSerializer
 from diamm.models.data.person_note import PersonNote
+from diamm.helpers.identifiers import TYPE_PREFIX
 
 
 class PersonRoleSerializer(ContextSerializer):
@@ -116,6 +117,12 @@ class PersonCompositionSerializer(ContextDictSerializer):
         return sources
 
 
+class PersonIdentifierSerializer(ContextSerializer):
+    url = serpy.StrField(attr="identifier_url")
+    label = serpy.StrField(attr="identifier_label")
+    identifier = serpy.StrField()
+
+
 class PersonDetailSerializer(ContextSerializer):
     url = serpy.MethodField()
     pk = serpy.IntField()
@@ -139,6 +146,7 @@ class PersonDetailSerializer(ContextSerializer):
     # biography = serpy.MethodField()
     variant_names = serpy.MethodField()
     roles = serpy.MethodField()
+    identifiers = serpy.MethodField(required=False)
 
     def get_url(self, obj) -> str:
         return reverse('person-detail',
@@ -166,8 +174,15 @@ class PersonDetailSerializer(ContextSerializer):
     # def get_biography(self, obj):
     #     return PersonNoteSerializer(obj.notes.filter(type=PersonNote.BIOGRAPHY, public=True), many=True).data
 
-    def get_variant_names(self, obj) -> List:
-        return obj.notes.filter(type=PersonNote.VARIANT_NAME_NOTE, public=True).values_list('note', flat=True)
+    def get_variant_names(self, obj) -> list:
+        return list(obj.notes.filter(type=PersonNote.VARIANT_NAME_NOTE,
+                                     public=True).values_list('note', flat=True))
 
     def get_roles(self, obj) -> List:
         return PersonRoleSerializer(obj.roles.all(), many=True).data
+
+    def get_identifiers(self, obj) -> list:
+        print("identifiers!")
+        return PersonIdentifierSerializer(obj.identifiers.all(),
+                                          many=True,
+                                          context={"request": self.context['request']}).data

@@ -53,12 +53,13 @@ class CycleInline(DynamicRawIDMixin, admin.StackedInline):
 @admin.register(Composition)
 class CompositionAdmin(VersionAdmin):
     save_on_top = True
-    list_display = ('id', 'title', 'get_composers', 'appears_in')
+    list_display = ('id', 'title', 'get_composers', 'appears_in', 'updated')
     search_fields = ('=id', 'title', 'composers__composer__last_name')
     inlines = (ComposerInline, NoteInline, CycleInline, BibliographyInline, ItemInline)
     list_filter = ('anonymous', 'genres')
     list_editable = ('title',)
     actions = ["merge_compositions_action", "assign_genre_action"]
+    readonly_fields = ('created', 'updated')
 
     def get_composers(self, obj):
         c = "; ".join([c.composer.full_name for c in obj.composers.all()])
@@ -122,7 +123,7 @@ class CompositionAdmin(VersionAdmin):
             if form.is_valid():
                 genre = form.cleaned_data['genre']
                 updated = queryset.update(genre=genre)
-                messages.success(request, "{0} compositions were updated".format(updated))
+                messages.success(request, f"{updated} compositions were updated")
             else:
                 messages.error(request, "The submitted form was not valid")
         else:

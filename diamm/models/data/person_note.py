@@ -25,3 +25,11 @@ class PersonNote(models.Model):
                                on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.person.full_name} ({self.note_type})"
+
+    @property
+    def note_type(self) -> str:
+        d = dict(self.NOTE_TYPES)
+        return d[self.type]

@@ -7,6 +7,7 @@ authors = ["Andrew Hankinson <andrew.hankinson@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.9"
 django = "~=3.0"
+wagtail = "^3.0"
 djangorestframework = "^3.11.0"
 django-extensions = "^2.2.9"
 werkzeug = "^1.0.0"

@@ -1,6 +1,8 @@
-from django.db import models
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
+from django.db import models
+from django.urls import reverse
+
 from diamm.helpers.solr_helpers import SolrManager
 
 
@@ -38,25 +40,26 @@ class Person(models.Model):
             early_pfx = "ca. "
         if self.latest_year_approximate:
             late_pfx = "ca. "
-        early_year = "{0}".format(self.earliest_year) if self.earliest_year else ""
-        late_year = "{0}".format(self.latest_year) if self.latest_year else ""
+        early_year = f"{self.earliest_year}" if self.earliest_year else ""
+        late_year = f"{self.latest_year}" if self.latest_year else ""
 
         date_str = ""
         if early_year or late_year:
-            date_str = "{epfx}{early}–{lpfx}{late}".format(epfx=early_pfx,
-                                                           early=early_year,
-                                                           lpfx=late_pfx,
-                                                           late=late_year)
+            date_str = f"{early_pfx}{early_year}–{late_pfx}{late_year}"
+
         name_str = ""
         if self.first_name:
-            name_str = "{0}, {1}".format(self.last_name, self.first_name)
+            name_str = f"{self.last_name}, {self.first_name}"
         else:
-            name_str = "{0}".format(self.last_name)
+            name_str = f"{self.last_name}"
 
         if date_str:
-            return "{0} ({1})".format(name_str, date_str)
+            return f"{name_str} ({date_str})"
         else:
             return name_str
+
+    def get_absolute_url(self):
+        return reverse("person-detail", kwargs={"pk": self.pk})
 
     @property
     def full_name(self):
@@ -65,7 +68,7 @@ class Person(models.Model):
     @property
     def solr_relationships(self):
         connection = SolrManager(settings.SOLR['SERVER'])
-        fq = ['type:sourcerelationship', 'related_entity_type_s:person', 'related_entity_pk_i:{0}'.format(self.pk)]
+        fq = ['type:sourcerelationship', 'related_entity_type_s:person', f'related_entity_pk_i:{self.pk}']
         sort = "source_ans asc"
 
         connection.search("*:*", fq=fq, sort=sort, rows=100)
@@ -74,7 +77,7 @@ class Person(models.Model):
     @property
     def solr_copyist(self):
         connection = SolrManager(settings.SOLR['SERVER'])
-        fq = ['type:sourcecopyist', 'copyist_type_s:person', 'copyist_pk_i:{0}'.format(self.pk)]
+        fq = ['type:sourcecopyist', 'copyist_type_s:person', f'copyist_pk_i:{self.pk}']
         sort = "source_ans asc"
 
         connection.search("*:*", fq=fq, sort=sort, rows=100)
@@ -84,7 +87,7 @@ class Person(models.Model):
     def solr_compositions(self):
         connection = SolrManager(settings.SOLR['SERVER'])
         uncertain_ids = self.compositions.filter(uncertain=True).values_list('composition__pk', flat=True)
-        fq = ['type:composition', 'composers_ii:{0}'.format(self.pk)]
+        fq = ['type:composition', f'composers_ii:{self.pk}']
         sort = "title_s asc"
         connection.search("*:*", fq=fq, sort=sort, rows=100)
 

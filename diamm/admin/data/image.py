@@ -1,19 +1,21 @@
-from django import forms
-from django.contrib import admin
-from django.conf import settings
+from urllib.parse import urljoin
+
 import requests
 import ujson
-from urllib.parse import urljoin
+from django import forms
+from django.conf import settings
+from django.contrib import admin
+from django.db import models
+from django.forms import TextInput
+# from import_export.admin import ImportMixin
+# from diamm.resources.image_resource import ImageResource
+from django.utils.translation import ugettext_lazy as _
+from reversion.admin import VersionAdmin
+
 from diamm.admin.filters.input_filter import InputFilter
 from diamm.models.data.image import Image
 from diamm.models.data.image_note import ImageNote
 from diamm.models.data.page import Page
-from reversion.admin import VersionAdmin
-# from import_export.admin import ImportMixin
-# from diamm.resources.image_resource import ImageResource
-from django.utils.translation import ugettext_lazy as _
-from django.forms import TextInput
-from django.db import models
 
 
 class ImageAdminForm(forms.ModelForm):
@@ -105,7 +107,7 @@ def refetch_iiif_info(modeladmin, request, queryset):
         url = urljoin(location + "/", "info.json")
 
         r = requests.get(url, headers={
-            "referer": "https://{0}".format(settings.HOSTNAME),
+            "referer": f"https://{settings.HOSTNAME}",
             "X-DIAMM": settings.DIAMM_IMAGE_KEY,
             "User-Agent": settings.DIAMM_UA
         })

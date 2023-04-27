@@ -1,6 +1,9 @@
+from typing import List
+
 import serpy
 from rest_framework.reverse import reverse
 from diamm.serializers.serializers import ContextSerializer, ContextDictSerializer
+from diamm.helpers.identifiers import TYPE_PREFIX
 
 
 class SourceArchiveSerializer(ContextDictSerializer):
@@ -49,6 +52,12 @@ class SourceArchiveSerializer(ContextDictSerializer):
                        request=self.context['request'])
 
 
+class ArchiveIdentifierSerializer(ContextSerializer):
+    url = serpy.StrField(attr="identifier_url")
+    label = serpy.StrField(attr="identifier_label")
+    identifier = serpy.StrField()
+
+
 class CityArchiveSerializer(ContextSerializer):
     url = serpy.MethodField()
     name = serpy.StrField()
@@ -62,6 +71,12 @@ class CityArchiveSerializer(ContextSerializer):
                        request=self.context['request'])
 
 
+class ArchiveNoteSerializer(ContextSerializer):
+    note = serpy.StrField()
+    note_type = serpy.StrField()
+    type_ = serpy.IntField(attr="type")
+
+
 class ArchiveDetailSerializer(ContextSerializer):
     url = serpy.MethodField()
     pk = serpy.IntField()
@@ -72,8 +87,10 @@ class ArchiveDetailSerializer(ContextSerializer):
     )
     name = serpy.StrField()
     siglum = serpy.StrField()
-    website = serpy.StrField()
+    website = serpy.StrField(required=False)
     logo = serpy.MethodField()
+    notes = serpy.MethodField()
+    identifiers = serpy.MethodField(required=False)
 
     def get_url(self, obj):
         return reverse('archive-detail',
@@ -88,6 +105,15 @@ class ArchiveDetailSerializer(ContextSerializer):
                                        many=True,
                                        context={'request': self.context['request']}).data
 
+    def get_notes(self, obj) -> List:
+        return ArchiveNoteSerializer(obj.notes.exclude(type=1),
+                                     many=True).data
+
     def get_logo(self, obj):
         if obj.logo:
             return obj.logo.url
+
+    def get_identifiers(self, obj) -> list:
+        return ArchiveIdentifierSerializer(obj.identifiers.all(),
+                                           many=True,
+                                           context={"request": self.context['request']}).data

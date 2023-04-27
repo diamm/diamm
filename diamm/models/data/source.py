@@ -2,6 +2,7 @@ from typing import List
 
 from django.conf import settings
 from django.db import models
+from django.urls import reverse
 
 from diamm.helpers.solr_helpers import SolrManager
 
@@ -84,6 +85,9 @@ class Source(models.Model):
         if self.name:
             return "{0} ({1})".format(self.shelfmark, self.name)
         return "{0}".format(self.shelfmark)
+
+    def get_absolute_url(self) -> str:
+        return reverse('source-detail', kwargs={"pk": self.pk})
 
     @property
     def display_name(self) -> str:

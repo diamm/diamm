@@ -1,15 +1,16 @@
 from django.contrib import admin, messages
-from django.shortcuts import render
 from django.contrib.contenttypes.admin import GenericTabularInline
+from django.shortcuts import render
+from dynamic_raw_id.admin import DynamicRawIDMixin
+from reversion.admin import VersionAdmin
+
+from diamm.admin.forms.merge_organizations import MergeOrganizationsForm
 from diamm.admin.forms.update_organization_type import UpdateOrganizationTypeForm
+from diamm.admin.merge_models import merge
 from diamm.models.data.organization import Organization
 from diamm.models.data.source_copyist import SourceCopyist
-from diamm.models.data.source_relationship import SourceRelationship
 from diamm.models.data.source_provenance import SourceProvenance
-from diamm.admin.forms.merge_organizations import MergeOrganizationsForm
-from diamm.admin.merge_models import merge
-from reversion.admin import VersionAdmin
-from dynamic_raw_id.admin import DynamicRawIDMixin
+from diamm.models.data.source_relationship import SourceRelationship
 
 
 class CopiedSourcesInline(DynamicRawIDMixin, GenericTabularInline):
@@ -35,11 +36,13 @@ class ProvenanceSourcesInline(DynamicRawIDMixin, GenericTabularInline):
 @admin.register(Organization)
 class OrganizationAdmin(DynamicRawIDMixin, VersionAdmin):
     save_on_top = True
-    list_display = ('name', 'location', 'type', 'legacy_id')
+    list_display = ('name', 'location', 'type', 'updated')
     list_filter = ('type',)
-    search_fields = ('name', 'location__name')
+    search_fields = ('name', 'location__name', 'variant_names')
     inlines = (CopiedSourcesInline, ProvenanceSourcesInline, RelatedSourcesInline)
     actions = ['update_organization_action', 'merge_organizations_action']
+    view_on_site = True
+    readonly_fields = ('created', 'updated')
 
     dynamic_raw_id_fields = ('location', 'archive')
 
@@ -50,7 +53,7 @@ class OrganizationAdmin(DynamicRawIDMixin, VersionAdmin):
             if form.is_valid():
                 org_type = form.cleaned_data['org_type']
                 updated = queryset.update(type=org_type)
-                messages.success(request, "{0} organizations were updated.".format(updated))
+                messages.success(request, f"{updated} organizations were updated.")
                 return
             else:
                 messages.error(request, "There was an error.")

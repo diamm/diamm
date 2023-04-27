@@ -12,6 +12,7 @@ class ArchiveSearchSerializer(ContextSerializer):
     display_name_ans = serpy.StrField(attr="name")
     country_s = serpy.StrField(attr="city.parent.name", required=False)
     siglum_s = serpy.StrField(attr="siglum")
+    former_sigla_ss = serpy.MethodField()
 
     def get_type(self, obj):
         return obj.__class__.__name__.lower()
@@ -24,3 +25,7 @@ class ArchiveSearchSerializer(ContextSerializer):
     def get_sources_ss(self, obj):
         return [source.display_name for source in obj.sources.all()]
 
+    def get_former_sigla_ss(self, obj):
+        if obj.former_sigla:
+            return obj.former_sigla.split(",")
+        return None

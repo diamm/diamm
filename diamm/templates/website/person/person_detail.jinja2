@@ -14,6 +14,18 @@
         <div class="column">
             <table class="source-details">
                 <tbody>
+                {% if content.identifiers %}
+                <tr>
+                    <th>External identifiers</th>
+                    <td>
+                        <ul>
+                        {% for identifier in content.identifiers %}
+                            <li><a href="{{ identifier.url }}">{{ identifier.label }} ({{ identifier.identifier }})</a></li>
+                        {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+                {% endif %}
                 {% if content.variant_names %}
                 <tr>
                     <th>Variant names</th>
@@ -23,18 +35,18 @@
                 </tr>
                 {% endif %}
                 {% if content.roles %}
-                    <tr>
-                        <th>Roles</th>
-                        <td>
-                            <ul>
-                                {% for role in content.roles %}
-                                <li>
-                                    {{ role.role }}
-                                </li>
-                                {% endfor %}
-                            </ul>
-                        </td>
-                    </tr>
+                <tr>
+                    <th>Roles</th>
+                    <td>
+                        <ul>
+                            {% for role in content.roles %}
+                            <li>
+                                {{ role.role }}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
                 {% endif %}
                 {% if content.compositions %}
                 <tr>

@@ -14,7 +14,7 @@ class SourceBibliographyAdmin(DynamicRawIDMixin, admin.ModelAdmin):
     dynamic_raw_id_fields = ('source', 'bibliography')
 
     def get_source(self, obj):
-        return "{0}".format(obj.source.display_name)
+        return f"{obj.source.display_name}"
     get_source.short_description = "Source"
     get_source.admin_order_field = "source__shelfmark"
 

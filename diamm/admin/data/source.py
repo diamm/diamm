@@ -1,5 +1,3 @@
-from typing import Optional
-
 import pysolr
 from django.conf import settings
 from django.contrib import admin, messages
@@ -7,7 +5,6 @@ from django.db import models
 from django.db.models import Q
 from django.db.models.signals import post_delete, post_save
 from django.forms import TextInput, Textarea
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import path
 from django.utils.safestring import mark_safe
@@ -31,7 +28,6 @@ from diamm.models.data.source_provenance import SourceProvenance
 from diamm.models.data.source_relationship import SourceRelationship
 from diamm.models.data.source_url import SourceURL
 from diamm.signals.item_signals import index_item, delete_item
-from diamm.signals.page_signals import index_page, delete_page
 
 
 class SourceCopyistInline(DynamicRawIDMixin, admin.StackedInline):
@@ -86,7 +82,7 @@ class PagesInline(admin.TabularInline):
 
     def link_id_field(self, obj):
         change_url = reverse('admin:diamm_data_page_change', args=(obj.pk,))
-        return mark_safe('<a href="{0}">{1}</a>'.format(change_url, obj.pk))
+        return mark_safe(f'<a href="{change_url}">{obj.pk}</a>')
 
 
 class URLsInline(admin.TabularInline):
@@ -108,7 +104,7 @@ class ItemInline(DynamicRawIDMixin, admin.TabularInline):
 
     def link_id_field(self, obj):
         change_url = reverse('admin:diamm_data_item_change', args=(obj.pk,))
-        return mark_safe('<a href="{0}">{1}</a>'.format(change_url, obj.pk))
+        return mark_safe(f'<a href="{change_url}">{obj.pk}</a>')
 
 
 class InventoryFilter(admin.SimpleListFilter):
@@ -173,7 +169,9 @@ class SourceAdmin(DynamicRawIDMixin, VersionAdmin):
                     'public',
                     'public_images',
                     'inventory_provided',
-                    'sort_order')
+                    'sort_order',
+                    'updated')
+    readonly_fields = ('created', 'updated')
     search_fields = ('identifiers__identifier',
                      'name', 'archive__name',
                      'archive__siglum', 'archive__city__name', 'shelfmark',
@@ -191,6 +189,7 @@ class SourceAdmin(DynamicRawIDMixin, VersionAdmin):
     filter_horizontal = ['notations']
     # actions = (sort_sources,)
     dynamic_raw_id_fields = ('cover_image', 'archive')
+    view_on_site = True
 
     formfield_overrides = {
         models.TextField: {'widget': AdminPagedownWidget}
@@ -203,9 +202,6 @@ class SourceAdmin(DynamicRawIDMixin, VersionAdmin):
     def get_archive(self, obj):
         return "{0}".format(obj.archive.name)
     get_archive.short_description = "Archive"
-
-    def view_on_site(self, obj):
-        return reverse('source-detail', kwargs={"pk": obj.pk})
 
     def copy_inventory_view(self, request, pk):
         instance = Source.objects.get(pk=pk)
@@ -226,7 +222,7 @@ class SourceAdmin(DynamicRawIDMixin, VersionAdmin):
                     if target.pk == instance.pk:
                         continue
 
-                    print("Copying to {0}".format(target.display_name))
+                    print(f"Copying to {target.display_name}")
                     self.__copy_items_to_source(instance, target)
 
                 messages.success(request, "Inventories successfully copied.")
@@ -273,5 +269,5 @@ class SourceAdmin(DynamicRawIDMixin, VersionAdmin):
     # TODO: Objects are not being deleted from Solr.
     def __delete_items_from_solr(self, target):
         connection = pysolr.Solr(settings.SOLR['SERVER'])
-        fq = " AND ".join(["type:item", "source_i:{0}".format(target.pk)])
+        fq = " AND ".join(["type:item", f"source_i:{target.pk}"])
         results = connection.delete(q=fq)

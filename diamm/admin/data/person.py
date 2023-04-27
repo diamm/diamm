@@ -2,6 +2,8 @@ from django.contrib import admin, messages
 from django.contrib.contenttypes.admin import GenericTabularInline
 from django.db import models
 from django.shortcuts import render
+from django.utils.safestring import mark_safe
+from django.utils.translation import ugettext_lazy as _
 from dynamic_raw_id.admin import DynamicRawIDMixin
 from pagedown.widgets import AdminPagedownWidget
 from reversion.admin import VersionAdmin
@@ -11,6 +13,7 @@ from diamm.admin.merge_models import merge
 from diamm.models.data.composition_composer import CompositionComposer
 from diamm.models.data.organization import Organization
 from diamm.models.data.person import Person
+from diamm.models.data.person_identifier import PersonIdentifier
 from diamm.models.data.person_note import PersonNote
 from diamm.models.data.person_role import PersonRole
 from diamm.models.data.source_copyist import SourceCopyist
@@ -35,6 +38,19 @@ class PersonNoteInline(admin.TabularInline):
     formfield_overrides = {
         models.TextField: {'widget': AdminPagedownWidget}
     }
+
+
+class PersonIdentifierInline(admin.TabularInline):
+    verbose_name = "Identifier"
+    model = PersonIdentifier
+    extra = 0
+    readonly_fields = ("get_external_url",)
+
+    @admin.display(description="URL")
+    def get_external_url(self, instance) -> str:
+        if not instance.identifier_type:
+            return ""
+        return mark_safe(f'<a href="{instance.identifier_url}">{instance.identifier_url}</a>')
 
 
 class PersonRoleInline(DynamicRawIDMixin, admin.TabularInline):
@@ -100,17 +116,38 @@ def migrate_to_organization(modeladmin, request, queryset):
 migrate_to_organization.short_description = "Migrate Person to Organization"
 
 
+class PersonBiography(admin.SimpleListFilter):
+    title = _('Has Biography')
+    parameter_name = 'biography'
+
+    def lookups(self, request, model_admin):
+        return (
+            ("yes", _("Has biography")),
+            ("no", _("Does not have biography"))
+        )
+
+    def queryset(self, request, queryset):
+        if not self.value():
+            return queryset
+        if self.value() == "yes":
+            return queryset.filter(notes__type=1)
+        elif self.value() == "no":
+            return queryset
+
+
 @admin.register(Person)
 class PersonAdmin(VersionAdmin):
     save_on_top = True
-    list_display = ('last_name', 'first_name', 'earliest_year', 'latest_year', 'legacy_id')
+    list_display = ('last_name', 'first_name', 'title', 'earliest_year', 'latest_year', 'updated')
     search_fields = ('last_name', 'first_name', 'title')
-    inlines = (PersonNoteInline, PersonRoleInline,
+    inlines = (PersonNoteInline, PersonRoleInline, PersonIdentifierInline,
                CopiedSourcesInline, RelatedSourcesInline, ProvenanceSourcesInline,
                CompositionsInline)
     actions = ['merge_people_action']
     # filter_horizontal = ('roles',)
-    list_filter = []
+    list_filter = [PersonBiography]
+    view_on_site = True
+    readonly_fields = ('created', 'updated')
 
     formfield_overrides = {
         models.TextField: {'widget': AdminPagedownWidget}
