@@ -16,6 +16,18 @@
             {% endif %}
         </div>
     </div>
+    {% if content.identifiers %}
+    <div class="columns">
+        <div class="column content">
+            <h5 class="is-5">External identifiers</h5>
+            <ul>
+                {% for identifier in content.identifiers %}
+                <li><a href="{{ identifier.url }}">{{ identifier.label }} ({{ identifier.identifier }})</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endif %}
     {% if content.notes %}
         {% for note in content.notes %}
             <h4 class="title is-5">{{ note.note_type }}</h4>
