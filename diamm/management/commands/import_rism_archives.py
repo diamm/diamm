@@ -25,7 +25,7 @@ class Command(BaseCommand):
                 archive_record = Archive.objects.get(id=diamm_id)
 
                 rism_ident = ArchiveIdentifier(
-                    identifier=f"institution/{rism_id}",
+                    identifier=f"institutions/{rism_id}",
                     identifier_type=ExternalIdentifiers.RISM,
                     archive=archive_record
                 ).save()
