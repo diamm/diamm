@@ -18,9 +18,9 @@ def __composer_inventory_index(item):
 
     # Delete this item in the indexed source from Solr.
     conn = pysolr.Solr(settings.SOLR['SERVER'])
-    fq = ["type:{0}".format("composerinventory"),
-          "source_i:{0}".format(source.pk),
-          "item_i:{0}".format(item.pk)]
+    fq = ["type:composerinventory",
+          f"source_i:{source.pk}",
+          f"item_i:{item.pk}"]
     records = conn.search("*:*", fq=fq, fl="id")
     if records.docs:
         for doc in records.docs:
@@ -35,9 +35,10 @@ def __composer_inventory_index(item):
 def __composer_inventory_delete(item):
     source = item.source
     conn = pysolr.Solr(settings.SOLR['SERVER'])
-    fq = ["type:{0}".format("composerinventory"),
-          "source_i:{0}".format(source.pk),
-          "item_i:{0}".format(item.pk)]
+
+    fq = ["type:composerinventory",
+          f"source_i:{source.pk}",
+          f"item_i:{item.pk}"]
     records = conn.search("*:*", fq=fq, fl="id")
     if records.docs:
         for doc in records.docs:

@@ -26,10 +26,6 @@ class ItemNotesSearchSerializer(serpy.Serializer):
 
 
 class ItemSearchSerializer(serpy.Serializer):
-    """
-        In testing, Serpy is twice as fast as DRF so we use it here
-        since this is index-time performance-sensitive.
-    """
     type = serpy.MethodField()
     pk = serpy.IntField()
 
@@ -98,7 +94,7 @@ class ItemSearchSerializer(serpy.Serializer):
 
     def get_pages_ssni(self, obj):
         pages = obj.pages.values_list('pk', 'numeration')
-        page_strs = ["{0}|{1}".format(o[0], o[1]) for o in pages]
+        page_strs = [f"{o[0]}|{o[1]}" for o in pages]
         return page_strs
 
     def get_composition_i(self, obj):
@@ -126,11 +122,11 @@ class ItemSearchSerializer(serpy.Serializer):
         """
         if obj.composition:
             if not obj.composition.anonymous:
-                return ["{0}|{1}|{2}".format(c.composer.full_name, c.composer.pk, c.uncertain) for c in obj.composition.composers.all()]
+                return [f"{c.composer.full_name}|{c.composer.pk}|{c.uncertain}" for c in obj.composition.composers.all()]
             else:
                 return ["Anonymous||"]
         elif obj.unattributed_composers.count() > 0:
-            return ["{0}|{1}|{2}".format(c.composer.full_name, c.composer.pk, c.uncertain) for c in obj.unattributed_composers.all()]
+            return [f"{c.composer.full_name}|{c.composer.pk}|{c.uncertain}" for c in obj.unattributed_composers.all()]
         else:
             return []
 
@@ -140,11 +136,11 @@ class ItemSearchSerializer(serpy.Serializer):
         """
         if obj.composition:
             if not obj.composition.anonymous:
-                return ["{0}".format(c.composer.full_name) for c in obj.composition.composers.all()]
+                return [f"{c.composer.full_name}" for c in obj.composition.composers.all()]
             else:
                 return ["Anonymous"]
         elif obj.unattributed_composers.count() > 0:
-            return ["{0}".format(c.composer.full_name) for c in obj.unattributed_composers.all()]
+            return [f"{c.composer.full_name}" for c in obj.unattributed_composers.all()]
         else:
             return []
 
@@ -160,11 +156,11 @@ class ItemSearchSerializer(serpy.Serializer):
         """
         if obj.composition:
             if not obj.composition.anonymous and obj.composition.composers.count() > 0:
-                return "{0}".format(obj.composition.composers.first().composer.full_name)
+                return f"{obj.composition.composers.first().composer.full_name}"
             else:
                 return "Anonymous"
         elif obj.unattributed_composers.count() > 0:
-            return "{0}".format(obj.unattributed_composers.first().composer.full_name)
+            return f"{obj.unattributed_composers.first().composer.full_name}"
         else:
             return None
 

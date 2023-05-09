@@ -1,3 +1,4 @@
+from collections import defaultdict
 from typing import List, Optional, Dict
 
 import serpy
@@ -207,7 +208,7 @@ class SourceComposerInventoryCompositionSerializer(ContextDictSerializer):
             return obj['source_attribution_s']
         return None
 
-    def get_url(self, obj):
+    def get_url(self, obj) -> Optional[str]:
         if 'composition_i' not in obj:
             return None
 
@@ -611,6 +612,10 @@ class SourceDetailSerializer(ContextSerializer):
                                          context={"request": self.context['request']}).data
 
     def get_composer_inventory(self, obj):
+        outp = defaultdict(list)
+        for inv in obj.inventory_by_composer:
+
+
         return SourceComposerInventorySerializer(obj.inventory_by_composer,
                                                  many=True,
                                                  context={"request": self.context['request']}).data
