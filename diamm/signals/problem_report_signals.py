@@ -1,11 +1,12 @@
-from django.dispatch import receiver
-from django.core.mail import send_mail
 from django.conf import settings
-from diamm.models.site.problem_report import ProblemReport
-from diamm.models.diamm_user import CustomUserModel
+from django.core.mail import send_mail
 from django.db.models.signals import post_save
+from django.dispatch import receiver
 
-FRIENDLY_FROM = "Digital Image Archive of Medieval Music <{0}>".format(settings.DEFAULT_FROM_EMAIL)
+from diamm.models.diamm_user import CustomUserModel
+from diamm.models.site.problem_report import ProblemReport
+
+FRIENDLY_FROM = f"Digital Image Archive of Medieval Music <{settings.DEFAULT_FROM_EMAIL}>"
 
 
 @receiver(post_save, sender=ProblemReport)
@@ -57,11 +58,11 @@ def send_admin_notification_email(sender, instance, created, **kwargs):
         name=name,
         record=record,
         report=report,
-        review_url="https://{0}/admin/diamm_site/problemreport/{1}/".format(settings.HOSTNAME, instance.pk)
+        review_url=f"https://{settings.HOSTNAME}/admin/diamm_site/problemreport/{instance.pk}/"
     )
 
     send_mail(
-        "A new correction report is available from {0}".format(name),
+        f"A new correction report is available from {name}",
         email_message,
         FRIENDLY_FROM,
         recipients,

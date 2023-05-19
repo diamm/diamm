@@ -1,8 +1,9 @@
 from django.db.models import Prefetch
 from django.shortcuts import redirect, get_object_or_404
 from rest_framework import generics
-from diamm.models.data.person import Person
+
 from diamm.models.data.composition import Composition
+from diamm.models.data.person import Person
 from diamm.serializers.website.person import PersonDetailSerializer
 
 
@@ -22,7 +23,7 @@ class PersonDetail(generics.RetrieveAPIView):
 # Since the old DIAMM IDs have been replaced with new ones, this
 # call will handle redirections to the new records.
 def legacy_composer_redirect(req, legacy_id: str) -> str:
-    legacy_lookup = "legacy_composer.{0}".format(legacy_id)
+    legacy_lookup = f"legacy_composer.{legacy_id}"
     person = get_object_or_404(Person, legacy_id=legacy_lookup)
 
     return redirect('person-detail', pk=person.pk)

@@ -1,7 +1,8 @@
 from django.contrib import admin
-from diamm.models.data.voice import Voice
 from dynamic_raw_id.admin import DynamicRawIDMixin
 from reversion.admin import VersionAdmin
+
+from diamm.models.data.voice import Voice
 
 
 @admin.register(Voice)

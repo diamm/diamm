@@ -1,10 +1,11 @@
-from django.dispatch import receiver
 from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+from diamm.helpers.solr_helpers import solr_index, solr_index_many
 from diamm.models.data.geographic_area import GeographicArea
 from diamm.serializers.search.archive import ArchiveSearchSerializer
 from diamm.serializers.search.organization import OrganizationSearchSerializer
 from diamm.serializers.search.source import SourceSearchSerializer
-from diamm.helpers.solr_helpers import solr_index, solr_index_many
 
 
 # A geographic area has relationships with a lot of different models. This will ensure that

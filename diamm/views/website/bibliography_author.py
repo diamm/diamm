@@ -1,4 +1,5 @@
 from rest_framework import generics
+
 from diamm.models.data.bibliography_author import BibliographyAuthor
 from diamm.serializers.website.bibliography_author import BibliographyAuthorSerializer
 

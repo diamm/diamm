@@ -26,7 +26,7 @@ def image_serve(request, pk, region=None, size=None, rotation=None, *args, **kwa
     ]
     conn = pysolr.Solr(settings.SOLR['SERVER'])
     req = conn.search("*:*",
-                      fq=["type:image", "pk:{0}".format(pk)],
+                      fq=["type:image", f"pk:{pk}"],
                       fl=field_list,
                       rows=1)  # ensure only one result is returned
 
@@ -39,10 +39,10 @@ def image_serve(request, pk, region=None, size=None, rotation=None, *args, **kwa
     if not location or location == 'None':
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
-    referer: str = "{0}://{1}".format(request.scheme, request.get_host())
+    referer: str = f"{request.scheme}://{request.get_host()}"
 
     if region and size and rotation:
-        location: str = "{0}/{1}/{2}/{3}/default.jpg".format(location, region, size, rotation)
+        location: str = f"{location}/{region}/{size}/{rotation}/default.jpg"
 
     diamm = request.META.get('HTTP_X_DIAMM')
     iiif_id = request.META.get('HTTP_X_IIIF_ID')

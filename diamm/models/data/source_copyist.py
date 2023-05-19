@@ -41,7 +41,7 @@ class SourceCopyist(models.Model):
     copyist = GenericForeignKey()
 
     def __str__(self):
-        return "{0} ({1})".format(self.copyist, self.copyist_type)
+        return f"{self.copyist} ({self.copyist_type})"
 
     @property
     def copyist_type(self):

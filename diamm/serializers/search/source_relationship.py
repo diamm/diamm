@@ -1,4 +1,5 @@
 import serpy
+
 from diamm.models.data.organization import Organization
 from diamm.models.data.person import Person
 

@@ -1,4 +1,5 @@
 import re
+
 import serpy
 from django.template.loader import get_template
 
@@ -43,7 +44,7 @@ class BibliographySearchSerializer(serpy.Serializer):
                                           'bibliography_author__last_name',
                                           'bibliography_author__pk').order_by('position',
                                                                               'bibliography_author__last_name')
-        authors_s = "$".join(["{0}|{1}|{2}".format(n[0], n[1], n[2]) for n in authors])
+        authors_s = "$".join([f"{n[0]}|{n[1]}|{n[2]}" for n in authors])
         return authors_s
 
     def get_authors_ii(self, obj):
@@ -65,8 +66,8 @@ class BibliographySearchSerializer(serpy.Serializer):
         template = get_template('website/bibliography/bibliography_entry.jinja2')
         citation = template.template.render(content=obj)
         # strip out any newlines from the templating process
-        citation = re.sub('\n', '', citation)
+        citation = re.sub(r'\n', '', citation)
         # strip out multiple spaces
-        citation = re.sub('\s+', ' ', citation)
+        citation = re.sub(r'\s+', ' ', citation)
         citation = citation.strip()
         return citation

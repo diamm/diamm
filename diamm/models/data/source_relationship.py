@@ -29,4 +29,4 @@ class SourceRelationship(models.Model):
     uncertain = models.BooleanField(default=False)
 
     def __str__(self):
-        return "{0} ({1})".format(self.related_entity, self.relationship_type.name)
+        return f"{self.related_entity} ({self.relationship_type.name})"

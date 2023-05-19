@@ -1,9 +1,10 @@
-from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete
-from diamm.models.data.source import Source
-from diamm.serializers.search.source import SourceSearchSerializer
-from diamm.serializers.search.item import ItemSearchSerializer
+from django.dispatch import receiver
+
 from diamm.helpers.solr_helpers import solr_index, solr_index_many, solr_delete, solr_delete_many
+from diamm.models.data.source import Source
+from diamm.serializers.search.item import ItemSearchSerializer
+from diamm.serializers.search.source import SourceSearchSerializer
 from serializers.search.composer_inventory import ComposerInventorySearchSerializer
 
 

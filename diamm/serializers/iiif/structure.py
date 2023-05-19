@@ -1,9 +1,11 @@
 from typing import List, Dict, Optional
+
 import serpy
 from rest_framework.reverse import reverse
-from diamm.serializers.serializers import ContextDictSerializer
+
 from diamm.serializers.fields import StaticField
 from diamm.serializers.iiif.service import StructureServiceSerializer
+from diamm.serializers.serializers import ContextDictSerializer
 
 
 class StructureSerializer(ContextDictSerializer):

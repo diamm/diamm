@@ -612,10 +612,6 @@ class SourceDetailSerializer(ContextSerializer):
                                          context={"request": self.context['request']}).data
 
     def get_composer_inventory(self, obj):
-        outp = defaultdict(list)
-        for inv in obj.inventory_by_composer:
-
-
         return SourceComposerInventorySerializer(obj.inventory_by_composer,
                                                  many=True,
                                                  context={"request": self.context['request']}).data

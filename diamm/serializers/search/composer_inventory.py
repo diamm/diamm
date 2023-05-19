@@ -1,7 +1,9 @@
 import random
+
 import serpy
-from diamm.serializers.serializers import ContextSerializer
+
 from diamm.serializers.fields import StaticField
+from diamm.serializers.serializers import ContextSerializer
 
 """
     An inventory by composer, where every 'composer' field is an array (possible
@@ -89,9 +91,9 @@ class ComposerInventorySearchSerializer(ContextSerializer):
 
     def get_composer_s(self, obj):
         if obj[LAST_NAME] and obj[FIRST_NAME]:
-            return "{0}, {1}".format(obj[LAST_NAME], obj[FIRST_NAME])
+            return f"{obj[LAST_NAME]}, {obj[FIRST_NAME]}"
         elif obj[LAST_NAME]:
-            return "{0}".format(obj[LAST_NAME])
+            return f"{obj[LAST_NAME]}"
         else:
             return "Anonymous"
 

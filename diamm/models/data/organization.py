@@ -43,7 +43,7 @@ class Organization(models.Model):
         connection = SolrManager(settings.SOLR['SERVER'])
         fq = ['type:sourcecopyist',
               'copyist_type_s:organization',
-              'copyist_pk_i:{0}'.format(self.pk)]
+              f'copyist_pk_i:{self.pk}']
         sort = "source_ans asc"
         connection.search("*:*", fq=fq, sort=sort, rows=100)
 
@@ -54,7 +54,7 @@ class Organization(models.Model):
         connection = SolrManager(settings.SOLR['SERVER'])
         fq = ['type:sourcerelationship',
               'related_entity_type_s:organization',
-              'related_entity_pk_i:{0}'.format(self.pk)]
+              f'related_entity_pk_i:{self.pk}']
         sort = "source_ans asc"
         connection.search("*:*", fq=fq, sort=sort, rows=100)
 
@@ -65,7 +65,7 @@ class Organization(models.Model):
         connection = SolrManager(settings.SOLR['SERVER'])
         fq = ['type:sourceprovenance',
               'entity_type_s:organization',
-              'entity_pk_i:{0}'.format(self.pk)]
+              f'entity_pk_i:{self.pk}']
         sort = "source_ans asc"
         connection.search("*:*", fq=fq, sort=sort, rows=100)
         return list(connection.results)

@@ -1,8 +1,10 @@
 from typing import Optional, Dict, List
+
 import serpy
 from rest_framework.reverse import reverse
-from diamm.serializers.serializers import ContextSerializer, ContextDictSerializer
+
 from diamm.models.data.geographic_area import GeographicArea
+from diamm.serializers.serializers import ContextSerializer, ContextDictSerializer
 
 
 class OrganizationLocationSerializer(ContextSerializer):

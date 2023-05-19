@@ -125,7 +125,7 @@ class ItemAdmin(DynamicRawIDMixin, VersionAdmin):
 
     def get_composers(self, obj):
         if obj.composition:
-            return "{0}".format(obj.composition.composer_names)
+            return f"{obj.composition.composer_names}"
 
     get_composers.short_description = "composers"
     get_composers.admin_order_field = 'composition__composers__composer__last_name'

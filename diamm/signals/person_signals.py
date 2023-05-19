@@ -1,8 +1,9 @@
-from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
+
+from diamm.helpers.solr_helpers import solr_delete, solr_index
 from diamm.models.data.person import Person
 from diamm.serializers.search.person import PersonSearchSerializer
-from diamm.helpers.solr_helpers import solr_delete, solr_index
 
 
 @receiver(post_save, sender=Person)

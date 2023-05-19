@@ -1,11 +1,12 @@
 from typing import Optional, Dict, List
 
-import serpy
 import pysolr
+import serpy
 from django.conf import settings
 from rest_framework.reverse import reverse
-from diamm.serializers.serializers import ContextDictSerializer
+
 from diamm.serializers.fields import StaticField
+from diamm.serializers.serializers import ContextDictSerializer
 
 
 class StructureServiceSerializer(ContextDictSerializer):
@@ -15,7 +16,7 @@ class StructureServiceSerializer(ContextDictSerializer):
     """
     service = StaticField(
         label="@context",
-        value="https://{0}/services/item".format(settings.HOSTNAME)
+        value=f"https://{settings.HOSTNAME}/services/item"
     )
     id = serpy.MethodField(
         label="@id"
@@ -31,7 +32,7 @@ class StructureServiceSerializer(ContextDictSerializer):
 class ServiceSerializer(ContextDictSerializer):
     service = StaticField(
         label="@context",
-        value="https://{0}/services/item".format(settings.HOSTNAME)  # custom DIAMM service namespace
+        value=f"https://{settings.HOSTNAME}/services/item"  # custom DIAMM service namespace
     )
     id = serpy.MethodField(
         label="@id"
@@ -87,7 +88,7 @@ class ServiceSerializer(ContextDictSerializer):
     def get_voices(self, obj: Dict) -> Optional[List]:
         id_list = ",".join([str(x) for x in obj['voices_ii']])
         connection = pysolr.Solr(settings.SOLR['SERVER'])
-        fq = ["type:voice", "{!terms f=pk}"+id_list]
+        fq = ["type:voice", "{!terms f=pk}" + id_list]
         sort = "sort_order_i asc"
         voice_list = connection.search("*:*", fq=fq, sort=sort, rows=100)
 

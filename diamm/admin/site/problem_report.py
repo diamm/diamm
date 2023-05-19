@@ -1,13 +1,15 @@
 from typing import Optional
+
 from django.contrib import admin
-from diamm.models.site.problem_report import ProblemReport
-from diamm.models.data.person import Person
-from diamm.models.data.source import Source
-from diamm.models.data.organization import Organization
-from diamm.models.data.composition import Composition
 from dynamic_raw_id.admin import DynamicRawIDMixin
 from rest_framework.reverse import reverse
 from reversion.admin import VersionAdmin
+
+from diamm.models.data.composition import Composition
+from diamm.models.data.organization import Organization
+from diamm.models.data.person import Person
+from diamm.models.data.source import Source
+from diamm.models.site.problem_report import ProblemReport
 
 
 @admin.register(ProblemReport)

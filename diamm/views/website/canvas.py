@@ -1,9 +1,10 @@
+import pysolr
+from django.conf import settings
 from rest_framework import generics
 from rest_framework import response
 from rest_framework import status
-from django.conf import settings
+
 from diamm.renderers.ujson_renderer import UJSONRenderer
-import pysolr
 
 
 class CanvasListData(generics.GenericAPIView):
@@ -22,7 +23,7 @@ class CanvasData(generics.GenericAPIView):
             return response.Response({'error': 'Page was not in request'}, status.HTTP_400_BAD_REQUEST)
 
         page_query = {
-            "fq": ["type:page", "pk:{0}".format(page_id)]
+            "fq": ["type:page", f"pk:{page_id}"]
         }
         conn = pysolr.Solr(settings.SOLR['SERVER'])
         page_res = conn.search("*:*", **page_query)
@@ -38,7 +39,7 @@ class CanvasData(generics.GenericAPIView):
 
         item_ids = ",".join([str(x) for x in page_items])
         item_query = {
-            "fq": ["type:item", "{!term f=pk}"+item_ids]
+            "fq": ["type:item", "{!term f=pk}" + item_ids]
         }
         item_res = conn.search("*:*", **item_query)
 

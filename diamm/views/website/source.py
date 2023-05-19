@@ -2,16 +2,17 @@ import pysolr
 from django.conf import settings
 from django.shortcuts import get_object_or_404, redirect
 from rest_framework import generics
-from rest_framework import status
-from rest_framework import response
 from rest_framework import permissions
-from diamm.renderers.ujson_renderer import UJSONRenderer
-from diamm.models.data.source import Source
+from rest_framework import response
+from rest_framework import status
+
 from diamm.models.data.item import Item
-from diamm.serializers.website.source import SourceDetailSerializer
-from diamm.serializers.iiif.manifest import SourceManifestSerializer
+from diamm.models.data.source import Source
+from diamm.renderers.ujson_renderer import UJSONRenderer
 from diamm.serializers.iiif.canvas import CanvasSerializer
+from diamm.serializers.iiif.manifest import SourceManifestSerializer
 from diamm.serializers.iiif.service import ServiceSerializer
+from diamm.serializers.website.source import SourceDetailSerializer
 
 
 class SourceDetail(generics.RetrieveAPIView):
@@ -47,7 +48,7 @@ class SourceManifest(generics.GenericAPIView):
     def get(self, request, pk, *args, **kwargs) -> response.Response:
         conn = pysolr.Solr(settings.SOLR['SERVER'])
         res = conn.search("*:*",
-                          fq=["type:source", "pk:{0}".format(pk)],
+                          fq=["type:source", f"pk:{pk}"],
                           rows=1)
 
         if res.hits == 0:
@@ -76,7 +77,7 @@ class SourceCanvasDetail(generics.GenericAPIView):
 
         conn = pysolr.Solr(settings.SOLR['SERVER'])
         res = conn.search("*:*",
-                          fq=["type:page", "pk:{0}".format(page_id)],
+                          fq=["type:page", f"pk:{page_id}"],
                           fl=page_fields)
         canvas = CanvasSerializer(res.docs[0], context={"request": request})
 
@@ -97,8 +98,8 @@ class SourceItemDetail(generics.GenericAPIView):
         # those records that have images associated with them.
         structure_query = {
             "fq": ["type:item",
-                   "pk:{0}".format(item_id),
-                   "source_i:{0}".format(source_id),
+                   f"pk:{item_id}",
+                   f"source_i:{source_id}",
                    "pages_ii:[* TO *]"],
             "sort": "folio_start_ans asc",
             "rows": 10000,

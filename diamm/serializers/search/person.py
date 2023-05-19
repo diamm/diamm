@@ -1,5 +1,7 @@
 from typing import List
+
 import serpy
+
 from diamm.models.data.person_note import PersonNote
 from diamm.serializers.serializers import ContextSerializer
 

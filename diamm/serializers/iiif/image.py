@@ -1,8 +1,10 @@
 from typing import Dict
+
 import serpy
 from rest_framework.reverse import reverse
-from diamm.serializers.serializers import ContextDictSerializer
+
 from diamm.serializers.fields import StaticField
+from diamm.serializers.serializers import ContextDictSerializer
 
 
 class ImageResourceSerializer(ContextDictSerializer):

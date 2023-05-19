@@ -1,8 +1,9 @@
 from django.contrib import admin
-from diamm.models.data.source_copyist import SourceCopyist
-from diamm.models.data.person import Person
-from diamm.models.data.organization import Organization
 from dynamic_raw_id.admin import DynamicRawIDMixin
+
+from diamm.models.data.organization import Organization
+from diamm.models.data.person import Person
+from diamm.models.data.source_copyist import SourceCopyist
 
 
 @admin.register(SourceCopyist)

@@ -3,11 +3,11 @@ import glob
 import os
 import re
 import sys
-import ujson
 from urllib.parse import urljoin
 
 import blessings
 import requests
+import ujson
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
@@ -21,7 +21,7 @@ def _check_input(imagename, filenames):
     while True:
         possible_default = re.sub(r'(Add\.|add)', 'Add', imagename)
         possible_default = re.sub(r'\s', '_', possible_default)
-        inp = input("Fix {0} ([{1}]?): ".format(imagename, possible_default))
+        inp = input(f"Fix {imagename} ([{possible_default}]?): ")
 
         # Allow the user to choose to delete or keep this image without matching a filename. Use with caution.
         if inp in ('d', 'k', 'r'):
@@ -32,7 +32,7 @@ def _check_input(imagename, filenames):
             inp = possible_default
 
         if inp not in filenames:
-            print(term.red("{0} is not in the list of filenames. Please try again.".format(inp)))
+            print(term.red(f"{inp} is not in the list of filenames. Please try again."))
             continue
         else:
             break
@@ -45,19 +45,19 @@ def preflight_checks(csvdata):
     for row in csvdata:
         folder = row['folder']
         source = row['source_id']
-        print(term.blue("Checking {0}...".format(folder)))
+        print(term.blue(f"Checking {folder}..."))
         # check that the folder exists
         foldername = os.path.join("/data", "images", folder)
         if not os.path.exists(foldername):
             passed = False
-            print(term.red("Folder {0} does not exist".format(foldername)))
+            print(term.red(f"Folder {foldername} does not exist"))
 
         # check that the source exists
         try:
             source = Source.objects.get(pk=source)
         except Source.DoesNotExist:
             passed = False
-            print(term.red("Source {0} does not exist. Please check this entry and re-try".format(source)))
+            print(term.red(f"Source {source} does not exist. Please check this entry and re-try"))
 
         # get filenames in directory
         files = glob.glob(os.path.join(foldername, "*.jpx"))
@@ -130,7 +130,7 @@ class Command(BaseCommand):
                 img_to_fix = Image.objects.get(pk=err[0])
 
                 if new_fn == 'k':
-                    logf_handle.write("Image not found, but will be kept: {0}/{1}.jpx [Source {2} ({3})]\n".format(folder, err[1], source.pk, source.display_name))
+                    logf_handle.write(f"Image not found, but will be kept: {folder}/{err[1]}.jpx [Source {source.pk} ({source.display_name})]\n")
                     print(term.yellow("\tKeeping the image in the database, but this *will* break things. Setting it to private to minimize the damage."))
                     img_to_fix.public = False
                     img_to_fix.save()
@@ -141,7 +141,7 @@ class Command(BaseCommand):
                     rfiles = glob.glob(os.path.join(foldername, "*.jpx"))
                     rfns = [os.path.splitext(os.path.relpath(p, foldername))[0] for p in rfiles]
                     if err[1] not in rfns:
-                        print(term.red("\tImage {0} still not found in the list of filenames. Setting to private and continuing."))
+                        print(term.red(f"\tImage {err[1]} still not found in the list of filenames. Setting to private and continuing."))
                         img_to_fix.public = False
                         img_to_fix.save()
                         continue
@@ -153,15 +153,15 @@ class Command(BaseCommand):
             pages = source.pages.all()
             for page in pages:
                 for image in page.images.all():
-                    location = "https://{0}/iiif/image/{1}/{2}.jpx".format(settings.HOSTNAME, folder, image.legacy_filename)
-                    print(term.green("\tSetting URL for image pk {0} as {1}".format(image.pk, location)))
+                    location = f"https://{settings.HOSTNAME}/iiif/image/{folder}/{image.legacy_filename}.jpx"
+                    print(term.green(f"\tSetting URL for image pk {image.pk} as {location}"))
                     image.location = location
                     image.save()
 
                     url = urljoin(location + "/", "info.json")
 
                     r = requests.get(url, headers={
-                        "referer": "https://{0}".format(settings.HOSTNAME),
+                        "referer": f"https://{settings.HOSTNAME}",
                         "X-DIAMM": settings.DIAMM_IMAGE_KEY
                     })
 
@@ -170,7 +170,7 @@ class Command(BaseCommand):
                         image.iiif_response_cache = ujson.dumps(j)
                         image.save()
                     elif r.status_code == 404:
-                        print(term.red("LOG: \t404 not found for {0}.".format(location)))
+                        print(term.red(f"LOG: \t404 not found for {location}."))
                         logf_handle.write("{0}/{1}.jpx was not found. [Source {2} ({3})]\n".format(folder, image.legacy_filename, source.pk, source.display_name))
                     else:
                         print(term.red("\tThere was a problem fetching {0}".format(location)))

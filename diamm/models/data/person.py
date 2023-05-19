@@ -68,7 +68,9 @@ class Person(models.Model):
     @property
     def solr_relationships(self):
         connection = SolrManager(settings.SOLR['SERVER'])
-        fq = ['type:sourcerelationship', 'related_entity_type_s:person', f'related_entity_pk_i:{self.pk}']
+        fq = ['type:sourcerelationship',
+              'related_entity_type_s:person',
+              f'related_entity_pk_i:{self.pk}']
         sort = "source_ans asc"
 
         connection.search("*:*", fq=fq, sort=sort, rows=100)
@@ -77,7 +79,9 @@ class Person(models.Model):
     @property
     def solr_copyist(self):
         connection = SolrManager(settings.SOLR['SERVER'])
-        fq = ['type:sourcecopyist', 'copyist_type_s:person', f'copyist_pk_i:{self.pk}']
+        fq = ['type:sourcecopyist',
+              'copyist_type_s:person',
+              f'copyist_pk_i:{self.pk}']
         sort = "source_ans asc"
 
         connection.search("*:*", fq=fq, sort=sort, rows=100)

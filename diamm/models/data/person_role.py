@@ -24,20 +24,17 @@ class PersonRole(models.Model):
             early_pfx = "ca. "
         if self.latest_year_approximate:
             late_pfx = "ca. "
-        early_year = "{0}".format(self.earliest_year) if self.earliest_year else ""
-        late_year = "{0}".format(self.latest_year) if self.latest_year else ""
+        early_year = f"{self.earliest_year}" if self.earliest_year else ""
+        late_year = f"{self.latest_year}" if self.latest_year else ""
 
         date_str = ""
         if early_year or late_year:
-            date_str = "{epfx}{early}–{lpfx}{late}".format(epfx=early_pfx,
-                                                           early=early_year,
-                                                           lpfx=late_pfx,
-                                                           late=late_year)
+            date_str = f"{early_pfx}{early_year}–{late_pfx}{late_year}"
 
         if date_str:
-            return "{0} ({1})".format(self.role, date_str)
+            return f"{self.role} ({date_str})"
         else:
-            return "{0}".format(self.role)
+            return f"{self.role}"
 
     @property
     def role_description(self):

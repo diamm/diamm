@@ -1,4 +1,5 @@
 from rest_framework import generics
+
 from diamm.models.data.organization import Organization
 from diamm.serializers.website.organization import OrganizationDetailSerializer
 

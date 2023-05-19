@@ -1,5 +1,5 @@
 import logging
-from typing import Optional, Dict, Iterator, List
+from typing import Optional, Dict, Iterator
 
 import pysolr
 from django.conf import settings
@@ -21,8 +21,8 @@ def __solr_prepare(instances):
     connection = pysolr.Solr(settings.SOLR['SERVER'])
 
     for instance in instances:
-        fq = ["type:{0}".format(instance.__class__.__name__.lower()),
-              "pk:{0}".format(instance.pk)]
+        fq = [f"type:{instance.__class__.__name__.lower()}",
+              f"pk:{instance.pk}"]
         records = connection.search("*:*", fq=fq, fl="id")
         if records.docs:
             for doc in records.docs:

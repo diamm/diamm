@@ -18,4 +18,4 @@ class SourceBibliography(models.Model):
     pages = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return "{0}".format(self.bibliography.title)
+        return f"{self.bibliography.title}"

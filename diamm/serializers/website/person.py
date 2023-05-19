@@ -1,9 +1,10 @@
 from typing import Dict, List
+
 import serpy
 from rest_framework.reverse import reverse
-from diamm.serializers.serializers import ContextDictSerializer, ContextSerializer
+
 from diamm.models.data.person_note import PersonNote
-from diamm.helpers.identifiers import TYPE_PREFIX
+from diamm.serializers.serializers import ContextDictSerializer, ContextSerializer
 
 
 class PersonRoleSerializer(ContextSerializer):

@@ -3,6 +3,7 @@ from django.views.decorators.cache import never_cache
 from rest_framework import generics
 from rest_framework import response
 from rest_framework import status
+
 from diamm.helpers.solr_pagination import SolrPaginator, SolrResultException, PageRangeOutOfBoundsException
 
 
@@ -52,11 +53,11 @@ class SearchView(generics.GenericAPIView):
 
         if 'country_s' in request.GET:
             filters.update({
-                'country_s': "\"{0}\"".format(request.GET.get('country_s'))
+                'country_s': f"\"{request.GET.get('country_s')}\""
             })
         if 'cities' in request.GET:
             filters.update({
-                'city_s': "\"{0}\"".format(request.GET.get('cities')),
+                'city_s': f"\"{request.GET.get('cities')}\"",
             })
 
         if 'composer' in request.GET:
@@ -87,7 +88,7 @@ class SearchView(generics.GenericAPIView):
         if 'date_range' in request.GET:
             start, end = request.GET.get('date_range').split(",")
             filters.update({
-                'facet_date_range_ii': "[{0} TO {1}]".format(start, end)
+                'facet_date_range_ii': f"[{start} TO {end}]"
             })
 
         # Filter search by Anonymous Compositions
@@ -101,7 +102,7 @@ class SearchView(generics.GenericAPIView):
         # Filter search by organization type
         if 'orgtype' in request.GET:
             filters.update({
-                'organization_type_s': "\"{0}\"".format(request.GET.get('orgtype', None))
+                'organization_type_s': f"\"{request.GET.get('orgtype', None)}\""
             })
 
         try:

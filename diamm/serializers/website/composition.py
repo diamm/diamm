@@ -1,7 +1,9 @@
 import re
+
 import serpy
 from django.template.loader import get_template
 from rest_framework.reverse import reverse
+
 from diamm.serializers.serializers import ContextSerializer
 
 
@@ -76,10 +78,10 @@ class CompositionSourceSerializer(ContextSerializer):
         folios = ""
 
         if folio_start:
-            folios += "{0}".format(folio_start)
+            folios += f"{folio_start}"
 
         if folio_end and folio_start != folio_end:
-            folios += "—{0}".format(folio_end)
+            folios += f"—{folio_end}"
 
         return folios
 

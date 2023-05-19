@@ -1,6 +1,7 @@
 from django.contrib import admin
-from diamm.models.data.archive_note import ArchiveNote
 from reversion.admin import VersionAdmin
+
+from diamm.models.data.archive_note import ArchiveNote
 
 
 @admin.register(ArchiveNote)

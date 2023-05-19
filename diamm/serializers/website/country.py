@@ -1,7 +1,8 @@
 import serpy
 from rest_framework.reverse import reverse
-from diamm.serializers.serializers import ContextSerializer
+
 from diamm.models.data.geographic_area import GeographicArea
+from diamm.serializers.serializers import ContextSerializer
 
 
 class CountryStateSerializer(ContextSerializer):

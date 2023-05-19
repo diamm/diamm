@@ -1,9 +1,10 @@
 from django.contrib import admin
-from diamm.admin.filters.input_filter import InputFilter
-from diamm.models.data.page import Page
-from diamm.models.data.image import Image
 from dynamic_raw_id.admin import DynamicRawIDMixin
 from reversion.admin import VersionAdmin
+
+from diamm.admin.filters.input_filter import InputFilter
+from diamm.models.data.image import Image
+from diamm.models.data.page import Page
 
 
 class ImageInline(admin.StackedInline):

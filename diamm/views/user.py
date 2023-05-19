@@ -1,13 +1,15 @@
 from typing import Dict
-from django.views.generic.edit import FormView
+
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.views.generic.edit import FormView
 from rest_framework import views
 from rest_framework.response import Response
+
+from diamm.forms.account_edit_form import AccountEditForm
 from diamm.renderers.html_renderer import HTMLRenderer
 from diamm.renderers.ujson_renderer import UJSONRenderer
 from diamm.serializers.website.user import UserSerializer
-from diamm.forms.account_edit_form import AccountEditForm
 
 
 @method_decorator(login_required, name='dispatch')

@@ -20,5 +20,5 @@ class Bibliography(models.Model):
     def __str__(self):
         if self.authors.count() > 0:
             auth = ", ".join(self.authors.values_list('bibliography_author__last_name', flat=True))
-            return "{0}: {1}".format(auth, self.title)
-        return "{0}".format(self.title)
+            return f"{auth}: {self.title}"
+        return f"{self.title}"

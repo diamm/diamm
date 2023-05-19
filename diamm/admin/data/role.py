@@ -1,6 +1,6 @@
 from django.contrib import admin
+
 from diamm.models.data.role import Role
-from diamm.models.data.person import Person
 
 
 # class PersonInline(admin.TabularInline):

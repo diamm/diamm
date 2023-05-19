@@ -1,7 +1,8 @@
 from django.contrib import admin
+from dynamic_raw_id.admin import DynamicRawIDMixin
+
 from diamm.models.data.bibliography_author import BibliographyAuthor
 from diamm.models.data.bibliography_author_role import BibliographyAuthorRole
-from dynamic_raw_id.admin import DynamicRawIDMixin
 
 
 class BibliographyInline(DynamicRawIDMixin, admin.TabularInline):

@@ -9,7 +9,6 @@ from diamm.models.data.archive import Archive
 from diamm.models.data.archive_identifier import ArchiveIdentifier
 from diamm.models.data.archive_note import ArchiveNote
 from diamm.models.data.geographic_area import GeographicArea
-from diamm.helpers.identifiers import TYPE_PREFIX, IDENTIFIER_TYPES
 
 
 class ArchiveNoteInline(admin.TabularInline):
@@ -61,7 +60,7 @@ class ArchiveAdmin(DynamicRawIDMixin, VersionAdmin):
     get_city.admin_order_field = "city__name"
 
     def get_country(self, obj):
-        return "{0}".format(obj.city.parent.name)
+        return f"{obj.city.parent.name}"
     get_country.short_description = "Country"
     get_country.admin_order_field = "city__parent__name"
 

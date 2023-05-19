@@ -15,7 +15,7 @@ class Composition(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return "{0}".format(self.title)
+        return f"{self.title}"
 
     @property
     def composer_names(self):

@@ -26,7 +26,7 @@ class CompositionNote(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return "{0}: {1}".format(self.note_type, self.composition.title)
+        return f"{self.note_type}: {self.composition.title}"
 
     @property
     def note_type(self):

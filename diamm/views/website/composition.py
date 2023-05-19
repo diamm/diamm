@@ -1,8 +1,9 @@
 from rest_framework import generics
-from diamm.renderers.ujson_renderer import UJSONRenderer
+
 from diamm.models.data.composition import Composition
-from diamm.serializers.website.composition import CompositionDetailSerializer
 from diamm.renderers.html_renderer import HTMLRenderer
+from diamm.renderers.ujson_renderer import UJSONRenderer
+from diamm.serializers.website.composition import CompositionDetailSerializer
 
 
 class CompositionDetail(generics.RetrieveAPIView):

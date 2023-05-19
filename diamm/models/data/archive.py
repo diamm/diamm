@@ -70,7 +70,7 @@ class Archive(models.Model):
         """
         conn = pysolr.Solr(settings.SOLR['SERVER'])
         q = {
-            "fq": ['type:source', 'archive_i:{0}'.format(self.pk)],
+            "fq": ['type:source', f'archive_i:{self.pk}'],
             "fl": ["pk",
                    "public_images_b",
                    'display_name_s',

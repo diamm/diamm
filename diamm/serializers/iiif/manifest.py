@@ -7,6 +7,7 @@
 #    most browsers will refuse to cross-load secure and insecure content). This also
 #    simplifies loading images into a canvas.
 from typing import List, Dict, Optional
+
 import serpy
 from django.conf import settings
 from django.template.defaultfilters import truncatewords
