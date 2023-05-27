@@ -5,7 +5,7 @@ from diamm.helpers.solr_helpers import solr_index, solr_index_many, solr_delete,
 from diamm.models.data.source import Source
 from diamm.serializers.search.item import ItemSearchSerializer
 from diamm.serializers.search.source import SourceSearchSerializer
-from serializers.search.composer_inventory import ComposerInventorySearchSerializer
+from diamm.serializers.search.composer_inventory import ComposerInventorySearchSerializer
 
 
 @receiver(post_save, sender=Source)
