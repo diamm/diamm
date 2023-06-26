@@ -92,7 +92,7 @@ export const NumberingSystemType = ({numbering_system_type}) =>
 
 export const OtherIdentifiers = ({identifiers}) =>
 {
-    if (identifiers.length === 0)
+    if (!identifiers || identifiers.length === 0)
         return null;
 
     return (
@@ -116,7 +116,7 @@ export const OtherIdentifiers = ({identifiers}) =>
 
 export const Authorities = ({authorities}) =>
 {
-    if (authorities.length === 0)
+    if (!authorities || authorities.length === 0)
         return null;
 
     return (
