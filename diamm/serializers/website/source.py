@@ -451,6 +451,12 @@ class SourceIdentifierSerializer(ContextSerializer):
     )
 
 
+class SourceAuthoritiesSerializer(ContextSerializer):
+    url = serpy.StrField(attr="identifier_url")
+    label = serpy.StrField(attr="identifier_label")
+    identifier = serpy.StrField()
+
+
 class SourceListSerializer(ContextSerializer):
     pk = serpy.IntField()
     url = serpy.MethodField()
@@ -552,6 +558,11 @@ class SourceDetailSerializer(ContextSerializer):
     )
     notations = SourceNotationsSerializer(
         attr="notations.all",
+        call=True,
+        many=True
+    )
+    authorities = SourceAuthoritiesSerializer(
+        attr="authorities.all",
         call=True,
         many=True
     )

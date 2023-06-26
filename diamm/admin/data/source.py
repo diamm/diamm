@@ -23,6 +23,7 @@ from diamm.models.data.source import Source
 from diamm.models.data.source_bibliography import SourceBibliography
 from diamm.models.data.source_copyist import SourceCopyist
 from diamm.models.data.source_identifier import SourceIdentifier
+from diamm.models.data.source_authority import SourceAuthority
 from diamm.models.data.source_note import SourceNote
 from diamm.models.data.source_provenance import SourceProvenance
 from diamm.models.data.source_relationship import SourceRelationship
@@ -61,6 +62,11 @@ class BibliographyInline(DynamicRawIDMixin, admin.TabularInline):
 
 class IdentifiersInline(admin.TabularInline):
     model = SourceIdentifier
+    extra = 0
+
+
+class AuthoritiesInline(admin.TabularInline):
+    model = SourceAuthority
     extra = 0
 
 
@@ -176,7 +182,7 @@ class SourceAdmin(DynamicRawIDMixin, VersionAdmin):
                      'name', 'archive__name',
                      'archive__siglum', 'archive__city__name', 'shelfmark',
                      "=pk")
-    inlines = (IdentifiersInline, NotesInline, URLsInline,
+    inlines = (IdentifiersInline, NotesInline, URLsInline, AuthoritiesInline,
                BibliographyInline, SourceRelationshipInline, SourceCopyistInline,
                SourceProvenanceInline, PagesInline, ItemInline)
     list_filter = (
