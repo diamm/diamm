@@ -22,8 +22,8 @@ class PersonDetail(generics.RetrieveAPIView):
 
 # Since the old DIAMM IDs have been replaced with new ones, this
 # call will handle redirections to the new records.
-def legacy_composer_redirect(req, legacy_id: str) -> str:
-    legacy_lookup = f"legacy_composer.{legacy_id}"
+def legacy_composer_redirect(req, pk: int) -> str:
+    legacy_lookup = f"legacy_composer.{pk}"
     person = get_object_or_404(Person, legacy_id=legacy_lookup)
 
     return redirect('person-detail', pk=person.pk)
