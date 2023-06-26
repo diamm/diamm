@@ -107,6 +107,30 @@ export const OtherIdentifiers = ({identifiers}) =>
     );
 };
 
+
+export const Authorities = ({authorities}) =>
+{
+    if (authorities.length === 0)
+        return null;
+
+    return (
+        <tr>
+            <th>External Authorities</th>
+            <td>
+                <ul className="no-style">
+                    { authorities.map((authority, idx) => {
+                        return (
+                            <li key={ `source-authority-${idx}` }>
+                                <a href={ authority.url }>{ authority.label }{ ` (${authority.identifier})` }</a>
+                            </li>
+                        );
+                    })}
+                </ul>
+            </td>
+        </tr>
+    )
+}
+
 export const Notations = ({notations}) =>
 {
     if (notations.length === 0)

@@ -9,6 +9,7 @@ import {
     Copyists,
     Relationships,
     Links,
+    Authorities,
     Provenance,
     Notes,
     CoverImage,
@@ -47,6 +48,7 @@ class Description extends React.Component
                             <Copyists copyists={ this.props.copyists } />
                             <Relationships relationships={ this.props.relationships } />
                             <Links links={ this.props.links } />
+                            <Authorities authorities={ this.props.authorities } />
                             <Provenance provenance={ this.props.provenance } />
                             <Contents
                                 numInventoried={ this.props.inventory.length }
@@ -87,6 +89,7 @@ function mapStateToProps (state)
         copyists: state.source.copyists,
         relationships: state.source.relationships,
         links: state.source.links,
+        authorities: state.source.authorities,
         provenance: state.source.provenance,
         notes: state.source.notes,
         cover_image_info: state.source.cover_image_info,
