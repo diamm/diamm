@@ -183,7 +183,6 @@ class PersonDetailSerializer(ContextSerializer):
         return PersonRoleSerializer(obj.roles.all(), many=True).data
 
     def get_identifiers(self, obj) -> list:
-        print("identifiers!")
         return PersonIdentifierSerializer(obj.identifiers.all(),
                                           many=True,
                                           context={"request": self.context['request']}).data
