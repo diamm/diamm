@@ -1,4 +1,5 @@
 from django import forms
+
 from diamm.models.data.organization_type import OrganizationType
 
 

@@ -1,8 +1,9 @@
 from django.contrib import admin
-from diamm.models.data.cycle import Cycle
-from diamm.models.data.composition_cycle import CompositionCycle
-from reversion.admin import VersionAdmin
 from dynamic_raw_id.admin import DynamicRawIDMixin
+from reversion.admin import VersionAdmin
+
+from diamm.models.data.composition_cycle import CompositionCycle
+from diamm.models.data.cycle import Cycle
 
 
 class CompositionCycleInline(DynamicRawIDMixin, admin.TabularInline):

@@ -52,4 +52,4 @@ class SourceProvenance(models.Model):
         source_name = self.source.display_name
         places = filter(None, [self.city, self.country, self.protectorate, self.region])
         places = [str(x) for x in places]
-        return "{0} ({1})".format(source_name, ", ".join(places))
+        return f"{source_name} ({', '.join(places)})"

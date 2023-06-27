@@ -1,10 +1,11 @@
 from django.contrib import admin
+from dynamic_raw_id.admin import DynamicRawIDMixin
+from reversion.admin import VersionAdmin
+
 from diamm.models.data.bibliography import Bibliography
 from diamm.models.data.bibliography_author_role import BibliographyAuthorRole
 from diamm.models.data.bibliography_publication import BibliographyPublication
 from diamm.models.data.source_bibliography import SourceBibliography
-from dynamic_raw_id.admin import DynamicRawIDMixin
-from reversion.admin import VersionAdmin
 
 
 class SourceInline(admin.TabularInline):

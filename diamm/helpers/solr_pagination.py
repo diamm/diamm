@@ -1,13 +1,14 @@
-from typing import List, Dict, Optional
 import math
-import pysolr
-from rest_framework.utils.urls import replace_query_param
-from rest_framework.reverse import reverse
-import serpy
-from diamm.serializers.serializers import ContextDictSerializer
-
-from django.conf import settings
 from collections import OrderedDict
+from typing import List, Dict, Optional
+
+import pysolr
+import serpy
+from django.conf import settings
+from rest_framework.reverse import reverse
+from rest_framework.utils.urls import replace_query_param
+
+from diamm.serializers.serializers import ContextDictSerializer
 
 
 class SolrResultObject(object):

@@ -1,6 +1,7 @@
 from django.contrib import admin
-from diamm.models.data.language import Language
 from reversion.admin import VersionAdmin
+
+from diamm.models.data.language import Language
 
 
 @admin.register(Language)

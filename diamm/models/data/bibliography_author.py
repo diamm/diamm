@@ -13,8 +13,8 @@ class BibliographyAuthor(models.Model):
 
     def __str__(self):
         if self.first_name:
-            return "{0}, {1}".format(self.last_name, self.first_name)
-        return "{0}".format(self.last_name)
+            return f"{self.last_name}, {self.first_name}"
+        return f"{self.last_name}"
 
     @property
     def full_name(self):
@@ -23,7 +23,7 @@ class BibliographyAuthor(models.Model):
     @property
     def solr_bibliography(self):
         connection = SolrManager(settings.SOLR['SERVER'])
-        fq = ["type:bibliography", "authors_ii:{0}".format(self.pk)]
+        fq = ["type:bibliography", f"authors_ii:{self.pk}"]
         sort = "year_ans desc, sort_ans asc"
 
         connection.search("*:*", fq=fq, sort=sort, rows=100)

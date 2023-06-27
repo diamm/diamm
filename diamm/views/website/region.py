@@ -1,10 +1,10 @@
 from django.db.models import Q
 from rest_framework import generics
-from rest_framework import renderers
-from diamm.renderers.ujson_renderer import UJSONRenderer
+
 from diamm.models.data.geographic_area import GeographicArea
-from diamm.serializers.website.region import RegionDetailSerializer
 from diamm.renderers.html_renderer import HTMLRenderer
+from diamm.renderers.ujson_renderer import UJSONRenderer
+from diamm.serializers.website.region import RegionDetailSerializer
 
 
 class RegionDetail(generics.RetrieveAPIView):

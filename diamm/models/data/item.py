@@ -1,4 +1,5 @@
 from django.db import models
+
 from diamm.helpers.storage import OverwriteStorage
 
 
@@ -76,11 +77,11 @@ class Item(models.Model):
 
     def __str__(self):
         if self.composition:
-            return "{0}".format(self.composition.title)
+            return f"{self.composition.title}"
         elif self.item_title:
-            return "{0}".format(self.item_title)
+            return f"{self.item_title}"
         else:
-            return "Works in {0}".format(self.source.display_name)
+            return f"Works in {self.source.display_name}"
 
     @property
     def item_type(self):

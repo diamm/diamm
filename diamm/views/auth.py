@@ -30,7 +30,7 @@ class CreateAccount(FormView):
     def form_valid(self, form):
         response = super(CreateAccount, self).form_valid(form)
 
-        if not 'g-recaptcha-response' in self.request.POST:
+        if 'g-recaptcha-response' not in self.request.POST:
             # Something funny is going on -- we've received a POST request without the Recaptcha
             # value. Bail with a client error.
             return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
@@ -94,7 +94,7 @@ class CreateAccount(FormView):
             settings.MAIL['CONFIRMATION_MESSAGE'].format(
                 first_name=first_name,
                 last_name=last_name,
-                hostname="https://{0}".format(settings.HOSTNAME),
+                hostname=f"https://{settings.HOSTNAME}",
                 confirmation_link=reverse('registration_activate',
                                           kwargs={"activation_key": activation_key},
                                           request=self.request)

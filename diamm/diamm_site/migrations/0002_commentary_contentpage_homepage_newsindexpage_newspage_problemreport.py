@@ -5,8 +5,8 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
-import wagtail.core.blocks
-import wagtail.core.fields
+import wagtail.blocks
+import wagtail.fields
 import wagtail.images.blocks
 
 
@@ -40,7 +40,7 @@ class Migration(migrations.Migration):
             name='ContentPage',
             fields=[
                 ('page_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('body', wagtail.core.fields.RichTextField()),
+                ('body', wagtail.fields.RichTextField()),
             ],
             bases=('wagtailcore.page',),
         ),
@@ -48,8 +48,8 @@ class Migration(migrations.Migration):
             name='HomePage',
             fields=[
                 ('page_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('carousel', wagtail.core.fields.StreamField((('carousel', wagtail.core.blocks.StructBlock((('image', wagtail.images.blocks.ImageChooserBlock()), ('caption', wagtail.core.blocks.TextBlock())), template='website/blocks/carousel.jinja2')),))),
-                ('brief_description', wagtail.core.fields.RichTextField()),
+                ('carousel', wagtail.fields.StreamField((('carousel', wagtail.blocks.StructBlock((('image', wagtail.images.blocks.ImageChooserBlock()), ('caption', wagtail.blocks.TextBlock())), template='website/blocks/carousel.jinja2')),))),
+                ('brief_description', wagtail.fields.RichTextField()),
             ],
             bases=('wagtailcore.page',),
         ),
@@ -57,7 +57,7 @@ class Migration(migrations.Migration):
             name='NewsIndexPage',
             fields=[
                 ('page_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('body', wagtail.core.fields.RichTextField()),
+                ('body', wagtail.fields.RichTextField()),
             ],
             bases=('wagtailcore.page',),
         ),
@@ -65,7 +65,7 @@ class Migration(migrations.Migration):
             name='NewsPage',
             fields=[
                 ('page_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('body', wagtail.core.fields.RichTextField()),
+                ('body', wagtail.fields.RichTextField()),
                 ('summary', models.CharField(max_length=255)),
             ],
             bases=('wagtailcore.page',),

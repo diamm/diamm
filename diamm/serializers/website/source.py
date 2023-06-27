@@ -1,3 +1,4 @@
+from collections import defaultdict
 from typing import List, Optional, Dict
 
 import serpy
@@ -207,7 +208,7 @@ class SourceComposerInventoryCompositionSerializer(ContextDictSerializer):
             return obj['source_attribution_s']
         return None
 
-    def get_url(self, obj):
+    def get_url(self, obj) -> Optional[str]:
         if 'composition_i' not in obj:
             return None
 
@@ -450,6 +451,12 @@ class SourceIdentifierSerializer(ContextSerializer):
     )
 
 
+class SourceAuthoritiesSerializer(ContextSerializer):
+    url = serpy.StrField(attr="identifier_url")
+    label = serpy.StrField(attr="identifier_label")
+    identifier = serpy.StrField()
+
+
 class SourceListSerializer(ContextSerializer):
     pk = serpy.IntField()
     url = serpy.MethodField()
@@ -551,6 +558,11 @@ class SourceDetailSerializer(ContextSerializer):
     )
     notations = SourceNotationsSerializer(
         attr="notations.all",
+        call=True,
+        many=True
+    )
+    authorities = SourceAuthoritiesSerializer(
+        attr="authorities.all",
         call=True,
         many=True
     )

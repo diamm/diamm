@@ -1,13 +1,15 @@
 from django.contrib import admin
-from diamm.models.data.source_copyist import SourceCopyist
-from diamm.models.data.person import Person
-from diamm.models.data.organization import Organization
 from dynamic_raw_id.admin import DynamicRawIDMixin
+
+from diamm.models.data.organization import Organization
+from diamm.models.data.person import Person
+from diamm.models.data.source_copyist import SourceCopyist
 
 
 @admin.register(SourceCopyist)
 class SourceCopyistAdmin(DynamicRawIDMixin, admin.ModelAdmin):
     list_display = ('get_source', 'get_copyist', 'copyist_type', 'uncertain')
+    search_fields = ('source__shelfmark', 'source__name', '=source__id')
     list_filter = ('type',)
     dynamic_raw_id_fields = ('source',)
 
@@ -24,4 +26,3 @@ class SourceCopyistAdmin(DynamicRawIDMixin, admin.ModelAdmin):
             return None
 
     get_copyist.short_description = "Related Copyist"
-

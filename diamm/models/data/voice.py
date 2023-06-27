@@ -20,7 +20,4 @@ class Voice(models.Model):
     legacy_id = models.CharField(max_length=64, blank=True, null=True)
 
     def __str__(self):
-        return "{0} [{1}]".format(
-            str(self.item),
-            self.type.name
-        )
+        return f"{self.item} [{self.type.name}]"

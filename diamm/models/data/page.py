@@ -52,7 +52,7 @@ class Page(models.Model):
     page_type = models.IntegerField(choices=PAGE_TYPE_CHOICES, default=PAGE, blank=True, null=True)
 
     def __str__(self):
-        return "{0}".format(self.numeration)
+        return f"{self.numeration}"
 
     @property
     def public_images(self):

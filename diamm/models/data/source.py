@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from django.conf import settings
 from django.db import models
@@ -49,7 +49,7 @@ class Source(models.Model):
 
     id = models.AutoField(primary_key=True)  # migrate old ID
     archive = models.ForeignKey('diamm_data.Archive', related_name="sources", on_delete=models.CASCADE)
-    name = models.CharField(max_length=255, blank=True, null=True)
+    name: Optional[str] = models.CharField(max_length=255, blank=True, null=True)
     shelfmark = models.CharField(max_length=255, blank=True, null=True)
     type = models.CharField(max_length=255, blank=True, null=True, help_text="""A brief description of the source,
                                                                              e.g, 'chant book with added polyphony'""")
@@ -82,16 +82,15 @@ class Source(models.Model):
     sort_order = models.IntegerField(blank=True, null=True)
 
     def __str__(self) -> str:
-        if self.name:
-            return "{0} ({1})".format(self.shelfmark, self.name)
-        return "{0}".format(self.shelfmark)
+        name: str = f" ({self.name})" if self.name else ""
+        return f"{self.shelfmark}{name}"
 
     def get_absolute_url(self) -> str:
         return reverse('source-detail', kwargs={"pk": self.pk})
 
     @property
     def display_name(self) -> str:
-        return "{0} {1}".format(self.archive.siglum, self.__str__())
+        return f"{self.archive.siglum} {str(self)}"
 
     @property
     def display_summary(self) -> str:
@@ -99,10 +98,10 @@ class Source(models.Model):
         summary = self.display_name if self.display_name else ""
 
         if date_stmt:
-            summary = "{0}; {1}".format(summary, date_stmt)
+            summary = f"{summary}; {date_stmt}"
 
         if self.notes.filter(type=1).exists():
-            summary = "{0}; {1}".format(summary, self.notes.filter(type=1).first().note)
+            summary = f"{summary}; {self.notes.filter(type=1).first().note}"
 
         return summary
 
@@ -208,7 +207,7 @@ class Source(models.Model):
     @property
     def solr_inventory(self):
         connection = SolrManager(settings.SOLR['SERVER'])
-        fq = ['type:item', 'source_i:{0}'.format(self.pk), 'composition_i:[* TO *]']
+        fq = ['type:item', f'source_i:{self.pk}', 'composition_i:[* TO *]']
         fl = ['bibliography_ii',
               'composers_ssni',
               'composition_i',

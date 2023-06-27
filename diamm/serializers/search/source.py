@@ -1,4 +1,5 @@
 from typing import Optional
+
 import serpy
 
 
@@ -128,7 +129,7 @@ class SourceSearchSerializer(serpy.Serializer):
         """
         if obj.sets.count() > 0:
             sourcesets = obj.sets.values_list("pk", "cluster_shelfmark")
-            sets = ["{0}|{1}".format(sset[0], sset[1]) for sset in sourcesets]
+            sets = [f"{sset[0]}|{sset[1]}" for sset in sourcesets]
             return sets
         else:
             return []

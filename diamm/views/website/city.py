@@ -1,10 +1,10 @@
 from rest_framework import generics
-from rest_framework import renderers
-from diamm.renderers.ujson_renderer import UJSONRenderer
+
+from diamm.helpers.object_pagination import ObjectPagination
 from diamm.models.data.geographic_area import GeographicArea
 from diamm.renderers.html_renderer import HTMLRenderer
+from diamm.renderers.ujson_renderer import UJSONRenderer
 from diamm.serializers.website.city import CityDetailSerializer, CityListSerializer
-from diamm.helpers.object_pagination import ObjectPagination
 
 
 class CityList(generics.ListAPIView):

@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from diamm.models.data.organization_type import OrganizationType
 
 

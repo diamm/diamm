@@ -1,6 +1,7 @@
 import serpy
-from diamm.models.data.person import Person
+
 from diamm.models.data.organization import Organization
+from diamm.models.data.person import Person
 
 
 class SourceCopyistSearchSerializer(serpy.Serializer):

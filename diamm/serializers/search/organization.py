@@ -2,7 +2,6 @@ import serpy
 
 
 class OrganizationSearchSerializer(serpy.Serializer):
-
     type = serpy.MethodField()
     pk = serpy.IntField()
 

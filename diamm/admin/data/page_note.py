@@ -1,6 +1,7 @@
 from django.contrib import admin
-from diamm.models.data.page_note import PageNote
 from reversion.admin import VersionAdmin
+
+from diamm.models.data.page_note import PageNote
 
 
 @admin.register(PageNote)

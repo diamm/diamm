@@ -2,8 +2,8 @@ from typing import List
 
 import serpy
 from rest_framework.reverse import reverse
+
 from diamm.serializers.serializers import ContextSerializer, ContextDictSerializer
-from diamm.helpers.identifiers import TYPE_PREFIX
 
 
 class SourceArchiveSerializer(ContextDictSerializer):

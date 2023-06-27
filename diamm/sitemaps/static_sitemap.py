@@ -1,5 +1,5 @@
 from django.contrib.sitemaps import Sitemap
-from wagtail.core.models import Site
+from wagtail.models import Site
 
 DIAMM_SITE = 1
 

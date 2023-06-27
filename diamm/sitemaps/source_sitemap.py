@@ -1,5 +1,6 @@
 from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
+
 from diamm.models.data.source import Source
 
 

@@ -1,4 +1,5 @@
 import re
+
 import serpy
 from django.template.loader import get_template
 
@@ -27,8 +28,8 @@ class ItemBibliographySearchSerializer(serpy.Serializer):
         """
         template = get_template('website/bibliography/bibliography_entry.jinja2')
         citation = template.template.render(content=obj.bibliography)
-        citation = re.sub('\n', '', citation)
-        citation = re.sub('\s+', ' ', citation)
+        citation = re.sub(r'\n', '', citation)
+        citation = re.sub(r'\s+', ' ', citation)
         citation = citation.strip()
         return citation
 

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.forms import ModelForm
 from django.template.defaultfilters import truncatewords
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from dynamic_raw_id.admin import DynamicRawIDMixin
 from reversion.admin import VersionAdmin
 
@@ -125,7 +125,7 @@ class ItemAdmin(DynamicRawIDMixin, VersionAdmin):
 
     def get_composers(self, obj):
         if obj.composition:
-            return "{0}".format(obj.composition.composer_names)
+            return f"{obj.composition.composer_names}"
 
     get_composers.short_description = "composers"
     get_composers.admin_order_field = 'composition__composers__composer__last_name'

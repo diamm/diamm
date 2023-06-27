@@ -22,4 +22,4 @@ class BibliographyType(models.Model):
     name = models.CharField(max_length=512)
 
     def __str__(self):
-        return "{0}".format(self.name)
+        return f"{self.name}"

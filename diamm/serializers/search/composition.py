@@ -1,5 +1,6 @@
-import serpy
 import re
+
+import serpy
 
 
 class CompositionSearchSerializer(serpy.Serializer):
@@ -39,7 +40,7 @@ class CompositionSearchSerializer(serpy.Serializer):
 
     def get_composers_ssni(self, obj):
         if obj.composers:
-            return ["{0}|{1}|{2}".format(o.composer.pk, o.composer.full_name, o.uncertain) for o in obj.composers.all()]
+            return [f"{o.composer.pk}|{o.composer.full_name}|{o.uncertain}" for o in obj.composers.all()]
         return []
 
     def get_composers_ii(self, obj):
@@ -50,7 +51,7 @@ class CompositionSearchSerializer(serpy.Serializer):
     def get_sources_ssni(self, obj):
         if obj.sources.count() == 0:
             return []
-        return ["{0}|{1}".format(s.source.pk, s.source.display_name) for s in obj.sources.all()]
+        return [f"{s.source.pk}|{s.source.display_name}" for s in obj.sources.all()]
 
     def get_sources_ss(self, obj):
         if obj.sources.count() == 0:

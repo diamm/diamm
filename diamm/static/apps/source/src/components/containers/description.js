@@ -16,6 +16,7 @@ export const ImageStatus = ({has_images, public_images, links}) =>
         return false;
 
     let hasExternalImageLink = false;
+    let externalImageLinkStmt = '';
 
     if (links !== null)
     {
@@ -27,6 +28,11 @@ export const ImageStatus = ({has_images, public_images, links}) =>
         });
     }
 
+    if (hasExternalImageLink === true )
+    {
+        externalImageLinkStmt = <strong>&nbsp;Please refer to the external links for image availability.</strong>;
+    }
+
     if (has_images === false && public_images === false)
     {
         return (
@@ -34,7 +40,7 @@ export const ImageStatus = ({has_images, public_images, links}) =>
                 <th>Image Availability</th>
                 <td>
                     DIAMM does not have images of this source.
-                    { hasExternalImageLink ? `Please refer to the external links below for image availability.` : ``}
+                    { externalImageLinkStmt }
                 </td>
             </tr>
         );
@@ -46,7 +52,7 @@ export const ImageStatus = ({has_images, public_images, links}) =>
                 <th>Image Availability</th>
                 <td>
                     DIAMM has images of this manuscript but does not yet have permission to put them online.
-                    { hasExternalImageLink ? ` Please refer to the external links below for image availability.` : ``}
+                    { externalImageLinkStmt }
                 </td>
             </tr>
         );
@@ -86,7 +92,7 @@ export const NumberingSystemType = ({numbering_system_type}) =>
 
 export const OtherIdentifiers = ({identifiers}) =>
 {
-    if (identifiers.length === 0)
+    if (!identifiers || identifiers.length === 0)
         return null;
 
     return (
@@ -106,6 +112,30 @@ export const OtherIdentifiers = ({identifiers}) =>
         </tr>
     );
 };
+
+
+export const Authorities = ({authorities}) =>
+{
+    if (!authorities || authorities.length === 0)
+        return null;
+
+    return (
+        <tr>
+            <th>External Authorities</th>
+            <td>
+                <ul className="no-style">
+                    { authorities.map((authority, idx) => {
+                        return (
+                            <li key={ `source-authority-${idx}` }>
+                                <a href={ authority.url }>{ authority.label }{ ` (${authority.identifier})` }</a>
+                            </li>
+                        );
+                    })}
+                </ul>
+            </td>
+        </tr>
+    )
+}
 
 export const Notations = ({notations}) =>
 {

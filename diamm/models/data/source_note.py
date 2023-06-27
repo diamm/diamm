@@ -3,7 +3,7 @@ from datetime import datetime
 
 
 def get_default_author():
-    return "DIAMM, {0}".format(datetime.now().year)
+    return f"DIAMM, {datetime.now().year}"
 
 
 class SourceNote(models.Model):
@@ -67,7 +67,7 @@ class SourceNote(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return "{0}: {1}".format(self.note_type, self.source.display_name)
+        return f"{self.note_type}: {self.source.display_name}"
 
     @property
     def note_type(self):

@@ -32,7 +32,7 @@ class SourceIdentifier(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return "{0}".format(self.identifier)
+        return f"{self.identifier}"
 
     @property
     def identifier_type(self):

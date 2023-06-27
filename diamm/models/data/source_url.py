@@ -28,7 +28,7 @@ class SourceURL(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return "{0}".format(self.link_text)
+        return f"{self.link_text}"
 
     @property
     def url_type(self):

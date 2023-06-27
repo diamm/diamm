@@ -1,17 +1,18 @@
 from django.contrib import admin, messages
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
-from diamm.models.data.composition import Composition
-from diamm.models.data.composition_composer import CompositionComposer
-from diamm.models.data.composition_note import CompositionNote
-from diamm.models.data.item import Item
-from diamm.models.data.composition_bibliography import CompositionBibliography
-from diamm.models.data.composition_cycle import CompositionCycle
-from diamm.admin.forms.merge_compositions import MergeCompositionsForm
-from diamm.admin.forms.assign_genre import AssignGenreForm
-from diamm.admin.merge_models import merge
 from dynamic_raw_id.admin import DynamicRawIDMixin
 from reversion.admin import VersionAdmin
+
+from diamm.admin.forms.assign_genre import AssignGenreForm
+from diamm.admin.forms.merge_compositions import MergeCompositionsForm
+from diamm.admin.merge_models import merge
+from diamm.models.data.composition import Composition
+from diamm.models.data.composition_bibliography import CompositionBibliography
+from diamm.models.data.composition_composer import CompositionComposer
+from diamm.models.data.composition_cycle import CompositionCycle
+from diamm.models.data.composition_note import CompositionNote
+from diamm.models.data.item import Item
 
 
 class BibliographyInline(DynamicRawIDMixin, admin.TabularInline):

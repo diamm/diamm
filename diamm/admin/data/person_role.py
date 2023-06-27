@@ -1,6 +1,7 @@
 from django.contrib import admin
-from diamm.models.data.person_role import PersonRole
 from dynamic_raw_id.admin import DynamicRawIDMixin
+
+from diamm.models.data.person_role import PersonRole
 
 
 @admin.register(PersonRole)

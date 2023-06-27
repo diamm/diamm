@@ -14,7 +14,7 @@ class Cycle(models.Model):
                              on_delete=models.CASCADE)
 
     def __str__(self):
-        return "{0}".format(self.title)
+        return f"{self.title}"
 
     @property
     def anonymous(self):

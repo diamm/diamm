@@ -1,10 +1,12 @@
-from typing import List, Dict
 import operator
+from typing import List, Dict
+
 import serpy
 from rest_framework.reverse import reverse
-from diamm.serializers.serializers import ContextDictSerializer
+
 from diamm.serializers.fields import StaticField
 from diamm.serializers.iiif.image import ImageSerializer
+from diamm.serializers.serializers import ContextDictSerializer
 
 
 class CanvasSerializer(ContextDictSerializer):

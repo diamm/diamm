@@ -1,9 +1,10 @@
 from django.contrib import admin
-from diamm.models.site.commentary import Commentary
-from rest_framework.reverse import reverse
 from django.utils.safestring import mark_safe
-from diamm.models.data.source import Source
+from rest_framework.reverse import reverse
+
 from diamm.models.data.page import Page
+from diamm.models.data.source import Source
+from diamm.models.site.commentary import Commentary
 
 
 @admin.register(Commentary)

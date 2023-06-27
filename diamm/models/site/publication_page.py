@@ -1,9 +1,8 @@
 from django.db import models
-from wagtail.admin.edit_handlers import FieldPanel
-from wagtail.core import blocks
-from wagtail.core.fields import RichTextField
-from wagtail.core.fields import StreamField
-from wagtail.core.models import Page
+from wagtail.admin.panels import FieldPanel
+from wagtail.blocks import StructBlock, CharBlock, DecimalBlock, URLBlock
+from wagtail.fields import RichTextField, StreamField
+from wagtail.models import Page
 
 
 class PublicationPage(Page):
@@ -19,12 +18,12 @@ class PublicationPage(Page):
         related_name='+'
     )
     pricing = StreamField([
-        ('price', blocks.StructBlock([
-            ('description', blocks.CharBlock()),
-            ('price', blocks.DecimalBlock()),
-            ('purchase_link', blocks.URLBlock())
+        ('price', StructBlock([
+            ('description', CharBlock()),
+            ('price', DecimalBlock()),
+            ('purchase_link', URLBlock())
         ], template="website/blocks/pricing_field.jinja2")),
-    ], use_json_field=False)
+    ], use_json_field=True)
     # purchase_link = models.URLField(blank=True)
     show_on_front = models.BooleanField(default=False)
     teaser = models.CharField(max_length=255, blank=True, null=True)

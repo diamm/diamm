@@ -1,15 +1,12 @@
 from django_jinja import library
-import itertools
 
 
 @library.global_function
-def page_array(num_pages, current_page):
+def page_array(num_pages: int, current_page: int) -> list:
     """
     Construct a plausible sorted page array based on the number of pages
     and the current page.
     Ensures pages are >= 1
-    :param args: c
-    :return:
     """
     num_pages = max(num_pages, 1)
     current_page = min(max(current_page, 1), num_pages)
