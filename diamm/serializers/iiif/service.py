@@ -86,6 +86,9 @@ class ServiceSerializer(ContextDictSerializer):
         return composers
 
     def get_voices(self, obj: Dict) -> Optional[List]:
+        if 'voices_ii' not in obj:
+            return None
+
         id_list = ",".join([str(x) for x in obj['voices_ii']])
         connection = pysolr.Solr(settings.SOLR['SERVER'])
         fq = ["type:voice", "{!terms f=pk}" + id_list]
