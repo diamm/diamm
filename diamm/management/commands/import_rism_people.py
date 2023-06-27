@@ -22,32 +22,17 @@ class Command(BaseCommand):
             csvreader = csv.DictReader(aligned)
 
             for row in csvreader:
-                diamm_id = re.sub(r"diamm_person_", "", row['diamm_id'])
-                rism_id = re.sub(r"person_", "", row["rism_id"])
-                person_record = Person.objects.get(id=diamm_id)
+                rism_identifier = row.get("rism_id")
+                if not rism_identifier:
+                    continue
 
-                rism_ident = PersonIdentifier(
-                    identifier=f"people/{rism_id}",
+                diamm_id = row.get("id")
+                person_record = Person.objects.get(id=diamm_id)
+                if person_record.identifiers.filter(identifier_type=ExternalIdentifiers.RISM).exists():
+                    continue
+
+                _ = PersonIdentifier(
+                    identifier=f"{rism_identifier}",
                     identifier_type=ExternalIdentifiers.RISM,
                     person=person_record
                 ).save()
-
-                if other_identifiers := row["other_identifiers"]:
-                    external_idents = other_identifiers.split(",")
-                    external_idents_split = [tuple(s.split(":")) for s in external_idents]
-                    for ident in external_idents_split:
-                        (pfx, idno) = ident
-                        ident_type = pfx_lookup.get(pfx, None)
-                        if not ident_type:
-                            print(f"Unknown prefix {pfx}")
-                            continue
-
-                        this_ident = PersonIdentifier(
-                            identifier=idno,
-                            identifier_type=ident_type,
-                            person=person_record
-                        ).save()
-
-
-
-
