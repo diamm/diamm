@@ -51,7 +51,7 @@ from diamm.views.website.contributor import ContributorList
 
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.documents import urls as wagtaildocs_urls
-from wagtail.core import urls as wagtail_urls
+from wagtail import urls as wagtail_urls
 
 from django.contrib.sitemaps import views as sitemap_views
 from diamm.sitemaps.source_sitemap import SourceSitemap
@@ -107,7 +107,7 @@ urlpatterns = [
             name='registration_activate'),
     path('activate/complete/', TemplateView.as_view(
         template_name="website/auth/activation.jinja2"
-    ), name='registration_activation_complete'),
+    ), name='django_registration_activation_complete'),
 
 
     path('account/', ProfileView.as_view(), name="user-account"),

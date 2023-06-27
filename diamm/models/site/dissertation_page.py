@@ -1,7 +1,7 @@
 from django.db import models
-from wagtail.admin.edit_handlers import FieldPanel
-from wagtail.core import fields
-from wagtail.core.models import Page
+from wagtail.admin.panels import FieldPanel
+from wagtail.fields import RichTextField
+from wagtail.models import Page
 
 
 class DissertationPage(Page):
@@ -13,7 +13,7 @@ class DissertationPage(Page):
         on_delete=models.PROTECT,
         related_name='+'
     )
-    abstract = fields.RichTextField()
+    abstract = RichTextField()
     university = models.CharField(max_length=255)
     year = models.IntegerField()
     degree = models.CharField(max_length=64)

@@ -5,7 +5,7 @@ from django.contrib.auth import (
 )
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from diamm.models.diamm_user import CustomUserModel
 

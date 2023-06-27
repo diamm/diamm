@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.forms import ModelForm
 from django.template.defaultfilters import truncatewords
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from dynamic_raw_id.admin import DynamicRawIDMixin
 from reversion.admin import VersionAdmin
 

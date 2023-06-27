@@ -9,7 +9,7 @@ from django.db import models
 from django.forms import TextInput
 # from import_export.admin import ImportMixin
 # from diamm.resources.image_resource import ImageResource
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from reversion.admin import VersionAdmin
 
 from diamm.admin.filters.input_filter import InputFilter

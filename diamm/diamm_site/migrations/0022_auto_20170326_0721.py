@@ -3,8 +3,8 @@
 from __future__ import unicode_literals
 
 from django.db import migrations
-import wagtail.core.blocks
-import wagtail.core.fields
+import wagtail.blocks
+import wagtail.fields
 
 
 class Migration(migrations.Migration):
@@ -21,6 +21,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='publicationpage',
             name='pricing',
-            field=wagtail.core.fields.StreamField((('price', wagtail.core.blocks.StructBlock((('description', wagtail.core.blocks.CharBlock()), ('price', wagtail.core.blocks.DecimalBlock()), ('purchase_link', wagtail.core.blocks.URLBlock())), template='website/blocks/pricing_field.jinja2')),)),
+            field=wagtail.fields.StreamField((('price', wagtail.blocks.StructBlock((('description', wagtail.blocks.CharBlock()), ('price', wagtail.blocks.DecimalBlock()), ('purchase_link', wagtail.blocks.URLBlock())), template='website/blocks/pricing_field.jinja2')),)),
         ),
     ]
