@@ -45,7 +45,7 @@ class Command(BaseCommand):
         docs = []
         for obj in objects.iterator():
             if not name_field:
-                name = "Object {0}".format(obj.pk)
+                name = f"Object {obj.pk}"
             else:
                 name = getattr(obj, name_field)
 
@@ -165,7 +165,7 @@ class Command(BaseCommand):
         objs = Source.objects.all().order_by('pk').select_related('archive__city__parent').iterator()
 
         for source in objs:
-            self.stdout.write(term.green("Indexing {0}".format(source.display_name)))
+            self.stdout.write(term.green(f"Indexing {source.display_name}"))
             res = [list(o) for o in source.inventory.values_list(*FIELDS_TO_INDEX)]
             data = ComposerInventorySearchSerializer(res, many=True).data
             self.solrconn.add(data)
@@ -191,7 +191,7 @@ class Command(BaseCommand):
 
         print("Committing changes")
         c = requests.get('http://localhost:8983/solr/diamm_ingest/update/?commit=true')
-        print("Done committing. Status code: {0}".format(c.status_code))
+        print(f"Done committing. Status code: {c.status_code}")
         print("Swapping ingest and live cores")
         r = requests.get('http://localhost:8983/solr/admin/cores?action=SWAP&core=diamm&other=diamm_ingest')
         print("Done swapping. Status code: {0}".format(r.status_code))

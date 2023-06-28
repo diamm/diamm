@@ -106,7 +106,7 @@ class ItemInline(DynamicRawIDMixin, admin.TabularInline):
 
     def get_composers(self, obj):
         if obj.composition:
-            return "{0}".format(obj.composition.composer_names)
+            return f"{obj.composition.composer_names}"
 
     def link_id_field(self, obj):
         change_url = reverse('admin:diamm_data_item_change', args=(obj.pk,))
@@ -202,11 +202,11 @@ class SourceAdmin(DynamicRawIDMixin, VersionAdmin):
     }
 
     def get_city(self, obj):
-        return "{0} ({1})".format(obj.archive.city.name, obj.archive.city.parent.name)
+        return f"{obj.archive.city.name} ({obj.archive.city.parent.name})"
     get_city.short_description = "City"
 
     def get_archive(self, obj):
-        return "{0}".format(obj.archive.name)
+        return f"{obj.archive.name}"
     get_archive.short_description = "Archive"
 
     def copy_inventory_view(self, request, pk):

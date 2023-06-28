@@ -231,7 +231,7 @@ class Source(models.Model):
     @property
     def solr_uninventoried(self):
         connection = SolrManager(settings.SOLR['SERVER'])
-        fq = ['type:item', 'source_i:{0}'.format(self.pk), '-composition_i:[* TO *]']
+        fq = ['type:item', f'source_i:{self.pk}', '-composition_i:[* TO *]']
         fl = ['bibliography_ii',
               'composers_ssni',
               'composition_i',
@@ -250,11 +250,11 @@ class Source(models.Model):
         return list(connection.results)
 
     @property
-    def inventory_by_composer(self):
+    def inventory_by_composer(self) -> list:
         connection = SolrManager(settings.SOLR['SERVER'])
 
         fq: List = ["type:composerinventory",
-                    "source_i:{0}".format(self.pk)]
+                    f"source_i:{self.pk}"]
         sort: str = "composer_s asc"
 
         connection.grouped_search("composer_s", "composition_s asc", "*:*", fq=fq, sort=sort)
@@ -284,7 +284,7 @@ class Source(models.Model):
         bibl = self.bibliographies.select_related('bibliography').values_list('bibliography__id', 'primary_study', 'pages', 'notes').order_by('bibliography__authors__bibliography_author__last_name').distinct()
         id_list = ",".join([str(x[0]) for x in bibl])
         connection = SolrManager(settings.SOLR['SERVER'])
-        fq = ['type:bibliography', "{!terms f=pk}"+id_list]
+        fq = ['type:bibliography', f"{{!terms f=pk}}{id_list}"]
         connection.search("*:*", fq=fq, sort="year_ans desc, sort_ans asc")
 
         if connection.hits == 0:
@@ -314,14 +314,14 @@ class Source(models.Model):
     def solr_pages(self):
         # List the pages from their Solr records
         connection = SolrManager(settings.SOLR['SERVER'])
-        fq = ['type:page', 'source_i:{0}'.format(self.pk)]
+        fq = ['type:page', f'source_i:{self.pk}']
         connection.search("*:*", fq=fq, sort="numeration_ans asc", rows=100)
         return list(connection.results)
 
     @property
     def solr_sets(self):
         connection = SolrManager(settings.SOLR['SERVER'])
-        fq = ['type:set', 'sources_ii:{0}'.format(self.pk)]
+        fq = ['type:set', f'sources_ii:{self.pk}']
         fl = ["id", "pk", "cluster_shelfmark_s", "sources_ii", "set_type_s"]
         sort = "shelfmark_ans asc"
 
@@ -331,7 +331,7 @@ class Source(models.Model):
     @property
     def solr_provenance(self):
         connection = SolrManager(settings.SOLR['SERVER'])
-        fq = ['type:sourceprovenance', 'source_i:{0}'.format(self.pk)]
+        fq = ['type:sourceprovenance', f'source_i:{self.pk}']
         sort = 'earliest_year_i asc, country_s asc'
 
         connection.search("*:*", fq=fq, sort=sort, rows=100)
@@ -340,7 +340,7 @@ class Source(models.Model):
     @property
     def solr_relationships(self):
         connection = SolrManager(settings.SOLR['SERVER'])
-        fq = ['type:sourcerelationship', 'source_i:{0}'.format(self.pk)]
+        fq = ['type:sourcerelationship', f'source_i:{self.pk}']
         sort = "related_entity_s asc"
         connection.search("*:*", fq=fq, sort=sort, rows=100)
         return list(connection.results)
@@ -348,7 +348,7 @@ class Source(models.Model):
     @property
     def solr_copyists(self):
         connection = SolrManager(settings.SOLR['SERVER'])
-        fq = ['type:sourcecopyist', 'source_i:{0}'.format(self.pk)]
+        fq = ['type:sourcecopyist', f'source_i:{self.pk}']
         sort = "copyist_s asc"
         connection.search("*:*", fq=fq, sort=sort, rows=100)
 

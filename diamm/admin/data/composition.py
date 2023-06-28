@@ -64,13 +64,13 @@ class CompositionAdmin(VersionAdmin):
 
     def get_composers(self, obj):
         c = "; ".join([c.composer.full_name for c in obj.composers.all()])
-        return "{0}".format(c)
+        return f"{c}"
     get_composers.short_description = "Composers"
     get_composers.admin_order_field = "composers__composer__last_name"
 
     def get_genres(self, obj):
         g = ", ".join([g.name for g in obj.genres.all()])
-        return "{0}".format(g)
+        return f"{g}"
     get_genres.short_description = "Genres"
 
     def appears_in(self, obj):

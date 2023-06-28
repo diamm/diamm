@@ -48,7 +48,7 @@ class SolrResultSerializer(ContextDictSerializer):
     sources = serpy.MethodField()
 
     def get_url(self, obj: Dict) -> str:
-        return reverse("{0}-detail".format(obj.get('type')),
+        return reverse(f"{obj.get('type')}-detail",
                        kwargs={'pk': obj.get("pk")},
                        request=self.context.get('request'))
 
@@ -116,17 +116,17 @@ class SolrPaginator:
                 # For example, {type: ['foo', 'bar']} ==> "type:foo OR type:bar"
                 # but {type: 'foo'} ==> 'type:foo'
                 if isinstance(v, list):
-                    fqlist.append(" OR ".join(["{0}:{1}".format(k, field) for field in v]))
+                    fqlist.append(" OR ".join([f"{k}:{field}" for field in v]))
                 else:
-                    fqlist.append("{0}:{1}".format(k, v))
+                    fqlist.append(f"{k}:{v}")
 
         if exclusive_filters:
             for k, v in exclusive_filters.items():
                 # unlike the previous filters, this will be ANDed and not ORed
                 if isinstance(v, list):
-                    fqlist.append(" AND ".join(["{0}:{1}".format(k, field) for field in v]))
+                    fqlist.append(" AND ".join([f"{k}:{field}" for field in v]))
                 else:
-                    fqlist.append("{0}:{1}".format(k, v))
+                    fqlist.append(f"{k}:{v}")
 
         # update our fq query opts with the values from our filters.
         self.qopts.update({

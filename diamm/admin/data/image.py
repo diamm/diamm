@@ -170,5 +170,5 @@ class ImageAdmin(VersionAdmin):
     }
 
     def get_type(self, obj):
-        return "{0}".format(obj.type.name)
+        return f"{obj.type.name}"
     get_type.short_description = "type"

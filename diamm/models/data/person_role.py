@@ -17,7 +17,7 @@ class PersonRole(models.Model):
     latest_year_approximate = models.BooleanField(default=False)
     note = models.TextField(blank=True, null=True)
 
-    def __str__(self):
+    def __str__(self) -> str:
         early_pfx = ""
         late_pfx = ""
         if self.earliest_year_approximate:

@@ -91,7 +91,7 @@ class Command(BaseCommand):
         f1 = open(csvfile, 'r')
         f2 = open(csvfile, 'r')
 
-        logfile = "{0}.log".format(os.path.splitext(os.path.basename(csvfile))[0])
+        logfile = f"{os.path.splitext(os.path.basename(csvfile))[0]}.log"
         logf_handle = open(logfile, 'w')
 
         datareader = csv.DictReader(f1)

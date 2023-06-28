@@ -21,6 +21,8 @@ class Person(models.Model):
     earliest_year_approximate = models.BooleanField(default=False)
     latest_year = models.IntegerField(blank=True, null=True)
     latest_year_approximate = models.BooleanField(default=False)
+    floruit = models.CharField(max_length=64, blank=True, null=True,
+                               help_text="Enter floruit dates only if no dates of birth or death are known. Do not enter both. Do not enter the 'fl.' prefix.")
 
     legacy_id = models.CharField(max_length=64, blank=True, null=True)
     # roles = models.ManyToManyField("diamm_data.Role",
@@ -33,7 +35,7 @@ class Person(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
+    def __str__(self) -> str:
         early_pfx = ""
         late_pfx = ""
         if self.earliest_year_approximate:
@@ -46,6 +48,8 @@ class Person(models.Model):
         date_str = ""
         if early_year or late_year:
             date_str = f"{early_pfx}{early_year}–{late_pfx}{late_year}"
+        elif self.floruit:
+            date_str = f"fl. {self.floruit}"
 
         name_str = ""
         if self.first_name:
@@ -58,15 +62,15 @@ class Person(models.Model):
         else:
             return name_str
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         return reverse("person-detail", kwargs={"pk": self.pk})
 
     @property
-    def full_name(self):
+    def full_name(self) -> str:
         return self.__str__()
 
     @property
-    def solr_relationships(self):
+    def solr_relationships(self) -> list:
         connection = SolrManager(settings.SOLR['SERVER'])
         fq = ['type:sourcerelationship',
               'related_entity_type_s:person',
@@ -77,7 +81,7 @@ class Person(models.Model):
         return list(connection.results)
 
     @property
-    def solr_copyist(self):
+    def solr_copyist(self) -> list:
         connection = SolrManager(settings.SOLR['SERVER'])
         fq = ['type:sourcecopyist',
               'copyist_type_s:person',
@@ -88,20 +92,22 @@ class Person(models.Model):
         return list(connection.results)
 
     @property
-    def solr_compositions(self):
+    def solr_compositions(self) -> list:
         connection = SolrManager(settings.SOLR['SERVER'])
         uncertain_ids = self.compositions.filter(uncertain=True).values_list('composition__pk', flat=True)
         fq = ['type:composition', f'composers_ii:{self.pk}']
         sort = "title_s asc"
         connection.search("*:*", fq=fq, sort=sort, rows=100)
 
+        if connection.hist == 0:
+            return []
+
         reslist = []
-        if connection.hits > 0:
-            for res in connection.results:
-                if res['pk'] in uncertain_ids:
-                    res['uncertain'] = True
-                else:
-                    res['uncertain'] = False
-                reslist.append(res)
+        for res in connection.results:
+            if res['pk'] in uncertain_ids:
+                res['uncertain'] = True
+            else:
+                res['uncertain'] = False
+            reslist.append(res)
 
         return reslist

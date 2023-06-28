@@ -36,7 +36,7 @@ class Organization(models.Model):
     sources_provenance = GenericRelation("diamm_data.SourceProvenance")
 
     def __str__(self):
-        return "{0}".format(self.name)
+        return f"{self.name}"
 
     @property
     def solr_copyist(self):
