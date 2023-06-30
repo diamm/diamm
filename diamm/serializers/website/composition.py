@@ -158,7 +158,7 @@ class CompositionDetailSerializer(ContextSerializer):
 
     def get_genres(self, obj):
         if obj.genres.count() > 0:
-            return obj.genres.values_list('name', flat=True)
+            return [g.name for g in obj.genres.all()]
         return []
 
     def get_bibliography(self, obj):
