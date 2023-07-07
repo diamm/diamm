@@ -99,7 +99,7 @@ class Person(models.Model):
         sort = "title_s asc"
         connection.search("*:*", fq=fq, sort=sort, rows=100)
 
-        if connection.hist == 0:
+        if connection.hits == 0:
             return []
 
         reslist = []
