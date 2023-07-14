@@ -1,14 +1,12 @@
-from django.contrib import admin
-from django.db.models import Q
-from django.utils.safestring import mark_safe
-from django.utils.translation import gettext_lazy as _
-from dynamic_raw_id.admin import DynamicRawIDMixin
-from reversion.admin import VersionAdmin
-
 from diamm.models.data.archive import Archive
 from diamm.models.data.archive_identifier import ArchiveIdentifier
 from diamm.models.data.archive_note import ArchiveNote
 from diamm.models.data.geographic_area import GeographicArea
+from django.contrib import admin
+from django.db.models import Q
+from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy as _
+from reversion.admin import VersionAdmin
 
 
 class ArchiveNoteInline(admin.TabularInline):
@@ -44,13 +42,13 @@ class ArchiveIdentifierInline(admin.TabularInline):
 
 
 @admin.register(Archive)
-class ArchiveAdmin(DynamicRawIDMixin, VersionAdmin):
+class ArchiveAdmin(VersionAdmin):
     save_on_top = True
     list_display = ('name', 'get_city', 'get_country', 'siglum', 'updated')
     search_fields = ('name', 'siglum', 'former_sigla', 'city__name', 'city__parent__name')
     list_filter = (CountryListFilter,)
     inlines = (ArchiveNoteInline, ArchiveIdentifierInline)
-    dynamic_raw_id_fields = ('city',)
+    raw_id_fields = ('city',)
     view_on_site = True
     readonly_fields = ("created", "updated")
 

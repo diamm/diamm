@@ -1,7 +1,6 @@
+from diamm.models.data.mensuration import Mensuration
 from django.contrib import admin
 from reversion.admin import VersionAdmin
-
-from diamm.models.data.mensuration import Mensuration
 
 
 @admin.register(Mensuration)

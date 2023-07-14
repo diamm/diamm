@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.sitemaps',
-    'dynamic_raw_id',
     'diamm',
     'diamm.diamm_data',
     'diamm.diamm_site',

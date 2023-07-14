@@ -1,4 +1,19 @@
 import pysolr
+from diamm.admin.filters.input_filter import InputFilter
+from diamm.admin.forms.copy_inventory import CopyInventoryForm
+from diamm.models.data.geographic_area import GeographicArea
+from diamm.models.data.item import Item
+from diamm.models.data.page import Page
+from diamm.models.data.source import Source
+from diamm.models.data.source_authority import SourceAuthority
+from diamm.models.data.source_bibliography import SourceBibliography
+from diamm.models.data.source_copyist import SourceCopyist
+from diamm.models.data.source_identifier import SourceIdentifier
+from diamm.models.data.source_note import SourceNote
+from diamm.models.data.source_provenance import SourceProvenance
+from diamm.models.data.source_relationship import SourceRelationship
+from diamm.models.data.source_url import SourceURL
+from diamm.signals.item_signals import index_item, delete_item
 from django.conf import settings
 from django.contrib import admin, messages
 from django.db import models
@@ -9,51 +24,34 @@ from django.shortcuts import render, redirect
 from django.urls import path
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
-from dynamic_raw_id.admin import DynamicRawIDMixin
 from pagedown.widgets import AdminPagedownWidget
 from rest_framework.reverse import reverse
 from reversion.admin import VersionAdmin
 
-from diamm.admin.filters.input_filter import InputFilter
-from diamm.admin.forms.copy_inventory import CopyInventoryForm
-from diamm.models.data.geographic_area import GeographicArea
-from diamm.models.data.item import Item
-from diamm.models.data.page import Page
-from diamm.models.data.source import Source
-from diamm.models.data.source_bibliography import SourceBibliography
-from diamm.models.data.source_copyist import SourceCopyist
-from diamm.models.data.source_identifier import SourceIdentifier
-from diamm.models.data.source_authority import SourceAuthority
-from diamm.models.data.source_note import SourceNote
-from diamm.models.data.source_provenance import SourceProvenance
-from diamm.models.data.source_relationship import SourceRelationship
-from diamm.models.data.source_url import SourceURL
-from diamm.signals.item_signals import index_item, delete_item
 
-
-class SourceCopyistInline(DynamicRawIDMixin, admin.StackedInline):
+class SourceCopyistInline(admin.StackedInline):
     model = SourceCopyist
     extra = 0
 
 
-class SourceRelationshipInline(DynamicRawIDMixin, admin.StackedInline):
+class SourceRelationshipInline(admin.StackedInline):
     model = SourceRelationship
     extra = 0
 
 
-class SourceProvenanceInline(DynamicRawIDMixin, admin.StackedInline):
+class SourceProvenanceInline(admin.StackedInline):
     model = SourceProvenance
     extra = 0
     verbose_name = "Provenance"
     verbose_name_plural = "Provenance"
 
 
-class BibliographyInline(DynamicRawIDMixin, admin.TabularInline):
+class BibliographyInline(admin.TabularInline):
     model = SourceBibliography
     verbose_name_plural = "Bibliography Entries"
     verbose_name = "Bibliography Entry"
     extra = 0
-    dynamic_raw_id_fields = ('bibliography',)
+    raw_id_fields = ('bibliography',)
     formfield_overrides = {
         models.CharField: {'widget': TextInput(attrs={'size': '160'})},
         models.TextField: {'widget': Textarea(attrs={'rows': 2, 'cols': 40})}
@@ -96,11 +94,11 @@ class URLsInline(admin.TabularInline):
     extra = 0
 
 
-class ItemInline(DynamicRawIDMixin, admin.TabularInline):
+class ItemInline(admin.TabularInline):
     model = Item
     extra = 0
     classes = ('collapse',)
-    dynamic_raw_id_fields = ('composition',)
+    raw_id_fields = ('composition',)
     fields = ('link_id_field', 'folio_start', 'folio_end', 'composition', 'get_composers', 'source_order',)
     readonly_fields = ('link_id_field', 'get_composers')
 
@@ -166,7 +164,7 @@ class SourceKeyFilter(InputFilter):
 
 
 @admin.register(Source)
-class SourceAdmin(DynamicRawIDMixin, VersionAdmin):
+class SourceAdmin(VersionAdmin):
     save_on_top = True
     list_display = ('shelfmark',
                     'name',
@@ -194,7 +192,7 @@ class SourceAdmin(DynamicRawIDMixin, VersionAdmin):
     list_editable = ('sort_order',)
     filter_horizontal = ['notations']
     # actions = (sort_sources,)
-    dynamic_raw_id_fields = ('cover_image', 'archive')
+    raw_id_fields = ('cover_image', 'archive')
     view_on_site = True
 
     formfield_overrides = {

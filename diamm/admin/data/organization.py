@@ -1,9 +1,3 @@
-from django.contrib import admin, messages
-from django.contrib.contenttypes.admin import GenericTabularInline
-from django.shortcuts import render
-from dynamic_raw_id.admin import DynamicRawIDMixin
-from reversion.admin import VersionAdmin
-
 from diamm.admin.forms.merge_organizations import MergeOrganizationsForm
 from diamm.admin.forms.update_organization_type import UpdateOrganizationTypeForm
 from diamm.admin.merge_models import merge
@@ -11,30 +5,38 @@ from diamm.models.data.organization import Organization
 from diamm.models.data.source_copyist import SourceCopyist
 from diamm.models.data.source_provenance import SourceProvenance
 from diamm.models.data.source_relationship import SourceRelationship
+from django.contrib import admin, messages
+from django.contrib.contenttypes.admin import GenericTabularInline
+from django.shortcuts import render
+from reversion.admin import VersionAdmin
 
 
-class CopiedSourcesInline(DynamicRawIDMixin, GenericTabularInline):
+class CopiedSourcesInline(GenericTabularInline):
     verbose_name = "Source Copied"
     verbose_name_plural = "Sources Copied"
     model = SourceCopyist
     extra = 0
-    dynamic_raw_id_fields = ('source',)
+    raw_id_fields = ('source',)
 
 
-class RelatedSourcesInline(DynamicRawIDMixin, GenericTabularInline):
+class RelatedSourcesInline(GenericTabularInline):
     model = SourceRelationship
     extra = 0
-    dynamic_raw_id_fields = ('source',)
+    raw_id_fields = ('source',)
 
 
-class ProvenanceSourcesInline(DynamicRawIDMixin, GenericTabularInline):
+class ProvenanceSourcesInline(GenericTabularInline):
     model = SourceProvenance
     extra = 0
-    dynamic_raw_id_fields = ('source', 'city', 'country', 'region', 'protectorate')
+    raw_id_fields = ('source',
+                     'city',
+                     'country',
+                     'region',
+                     'protectorate')
 
 
 @admin.register(Organization)
-class OrganizationAdmin(DynamicRawIDMixin, VersionAdmin):
+class OrganizationAdmin(VersionAdmin):
     save_on_top = True
     list_display = ('name', 'location', 'type', 'updated')
     list_filter = ('type',)
@@ -43,8 +45,7 @@ class OrganizationAdmin(DynamicRawIDMixin, VersionAdmin):
     actions = ['update_organization_action', 'merge_organizations_action']
     view_on_site = True
     readonly_fields = ('created', 'updated')
-
-    dynamic_raw_id_fields = ('location', 'archive')
+    raw_id_fields = ('location', 'archive')
 
     def update_organization_action(self, request, queryset):
         if 'do_action' in request.POST:

@@ -1,9 +1,8 @@
+from diamm.models.data.source_note import SourceNote
 from django.contrib import admin
 from django.db import models
 from pagedown.widgets import AdminPagedownWidget
 from reversion.admin import VersionAdmin
-
-from diamm.models.data.source_note import SourceNote
 
 
 @admin.register(SourceNote)

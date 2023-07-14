@@ -1,17 +1,15 @@
-from django.contrib import admin
-from dynamic_raw_id.admin import DynamicRawIDMixin
-from reversion.admin import VersionAdmin
-
 from diamm.models.data.composition_cycle import CompositionCycle
 from diamm.models.data.cycle import Cycle
+from django.contrib import admin
+from reversion.admin import VersionAdmin
 
 
-class CompositionCycleInline(DynamicRawIDMixin, admin.TabularInline):
+class CompositionCycleInline(admin.TabularInline):
     model = CompositionCycle
     verbose_name = "Composition"
     verbose_name_plural = "Compositions"
     extra = 0
-    dynamic_raw_id_fields = ('composition',)
+    raw_id_fields = ('composition',)
 
 
 @admin.register(Cycle)

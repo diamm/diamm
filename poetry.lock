@@ -275,23 +275,6 @@ argon2 = ["argon2-cffi (>=19.1.0)"]
 bcrypt = ["bcrypt"]
 
 [[package]]
-name = "django-dynamic-raw-id"
-version = "3.0"
-description = "raw_id_fields widget replacement that handles display of an object's string value on change."
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "django-dynamic-raw-id-3.0.tar.gz", hash = "sha256:1d9cb7f019e3b2528dd006c58695f9303e0676bad822972c96da4892cae89b95"},
-    {file = "django_dynamic_raw_id-3.0-py2.py3-none-any.whl", hash = "sha256:ca020c96503072fc22418d38e3f48034f35848f5a86cd145f44c4d809478963d"},
-]
-
-[package.dependencies]
-django = ">=3.2"
-
-[package.extras]
-tests = ["coverage", "pytest", "pytest-cov", "pytest-django", "selenium"]
-
-[[package]]
 name = "django-extensions"
 version = "3.2.3"
 description = "Extensions for Django"
@@ -1272,4 +1255,4 @@ testing = ["Pillow (>=9.1.0,<11.0.0)", "Wand (>=0.6,<1.0)", "mock (>=3.0,<4.0)",
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "81a5b2782e24b169991ce5caa1251af56bd8b5f64760496d98c69ab6f1f34bf1"
+content-hash = "b21dd20d2862f61e645f17b5a6a9ad6d39080ab1abb8ef2b8614ecb8bd909b99"

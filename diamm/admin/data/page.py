@@ -1,10 +1,8 @@
-from django.contrib import admin
-from dynamic_raw_id.admin import DynamicRawIDMixin
-from reversion.admin import VersionAdmin
-
 from diamm.admin.filters.input_filter import InputFilter
 from diamm.models.data.image import Image
 from diamm.models.data.page import Page
+from django.contrib import admin
+from reversion.admin import VersionAdmin
 
 
 class ImageInline(admin.StackedInline):
@@ -23,9 +21,9 @@ class SourceKeyFilter(InputFilter):
 
 
 @admin.register(Page)
-class PageAdmin(DynamicRawIDMixin, VersionAdmin):
+class PageAdmin(VersionAdmin):
     save_on_top = True
-    dynamic_raw_id_fields = ("source",)
+    raw_id_fields = ("source",)
     list_filter = (
         SourceKeyFilter,
         "page_type"

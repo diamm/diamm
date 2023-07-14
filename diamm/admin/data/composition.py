@@ -1,9 +1,3 @@
-from django.contrib import admin, messages
-from django.shortcuts import render
-from django.utils.safestring import mark_safe
-from dynamic_raw_id.admin import DynamicRawIDMixin
-from reversion.admin import VersionAdmin
-
 from diamm.admin.forms.assign_genre import AssignGenreForm
 from diamm.admin.forms.merge_compositions import MergeCompositionsForm
 from diamm.admin.merge_models import merge
@@ -13,28 +7,32 @@ from diamm.models.data.composition_composer import CompositionComposer
 from diamm.models.data.composition_cycle import CompositionCycle
 from diamm.models.data.composition_note import CompositionNote
 from diamm.models.data.item import Item
+from django.contrib import admin, messages
+from django.shortcuts import render
+from django.utils.safestring import mark_safe
+from reversion.admin import VersionAdmin
 
 
-class BibliographyInline(DynamicRawIDMixin, admin.TabularInline):
+class BibliographyInline(admin.TabularInline):
     verbose_name = "Bibliography"
     verbose_name_plural = "Bibliographies"
     model = CompositionBibliography
     extra = 0
-    dynamic_raw_id_fields = ('bibliography',)
+    raw_id_fields = ('bibliography',)
 
 
-class ComposerInline(DynamicRawIDMixin, admin.TabularInline):
+class ComposerInline(admin.TabularInline):
     verbose_name = "Composer"
     verbose_name_plural = "Composers"
     model = CompositionComposer
     extra = 0
-    dynamic_raw_id_fields = ('composer',)
+    raw_id_fields = ('composer',)
 
 
-class ItemInline(DynamicRawIDMixin, admin.StackedInline):
+class ItemInline(admin.StackedInline):
     model = Item
     extra = 0
-    dynamic_raw_id_fields = ('source', 'pages')
+    raw_id_fields = ('source', 'pages')
     classes = ['collapse']
 
 
@@ -43,12 +41,12 @@ class NoteInline(admin.TabularInline):
     extra = 0
 
 
-class CycleInline(DynamicRawIDMixin, admin.StackedInline):
+class CycleInline(admin.StackedInline):
     verbose_name = "Cycle"
     verbose_name_plural = "Cycles"
     model = CompositionCycle
     extra = 0
-    dynamic_raw_id_fields = ('cycle',)
+    raw_id_fields = ('cycle',)
 
 
 @admin.register(Composition)

@@ -1,14 +1,13 @@
 from django.contrib import admin
-from dynamic_raw_id.admin import DynamicRawIDMixin
 
 from diamm.models.data.bibliography_author import BibliographyAuthor
 from diamm.models.data.bibliography_author_role import BibliographyAuthorRole
 
 
-class BibliographyInline(DynamicRawIDMixin, admin.TabularInline):
+class BibliographyInline(admin.TabularInline):
     model = BibliographyAuthorRole
     extra = 0
-    dynamic_raw_id_fields = ('bibliography_entry',)
+    raw_id_fields = ('bibliography_entry',)
 
 
 @admin.register(BibliographyAuthor)
