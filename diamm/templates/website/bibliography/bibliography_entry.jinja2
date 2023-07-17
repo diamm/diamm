@@ -62,7 +62,7 @@
     {# journal, book, or festschrift -#}
     {%- if content.type.pk in (5, 6, 2, 9) -%}
     <em>{{ punctuate(content.title) }}</em>
-    {%- elif content.type.pk in (5,) and content.publication_info.filter(type=2).count() > 0 -%}
+    {%- elif content.type.pk in (5,) and content.publication_info.filter(type=2).exists() -%}
     {# chapter in a festschrift #}
     {{ punctuate(content.title) }}
     {%- else -%}

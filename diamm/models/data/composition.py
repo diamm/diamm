@@ -19,5 +19,5 @@ class Composition(models.Model):
 
     @property
     def composer_names(self):
-        composers = self.composers.all()
-        return "; ".join([c.composer.full_name for c in composers])
+        composers = self.composers.select_related('composer', 'composition').all()
+        return "; ".join([c.composer_name for c in composers])

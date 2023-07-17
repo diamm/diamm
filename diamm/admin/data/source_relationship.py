@@ -1,16 +1,14 @@
-from django.contrib import admin
-from dynamic_raw_id.admin import DynamicRawIDMixin
-from reversion.admin import VersionAdmin
-
 from diamm.models.data.organization import Organization
 from diamm.models.data.person import Person
 from diamm.models.data.source_relationship import SourceRelationship
+from django.contrib import admin
+from reversion.admin import VersionAdmin
 
 
 @admin.register(SourceRelationship)
-class SourceRelationshipAdmin(DynamicRawIDMixin, VersionAdmin):
+class SourceRelationshipAdmin(VersionAdmin):
     list_display = ('get_source', 'get_related_entity', 'relationship_type')
-    dynamic_raw_id_fields = ('source',)
+    raw_id_fields = ('source',)
     list_filter = ('relationship_type',)
 
     search_fields = ('source__name',

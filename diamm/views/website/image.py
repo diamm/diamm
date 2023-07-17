@@ -1,9 +1,10 @@
 from typing import Dict, Optional
+
+import requests
+from diamm.helpers.solr_helpers import SolrConnection
 from django.conf import settings
 from django.http import HttpResponse
 from rest_framework import status
-import requests
-import pysolr
 
 
 def image_serve(request, pk, region=None, size=None, rotation=None, *args, **kwargs) -> HttpResponse:
@@ -24,11 +25,11 @@ def image_serve(request, pk, region=None, size=None, rotation=None, *args, **kwa
     field_list = [
         'location_s'
     ]
-    conn = pysolr.Solr(settings.SOLR['SERVER'])
-    req = conn.search("*:*",
-                      fq=["type:image", f"pk:{pk}"],
-                      fl=field_list,
-                      rows=1)  # ensure only one result is returned
+    # conn = pysolr.Solr(settings.SOLR['SERVER'])
+    req = SolrConnection.search("*:*",
+                                fq=["type:image", f"pk:{pk}"],
+                                fl=field_list,
+                                rows=1)  # ensure only one result is returned
 
     if req.hits == 0:
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)

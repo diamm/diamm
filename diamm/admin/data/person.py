@@ -1,13 +1,3 @@
-from django.contrib import admin, messages
-from django.contrib.contenttypes.admin import GenericTabularInline
-from django.db import models
-from django.shortcuts import render
-from django.utils.safestring import mark_safe
-from django.utils.translation import gettext_lazy as _
-from dynamic_raw_id.admin import DynamicRawIDMixin
-from pagedown.widgets import AdminPagedownWidget
-from reversion.admin import VersionAdmin
-
 from diamm.admin.forms.merge_people import MergePeopleForm
 from diamm.admin.merge_models import merge
 from diamm.models.data.composition_composer import CompositionComposer
@@ -19,14 +9,22 @@ from diamm.models.data.person_role import PersonRole
 from diamm.models.data.source_copyist import SourceCopyist
 from diamm.models.data.source_provenance import SourceProvenance
 from diamm.models.data.source_relationship import SourceRelationship
+from django.contrib import admin, messages
+from django.contrib.contenttypes.admin import GenericTabularInline
+from django.db import models
+from django.shortcuts import render
+from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy as _
+from pagedown.widgets import AdminPagedownWidget
+from reversion.admin import VersionAdmin
 
 
-class CompositionsInline(DynamicRawIDMixin, admin.TabularInline):
+class CompositionsInline(admin.TabularInline):
     verbose_name = "Composition"
     verbose_name_plural = "Compositions"
     model = CompositionComposer
     extra = 0
-    dynamic_raw_id_fields = ('composition',)
+    raw_id_fields = ('composition',)
 
 
 class PersonNoteInline(admin.TabularInline):
@@ -53,32 +51,32 @@ class PersonIdentifierInline(admin.TabularInline):
         return mark_safe(f'<a href="{instance.identifier_url}">{instance.identifier_url}</a>')
 
 
-class PersonRoleInline(DynamicRawIDMixin, admin.TabularInline):
+class PersonRoleInline(admin.TabularInline):
     verbose_name = "Role"
     verbose_name_plural = "Roles"
     model = PersonRole
     extra = 0
-    dynamic_raw_id_fields = ('role',)
+    raw_id_fields = ('role',)
 
 
-class CopiedSourcesInline(DynamicRawIDMixin, GenericTabularInline):
+class CopiedSourcesInline(GenericTabularInline):
     verbose_name = "Source Copied"
     verbose_name_plural = "Sources Copied"
     model = SourceCopyist
     extra = 0
-    dynamic_raw_id_fields = ('source',)
+    raw_id_fields = ('source',)
 
 
-class RelatedSourcesInline(DynamicRawIDMixin, GenericTabularInline):
+class RelatedSourcesInline(GenericTabularInline):
     model = SourceRelationship
     extra = 0
-    dynamic_raw_id_fields = ('source',)
+    raw_id_fields = ('source',)
 
 
-class ProvenanceSourcesInline(DynamicRawIDMixin, GenericTabularInline):
+class ProvenanceSourcesInline(GenericTabularInline):
     model = SourceProvenance
     extra = 0
-    dynamic_raw_id_fields = ('source', 'city', 'country', 'region', 'protectorate')
+    raw_id_fields = ('source', 'city', 'country', 'region', 'protectorate')
 
 
 def migrate_to_organization(modeladmin, request, queryset):
@@ -138,7 +136,13 @@ class PersonBiography(admin.SimpleListFilter):
 @admin.register(Person)
 class PersonAdmin(VersionAdmin):
     save_on_top = True
-    list_display = ('last_name', 'first_name', 'title', 'earliest_year', 'latest_year', 'updated')
+    list_display = ('last_name',
+                    'first_name',
+                    'title',
+                    'earliest_year',
+                    'latest_year',
+                    'floruit',
+                    'updated')
     search_fields = ('last_name', 'first_name', 'title')
     inlines = (PersonNoteInline, PersonRoleInline, PersonIdentifierInline,
                CopiedSourcesInline, RelatedSourcesInline, ProvenanceSourcesInline,

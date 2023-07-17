@@ -62,7 +62,7 @@ class CountryDetailSerializer(ContextSerializer):
                                       context=self.context).data
 
     def get_url(self, obj):
-        if obj.type in (GeographicArea.STATE, GeographicArea.REGION) :
+        if obj.type in (GeographicArea.STATE, GeographicArea.REGION):
             return reverse("region-detail", kwargs={"pk": obj.id}, request=self.context['request'])
         elif obj.type == GeographicArea.CITY:
             return reverse("city-detail", kwargs={"pk": obj.id}, request=self.context['request'])

@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.sitemaps',
-    'dynamic_raw_id',
     'diamm',
     'diamm.diamm_data',
     'diamm.diamm_site',
@@ -88,6 +87,11 @@ MIDDLEWARE = [
     # 'wagtail.wagtailcore.middleware.SiteMiddleware',
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
 ]
+
+if DEBUG:
+    INSTALLED_APPS.append('debug_toolbar')
+    MIDDLEWARE.append("debug_toolbar.middleware.DebugToolbarMiddleware",)
+
 
 ROOT_URLCONF = 'diamm.urls'
 

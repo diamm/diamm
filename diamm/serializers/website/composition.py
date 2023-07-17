@@ -91,9 +91,7 @@ class CompositionSourceSerializer(ContextSerializer):
                        request=self.context['request'])
 
     def get_has_images(self, obj):
-        if obj.pages.count() > 0:
-            return True
-        return False
+        return obj.pages.exists()
 
 
 class CompositionComposerSerializer(ContextSerializer):
@@ -150,14 +148,14 @@ class CompositionDetailSerializer(ContextSerializer):
             return []
 
     def get_cycles(self, obj):
-        if obj.cycles.count() > 0:
+        if obj.cycles.exists():
             return CompositionCycleSerializer(obj.cycles.all(),
                                               context={"request": self.context['request']},
                                               many=True).data
         return []
 
     def get_genres(self, obj):
-        if obj.genres.count() > 0:
+        if obj.genres.exists():
             return [g.name for g in obj.genres.all()]
         return []
 

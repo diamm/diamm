@@ -1,18 +1,16 @@
+from diamm.models.data.archive_identifier import ArchiveIdentifier
 from django.contrib import admin
 from django.utils.safestring import mark_safe
-from dynamic_raw_id.admin import DynamicRawIDMixin
 from reversion.admin import VersionAdmin
-
-from diamm.models.data.archive_identifier import ArchiveIdentifier
 
 
 @admin.register(ArchiveIdentifier)
-class ArchiveIdentifierAdmin(DynamicRawIDMixin, VersionAdmin):
+class ArchiveIdentifierAdmin(VersionAdmin):
     search_fields = ('archive__name',)
-    list_display = ('get_archive_name',)
+    list_display = ('get_archive_name', 'identifier_type', 'identifier')
     list_filter = ("identifier_type",)
     readonly_fields = ("get_external_url",)
-    dynamic_raw_id_fields = ('archive',)
+    raw_id_fields = ('archive',)
 
     def get_archive_name(self, obj):
         return f"{obj.archive.name}"

@@ -1,7 +1,6 @@
+from diamm.models.data.notation import Notation
 from django.contrib import admin
 from reversion.admin import VersionAdmin
-
-from diamm.models.data.notation import Notation
 
 
 @admin.register(Notation)

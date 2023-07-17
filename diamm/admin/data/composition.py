@@ -1,9 +1,3 @@
-from django.contrib import admin, messages
-from django.shortcuts import render
-from django.utils.safestring import mark_safe
-from dynamic_raw_id.admin import DynamicRawIDMixin
-from reversion.admin import VersionAdmin
-
 from diamm.admin.forms.assign_genre import AssignGenreForm
 from diamm.admin.forms.merge_compositions import MergeCompositionsForm
 from diamm.admin.merge_models import merge
@@ -13,28 +7,32 @@ from diamm.models.data.composition_composer import CompositionComposer
 from diamm.models.data.composition_cycle import CompositionCycle
 from diamm.models.data.composition_note import CompositionNote
 from diamm.models.data.item import Item
+from django.contrib import admin, messages
+from django.shortcuts import render
+from django.utils.safestring import mark_safe
+from reversion.admin import VersionAdmin
 
 
-class BibliographyInline(DynamicRawIDMixin, admin.TabularInline):
+class BibliographyInline(admin.TabularInline):
     verbose_name = "Bibliography"
     verbose_name_plural = "Bibliographies"
     model = CompositionBibliography
     extra = 0
-    dynamic_raw_id_fields = ('bibliography',)
+    raw_id_fields = ('bibliography',)
 
 
-class ComposerInline(DynamicRawIDMixin, admin.TabularInline):
+class ComposerInline(admin.TabularInline):
     verbose_name = "Composer"
     verbose_name_plural = "Composers"
     model = CompositionComposer
     extra = 0
-    dynamic_raw_id_fields = ('composer',)
+    raw_id_fields = ('composer',)
 
 
-class ItemInline(DynamicRawIDMixin, admin.StackedInline):
+class ItemInline(admin.StackedInline):
     model = Item
     extra = 0
-    dynamic_raw_id_fields = ('source', 'pages')
+    raw_id_fields = ('source', 'pages')
     classes = ['collapse']
 
 
@@ -43,12 +41,12 @@ class NoteInline(admin.TabularInline):
     extra = 0
 
 
-class CycleInline(DynamicRawIDMixin, admin.StackedInline):
+class CycleInline(admin.StackedInline):
     verbose_name = "Cycle"
     verbose_name_plural = "Cycles"
     model = CompositionCycle
     extra = 0
-    dynamic_raw_id_fields = ('cycle',)
+    raw_id_fields = ('cycle',)
 
 
 @admin.register(Composition)
@@ -74,9 +72,9 @@ class CompositionAdmin(VersionAdmin):
     get_genres.short_description = "Genres"
 
     def appears_in(self, obj):
-        if obj.sources.count() == 0:
+        if not obj.sources.exists():
             return None
-        sources = ["<a href='/admin/diamm_data/source/{0}/change'>{1} {2}</a><br />".format(x[0], x[1], x[2]) for x in obj.sources.values_list('source__pk',
+        sources = ["<a href='/admin/diamm_data/source/{0}/change'>{1} {2}</a><br />".format(x[0], x[1], x[2]) for x in obj.sources.select_related('source__archive__city').values_list('source__pk',
                                                                                                          'source__archive__siglum',
                                                                                                          'source__shelfmark')]
         return mark_safe("".join(sources))

@@ -1,16 +1,14 @@
-from django.contrib import admin
-from django.forms import ModelForm
-from django.template.defaultfilters import truncatewords
-from django.utils.translation import gettext_lazy as _
-from dynamic_raw_id.admin import DynamicRawIDMixin
-from reversion.admin import VersionAdmin
-
 from diamm.admin.filters.input_filter import InputFilter
 from diamm.models.data.item import Item
 from diamm.models.data.item_bibliography import ItemBibliography
 from diamm.models.data.item_composer import ItemComposer
 from diamm.models.data.item_note import ItemNote
 from diamm.models.data.page import Page
+from django.contrib import admin
+from django.forms import ModelForm
+from django.template.defaultfilters import truncatewords
+from django.utils.translation import gettext_lazy as _
+from reversion.admin import VersionAdmin
 
 
 # This custom form will reduce the number of options for the pages to only those
@@ -37,18 +35,18 @@ class ItemNoteInline(admin.TabularInline):
     extra = 0
 
 
-class BibliographyInline(DynamicRawIDMixin, admin.TabularInline):
+class BibliographyInline(admin.TabularInline):
     verbose_name_plural = "Bibliography"
     verbose_name = "Bibliography"
     model = ItemBibliography
     extra = 0
-    dynamic_raw_id_fields = ('bibliography',)
+    raw_id_fields = ('bibliography',)
 
 
-class ItemComposerInline(DynamicRawIDMixin, admin.TabularInline):
+class ItemComposerInline(admin.TabularInline):
     model = ItemComposer
     extra = 0
-    dynamic_raw_id_fields = ('composer',)
+    raw_id_fields = ('composer',)
 
 
 class AttachedToPagesListFilter(admin.SimpleListFilter):
@@ -92,11 +90,12 @@ class CompositionKeyFilter(InputFilter):
 
 
 @admin.register(Item)
-class ItemAdmin(DynamicRawIDMixin, VersionAdmin):
+class ItemAdmin(VersionAdmin):
     save_on_top = True
     form = ItemAdminForm
     list_display = ('get_source', 'get_composition', 'get_composers',
-                    'folio_start', 'folio_end', 'source_order', 'pages_attached')
+                    'folio_start', 'folio_end', 'source_order', 'pages_attached',
+                    'created', 'updated')
     list_editable = ('source_order',
                      'folio_start',
                      'folio_end')
@@ -111,10 +110,10 @@ class ItemAdmin(DynamicRawIDMixin, VersionAdmin):
     inlines = (ItemNoteInline, ItemComposerInline, BibliographyInline)
     filter_horizontal = ['pages']
     # exclude = ("pages",)
-    dynamic_raw_id_fields = ('source', 'composition')
+    raw_id_fields = ('source', 'composition')
 
     def pages_attached(self, obj):
-        return obj.pages.count() > 0
+        return obj.pages.exists()
     pages_attached.short_description = "Pages Linked"
     pages_attached.boolean = True
 

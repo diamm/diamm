@@ -1,24 +1,22 @@
-from django.contrib import admin, messages
-from django.shortcuts import render
-from dynamic_raw_id.admin import DynamicRawIDMixin
-from reversion.admin import VersionAdmin
-
 from diamm.admin.forms.merge_areas import MergeAreasForm
 from diamm.admin.merge_models import merge
 from diamm.models.data.geographic_area import GeographicArea
+from django.contrib import admin, messages
+from django.shortcuts import render
+from reversion.admin import VersionAdmin
 
 
 @admin.register(GeographicArea)
-class GeographicAreaAdmin(DynamicRawIDMixin, VersionAdmin):
-    list_display = ('name', 'area_type', 'get_parent')
+class GeographicAreaAdmin(VersionAdmin):
+    list_display = ('name', 'area_type', 'get_parent', 'created', 'updated')
     search_fields = ('name',)
     list_filter = ('type',)
     actions = ['merge_areas_action']
-    dynamic_raw_id_fields = ('parent',)
+    raw_id_fields = ('parent',)
 
     def get_parent(self, obj):
         if obj.parent:
-            return f"{obj.parent_name}"
+            return f"{obj.parent.name}"
         return None
     get_parent.short_description = "Parent"
 

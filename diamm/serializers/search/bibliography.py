@@ -48,12 +48,12 @@ class BibliographySearchSerializer(serpy.Serializer):
         return authors_s
 
     def get_authors_ii(self, obj):
-        if obj.authors.count() > 0:
+        if obj.authors.exists():
             return list(obj.authors.values_list('bibliography_author__pk', flat=True))
         return None
 
     def get_sort_ans(self, obj):
-        if obj.authors.count() > 0:
+        if obj.authors.exists():
             return " ".join(list(obj.authors.values_list('bibliography_author__last_name', flat=True)))
         return None
 

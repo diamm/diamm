@@ -1,4 +1,4 @@
-import pysolr
+# import pysolr
 from django.conf import settings
 from django.shortcuts import get_object_or_404, redirect
 from rest_framework import generics
@@ -21,8 +21,7 @@ class SourceDetail(generics.RetrieveAPIView):
 
     def get_queryset(self):
         # Optimization for retrieving
-        queryset = Source.objects.all()
-        queryset = queryset.select_related('archive__city__parent')
+        queryset = Source.objects.all().select_related('archive__city__parent')
         return queryset
 
     def get(self, request, *args, **kwargs) -> response.Response:

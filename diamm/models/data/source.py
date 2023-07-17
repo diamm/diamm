@@ -146,35 +146,35 @@ class Source(models.Model):
             return None
 
         cover_obj = {}
-        if self.cover_image:
+        if self.cover_image.exists():
             cover_obj['id'] = self.cover_image.id
             cover_obj['label'] = self.cover_image.page.numeration
             return cover_obj
-        else:
-            if self.pages.count() == 0:
-                return None
 
-            p = self.pages.order_by("?").only('numeration').first()
-            i = p.images.filter(type=1, iiif_response_cache__isnull=False).only('id', 'public').first()
-            if i and i.public:
-                cover_obj['id'] = i.id
-                cover_obj['label'] = p.numeration
-                return cover_obj
-            else:
-                return None
+        if not self.pages.exists():
+            return None
+
+        p = self.pages.order_by("?").only('numeration').first()
+        i = p.images.filter(type=1, iiif_response_cache__isnull=False).only('id', 'public').first()
+        if i and i.public:
+            cover_obj['id'] = i.id
+            cover_obj['label'] = p.numeration
+            return cover_obj
+
+        return None
 
     @property
     def composers(self):
         composer_names = []
-        for item in self.inventory.filter(source__id=self.pk).select_related('composition').iterator():
-            if not item.composition:
-                if item.unattributed_composers.count() > 0:
-                    for itcomposer in item.unattributed_composers.all().iterator():
-                        composer_names.append(itcomposer.composer.full_name)
-                    continue
-            else:
-                for composer in item.composition.composers.all().iterator():
+        for item in self.inventory.all().select_related('composition'):
+            if item.composition:
+                for composer in item.composition.composers.select_related('composer').all():
                     composer_names.append(composer.composer_name)
+
+            if item.unattributed_composers:
+                for itcomposer in item.unattributed_composers.select_related('composer').all():
+                    composer_names.append(itcomposer.composer.full_name)
+                continue
 
         composer_names = list(set(composer_names))
         composer_names.sort()
@@ -182,23 +182,22 @@ class Source(models.Model):
         return composer_names
 
     @property
-    def num_composers(self):
-        c = self.composers
-        return len(c)
+    def num_composers(self) -> int:
+        return len(self.composers)
 
     @property
     def compositions(self):
         composition_names = []
-        for item in self.inventory.all().select_related('composition').iterator():
+        for item in self.inventory.all().select_related('composition'):
             if not item.composition:
                 continue
+
             composition_names.append(item.composition.title)
         return list(set(composition_names))
 
     @property
-    def num_compositions(self):
-        c = self.compositions
-        return len(c)
+    def num_compositions(self) -> int:
+        return len(self.compositions)
 
     # Fetches results for a source from Solr. Much quicker than hitting up postgres
     # and sorts correctly too! Restricting the composition using [* TO *] means that

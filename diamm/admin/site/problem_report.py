@@ -3,7 +3,6 @@ from typing import Optional
 from django.contrib import admin
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
-from dynamic_raw_id.admin import DynamicRawIDMixin
 from rest_framework.reverse import reverse
 from reversion.admin import VersionAdmin
 
@@ -15,7 +14,7 @@ from diamm.models.site.problem_report import ProblemReport
 
 
 @admin.register(ProblemReport)
-class ProblemReportAdmin(DynamicRawIDMixin, VersionAdmin):
+class ProblemReportAdmin(VersionAdmin):
     list_display = ('get_contributor',
                     'get_entity',
                     'created',
@@ -27,7 +26,7 @@ class ProblemReportAdmin(DynamicRawIDMixin, VersionAdmin):
                      '=object_id')
     list_filter = ("accepted", "content_type")
 
-    dynamic_raw_id_fields = ("contributor",)
+    raw_id_fields = ("contributor",)
 
     fields = ('content_type',
               'object_id',
