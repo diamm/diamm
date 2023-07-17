@@ -146,7 +146,7 @@ class Source(models.Model):
             return None
 
         cover_obj = {}
-        if self.cover_image and self.cover_image.exists():
+        if self.cover_image:
             cover_obj['id'] = self.cover_image.id
             cover_obj['label'] = self.cover_image.page.numeration
             return cover_obj
