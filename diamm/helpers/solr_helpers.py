@@ -6,15 +6,12 @@ from django.conf import settings
 
 SolrConnection: pysolr.Solr = pysolr.Solr(settings.SOLR['SERVER'])
 
-def __solr_prepare(instances):
+def __solr_prepare(instances) -> None:
     """
         Both index and delete require the step of checking
         to see if the requested documents exist. For indexing, this is so we don't get
         duplicate records in the index; for deleting, it's rather obvious.
         This method deletes the documents in question and returns the connection object.
-
-        If further action is required (i.e., actually indexing) the calling method
-        can re-use the connection object to do this.
 
         An array of model instances must be passed to this method. For single instances,
         the caller should wrap it in an array of length 1 before passing it in.
@@ -27,10 +24,10 @@ def __solr_prepare(instances):
         records = SolrConnection.search("*:*", fq=fq, fl="id")
         if records.docs:
             for doc in records.docs:
-                connection.delete(id=doc['id'])
-                connection.commit()
-
-    return connection
+                SolrConnection.delete(id=doc['id'])
+                SolrConnection.commit()
+    #
+    # return connection
 
 
 def solr_index(serializer, instance):
@@ -44,7 +41,7 @@ def solr_index(serializer, instance):
 
 
 def solr_index_many(serializer, instances):
-    connection = __solr_prepare(instances)
+    __solr_prepare(instances)
     serialized = serializer(instances, many=True)
     data = serialized.data
     SolrConnection.add(data)
