@@ -78,7 +78,7 @@ class Command(BaseCommand):
     def _index_inventories(self):
         self.stdout.write(term.blue('Indexing Inventories'))
         self.solrconn.delete(q="type:item")
-        objs = Item.objects.all().order_by('pk')
+        objs = Item.objects.all().order_by('pk').select_related("source__archive__city__parent", "composition")
         self._index(objs, '', ItemSearchSerializer)
 
     def _index_archives(self):
