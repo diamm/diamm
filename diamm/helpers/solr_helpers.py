@@ -6,6 +6,7 @@ from django.conf import settings
 
 SolrConnection: pysolr.Solr = pysolr.Solr(settings.SOLR['SERVER'])
 
+
 def __solr_prepare(instances) -> None:
     """
         Both index and delete require the step of checking
