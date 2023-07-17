@@ -4,6 +4,7 @@ from typing import Optional, Dict, Iterator
 import pysolr
 from django.conf import settings
 
+SolrConnection: pysolr.Solr = pysolr.Solr(settings.SOLR['SERVER'])
 
 def __solr_prepare(instances):
     """
@@ -18,12 +19,12 @@ def __solr_prepare(instances):
         An array of model instances must be passed to this method. For single instances,
         the caller should wrap it in an array of length 1 before passing it in.
     """
-    connection = pysolr.Solr(settings.SOLR['SERVER'])
-
+    # connection = pysolr.Solr(settings.SOLR['SERVER'])
+    #
     for instance in instances:
         fq = [f"type:{instance.__class__.__name__.lower()}",
               f"pk:{instance.pk}"]
-        records = connection.search("*:*", fq=fq, fl="id")
+        records = SolrConnection.search("*:*", fq=fq, fl="id")
         if records.docs:
             for doc in records.docs:
                 connection.delete(id=doc['id'])
@@ -33,21 +34,21 @@ def __solr_prepare(instances):
 
 
 def solr_index(serializer, instance):
-    connection = __solr_prepare([instance])
+    # connection = __solr_prepare([instance])
     serialized = serializer(instance)
     data = serialized.data
 
     # pysolr add takes a list of documents, so we wrap the instance in an array.
-    connection.add([data])
-    connection.commit()
+    SolrConnection.add([data])
+    SolrConnection.commit()
 
 
 def solr_index_many(serializer, instances):
     connection = __solr_prepare(instances)
     serialized = serializer(instances, many=True)
     data = serialized.data
-    connection.add(data)
-    connection.commit()
+    SolrConnection.add(data)
+    SolrConnection.commit()
 
 
 def solr_delete(instance):
@@ -86,7 +87,7 @@ class SolrManager:
     fire off requests for the next page (technically, the next cursor mark) before yielding a result.
     """
     def __init__(self, url: str, curs_sort_statement: str = "id asc") -> None:
-        self._conn: pysolr.Solr = pysolr.Solr(url)
+        # self._conn: pysolr.Solr = pysolr.Solr(url)
         self._res: Optional[pysolr.Results] = None
         self._curs_sort_statement: str = curs_sort_statement
         self._hits: int = 0
@@ -126,7 +127,7 @@ class SolrManager:
 
         self._cursorMark = "*"
         self._q_kwargs['cursorMark'] = self._cursorMark
-        self._res = self._conn.search(q, **self._q_kwargs)
+        self._res = SolrConnection.search(q, **self._q_kwargs)
         self._hits = self._res.hits
 
     @property
@@ -147,7 +148,7 @@ class SolrManager:
         self._q_kwargs = kwargs
         self._group_name = group_name
         self._gp_kwargs.update({"group.field": self._group_name, "group.sort": group_sort})
-        self._res = self._conn.search(q, start=0, rows=self._group_rows, **self._q_kwargs, **self._gp_kwargs)
+        self._res = SolrConnection.search(q, start=0, rows=self._group_rows, **self._q_kwargs, **self._gp_kwargs)
         self._hits = self._res.hits
 
     @property
@@ -174,7 +175,7 @@ class SolrManager:
                 pgno += 1
                 start: int = (pgno * self._group_rows) + 1
 
-                self._res = self._conn.search(self._q, start=start, rows=self._group_rows,
+                self._res = SolrConnection.search(self._q, start=start, rows=self._group_rows,
                                               **self._q_kwargs,
                                               **self._gp_kwargs)
 
@@ -206,7 +207,7 @@ class SolrManager:
                 self._page_idx = 0
                 self._cursorMark = self._res.nextCursorMark
                 self._q_kwargs['cursorMark'] = self._res.nextCursorMark
-                self._res = self._conn.search(self._q, **self._q_kwargs)
+                self._res = SolrConnection.search(self._q, **self._q_kwargs)
                 self._hits = self._res.hits
                 if self._res.docs:
                     yield self._res.docs[self._page_idx]

@@ -8,7 +8,7 @@ from reversion.admin import VersionAdmin
 
 @admin.register(GeographicArea)
 class GeographicAreaAdmin(VersionAdmin):
-    list_display = ('name', 'area_type', 'get_parent')
+    list_display = ('name', 'area_type', 'get_parent', 'created', 'updated')
     search_fields = ('name',)
     list_filter = ('type',)
     actions = ['merge_areas_action']

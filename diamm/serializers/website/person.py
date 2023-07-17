@@ -104,6 +104,7 @@ class PersonCompositionSerializer(ContextDictSerializer):
     def get_sources(self, obj: Dict) -> List:
         if 'sources_ss' not in obj:
             return []
+
         sources = []
         for entry in obj['sources_ssni']:
             pk, name = entry.split("|")

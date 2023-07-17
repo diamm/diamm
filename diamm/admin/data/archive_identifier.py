@@ -7,7 +7,7 @@ from reversion.admin import VersionAdmin
 @admin.register(ArchiveIdentifier)
 class ArchiveIdentifierAdmin(VersionAdmin):
     search_fields = ('archive__name',)
-    list_display = ('get_archive_name',)
+    list_display = ('get_archive_name', 'identifier_type', 'identifier')
     list_filter = ("identifier_type",)
     readonly_fields = ("get_external_url",)
     raw_id_fields = ('archive',)

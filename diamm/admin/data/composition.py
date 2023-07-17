@@ -72,9 +72,9 @@ class CompositionAdmin(VersionAdmin):
     get_genres.short_description = "Genres"
 
     def appears_in(self, obj):
-        if obj.sources.count() == 0:
+        if not obj.sources.exists():
             return None
-        sources = ["<a href='/admin/diamm_data/source/{0}/change'>{1} {2}</a><br />".format(x[0], x[1], x[2]) for x in obj.sources.values_list('source__pk',
+        sources = ["<a href='/admin/diamm_data/source/{0}/change'>{1} {2}</a><br />".format(x[0], x[1], x[2]) for x in obj.sources.select_related('source__archive__city').values_list('source__pk',
                                                                                                          'source__archive__siglum',
                                                                                                          'source__shelfmark')]
         return mark_safe("".join(sources))

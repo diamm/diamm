@@ -136,7 +136,13 @@ class PersonBiography(admin.SimpleListFilter):
 @admin.register(Person)
 class PersonAdmin(VersionAdmin):
     save_on_top = True
-    list_display = ('last_name', 'first_name', 'title', 'earliest_year', 'latest_year', 'updated')
+    list_display = ('last_name',
+                    'first_name',
+                    'title',
+                    'earliest_year',
+                    'latest_year',
+                    'floruit',
+                    'updated')
     search_fields = ('last_name', 'first_name', 'title')
     inlines = (PersonNoteInline, PersonRoleInline, PersonIdentifierInline,
                CopiedSourcesInline, RelatedSourcesInline, ProvenanceSourcesInline,

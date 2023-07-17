@@ -33,10 +33,18 @@ class SourceCopyistInline(admin.StackedInline):
     model = SourceCopyist
     extra = 0
 
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('source__archive__city', 'content_type')
 
 class SourceRelationshipInline(admin.StackedInline):
     model = SourceRelationship
     extra = 0
+    # raw_id_fields = ('relationship_type',)
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('source__archive__city',
+                                                            'content_type',
+                                                            'relationship_type').prefetch_related('related_entity')
 
 
 class SourceProvenanceInline(admin.StackedInline):
@@ -44,6 +52,10 @@ class SourceProvenanceInline(admin.StackedInline):
     extra = 0
     verbose_name = "Provenance"
     verbose_name_plural = "Provenance"
+    raw_id_fields = ('city', 'country', 'region', 'protectorate')
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('source__archive', 'city', 'country', 'region')
 
 
 class BibliographyInline(admin.TabularInline):
@@ -57,11 +69,16 @@ class BibliographyInline(admin.TabularInline):
         models.TextField: {'widget': Textarea(attrs={'rows': 2, 'cols': 40})}
     }
 
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('source__archive__city', 'bibliography__type').prefetch_related('bibliography__authors')
+
 
 class IdentifiersInline(admin.TabularInline):
     model = SourceIdentifier
     extra = 0
 
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("source__archive__city")
 
 class AuthoritiesInline(admin.TabularInline):
     model = SourceAuthority
@@ -75,6 +92,9 @@ class NotesInline(admin.TabularInline):
     formfield_overrides = {
         models.TextField: {'widget': AdminPagedownWidget}
     }
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("source__archive__city")
 
 
 class PagesInline(admin.TabularInline):
@@ -102,8 +122,11 @@ class ItemInline(admin.TabularInline):
     fields = ('link_id_field', 'folio_start', 'folio_end', 'composition', 'get_composers', 'source_order',)
     readonly_fields = ('link_id_field', 'get_composers')
 
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("source__archive__city", "composition").prefetch_related('pages', 'composition__composers')
+
     def get_composers(self, obj):
-        if obj.composition:
+        if obj.composition.exists():
             return f"{obj.composition.composer_names}"
 
     def link_id_field(self, obj):
@@ -136,8 +159,8 @@ class CountryListFilter(admin.SimpleListFilter):
     parameter_name = 'country'
 
     def lookups(self, request, model_admin):
-        countries = GeographicArea.objects.filter(Q(type=GeographicArea.COUNTRY) | Q(type=GeographicArea.STATE))
-        return [(c.pk, c.name) for c in countries]
+        countries = GeographicArea.objects.filter(Q(type=GeographicArea.COUNTRY) | Q(type=GeographicArea.STATE)).values_list('id', 'name')
+        return list(countries)
 
     def queryset(self, request, queryset):
         if not self.value():
@@ -194,10 +217,14 @@ class SourceAdmin(VersionAdmin):
     # actions = (sort_sources,)
     raw_id_fields = ('cover_image', 'archive')
     view_on_site = True
+    list_select_related = ('archive__city',)
 
     formfield_overrides = {
         models.TextField: {'widget': AdminPagedownWidget}
     }
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('archive__city')
 
     def get_city(self, obj):
         return f"{obj.archive.city.name} ({obj.archive.city.parent.name})"
@@ -244,7 +271,7 @@ class SourceAdmin(VersionAdmin):
                       })
 
     def get_urls(self):
-        urls = super(SourceAdmin, self).get_urls()
+        urls = super().get_urls()
         my_urls = [
             path('<int:pk>/copy_inventory/',
                  self.admin_site.admin_view(self.copy_inventory_view),

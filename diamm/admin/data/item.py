@@ -94,7 +94,8 @@ class ItemAdmin(VersionAdmin):
     save_on_top = True
     form = ItemAdminForm
     list_display = ('get_source', 'get_composition', 'get_composers',
-                    'folio_start', 'folio_end', 'source_order', 'pages_attached')
+                    'folio_start', 'folio_end', 'source_order', 'pages_attached',
+                    'created', 'updated')
     list_editable = ('source_order',
                      'folio_start',
                      'folio_end')
@@ -112,7 +113,7 @@ class ItemAdmin(VersionAdmin):
     raw_id_fields = ('source', 'composition')
 
     def pages_attached(self, obj):
-        return obj.pages.count() > 0
+        return obj.pages.exists()
     pages_attached.short_description = "Pages Linked"
     pages_attached.boolean = True
 

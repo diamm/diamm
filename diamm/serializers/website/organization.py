@@ -17,7 +17,7 @@ class OrganizationLocationSerializer(ContextSerializer):
     )
 
     def get_url(self, obj) -> Optional[str]:
-        view_type = None
+        view_type: str
         if obj.type == GeographicArea.CITY:
             view_type = "city-detail"
         elif obj.type == GeographicArea.COUNTRY:

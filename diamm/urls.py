@@ -155,6 +155,7 @@ urlpatterns = [
 
     # Any routes that are not matched by the previous are routed to the Wagtail module
     #  which acts as a CMS for the non-database content.
+    path("__debug__/", include("debug_toolbar.urls")),
     path('cms/', include(wagtailadmin_urls)),
     path('documents/', include(wagtaildocs_urls)),
     path('', include(wagtail_urls)),
@@ -162,4 +163,5 @@ urlpatterns = [
 if settings.DEBUG:
     urlpatterns += static("/static/", document_root=settings.STATIC_ROOT)
     urlpatterns += static("/media/", document_root=settings.MEDIA_ROOT)
+
 

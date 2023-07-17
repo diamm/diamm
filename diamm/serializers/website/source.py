@@ -1,12 +1,10 @@
-from collections import defaultdict
 from typing import List, Optional, Dict
 
 import serpy
-from django.conf import settings
-from rest_framework.reverse import reverse
-
 from diamm.helpers.solr_helpers import SolrManager
 from diamm.serializers.serializers import ContextSerializer, ContextDictSerializer
+from django.conf import settings
+from rest_framework.reverse import reverse
 
 
 class SourceCatalogueEntrySerializer(ContextSerializer):
@@ -36,7 +34,7 @@ class SourceCopyistSerializer(ContextDictSerializer):
     )
 
     def get_copyist(self, obj) -> Dict:
-        url = reverse('{0}-detail'.format(obj['copyist_type_s']),
+        url = reverse(f"{obj['copyist_type_s']}-detail",
                       kwargs={"pk": int(obj['copyist_pk_i'])},
                       request=self.context['request'])
         return {
@@ -57,7 +55,7 @@ class SourceRelationshipSerializer(ContextDictSerializer):
 
     def get_related_entity(self, obj):
         if 'related_entity_s' in obj:
-            url = reverse("{0}-detail".format(obj['related_entity_type_s']),
+            url = reverse(f"{obj['related_entity_type_s']}-detail",
                           kwargs={"pk": int(obj['related_entity_pk_i'])},
                           request=self.context['request'])
             return {
@@ -88,36 +86,28 @@ class SourceProvenanceSerializer(ContextDictSerializer):
     )
 
     def get_city(self, obj):
-        if 'city_s' in obj:
-            return obj['city_s']
-        return None
+        return obj.get('city_s')
 
     def get_country(self, obj):
-        if 'country_s' in obj:
-            return obj['country_s']
-        return None
+        return obj.get('country_s')
 
     def get_region(self, obj):
-        if 'region_s' in obj:
-            return obj['region_s']
-        return None
+        return obj.get("region_s")
 
     def get_protectorate(self, obj):
-        if 'protectorate_s' in obj:
-            return obj['protectorate_s']
-        return None
+        return obj.get("protectorate_s")
 
     def get_entity(self, obj):
-        if 'entity_s' in obj:
-            url = reverse("{0}-detail".format(obj['entity_type_s']),
-                          kwargs={"pk": int(obj['entity_pk_i'])},
-                          request=self.context['request'])
-            return {
-                'name': obj['entity_s'],
-                'url': url
-            }
-        else:
+        if 'entity_s' not in obj:
             return None
+
+        url = reverse(f"{obj['entity_type_s']}-detail",
+                      kwargs={"pk": int(obj['entity_pk_i'])},
+                      request=self.context['request'])
+        return {
+            'name': obj['entity_s'],
+            'url': url
+        }
 
 
 class SourceSetSerializer(ContextDictSerializer):
@@ -143,28 +133,26 @@ class SourceSetSerializer(ContextDictSerializer):
 
         connection.search("*:*", fq=fq, fl=fl, sort=sort, rows=100)
 
-        resultlist = []
-
-        if connection.hits > 0:
-            for doc in connection.results:
-
-                source_url = reverse('source-detail',
-                                     kwargs={"pk": doc['pk']},
-                                     request=self.context['request'])
-
-                doc['url'] = source_url
-                if doc.get('cover_image_i'):
-                    doc['cover_image'] = reverse('image-serve-info',
-                                                 kwargs={"pk": doc["cover_image_i"]},
-                                                 request=self.context['request'])
-                else:
-                    doc['cover_image'] = None
-
-                resultlist.append(doc)
-
-            return resultlist
-        else:
+        if connection.hits == 0:
             return []
+
+        resultlist = []
+        for doc in connection.results:
+            source_url = reverse('source-detail',
+                                 kwargs={"pk": doc['pk']},
+                                 request=self.context['request'])
+
+            doc['url'] = source_url
+            if doc.get('cover_image_i'):
+                doc['cover_image'] = reverse('image-serve-info',
+                                             kwargs={"pk": doc["cover_image_i"]},
+                                             request=self.context['request'])
+            else:
+                doc['cover_image'] = None
+
+            resultlist.append(doc)
+
+        return resultlist
 
 
 class SourceBibliographySerializer(ContextDictSerializer):
@@ -204,9 +192,7 @@ class SourceComposerInventoryCompositionSerializer(ContextDictSerializer):
     url = serpy.MethodField()
 
     def get_source_attribution(self, obj) -> Optional[str]:
-        if 'source_attribution_s' in obj:
-            return obj['source_attribution_s']
-        return None
+        return obj.get("source_attribution_s")
 
     def get_url(self, obj) -> Optional[str]:
         if 'composition_i' not in obj:
@@ -292,24 +278,16 @@ class SourceInventorySerializer(ContextDictSerializer):
     )
 
     def get_pages(self, obj):
-        if 'pages_ii' in obj:
-            return obj['pages_ii']
-        return None
+        return obj.get("pages_ii")
 
     def get_source_attribution(self, obj):
-        if 'source_attribution_s' in obj:
-            return obj['source_attribution_s']
-        return None
+        return obj.get('source_attribution_s')
 
     def get_num_voices(self, obj):
-        if 'num_voices_s' in obj:
-            return obj['num_voices_s']
-        return None
+        return obj.get('num_voices_s')
 
     def get_genres(self, obj):
-        if 'genres_ss' in obj:
-            return obj['genres_ss']
-        return None
+        return obj.get('genres_ss')
 
     def get_notes(self, obj):
         if '_childDocuments_' in obj:
@@ -327,16 +305,10 @@ class SourceInventorySerializer(ContextDictSerializer):
         return list(connection.results)
 
     def get_folio_end(self, obj):
-        if 'folio_end_s' in obj:
-            return obj['folio_end_s']
-        else:
-            return None
+        return obj.get('folio_end_s')
 
     def get_folio_start(self, obj):
-        if 'folio_start_s' in obj:
-            return obj['folio_start_s']
-        else:
-            return None
+        return obj.get('folio_start_s')
 
     def get_url(self, obj):
         if 'composition_i' in obj:
@@ -345,22 +317,18 @@ class SourceInventorySerializer(ContextDictSerializer):
                            request=self.context['request'])
 
     def get_composition(self, obj):
-        if 'composition_s' in obj:
-            return obj['composition_s']
-        else:
-            return None
+        return obj.get('composition_s')
 
-    def get_composers(self, obj):
+    def get_composers(self, obj) -> list:
         composers = obj.get('composers_ssni')
         if not composers:
             return []
 
-        out = []
-        try:
-            req = self.context['request']
-        except KeyError:
-            raise
+        if 'request' not in self.context:
+            return []
 
+        req = self.context['request']
+        out = []
         for composer in composers:
             # Unpack the composer values. See the Item Search Serializer for more info.
             full_name, pk, uncertain = composer.split("|")
@@ -601,9 +569,7 @@ class SourceDetailSerializer(ContextSerializer):
         return obj
 
     def get_has_images(self, obj):
-        if obj.pages.count() > 0:
-            return True
-        return False
+        return obj.pages.exists()
 
     def get_manifest_url(self, obj):
         # Return None if the document has no public images

@@ -88,6 +88,11 @@ MIDDLEWARE = [
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
 ]
 
+if DEBUG:
+    INSTALLED_APPS.append('debug_toolbar')
+    MIDDLEWARE.append("debug_toolbar.middleware.DebugToolbarMiddleware",)
+
+
 ROOT_URLCONF = 'diamm.urls'
 
 TEMPLATES = [

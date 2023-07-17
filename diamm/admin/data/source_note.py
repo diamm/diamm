@@ -10,10 +10,14 @@ class SourceNoteAdmin(VersionAdmin):
     list_display = ('get_source', 'note_type')
     search_fields = ('source__shelfmark', 'source__name', '=source__id')
     list_filter = ('type',)
+    raw_id_fields = ('source',)
 
     formfield_overrides = {
         models.TextField: {'widget': AdminPagedownWidget}
     }
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("source", "source__archive")
 
     def get_source(self, obj):
         return f"{obj.source.display_name}"

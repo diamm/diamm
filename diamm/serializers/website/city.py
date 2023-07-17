@@ -19,7 +19,7 @@ class CityProvenanceSerializer(ContextSerializer):
         return reverse('source-detail', kwargs={"pk": obj.source.id}, request=self.context['request'])
 
     def get_name(self, obj):
-        return "{0}".format(obj.source.display_name)
+        return f"{obj.source.display_name}"
 
 
 class OrganizationSerializer(ContextSerializer):

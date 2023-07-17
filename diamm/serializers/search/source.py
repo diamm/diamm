@@ -102,7 +102,7 @@ class SourceSearchSerializer(serpy.Serializer):
         return obj.__class__.__name__.lower()
 
     def get_identifiers_ss(self, obj):
-        if obj.identifiers.count() > 0:
+        if obj.identifiers.exists():
             return list(obj.identifiers.values_list('identifier', flat=True))
         else:
             return []
@@ -112,13 +112,13 @@ class SourceSearchSerializer(serpy.Serializer):
         return c.get('id') if c else None
 
     def get_notations_ss(self, obj):
-        if obj.notations.count() > 0:
+        if obj.notations.exists():
             return list(obj.notations.values_list('name', flat=True))
         else:
             return []
 
     def get_sets_ii(self, obj):
-        if obj.sets.count() > 0:
+        if obj.sets.exists():
             return list(obj.sets.values_list("pk", flat=True))
         else:
             return []
@@ -127,7 +127,7 @@ class SourceSearchSerializer(serpy.Serializer):
         """
             PK|Name for the sets this source belongs to, except project sets (type=7)
         """
-        if obj.sets.count() > 0:
+        if obj.sets.exists():
             sourcesets = obj.sets.values_list("pk", "cluster_shelfmark")
             sets = [f"{sset[0]}|{sset[1]}" for sset in sourcesets]
             return sets
@@ -141,7 +141,7 @@ class SourceSearchSerializer(serpy.Serializer):
         return list(obj.public_notes.values_list('note', flat=True))
 
     def get_public_images_b(self, obj):
-        has_images = obj.pages.count() > 0
+        has_images = obj.pages.exists()
         public_images = obj.public_images
 
         if has_images and public_images:

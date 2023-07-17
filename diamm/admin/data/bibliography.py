@@ -16,6 +16,9 @@ class AuthorsInline(admin.TabularInline):
     extra = 0
     raw_id_fields = ('bibliography_author',)
 
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('bibliography_author', 'bibliography_entry')
+
 
 class PublicationInline(admin.TabularInline):
     model = BibliographyPublication

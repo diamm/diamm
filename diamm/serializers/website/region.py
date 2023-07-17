@@ -1,7 +1,8 @@
-from typing import List, Dict, Optional
+from typing import List
+
 import serpy
-from rest_framework.reverse import reverse
 from diamm.serializers.serializers import ContextSerializer
+from rest_framework.reverse import reverse
 
 
 class RegionCitySerializer(ContextSerializer):

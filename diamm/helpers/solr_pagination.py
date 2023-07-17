@@ -8,6 +8,7 @@ from django.conf import settings
 from rest_framework.reverse import reverse
 from rest_framework.utils.urls import replace_query_param
 
+from diamm.helpers.solr_helpers import SolrConnection
 from diamm.serializers.serializers import ContextDictSerializer
 
 
@@ -133,7 +134,7 @@ class SolrPaginator:
             'fq': fqlist
         })
 
-        self.solr = pysolr.Solr(settings.SOLR['SERVER'])
+        # self.solr = pysolr.Solr(settings.SOLR['SERVER'])
 
         # Fetch the requested page.
         self._fetch_page()
@@ -169,7 +170,7 @@ class SolrPaginator:
         })
 
         try:
-            self.result = self.solr.search(self.query, **self.qopts)
+            self.result = SolrConnection.search(self.query, **self.qopts)
         except pysolr.SolrError as e:
             raise SolrResultException(repr(e))
 

@@ -25,9 +25,7 @@ class SetSourceSerializer(ContextSerializer):
                        request=self.context['request'])
 
     def get_has_images(self, obj) -> bool:
-        if obj.pages.count() > 0:
-            return True
-        return False
+        return obj.pages.exists()
 
     def get_cover(self, obj) -> Optional[str]:
         try:
@@ -65,5 +63,4 @@ class SetDetailSerializer(ContextSerializer):
             return SetSourceSerializer(obj.sources.all(),
                                        many=True,
                                        context={'request': self.context['request']}).data
-        else:
-            return None
+        return None
