@@ -23,27 +23,25 @@ class ImageChildSerializer(serpy.Serializer):
     width_i = serpy.MethodField()
     height_i = serpy.MethodField()
 
-    def get_width_i(self, obj):
-        if obj.iiif_response_cache:
-            d = ujson.loads(obj.iiif_response_cache)
-            if 'width' in d:
-                return d['width']
-            else:
-                return 0
-        else:
+    def get_width_i(self, obj) -> int:
+        if not obj.iiif_response_cache:
             return 0
 
-    def get_height_i(self, obj):
-        if obj.iiif_response_cache:
-            d = ujson.loads(obj.iiif_response_cache)
-            if 'height' in d:
-                return d['height']
-            else:
-                return 0
-        else:
+        d = ujson.loads(obj.iiif_response_cache)
+        if 'width' in d:
+            return d['width']
+        return 0
+
+    def get_height_i(self, obj) -> int:
+        if not obj.iiif_response_cache:
             return 0
 
-    def get_id(self, obj):
+        d = ujson.loads(obj.iiif_response_cache)
+        if 'height' in d:
+            return d['height']
+        return 0
+
+    def get_id(self, obj) -> str:
         """
             Solr doesn't provide an auto-UUID field for a childDocument,
             so we have to generate one here.
@@ -87,13 +85,13 @@ class PageSearchSerializer(serpy.Serializer):
     images_ss = serpy.MethodField()
 
     def get_items_ii(self, obj):
-        if obj.items.count() > 0:
+        if obj.items.exists():
             return list(obj.items.all().values_list('pk', flat=True))
         else:
             return []
 
     def get_images_ss(self, obj):
-        if obj.images.count() > 0:
+        if obj.images.exists():
             return list(obj.images.filter(public=True).values_list('location', flat=True))
         else:
             return []
