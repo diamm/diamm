@@ -1,11 +1,11 @@
 # import pysolr
-from django.conf import settings
 from django.shortcuts import get_object_or_404, redirect
 from rest_framework import generics
 from rest_framework import permissions
 from rest_framework import response
 from rest_framework import status
 
+from diamm.helpers.solr_helpers import SolrConnection
 from diamm.models.data.item import Item
 from diamm.models.data.source import Source
 from diamm.renderers.ujson_renderer import UJSONRenderer
@@ -45,8 +45,8 @@ class SourceManifest(generics.GenericAPIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request, pk, *args, **kwargs) -> response.Response:
-        conn = pysolr.Solr(settings.SOLR['SERVER'])
-        res = conn.search("*:*",
+        # conn = pysolr.Solr(settings.SOLR['SERVER'])
+        res = SolrConnection.search("*:*",
                           fq=["type:source", f"pk:{pk}"],
                           rows=1)
 
@@ -74,8 +74,8 @@ class SourceCanvasDetail(generics.GenericAPIView):
             "[child parentFilter=type:page childFilter=type:image]"
         ]
 
-        conn = pysolr.Solr(settings.SOLR['SERVER'])
-        res = conn.search("*:*",
+        # conn = pysolr.Solr(settings.SOLR['SERVER'])
+        res = SolrConnection.search("*:*",
                           fq=["type:page", f"pk:{page_id}"],
                           fl=page_fields)
         canvas = CanvasSerializer(res.docs[0], context={"request": request})
@@ -91,7 +91,7 @@ class SourceItemDetail(generics.GenericAPIView):
     renderer_classes = (UJSONRenderer,)
 
     def get(self, request, source_id, item_id) -> response.Response:
-        conn = pysolr.Solr(settings.SOLR['SERVER'])
+        # conn = pysolr.Solr(settings.SOLR['SERVER'])
 
         # The pages_ii:[* TO *] query ensures we retrieve only
         # those records that have images associated with them.
@@ -103,7 +103,7 @@ class SourceItemDetail(generics.GenericAPIView):
             "sort": "folio_start_ans asc",
             "rows": 10000,
         }
-        structure_res = conn.search("*:*", **structure_query)
+        structure_res = SolrConnection.search("*:*", **structure_query)
         structures = ServiceSerializer(structure_res.docs[0],
                                        context={"request": request}).data
 
