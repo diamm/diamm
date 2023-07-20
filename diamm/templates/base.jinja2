@@ -65,8 +65,10 @@
 
     <footer class="footer">
         <div class="container columns">
-            <div class="column is-two-thirds footer-address">
-                <img src="{{ static('images/headerLogo.png') }}" alt="DIAMM Logo" />
+            <div class="column is-one-third footer-address">
+                <div class="container" style="height: 70px;">
+                    <img src="{{ static('images/headerLogo.png') }}" alt="DIAMM Logo" style="height: 70px; width: auto;"/>
+                </div>
                 <h5 class="title is-5">The Digital Image Archive of Medieval Music</h5>
                 <p>University of Oxford<br />
                     Faculty of Music<br />
@@ -74,37 +76,38 @@
                     Oxford, OX1 1DB<br />
                     United Kingdom
                 </p>
+                <a href="https://www.ox.ac.uk" target="_blank">
+                    <img src="{{ static('images/oxford-large.png') }}" alt="University of Oxford" style="height: 70px; width: auto;"/>
+                </a>
             </div>
-            {# <div class="column">
-                <table>
-                    <tr>
-                        <td><img src="{{ static('images/oxford.png') }}"></td>
-                        <td><img src="{{ static('images/bodleian.png') }}"></td>
-                    </tr>
-                    <tr>
-                        <td><img src="{{ static('images/ba.png') }}"></td>
-                        <td><img src="{{ static('images/johnfell.png') }}"></td>
-                    </tr>
-                    <tr>
-                        <td><img src="{{ static('images/ahrc.png') }}"></td>
-                        <td></td>
-                    </tr>
-                </table>
-            </div> #}
+             <div class="column is-two-thirds footer-address">
+                 <div class="container" style="height: 70px;">
+                     <a href="https://alliancecan.ca/en" target="_blank">
+                        <img src="{{ static('images/digital-research-alliance.png') }}" alt="Digital Research Alliance of Canada Logo"
+                             style="max-height: 50px; width: auto"/>
+                     </a>
+                 </div>
+                 <h5 class="title is-5">DIAMM is hosted by the Digital Research Alliance of Canada</h5>
+                 <div class="container" style="height: 70px;">
+                     <a href="https://rism.digital" target="_blank">
+                        <img src="{{ static('images/rism-logo.png') }}" alt="RISM Digital Center" style="height: 60px; width: auto;"/>
+                     </a>
+                 </div>
+                 <h5 class="title is-5">In partnership with the RISM Digital Center.</h5>
+             </div>
         </div>
     </footer>
     {% block scripts %}
     {% endblock %}
     {% if not debug %}
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BX71EKZJVX"></script>
     <script>
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-                    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
 
-        ga('create', 'UA-70914579-2', 'auto');
-        ga('send', 'pageview');
-
+        gtag('config', 'G-BX71EKZJVX');
     </script>
     {% endif %}
 </body>
