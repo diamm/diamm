@@ -19,6 +19,6 @@ class Bibliography(models.Model):
 
     def __str__(self):
         if self.authors.exists():
-            auth = ", ".join(self.authors.select_related('bibliography_author__last_name').values_list('bibliography_author__last_name', flat=True))
+            auth = ", ".join(self.authors.select_related('bibliography_author__last_name', "bibliography_entry__title").values_list('bibliography_author__last_name', flat=True))
             return f"{auth}: {self.title}"
         return f"{self.title}"

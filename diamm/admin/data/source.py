@@ -36,6 +36,7 @@ class SourceCopyistInline(admin.StackedInline):
     def get_queryset(self, request):
         return super().get_queryset(request).select_related('source__archive__city', 'content_type')
 
+
 class SourceRelationshipInline(admin.StackedInline):
     model = SourceRelationship
     extra = 0
@@ -79,6 +80,7 @@ class IdentifiersInline(admin.TabularInline):
 
     def get_queryset(self, request):
         return super().get_queryset(request).select_related("source__archive__city")
+
 
 class AuthoritiesInline(admin.TabularInline):
     model = SourceAuthority
@@ -126,8 +128,11 @@ class ItemInline(admin.TabularInline):
         return super().get_queryset(request).select_related("source__archive__city", "composition").prefetch_related('pages', 'composition__composers')
 
     def get_composers(self, obj):
-        if obj.composition.exists():
-            return f"{obj.composition.composer_names}"
+        if obj.composition:
+            cnames: list = obj.composition.composer_names
+            return mark_safe("; <br />".join(cnames))
+        return None
+    get_composers.short_description = "Composers"
 
     def link_id_field(self, obj):
         change_url = reverse('admin:diamm_data_item_change', args=(obj.pk,))

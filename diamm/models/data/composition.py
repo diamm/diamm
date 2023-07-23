@@ -18,6 +18,14 @@ class Composition(models.Model):
         return f"{self.title}"
 
     @property
-    def composer_names(self):
+    def composer_names(self) -> list:
         composers = self.composers.select_related('composer', 'composition').all()
-        return "; ".join([c.composer_name for c in composers])
+        cnames = []
+        for c in composers:
+            cname = c.composer_name
+            cattr = ""
+            if c.uncertain:
+                cattr = "?"
+
+            cnames.append(f"{cattr}{cname}")
+        return cnames
