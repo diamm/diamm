@@ -1,5 +1,6 @@
-from diamm.models.data.person_role import PersonRole
 from django.contrib import admin
+
+from diamm.models.data.person_role import PersonRole
 
 
 @admin.register(PersonRole)

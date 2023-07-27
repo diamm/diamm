@@ -1,7 +1,8 @@
-from diamm.models.data.composition_cycle import CompositionCycle
-from diamm.models.data.cycle import Cycle
 from django.contrib import admin
 from reversion.admin import VersionAdmin
+
+from diamm.models.data.composition_cycle import CompositionCycle
+from diamm.models.data.cycle import Cycle
 
 
 class CompositionCycleInline(admin.TabularInline):

@@ -1,3 +1,12 @@
+from django.contrib import admin, messages
+from django.contrib.contenttypes.admin import GenericTabularInline
+from django.db import models
+from django.shortcuts import render
+from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy as _
+from pagedown.widgets import AdminPagedownWidget
+from reversion.admin import VersionAdmin
+
 from diamm.admin.forms.merge_people import MergePeopleForm
 from diamm.admin.merge_models import merge
 from diamm.models.data.composition_composer import CompositionComposer
@@ -9,14 +18,6 @@ from diamm.models.data.person_role import PersonRole
 from diamm.models.data.source_copyist import SourceCopyist
 from diamm.models.data.source_provenance import SourceProvenance
 from diamm.models.data.source_relationship import SourceRelationship
-from django.contrib import admin, messages
-from django.contrib.contenttypes.admin import GenericTabularInline
-from django.db import models
-from django.shortcuts import render
-from django.utils.safestring import mark_safe
-from django.utils.translation import gettext_lazy as _
-from pagedown.widgets import AdminPagedownWidget
-from reversion.admin import VersionAdmin
 
 
 class CompositionsInline(admin.TabularInline):

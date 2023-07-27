@@ -1,5 +1,6 @@
-from diamm.models.data.organization_type import OrganizationType
 from django.contrib import admin
+
+from diamm.models.data.organization_type import OrganizationType
 
 
 @admin.register(OrganizationType)

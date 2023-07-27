@@ -1,9 +1,10 @@
-from diamm.models.data.set import Set
-from diamm.models.data.set_bibliography import SetBibliography
 from django.contrib import admin
 from django.db import models
 from pagedown.widgets import AdminPagedownWidget
 from reversion.admin import VersionAdmin
+
+from diamm.models.data.set import Set
+from diamm.models.data.set_bibliography import SetBibliography
 
 
 class SetBibliographyInline(admin.TabularInline):

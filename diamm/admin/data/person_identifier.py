@@ -6,7 +6,7 @@ from reversion.admin import VersionAdmin
 
 @admin.register(PersonIdentifier)
 class PersonIdentifierAdmin(VersionAdmin):
-    search_fields = ('person__last_name', 'person__first_name', 'person__title')
+    search_fields = ('person__last_name', 'person__first_name', 'person__title', "identifier")
     list_display = ('get_person_name', 'identifier_type', 'identifier')
     list_filter = ("identifier_type",)
     readonly_fields = ("get_external_url",)

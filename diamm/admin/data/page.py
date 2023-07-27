@@ -1,8 +1,9 @@
+from django.contrib import admin
+from reversion.admin import VersionAdmin
+
 from diamm.admin.filters.input_filter import InputFilter
 from diamm.models.data.image import Image
 from diamm.models.data.page import Page
-from django.contrib import admin
-from reversion.admin import VersionAdmin
 
 
 class ImageInline(admin.StackedInline):

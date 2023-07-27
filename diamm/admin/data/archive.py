@@ -1,12 +1,13 @@
-from diamm.models.data.archive import Archive
-from diamm.models.data.archive_identifier import ArchiveIdentifier
-from diamm.models.data.archive_note import ArchiveNote
-from diamm.models.data.geographic_area import GeographicArea
 from django.contrib import admin
 from django.db.models import Q
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from reversion.admin import VersionAdmin
+
+from diamm.models.data.archive import Archive
+from diamm.models.data.archive_identifier import ArchiveIdentifier
+from diamm.models.data.archive_note import ArchiveNote
+from diamm.models.data.geographic_area import GeographicArea
 
 
 class ArchiveNoteInline(admin.TabularInline):
