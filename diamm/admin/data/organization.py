@@ -58,7 +58,10 @@ class OrganizationAdmin(VersionAdmin):
     list_display = ('name', 'location', 'type', 'updated')
     list_filter = ('type',)
     search_fields = ('name', 'location__name', 'variant_names')
-    inlines = (CopiedSourcesInline, ProvenanceSourcesInline, RelatedSourcesInline)
+    inlines = (CopiedSourcesInline,
+               ProvenanceSourcesInline,
+               RelatedSourcesInline,
+               OrganizationIdentifierInline)
     actions = ['update_organization_action', 'merge_organizations_action']
     view_on_site = True
     readonly_fields = ('created', 'updated')
