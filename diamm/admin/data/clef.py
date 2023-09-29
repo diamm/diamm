@@ -1,5 +1,6 @@
-from diamm.models.data.clef import Clef
 from django.contrib import admin
+
+from diamm.models.data.clef import Clef
 
 
 @admin.register(Clef)

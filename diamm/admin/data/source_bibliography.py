@@ -1,5 +1,6 @@
-from diamm.models.data.source_bibliography import SourceBibliography
 from django.contrib import admin
+
+from diamm.models.data.source_bibliography import SourceBibliography
 
 
 @admin.register(SourceBibliography)

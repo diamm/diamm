@@ -1,6 +1,7 @@
-from diamm.models.data.person_note import PersonNote
 from django.contrib import admin
 from reversion.admin import VersionAdmin
+
+from diamm.models.data.person_note import PersonNote
 
 
 @admin.register(PersonNote)

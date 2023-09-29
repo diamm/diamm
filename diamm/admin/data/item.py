@@ -1,14 +1,16 @@
+from django.contrib import admin
+from django.forms import ModelForm
+from django.template.defaultfilters import truncatewords
+from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy as _
+from reversion.admin import VersionAdmin
+
 from diamm.admin.filters.input_filter import InputFilter
 from diamm.models.data.item import Item
 from diamm.models.data.item_bibliography import ItemBibliography
 from diamm.models.data.item_composer import ItemComposer
 from diamm.models.data.item_note import ItemNote
 from diamm.models.data.page import Page
-from django.contrib import admin
-from django.forms import ModelForm
-from django.template.defaultfilters import truncatewords
-from django.utils.translation import gettext_lazy as _
-from reversion.admin import VersionAdmin
 
 
 # This custom form will reduce the number of options for the pages to only those
@@ -124,7 +126,10 @@ class ItemAdmin(VersionAdmin):
 
     def get_composers(self, obj):
         if obj.composition:
-            return f"{obj.composition.composer_names}"
+            cnames: list = obj.composition.composer_names
+            return mark_safe("; <br />".join(cnames))
+        return None
+    get_composers.short_description = "Composers"
 
     get_composers.short_description = "composers"
     get_composers.admin_order_field = 'composition__composers__composer__last_name'

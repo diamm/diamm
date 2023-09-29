@@ -1,6 +1,7 @@
-from diamm.models.data.voice import Voice
 from django.contrib import admin
 from reversion.admin import VersionAdmin
+
+from diamm.models.data.voice import Voice
 
 
 @admin.register(Voice)

@@ -2,10 +2,6 @@ from urllib.parse import urljoin
 
 import requests
 import ujson
-from diamm.admin.filters.input_filter import InputFilter
-from diamm.models.data.image import Image
-from diamm.models.data.image_note import ImageNote
-from diamm.models.data.page import Page
 from django import forms
 from django.conf import settings
 from django.contrib import admin
@@ -13,6 +9,11 @@ from django.db import models
 from django.forms import TextInput
 from django.utils.translation import gettext_lazy as _
 from reversion.admin import VersionAdmin
+
+from diamm.admin.filters.input_filter import InputFilter
+from diamm.models.data.image import Image
+from diamm.models.data.image_note import ImageNote
+from diamm.models.data.page import Page
 
 
 class ImageAdminForm(forms.ModelForm):

@@ -1,8 +1,9 @@
+from django.contrib import admin
+from reversion.admin import VersionAdmin
+
 from diamm.models.data.organization import Organization
 from diamm.models.data.person import Person
 from diamm.models.data.source_relationship import SourceRelationship
-from django.contrib import admin
-from reversion.admin import VersionAdmin
 
 
 @admin.register(SourceRelationship)

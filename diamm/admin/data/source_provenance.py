@@ -1,6 +1,7 @@
-from diamm.models.data.source_provenance import SourceProvenance
 from django.contrib import admin
 from reversion.admin import VersionAdmin
+
+from diamm.models.data.source_provenance import SourceProvenance
 
 
 @admin.register(SourceProvenance)

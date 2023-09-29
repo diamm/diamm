@@ -1,5 +1,6 @@
-from diamm.models.data.image_type import ImageType
 from django.contrib import admin
+
+from diamm.models.data.image_type import ImageType
 
 
 @admin.register(ImageType)

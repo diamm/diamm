@@ -1,4 +1,18 @@
 import pysolr
+from django.conf import settings
+from django.contrib import admin, messages
+from django.db import models
+from django.db.models import Q
+from django.db.models.signals import post_delete, post_save
+from django.forms import TextInput, Textarea
+from django.shortcuts import render, redirect
+from django.urls import path
+from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy as _
+from pagedown.widgets import AdminPagedownWidget
+from rest_framework.reverse import reverse
+from reversion.admin import VersionAdmin
+
 from diamm.admin.filters.input_filter import InputFilter
 from diamm.admin.forms.copy_inventory import CopyInventoryForm
 from diamm.models.data.geographic_area import GeographicArea
@@ -14,19 +28,6 @@ from diamm.models.data.source_provenance import SourceProvenance
 from diamm.models.data.source_relationship import SourceRelationship
 from diamm.models.data.source_url import SourceURL
 from diamm.signals.item_signals import index_item, delete_item
-from django.conf import settings
-from django.contrib import admin, messages
-from django.db import models
-from django.db.models import Q
-from django.db.models.signals import post_delete, post_save
-from django.forms import TextInput, Textarea
-from django.shortcuts import render, redirect
-from django.urls import path
-from django.utils.safestring import mark_safe
-from django.utils.translation import gettext_lazy as _
-from pagedown.widgets import AdminPagedownWidget
-from rest_framework.reverse import reverse
-from reversion.admin import VersionAdmin
 
 
 class SourceCopyistInline(admin.StackedInline):
@@ -35,6 +36,7 @@ class SourceCopyistInline(admin.StackedInline):
 
     def get_queryset(self, request):
         return super().get_queryset(request).select_related('source__archive__city', 'content_type')
+
 
 class SourceRelationshipInline(admin.StackedInline):
     model = SourceRelationship
@@ -79,6 +81,7 @@ class IdentifiersInline(admin.TabularInline):
 
     def get_queryset(self, request):
         return super().get_queryset(request).select_related("source__archive__city")
+
 
 class AuthoritiesInline(admin.TabularInline):
     model = SourceAuthority
@@ -126,8 +129,11 @@ class ItemInline(admin.TabularInline):
         return super().get_queryset(request).select_related("source__archive__city", "composition").prefetch_related('pages', 'composition__composers')
 
     def get_composers(self, obj):
-        if obj.composition.exists():
-            return f"{obj.composition.composer_names}"
+        if obj.composition:
+            cnames: list = obj.composition.composer_names
+            return mark_safe("; <br />".join(cnames))
+        return None
+    get_composers.short_description = "Composers"
 
     def link_id_field(self, obj):
         change_url = reverse('admin:diamm_data_item_change', args=(obj.pk,))

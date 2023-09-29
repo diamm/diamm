@@ -1,14 +1,17 @@
+from django.contrib import admin, messages
+from django.contrib.contenttypes.admin import GenericTabularInline
+from django.shortcuts import render
+from django.utils.safestring import mark_safe
+from reversion.admin import VersionAdmin
+
 from diamm.admin.forms.merge_organizations import MergeOrganizationsForm
 from diamm.admin.forms.update_organization_type import UpdateOrganizationTypeForm
 from diamm.admin.merge_models import merge
+from diamm.models import OrganizationIdentifier
 from diamm.models.data.organization import Organization
 from diamm.models.data.source_copyist import SourceCopyist
 from diamm.models.data.source_provenance import SourceProvenance
 from diamm.models.data.source_relationship import SourceRelationship
-from django.contrib import admin, messages
-from django.contrib.contenttypes.admin import GenericTabularInline
-from django.shortcuts import render
-from reversion.admin import VersionAdmin
 
 
 class CopiedSourcesInline(GenericTabularInline):
@@ -33,6 +36,20 @@ class ProvenanceSourcesInline(GenericTabularInline):
                      'country',
                      'region',
                      'protectorate')
+
+
+class OrganizationIdentifierInline(admin.TabularInline):
+    verbose_name = "Identifier"
+    model = OrganizationIdentifier
+    extra = 0
+    readonly_fields = ("get_external_url",)
+
+    @admin.display(description="URL")
+    def get_external_url(self, instance) -> str:
+        if not instance.identifier_type:
+            return ""
+        return mark_safe(f'<a href="{instance.identifier_url}">{instance.identifier_url}</a>')
+
 
 
 @admin.register(Organization)
