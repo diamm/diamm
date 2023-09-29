@@ -19,8 +19,5 @@ class OrganizationIdentifierAdmin(VersionAdmin):
             return ""
         return mark_safe(f'<a href="{instance.identifier_url}">{instance.identifier_url}</a>')
 
-    def get_queryset(self, request):
-        pass
-
     def get_organization_name(self, instance) -> str:
         return f"{instance.organization.name}"
