@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.db import models
+from django.forms import TextInput
 from reversion.admin import VersionAdmin
 
 from diamm.admin.filters.input_filter import InputFilter
@@ -10,6 +12,11 @@ class ImageInline(admin.StackedInline):
     model = Image
     extra = 0
     template = "admin/diamm_data/page/edit_inline/stacked_imageview.html"
+
+    formfield_overrides = {
+        models.CharField: {'widget': TextInput(attrs={'size': '80'})},
+        models.URLField: {'widget': TextInput(attrs={'size': '160'})}
+    }
 
 
 class SourceKeyFilter(InputFilter):

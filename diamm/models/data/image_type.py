@@ -4,7 +4,7 @@ from django.db import models
 class ImageType(models.Model):
     class Meta:
         app_label = "diamm_data"
-        ordering = ('name',)
+        ordering = ('id',)
 
     # refers to the PK of the types loaded by the fixtures. See: fixtures/image_file_types.json
     PRIMARY = 1

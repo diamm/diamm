@@ -1,8 +1,4 @@
-import ujson
 from django.db import models
-import requests
-
-from diamm import settings
 
 
 class Image(models.Model):
@@ -21,6 +17,7 @@ class Image(models.Model):
                              on_delete=models.CASCADE)
     type = models.ForeignKey("diamm_data.ImageType",
                              blank=True, null=True,
+                             default=1,
                              on_delete=models.CASCADE)
     location = models.URLField(max_length=1024, blank=True, null=True)
 
