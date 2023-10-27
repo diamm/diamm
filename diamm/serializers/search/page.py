@@ -22,6 +22,9 @@ class ImageChildSerializer(serpy.Serializer):
 
     width_i = serpy.MethodField()
     height_i = serpy.MethodField()
+    external_b = serpy.BoolField(
+        attr="external"
+    )
 
     def get_width_i(self, obj) -> int:
         if not obj.iiif_response_cache:
@@ -83,6 +86,12 @@ class PageSearchSerializer(serpy.Serializer):
     )
     items_ii = serpy.MethodField()
     images_ss = serpy.MethodField()
+    iiif_canvas_uri_s = serpy.StrField(
+        attr="iiif_canvas_uri"
+    )
+    external_b = serpy.BoolField(
+        attr="external"
+    )
 
     def get_items_ii(self, obj):
         if obj.items.exists():

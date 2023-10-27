@@ -35,7 +35,7 @@ class SourceCopyistInline(admin.StackedInline):
     extra = 0
 
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('source__archive__city', 'content_type')
+        return super().get_queryset(request).select_related('source__archive__city__parent', 'content_type')
 
 
 class SourceRelationshipInline(admin.StackedInline):
@@ -44,7 +44,7 @@ class SourceRelationshipInline(admin.StackedInline):
     # raw_id_fields = ('relationship_type',)
 
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('source__archive__city',
+        return super().get_queryset(request).select_related('source__archive__city__parent',
                                                             'content_type',
                                                             'relationship_type').prefetch_related('related_entity')
 
@@ -57,7 +57,7 @@ class SourceProvenanceInline(admin.StackedInline):
     raw_id_fields = ('city', 'country', 'region', 'protectorate')
 
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('source__archive', 'city', 'country', 'region')
+        return super().get_queryset(request).select_related('source__archive__city__parent', 'city__parent', 'country__parent', 'region__parent')
 
 
 class BibliographyInline(admin.TabularInline):
@@ -72,7 +72,7 @@ class BibliographyInline(admin.TabularInline):
     }
 
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('source__archive__city', 'bibliography__type').prefetch_related('bibliography__authors')
+        return super().get_queryset(request).select_related('source__archive__city__parent', 'bibliography__type').prefetch_related('bibliography__authors')
 
 
 class IdentifiersInline(admin.TabularInline):
@@ -80,7 +80,7 @@ class IdentifiersInline(admin.TabularInline):
     extra = 0
 
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related("source__archive__city")
+        return super().get_queryset(request).select_related("source__archive__city__parent")
 
 
 class AuthoritiesInline(admin.TabularInline):
@@ -126,7 +126,8 @@ class ItemInline(admin.TabularInline):
     readonly_fields = ('link_id_field', 'get_composers')
 
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related("source__archive__city", "composition").prefetch_related('pages', 'composition__composers')
+        return super().get_queryset(request).select_related("source__archive__city",
+                                                            "composition").prefetch_related('pages', 'composition__composers')
 
     def get_composers(self, obj):
         if obj.composition:
@@ -230,7 +231,7 @@ class SourceAdmin(VersionAdmin):
     }
 
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('archive__city')
+        return super().get_queryset(request).select_related('archive__city__parent__parent')
 
     def get_city(self, obj):
         return f"{obj.archive.city.name} ({obj.archive.city.parent.name})"

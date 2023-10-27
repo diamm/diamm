@@ -126,7 +126,8 @@ class SourceManifestSerializer(ContextDictSerializer):
         # images_ss:[* TO *] ensures that only records with images attached are returned.
         canvas_query = {
             "fq": ["type:page", "source_i:{0}".format(obj['pk']), "images_ss:[* TO *]"],
-            "fl": ["id", "pk", "source_i", "numeration_s", "items_ii", "page_type_i",
+            "fl": ["id", "pk", "source_i", "numeration_s", "items_ii", "page_type_i", "image_type_i",
+                   "width_i", "height_i", "image_type_s",
                    "[child parentFilter=type:page childFilter=type:image]"],
             "sort": "sort_order_f asc, image_type_i asc, numeration_ans asc",
             "rows": 100

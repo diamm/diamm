@@ -50,6 +50,8 @@ class Page(models.Model):
     # This may be refactored to allow for multiple page sort orders, but for now we'll stick with one
     sort_order = models.DecimalField(default=0, blank=True, null=True, decimal_places=3, max_digits=100)
     page_type = models.IntegerField(choices=PAGE_TYPE_CHOICES, default=PAGE, blank=True, null=True)
+    iiif_canvas_uri = models.CharField(max_length=1024, blank=True, null=True)
+    external = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.numeration}"

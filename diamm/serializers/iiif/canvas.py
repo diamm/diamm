@@ -34,6 +34,7 @@ class CanvasSerializer(ContextDictSerializer):
     def get_height(self, obj: Dict) -> int:
         if '_childDocuments_' not in obj:
             return 0
+
         obj['_childDocuments_'].sort(key=operator.itemgetter('image_type_i'))
         return obj['_childDocuments_'][0]['height_i']
 

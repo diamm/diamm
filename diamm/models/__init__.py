@@ -46,6 +46,7 @@ from diamm.models.data.source_catalogue_entry import SourceCatalogueEntry
 from diamm.models.data.source_copyist import SourceCopyist
 from diamm.models.data.source_identifier import SourceIdentifier
 from diamm.models.data.source_authority import SourceAuthority
+from diamm.models.data.source_manifest import SourceManifest
 from diamm.models.data.source_note import SourceNote
 from diamm.models.data.source_provenance import SourceProvenance
 from diamm.models.data.source_relationship import SourceRelationship

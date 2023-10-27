@@ -1,4 +1,8 @@
+import ujson
 from django.db import models
+import requests
+
+from diamm import settings
 
 
 class Image(models.Model):
@@ -28,6 +32,7 @@ class Image(models.Model):
 
     iiif_response_cache = models.TextField(blank=True, null=True, verbose_name="IIIF Image Response")
     public = models.BooleanField(default=False)
+    external = models.BooleanField(default=False)
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

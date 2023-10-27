@@ -27,7 +27,8 @@ class PageAdmin(VersionAdmin):
     raw_id_fields = ("source",)
     list_filter = (
         SourceKeyFilter,
-        "page_type"
+        "page_type",
+        "external"
     )
     list_display = ('get_source', 'numeration', 'page_type', 'sort_order')
     search_fields = ('source__shelfmark', 'source__name', 'source__archive__siglum', '=source__id')

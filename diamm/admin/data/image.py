@@ -114,7 +114,6 @@ def refetch_iiif_info(modeladmin, request, queryset):
             j = r.json()
             img.iiif_response_cache = ujson.dumps(j)
             img.save()
-
 refetch_iiif_info.short_description = "Re-Fetch IIIF Image Info"
 
 
@@ -138,7 +137,8 @@ class ImageAdmin(VersionAdmin):
         "type__name",
         ImageSourceListFilter,
         IIIFDataListFilter,
-        'public'
+        "public",
+        "external"
     )
 
     list_editable = (

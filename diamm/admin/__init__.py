@@ -34,6 +34,7 @@ from diamm.admin.data.source_bibliography import SourceBibliographyAdmin
 from diamm.admin.data.source_catalogue_entry import SourceCatalogueEntryAdmin
 from diamm.admin.data.source_copyist import SourceCopyistAdmin
 from diamm.admin.data.source_note import SourceNoteAdmin
+from diamm.admin.data.source_manifest import SourceManifestAdmin
 from diamm.admin.data.source_provenance import SourceProvenanceAdmin
 from diamm.admin.data.source_relationship import SourceRelationshipAdmin
 from diamm.admin.data.source_relationship_type import SourceRelationshipTypeAdmin
