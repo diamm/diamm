@@ -5,30 +5,31 @@ description = ""
 authors = ["Andrew Hankinson <andrew.hankinson@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
-django = "~=4.0"
-wagtail = "^5.0"
+python = "^3.10"
+django = "~=5.0"
+wagtail = "^6.0"
 djangorestframework = "^3.11.0"
 django-extensions = "^3.0"
-werkzeug = "^2.0.0"
+werkzeug = "^3.0.3"
 django-registration = "^3.1"
 jinja2 = "^3.0"
 django-jinja = "^2.6.0"
-pysolr = "^3.8.1"
+pysolr = { git = "https://github.com/django-haystack/pysolr/", rev="master"}
 django-pagedown = "^2.0.3"
 django-reversion = "^5.0"
 ujson = "^5.0"
 serpy = "^0.3.1"
 markdown2 = "^2.3.8"
-gunicorn = "^20.1.0"
+gunicorn = "^22.0.0"
 blessings = "^1.7"
-ipython = "^7.13.0"
-tablib = "3.1.0"
-requests = "2.29.0"
-traitlets = "^4.3"
-pillow = "^8.4.0"
+ipython = "^8.24.0"
+tablib = "^3.5.0"
+requests = "2.31.0"
+traitlets = "^5.14.3"
+Pillow = "^9.0"
 markupsafe = "^2.0.1"
 psycopg = "^3.1.9"
+aiohttp = {extras = ["speedups"], version = "^3.8.5"}
 
 [tool.poetry.dev-dependencies]
 

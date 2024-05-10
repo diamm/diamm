@@ -1,4 +1,6 @@
 import re
+from functools import cache
+from typing import Optional
 
 import serpy
 
@@ -33,61 +35,69 @@ class CompositionSearchSerializer(serpy.Serializer):
             return list(obj.genres.all().values_list('name', flat=True))
         return []
 
+    @cache
+    def __composers(self, obj) -> Optional[list]:
+        if obj.composers.exists():
+            return [(o.composer.pk, o.composer.full_name, o.uncertain) for o in obj.composers.all()]
+        return None
+
     def get_composers_ss(self, obj):
-        if obj.composers:
-            return [o.composer.full_name for o in obj.composers.all()]
+        composers = self.__composers(obj)
+
+        if composers:
+            return [o[1] for o in composers]
         return []
 
     def get_composers_ssni(self, obj):
-        if obj.composers:
-            return [f"{o.composer.pk}|{o.composer.full_name}|{o.uncertain}" for o in obj.composers.all()]
+        composers = self.__composers(obj)
+        if composers:
+            return [f"{o[0]}|{o[1]}|{o[2]}" for o in composers]
         return []
 
     def get_composers_ii(self, obj):
-        if obj.composers:
-            return [o.composer.pk for o in obj.composers.all()]
+        composers = self.__composers(obj)
+        if composers:
+            return [o[0] for o in composers]
         return []
 
+    @cache
+    def __sources(self, obj) -> Optional[list]:
+        if obj.sources.exists():
+            return [(s.source.pk, s.source.display_name) for s in obj.sources.all()]
+        return None
+
     def get_sources_ssni(self, obj):
-        if obj.sources.count() == 0:
-            return []
-        return [f"{s.source.pk}|{s.source.display_name}" for s in obj.sources.all()]
+        sources = self.__sources(obj)
+        if sources:
+            return [f"{s[0]}|{s[1]}" for s in sources]
+        return []
 
     def get_sources_ss(self, obj):
-        if obj.sources.count() == 0:
-            return []
-        return [s.source.display_name for s in obj.sources.all()]
+        sources = self.__sources(obj)
+        if sources:
+            return [s[1] for s in sources]
+        return []
 
     def get_sources_ii(self, obj):
-        if obj.sources.count() == 0:
-            return []
-        return [s.source.pk for s in obj.sources.all()]
+        sources = self.__sources(obj)
+        if sources:
+            return [s[0] for s in sources]
+        return []
 
     def get_voice_text_txt(self, obj):
         # NB: Sources == Items in this case, since the item is the relationship
         # between composition and source.
-        if obj.sources.count() == 0:
+        if not obj.sources.exists():
             return None
 
-        voice_texts = []
-        items = obj.sources.all()
+        voice_texts = set()
+        items = obj.sources.filter(voices__isnull=False, voices__voice_text__isnull=False)
         for it in items:
-            if it.voices.count() == 0:
-                continue
-
-            voices = it.voices.all()
-            for voice in voices:
+            for voice in it.voices.all():
                 if not voice.voice_text:
                     continue
-
                 voice_text = re.sub(r'[^\w ]+', '', voice.voice_text, flags=re.UNICODE)
                 voice_text = " ".join(voice_text.split())
+                voice_texts.add(voice_text)
 
-                if voice_text in voice_texts:
-                    # It's a duplicate text, so we'll not index it
-                    # to prevent improper weighting of results
-                    continue
-
-                voice_texts.append(voice_text)
-
-        return voice_texts
+        return list(voice_texts)

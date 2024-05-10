@@ -35,7 +35,8 @@ class SourceCopyistInline(admin.StackedInline):
     extra = 0
 
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('source__archive__city__parent', 'content_type')
+        return super().get_queryset(request).select_related('source__archive__city__parent',
+                                                            'content_type')
 
 
 class SourceRelationshipInline(admin.StackedInline):
@@ -57,7 +58,10 @@ class SourceProvenanceInline(admin.StackedInline):
     raw_id_fields = ('city', 'country', 'region', 'protectorate')
 
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('source__archive__city__parent', 'city__parent', 'country__parent', 'region__parent')
+        return super().get_queryset(request).select_related('source__archive__city__parent',
+                                                            'city__parent',
+                                                            'country__parent',
+                                                            'region__parent')
 
 
 class BibliographyInline(admin.TabularInline):
@@ -70,9 +74,11 @@ class BibliographyInline(admin.TabularInline):
         models.CharField: {'widget': TextInput(attrs={'size': '160'})},
         models.TextField: {'widget': Textarea(attrs={'rows': 2, 'cols': 40})}
     }
+    list_select_related = ('source__archive__city__parent', 'bibliography__type')
 
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('source__archive__city__parent', 'bibliography__type').prefetch_related('bibliography__authors')
+        return super().get_queryset(request).select_related('source__archive__city__parent',
+                                                            'bibliography__type')
 
 
 class IdentifiersInline(admin.TabularInline):
@@ -106,10 +112,14 @@ class PagesInline(admin.TabularInline):
     classes = ('collapse',)
     fields = ('link_id_field', 'numeration', 'sort_order', 'page_type')
     readonly_fields = ('link_id_field',)
+    list_select_related = ('source__archive__city',)
 
     def link_id_field(self, obj):
         change_url = reverse('admin:diamm_data_page_change', args=(obj.pk,))
         return mark_safe(f'<a href="{change_url}">{obj.pk}</a>')
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("source__archive__city")
 
 
 class URLsInline(admin.TabularInline):
@@ -124,13 +134,15 @@ class ItemInline(admin.TabularInline):
     raw_id_fields = ('composition',)
     fields = ('link_id_field', 'folio_start', 'folio_end', 'composition', 'get_composers', 'source_order',)
     readonly_fields = ('link_id_field', 'get_composers')
+    list_select_related = ('source__archive__city__parent__parent', 'composition')
+    list_prefetch_related = ('composition__composers',)
 
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related("source__archive__city",
-                                                            "composition").prefetch_related('pages', 'composition__composers')
+        return super().get_queryset(request).select_related("source__archive__city__parent__parent",
+                                                            "composition").prefetch_related('composition__composers')
 
     def get_composers(self, obj):
-        if obj.composition:
+        if obj.composition.exists():
             cnames: list = obj.composition.composer_names
             return mark_safe("; <br />".join(cnames))
         return None
@@ -231,7 +243,10 @@ class SourceAdmin(VersionAdmin):
     }
 
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('archive__city__parent__parent')
+        print("Getting source queryset")
+        return super().get_queryset(request).select_related('archive__city__parent__parent',
+                                                            "cover_image__page",
+                                                            "cover_image__type")
 
     def get_city(self, obj):
         return f"{obj.archive.city.name} ({obj.archive.city.parent.name})"

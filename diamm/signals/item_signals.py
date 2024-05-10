@@ -1,3 +1,5 @@
+import threading
+
 from diamm.helpers.solr_helpers import solr_delete, solr_index, SolrConnection
 from diamm.models.data.item import Item
 from diamm.serializers.search.composer_inventory import ComposerInventorySearchSerializer, FIELDS_TO_INDEX
@@ -44,8 +46,42 @@ def __composer_inventory_delete(item):
 
     SolrConnection.commit()
 
+
 @receiver(post_save, sender=Item)
 def index_item(sender, instance, created, **kwargs):
+    t = threading.Thread(target=_do_item_index, args=(instance,))
+    t.daemon = True
+    t.start()
+    # solr_index(ItemSearchSerializer, instance)
+    # solr_index(SourceSearchSerializer, instance.source)
+    # if instance.composition:
+    #     solr_index(CompositionSearchSerializer, instance.composition)
+    #
+    # __composer_inventory_index(instance)
+
+
+@receiver(post_delete, sender=Item)
+def delete_item(sender, instance, **kwargs):
+    t = threading.Thread(target=_do_item_delete, args=(instance,))
+    t.daemon = True
+    t.start()
+    # solr_delete(instance)
+    # solr_index(SourceSearchSerializer, instance.source)
+    # if instance.composition:
+    #     solr_index(CompositionSearchSerializer, instance.composition)
+    #
+    # __composer_inventory_delete(instance)
+
+
+# If pages have been added / removed from this item, catch them and re-index the item.
+# @receiver(m2m_changed, sender=Item.pages.through)
+def index_item_page_relationships(sender, instance, action, reverse, model, pk_set, **kwargs):
+    if action in ('post_add', 'post_remove'):
+        solr_index(ItemSearchSerializer, instance)
+
+
+def _do_item_index(instance):
+    print("Threaded item index")
     solr_index(ItemSearchSerializer, instance)
     solr_index(SourceSearchSerializer, instance.source)
     if instance.composition:
@@ -54,20 +90,11 @@ def index_item(sender, instance, created, **kwargs):
     __composer_inventory_index(instance)
 
 
-@receiver(post_delete, sender=Item)
-def delete_item(sender, instance, **kwargs):
+def _do_item_delete(instance):
+    print("Threaded item delete")
     solr_delete(instance)
     solr_index(SourceSearchSerializer, instance.source)
     if instance.composition:
         solr_index(CompositionSearchSerializer, instance.composition)
 
     __composer_inventory_delete(instance)
-
-
-# If pages have been added / removed from this item, catch them and re-index the item.
-@receiver(m2m_changed, sender=Item.pages.through)
-def index_item_page_relationships(sender, instance, action, reverse, model, pk_set, **kwargs):
-    if action in ('post_add', 'post_remove'):
-        solr_index(ItemSearchSerializer, instance)
-
-

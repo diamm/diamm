@@ -94,8 +94,8 @@ class ComposerInventorySearchSerializer(ContextSerializer):
             return f"{obj[LAST_NAME]}, {obj[FIRST_NAME]}"
         elif obj[LAST_NAME]:
             return f"{obj[LAST_NAME]}"
-        else:
-            return "Anonymous"
+
+        return "Anonymous"
 
     def get_composer_i(self, obj):
         if obj[COMPOSER_PK]:

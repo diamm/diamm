@@ -58,7 +58,8 @@ def send_admin_notification_email(sender, instance, created, **kwargs):
         name=name,
         record=record,
         report=report,
-        review_url=f"https://{settings.HOSTNAME}/admin/diamm_site/problemreport/{instance.pk}/"
+        review_url=f"https://{settings.HOSTNAME}/admin/diamm_site/problemreport/{instance.pk}/",
+        record_url=f"https://{settings.HOSTNAME}/sources/{record.pk}/"
     )
 
     send_mail(

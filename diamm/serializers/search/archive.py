@@ -1,3 +1,5 @@
+from typing import Optional
+
 import serpy
 
 from diamm.serializers.serializers import ContextSerializer
@@ -18,15 +20,15 @@ class ArchiveSearchSerializer(ContextSerializer):
     def get_type(self, obj):
         return obj.__class__.__name__.lower()
 
-    def get_city_variants_ss(self, obj):
-        if obj.city.variant_names is None:
-            return []
-        return [variant.strip() for variant in obj.city.variant_names.split(",")]
+    def get_city_variants_ss(self, obj) -> list:
+        if obj.city.variant_names:
+            return [variant.strip() for variant in obj.city.variant_names.split(",")]
+        return []
 
-    def get_sources_ss(self, obj):
+    def get_sources_ss(self, obj) -> list:
         return [source.display_name for source in obj.sources.all()]
 
-    def get_former_sigla_ss(self, obj):
+    def get_former_sigla_ss(self, obj) -> Optional[list]:
         if obj.former_sigla:
             return obj.former_sigla.split(",")
         return None

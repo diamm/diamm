@@ -101,29 +101,26 @@ class SourceSearchSerializer(serpy.Serializer):
     def get_type(self, obj):
         return obj.__class__.__name__.lower()
 
-    def get_identifiers_ss(self, obj):
+    def get_identifiers_ss(self, obj) -> list:
         if obj.identifiers.exists():
             return list(obj.identifiers.values_list('identifier', flat=True))
-        else:
-            return []
+        return []
 
     def get_cover_image_i(self, obj) -> Optional[int]:
         c = obj.cover
         return c.get('id') if c else None
 
-    def get_notations_ss(self, obj):
+    def get_notations_ss(self, obj) -> list:
         if obj.notations.exists():
             return list(obj.notations.values_list('name', flat=True))
-        else:
-            return []
+        return []
 
-    def get_sets_ii(self, obj):
+    def get_sets_ii(self, obj) -> list:
         if obj.sets.exists():
             return list(obj.sets.values_list("pk", flat=True))
-        else:
-            return []
+        return []
 
-    def get_sets_ssni(self, obj):
+    def get_sets_ssni(self, obj) -> list:
         """
             PK|Name for the sets this source belongs to, except project sets (type=7)
         """
@@ -131,23 +128,19 @@ class SourceSearchSerializer(serpy.Serializer):
             sourcesets = obj.sets.values_list("pk", "cluster_shelfmark")
             sets = [f"{sset[0]}|{sset[1]}" for sset in sourcesets]
             return sets
-        else:
-            return []
+        return []
 
-    def get_composers_ss(self, obj):
+    def get_composers_ss(self, obj) -> list:
         return obj.composers
 
-    def get_notes_txt(self, obj):
+    def get_notes_txt(self, obj) -> list:
         return list(obj.public_notes.values_list('note', flat=True))
 
-    def get_public_images_b(self, obj):
+    def get_public_images_b(self, obj) -> bool:
         has_images = obj.pages.exists()
         public_images = obj.public_images
 
-        if has_images and public_images:
-            return True
-        else:
-            return False
+        return has_images and public_images is not None
 
-    def get_external_images_b(self, obj):
+    def get_external_images_b(self, obj) -> bool:
         return obj.external_images

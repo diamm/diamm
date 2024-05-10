@@ -1,4 +1,6 @@
 import uuid
+from functools import cached_property, cache
+from typing import Optional
 
 import serpy
 
@@ -88,33 +90,52 @@ class ItemSearchSerializer(serpy.Serializer):
 
     _childDocuments_ = serpy.MethodField()
 
-    def get_type(self, obj):
+    def get_type(self, obj) -> str:
         return obj.__class__.__name__.lower()
 
-    def get_pages_ii(self, obj):
+    def get_pages_ii(self, obj) -> list[int]:
         return list(obj.pages.values_list('pk', flat=True))
 
-    def get_pages_ssni(self, obj):
+    def get_pages_ssni(self, obj) -> list:
         pages = obj.pages.values_list('pk', 'numeration')
         page_strs = [f"{o[0]}|{o[1]}" for o in pages]
         return page_strs
 
-    def get_composition_i(self, obj):
-        if obj.composition:
+    def get_composition_i(self, obj) -> Optional[int]:
+        if obj.composition.exists():
             return obj.composition.pk
         return None
 
-    def get_composition_s(self, obj):
-        if obj.composition:
+    def get_composition_s(self, obj) -> Optional[str]:
+        if obj.composition.exists():
             return obj.composition.title
         return None
 
-    def get_bibliography_ii(self, obj):
-        if obj.itembibliography_set.count() > 0:
-            return list(obj.itembibliography_set.values_list('bibliography__pk', flat=True))
+    def get_bibliography_ii(self, obj) -> list[int]:
+        if obj.itembibliography_set.exists():
+            return list(obj.itembibliography_set.select_related("bibliography__type").values_list('bibliography__pk', flat=True))
         return []
 
-    def get_composers_ssni(self, obj):
+    @cache
+    def __composers(self, obj) -> list[tuple[str, Optional[int], Optional[bool]]]:
+        """
+            Returns an array of composer names, PK, and certainty.
+        """
+        composers = []
+        unattr_composers = []
+
+        if obj.composition.exists():
+            if obj.composition.anonymous:
+                composers = [("Anonymous", None, None)]
+            else:
+                composers = [(c.composer.full_name, c.composer.pk, c.uncertain) for c in obj.composition.composers.all()]
+
+        if obj.unattributed_composers.exists():
+            unattr_composers = [(c.composer.full_name, c.composer.pk, c.uncertain) for c in obj.unattributed_composers.all()]
+
+        return composers + unattr_composers
+
+    def get_composers_ssni(self, obj) -> list[str]:
         """
             Returns a array of composer names, PK, and certainty, formatted to be split
             by the pipe (|). This is so we can store these bits of information in Solr without
@@ -122,32 +143,22 @@ class ItemSearchSerializer(serpy.Serializer):
 
             Will be broken apart on display, and the PK will be resolved to a full URL.
         """
-        if obj.composition:
-            if not obj.composition.anonymous:
-                return [f"{c.composer.full_name}|{c.composer.pk}|{c.uncertain}" for c in obj.composition.composers.all()]
-            else:
-                return ["Anonymous||"]
-        elif obj.unattributed_composers.count() > 0:
-            return [f"{c.composer.full_name}|{c.composer.pk}|{c.uncertain}" for c in obj.unattributed_composers.all()]
-        else:
-            return []
+        composers = self.__composers(obj)
+        all_composers = []
+        for composer in composers:
+            c = (str(cv if cv is not None else "") for cv in composer)
+            all_composers.append("|".join(c))
+        return all_composers
 
     def get_composers_ss(self, obj):
         """
             Returns an array of composer names for the purposes of filtering and searching by name.
         """
-        if obj.composition:
-            if not obj.composition.anonymous:
-                return [f"{c.composer.full_name}" for c in obj.composition.composers.all()]
-            else:
-                return ["Anonymous"]
-        elif obj.unattributed_composers.count() > 0:
-            return [f"{c.composer.full_name}" for c in obj.unattributed_composers.all()]
-        else:
-            return []
+        composers = self.__composers(obj)
+        return [c[0] for c in composers]
 
     def get_voices_ii(self, obj):
-        if obj.voices.count() > 0:
+        if obj.voices.exists():
             return list(obj.voices.values_list('pk', flat=True))
         return []
 
@@ -156,15 +167,10 @@ class ItemSearchSerializer(serpy.Serializer):
             Gets the first composer and stores it in an alphanumeric sort field so that the results may be sorted
             by composer. Esp. useful in non-attributed records.
         """
-        if obj.composition:
-            if not obj.composition.anonymous and obj.composition.composers.count() > 0:
-                return f"{obj.composition.composers.first().composer.full_name}"
-            else:
-                return "Anonymous"
-        elif obj.unattributed_composers.count() > 0:
-            return f"{obj.unattributed_composers.first().composer.full_name}"
-        else:
-            return None
+        composers = self.__composers(obj)
+        if len(composers) > 0:
+            return composers[0][0]
+        return None
 
     def get_genres_ss(self, obj):
         if obj.composition:

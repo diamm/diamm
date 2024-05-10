@@ -32,7 +32,7 @@ def __solr_prepare(instances) -> None:
 
 
 def solr_index(serializer, instance):
-    # connection = __solr_prepare([instance])
+    __solr_prepare([instance])
     serialized = serializer(instance)
     data = serialized.data
 
@@ -53,7 +53,7 @@ def solr_delete(instance):
     __solr_prepare([instance])
 
 
-def solr_delete_many(instances):
+def solr_delete_many(instances: list):
     __solr_prepare(instances)
 
 

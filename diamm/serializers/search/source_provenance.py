@@ -102,16 +102,14 @@ class SourceProvenanceSearchSerializer(serpy.Serializer):
             return "organization"
         elif isinstance(obj.entity, Person):
             return "person"
-        else:
-            return None
+        return None
 
     def get_entity_s(self, obj):
         if isinstance(obj.entity, Organization):
             return obj.entity.name
         elif isinstance(obj.entity, Person):
             return obj.entity.full_name
-        else:
-            return None
+        return None
 
     def get_entity_pk_i(self, obj):
         if obj.entity:

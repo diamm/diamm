@@ -3,6 +3,7 @@ from typing import List, Optional
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
+from django.utils.functional import cached_property
 
 from diamm.helpers.solr_helpers import SolrManager
 
@@ -46,7 +47,6 @@ class Source(models.Model):
         (PAGINATION_NUMBERING_SYSTEM, "Pagination"),
         (NO_NUMBERING_SYSTEM, "None / Unknown")
     )
-
     id = models.AutoField(primary_key=True)  # migrate old ID
     archive = models.ForeignKey('diamm_data.Archive', related_name="sources", on_delete=models.CASCADE)
     name: Optional[str] = models.CharField(max_length=255, blank=True, null=True)
@@ -88,11 +88,11 @@ class Source(models.Model):
     def get_absolute_url(self) -> str:
         return reverse('source-detail', kwargs={"pk": self.pk})
 
-    @property
+    @cached_property
     def display_name(self) -> str:
         return f"{self.archive.siglum} {str(self)}"
 
-    @property
+    @cached_property
     def display_summary(self) -> str:
         date_stmt = self.date_statement if self.date_statement else ""
         summary = self.display_name if self.display_name else ""
@@ -120,7 +120,7 @@ class Source(models.Model):
         d = dict(self.NUMBERING_SYSTEM)
         return d[self.numbering_system]
 
-    @property
+    @cached_property
     def public_notes(self):
         return self.notes.exclude(type=99).order_by('sort')  # exclude private notes
 
@@ -128,7 +128,7 @@ class Source(models.Model):
     def date_notes(self):
         return self.public_notes.filter(type=11)
 
-    @property
+    @cached_property
     def has_external_images(self):
         """
             Does the source have an external URL pointing to images
@@ -137,7 +137,7 @@ class Source(models.Model):
         # type 4 is the links to external images
         return self.links.filter(type=4).exists()
 
-    @property
+    @cached_property
     def cover(self):
         """
             If a cover image is set, returns the ID for that; else it chooses a random page with an image attached.
@@ -187,17 +187,12 @@ class Source(models.Model):
 
     @property
     def compositions(self):
-        composition_names = []
-        for item in self.inventory.all().select_related('composition'):
-            if not item.composition:
-                continue
-
-            composition_names.append(item.composition.title)
+        composition_names = self.inventory.filter(composition__isnull=False).select_related('composition').values_list('composition__title', flat=True)
         return list(set(composition_names))
 
     @property
     def num_compositions(self) -> int:
-        return len(self.compositions)
+        return self.inventory.filter(composition__isnull=False).count()
 
     # Fetches results for a source from Solr. Much quicker than hitting up postgres
     # and sorts correctly too! Restricting the composition using [* TO *] means that
@@ -278,7 +273,7 @@ class Source(models.Model):
         return reslist
 
     @property
-    def solr_bibliography(self):
+    def solr_bibliography(self) -> list:
         # Grab a list of the ids for this record
         bibl = self.bibliographies.select_related('bibliography').values_list('bibliography__id', 'primary_study', 'pages', 'notes').order_by('bibliography__authors__bibliography_author__last_name').distinct()
         id_list = ",".join([str(x[0]) for x in bibl])

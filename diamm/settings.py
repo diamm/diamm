@@ -142,7 +142,7 @@ WSGI_APPLICATION = 'diamm.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
-DATABASE_ROUTERS = ['diamm.router.DatabaseRouter']
+# DATABASE_ROUTERS = ['diamm.router.DatabaseRouter']
 
 # Some records fail with too many fields if this check is not disabled.
 DATA_UPLOAD_MAX_NUMBER_FIELDS = None
@@ -338,8 +338,9 @@ A new correction report for "{record}" has been submitted by {name}:
 ---
 {report}
 ---
-    
 This report is available for review at {review_url}.
+
+The record to be corrected is at {record_url}.
 
 ---
 The Digital Image Archive of Medieval Music

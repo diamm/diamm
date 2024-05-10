@@ -39,16 +39,14 @@ class SourceCopyistSearchSerializer(serpy.Serializer):
             return "organization"
         elif isinstance(obj.copyist, Person):
             return "person"
-        else:
-            return None
+        return None
 
     def get_copyist_s(self, obj):
         if isinstance(obj.copyist, Organization):
             return obj.copyist.name
         elif isinstance(obj.copyist, Person):
             return obj.copyist.full_name
-        else:
-            return None
+        return None
 
     def get_copyist_pk_i(self, obj):
         if obj.copyist:
@@ -56,9 +54,7 @@ class SourceCopyistSearchSerializer(serpy.Serializer):
         return None
 
     def get_has_images_b(self, obj):
-        if obj.source.pages.count() > 0:
-            return True
-        return False
+        return obj.source.pages.exists()
 
     def get_type(self, obj):
         return obj.__class__.__name__.lower()

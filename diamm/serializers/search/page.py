@@ -96,14 +96,12 @@ class PageSearchSerializer(serpy.Serializer):
     def get_items_ii(self, obj):
         if obj.items.exists():
             return list(obj.items.all().values_list('pk', flat=True))
-        else:
-            return []
+        return []
 
     def get_images_ss(self, obj):
         if obj.images.exists():
             return list(obj.images.filter(public=True).values_list('location', flat=True))
-        else:
-            return []
+        return []
 
     def get_type(self, obj):
         return obj.__class__.__name__.lower()

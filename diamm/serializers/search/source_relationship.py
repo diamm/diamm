@@ -39,16 +39,14 @@ class SourceRelationshipSerializer(serpy.Serializer):
             return 'organization'
         elif isinstance(obj.related_entity, Person):
             return 'person'
-        else:
-            return None
+        return None
 
     def get_related_entity_s(self, obj):
         if isinstance(obj.related_entity, Organization):
             return obj.related_entity.name
         elif isinstance(obj.related_entity, Person):
             return obj.related_entity.full_name
-        else:
-            return None
+        return None
 
     def get_relationship_type_s(self, obj):
         if obj.relationship_type:
@@ -59,6 +57,4 @@ class SourceRelationshipSerializer(serpy.Serializer):
         return obj.__class__.__name__.lower()
 
     def get_has_images_b(self, obj):
-        if obj.source.pages.count() > 0:
-            return True
-        return False
+        return obj.source.pages.exists()

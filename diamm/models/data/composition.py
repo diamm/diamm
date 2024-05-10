@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.functional import cached_property
 
 
 class Composition(models.Model):
@@ -17,15 +18,12 @@ class Composition(models.Model):
     def __str__(self):
         return f"{self.title}"
 
-    @property
+    @cached_property
     def composer_names(self) -> list:
-        composers = self.composers.select_related('composer', 'composition').all()
+        composers = self.composers.prefetch_related("composers__composer").all()
         cnames = []
         for c in composers:
             cname = c.composer_name
-            cattr = ""
-            if c.uncertain:
-                cattr = "?"
-
+            cattr = "?" if c.uncertain else ""
             cnames.append(f"{cattr}{cname}")
         return cnames

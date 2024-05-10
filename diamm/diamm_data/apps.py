@@ -10,5 +10,5 @@ class DiammDataAppConfig(AppConfig):
     name = 'diamm.diamm_data'
     verbose_name = 'DIAMM Data'
 
-    def ready(self):
-        import diamm.signals
+    # def ready(self):
+    #     import diamm.signals

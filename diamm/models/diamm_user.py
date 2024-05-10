@@ -34,6 +34,7 @@ class CustomUserManager(BaseUserManager):
 
         if extra_fields.get('is_staff') is not True:
             raise ValueError('Superuser must have is_staff=True.')
+
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
 
@@ -86,9 +87,9 @@ class CustomUserModel(AbstractBaseUser, PermissionsMixin):
     def get_full_name(self) -> str:
         if not self.last_name:
             return f"{self.email}"
-        else:
-            full_name = f"{self.first_name} {self.last_name}"
-            return full_name.strip()
+
+        full_name = f"{self.first_name} {self.last_name}"
+        return full_name.strip()
 
     def get_short_name(self) -> str:
         return self.first_name

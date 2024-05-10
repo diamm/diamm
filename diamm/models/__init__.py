@@ -64,38 +64,3 @@ from diamm.models.site.news_index import NewsIndexPage
 from diamm.models.site.news_page import NewsPage
 from diamm.models.site.problem_report import ProblemReport
 from diamm.models.site.publication_page import PublicationPage
-
-# from diamm.models.migrate.legacy_source import LegacySource
-# from diamm.models.migrate.legacy_archive import LegacyArchive
-# from diamm.models.migrate.legacy_country import LegacyCountry
-# from diamm.models.migrate.legacy_city import LegacyCity
-# from diamm.models.migrate.legacy_composer import LegacyComposer
-# from diamm.models.migrate.legacy_copyist import LegacyCopyist
-# from diamm.models.migrate.legacy_language import LegacyLanguage
-# from diamm.models.migrate.legacy_person import LegacyPerson
-# from diamm.models.migrate.legacy_source_copyist import LegacySourceCopyist
-# from diamm.models.migrate.legacy_bibliography import LegacyBibliography
-# from diamm.models.migrate.legacy_author import LegacyAuthor
-# from diamm.models.migrate.legacy_author_bibliography import LegacyAuthorBibliography
-# from diamm.models.migrate.legacy_bibliography_source import LegacyBibliographySource
-# from diamm.models.migrate.legacy_relationship_type import LegacyRelationshipType
-# from diamm.models.migrate.legacy_source_person import LegacySourcePerson
-# from diamm.models.migrate.legacy_source_notation import LegacySourceNotation
-# from diamm.models.migrate.legacy_composition import LegacyComposition
-# from diamm.models.migrate.legacy_composition_composer import LegacyCompositionComposer
-# from diamm.models.migrate.legacy_item import LegacyItem
-# from diamm.models.migrate.legacy_image import LegacyImage
-# from diamm.models.migrate.legacy_secondary_image import LegacySecondaryImage
-# from diamm.models.migrate.legacy_item_image import LegacyItemImage
-# from diamm.models.migrate.legacy_provenance import LegacyProvenance
-# from diamm.models.migrate.legacy_set import LegacySet
-# from diamm.models.migrate.legacy_source_set import LegacySourceSet
-# from diamm.models.migrate.legacy_clef import LegacyClef
-# from diamm.models.migrate.legacy_text import LegacyText
-# from diamm.models.migrate.legacy_text_language import LegacyTextLanguage
-# from diamm.models.migrate.legacy_notation import LegacyNotation
-# from diamm.models.migrate.legacy_bibliography_item import LegacyBibliographyItem
-# from diamm.models.migrate.legacy_cycle_type import LegacyCycleType
-# from diamm.models.migrate.legacy_composition_cycle import LegacyCompositionCycle
-# from diamm.models.migrate.legacy_composition_cycle_composition import LegacyCompositionCycleComposition
-# from diamm.models.migrate.legacy_note import LegacyNote

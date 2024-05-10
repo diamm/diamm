@@ -84,5 +84,5 @@ class Archive(models.Model):
         res = SolrConnection.search("*:*", **q)
         if res.hits > 0:
             return res.docs
-        else:
-            return []
+
+        return []

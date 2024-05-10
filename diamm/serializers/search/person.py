@@ -46,7 +46,6 @@ class PersonSearchSerializer(ContextSerializer):
         vnames = []
         for n in obj.notes.filter(type=PersonNote.VARIANT_NAME_NOTE):
             vnames = vnames + [o.strip() for o in n.note.split(";")]
-
         return vnames
 
     def get_type(self, obj) -> str:

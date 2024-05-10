@@ -6,11 +6,11 @@ from diamm.models.data.organization import Organization
 from diamm.serializers.search.organization import OrganizationSearchSerializer
 
 
-@receiver(post_save, sender=Organization)
+# @receiver(post_save, sender=Organization)
 def index_organization(sender, instance, created, **kwargs):
     solr_index(OrganizationSearchSerializer, instance)
 
 
-@receiver(post_delete, sender=Organization)
+# @receiver(post_delete, sender=Organization)
 def delete_organization(sender, instance, **kwargs):
     solr_delete(instance)
