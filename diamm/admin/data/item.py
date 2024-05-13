@@ -130,7 +130,6 @@ class ItemAdmin(VersionAdmin):
             return mark_safe("; <br />".join(cnames))
         return None
     get_composers.short_description = "Composers"
-
     get_composers.short_description = "composers"
     get_composers.admin_order_field = 'composition__composers__composer__last_name'
 

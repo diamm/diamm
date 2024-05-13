@@ -20,7 +20,7 @@ class Composition(models.Model):
 
     @cached_property
     def composer_names(self) -> list:
-        composers = self.composers.prefetch_related("composers__composer").all()
+        composers = self.composers.prefetch_related("composer").all()
         cnames = []
         for c in composers:
             cname = c.composer_name
