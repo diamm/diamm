@@ -37,22 +37,22 @@ class VoiceSearchSerializer(serpy.Serializer):
         return obj.type.name
 
     def get_languages_ss(self, obj):
-        if obj.languages.exists():
+        if obj.languages:
             return list(obj.languages.values_list('name', flat=True))
         return []
 
     def get_mensuration_s(self, obj):
-        if obj.mensuration.exists():
+        if obj.mensuration:
             return obj.mensuration.sign
         return None
 
     def get_mensuration_text_s(self, obj):
-        if obj.mensuration.exists():
+        if obj.mensuration:
             return obj.mensuration.text
         return None
 
     def get_clef_s(self, obj):
-        if obj.clef.exists():
+        if obj.clef:
             return obj.clef.name
         return None
 
