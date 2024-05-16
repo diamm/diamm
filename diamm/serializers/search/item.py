@@ -102,12 +102,12 @@ class ItemSearchSerializer(serpy.Serializer):
         return page_strs
 
     def get_composition_i(self, obj) -> Optional[int]:
-        if obj.composition.exists():
+        if obj.composition:
             return obj.composition.pk
         return None
 
     def get_composition_s(self, obj) -> Optional[str]:
-        if obj.composition.exists():
+        if obj.composition:
             return obj.composition.title
         return None
 
@@ -124,7 +124,7 @@ class ItemSearchSerializer(serpy.Serializer):
         composers = []
         unattr_composers = []
 
-        if obj.composition.exists():
+        if obj.composition:
             if obj.composition.anonymous:
                 composers = [("Anonymous", None, None)]
             else:
