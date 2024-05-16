@@ -39,31 +39,28 @@ term = Terminal()
 
 class Command(BaseCommand):
     def _index(self, objects, name_field, serializer):
-        num_objs = objects.count()
-        i = 0
-
         docs = []
-        for obj in objects.iterator():
+        for i, obj in enumerate(objects.iterator(), 1):
             if not name_field:
                 name = f"Object {obj.pk}"
             else:
                 name = getattr(obj, name_field)
 
-            self.stdout.write('{0} {1}: {2} ({3})'.format(term.blue('Indexing'),
+            self.stdout.write("{0} {1}: {2} ({3})".format(term.blue('Indexing'),
                                                           term.green(obj.__class__.__name__),
-                                                          term.yellow(name if name else "[No Shelfmark]"),
+                                                          term.yellow(name),
                                                           term.yellow(str(obj.pk))))
             data = serializer(obj).data
             docs.append(data)
 
-            # queue up the docs and index them at every 100 records.
+            # queue up the docs and index them at every 1000 records.
             # This saves expensive calls out to Solr so it should make
             # indexing quite quick.
-            if i % 100 == 0:
+            if i % 1000 == 0:
+                self.stdout.write(term.blue("Sending 1000 records to Solr"))
                 self.solrconn.add(docs, commit=False)
                 del docs
                 docs = []
-            i += 1
 
         # ensure any leftovers are added
         self.solrconn.add(docs, commit=False)
@@ -115,7 +112,7 @@ class Command(BaseCommand):
         self.stdout.write(term.blue("Indexing Pages"))
         self.solrconn.delete(q="type:page")
         self.solrconn.delete(q="type:image")
-        objs = Page.objects.all().order_by('pk')
+        objs = Page.objects.all().order_by('pk').select_related("source__archive__city")
         self._index(objs, 'numeration', PageSearchSerializer)
 
     def _index_sets(self):
@@ -165,7 +162,11 @@ class Command(BaseCommand):
         objs = Source.objects.all().order_by('pk').select_related('archive__city__parent').iterator()
 
         for source in objs:
-            self.stdout.write(term.green(f"Indexing {source.display_name}"))
+            self.stdout.write("{0} {1}: {2} ({3})".format(term.blue("Indexing"),
+                                                    term.green("Source (Composer Inventory)"),
+                                                    term.yellow(source.display_name),
+                                                    term.yellow(str(source.pk))))
+
             res = [list(o) for o in source.inventory.values_list(*FIELDS_TO_INDEX)]
             data = ComposerInventorySearchSerializer(res, many=True).data
             self.solrconn.add(data)
@@ -194,6 +195,6 @@ class Command(BaseCommand):
         print(f"Done committing. Status code: {c.status_code}")
         print("Swapping ingest and live cores")
         r = requests.get('http://localhost:8983/solr/admin/cores?action=SWAP&core=diamm&other=diamm_ingest')
-        print("Done swapping. Status code: {0}".format(r.status_code))
+        print(f"Done swapping. Status code: {r.status_code}")
 
         print("Done Indexing.")
