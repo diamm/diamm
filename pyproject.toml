@@ -10,7 +10,6 @@ django = "~=5.0"
 wagtail = "^6.0"
 djangorestframework = "^3.11.0"
 django-extensions = "^3.0"
-werkzeug = "^3.0.3"
 django-registration = "^3.1"
 jinja2 = "^3.0"
 django-jinja = "^2.6.0"
@@ -30,6 +29,7 @@ Pillow = "^9.0"
 markupsafe = "^2.0.1"
 psycopg = "^3.1.9"
 aiohttp = {extras = ["speedups"], version = "^3.8.5"}
+werkzeug = "^3.0.3"
 
 [tool.poetry.dev-dependencies]
 
