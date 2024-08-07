@@ -1,4 +1,5 @@
 import random
+from typing import Optional
 
 import serpy
 
@@ -86,10 +87,10 @@ class ComposerInventorySearchSerializer(ContextSerializer):
     # The PK for this table does not map directly on to any
     # database entity, so we can instead generate a random integer
     # and use that.
-    def get_pk(self, obj):
+    def get_pk(self, obj) -> int:
         return random.randrange(10000000)
 
-    def get_composer_s(self, obj):
+    def get_composer_s(self, obj) -> str:
         if obj[LAST_NAME] and obj[FIRST_NAME]:
             return f"{obj[LAST_NAME]}, {obj[FIRST_NAME]}"
         elif obj[LAST_NAME]:
@@ -97,31 +98,29 @@ class ComposerInventorySearchSerializer(ContextSerializer):
 
         return "Anonymous"
 
-    def get_composer_i(self, obj):
-        if obj[COMPOSER_PK]:
-            return obj[COMPOSER_PK]
-        return None
+    def get_composer_i(self, obj) -> Optional[int]:
+        return obj[COMPOSER_PK]
 
-    def get_source_i(self, obj):
+    def get_source_i(self, obj) -> Optional[int]:
         return obj[SOURCE_ID]
 
-    def get_uncertain_b(self, obj):
+    def get_uncertain_b(self, obj) -> bool:
         return obj[UNCERTAIN] is True
 
-    def get_composition_s(self, obj):
+    def get_composition_s(self, obj) -> Optional[str]:
         return obj[COMPOSITION_TITLE]
 
-    def get_composition_i(self, obj):
+    def get_composition_i(self, obj) -> Optional[int]:
         return obj[COMPOSITION_PK]
 
-    def get_folio_start_s(self, obj):
+    def get_folio_start_s(self, obj) -> Optional[str]:
         return obj[FOLIO_START]
 
-    def get_folio_end_s(self, obj):
+    def get_folio_end_s(self, obj) -> Optional[str]:
         return obj[FOLIO_END]
 
-    def get_source_attribution_s(self, obj):
+    def get_source_attribution_s(self, obj) -> Optional[str]:
         return obj[SOURCE_ATTRIBUTION]
 
-    def get_item_i(self, obj):
+    def get_item_i(self, obj) -> Optional[int]:
         return obj[ITEM_PK]

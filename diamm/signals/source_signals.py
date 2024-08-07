@@ -29,7 +29,8 @@ def delete_source(sender, instance, **kwargs):
 
 def _do_source_indexing(instance):
     solr_index(SourceSearchSerializer, instance)
-    solr_index_many(ItemSearchSerializer, instance.inventory.select_related("composition").prefetch_related("composition__composers").all())
+    solr_index_many(ItemSearchSerializer,
+                    instance.inventory.select_related("composition").prefetch_related("composition__composers").all())
 
 
 def _do_source_delete(instance):
