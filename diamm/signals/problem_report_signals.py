@@ -44,9 +44,9 @@ def send_admin_notification_email(sender, instance, created, **kwargs):
 
     reported_entity = instance.record
     reporter = instance.contributor
-    report = instance.note
+    report: str = instance.note
     name = reporter.full_name
-    record = reported_entity.display_name
+    record: str = reported_entity.display_name
 
     if settings.DEBUG:
         recipients = [settings.ADMIN_EMAIL]
@@ -59,7 +59,7 @@ def send_admin_notification_email(sender, instance, created, **kwargs):
         record=record,
         report=report,
         review_url=f"https://{settings.HOSTNAME}/admin/diamm_site/problemreport/{instance.pk}/",
-        record_url=f"https://{settings.HOSTNAME}/sources/{record.pk}/"
+        record_url=f"https://{settings.HOSTNAME}/sources/{reported_entity.pk}/"
     )
 
     send_mail(
