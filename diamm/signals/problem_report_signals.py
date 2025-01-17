@@ -6,7 +6,9 @@ from django.dispatch import receiver
 from diamm.models.diamm_user import CustomUserModel
 from diamm.models.site.problem_report import ProblemReport
 
-FRIENDLY_FROM = f"Digital Image Archive of Medieval Music <{settings.DEFAULT_FROM_EMAIL}>"
+FRIENDLY_FROM = (
+    f"Digital Image Archive of Medieval Music <{settings.DEFAULT_FROM_EMAIL}>"
+)
 
 
 @receiver(post_save, sender=ProblemReport)
@@ -31,7 +33,7 @@ def send_thank_you_email(sender, instance, created, **kwargs):
         email_message,
         FRIENDLY_FROM,
         [email_address],
-        fail_silently=False
+        fail_silently=False,
     )
 
 
@@ -52,14 +54,16 @@ def send_admin_notification_email(sender, instance, created, **kwargs):
         recipients = [settings.ADMIN_EMAIL]
     else:
         # Send reports to all people in the 'Editors' group
-        recipients = CustomUserModel.objects.filter(groups__name__in=['Editors', "Add-edit only"]).values_list("email", flat=True)
+        recipients = CustomUserModel.objects.filter(
+            groups__name__in=["Editors", "Add-edit only"]
+        ).values_list("email", flat=True)
 
     email_message = settings.MAIL["CORRECTION_ADMIN"].format(
         name=name,
         record=record,
         report=report,
         review_url=f"https://{settings.HOSTNAME}/admin/diamm_site/problemreport/{instance.pk}/",
-        record_url=f"https://{settings.HOSTNAME}/sources/{reported_entity.pk}/"
+        record_url=f"https://{settings.HOSTNAME}/sources/{reported_entity.pk}/",
     )
 
     send_mail(
@@ -67,7 +71,7 @@ def send_admin_notification_email(sender, instance, created, **kwargs):
         email_message,
         FRIENDLY_FROM,
         recipients,
-        fail_silently=False
+        fail_silently=False,
     )
 
 
@@ -87,16 +91,10 @@ def send_issue_resolved_message(sender, instance, created, **kwargs):
     name = reporter.full_name
     record = reported_entity.display_name
 
-    if settings.DEBUG:
-        recipient = [settings.ADMIN_EMAIL]
-    else:
-        recipient = [email_address]
+    recipient = [settings.ADMIN_EMAIL] if settings.DEBUG else [email_address]
 
     email_message = settings.MAIL["ISSUE_RESOLVED"].format(
-        name=name,
-        record=record,
-        summary=summary,
-        original_report=original_report
+        name=name, record=record, summary=summary, original_report=original_report
     )
 
     send_mail(
@@ -104,5 +102,5 @@ def send_issue_resolved_message(sender, instance, created, **kwargs):
         email_message,
         FRIENDLY_FROM,
         recipient,
-        fail_silently=False
+        fail_silently=False,
     )

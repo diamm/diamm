@@ -10,15 +10,20 @@ class Image(models.Model):
     #                                related_name="images")
     #
 
-    page = models.ForeignKey("diamm_data.Page",
-                             blank=True,
-                             null=True,
-                             related_name="images",
-                             on_delete=models.CASCADE)
-    type = models.ForeignKey("diamm_data.ImageType",
-                             blank=True, null=True,
-                             default=1,
-                             on_delete=models.CASCADE)
+    page = models.ForeignKey(
+        "diamm_data.Page",
+        blank=True,
+        null=True,
+        related_name="images",
+        on_delete=models.CASCADE,
+    )
+    type = models.ForeignKey(
+        "diamm_data.ImageType",
+        blank=True,
+        null=True,
+        default=1,
+        on_delete=models.CASCADE,
+    )
     location = models.URLField(max_length=1024, blank=True, null=True)
 
     # folio = models.CharField(max_length=256, blank=True, null=True)
@@ -27,7 +32,9 @@ class Image(models.Model):
     legacy_id = models.CharField(max_length=256, blank=True, null=True)
     legacy_filename = models.CharField(max_length=1024, blank=True, null=True)
 
-    iiif_response_cache = models.TextField(blank=True, null=True, verbose_name="IIIF Image Response")
+    iiif_response_cache = models.TextField(
+        blank=True, null=True, verbose_name="IIIF Image Response"
+    )
     public = models.BooleanField(default=False)
     external = models.BooleanField(default=False)
 

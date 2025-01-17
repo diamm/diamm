@@ -1,9 +1,6 @@
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
-from rest_framework import generics
-from rest_framework import permissions
-from rest_framework import response
-from rest_framework import status
+from rest_framework import generics, permissions, response, status
 
 from diamm.models.site.problem_report import ProblemReport
 from diamm.renderers.ujson_renderer import UJSONRenderer
@@ -20,25 +17,29 @@ class ContributorList(generics.ListAPIView):
     # type - The content type of the object. At present only 'source' is supported.
     #
     def get(self, request, *args, **kwargs) -> response.Response:
-        pk = self.request.query_params.get('pk', None)
-        objtype = self.request.query_params.get('type', None)
+        pk = self.request.query_params.get("pk", None)
+        objtype = self.request.query_params.get("type", None)
 
-        if objtype not in ('source',):
-            return response.Response({
-                "message": "An unexpected type argument was supplied."
-            }, status=status.HTTP_400_BAD_REQUEST)
+        if objtype not in ("source",):
+            return response.Response(
+                {"message": "An unexpected type argument was supplied."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         if not pk or not type:
-            return response.Response({
-                'message': "You must specify both a type and an ID to retrieve commentaries"
-            }, status=status.HTTP_400_BAD_REQUEST)
+            return response.Response(
+                {
+                    "message": "You must specify both a type and an ID to retrieve commentaries"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-        return super(ContributorList, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
         # Any non-valid query params should have been filtered out prior to reaching here.
-        pk = self.request.query_params.get('pk', None)
-        objtype = self.request.query_params.get('type', None)
+        pk = self.request.query_params.get("pk", None)
+        objtype = self.request.query_params.get("type", None)
 
         try:
             contenttype = ContentType.objects.get(app_label="diamm_data", model=objtype)

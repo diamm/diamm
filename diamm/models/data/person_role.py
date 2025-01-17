@@ -5,12 +5,12 @@ class PersonRole(models.Model):
     class Meta:
         app_label = "diamm_data"
 
-    person = models.ForeignKey("diamm_data.Person",
-                               related_name="roles",
-                               on_delete=models.CASCADE)
-    role = models.ForeignKey("diamm_data.Role",
-                             related_name="people",
-                             on_delete=models.CASCADE)
+    person = models.ForeignKey(
+        "diamm_data.Person", related_name="roles", on_delete=models.CASCADE
+    )
+    role = models.ForeignKey(
+        "diamm_data.Role", related_name="people", on_delete=models.CASCADE
+    )
     earliest_year = models.IntegerField(blank=True, null=True)
     earliest_year_approximate = models.BooleanField(default=False)
     latest_year = models.IntegerField(blank=True, null=True)

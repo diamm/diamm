@@ -1,1 +1,1 @@
-default_app_config = 'diamm.diamm_site.apps.DiammSiteAppConfig'
+default_app_config = "diamm.diamm_site.apps.DiammSiteAppConfig"

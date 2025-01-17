@@ -2,7 +2,6 @@ from django.db import models
 
 
 class CompositionNote(models.Model):
-
     ALTERNATE_TITLE = 1
     PARS = 2
     GENERAL_NOTE = 3
@@ -10,7 +9,7 @@ class CompositionNote(models.Model):
     NOTE_TYPES = (
         (ALTERNATE_TITLE, "Alternate Title"),
         (PARS, "Pars"),
-        (GENERAL_NOTE, "General Note")
+        (GENERAL_NOTE, "General Note"),
     )
 
     class Meta:
@@ -18,9 +17,9 @@ class CompositionNote(models.Model):
 
     type = models.IntegerField(choices=NOTE_TYPES)
     note = models.TextField()
-    composition = models.ForeignKey("diamm_data.Composition",
-                                    related_name="notes",
-                                    on_delete=models.CASCADE)
+    composition = models.ForeignKey(
+        "diamm_data.Composition", related_name="notes", on_delete=models.CASCADE
+    )
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

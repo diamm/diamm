@@ -1,24 +1,25 @@
-from typing import Dict, Union, List
+from typing import Union
 
 import serpy
 
 
 class ContextSerializer(serpy.Serializer):
     """
-        Used for serializing database objects, extending the base
-        serpy serializer by storing the context arg passed in.
+    Used for serializing database objects, extending the base
+    serpy serializer by storing the context arg passed in.
 
-        cf. https://github.com/clarkduvall/serpy/issues/16
+    cf. https://github.com/clarkduvall/serpy/issues/16
     """
-    def __init__(self, *args, **kwargs):
-        super(ContextSerializer, self).__init__(*args, **kwargs)
-        if 'context' in kwargs:
-            self.context = kwargs['context']
 
-    def __remove_none(self, d: Dict) -> Dict:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if "context" in kwargs:
+            self.context = kwargs["context"]
+
+    def __remove_none(self, d: dict) -> dict:
         return {k: v for k, v in d.items() if v is not None}
 
-    def to_value(self, instance: Union[Dict, List]) -> Union[Dict, List]:
+    def to_value(self, instance: Union[dict, list]) -> Union[dict, list]:
         """
         Filters out values that have been serialized to 'None' to prevent
         them from being sent to the browser.
@@ -36,18 +37,19 @@ class ContextSerializer(serpy.Serializer):
 
 class ContextDictSerializer(serpy.DictSerializer):
     """
-        The same as ContextSerializer, but used for serializing dictionaries not
-        objects. Useful for serializing Solr results.
+    The same as ContextSerializer, but used for serializing dictionaries not
+    objects. Useful for serializing Solr results.
     """
-    def __init__(self, *args, **kwargs):
-        super(ContextDictSerializer, self).__init__(*args, **kwargs)
-        if 'context' in kwargs:
-            self.context = kwargs['context']
 
-    def __remove_none(self, d: Dict) -> Dict:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if "context" in kwargs:
+            self.context = kwargs["context"]
+
+    def __remove_none(self, d: dict) -> dict:
         return {k: v for k, v in d.items() if v is not None}
 
-    def to_value(self, instance: Union[Dict, List]) -> Union[Dict, List]:
+    def to_value(self, instance: Union[dict, list]) -> Union[dict, list]:
         """
         Filters out values that have been serialized to 'None' to prevent
         them from being sent to the browser.

@@ -6,13 +6,13 @@ class CompositionComposer(models.Model):
         app_label = "diamm_data"
         ordering = ("composition__title",)
 
-    composition = models.ForeignKey("diamm_data.Composition",
-                                    related_name="composers",
-                                    on_delete=models.CASCADE)
+    composition = models.ForeignKey(
+        "diamm_data.Composition", related_name="composers", on_delete=models.CASCADE
+    )
 
-    composer = models.ForeignKey("diamm_data.Person",
-                                 related_name="compositions",
-                                 on_delete=models.CASCADE)
+    composer = models.ForeignKey(
+        "diamm_data.Person", related_name="compositions", on_delete=models.CASCADE
+    )
     uncertain = models.BooleanField(default=False)
     notes = models.TextField(blank=True, null=True)
 

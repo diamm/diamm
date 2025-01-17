@@ -1,4 +1,5 @@
 from django.db import models
+
 from diamm.helpers.identifiers import IDENTIFIER_TYPES, TYPE_PREFIX
 
 
@@ -6,11 +7,14 @@ class PersonIdentifier(models.Model):
     class Meta:
         app_label = "diamm_data"
 
-    identifier = models.CharField(max_length=512, help_text="Do not provide the full URL here; only the identifier.")
+    identifier = models.CharField(
+        max_length=512,
+        help_text="Do not provide the full URL here; only the identifier.",
+    )
     identifier_type = models.IntegerField(choices=IDENTIFIER_TYPES)
-    person = models.ForeignKey("diamm_data.Person",
-                               related_name="identifiers",
-                               on_delete=models.CASCADE)
+    person = models.ForeignKey(
+        "diamm_data.Person", related_name="identifiers", on_delete=models.CASCADE
+    )
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

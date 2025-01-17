@@ -1,5 +1,5 @@
-from django_jinja import library
 import markdown2
+from django_jinja import library
 
 
 @library.filter

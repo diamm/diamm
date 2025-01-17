@@ -1,16 +1,18 @@
 """
 Used to create Page and Image entries for new sources.
 """
+
 import glob
 import logging
 import os
 import re
 import sys
-import ujson
+from typing import Optional
 from urllib.parse import urljoin
 
 import blessings
 import requests
+import ujson
 from django.conf import settings
 from django.core.management import BaseCommand
 
@@ -20,8 +22,10 @@ from diamm.models.data.page import Page
 from diamm.models.data.source import Source
 
 term = blessings.Terminal()
-logging.basicConfig(format="[%(asctime)s] [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)",
-                    level=logging.DEBUG)
+logging.basicConfig(
+    format="[%(asctime)s] [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)",
+    level=logging.DEBUG,
+)
 log = logging.getLogger(__name__)
 
 # Names which do not follow the foliation standard have to be special-cased.
@@ -105,7 +109,7 @@ NON_FOLIATED_NAMES = {
     "C": "C",
     "Cv": "Cv",
     "D": "D",
-    "Dv": "Dv"
+    "Dv": "Dv",
 }
 
 TYPE_MAP = {
@@ -114,20 +118,22 @@ TYPE_MAP = {
     "_a": ImageType.objects.get(pk=ImageType.ALT_SHOT),
     "_a2": ImageType.objects.get(pk=ImageType.ALT_SHOT),
     "_u": ImageType.objects.get(pk=ImageType.COLOUR_UV),
-    "_u2": ImageType.objects.get(pk=ImageType.COLOUR_UV)
+    "_u2": ImageType.objects.get(pk=ImageType.COLOUR_UV),
 }
 
 
 class Command(BaseCommand):
     def add_arguments(self, parser):
-        parser.add_argument('sourcekey', type=int)
-        parser.add_argument('foldername', type=str)
-        parser.add_argument('-d',
-                            "--dry",
-                            dest="dry_run",
-                            action="store_true",
-                            default=False,
-                            help="Dry run; don't actually save anything.")
+        parser.add_argument("sourcekey", type=int)
+        parser.add_argument("foldername", type=str)
+        parser.add_argument(
+            "-d",
+            "--dry",
+            dest="dry_run",
+            action="store_true",
+            default=False,
+            help="Dry run; don't actually save anything.",
+        )
 
     def handle(self, *args, **options):
         """
@@ -144,35 +150,39 @@ class Command(BaseCommand):
         :param options:
         :return:
         """
-        sourcekey = options['sourcekey']
-        foldername = options['foldername']
-        dryrun = options['dry_run']
+        sourcekey = options["sourcekey"]
+        foldername = options["foldername"]
+        dryrun = options["dry_run"]
 
         if dryrun:
             log.info(term.yellow("DRY RUN. Changes will not be committed."))
 
         folderpath = os.path.join("/data", "images", foldername)
         if not os.path.exists(folderpath):
-            log.error(term.red("Folder {0} does not exist. Exiting.".format(foldername)))
+            log.error(term.red(f"Folder {foldername} does not exist. Exiting."))
             sys.exit(-1)
 
         try:
             src = Source.objects.get(pk=sourcekey)
         except Source.DoesNotExist:
-            log.error(term.red("Source {0} does not exist. Exiting.".format(sourcekey)))
+            log.error(term.red(f"Source {sourcekey} does not exist. Exiting."))
             sys.exit(-1)
 
         # Check whether source has pages attached already
         num_pages = src.pages.count()
         if num_pages > 0:
-            log.error(term.red("Source already has {0} page records. This should only be run on sources with no existing page records.".format(num_pages)))
+            log.error(
+                term.red(
+                    f"Source already has {num_pages} page records. This should only be run on sources with no existing page records."
+                )
+            )
             sys.exit(-1)
 
         # Check how many images are in the images folder.
         files = sorted(glob.glob(os.path.join(folderpath, "*.jpx")))
 
         if len(files) == 0:
-            log.error(term.red("There were no JPX files in {0}. Exiting.".format(foldername)))
+            log.error(term.red(f"There were no JPX files in {foldername}. Exiting."))
             sys.exit(-1)
 
         # Try to parse the filename for info.
@@ -184,29 +194,38 @@ class Command(BaseCommand):
         #   E-Sco_5-5-20_039r_a.jpx
         #   E-MOsb_MS1085_115br.jpx
         # As well as those with the non-foliated names in them (see the keys for NON_FOLIATED_NAMES
-        page_name_regex = re.compile(r"(?P<sig>.*)_(?P<pname>(\d{3}b?[r|v])|(" + "|".join(NON_FOLIATED_NAMES.keys()) + r"))(?P<spctype>_w|_a)?(?P<ext>.jpx)")
+        page_name_regex = re.compile(
+            r"(?P<sig>.*)_(?P<pname>(\d{3}b?[r|v])|("
+            + "|".join(NON_FOLIATED_NAMES.keys())
+            + r"))(?P<spctype>_w|_a)?(?P<ext>.jpx)"
+        )
 
         for order, imagepath in enumerate(files):
-            log.info(term.magenta("------- New image {0} --------".format(imagepath)))
+            log.info(term.magenta(f"------- New image {imagepath} --------"))
             image_name = os.path.basename(imagepath)
 
             # Try to retrieve the image.
-            loc = "https://{0}/iiif/image/{1}/{2}".format(settings.HOSTNAME, foldername, image_name)
-            url = urljoin(loc + '/', "info.json")
+            loc = f"https://{settings.HOSTNAME}/iiif/image/{foldername}/{image_name}"
+            url = urljoin(loc + "/", "info.json")
 
-            log.info(term.green("Retrieving {0}".format(url)))
-            r = requests.get(url, headers={
-                "referer": "https://{0}".format(settings.HOSTNAME),
-                "X-DIAMM": settings.DIAMM_IMAGE_KEY
-            })
+            log.info(term.green(f"Retrieving {url}"))
+            r = requests.get(
+                url,
+                headers={
+                    "referer": f"https://{settings.HOSTNAME}",
+                    "X-DIAMM": settings.DIAMM_IMAGE_KEY,
+                },
+            )
 
             iiif_resp = None
             if 200 <= r.status_code < 300:
-                log.info(term.green("Received a success response from info.json retrieval"))
+                log.info(
+                    term.green("Received a success response from info.json retrieval")
+                )
                 j = r.json()
                 iiif_resp = ujson.dumps(j)
             elif r.status_code == 404:
-                log.warning(term.yellow("404 not found for {0}".format(loc)))
+                log.warning(term.yellow(f"404 not found for {loc}"))
                 log.warning(term.yellow("Skipping."))
                 continue
 
@@ -216,44 +235,65 @@ class Command(BaseCommand):
 
             re_match = re.match(page_name_regex, image_name)
             if not re_match:
-                log.warning(term.yellow("No matches found for {0}. It will be skipped.".format(image_name)))
+                log.warning(
+                    term.yellow(
+                        f"No matches found for {image_name}. It will be skipped."
+                    )
+                )
                 continue
 
             pname = re_match.group("pname")
             special_type = re_match.group("spctype")
 
-            log.debug(term.green("Parsing filename: Page name: {pname}, Special type: {spctype}".format(pname=pname, spctype=special_type)))
+            log.debug(
+                term.green(
+                    f"Parsing filename: Page name: {pname}, Special type: {special_type}"
+                )
+            )
 
             # Try to get the special page names; if None, use the name from the filename.
-            page_name = NON_FOLIATED_NAMES.get(pname, None)
+            page_name = NON_FOLIATED_NAMES.get(pname)
             if not page_name:
                 page_name = pname
 
             if not special_type:
-                log.info(term.green("Creating a regular page with label {0}".format(page_name)))
+                log.info(term.green(f"Creating a regular page with label {page_name}"))
                 # Create a page record.
                 p = {
-                    'source': src,
-                    'numeration': page_name,
-                    'sort_order': order,
-                    'page_type': Page.PAGE
+                    "source": src,
+                    "numeration": page_name,
+                    "sort_order": order,
+                    "page_type": Page.PAGE,
                 }
                 if not dryrun:
                     pg = Page(**p)
                     pg.save()
             else:
                 # Try to find a previously-saved page
-                log.info(term.green("Found a special image; trying to retrieve a page record for it."))
+                log.info(
+                    term.green(
+                        "Found a special image; trying to retrieve a page record for it."
+                    )
+                )
                 try:
                     pg = Page.objects.filter(numeration=page_name).first()
                 except Page.DoesNotExist:
-                    print(term.yellow("Could not find an ordinary page for label {0}".format(page_name)))
-                    print(term.yellow("Special image {0} could not be attached to a page.".format(image_name)))
+                    print(
+                        term.yellow(
+                            f"Could not find an ordinary page for label {page_name}"
+                        )
+                    )
+                    print(
+                        term.yellow(
+                            f"Special image {image_name} could not be attached to a page."
+                        )
+                    )
                     continue
 
             # Create an image record
             imtype = TYPE_MAP.get(special_type)
             log.info(term.green("Creating an image record."))
+            pg: Optional[Page] = None
 
             if dryrun:
                 pg = None
@@ -263,7 +303,7 @@ class Command(BaseCommand):
                 "type": imtype,
                 "location": loc,
                 "public": True,
-                "iiif_response_cache": iiif_resp
+                "iiif_response_cache": iiif_resp,
             }
 
             if not dryrun:

@@ -1,8 +1,5 @@
 from django.contrib.contenttypes.models import ContentType
-from rest_framework import generics
-from rest_framework import permissions
-from rest_framework import response
-from rest_framework import status
+from rest_framework import generics, permissions, response, status
 
 from diamm.models.site.problem_report import ProblemReport
 from diamm.renderers.ujson_renderer import UJSONRenderer
@@ -25,18 +22,16 @@ class CorrectionCreate(generics.CreateAPIView):
     #
     def post(self, request, *args, **kwargs) -> response.Response:
         data = self.request.data
-        objtype = data.get('objtype')
-        objpk = data.get('objpk')
-        note = data.get('note')
+        objtype = data.get("objtype")
+        objpk = data.get("objpk")
+        note = data.get("note")
         user = self.request.user
-        record_type = ContentType.objects.get(app_label="diamm_data", model=objtype).model_class()
+        record_type = ContentType.objects.get(
+            app_label="diamm_data", model=objtype
+        ).model_class()
         record = record_type.objects.get(pk=objpk)
 
-        d = {
-            'record': record,
-            'note': note,
-            'contributor': user
-        }
+        d = {"record": record, "note": note, "contributor": user}
 
         c = ProblemReport(**d)
         c.save()

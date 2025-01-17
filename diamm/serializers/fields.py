@@ -3,7 +3,7 @@ import serpy
 
 class StaticField(serpy.Field):
     def __init__(self, value, *args, **kwargs):
-        super(StaticField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.value = value
 
     def to_value(self, value):

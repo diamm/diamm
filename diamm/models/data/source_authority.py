@@ -1,4 +1,5 @@
 from django.db import models
+
 from diamm.helpers.identifiers import IDENTIFIER_TYPES, TYPE_PREFIX
 
 
@@ -7,15 +8,19 @@ class SourceAuthority(models.Model):
     Modelled after the "Person" and "Archive" Identifier models. However, the "Source Identifier"
     name was already taken, so this is called a "Source Authority."
     """
+
     class Meta:
         app_label = "diamm_data"
         verbose_name_plural = "Source authorities"
 
-    identifier = models.CharField(max_length=512, help_text="Do not provide the full URL here; only the identifier.")
+    identifier = models.CharField(
+        max_length=512,
+        help_text="Do not provide the full URL here; only the identifier.",
+    )
     identifier_type = models.IntegerField(choices=IDENTIFIER_TYPES)
-    source = models.ForeignKey("diamm_data.Source",
-                               related_name="authorities",
-                               on_delete=models.CASCADE)
+    source = models.ForeignKey(
+        "diamm_data.Source", related_name="authorities", on_delete=models.CASCADE
+    )
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

@@ -17,25 +17,30 @@ class ContentPage(Page):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name='+'
+        related_name="+",
     )
-    tmpl = models.FilePathField("Template",
-        path=os.path.join(settings.BASE_DIR, "diamm", "templates", "website", "cms", "content_page"),
-        match=".*\.jinja2",
+    tmpl = models.FilePathField(
+        "Template",
+        path=os.path.join(
+            settings.BASE_DIR, "diamm", "templates", "website", "cms", "content_page"
+        ),
+        match=r".*\.jinja2",
         max_length=255,
         blank=True,
-        null=True
+        null=True,
     )
 
     def get_template(self, request, *args, **kwargs):
         if self.tmpl:
-            return os.path.relpath(self.tmpl, os.path.join(settings.BASE_DIR, 'diamm', 'templates'))
+            return os.path.relpath(
+                self.tmpl, os.path.join(settings.BASE_DIR, "diamm", "templates")
+            )
         return "website/cms/content_page.jinja2"
 
 
 ContentPage.content_panels = [
-    FieldPanel('title', classname="full title"),
-    FieldPanel('body', classname="full"),
-    FieldPanel('cover_image'),
-    FieldPanel('tmpl')
+    FieldPanel("title", classname="full title"),
+    FieldPanel("body", classname="full"),
+    FieldPanel("cover_image"),
+    FieldPanel("tmpl"),
 ]

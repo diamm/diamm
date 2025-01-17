@@ -9,36 +9,24 @@ class SourceRelationshipSerializer(serpy.Serializer):
     type = serpy.MethodField()
     has_images_b = serpy.MethodField()
 
-    source_i = serpy.IntField(
-        attr="source.pk"
-    )
-    source_s = serpy.StrField(
-        attr="source.display_name"
-    )
+    source_i = serpy.IntField(attr="source.pk")
+    source_s = serpy.StrField(attr="source.display_name")
     # Sort by the source name *with the archive sigla*
-    source_ans = serpy.StrField(
-        attr="source.display_name"
-    )
+    source_ans = serpy.StrField(attr="source.display_name")
 
-    uncertain_b = serpy.BoolField(
-        attr="uncertain"
-    )
-    source_public_images_b = serpy.BoolField(
-        attr="source.public_images"
-    )
+    uncertain_b = serpy.BoolField(attr="uncertain")
+    source_public_images_b = serpy.BoolField(attr="source.public_images")
 
     relationship_type_s = serpy.MethodField()
     related_entity_type_s = serpy.MethodField()
-    related_entity_pk_i = serpy.IntField(
-        attr='related_entity.pk'
-    )
+    related_entity_pk_i = serpy.IntField(attr="related_entity.pk")
     related_entity_s = serpy.MethodField()
 
     def get_related_entity_type_s(self, obj):
         if isinstance(obj.related_entity, Organization):
-            return 'organization'
+            return "organization"
         elif isinstance(obj.related_entity, Person):
-            return 'person'
+            return "person"
         return None
 
     def get_related_entity_s(self, obj):

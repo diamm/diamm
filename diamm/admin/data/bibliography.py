@@ -15,10 +15,14 @@ class SourceInline(admin.TabularInline):
 class AuthorsInline(admin.TabularInline):
     model = BibliographyAuthorRole
     extra = 0
-    raw_id_fields = ('bibliography_author',)
+    raw_id_fields = ("bibliography_author",)
 
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('bibliography_author', 'bibliography_entry')
+        return (
+            super()
+            .get_queryset(request)
+            .select_related("bibliography_author", "bibliography_entry")
+        )
 
 
 class PublicationInline(admin.TabularInline):
@@ -28,10 +32,15 @@ class PublicationInline(admin.TabularInline):
 
 @admin.register(Bibliography)
 class BibliographyAdmin(VersionAdmin):
-    list_display = ('get_authors', 'title', 'year', 'abbreviation', 'created', 'id')
-    list_filter = ('type__name',)
-    search_fields = ('=id', 'title', 'authors__bibliography_author__last_name', 'abbreviation')
-    readonly_fields = ('id',)
+    list_display = ("get_authors", "title", "year", "abbreviation", "created", "id")
+    list_filter = ("type__name",)
+    search_fields = (
+        "=id",
+        "title",
+        "authors__bibliography_author__last_name",
+        "abbreviation",
+    )
+    readonly_fields = ("id",)
     inlines = (AuthorsInline, PublicationInline)
 
     def get_authors(self, obj):
@@ -45,5 +54,5 @@ class BibliographyAdmin(VersionAdmin):
         else:
             authlist = ", ".join([a.bibliography_author.full_name for a in authors])
             return f"{authlist}"
-    get_authors.short_description = "Authors"
 
+    get_authors.short_description = "Authors"

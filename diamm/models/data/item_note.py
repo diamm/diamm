@@ -20,14 +20,14 @@ class ItemNote(models.Model):
         (LAYOUT, "Layout"),
         (POSITION, "Position on Page"),
         (NON_MUSIC_CONTENTS, "Non-music contents description"),
-        (INDEX, "Indexing or Ordering")
+        (INDEX, "Indexing or Ordering"),
     )
 
     type = models.IntegerField(choices=NOTE_TYPE)
     note = models.TextField()
-    item = models.ForeignKey("diamm_data.Item",
-                             related_name="notes",
-                             on_delete=models.CASCADE)
+    item = models.ForeignKey(
+        "diamm_data.Item", related_name="notes", on_delete=models.CASCADE
+    )
 
     @property
     def note_type(self):

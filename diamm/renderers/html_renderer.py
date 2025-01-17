@@ -12,9 +12,9 @@ class HTMLRenderer(TemplateHTMLRenderer):
         """
 
         renderer_context = renderer_context or {}
-        view = renderer_context['view']
-        request = renderer_context['request']
-        response = renderer_context['response']
+        view = renderer_context["view"]
+        request = renderer_context["request"]
+        response = renderer_context["response"]
 
         if response.exception:
             template = self.get_exception_template(response)
@@ -22,5 +22,5 @@ class HTMLRenderer(TemplateHTMLRenderer):
             template_names = self.get_template_names(response, view)
             template = self.resolve_template(template_names)
 
-        context = self.get_template_context({'content': data}, renderer_context)
+        context = self.get_template_context({"content": data}, renderer_context)
         return template.render(context, request=request)

@@ -5,11 +5,15 @@ from django.utils.functional import cached_property
 class Composition(models.Model):
     class Meta:
         app_label = "diamm_data"
-        ordering = ('title',)
+        ordering = ("title",)
 
     title = models.CharField(max_length=1024)
-    legacy_genre = models.CharField(max_length=512, blank=True, null=True,
-                                    help_text="Stores the legacy value for the genre field.")
+    legacy_genre = models.CharField(
+        max_length=512,
+        blank=True,
+        null=True,
+        help_text="Stores the legacy value for the genre field.",
+    )
     anonymous = models.BooleanField(default=False)
     genres = models.ManyToManyField("diamm_data.Genre", blank=True)
     created = models.DateTimeField(auto_now_add=True)

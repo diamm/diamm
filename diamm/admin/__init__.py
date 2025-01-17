@@ -1,6 +1,8 @@
+# ruff: noqa: F401
+
 from diamm.admin.data.archive import ArchiveAdmin
-from diamm.admin.data.archive_note import ArchiveNoteAdmin
 from diamm.admin.data.archive_identifier import ArchiveIdentifierAdmin
+from diamm.admin.data.archive_note import ArchiveNoteAdmin
 from diamm.admin.data.bibliography import BibliographyAdmin
 from diamm.admin.data.bibliography_author import BibliographyAuthorAdmin
 from diamm.admin.data.bibliography_type import BibliographyTypeAdmin
@@ -18,8 +20,8 @@ from diamm.admin.data.language import LanguageAdmin
 from diamm.admin.data.mensuration import MensurationAdmin
 from diamm.admin.data.notation import NotationAdmin
 from diamm.admin.data.organization import OrganizationAdmin
-from diamm.admin.data.organization_type import OrganizationTypeAdmin
 from diamm.admin.data.organization_identifier import OrganizationIdentifierAdmin
+from diamm.admin.data.organization_type import OrganizationTypeAdmin
 from diamm.admin.data.page import PageAdmin
 from diamm.admin.data.page_note import PageNoteAdmin
 from diamm.admin.data.person import PersonAdmin
@@ -33,8 +35,8 @@ from diamm.admin.data.source_authority import SourceAuthorityAdmin
 from diamm.admin.data.source_bibliography import SourceBibliographyAdmin
 from diamm.admin.data.source_catalogue_entry import SourceCatalogueEntryAdmin
 from diamm.admin.data.source_copyist import SourceCopyistAdmin
-from diamm.admin.data.source_note import SourceNoteAdmin
 from diamm.admin.data.source_manifest import SourceManifestAdmin
+from diamm.admin.data.source_note import SourceNoteAdmin
 from diamm.admin.data.source_provenance import SourceProvenanceAdmin
 from diamm.admin.data.source_relationship import SourceRelationshipAdmin
 from diamm.admin.data.source_relationship_type import SourceRelationshipTypeAdmin
@@ -42,8 +44,5 @@ from diamm.admin.data.text import TextAdmin
 from diamm.admin.data.voice import VoiceAdmin
 from diamm.admin.data.voice_type import VoiceTypeAdmin
 from diamm.admin.diamm_user import UserAdmin
-from diamm.admin.diamm_user import UserAdmin
 from diamm.admin.site.commentary import CommentaryAdmin
 from diamm.admin.site.problem_report import ProblemReportAdmin
-
-

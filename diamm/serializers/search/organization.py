@@ -7,16 +7,9 @@ class OrganizationSearchSerializer(serpy.Serializer):
 
     location_s = serpy.MethodField()
 
-    name_s = serpy.StrField(
-        attr="name"
-    )
-    display_name_ans = serpy.StrField(
-        attr="name"
-    )
-    organization_type_s = serpy.StrField(
-        attr="type",
-        required=False
-    )
+    name_s = serpy.StrField(attr="name")
+    display_name_ans = serpy.StrField(attr="name")
+    organization_type_s = serpy.StrField(attr="type", required=False)
     variant_names_ss = serpy.MethodField()
 
     def get_type(self, obj):

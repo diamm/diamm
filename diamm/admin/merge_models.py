@@ -1,14 +1,15 @@
-from typing import Iterable
-from django.db import transaction
-from django.db.models import Model
+from collections.abc import Iterable
+
 from django.apps import apps
 from django.contrib.contenttypes.fields import GenericForeignKey
+from django.db import transaction
+from django.db.models import Model
 
 
-def flatten(l, a=list()):
-    """ Flattens a list.  Just do flatten(l, [])."""
-    for i in l:
-        if isinstance(i, Iterable) and type(i) != str:
+def flatten(flist, a: list):
+    """Flattens a list.  Just do flatten(l, [])."""
+    for i in flist:
+        if isinstance(i, Iterable) and not isinstance(i, str):
             flatten(i, a)
         else:
             a.append(i)
@@ -24,14 +25,19 @@ def is_duplicate_in_model(instance):
     """
     fields = flatten(instance._meta.unique_together, [])
     if fields:
-        return type(instance).objects.exclude(pk=instance.pk).filter(
-            **{k: getattr(instance, k) for k in fields}
-        ).count() > 0
+        return (
+            type(instance)
+            .objects.exclude(pk=instance.pk)
+            .filter(**{k: getattr(instance, k) for k in fields})
+            .count()
+            > 0
+        )
 
     return False
 
+
 @transaction.atomic()
-def merge(primary_object, alias_objects=list(), keep_old=False):
+def merge(primary_object, alias_objects, keep_old=False):
     """
     Use this function to merge model objects (i.e. Users, Organizations, Polls,
     etc.) and migrate all of the related fields from the alias objects to the
@@ -43,6 +49,9 @@ def merge(primary_object, alias_objects=list(), keep_old=False):
     duplicate_user = User.objects.get(email='good_email+duplicate@example.com')
     merge_model_objects(primary_user, duplicate_user)
     """
+    if alias_objects is None:
+        alias_objects = []
+
     if not isinstance(alias_objects, list):
         alias_objects = [alias_objects]
 
@@ -51,22 +60,28 @@ def merge(primary_object, alias_objects=list(), keep_old=False):
     primary_class = primary_object.__class__
 
     if not issubclass(primary_class, Model):
-        raise TypeError('Only django.db.models.Model subclasses can be merged')
+        raise TypeError("Only django.db.models.Model subclasses can be merged")
 
     for alias_object in alias_objects:
         if not isinstance(alias_object, primary_class):
-            raise TypeError('Only models of same class can be merged')
+            raise TypeError("Only models of same class can be merged")
 
     # Get a list of all GenericForeignKeys in all models
     # TODO: this is a bit of a hack, since the generics framework should provide a similar
     # method to the ForeignKey field for accessing the generic related fields.
     generic_fields = []
     # Only get the models for the 'diamm_data' app.
-    for model in apps.get_app_config('diamm_data').get_models():
-        for field_name, field in filter(lambda x: isinstance(x[1], GenericForeignKey), model.__dict__.items()):
+    for model in apps.get_app_config("diamm_data").get_models():
+        for _, field in filter(
+            lambda x: isinstance(x[1], GenericForeignKey), model.__dict__.items()
+        ):
             generic_fields.append(field)
 
-    blank_local_fields = set([field.attname for field in primary_object._meta.local_fields if getattr(primary_object, field.attname) in [None, '']])
+    blank_local_fields = {
+        field.attname
+        for field in primary_object._meta.local_fields
+        if getattr(primary_object, field.attname) in [None, ""]
+    }
 
     # Loop through all alias objects and migrate their data to the primary object.
     for alias_object in alias_objects:
@@ -93,9 +108,10 @@ def merge(primary_object, alias_objects=list(), keep_old=False):
 
         # Migrate all generic foreign key references from alias object to primary object.
         for field in generic_fields:
-            filter_kwargs = dict()
-            filter_kwargs[field.fk_field] = alias_object._get_pk_val()
-            filter_kwargs[field.ct_field] = field.get_content_type(alias_object)
+            filter_kwargs: dict = {
+                field.fk_field: alias_object._get_pk_val(),
+                field.ct_field: field.get_content_type(alias_object),
+            }
             for generic_related_object in field.model.objects.filter(**filter_kwargs):
                 setattr(generic_related_object, field.name, primary_object)
                 generic_related_object.save()
@@ -104,7 +120,7 @@ def merge(primary_object, alias_objects=list(), keep_old=False):
         filled_up = set()
         for field_name in blank_local_fields:
             val = getattr(alias_object, field_name)
-            if val not in [None, '']:
+            if val not in [None, ""]:
                 setattr(primary_object, field_name, val)
                 filled_up.add(field_name)
         blank_local_fields -= filled_up
@@ -115,4 +131,3 @@ def merge(primary_object, alias_objects=list(), keep_old=False):
     primary_object.save()
 
     return primary_object
-

@@ -5,4 +5,4 @@ from diamm.models.data.voice_type import VoiceType
 
 @admin.register(VoiceType)
 class VoiceTypeAdmin(admin.ModelAdmin):
-    search_fields = ('name',)
+    search_fields = ("name",)

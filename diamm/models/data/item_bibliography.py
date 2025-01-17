@@ -8,6 +8,8 @@ class ItemBibliography(models.Model):
         ordering = ("bibliography__year",)
 
     item = models.ForeignKey("diamm_data.Item", on_delete=models.CASCADE)
-    bibliography = models.ForeignKey("diamm_data.Bibliography", on_delete=models.CASCADE)
+    bibliography = models.ForeignKey(
+        "diamm_data.Bibliography", on_delete=models.CASCADE
+    )
     pages = models.CharField(max_length=256, blank=True, null=True)
     notes = models.TextField(blank=True, null=True)

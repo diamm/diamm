@@ -1,8 +1,7 @@
+from rest_framework import generics, response, status
+
 from diamm.helpers.solr_helpers import SolrConnection
 from diamm.renderers.ujson_renderer import UJSONRenderer
-from rest_framework import generics
-from rest_framework import response
-from rest_framework import status
 
 
 class CanvasListData(generics.GenericAPIView):
@@ -16,13 +15,13 @@ class CanvasData(generics.GenericAPIView):
     renderer_classes = (UJSONRenderer,)
 
     def get(self, request, *args, **kwargs):
-        page_id = kwargs.get('page_id', None)
+        page_id = kwargs.get("page_id")
         if not page_id:
-            return response.Response({'error': 'Page was not in request'}, status.HTTP_400_BAD_REQUEST)
+            return response.Response(
+                {"error": "Page was not in request"}, status.HTTP_400_BAD_REQUEST
+            )
 
-        page_query = {
-            "fq": ["type:page", f"pk:{page_id}"]
-        }
+        page_query = {"fq": ["type:page", f"pk:{page_id}"]}
         # conn = pysolr.Solr(settings.SOLR['SERVER'])
         page_res = SolrConnection.search("*:*", **page_query)
 
@@ -30,15 +29,13 @@ class CanvasData(generics.GenericAPIView):
             return response.Response([])
 
         page = page_res.docs[0]
-        page_items = page.get('items_ii', None)
+        page_items = page.get("items_ii", None)
 
         if not page_items:
             return response.Response([])
 
         item_ids = ",".join([str(x) for x in page_items])
-        item_query = {
-            "fq": ["type:item", "{!term f=pk}" + item_ids]
-        }
+        item_query = {"fq": ["type:item", "{!term f=pk}" + item_ids]}
         item_res = SolrConnection.search("*:*", **item_query)
 
         if not item_res.hits > 0:

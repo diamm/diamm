@@ -12,17 +12,27 @@ class Person(models.Model):
         verbose_name_plural = "People"
         ordering = ["last_name", "first_name"]
 
-    last_name = models.CharField(max_length=512,
-                                 help_text="Last name, or full name if it does not follow convention, e.g., 'Louis of Bavaria'")
+    last_name = models.CharField(
+        max_length=512,
+        help_text="Last name, or full name if it does not follow convention, e.g., 'Louis of Bavaria'",
+    )
     first_name = models.CharField(max_length=512, blank=True, null=True)
-    title = models.CharField(max_length=512, blank=True, null=True,
-                             help_text="Personal title, e.g., Duke, Count, Pope.")
+    title = models.CharField(
+        max_length=512,
+        blank=True,
+        null=True,
+        help_text="Personal title, e.g., Duke, Count, Pope.",
+    )
     earliest_year = models.IntegerField(blank=True, null=True)
     earliest_year_approximate = models.BooleanField(default=False)
     latest_year = models.IntegerField(blank=True, null=True)
     latest_year_approximate = models.BooleanField(default=False)
-    floruit = models.CharField(max_length=64, blank=True, null=True,
-                               help_text="Enter floruit dates only if no dates of birth or death are known. Do not enter both. Do not enter the 'fl.' prefix.")
+    floruit = models.CharField(
+        max_length=64,
+        blank=True,
+        null=True,
+        help_text="Enter floruit dates only if no dates of birth or death are known. Do not enter both. Do not enter the 'fl.' prefix.",
+    )
 
     legacy_id = models.CharField(max_length=64, blank=True, null=True)
     # roles = models.ManyToManyField("diamm_data.Role",
@@ -71,10 +81,12 @@ class Person(models.Model):
 
     @property
     def solr_relationships(self) -> list:
-        connection = SolrManager(settings.SOLR['SERVER'])
-        fq = ['type:sourcerelationship',
-              'related_entity_type_s:person',
-              f'related_entity_pk_i:{self.pk}']
+        connection = SolrManager(settings.SOLR["SERVER"])
+        fq = [
+            "type:sourcerelationship",
+            "related_entity_type_s:person",
+            f"related_entity_pk_i:{self.pk}",
+        ]
         sort = "source_ans asc"
 
         connection.search("*:*", fq=fq, sort=sort, rows=100)
@@ -82,10 +94,8 @@ class Person(models.Model):
 
     @property
     def solr_copyist(self) -> list:
-        connection = SolrManager(settings.SOLR['SERVER'])
-        fq = ['type:sourcecopyist',
-              'copyist_type_s:person',
-              f'copyist_pk_i:{self.pk}']
+        connection = SolrManager(settings.SOLR["SERVER"])
+        fq = ["type:sourcecopyist", "copyist_type_s:person", f"copyist_pk_i:{self.pk}"]
         sort = "source_ans asc"
 
         connection.search("*:*", fq=fq, sort=sort, rows=100)
@@ -93,9 +103,11 @@ class Person(models.Model):
 
     @property
     def solr_compositions(self) -> list:
-        connection = SolrManager(settings.SOLR['SERVER'])
-        uncertain_ids = self.compositions.filter(uncertain=True).values_list('composition__pk', flat=True)
-        fq = ['type:composition', f'composers_ii:{self.pk}']
+        connection = SolrManager(settings.SOLR["SERVER"])
+        uncertain_ids = self.compositions.filter(uncertain=True).values_list(
+            "composition__pk", flat=True
+        )
+        fq = ["type:composition", f"composers_ii:{self.pk}"]
         sort = "title_s asc"
         connection.search("*:*", fq=fq, sort=sort, rows=100)
 
@@ -104,10 +116,10 @@ class Person(models.Model):
 
         reslist = []
         for res in connection.results:
-            if res['pk'] in uncertain_ids:
-                res['uncertain'] = True
+            if res["pk"] in uncertain_ids:
+                res["uncertain"] = True
             else:
-                res['uncertain'] = False
+                res["uncertain"] = False
             reslist.append(res)
 
         return reslist

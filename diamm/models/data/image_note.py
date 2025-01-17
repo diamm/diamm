@@ -14,11 +14,9 @@ class ImageNote(models.Model):
     NOTE_TYPE = (
         (GENERAL, "General"),
         (CAPTURE_CONDITIONS, "Capture Conditions"),
-        (CAPTURE_DEVICE, "Capture Device")
+        (CAPTURE_DEVICE, "Capture Device"),
     )
 
     type = models.IntegerField(choices=NOTE_TYPE)
     note = models.TextField()
-    image = models.ForeignKey("diamm_data.Image",
-                              on_delete=models.CASCADE)
-
+    image = models.ForeignKey("diamm_data.Image", on_delete=models.CASCADE)

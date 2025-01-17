@@ -12,12 +12,12 @@ pfx_lookup = {t[0]: k for k, t in TYPE_PREFIX.items()}
 
 class Command(BaseCommand):
     def add_arguments(self, parser):
-        parser.add_argument('csvfile')
+        parser.add_argument("csvfile")
 
     def handle(self, *args, **options):
-        csvfile = options['csvfile']
+        csvfile = options["csvfile"]
 
-        with open(csvfile, 'r') as aligned:
+        with open(csvfile) as aligned:
             csvreader = csv.DictReader(aligned)
 
             for row in csvreader:
@@ -28,10 +28,8 @@ class Command(BaseCommand):
                 diamm_id = row.get("id")
                 source_record = Source.objects.get(id=diamm_id)
 
-                rism_ident = SourceAuthority(
+                _ = SourceAuthority(
                     identifier=f"{rism_identifier}",
                     identifier_type=ExternalIdentifiers.RISM,
-                    source=source_record
+                    source=source_record,
                 ).save()
-
-

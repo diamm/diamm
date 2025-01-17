@@ -1,6 +1,6 @@
-from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.db import models
 
 
 class SourceCopyist(models.Model):
@@ -22,21 +22,23 @@ class SourceCopyist(models.Model):
         (LIMINARY_TEXT, "Liminary Text"),
         (ILLUMINATOR, "Illuminator"),
         (TEXT_AND_MUSIC, "Text and Music"),
-        (UNKNOWN, "Unknown")
+        (UNKNOWN, "Unknown"),
     )
 
-    source = models.ForeignKey("diamm_data.Source",
-                               on_delete=models.CASCADE,
-                               related_name="copyists")
+    source = models.ForeignKey(
+        "diamm_data.Source", on_delete=models.CASCADE, related_name="copyists"
+    )
 
     uncertain = models.BooleanField(default=False)
     type = models.IntegerField(choices=SOURCE_COPYIST_TYPES, blank=True, null=True)
 
     # Copyists can be either People or Organizations.
-    limit = models.Q(app_label='diamm_data', model="person") | models.Q(app_label='diamm_data', model='organization')
-    content_type = models.ForeignKey(ContentType,
-                                     on_delete=models.CASCADE,
-                                     limit_choices_to=limit)
+    limit = models.Q(app_label="diamm_data", model="person") | models.Q(
+        app_label="diamm_data", model="organization"
+    )
+    content_type = models.ForeignKey(
+        ContentType, on_delete=models.CASCADE, limit_choices_to=limit
+    )
     object_id = models.PositiveIntegerField()
     copyist = GenericForeignKey()
 
@@ -50,5 +52,3 @@ class SourceCopyist(models.Model):
 
         d = dict(self.SOURCE_COPYIST_TYPES)
         return d[self.type]
-
-

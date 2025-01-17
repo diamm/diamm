@@ -5,6 +5,6 @@ from diamm.serializers.website.bibliography_author import BibliographyAuthorSeri
 
 
 class BibliographyAuthorDetail(generics.RetrieveAPIView):
-    template_name = 'website/bibliography_author/bibliography_author_detail.jinja2'
+    template_name = "website/bibliography_author/bibliography_author_detail.jinja2"
     serializer_class = BibliographyAuthorSerializer
     queryset = BibliographyAuthor.objects.all()

@@ -3,12 +3,12 @@ from django.db import models
 
 class BibliographyPublication(models.Model):
     """
-        This class stores additional publication info about a bibliography entry.
-        It is abstracted here so that these may be "mixed and matched" with
-        bibliography entries without needing to assume a set format of entry.
+    This class stores additional publication info about a bibliography entry.
+    It is abstracted here so that these may be "mixed and matched" with
+    bibliography entries without needing to assume a set format of entry.
 
-        For example, a Volume or Series Number, normally attached to a Journal
-        Article, may occasionally be needed on a published book.
+    For example, a Volume or Series Number, normally attached to a Journal
+    Article, may occasionally be needed on a published book.
     """
 
     class Meta:
@@ -54,14 +54,16 @@ class BibliographyPublication(models.Model):
         (B_CONFERENCE_NAME, "Conference name"),
         (B_CONFERENCE_LOCATION, "Conference location"),
         (B_CONFERENCE_DATE, "Conference date"),
-        (B_NOTE, "General Note")
+        (B_NOTE, "General Note"),
     )
 
     entry = models.CharField(max_length=2048)
     type = models.IntegerField(choices=PUBLICATION_INFO_TYPE)
-    bibliography = models.ForeignKey("diamm_data.Bibliography",
-                                     related_name="publication_info",
-                                     on_delete=models.CASCADE)
+    bibliography = models.ForeignKey(
+        "diamm_data.Bibliography",
+        related_name="publication_info",
+        on_delete=models.CASCADE,
+    )
 
     @property
     def publication_type(self):

@@ -10,29 +10,16 @@ class SourceCopyistSearchSerializer(serpy.Serializer):
     has_images_b = serpy.MethodField()
 
     # The type of copyist: Illuminator, music, etc.
-    type_s = serpy.StrField(
-        attr="copyist_type",
-        required=False
-    )
-    source_i = serpy.IntField(
-            attr="source.pk"
-    )
-    source_s = serpy.StrField(
-            attr="source.display_name"
-    )
+    type_s = serpy.StrField(attr="copyist_type", required=False)
+    source_i = serpy.IntField(attr="source.pk")
+    source_s = serpy.StrField(attr="source.display_name")
     # Sort by the source name *with the archive sigla*
-    source_ans = serpy.StrField(
-            attr="source.display_name"
-    )
+    source_ans = serpy.StrField(attr="source.display_name")
     copyist_type_s = serpy.MethodField()
     copyist_pk_i = serpy.MethodField()
     copyist_s = serpy.MethodField()
-    uncertain_b = serpy.BoolField(
-        attr="uncertain"
-    )
-    source_public_images_b = serpy.BoolField(
-        attr="source.public_images"
-    )
+    uncertain_b = serpy.BoolField(attr="uncertain")
+    source_public_images_b = serpy.BoolField(attr="source.public_images")
 
     def get_copyist_type_s(self, obj):
         if isinstance(obj.copyist, Organization):

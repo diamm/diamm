@@ -4,8 +4,8 @@ from django.contrib import admin, messages
 from django.db import models
 from django.db.models import Q
 from django.db.models.signals import post_delete, post_save
-from django.forms import TextInput, Textarea
-from django.shortcuts import render, redirect
+from django.forms import Textarea, TextInput
+from django.shortcuts import redirect, render
 from django.urls import path
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
@@ -27,7 +27,7 @@ from diamm.models.data.source_note import SourceNote
 from diamm.models.data.source_provenance import SourceProvenance
 from diamm.models.data.source_relationship import SourceRelationship
 from diamm.models.data.source_url import SourceURL
-from diamm.signals.item_signals import index_item, delete_item
+from diamm.signals.item_signals import delete_item, index_item
 
 
 class SourceCopyistInline(admin.StackedInline):
@@ -35,8 +35,11 @@ class SourceCopyistInline(admin.StackedInline):
     extra = 0
 
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('source__archive__city__parent',
-                                                            'content_type')
+        return (
+            super()
+            .get_queryset(request)
+            .select_related("source__archive__city__parent", "content_type")
+        )
 
 
 class SourceRelationshipInline(admin.StackedInline):
@@ -45,9 +48,14 @@ class SourceRelationshipInline(admin.StackedInline):
     # raw_id_fields = ('relationship_type',)
 
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('source__archive__city__parent',
-                                                            'content_type',
-                                                            'relationship_type').prefetch_related('related_entity')
+        return (
+            super()
+            .get_queryset(request)
+            .select_related(
+                "source__archive__city__parent", "content_type", "relationship_type"
+            )
+            .prefetch_related("related_entity")
+        )
 
 
 class SourceProvenanceInline(admin.StackedInline):
@@ -55,13 +63,19 @@ class SourceProvenanceInline(admin.StackedInline):
     extra = 0
     verbose_name = "Provenance"
     verbose_name_plural = "Provenance"
-    raw_id_fields = ('city', 'country', 'region', 'protectorate')
+    raw_id_fields = ("city", "country", "region", "protectorate")
 
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('source__archive__city__parent',
-                                                            'city__parent',
-                                                            'country__parent',
-                                                            'region__parent')
+        return (
+            super()
+            .get_queryset(request)
+            .select_related(
+                "source__archive__city__parent",
+                "city__parent",
+                "country__parent",
+                "region__parent",
+            )
+        )
 
 
 class BibliographyInline(admin.TabularInline):
@@ -69,16 +83,19 @@ class BibliographyInline(admin.TabularInline):
     verbose_name_plural = "Bibliography Entries"
     verbose_name = "Bibliography Entry"
     extra = 0
-    raw_id_fields = ('bibliography',)
+    raw_id_fields = ("bibliography",)
     formfield_overrides = {
-        models.CharField: {'widget': TextInput(attrs={'size': '160'})},
-        models.TextField: {'widget': Textarea(attrs={'rows': 2, 'cols': 40})}
+        models.CharField: {"widget": TextInput(attrs={"size": "160"})},
+        models.TextField: {"widget": Textarea(attrs={"rows": 2, "cols": 40})},
     }
-    list_select_related = ('source__archive__city__parent', 'bibliography__type')
+    list_select_related = ("source__archive__city__parent", "bibliography__type")
 
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('source__archive__city__parent',
-                                                            'bibliography__type')
+        return (
+            super()
+            .get_queryset(request)
+            .select_related("source__archive__city__parent", "bibliography__type")
+        )
 
 
 class IdentifiersInline(admin.TabularInline):
@@ -86,7 +103,11 @@ class IdentifiersInline(admin.TabularInline):
     extra = 0
 
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related("source__archive__city__parent")
+        return (
+            super()
+            .get_queryset(request)
+            .select_related("source__archive__city__parent")
+        )
 
 
 class AuthoritiesInline(admin.TabularInline):
@@ -98,9 +119,7 @@ class NotesInline(admin.TabularInline):
     model = SourceNote
     extra = 0
 
-    formfield_overrides = {
-        models.TextField: {'widget': AdminPagedownWidget}
-    }
+    formfield_overrides = {models.TextField: {"widget": AdminPagedownWidget}}
 
     def get_queryset(self, request):
         return super().get_queryset(request).select_related("source__archive__city")
@@ -109,14 +128,14 @@ class NotesInline(admin.TabularInline):
 class PagesInline(admin.TabularInline):
     model = Page
     extra = 0
-    classes = ('collapse',)
-    fields = ('link_id_field', 'numeration', 'sort_order', 'page_type')
-    readonly_fields = ('link_id_field',)
-    list_select_related = ('source__archive__city',)
+    classes = ("collapse",)
+    fields = ("link_id_field", "numeration", "sort_order", "page_type")
+    readonly_fields = ("link_id_field",)
+    list_select_related = ("source__archive__city",)
 
     def link_id_field(self, obj):
-        change_url = reverse('admin:diamm_data_page_change', args=(obj.pk,))
-        return mark_safe(f'<a href="{change_url}">{obj.pk}</a>')
+        change_url = reverse("admin:diamm_data_page_change", args=(obj.pk,))
+        return mark_safe(f'<a href="{change_url}">{obj.pk}</a>')  # noqa: S308
 
     def get_queryset(self, request):
         return super().get_queryset(request).select_related("source__archive__city")
@@ -130,37 +149,49 @@ class URLsInline(admin.TabularInline):
 class ItemInline(admin.TabularInline):
     model = Item
     extra = 0
-    classes = ('collapse',)
-    raw_id_fields = ('composition',)
-    fields = ('link_id_field', 'folio_start', 'folio_end', 'composition', 'get_composers', 'source_order',)
-    readonly_fields = ('link_id_field', 'get_composers')
-    list_select_related = ('source__archive__city__parent__parent', 'composition')
-    list_prefetch_related = ('composition__composers',)
+    classes = ("collapse",)
+    raw_id_fields = ("composition",)
+    fields = (
+        "link_id_field",
+        "folio_start",
+        "folio_end",
+        "composition",
+        "get_composers",
+        "source_order",
+    )
+    readonly_fields = ("link_id_field", "get_composers")
+    list_select_related = ("source__archive__city__parent__parent", "composition")
+    list_prefetch_related = ("composition__composers",)
 
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related("source__archive__city__parent__parent",
-                                                            "composition").prefetch_related('composition__composers')
+        return (
+            super()
+            .get_queryset(request)
+            .select_related("source__archive__city__parent__parent", "composition")
+            .prefetch_related("composition__composers")
+        )
 
     def get_composers(self, obj):
         if obj.composition.exists():
             cnames: list = obj.composition.composer_names
-            return mark_safe("; <br />".join(cnames))
+            return mark_safe("; <br />".join(cnames))  # noqa: S308
         return None
+
     get_composers.short_description = "Composers"
 
     def link_id_field(self, obj):
-        change_url = reverse('admin:diamm_data_item_change', args=(obj.pk,))
-        return mark_safe(f'<a href="{change_url}">{obj.pk}</a>')
+        change_url = reverse("admin:diamm_data_item_change", args=(obj.pk,))
+        return mark_safe(f'<a href="{change_url}">{obj.pk}</a>')  # noqa: S308
 
 
 class InventoryFilter(admin.SimpleListFilter):
-    title = _('Inventory')
+    title = _("Inventory")
     parameter_name = "inventory"
 
     def lookups(self, request, model_admin):
         return (
             ("yes", _("Source has inventory")),
-            ("no", _("Source does not have inventory"))
+            ("no", _("Source does not have inventory")),
         )
 
     def queryset(self, request, queryset):
@@ -174,11 +205,13 @@ class InventoryFilter(admin.SimpleListFilter):
 
 
 class CountryListFilter(admin.SimpleListFilter):
-    title = _('Country')
-    parameter_name = 'country'
+    title = _("Country")
+    parameter_name = "country"
 
     def lookups(self, request, model_admin):
-        countries = GeographicArea.objects.filter(Q(type=GeographicArea.COUNTRY) | Q(type=GeographicArea.STATE)).values_list('id', 'name')
+        countries = GeographicArea.objects.filter(
+            Q(type=GeographicArea.COUNTRY) | Q(type=GeographicArea.STATE)
+        ).values_list("id", "name")
         return list(countries)
 
     def queryset(self, request, queryset):
@@ -208,57 +241,79 @@ class SourceKeyFilter(InputFilter):
 @admin.register(Source)
 class SourceAdmin(VersionAdmin):
     save_on_top = True
-    list_display = ('shelfmark',
-                    'name',
-                    'get_city',
-                    'get_archive',
-                    'public',
-                    'public_images',
-                    'inventory_provided',
-                    'sort_order',
-                    'updated')
-    readonly_fields = ('created', 'updated')
-    search_fields = ('identifiers__identifier',
-                     'name', 'archive__name',
-                     'archive__siglum', 'archive__city__name', 'shelfmark',
-                     "=pk")
-    inlines = (IdentifiersInline, NotesInline, URLsInline, AuthoritiesInline,
-               BibliographyInline, SourceRelationshipInline, SourceCopyistInline,
-               SourceProvenanceInline, PagesInline, ItemInline)
+    list_display = (
+        "shelfmark",
+        "name",
+        "get_city",
+        "get_archive",
+        "public",
+        "public_images",
+        "inventory_provided",
+        "sort_order",
+        "updated",
+    )
+    readonly_fields = ("created", "updated")
+    search_fields = (
+        "identifiers__identifier",
+        "name",
+        "archive__name",
+        "archive__siglum",
+        "archive__city__name",
+        "shelfmark",
+        "=pk",
+    )
+    inlines = (
+        IdentifiersInline,
+        NotesInline,
+        URLsInline,
+        AuthoritiesInline,
+        BibliographyInline,
+        SourceRelationshipInline,
+        SourceCopyistInline,
+        SourceProvenanceInline,
+        PagesInline,
+        ItemInline,
+    )
     list_filter = (
         SourceKeyFilter,
         ArchiveKeyFilter,
         CountryListFilter,
-        InventoryFilter
+        InventoryFilter,
     )
-    list_editable = ('sort_order',)
-    filter_horizontal = ['notations']
+    list_editable = ("sort_order",)
+    filter_horizontal = ["notations"]
     # actions = (sort_sources,)
-    raw_id_fields = ('cover_image', 'archive')
+    raw_id_fields = ("cover_image", "archive")
     view_on_site = True
-    list_select_related = ('archive__city',)
+    list_select_related = ("archive__city",)
 
-    formfield_overrides = {
-        models.TextField: {'widget': AdminPagedownWidget}
-    }
+    formfield_overrides = {models.TextField: {"widget": AdminPagedownWidget}}
 
     def get_queryset(self, request):
         print("Getting source queryset")
-        return super().get_queryset(request).select_related('archive__city__parent__parent',
-                                                            "cover_image__page",
-                                                            "cover_image__type")
+        return (
+            super()
+            .get_queryset(request)
+            .select_related(
+                "archive__city__parent__parent",
+                "cover_image__page",
+                "cover_image__type",
+            )
+        )
 
     def get_city(self, obj):
         return f"{obj.archive.city.name} ({obj.archive.city.parent.name})"
+
     get_city.short_description = "City"
 
     def get_archive(self, obj):
         return f"{obj.archive.name}"
+
     get_archive.short_description = "Archive"
 
     def copy_inventory_view(self, request, pk):
         instance = Source.objects.get(pk=pk)
-        if 'do_action' not in request.POST:
+        if "do_action" not in request.POST:
             form = CopyInventoryForm(instance=instance)
         else:
             post_save.disconnect(index_item, sender=Item)
@@ -267,7 +322,7 @@ class SourceAdmin(VersionAdmin):
             if not form.is_valid():
                 messages.error(request, "There was an error in the form")
             else:
-                targets = form.cleaned_data['targets']
+                targets = form.cleaned_data["targets"]
 
                 for target in targets:
                     # If the source has accidentally been included in the targets,
@@ -282,22 +337,22 @@ class SourceAdmin(VersionAdmin):
                 post_save.connect(index_item, sender=Item)
                 post_delete.connect(index_item, sender=Item)
 
-                return redirect(
-                    'admin:diamm_data_source_change', pk
-                )
+                return redirect("admin:diamm_data_source_change", pk)
 
-        return render(request,
-                      'admin/diamm_data/source/copy_inventory.html', {
-                        'form': form,
-                        'instance': instance
-                      })
+        return render(
+            request,
+            "admin/diamm_data/source/copy_inventory.html",
+            {"form": form, "instance": instance},
+        )
 
     def get_urls(self):
         urls = super().get_urls()
         my_urls = [
-            path('<int:pk>/copy_inventory/',
-                 self.admin_site.admin_view(self.copy_inventory_view),
-                 name="copy-inventory")
+            path(
+                "<int:pk>/copy_inventory/",
+                self.admin_site.admin_view(self.copy_inventory_view),
+                name="copy-inventory",
+            )
         ]
 
         return my_urls + urls
@@ -321,6 +376,6 @@ class SourceAdmin(VersionAdmin):
 
     # TODO: Objects are not being deleted from Solr.
     def __delete_items_from_solr(self, target):
-        connection = pysolr.Solr(settings.SOLR['SERVER'])
+        connection = pysolr.Solr(settings.SOLR["SERVER"])
         fq = " AND ".join(["type:item", f"source_i:{target.pk}"])
-        results = connection.delete(q=fq)
+        _ = connection.delete(q=fq)

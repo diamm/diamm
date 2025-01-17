@@ -51,27 +51,25 @@ ITEM_PK = 13
 # These fields will be used in two places, so they are stored centrally here and then
 # imported in the reindexing signal and in the reindex_all script.
 FIELDS_TO_INDEX = [
-    'composition__composers__composer__last_name',
-    'composition__composers__composer__first_name',
-    'composition__composers__composer__pk',
-    'composition__composers__uncertain',
-    'composition__title',
-    'source_id',
-    'source__shelfmark',
-    'source__name',
-    'source__archive__siglum',
-    'composition__pk',
-    'folio_start',
-    'folio_end',
-    'source_attribution',
-    'pk'  # item pk
+    "composition__composers__composer__last_name",
+    "composition__composers__composer__first_name",
+    "composition__composers__composer__pk",
+    "composition__composers__uncertain",
+    "composition__title",
+    "source_id",
+    "source__shelfmark",
+    "source__name",
+    "source__archive__siglum",
+    "composition__pk",
+    "folio_start",
+    "folio_end",
+    "source_attribution",
+    "pk",  # item pk
 ]
 
 
 class ComposerInventorySearchSerializer(ContextSerializer):
-    type = StaticField(
-        value="composerinventory"
-    )
+    type = StaticField(value="composerinventory")
     pk = serpy.MethodField()
     composer_s = serpy.MethodField()
     composer_i = serpy.MethodField()
@@ -88,7 +86,7 @@ class ComposerInventorySearchSerializer(ContextSerializer):
     # database entity, so we can instead generate a random integer
     # and use that.
     def get_pk(self, obj) -> int:
-        return random.randrange(10000000)
+        return random.randrange(10000000)  # noqa: S311
 
     def get_composer_s(self, obj) -> str:
         if obj[LAST_NAME] and obj[FIRST_NAME]:

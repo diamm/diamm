@@ -3,9 +3,10 @@ from django.db import models
 
 class Page(models.Model):
     """
-        Represents an object that relates images and items in a source.
-        :> Sources have pages, (many) items point to (many) pages, (many) images point to a page.
+    Represents an object that relates images and items in a source.
+    :> Sources have pages, (many) items point to (many) pages, (many) images point to a page.
     """
+
     PAGE = 1
     ENDPAPER_MODERN = 2
     ENDPAPER_CONTEMPORARY = 3
@@ -31,25 +32,32 @@ class Page(models.Model):
         (ADDITIONAL, "Additional"),
         (PASTEDOWN, "Pastedown"),
         (OFFSET, "Offset"),
-        (SECONDARY, "Secondary")
+        (SECONDARY, "Secondary"),
     )
 
     class Meta:
         app_label = "diamm_data"
         ordering = ["source__shelfmark", "sort_order"]
 
-    source = models.ForeignKey("diamm_data.Source",
-                               related_name="pages",
-                               on_delete=models.CASCADE)
+    source = models.ForeignKey(
+        "diamm_data.Source", related_name="pages", on_delete=models.CASCADE
+    )
 
-    numeration = models.CharField(max_length=64, help_text="""The folio or page number. If there are many different systems in use,
-                                                           choose one and put the others in the note field.""")
+    numeration = models.CharField(
+        max_length=64,
+        help_text="""The folio or page number. If there are many different systems in use,
+                                                           choose one and put the others in the note field.""",
+    )
     # legacy id for the Image it was derived from.
     legacy_id = models.CharField(max_length=64, blank=True, null=True)
 
     # This may be refactored to allow for multiple page sort orders, but for now we'll stick with one
-    sort_order = models.DecimalField(default=0, blank=True, null=True, decimal_places=3, max_digits=100)
-    page_type = models.IntegerField(choices=PAGE_TYPE_CHOICES, default=PAGE, blank=True, null=True)
+    sort_order = models.DecimalField(
+        default=0, blank=True, null=True, decimal_places=3, max_digits=100
+    )
+    page_type = models.IntegerField(
+        choices=PAGE_TYPE_CHOICES, default=PAGE, blank=True, null=True
+    )
     iiif_canvas_uri = models.CharField(max_length=1024, blank=True, null=True)
     external = models.BooleanField(default=False)
 

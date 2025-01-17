@@ -12,7 +12,7 @@ class ArchiveSitemap(Sitemap):
         return Archive.objects.all().only("pk", "updated").order_by("pk")
 
     def location(self, obj):
-        return reverse('archive-detail', kwargs={"pk": obj.pk})
+        return reverse("archive-detail", kwargs={"pk": obj.pk})
 
     def lastmod(self, obj):
         return obj.updated

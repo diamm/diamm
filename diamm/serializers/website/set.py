@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional
 
 import serpy
 from rest_framework.reverse import reverse
@@ -11,18 +11,14 @@ class SetSourceSerializer(ContextSerializer):
     shelfmark = serpy.StrField()
     public_images = serpy.BoolField()
     has_images = serpy.MethodField()
-    display_name = serpy.StrField(
-        required=False
-    )
-    archive_name = serpy.StrField(
-        attr="archive.display_name"
-    )
+    display_name = serpy.StrField(required=False)
+    archive_name = serpy.StrField(attr="archive.display_name")
     cover = serpy.MethodField()
 
     def get_url(self, obj) -> str:
-        return reverse('source-detail',
-                       kwargs={"pk": obj.pk},
-                       request=self.context['request'])
+        return reverse(
+            "source-detail", kwargs={"pk": obj.pk}, request=self.context["request"]
+        )
 
     def get_has_images(self, obj) -> bool:
         return obj.pages.exists()
@@ -36,31 +32,31 @@ class SetSourceSerializer(ContextSerializer):
         if not cover_obj:
             return None
 
-        return reverse('image-serve-info',
-                       kwargs={"pk": cover_obj['id']},
-                       request=self.context['request'])
+        return reverse(
+            "image-serve-info",
+            kwargs={"pk": cover_obj["id"]},
+            request=self.context["request"],
+        )
 
 
 class SetDetailSerializer(ContextSerializer):
     pk = serpy.IntField()
     url = serpy.MethodField()
-    type = serpy.StrField(
-        attr='set_type'
-    )
+    type = serpy.StrField(attr="set_type")
     cluster_shelfmark = serpy.StrField()
     sources = serpy.MethodField()
-    description = serpy.StrField(
-        required=False
-    )
+    description = serpy.StrField(required=False)
 
     def get_url(self, obj) -> str:
-        return reverse('set-detail',
-                       kwargs={"pk": obj.pk},
-                       request=self.context['request'])
+        return reverse(
+            "set-detail", kwargs={"pk": obj.pk}, request=self.context["request"]
+        )
 
-    def get_sources(self, obj) -> Optional[List]:
+    def get_sources(self, obj) -> Optional[list]:
         if obj.sources:
-            return SetSourceSerializer(obj.sources.all(),
-                                       many=True,
-                                       context={'request': self.context['request']}).data
+            return SetSourceSerializer(
+                obj.sources.all(),
+                many=True,
+                context={"request": self.context["request"]},
+            ).data
         return None

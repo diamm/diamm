@@ -14,15 +14,15 @@ class PersonNote(models.Model):
         (BIOGRAPHY, "Biography"),
         (VARIANT_NAME_NOTE, "Variant Name"),
         (DATE_NOTE, "Date"),
-        (BIBLIOGRAPHY_NOTE, "Bibliography")
+        (BIBLIOGRAPHY_NOTE, "Bibliography"),
     )
 
     note = models.TextField()
     type = models.IntegerField(choices=NOTE_TYPES)
     public = models.BooleanField(default=True)
-    person = models.ForeignKey('diamm_data.Person',
-                               related_name="notes",
-                               on_delete=models.CASCADE)
+    person = models.ForeignKey(
+        "diamm_data.Person", related_name="notes", on_delete=models.CASCADE
+    )
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 

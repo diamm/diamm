@@ -15,4 +15,3 @@ class Text(models.Model):
             return self.incipit
         else:
             return Truncator(self.text).words(15, truncate=" ...")
-

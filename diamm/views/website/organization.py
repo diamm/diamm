@@ -9,5 +9,5 @@ class OrganizationDetail(generics.RetrieveAPIView):
     serializer_class = OrganizationDetailSerializer
 
     def get_queryset(self):
-        queryset = Organization.objects.all().select_related('type', 'location__parent')
+        queryset = Organization.objects.all().select_related("type", "location__parent")
         return queryset

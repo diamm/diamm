@@ -1,11 +1,13 @@
 from datetime import datetime, timedelta, timezone
-from diamm.models.data.image import Image
-from diamm.models.data.source import Source
-from diamm.models.data.person import Person
-from diamm.models.data.archive import Archive
-from diamm.models.data.organization import Organization
-from diamm.models.data.geographic_area import GeographicArea
+
 from django_jinja import library
+
+from diamm.models.data.archive import Archive
+from diamm.models.data.geographic_area import GeographicArea
+from diamm.models.data.image import Image
+from diamm.models.data.organization import Organization
+from diamm.models.data.person import Person
+from diamm.models.data.source import Source
 
 
 @library.global_function
@@ -31,6 +33,5 @@ def statistics():
         "num_people": num_people,
         "num_places": num_places,
         "num_organizations": num_organizations,
-        "num_archives": num_archives
+        "num_archives": num_archives,
     }
-

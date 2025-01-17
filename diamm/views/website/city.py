@@ -15,12 +15,12 @@ class CityList(generics.ListAPIView):
     queryset = GeographicArea.objects.filter(type=GeographicArea.CITY)
 
     def initial(self, request, *args, **kwargs):
-        letter = request.GET.get('l', None)
+        letter = request.GET.get("l", None)
 
         if letter:
             self.queryset = self.queryset.filter(name__istartswith=letter)
 
-        super(CityList, self).initial(request, *args, **kwargs)
+        super().initial(request, *args, **kwargs)
 
 
 class CityDetail(generics.RetrieveAPIView):

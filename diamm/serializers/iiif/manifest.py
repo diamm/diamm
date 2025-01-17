@@ -6,7 +6,7 @@
 #    problems with loading insecure content (DIAMM is served over HTTPS, and
 #    most browsers will refuse to cross-load secure and insecure content). This also
 #    simplifies loading images into a canvas.
-from typing import List, Dict, Optional
+from typing import Optional
 
 import serpy
 from django.conf import settings
@@ -20,59 +20,43 @@ from diamm.serializers.iiif.structure import StructureSerializer
 from diamm.serializers.serializers import ContextDictSerializer
 
 METADATA_MAPPING = {
-    'name_s': 'Name',
-    'shelfmark_s': 'Shelfmark',
-    'archive_s': 'Archive',
-    'surface_type_s': 'Surface Type',
-    'measurements_s': 'Measurements',
-    'identifiers_ss': 'Identifiers',
-    'date_statement_s': 'Date Statement',
-    'source_type_s': 'Source Type'
+    "name_s": "Name",
+    "shelfmark_s": "Shelfmark",
+    "archive_s": "Archive",
+    "surface_type_s": "Surface Type",
+    "measurements_s": "Measurements",
+    "identifiers_ss": "Identifiers",
+    "date_statement_s": "Date Statement",
+    "source_type_s": "Source Type",
 }
 
 
 class SourceManifestSerializer(ContextDictSerializer):
     ctx = StaticField(
-        value="http://iiif.io/api/presentation/2/context.json",
-        label="@context"
+        value="http://iiif.io/api/presentation/2/context.json", label="@context"
     )
-    id = serpy.MethodField(
-        label="@id"
-    )
-    type = StaticField(
-        value="sc:Manifest",
-        label="@type"
-    )
-    label = serpy.StrField(
-        attr="display_name_s"
-    )
+    id = serpy.MethodField(label="@id")
+    type = StaticField(value="sc:Manifest", label="@type")
+    label = serpy.StrField(attr="display_name_s")
     metadata = serpy.MethodField()
-    see_also = serpy.MethodField(
-        label="seeAlso"
-    )
+    see_also = serpy.MethodField(label="seeAlso")
     description = serpy.MethodField()
 
     related = serpy.MethodField()
     sequences = serpy.MethodField()
     structures = serpy.MethodField()
-    attribution = StaticField(
-        value="Digital Image Archive of Medieval Music"
-    )
+    attribution = StaticField(value="Digital Image Archive of Medieval Music")
 
-    logo = StaticField(
-        value="https://{0}/static/images/diammlogo.png".format(settings.HOSTNAME)
-    )
+    logo = StaticField(value=f"https://{settings.HOSTNAME}/static/images/diammlogo.png")
 
-    thumbnail = serpy.MethodField(
-        required=False
-    )
+    thumbnail = serpy.MethodField(required=False)
 
-    def get_id(self, obj: Dict) -> str:
-        return reverse('source-manifest',
-                       kwargs={'pk': obj['pk']},
-                       request=self.context['request'])
+    def get_id(self, obj: dict) -> str:
+        return reverse(
+            "source-manifest", kwargs={"pk": obj["pk"]}, request=self.context["request"]
+        )
 
-    def get_metadata(self, obj: Dict) -> List:
+    def get_metadata(self, obj: dict) -> list:  # noqa: UP006
         metadata_entries = []
         for field, label in METADATA_MAPPING.items():
             if field not in obj:
@@ -81,105 +65,110 @@ class SourceManifestSerializer(ContextDictSerializer):
             value = obj[field]
             if isinstance(value, list):
                 for v in value:
-                    metadata_entries.append({
-                        'label': label,
-                        'value': v
-                    })
+                    metadata_entries.append({"label": label, "value": v})
             else:
-                metadata_entries.append({
-                    'label': label,
-                    'value': value
-                })
+                metadata_entries.append({"label": label, "value": value})
         return metadata_entries
 
-    def get_description(self, obj: Dict) -> Optional[str]:
-        if 'notes_txt' in obj:
+    def get_description(self, obj: dict) -> Optional[str]:
+        if "notes_txt" in obj:
             # return the first note for the description. Truncate it to 300 words
-            return truncatewords(obj['notes_txt'][0], 300)
+            return truncatewords(obj["notes_txt"][0], 300)
         return None
 
-    def get_see_also(self, obj: Dict) -> Dict:
-        source_id = obj['pk']
-        source_url = reverse('source-detail',
-                             kwargs={'pk': source_id},
-                             request=self.context['request'])
-        return {
-            '@id': source_url,
-            'format': "application/json"
-        }
+    def get_see_also(self, obj: dict) -> dict:
+        source_id = obj["pk"]
+        source_url = reverse(
+            "source-detail", kwargs={"pk": source_id}, request=self.context["request"]
+        )
+        return {"@id": source_url, "format": "application/json"}
 
-    def get_related(self, obj: Dict) -> Dict:
-        source_id = obj['pk']
-        source_url = reverse('source-detail',
-                             kwargs={"pk": source_id},
-                             request=self.context['request'])
-        return {
-            "@id": source_url,
-            "format": "text/html"
-        }
+    def get_related(self, obj: dict) -> dict:
+        source_id = obj["pk"]
+        source_url = reverse(
+            "source-detail", kwargs={"pk": source_id}, request=self.context["request"]
+        )
+        return {"@id": source_url, "format": "text/html"}
 
-    def get_sequences(self, obj: Dict) -> List:
-        conn = SolrManager(settings.SOLR['SERVER'])
+    def get_sequences(self, obj: dict) -> list:
+        conn = SolrManager(settings.SOLR["SERVER"])
 
         # image_type_i:1 in the field list transformer childFilter ensures that
         # only the primary images (type 1) are returned.
         # images_ss:[* TO *] ensures that only records with images attached are returned.
         canvas_query = {
-            "fq": ["type:page", "source_i:{0}".format(obj['pk']), "images_ss:[* TO *]"],
-            "fl": ["id", "pk", "source_i", "numeration_s", "items_ii", "page_type_i", "image_type_i",
-                   "width_i", "height_i", "image_type_s",
-                   "[child parentFilter=type:page childFilter=type:image]"],
+            "fq": ["type:page", f"source_i:{obj['pk']}", "images_ss:[* TO *]"],
+            "fl": [
+                "id",
+                "pk",
+                "source_i",
+                "numeration_s",
+                "items_ii",
+                "page_type_i",
+                "image_type_i",
+                "width_i",
+                "height_i",
+                "image_type_s",
+                "[child parentFilter=type:page childFilter=type:image]",
+            ],
             "sort": "sort_order_f asc, image_type_i asc, numeration_ans asc",
-            "rows": 100
+            "rows": 100,
         }
         conn.search("*:*", **canvas_query)
 
-        canvases = CanvasSerializer(conn.results, many=True, context={"request": self.context['request']}).data
+        canvases = CanvasSerializer(
+            conn.results, many=True, context={"request": self.context["request"]}
+        ).data
 
         label = "Default"
-        source_id = obj['pk']
-        source_url = reverse('source-manifest',
-                             kwargs={'pk': source_id},
-                             request=self.context['request'])
-        sequence_id = "{0}sequence/{1}".format(source_url, label.lower())
+        source_id = obj["pk"]
+        source_url = reverse(
+            "source-manifest", kwargs={"pk": source_id}, request=self.context["request"]
+        )
+        sequence_id = f"{source_url}sequence/{label.lower()}"
 
-        return [{
-            "@id": sequence_id,
-            "@type": "sc:Sequence",
-            "label": label,
-            "canvases": canvases
-        }]
+        return [
+            {
+                "@id": sequence_id,
+                "@type": "sc:Sequence",
+                "label": label,
+                "canvases": canvases,
+            }
+        ]
 
-    def get_thumbnail(self, obj: Dict) -> Optional[Dict]:
-        if 'cover_image_url_sni' not in obj:
+    def get_thumbnail(self, obj: dict) -> Optional[dict]:
+        if "cover_image_url_sni" not in obj:
             return None
         else:
-            cover_image_url = reverse('image-serve-info',
-                                      kwargs={"pk": obj['cover_image_i']},
-                                      request=self.context['request'])
+            cover_image_url = reverse(
+                "image-serve-info",
+                kwargs={"pk": obj["cover_image_i"]},
+                request=self.context["request"],
+            )
             return {
-                "@id": cover_image_url + "full/{0},/0/default.jpg".format(settings.IIIF['THUMBNAIL_WIDTH']),
+                "@id": cover_image_url
+                + f"full/{settings.IIIF['THUMBNAIL_WIDTH']},/0/default.jpg",
                 "service": {
                     "@context": "http://iiif.io/api/image/2/context.json",
                     "@id": cover_image_url,
-                    "profile": "http://iiif.io/api/image/2/level1.json"
-                }
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                },
             }
 
-    def get_structures(self, obj: Dict) -> List:
-        conn = SolrManager(settings.SOLR['SERVER'])
+    def get_structures(self, obj: dict) -> list:
+        conn = SolrManager(settings.SOLR["SERVER"])
 
         # The pages_ii query ensures we retrieve only those records that have images associated with them.
         structure_query = {
-            "fq": ["type:item", "source_i:{0}".format(obj['pk']), "pages_ii:[* TO *]"],
+            "fq": ["type:item", f"source_i:{obj['pk']}", "pages_ii:[* TO *]"],
             "fl": ["pages_ii", "pages_ssni", "source_i", "pk", "composition_s"],
             "sort": "folio_start_ans asc",
             "rows": 100,
         }
         conn.search("*:*", **structure_query)
 
-        structures = StructureSerializer(conn.results,
-                                         context={"request": self.context["request"]},
-                                         many=True).data
+        structures = StructureSerializer(
+            conn.results, context={"request": self.context["request"]}, many=True
+        ).data
 
         return structures

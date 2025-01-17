@@ -6,4 +6,4 @@ from diamm.models.data.notation import Notation
 
 @admin.register(Notation)
 class NotationAdmin(VersionAdmin):
-    search_fields = ('name',)
+    search_fields = ("name",)

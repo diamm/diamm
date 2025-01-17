@@ -1,31 +1,31 @@
 import logging
-from typing import Optional, Dict, Iterator
+from collections.abc import Iterator
+from typing import Optional
 
 import pysolr
 from django.conf import settings
 
-SolrConnection: pysolr.Solr = pysolr.Solr(settings.SOLR['SERVER'])
+SolrConnection: pysolr.Solr = pysolr.Solr(settings.SOLR["SERVER"])
 
 
 def __solr_prepare(instances) -> None:
     """
-        Both index and delete require the step of checking
-        to see if the requested documents exist. For indexing, this is so we don't get
-        duplicate records in the index; for deleting, it's rather obvious.
-        This method deletes the documents in question and returns the connection object.
+    Both index and delete require the step of checking
+    to see if the requested documents exist. For indexing, this is so we don't get
+    duplicate records in the index; for deleting, it's rather obvious.
+    This method deletes the documents in question and returns the connection object.
 
-        An array of model instances must be passed to this method. For single instances,
-        the caller should wrap it in an array of length 1 before passing it in.
+    An array of model instances must be passed to this method. For single instances,
+    the caller should wrap it in an array of length 1 before passing it in.
     """
     # connection = pysolr.Solr(settings.SOLR['SERVER'])
     #
     for instance in instances:
-        fq = [f"type:{instance.__class__.__name__.lower()}",
-              f"pk:{instance.pk}"]
+        fq = [f"type:{instance.__class__.__name__.lower()}", f"pk:{instance.pk}"]
         records = SolrConnection.search("*:*", fq=fq, fl="id")
         if records.docs:
             for doc in records.docs:
-                SolrConnection.delete(id=doc['id'])
+                SolrConnection.delete(id=doc["id"])
                 SolrConnection.commit()
     #
     # return connection
@@ -84,20 +84,21 @@ class SolrManager:
     Once `search()` has been called users can iterate through the `results` property and it will transparently
     fire off requests for the next page (technically, the next cursor mark) before yielding a result.
     """
+
     def __init__(self, url: str, curs_sort_statement: str = "id asc") -> None:
         # self._conn: pysolr.Solr = pysolr.Solr(url)
         self._res: Optional[pysolr.Results] = None
         self._curs_sort_statement: str = curs_sort_statement
         self._hits: int = 0
         self._q: Optional[str] = None
-        self._q_kwargs: Dict = {}
+        self._q_kwargs: dict = {}
         self._cursorMark: str = "*"
         self._idx: int = 0
         self._page_idx: int = 0
         # since group queries don't use cursor marks, we need to manually manage
         # the number of rows we return in the iterator
-        self._group_rows: int = settings.SOLR['PAGE_SIZE']
-        self._gp_kwargs: Dict = {
+        self._group_rows: int = settings.SOLR["PAGE_SIZE"]
+        self._gp_kwargs: dict = {
             "group": "true",
             "group.limit": 1000,
             "group.ngroups": "true",
@@ -119,12 +120,12 @@ class SolrManager:
         self._page_idx = 0
 
         if "sort" in kwargs:
-            self._q_kwargs['sort'] += f", {self._curs_sort_statement}"
+            self._q_kwargs["sort"] += f", {self._curs_sort_statement}"
         else:
-            self._q_kwargs['sort'] = f"{self._curs_sort_statement}"
+            self._q_kwargs["sort"] = f"{self._curs_sort_statement}"
 
         self._cursorMark = "*"
-        self._q_kwargs['cursorMark'] = self._cursorMark
+        self._q_kwargs["cursorMark"] = self._cursorMark
         self._res = SolrConnection.search(q, **self._q_kwargs)
         self._hits = self._res.hits
 
@@ -135,32 +136,42 @@ class SolrManager:
         :return: Number of hits
         """
         if self._res is None:
-            log.warning("A request for number of results was called before a search was initiated")
+            log.warning(
+                "A request for number of results was called before a search was initiated"
+            )
 
         return self._hits
 
-    def grouped_search(self, group_name: str, group_sort: str, q: str, **kwargs) -> None:
+    def grouped_search(
+        self, group_name: str, group_sort: str, q: str, **kwargs
+    ) -> None:
         self._idx = 0
         self._page_idx = 0
         self._q = q
         self._q_kwargs = kwargs
         self._group_name = group_name
-        self._gp_kwargs.update({"group.field": self._group_name, "group.sort": group_sort})
-        self._res = SolrConnection.search(q, start=0, rows=self._group_rows, **self._q_kwargs, **self._gp_kwargs)
+        self._gp_kwargs.update(
+            {"group.field": self._group_name, "group.sort": group_sort}
+        )
+        self._res = SolrConnection.search(
+            q, start=0, rows=self._group_rows, **self._q_kwargs, **self._gp_kwargs
+        )
         self._hits = self._res.hits
 
     @property
-    def grouped_results(self) -> Iterator[Dict]:
+    def grouped_results(self) -> Iterator[dict]:
         if self._res is None:
-            log.warning("A request for a group was called before a search was initiated")
+            log.warning(
+                "A request for a group was called before a search was initiated"
+            )
 
-        group: Dict = self._res.grouped.get(self._group_name)
-        num_groups: int = group['ngroups']
+        group: dict = self._res.grouped.get(self._group_name)
+        num_groups: int = group["ngroups"]
         pgno = 0
 
         while self._idx < num_groups:
             try:
-                yield self._res.grouped.get(self._group_name)['groups'][self._page_idx]
+                yield self._res.grouped.get(self._group_name)["groups"][self._page_idx]
             except IndexError:
                 self._page_idx = 0
                 # When we run out
@@ -173,13 +184,17 @@ class SolrManager:
                 pgno += 1
                 start: int = (pgno * self._group_rows) + 1
 
-                self._res = SolrConnection.search(self._q, start=start, rows=self._group_rows,
-                                              **self._q_kwargs,
-                                              **self._gp_kwargs)
+                self._res = SolrConnection.search(
+                    self._q,
+                    start=start,
+                    rows=self._group_rows,
+                    **self._q_kwargs,
+                    **self._gp_kwargs,
+                )
 
                 gp = self._res.grouped.get(self._group_name)
-                if gp and gp.get('groups'):
-                    yield gp.get('groups')[self._page_idx]
+                if gp and gp.get("groups"):
+                    yield gp.get("groups")[self._page_idx]
                 else:
                     break
 
@@ -187,7 +202,7 @@ class SolrManager:
             self._page_idx += 1
 
     @property
-    def results(self) -> Iterator[Dict]:
+    def results(self) -> Iterator[dict]:
         """
         Provides a generator for pysolr.Results.docs, yielding
         the next result on every loop. In the case where the next result
@@ -196,7 +211,9 @@ class SolrManager:
         :return: The full list of Solr results
         """
         if self._res is None:
-            log.warning("A request for results was called before a search was initiated.")
+            log.warning(
+                "A request for results was called before a search was initiated."
+            )
 
         while self._idx < self._hits:
             try:
@@ -204,7 +221,7 @@ class SolrManager:
             except IndexError:
                 self._page_idx = 0
                 self._cursorMark = self._res.nextCursorMark
-                self._q_kwargs['cursorMark'] = self._res.nextCursorMark
+                self._q_kwargs["cursorMark"] = self._res.nextCursorMark
                 self._res = SolrConnection.search(self._q, **self._q_kwargs)
                 self._hits = self._res.hits
                 if self._res.docs:

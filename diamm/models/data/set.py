@@ -21,16 +21,16 @@ class Set(models.Model):
         (NON_MUSIC, "Non-music Collection"),
         (SCRIBAL, "Copyist or Scribal Concordance"),
         (SEPARATE_VOLUMES, "Source bound in separate volumes"),
-        (PROJECT, "Project Collection")
+        (PROJECT, "Project Collection"),
     )
 
     cluster_shelfmark = models.CharField(max_length=255, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
 
-    bibliography = models.ManyToManyField("diamm_data.Bibliography",
-                                          through="diamm_data.SetBibliography")
-    sources = models.ManyToManyField("diamm_data.Source",
-                                     related_name="sets")
+    bibliography = models.ManyToManyField(
+        "diamm_data.Bibliography", through="diamm_data.SetBibliography"
+    )
+    sources = models.ManyToManyField("diamm_data.Source", related_name="sets")
     type = models.IntegerField(choices=SET_TYPES)
 
     created = models.DateTimeField(auto_now_add=True)
@@ -43,4 +43,3 @@ class Set(models.Model):
     def set_type(self):
         d = dict(self.SET_TYPES)
         return d[self.type]
-

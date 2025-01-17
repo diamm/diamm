@@ -18,18 +18,22 @@ from diamm.models.data.page import Page
 class ItemAdminForm(ModelForm):
     class Meta:
         model = Item
-        fields = '__all__'
+        fields = "__all__"  # noqa: DJ007
 
     def __init__(self, *args, **kwargs):
-        super(ItemAdminForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         # If we are editing an existing record, show only the pages of the attached source.
         # If we don't have a source attached, show an empty queryset so that no pages show up to add.
         # This helps reduce confusion around what pages are available to add to this item.
         if self.instance.pk:
-            self.fields['pages'].queryset = Page.objects.filter(source=self.instance.source).select_related('source').order_by('sort_order')
+            self.fields["pages"].queryset = (
+                Page.objects.filter(source=self.instance.source)
+                .select_related("source")
+                .order_by("sort_order")
+            )
         else:
-            self.fields['pages'].queryset = Page.objects.none()
+            self.fields["pages"].queryset = Page.objects.none()
 
 
 class ItemNoteInline(admin.TabularInline):
@@ -42,13 +46,13 @@ class BibliographyInline(admin.TabularInline):
     verbose_name = "Bibliography"
     model = ItemBibliography
     extra = 0
-    raw_id_fields = ('bibliography',)
+    raw_id_fields = ("bibliography",)
 
 
 class ItemComposerInline(admin.TabularInline):
     model = ItemComposer
     extra = 0
-    raw_id_fields = ('composer',)
+    raw_id_fields = ("composer",)
 
 
 class AttachedToPagesListFilter(admin.SimpleListFilter):
@@ -56,10 +60,7 @@ class AttachedToPagesListFilter(admin.SimpleListFilter):
     parameter_name = "page_att"
 
     def lookups(self, request, model_admin):
-        return (
-            ("False", _("Not attached to pages")),
-            ("True", _("Attached to pages"))
-        )
+        return (("False", _("Not attached to pages")), ("True", _("Attached to pages")))
 
     def queryset(self, request, queryset):
         val = self.value()
@@ -95,43 +96,57 @@ class CompositionKeyFilter(InputFilter):
 class ItemAdmin(VersionAdmin):
     save_on_top = True
     form = ItemAdminForm
-    list_display = ('get_source', 'get_composition', 'get_composers',
-                    'folio_start', 'folio_end', 'source_order', 'pages_attached',
-                    'created', 'updated')
-    list_editable = ('source_order',
-                     'folio_start',
-                     'folio_end')
+    list_display = (
+        "get_source",
+        "get_composition",
+        "get_composers",
+        "folio_start",
+        "folio_end",
+        "source_order",
+        "pages_attached",
+        "created",
+        "updated",
+    )
+    list_editable = ("source_order", "folio_start", "folio_end")
     list_filter = (
         SourceKeyFilter,
         CompositionKeyFilter,
         AttachedToPagesListFilter,
     )
-    search_fields = ("source__name", "source__identifiers__identifier", "source__shelfmark",
-                     "composition__title", "=source__pk")
+    search_fields = (
+        "source__name",
+        "source__identifiers__identifier",
+        "source__shelfmark",
+        "composition__title",
+        "=source__pk",
+    )
     # list_filter = (AggregateComposerListFilter,)
     inlines = (ItemNoteInline, ItemComposerInline, BibliographyInline)
-    filter_horizontal = ['pages']
+    filter_horizontal = ["pages"]
     # exclude = ("pages",)
-    raw_id_fields = ('source', 'composition')
+    raw_id_fields = ("source", "composition")
 
     def pages_attached(self, obj):
         return obj.pages.exists()
+
     pages_attached.short_description = "Pages Linked"
     pages_attached.boolean = True
 
     def get_source(self, obj):
         return f"{obj.source.display_name}"
+
     get_source.short_description = "Source"
     get_source.admin_order_field = "source__shelfmark"
 
     def get_composers(self, obj):
         if obj.composition:
             cnames: list = obj.composition.composer_names
-            return mark_safe("; <br />".join(cnames))
+            return mark_safe("; <br />".join(cnames))  # noqa: S308
         return None
+
     get_composers.short_description = "Composers"
     get_composers.short_description = "composers"
-    get_composers.admin_order_field = 'composition__composers__composer__last_name'
+    get_composers.admin_order_field = "composition__composers__composer__last_name"
 
     def get_composition(self, obj):
         if obj.composition:
@@ -141,6 +156,8 @@ class ItemAdmin(VersionAdmin):
     get_composition.admin_order_field = "composition__title"
 
     def get_queryset(self, request):
-        qset = super(ItemAdmin, self).get_queryset(request)
-        qset = qset.select_related('source__archive', 'composition').prefetch_related('pages')
+        qset = super().get_queryset(request)
+        qset = qset.select_related("source__archive", "composition").prefetch_related(
+            "pages"
+        )
         return qset

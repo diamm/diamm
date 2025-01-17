@@ -6,7 +6,7 @@ class Bibliography(models.Model):
         app_label = "diamm_data"
         verbose_name = "Bibliography entry"
         verbose_name_plural = "Bibliography entries"
-        ordering = ('created',)
+        ordering = ("created",)
 
     title = models.CharField(max_length=1024)
     # authors = models.ManyToManyField("diamm_data.BibliographyAuthorRole")
@@ -19,6 +19,10 @@ class Bibliography(models.Model):
 
     def __str__(self):
         if self.authors.exists():
-            auth = ", ".join(self.authors.select_related('bibliography_author__last_name', "bibliography_entry__title").values_list('bibliography_author__last_name', flat=True))
+            auth = ", ".join(
+                self.authors.select_related(
+                    "bibliography_author__last_name", "bibliography_entry__title"
+                ).values_list("bibliography_author__last_name", flat=True)
+            )
             return f"{auth}: {self.title}"
         return f"{self.title}"

@@ -1,28 +1,26 @@
 import React from "react";
-import { matchPath } from "react-router";
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 import PropTypes from "prop-types";
 import {
-    ROOT_ROUTE,
-    INVENTORY_ROUTE,
-    INVENTORY_ROUTE_BY_COMPOSER,
-    INVENTORY_ROUTE_ALPHABETICAL,
-    INVENTORY_ROUTE_UNINVENTORIED,
-    IMAGES_ROUTE,
-    SETS_ROUTE,
     BIBLIOGRAPHY_ROUTE,
-    CONTRIBUTORS_ROUTE,
     COMMENTARY_ROUTE,
     COMMENTARY_ROUTE_PRIVATE,
-    CORRECTIONS_ROUTE
+    CONTRIBUTORS_ROUTE,
+    CORRECTIONS_ROUTE,
+    IMAGES_ROUTE,
+    INVENTORY_ROUTE,
+    INVENTORY_ROUTE_ALPHABETICAL,
+    INVENTORY_ROUTE_BY_COMPOSER,
+    isActive,
+    ROOT_ROUTE,
+    SETS_ROUTE
 } from "../routes";
 
-import { SERVER_BASE_URL } from "../constants";
-import { connect } from "react-redux";
+import {SERVER_BASE_URL} from "../constants";
+import {connect} from "react-redux";
 
 import Title from "./title";
-import { fetchSourceInfo, setUserInfo } from "../actions/index";
-import { isActive } from "../routes";
+import {fetchSourceInfo, setUserInfo} from "../actions/index";
 
 const MenuLink = ({active, route, title, show=true}) =>
 {

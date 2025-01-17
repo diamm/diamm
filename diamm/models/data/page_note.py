@@ -14,14 +14,14 @@ class PageNote(models.Model):
         (DECORATION_COLOUR, "Decoration Colour"),
         (DECORATION_STYLE, "Decoration Style"),
         (INITIAL, "Decorated Initial"),
-        (INITIAL_COLOUR, "Decorated Initial Colour")
+        (INITIAL_COLOUR, "Decorated Initial Colour"),
     )
 
     type = models.IntegerField(choices=NOTE_TYPE)
     note = models.TextField()
-    page = models.ForeignKey("diamm_data.Page",
-                             related_name="notes",
-                             on_delete=models.CASCADE)
+    page = models.ForeignKey(
+        "diamm_data.Page", related_name="notes", on_delete=models.CASCADE
+    )
 
     @property
     def note_type(self):

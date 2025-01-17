@@ -9,7 +9,8 @@ from diamm.serializers.website.region import RegionDetailSerializer
 
 class RegionDetail(generics.RetrieveAPIView):
     template_name = "website/region/region_detail.jinja2"
-    queryset = GeographicArea.objects.filter(Q(type=GeographicArea.REGION) | Q(type=GeographicArea.STATE))
+    queryset = GeographicArea.objects.filter(
+        Q(type=GeographicArea.REGION) | Q(type=GeographicArea.STATE)
+    )
     serializer_class = RegionDetailSerializer
     renderer_classes = (HTMLRenderer, UJSONRenderer)
-

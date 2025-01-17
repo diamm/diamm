@@ -1,1 +1,1 @@
-default_app_config = 'diamm.diamm_data.apps.DiammDataAppConfig'
+default_app_config = "diamm.diamm_data.apps.DiammDataAppConfig"

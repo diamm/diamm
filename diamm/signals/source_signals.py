@@ -1,9 +1,14 @@
 import threading
 
-from django.db.models.signals import post_save, post_delete
+from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 
-from diamm.helpers.solr_helpers import solr_index, solr_index_many, solr_delete, solr_delete_many
+from diamm.helpers.solr_helpers import (
+    solr_delete,
+    solr_delete_many,
+    solr_index,
+    solr_index_many,
+)
 from diamm.models.data.source import Source
 from diamm.serializers.search.item import ItemSearchSerializer
 from diamm.serializers.search.source import SourceSearchSerializer
@@ -29,8 +34,12 @@ def delete_source(sender, instance, **kwargs):
 
 def _do_source_indexing(instance):
     solr_index(SourceSearchSerializer, instance)
-    solr_index_many(ItemSearchSerializer,
-                    instance.inventory.select_related("composition").prefetch_related("composition__composers").all())
+    solr_index_many(
+        ItemSearchSerializer,
+        instance.inventory.select_related("composition")
+        .prefetch_related("composition__composers")
+        .all(),
+    )
 
 
 def _do_source_delete(instance):

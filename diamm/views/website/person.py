@@ -1,5 +1,5 @@
 from django.db.models import Prefetch
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from rest_framework import generics
 
 from diamm.models.data.composition import Composition
@@ -15,7 +15,10 @@ class PersonDetail(generics.RetrieveAPIView):
         cc_queryset = Composition.objects.all()
         # This lets us prefetch on Generic Foreign Relations.
         queryset = Person.objects.prefetch_related(
-            Prefetch('compositions__composition__sources__source__archive__city', queryset=cc_queryset),
+            Prefetch(
+                "compositions__composition__sources__source__archive__city",
+                queryset=cc_queryset,
+            ),
         )
         return queryset
 
@@ -26,4 +29,4 @@ def legacy_composer_redirect(req, pk: int) -> str:
     legacy_lookup = f"legacy_composer.{pk}"
     person = get_object_or_404(Person, legacy_id=legacy_lookup)
 
-    return redirect('person-detail', pk=person.pk)
+    return redirect("person-detail", pk=person.pk)

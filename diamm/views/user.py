@@ -1,5 +1,3 @@
-from typing import Dict
-
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.generic.edit import FormView
@@ -12,7 +10,7 @@ from diamm.renderers.ujson_renderer import UJSONRenderer
 from diamm.serializers.website.user import UserSerializer
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(login_required, name="dispatch")
 class ProfileView(views.APIView):
     template_name = "website/user/profile.jinja2"
     renderer_classes = (HTMLRenderer, UJSONRenderer)
@@ -23,30 +21,30 @@ class ProfileView(views.APIView):
         return Response(data)
 
 
-@method_decorator(login_required(login_url="/login/"), name='dispatch')
+@method_decorator(login_required(login_url="/login/"), name="dispatch")
 class ProfileEditView(FormView):
     form_class = AccountEditForm
     template_name = "website/user/profile-edit.jinja2"
     success_url = "/account/"
 
     def form_valid(self, form):
-        response = super(ProfileEditView, self).form_valid(form)
+        response = super().form_valid(form)
         user = self.request.user
 
-        user.email = form.cleaned_data.get('email')
-        user.affiliation = form.cleaned_data.get('affiliation')
-        user.first_name = form.cleaned_data.get('first_name')
-        user.last_name = form.cleaned_data.get('last_name')
+        user.email = form.cleaned_data.get("email")
+        user.affiliation = form.cleaned_data.get("affiliation")
+        user.first_name = form.cleaned_data.get("first_name")
+        user.last_name = form.cleaned_data.get("last_name")
         user.save()
 
         return response
 
-    def get_initial(self) -> Dict:
+    def get_initial(self) -> dict:
         user = self.request.user
         initial_data = {
-            'email': user.email,
-            'first_name': user.first_name,
-            'last_name': user.last_name,
-            'affiliation': user.affiliation
+            "email": user.email,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "affiliation": user.affiliation,
         }
         return initial_data

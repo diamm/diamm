@@ -1,7 +1,7 @@
 import serpy
 from rest_framework.reverse import reverse
 
-from diamm.serializers.serializers import ContextSerializer, ContextDictSerializer
+from diamm.serializers.serializers import ContextDictSerializer, ContextSerializer
 
 
 class BibliographySerializer(ContextDictSerializer):
@@ -9,7 +9,7 @@ class BibliographySerializer(ContextDictSerializer):
     pk = serpy.IntField()
 
     def get_entry(self, obj):
-        return obj['prerendered_sni']
+        return obj["prerendered_sni"]
 
 
 class BibliographyAuthorSerializer(ContextSerializer):
@@ -19,11 +19,13 @@ class BibliographyAuthorSerializer(ContextSerializer):
     bibliography = serpy.MethodField()
 
     def get_url(self, obj):
-        return reverse('author-detail',
-                       kwargs={"pk": obj.pk},
-                       request=self.context['request'])
+        return reverse(
+            "author-detail", kwargs={"pk": obj.pk}, request=self.context["request"]
+        )
 
     def get_bibliography(self, obj):
-        return BibliographySerializer(obj.solr_bibliography,
-                                      many=True,
-                                      context={'request': self.context['request']}).data
+        return BibliographySerializer(
+            obj.solr_bibliography,
+            many=True,
+            context={"request": self.context["request"]},
+        ).data

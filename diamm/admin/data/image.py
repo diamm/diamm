@@ -18,23 +18,26 @@ from diamm.models.data.page import Page
 
 class ImageAdminForm(forms.ModelForm):
     """
-        This limits the choices for the page dropdown to just those pages
-        attached to the source. Of course, this causes a problem if the image
-        is not connected to the page, since the page is what is attached to the source.
-        Remember:
+    This limits the choices for the page dropdown to just those pages
+    attached to the source. Of course, this causes a problem if the image
+    is not connected to the page, since the page is what is attached to the source.
+    Remember:
 
-        Image -> Page -> Source
+    Image -> Page -> Source
 
-        So if Page is missing, there is no direct relationship to filter on. We default
-        therefore to no pages (a queryset of none). This field will be populated
-        when the image is attached to a page which is attached to a source.
+    So if Page is missing, there is no direct relationship to filter on. We default
+    therefore to no pages (a queryset of none). This field will be populated
+    when the image is attached to a page which is attached to a source.
     """
+
     def __init__(self, *args, **kwargs):
-        super(ImageAdminForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if self.instance.page:
-            self.fields['page'].queryset = Page.objects.filter(source_id=self.instance.page.source.pk)
+            self.fields["page"].queryset = Page.objects.filter(
+                source_id=self.instance.page.source.pk
+            )
         else:
-            self.fields['page'].queryset = Page.objects.none()
+            self.fields["page"].queryset = Page.objects.none()
 
 
 class ImageSourceListFilter(admin.SimpleListFilter):
@@ -42,10 +45,7 @@ class ImageSourceListFilter(admin.SimpleListFilter):
     parameter_name = "source_attach"
 
     def lookups(self, request, model_admin):
-        return (
-            ("True", _("No Source Attached")),
-            ("False", _("Attached to a Source"))
-        )
+        return (("True", _("No Source Attached")), ("False", _("Attached to a Source")))
 
     def queryset(self, request, queryset):
         val = self.value()
@@ -57,16 +57,14 @@ class ImageSourceListFilter(admin.SimpleListFilter):
 
 class IIIFDataListFilter(admin.SimpleListFilter):
     """
-        Filters for where a record has a location, but the IIIF response is null.
+    Filters for where a record has a location, but the IIIF response is null.
     """
+
     title = _("IIIF Info")
     parameter_name = "iiif_info"
 
     def lookups(self, request, model_admin):
-        return (
-            ("False", _("No IIIF Description")),
-            ("True", _("IIIF Description"))
-        )
+        return (("False", _("No IIIF Description")), ("True", _("IIIF Description")))
 
     def queryset(self, request, queryset):
         val = self.value()
@@ -74,12 +72,12 @@ class IIIFDataListFilter(admin.SimpleListFilter):
             return queryset
         if val == "True":
             return queryset.filter(
-                    location__isnull=False,
-                    iiif_response_cache__isnull=False)
+                location__isnull=False, iiif_response_cache__isnull=False
+            )
         elif val == "False":
             return queryset.filter(
-                    location__isnull=False,
-                    iiif_response_cache__isnull=True)
+                location__isnull=False, iiif_response_cache__isnull=True
+            )
 
 
 class ImageNoteInline(admin.TabularInline):
@@ -104,26 +102,36 @@ def refetch_iiif_info(modeladmin, request, queryset):
 
         url = urljoin(location + "/", "info.json")
 
-        r = requests.get(url, headers={
-            "referer": f"https://{settings.HOSTNAME}",
-            "X-DIAMM": settings.DIAMM_IMAGE_KEY,
-            "User-Agent": settings.DIAMM_UA
-        })
+        r = requests.get(
+            url,
+            headers={
+                "referer": f"https://{settings.HOSTNAME}",
+                "X-DIAMM": settings.DIAMM_IMAGE_KEY,
+                "User-Agent": settings.DIAMM_UA,
+            },
+            timeout=10,
+        )
 
         if 200 <= r.status_code < 300:
             j = r.json()
             img.iiif_response_cache = ujson.dumps(j)
             img.save()
+
+
 refetch_iiif_info.short_description = "Re-Fetch IIIF Image Info"
 
 
 def make_selected_images_public(modeladmin, request, queryset):
     queryset.update(public=True)
+
+
 make_selected_images_public.short_description = "Make selected images public"
 
 
 def make_selected_images_private(modeladmin, request, queryset):
     queryset.update(public=False)
+
+
 make_selected_images_private.short_description = "Make selected images private"
 
 
@@ -131,27 +139,24 @@ make_selected_images_private.short_description = "Make selected images private"
 class ImageAdmin(VersionAdmin):
     save_on_top = True
     form = ImageAdminForm
-    list_display = ('pk', 'public', 'legacy_filename', 'location', 'get_type')
+    list_display = ("pk", "public", "legacy_filename", "location", "get_type")
     list_filter = (
         SourceKeyFilter,
         "type__name",
         ImageSourceListFilter,
         IIIFDataListFilter,
         "public",
-        "external"
+        "external",
     )
 
-    list_editable = (
-        'legacy_filename',
-        'location'
-    )
+    list_editable = ("legacy_filename", "location")
 
     search_fields = (
-        'legacy_filename',
-        'location',
-        '=page__source__id',
-        'page__source__shelfmark',
-        'page__source__name'
+        "legacy_filename",
+        "location",
+        "=page__source__id",
+        "page__source__shelfmark",
+        "page__source__name",
     )
 
     inlines = (ImageNoteInline,)
@@ -159,14 +164,15 @@ class ImageAdmin(VersionAdmin):
     actions = (
         refetch_iiif_info,
         make_selected_images_public,
-        make_selected_images_private
+        make_selected_images_private,
     )
 
     formfield_overrides = {
-        models.CharField: {'widget': TextInput(attrs={'size': '80'})},
-        models.URLField: {'widget': TextInput(attrs={'size': '160'})}
+        models.CharField: {"widget": TextInput(attrs={"size": "80"})},
+        models.URLField: {"widget": TextInput(attrs={"size": "160"})},
     }
 
     def get_type(self, obj):
         return f"{obj.type.name}"
+
     get_type.short_description = "type"

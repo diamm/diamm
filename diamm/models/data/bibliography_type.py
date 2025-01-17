@@ -4,7 +4,7 @@ from django.db import models
 class BibliographyType(models.Model):
     class Meta:
         app_label = "diamm_data"
-        ordering = ('name',)
+        ordering = ("name",)
 
     # These refer to the PKs for each type. They are loaded in the old-to-new DIAMM migration process.
     JOURNAL_ARTICLE = 1

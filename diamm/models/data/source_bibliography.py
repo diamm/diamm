@@ -7,12 +7,12 @@ class SourceBibliography(models.Model):
         verbose_name_plural = "Source bibliographies"
         # ordering = ('bibliography__authors__bibliography_author__last_name',)
 
-    source = models.ForeignKey("diamm_data.Source",
-                               related_name="bibliographies",
-                               on_delete=models.CASCADE)
-    bibliography = models.ForeignKey("diamm_data.Bibliography",
-                                     related_name="sources",
-                                     on_delete=models.CASCADE)
+    source = models.ForeignKey(
+        "diamm_data.Source", related_name="bibliographies", on_delete=models.CASCADE
+    )
+    bibliography = models.ForeignKey(
+        "diamm_data.Bibliography", related_name="sources", on_delete=models.CASCADE
+    )
     primary_study = models.BooleanField(default=False)
     notes = models.TextField(blank=True, null=True)
     pages = models.TextField(blank=True, null=True)

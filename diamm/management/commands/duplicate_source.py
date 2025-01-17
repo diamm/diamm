@@ -2,25 +2,32 @@ import logging
 
 import blessings
 from django.core.management import BaseCommand
-from django.db.models.signals import post_save, post_delete
+from django.db.models.signals import post_delete, post_save
 
-from diamm.models import Item, Page, Source, Image
-from diamm.signals.item_signals import index_item, delete_item
-from diamm.signals.page_signals import index_page, delete_page, index_image, delete_image
-from diamm.signals.source_signals import index_source
 from diamm.helpers.solr_helpers import solr_index, solr_index_many
+from diamm.models import Image, Item, Page, Source
 from diamm.serializers.search.item import ItemSearchSerializer
 from diamm.serializers.search.source import SourceSearchSerializer
+from diamm.signals.item_signals import delete_item, index_item
+from diamm.signals.page_signals import (
+    delete_image,
+    delete_page,
+    index_image,
+    index_page,
+)
+from diamm.signals.source_signals import index_source
 
 term = blessings.Terminal()
-logging.basicConfig(format="[%(asctime)s] [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)",
-                    level=logging.INFO)
+logging.basicConfig(
+    format="[%(asctime)s] [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)",
+    level=logging.INFO,
+)
 log = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
     def add_arguments(self, parser):
-        parser.add_argument('sourcekey', type=int)
+        parser.add_argument("sourcekey", type=int)
         # parser.add_argument('-d',
         #                     "--dry",
         #                     dest="dry_run",
@@ -29,7 +36,7 @@ class Command(BaseCommand):
         #                     help="Dry run; don't actually save anything.")
 
     def handle(self, *args, **options):
-        sourcekey = options['sourcekey']
+        sourcekey = options["sourcekey"]
 
         # disable solr signals for this operation
         post_save.disconnect(index_item, sender=Item)
@@ -86,4 +93,3 @@ class Command(BaseCommand):
         solr_index_many(ItemSearchSerializer, new_source.inventory.all())
 
         print(term.yellow(f"Success, created new Source {new_source.pk}"))
-

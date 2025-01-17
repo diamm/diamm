@@ -14,6 +14,6 @@ class NewsIndexPage(Page):
 
 
 NewsIndexPage.content_panels = [
-    FieldPanel('title', classname="full title"),
-    FieldPanel('body', classname="full"),
+    FieldPanel("title", classname="full title"),
+    FieldPanel("body", classname="full"),
 ]

@@ -3,6 +3,7 @@ name = "diamm"
 version = "1.11.1"
 description = ""
 authors = ["Andrew Hankinson <andrew.hankinson@gmail.com>"]
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -23,19 +24,67 @@ gunicorn = "^22.0.0"
 blessings = "^1.7"
 ipython = "^8.24.0"
 tablib = "^3.5.0"
-requests = "2.31.0"
+requests = "2.32.3"
 traitlets = "^5.14.3"
-Pillow = "^9.0"
+Pillow = "^10.0"
 markupsafe = "^2.0.1"
 psycopg = "^3.1.9"
-aiohttp = {extras = ["speedups"], version = "^3.8.5"}
+aiohttp = "3.11.11"
 werkzeug = "^3.0.3"
 
 [tool.poetry.dev-dependencies]
 
 [tool.poetry.group.dev.dependencies]
 django-debug-toolbar = "^4.1.0"
+django-stubs = "^5.1.2"
 
 [build-system]
-requires = ["poetry>=0.12"]
-build-backend = "poetry.masonry.api"
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff.lint]
+select = [
+    # pycodestyle
+    "E",
+    # pycodestyle warnings
+    "W",
+    # Pyflakes
+    "F",
+    # pyupgrade
+    ## Flake8 plugins
+    "UP",
+    # flake8-bugbear
+    "B",
+    # flake8-comprehensions
+    "C",
+    # flake8-django
+    "DJ",
+    # flake8-bandit
+    "S",
+    # flake8-simplify
+    "SIM",
+    # isort
+    "I",
+]
+
+ignore = [
+    # Ignore Pycodestyle line-length warnings, (mainly long comments).
+    "E501",
+    # Ignore McCabe complexity (for now).
+    "C901",
+    # Allow nullable Django fields
+    "DJ001",
+    # Don't check order of Django fields
+    "DJ012",
+    # Don't require a __str__ on models
+    "DJ008",
+]
+
+[tool.ruff]
+exclude = [
+    "diamm/tests",
+    "resources",
+    "diamm/management",
+    "diamm/diamm_data/migrations",
+    "diamm/diamm_site/migrations",
+]

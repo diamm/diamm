@@ -9,12 +9,16 @@ class ItemComposer(models.Model):
                             This field is ONLY to be used to record that a MSS features works by a particular composer,
                             and should not be used otherwise."""
 
-    item = models.ForeignKey("diamm_data.Item",
-                             related_name="unattributed_composers",
-                             on_delete=models.CASCADE)
-    composer = models.ForeignKey("diamm_data.Person",
-                                 related_name="unattributed_works",
-                                 help_text=COMPOSER_HELP_TEXT,
-                                 on_delete=models.CASCADE)
+    item = models.ForeignKey(
+        "diamm_data.Item",
+        related_name="unattributed_composers",
+        on_delete=models.CASCADE,
+    )
+    composer = models.ForeignKey(
+        "diamm_data.Person",
+        related_name="unattributed_works",
+        help_text=COMPOSER_HELP_TEXT,
+        on_delete=models.CASCADE,
+    )
     uncertain = models.BooleanField(default=False)
     note = models.TextField(blank=True, null=True)

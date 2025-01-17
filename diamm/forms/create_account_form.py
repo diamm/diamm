@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.password_validation import validate_password
 from django.utils.safestring import mark_safe
+
 from diamm.models.diamm_user import CustomUserModel
 
 
@@ -36,12 +37,12 @@ class CreateAccountForm(forms.Form):
 
         :return: None; will raise validation error if a condition is not met.
         """
-        cleaned_data = super(CreateAccountForm, self).clean()
-        password = cleaned_data.get('password')
-        confirm_password = cleaned_data.get('confirm_password')
-        email = cleaned_data.get('email')
+        cleaned_data = super().clean()
+        password = cleaned_data.get("password")
+        confirm_password = cleaned_data.get("confirm_password")
+        email = cleaned_data.get("email")
 
-        if 'user-agreement' not in self.data:
+        if "user-agreement" not in self.data:
             agreement_err = """
                 You must agree to the user terms and conditions.
             """
@@ -54,27 +55,27 @@ class CreateAccountForm(forms.Form):
             email_err = """
                 A user with the e-mail address {0} already exists. Try <a href='/reset'>recovering your password</a>.
             """
-            err = forms.ValidationError(mark_safe(email_err.format(email)))
+            err = forms.ValidationError(mark_safe(email_err.format(email)))  # noqa: S308
             raise err
 
         if not password:
-            err = forms.ValidationError('You must supply a password')
-            self.add_error('password', err)
+            err = forms.ValidationError("You must supply a password")
+            self.add_error("password", err)
             raise err
 
         if not confirm_password:
-            err = forms.ValidationError('You must re-type your password to confirm')
-            self.add_error('confirm_password', err)
+            err = forms.ValidationError("You must re-type your password to confirm")
+            self.add_error("confirm_password", err)
             raise err
 
         if password != confirm_password:
-            err = forms.ValidationError('Your passwords did not match')
-            self.add_error('password', err)
-            self.add_error('confirm_password', err)
+            err = forms.ValidationError("Your passwords did not match")
+            self.add_error("password", err)
+            self.add_error("confirm_password", err)
             raise err
 
         try:
             validate_password(password)
         except forms.ValidationError as err:
-            self.add_error('password', err)
+            self.add_error("password", err)
             raise err

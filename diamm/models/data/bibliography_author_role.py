@@ -33,17 +33,21 @@ class BibliographyAuthorRole(models.Model):
         (R_REVISER, "Reviser"),
         (R_SUPERVISOR, "Supervisor"),
         (R_TRANSLATOR, "Translator"),
-        (R_COPYIST, "Copyist")
+        (R_COPYIST, "Copyist"),
     )
 
-    bibliography_author = models.ForeignKey('diamm_data.BibliographyAuthor',
-                                            related_name="bibliography_entries",
-                                            on_delete=models.CASCADE)
-    bibliography_entry = models.ForeignKey("diamm_data.Bibliography",
-                                           related_name="authors",
-                                           on_delete=models.CASCADE)
+    bibliography_author = models.ForeignKey(
+        "diamm_data.BibliographyAuthor",
+        related_name="bibliography_entries",
+        on_delete=models.CASCADE,
+    )
+    bibliography_entry = models.ForeignKey(
+        "diamm_data.Bibliography", related_name="authors", on_delete=models.CASCADE
+    )
     role = models.IntegerField(choices=ROLES)
-    position = models.IntegerField(default=1, help_text="""The position of this author in the author list.""")
+    position = models.IntegerField(
+        default=1, help_text="""The position of this author in the author list."""
+    )
 
     def __str__(self):
         return f"{self.bibliography_author}"

@@ -10,12 +10,12 @@ class CompositionCycleInline(admin.TabularInline):
     verbose_name = "Composition"
     verbose_name_plural = "Compositions"
     extra = 0
-    raw_id_fields = ('composition',)
+    raw_id_fields = ("composition",)
 
 
 @admin.register(Cycle)
 class CycleAdmin(VersionAdmin):
-    list_display = ('title', 'composer', 'type')
-    list_filter = ('type',)
-    search_fields = ('title', 'composer__last_name', 'type__name')
+    list_display = ("title", "composer", "type")
+    list_filter = ("type",)
+    search_fields = ("title", "composer__last_name", "type__name")
     inlines = (CompositionCycleInline,)

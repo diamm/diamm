@@ -1,5 +1,4 @@
 import re
-from functools import cache
 from typing import Optional
 
 import serpy
@@ -9,15 +8,9 @@ class CompositionSearchSerializer(serpy.Serializer):
     type = serpy.MethodField()
     pk = serpy.IntField()
 
-    title_s = serpy.StrField(
-        attr="title"
-    )
-    display_name_ans = serpy.StrField(
-        attr="title"
-    )
-    anonymous_b = serpy.BoolField(
-        attr="anonymous"
-    )
+    title_s = serpy.StrField(attr="title")
+    display_name_ans = serpy.StrField(attr="title")
+    anonymous_b = serpy.BoolField(attr="anonymous")
     genres_ss = serpy.MethodField()
     composers_ssni = serpy.MethodField()
     composers_ss = serpy.MethodField()
@@ -32,13 +25,15 @@ class CompositionSearchSerializer(serpy.Serializer):
 
     def get_genres_ss(self, obj):
         if obj.genres:
-            return list(obj.genres.all().values_list('name', flat=True))
+            return list(obj.genres.all().values_list("name", flat=True))
         return []
 
-    @cache
     def __composers(self, obj) -> Optional[list]:
         if obj.composers.exists():
-            return [(o.composer.pk, o.composer.full_name, o.uncertain) for o in obj.composers.all()]
+            return [
+                (o.composer.pk, o.composer.full_name, o.uncertain)
+                for o in obj.composers.all()
+            ]
         return None
 
     def get_composers_ss(self, obj):
@@ -60,7 +55,6 @@ class CompositionSearchSerializer(serpy.Serializer):
             return [o[0] for o in composers]
         return []
 
-    @cache
     def __sources(self, obj) -> Optional[list]:
         if obj.sources.exists():
             return [(s.source.pk, s.source.display_name) for s in obj.sources.all()]
@@ -91,12 +85,14 @@ class CompositionSearchSerializer(serpy.Serializer):
             return None
 
         voice_texts = set()
-        items = obj.sources.filter(voices__isnull=False, voices__voice_text__isnull=False)
+        items = obj.sources.filter(
+            voices__isnull=False, voices__voice_text__isnull=False
+        )
         for it in items:
             for voice in it.voices.all():
                 if not voice.voice_text:
                     continue
-                voice_text = re.sub(r'[^\w ]+', '', voice.voice_text, flags=re.UNICODE)
+                voice_text = re.sub(r"[^\w ]+", "", voice.voice_text, flags=re.UNICODE)
                 voice_text = " ".join(voice_text.split())
                 voice_texts.add(voice_text)
 

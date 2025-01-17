@@ -6,5 +6,5 @@ from diamm.models.data.genre import Genre
 
 @admin.register(Genre)
 class GenreAdmin(VersionAdmin):
-    list_display = ('name',)
-    search_fields = ('name',)
+    list_display = ("name",)
+    search_fields = ("name",)

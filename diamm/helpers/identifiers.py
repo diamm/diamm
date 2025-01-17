@@ -17,7 +17,7 @@ IDENTIFIER_TYPES = (
     (ExternalIdentifiers.MUSICBRAINZ, "MusicBrainz Artist"),
     (ExternalIdentifiers.ORCID, "ORCID"),
     (ExternalIdentifiers.BNF, "Bibliothèque national de France"),
-    (ExternalIdentifiers.LC, "Library of Congress")
+    (ExternalIdentifiers.LC, "Library of Congress"),
 )
 
 TYPE_PREFIX = {
@@ -28,5 +28,5 @@ TYPE_PREFIX = {
     ExternalIdentifiers.MUSICBRAINZ: ("mbaid", "https://musicbrainz.org/artist/"),
     ExternalIdentifiers.ORCID: ("orcid", "https://orcid.org/"),
     ExternalIdentifiers.BNF: ("bnf", "https://catalogue.bnf.fr/ark:/12148/cb"),
-    ExternalIdentifiers.LC: ("lc", "https://id.loc.gov/authorities/")
+    ExternalIdentifiers.LC: ("lc", "https://id.loc.gov/authorities/"),
 }

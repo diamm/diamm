@@ -8,13 +8,15 @@ from diamm.models.data.source_relationship import SourceRelationship
 
 @admin.register(SourceRelationship)
 class SourceRelationshipAdmin(VersionAdmin):
-    list_display = ('get_source', 'get_related_entity', 'relationship_type')
-    raw_id_fields = ('source',)
-    list_filter = ('relationship_type',)
+    list_display = ("get_source", "get_related_entity", "relationship_type")
+    raw_id_fields = ("source",)
+    list_filter = ("relationship_type",)
 
-    search_fields = ('source__name',
-                     'source__identifiers__identifier',
-                     'source__archive__name')
+    search_fields = (
+        "source__name",
+        "source__identifiers__identifier",
+        "source__archive__name",
+    )
     #
     # related_search_fields = {
     #     'source': ('name', 'identifiers__identifier', 'archive__name'),
@@ -23,6 +25,7 @@ class SourceRelationshipAdmin(VersionAdmin):
 
     def get_source(self, obj):
         return f"{obj.source.display_name}"
+
     get_source.short_description = "source"
 
     def get_related_entity(self, obj):

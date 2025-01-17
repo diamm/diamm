@@ -1,6 +1,6 @@
 import math
 from collections import OrderedDict
-from typing import List, Dict, Optional
+from typing import Optional
 
 import pysolr
 import serpy
@@ -12,7 +12,7 @@ from diamm.helpers.solr_helpers import SolrConnection
 from diamm.serializers.serializers import ContextDictSerializer
 
 
-class SolrResultObject(object):
+class SolrResultObject:
     def __init__(self, **entries):
         self.__dict__.update(entries)
 
@@ -31,7 +31,9 @@ class SolrResultSerializer(ContextDictSerializer):
     date_statement = serpy.StrField(attr="date_statement_s", required=False)
     measurements = serpy.StrField(attr="measurements_s", required=False)
     inventory_provided = serpy.BoolField(attr="inventory_provided_b", required=False)
-    number_of_compositions = serpy.IntField(attr="number_of_compositions_i", required=False)
+    number_of_compositions = serpy.IntField(
+        attr="number_of_compositions_i", required=False
+    )
     number_of_composers = serpy.IntField(attr="number_of_composers_i", required=False)
     notations = serpy.Field(attr="notations_ss", required=False)
     start_date = serpy.IntField(attr="start_date_i", required=False)
@@ -48,25 +50,27 @@ class SolrResultSerializer(ContextDictSerializer):
     archives = serpy.Field(attr="archives_ss", required=False)
     sources = serpy.MethodField()
 
-    def get_url(self, obj: Dict) -> str:
-        return reverse(f"{obj.get('type')}-detail",
-                       kwargs={'pk': obj.get("pk")},
-                       request=self.context.get('request'))
+    def get_url(self, obj: dict) -> str:
+        return reverse(
+            f"{obj.get('type')}-detail",
+            kwargs={"pk": obj.get("pk")},
+            request=self.context.get("request"),
+        )
 
-    def get_heading(self, obj: Dict) -> str:
-        if obj.get('display_name_s'):
-            return obj.get('display_name_s')
-        elif obj.get('name_s'):
-            return obj.get('name_s')
-        elif obj.get('title_s'):
-            return obj.get('title_s')
-        elif obj.get('cluster_shelfmark_s'):
-            return obj.get('cluster_shelfmark_s')
+    def get_heading(self, obj: dict) -> str:
+        if obj.get("display_name_s"):
+            return obj.get("display_name_s")
+        elif obj.get("name_s"):
+            return obj.get("name_s")
+        elif obj.get("title_s"):
+            return obj.get("title_s")
+        elif obj.get("cluster_shelfmark_s"):
+            return obj.get("cluster_shelfmark_s")
         else:
             return "[Unknown Heading]"
 
-    def get_sources(self, obj: Dict) -> Optional[int]:
-        if obj.get('sources_ii'):
+    def get_sources(self, obj: dict) -> Optional[int]:
+        if obj.get("sources_ii"):
             return len(obj.get("sources_ii"))
         return None
 
@@ -81,10 +85,13 @@ class PageRangeOutOfBoundsException(BaseException):
 
 class SolrPaginator:
     """
-        Takes in a SolrSearch object (pre-execute) and manages
-        a paginated list of Solr results.
+    Takes in a SolrSearch object (pre-execute) and manages
+    a paginated list of Solr results.
     """
-    def __init__(self, query, filters, exclusive_filters, sorts, request, *args, **kwargs):
+
+    def __init__(
+        self, query, filters, exclusive_filters, sorts, request, *args, **kwargs
+    ):
         # The query is the value of the fulltext q-field.
         self.query = query
         self.request = request
@@ -92,23 +99,23 @@ class SolrPaginator:
 
         # qopts are the query options passed to solr.
         self.qopts = {
-            'q.op': settings.SOLR['DEFAULT_OPERATOR'],
-            'facet': 'true',
-            'facet.field': settings.SOLR['FACET_FIELDS'],
-            'facet.mincount': 1,
-            'facet.limit': -1,
-            'facet.pivot': settings.SOLR['FACET_PIVOTS'],
-            'hl': 'true',
-            'defType': 'edismax',
-            'qf': settings.SOLR['FULLTEXT_QUERYFIELDS'],
-            'bq': ['type:source^10', 'type:archive^5', 'type:person^1']
+            "q.op": settings.SOLR["DEFAULT_OPERATOR"],
+            "facet": "true",
+            "facet.field": settings.SOLR["FACET_FIELDS"],
+            "facet.mincount": 1,
+            "facet.limit": -1,
+            "facet.pivot": settings.SOLR["FACET_PIVOTS"],
+            "hl": "true",
+            "defType": "edismax",
+            "qf": settings.SOLR["FULLTEXT_QUERYFIELDS"],
+            "bq": ["type:source^10", "type:archive^5", "type:person^1"],
         }
-        self.qopts.update(settings.SOLR['FACET_SORT'])
+        self.qopts.update(settings.SOLR["FACET_SORT"])
 
         if sorts:
-            self.qopts['sort'] = sorts
+            self.qopts["sort"] = sorts
 
-        fqlist = list()
+        fqlist = []
 
         if filters:
             for k, v in filters.items():
@@ -130,9 +137,7 @@ class SolrPaginator:
                     fqlist.append(f"{k}:{v}")
 
         # update our fq query opts with the values from our filters.
-        self.qopts.update({
-            'fq': fqlist
-        })
+        self.qopts.update({"fq": fqlist})
 
         # self.solr = pysolr.Solr(settings.SOLR['SERVER'])
 
@@ -141,7 +146,7 @@ class SolrPaginator:
 
     @property
     def page_size(self):
-        return settings.SOLR['PAGE_SIZE']
+        return settings.SOLR["PAGE_SIZE"]
 
     @property
     def count(self) -> int:
@@ -157,33 +162,30 @@ class SolrPaginator:
         return int(math.ceil(float(self.count) / float(self.page_size)))
 
     @property
-    def page_range(self) -> List:
+    def page_range(self) -> list:
         if self.count == 0:
             return []
         return list(range(1, self.num_pages + 1))
 
     def _fetch_page(self, start=0):
         """Retrieve a new result response from Solr."""
-        self.qopts.update({
-            'start': start,
-            'rows': settings.SOLR['PAGE_SIZE']
-        })
+        self.qopts.update({"start": start, "rows": settings.SOLR["PAGE_SIZE"]})
 
         try:
             self.result = SolrConnection.search(self.query, **self.qopts)
         except pysolr.SolrError as e:
-            raise SolrResultException(repr(e))
+            raise SolrResultException(repr(e)) from e
 
     def page(self, page_num=1):
         """
-            page_num must be an integer. Do not pass in un-coerced request parameters!
+        page_num must be an integer. Do not pass in un-coerced request parameters!
         """
         # e.g., page 3: ((3 - 1) * 20) + 1, start = 41
         # remainder = 0 if page_num == 1 else 1  # page 1 starts at result 0; page 2 starts at result 11
         if self.num_pages != 0 and page_num > self.num_pages:
             raise PageRangeOutOfBoundsException()
 
-        start = ((page_num - 1) * self.page_size)
+        start = (page_num - 1) * self.page_size
         self._fetch_page(start=start)
         return SolrPage(self.result, page_num, self)
 
@@ -194,26 +196,28 @@ class SolrPage:
         self.number = page_num
         self.paginator = paginator
 
-    def get_paginated_response(self) -> Dict:
+    def get_paginated_response(self) -> dict:
         """
-            Returns a full response object
+        Returns a full response object
         """
 
-        return OrderedDict([
-            ('count', self.paginator.count),
-            ('pagination', self.pagination),
-            ('query', self.paginator.query),
-            ('types', self.type_list),
-            ('results', self.object_list),
-            ('facets', self.facet_list)
-        ])
+        return OrderedDict(
+            [
+                ("count", self.paginator.count),
+                ("pagination", self.pagination),
+                ("query", self.paginator.query),
+                ("types", self.type_list),
+                ("results", self.object_list),
+                ("facets", self.facet_list),
+            ]
+        )
 
     @property
-    def type_list(self) -> Dict:
+    def type_list(self) -> dict:
         # Takes a list of facets ['foo', 1, 'bar', 2] and converts them to
         # {'foo': 1, 'bar': 2} using some stupid python iterator tricks.
-        facet_fields: Dict = self.result.facets.get('facet_fields', {})
-        facets: Dict = facet_fields.get("type")
+        facet_fields: dict = self.result.facets.get("facet_fields", {})
+        facets: dict = facet_fields.get("type")
 
         if not facets:
             return {}
@@ -221,34 +225,43 @@ class SolrPage:
         i = iter(facets)
         # Since Solr doesn't filter by facet _value_, we remove some of the values that we don't want
         # to display in the search results.
-        filtered_facets: List = [k for k in sorted(zip(i, i), key=lambda f: f[0]) if k[0] in settings.SOLR['SEARCH_TYPES']]
+        filtered_facets: list = [
+            k
+            for k in sorted(zip(i, i), key=lambda f: f[0])
+            if k[0] in settings.SOLR["SEARCH_TYPES"]
+        ]
 
         # For the public_images_b facet, we will get the count for this value
         # and send it along with the sources_with_images key.
-        image_count = self.result.facets['facet_fields'].get('public_images_b')
+        image_count = self.result.facets["facet_fields"].get("public_images_b")
 
         if image_count:
             i = iter(image_count)
             d = dict(zip(i, i))
-            if d.get('true'):
-                filtered_facets.append(('sources_with_images', d['true']))
+            if d.get("true"):
+                filtered_facets.append(("sources_with_images", d["true"]))
 
         return OrderedDict(filtered_facets)
 
     @property
-    def facet_list(self) -> Dict:
-        solr_facets = self.result.facets.get('facet_fields', None)
-        pivot_facets = self.result.facets.get('facet_pivot', None)
-        facets: Dict = {key: value for (key, value) in solr_facets.items() if key in settings.INTERFACE_FACETS}
+    def facet_list(self) -> dict:
+        solr_facets = self.result.facets.get("facet_fields", None)
+        pivot_facets = self.result.facets.get("facet_pivot", None)
+        facets: dict = {
+            key: value
+            for (key, value) in solr_facets.items()
+            if key in settings.INTERFACE_FACETS
+        }
         facets.update(pivot_facets)
 
         return facets
 
     @property
-    def object_list(self) -> List:
-        docs: List = self.result.docs
-        data: List = SolrResultSerializer(docs, many=True,
-                                          context={"request": self.paginator.request}).data
+    def object_list(self) -> list:
+        docs: list = self.result.docs
+        data: list = SolrResultSerializer(
+            docs, many=True, context={"request": self.paginator.request}
+        ).data
 
         return data
 
@@ -268,20 +281,22 @@ class SolrPage:
         # return docs
 
     @property
-    def pagination(self) -> Dict:
+    def pagination(self) -> dict:
         # pages = {}
         # for pnum in range(self.paginator.num_pages):
         #     url = self.paginator.request.build_absolute_uri()
         #     pg_url = replace_query_param(url, 'page', pnum + 1)
         #     pages[pnum + 1] = pg_url
 
-        return OrderedDict([
-            ('next', self.next_url),
-            ('previous', self.previous_url),
-            ('current_page', self.number),
-            ('num_pages', self.paginator.num_pages),
-            # ('pages', pages)
-        ])
+        return OrderedDict(
+            [
+                ("next", self.next_url),
+                ("previous", self.previous_url),
+                ("current_page", self.number),
+                ("num_pages", self.paginator.num_pages),
+                # ('pages', pages)
+            ]
+        )
 
     @property
     def next_url(self) -> Optional[str]:
@@ -289,7 +304,7 @@ class SolrPage:
             return None
         url: str = self.paginator.request.build_absolute_uri()
         page_number = self.next_page_number
-        return replace_query_param(url, 'page', page_number)
+        return replace_query_param(url, "page", page_number)
 
     @property
     def previous_url(self) -> Optional[str]:
@@ -297,7 +312,7 @@ class SolrPage:
             return None
         url: str = self.paginator.request.build_absolute_uri()
         page_number = self.previous_page_number
-        return replace_query_param(url, 'page', page_number)
+        return replace_query_param(url, "page", page_number)
 
     @property
     def has_next(self) -> int:

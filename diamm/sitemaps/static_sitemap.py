@@ -9,7 +9,13 @@ class StaticSitemap(Sitemap):
     protocol = "https"
 
     def items(self):
-        return Site.objects.get(pk=DIAMM_SITE).root_page.get_descendants(inclusive=True).live().public().order_by('path')
+        return (
+            Site.objects.get(pk=DIAMM_SITE)
+            .root_page.get_descendants(inclusive=True)
+            .live()
+            .public()
+            .order_by("path")
+        )
 
     def location(self, page):
         return page.url

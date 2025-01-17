@@ -1,19 +1,17 @@
 import React from "react";
-import { connect } from "react-redux";
+import {connect} from "react-redux";
 import debounce from "lodash.debounce";
 import _ from "lodash";
 
 import DivaViewer from "./divaviewer";
 import PageData from "./page_data";
-import { ControlBar } from "./containers/images";
 import {
+    clearPageContents,
+    fetchActiveRanges,
     setActiveManifest,
     setCurrentlyActiveCanvas,
-    setCurrentlyActiveCanvasTitle,
-    fetchActiveRanges,
-    clearPageContents
+    setCurrentlyActiveCanvasTitle
 } from "../actions/iiif_actions";
-
 
 
 class Images extends React.Component

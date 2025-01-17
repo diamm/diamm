@@ -8,15 +8,15 @@ class CityProvenanceSerializer(ContextSerializer):
     url = serpy.MethodField()
     name = serpy.MethodField()
     city_uncertain = serpy.BoolField()
-    earliest_year = serpy.IntField(
-        required=False
-    )
-    latest_year = serpy.IntField(
-        required=False
-    )
+    earliest_year = serpy.IntField(required=False)
+    latest_year = serpy.IntField(required=False)
 
     def get_url(self, obj):
-        return reverse('source-detail', kwargs={"pk": obj.source.id}, request=self.context['request'])
+        return reverse(
+            "source-detail",
+            kwargs={"pk": obj.source.id},
+            request=self.context["request"],
+        )
 
     def get_name(self, obj):
         return f"{obj.source.display_name}"
@@ -27,7 +27,11 @@ class OrganizationSerializer(ContextSerializer):
     name = serpy.StrField()
 
     def get_url(self, obj):
-        return reverse('organization-detail', kwargs={"pk": obj.id}, request=self.context['request'])
+        return reverse(
+            "organization-detail",
+            kwargs={"pk": obj.id},
+            request=self.context["request"],
+        )
 
 
 class CountryCitySerializer(ContextSerializer):
@@ -35,7 +39,9 @@ class CountryCitySerializer(ContextSerializer):
     name = serpy.StrField()
 
     def get_url(self, obj):
-        return reverse("country-detail", kwargs={"pk": obj.id}, request=self.context['request'])
+        return reverse(
+            "country-detail", kwargs={"pk": obj.id}, request=self.context["request"]
+        )
 
 
 class ArchiveCitySerializer(ContextSerializer):
@@ -44,7 +50,9 @@ class ArchiveCitySerializer(ContextSerializer):
     siglum = serpy.StrField()
 
     def get_url(self, obj):
-        return reverse("archive-detail", kwargs={"pk": obj.id}, request=self.context['request'])
+        return reverse(
+            "archive-detail", kwargs={"pk": obj.id}, request=self.context["request"]
+        )
 
 
 class CityListSerializer(ContextSerializer):
@@ -52,7 +60,9 @@ class CityListSerializer(ContextSerializer):
     name = serpy.StrField()
 
     def get_url(self, obj):
-        return reverse("city-detail", kwargs={"pk": obj.id}, request=self.context['request'])
+        return reverse(
+            "city-detail", kwargs={"pk": obj.id}, request=self.context["request"]
+        )
 
 
 class CityDetailSerializer(ContextSerializer):
@@ -64,12 +74,12 @@ class CityDetailSerializer(ContextSerializer):
     # provenance_relationships = serpy.MethodField()
     organizations = serpy.MethodField()
     provenance = serpy.MethodField()
-    variant_names = serpy.StrField(
-        required=False
-    )
+    variant_names = serpy.StrField(required=False)
 
     def get_archives(self, obj):
-        return ArchiveCitySerializer(obj.archives.all(), many=True, context=self.context).data
+        return ArchiveCitySerializer(
+            obj.archives.all(), many=True, context=self.context
+        ).data
 
     def get_country(self, obj):
         return CountryCitySerializer(obj.parent, context=self.context).data
@@ -78,14 +88,20 @@ class CityDetailSerializer(ContextSerializer):
     #     return ProvenanceSerializer(obj.city_sources.all(), many=True, context=self.context).data
 
     def get_organizations(self, obj):
-        return OrganizationSerializer(obj.organizations.all(),
-                                      many=True,
-                                      context=self.context).data
+        return OrganizationSerializer(
+            obj.organizations.all(), many=True, context=self.context
+        ).data
 
     def get_provenance(self, obj):
-        return CityProvenanceSerializer(obj.city_sources.all().select_related('source__archive').order_by('source__archive__name', 'source__sort_order'),
-                                        many=True,
-                                        context=self.context).data
+        return CityProvenanceSerializer(
+            obj.city_sources.all()
+            .select_related("source__archive")
+            .order_by("source__archive__name", "source__sort_order"),
+            many=True,
+            context=self.context,
+        ).data
 
     def get_url(self, obj):
-        return reverse("city-detail", kwargs={"pk": obj.id}, request=self.context['request'])
+        return reverse(
+            "city-detail", kwargs={"pk": obj.id}, request=self.context["request"]
+        )

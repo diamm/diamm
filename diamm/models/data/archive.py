@@ -8,16 +8,22 @@ from diamm.helpers.storage import OverwriteStorage
 class Archive(models.Model):
     class Meta:
         app_label = "diamm_data"
-        ordering = ['city__name', 'name']
+        ordering = ["city__name", "name"]
 
     # IDs from the old database to the new database will be maintained
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=512, default="S.N.")
-    city = models.ForeignKey('diamm_data.GeographicArea',
-                             related_name="archives", on_delete=models.CASCADE,
-                             blank=True, null=True)
+    city = models.ForeignKey(
+        "diamm_data.GeographicArea",
+        related_name="archives",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
     siglum = models.CharField(max_length=64, blank=True, null=True)
-    former_sigla = models.CharField(max_length=255, blank=True, null=True, help_text="Separated by comma")
+    former_sigla = models.CharField(
+        max_length=255, blank=True, null=True, help_text="Separated by comma"
+    )
     librarian = models.CharField(max_length=255, blank=True, null=True)
     secondary_contact = models.CharField(max_length=255, blank=True, null=True)
     former_name = models.CharField(max_length=512, blank=True, null=True)
@@ -35,9 +41,7 @@ class Archive(models.Model):
     website = models.CharField(max_length=1024, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
     logo = models.FileField(
-            upload_to='archives/',
-            storage=OverwriteStorage(),
-            blank=True, null=True
+        upload_to="archives/", storage=OverwriteStorage(), blank=True, null=True
     )
     copyright_statement = models.TextField(blank=True, null=True)
 
@@ -63,22 +67,24 @@ class Archive(models.Model):
     @property
     def solr_sources(self):
         """
-            We use this method to return a list of sources for this archive
-            sorted by shelfmark. (Solr can do alphanumeric sort but the database
-            cannot.
+        We use this method to return a list of sources for this archive
+        sorted by shelfmark. (Solr can do alphanumeric sort but the database
+        cannot.
         """
         # conn = pysolr.Solr(settings.SOLR['SERVER'])
         q = {
-            "fq": ['type:source', f'archive_i:{self.pk}'],
-            "fl": ["pk",
-                   "public_images_b",
-                   'display_name_s',
-                   'cover_image_i',
-                   'source_type_s',
-                   'date_statement_s',
-                   'surface_type_s'],
+            "fq": ["type:source", f"archive_i:{self.pk}"],
+            "fl": [
+                "pk",
+                "public_images_b",
+                "display_name_s",
+                "cover_image_i",
+                "source_type_s",
+                "date_statement_s",
+                "surface_type_s",
+            ],
             "rows": 10000,
-            "sort": ["shelfmark_ans asc"]
+            "sort": ["shelfmark_ans asc"],
         }
 
         res = SolrConnection.search("*:*", **q)

@@ -6,4 +6,4 @@ from diamm.models.data.language import Language
 
 @admin.register(Language)
 class LanguageAdmin(VersionAdmin):
-    list_display = ('name',)
+    list_display = ("name",)

@@ -15,44 +15,40 @@ class CompositionBibliographySerializer(ContextSerializer):
         template = get_template("website/bibliography/bibliography_entry.jinja2")
         citation = template.template.render(content=obj.bibliography)
         # strip out any newlines from the templating process
-        citation = re.sub('\n', '', citation)
+        citation = re.sub("\n", "", citation)
         # strip out multiple spaces
-        citation = re.sub('\s+', ' ', citation)
+        citation = re.sub(r"\s+", " ", citation)
         citation = citation.strip()
         return citation
 
 
 class CompositionCycleCompositionSerializer(ContextSerializer):
-    title = serpy.StrField(
-        attr="composition.title"
-    )
+    title = serpy.StrField(attr="composition.title")
     url = serpy.MethodField()
 
     def get_url(self, obj):
-        return reverse('composition-detail',
-                       kwargs={"pk": obj.composition.pk},
-                       request=self.context['request'])
+        return reverse(
+            "composition-detail",
+            kwargs={"pk": obj.composition.pk},
+            request=self.context["request"],
+        )
 
 
 class CompositionCycleSerializer(ContextSerializer):
-    title = serpy.StrField(
-        attr="cycle.title"
-    )
-    type = serpy.StrField(
-        attr="cycle.type.name"
-    )
+    title = serpy.StrField(attr="cycle.title")
+    type = serpy.StrField(attr="cycle.type.name")
     compositions = serpy.MethodField()
 
     def get_compositions(self, obj):
-        return CompositionCycleCompositionSerializer(obj.cycle.compositions.all(),
-                                                     many=True,
-                                                     context={"request": self.context['request']}).data
+        return CompositionCycleCompositionSerializer(
+            obj.cycle.compositions.all(),
+            many=True,
+            context={"request": self.context["request"]},
+        ).data
 
 
 class CompositionContributionSerializer(ContextSerializer):
-    contributor = serpy.StrField(
-        attr="contributor.username"
-    )
+    contributor = serpy.StrField(attr="contributor.username")
 
     summary = serpy.StrField()
     updated = serpy.StrField()
@@ -60,15 +56,11 @@ class CompositionContributionSerializer(ContextSerializer):
 
 class CompositionSourceSerializer(ContextSerializer):
     url = serpy.MethodField()
-    display_name = serpy.StrField(
-        attr="source.display_name"
-    )
+    display_name = serpy.StrField(attr="source.display_name")
 
     has_images = serpy.MethodField()
 
-    public_images = serpy.BoolField(
-        attr="source.public_images"
-    )
+    public_images = serpy.BoolField(attr="source.public_images")
     folios = serpy.MethodField()
 
     def get_folios(self, obj):
@@ -86,9 +78,11 @@ class CompositionSourceSerializer(ContextSerializer):
         return folios
 
     def get_url(self, obj):
-        return reverse('source-detail',
-                       kwargs={"pk": obj.source.pk},
-                       request=self.context['request'])
+        return reverse(
+            "source-detail",
+            kwargs={"pk": obj.source.pk},
+            request=self.context["request"],
+        )
 
     def get_has_images(self, obj):
         return obj.pages.exists()
@@ -96,23 +90,20 @@ class CompositionSourceSerializer(ContextSerializer):
 
 class CompositionComposerSerializer(ContextSerializer):
     url = serpy.MethodField()
-    full_name = serpy.StrField(
-        attr="composer.full_name"
-    )
+    full_name = serpy.StrField(attr="composer.full_name")
     uncertain = serpy.BoolField()
     notes = serpy.StrField()
 
     def get_url(self, obj):
-        return reverse('person-detail',
-                       kwargs={"pk": obj.composer.pk},
-                       request=self.context['request'])
+        return reverse(
+            "person-detail",
+            kwargs={"pk": obj.composer.pk},
+            request=self.context["request"],
+        )
 
 
 class CompositionDetailSerializer(ContextSerializer):
-    anonymous = serpy.BoolField(
-        attr="anonymous",
-        required=False
-    )
+    anonymous = serpy.BoolField(attr="anonymous", required=False)
     composers = serpy.MethodField()
     sources = serpy.MethodField()
     type = serpy.MethodField()
@@ -124,34 +115,40 @@ class CompositionDetailSerializer(ContextSerializer):
     bibliography = serpy.MethodField()
 
     def get_url(self, obj):
-        return reverse('composition-detail',
-                       kwargs={"pk": obj.pk},
-                       request=self.context['request'])
+        return reverse(
+            "composition-detail", kwargs={"pk": obj.pk}, request=self.context["request"]
+        )
 
     def get_type(self, obj):
         return obj.__class__.__name__.lower()
 
     def get_sources(self, obj):
         if obj.sources:
-            return CompositionSourceSerializer(obj.sources.all().order_by('source__sort_order'),
-                                               context={'request': self.context['request']},
-                                               many=True).data
+            return CompositionSourceSerializer(
+                obj.sources.all().order_by("source__sort_order"),
+                context={"request": self.context["request"]},
+                many=True,
+            ).data
         else:
             return []
 
     def get_composers(self, obj):
         if obj.composers:
-            return CompositionComposerSerializer(obj.composers.all(),
-                                                 context={"request": self.context['request']},
-                                                 many=True).data
+            return CompositionComposerSerializer(
+                obj.composers.all(),
+                context={"request": self.context["request"]},
+                many=True,
+            ).data
         else:
             return []
 
     def get_cycles(self, obj):
         if obj.cycles.exists():
-            return CompositionCycleSerializer(obj.cycles.all(),
-                                              context={"request": self.context['request']},
-                                              many=True).data
+            return CompositionCycleSerializer(
+                obj.cycles.all(),
+                context={"request": self.context["request"]},
+                many=True,
+            ).data
         return []
 
     def get_genres(self, obj):

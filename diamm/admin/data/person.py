@@ -25,7 +25,7 @@ class CompositionsInline(admin.TabularInline):
     verbose_name_plural = "Compositions"
     model = CompositionComposer
     extra = 0
-    raw_id_fields = ('composition',)
+    raw_id_fields = ("composition",)
 
 
 class PersonNoteInline(admin.TabularInline):
@@ -34,9 +34,7 @@ class PersonNoteInline(admin.TabularInline):
     model = PersonNote
     extra = 0
 
-    formfield_overrides = {
-        models.TextField: {'widget': AdminPagedownWidget}
-    }
+    formfield_overrides = {models.TextField: {"widget": AdminPagedownWidget}}
 
 
 class PersonIdentifierInline(admin.TabularInline):
@@ -49,7 +47,9 @@ class PersonIdentifierInline(admin.TabularInline):
     def get_external_url(self, instance) -> str:
         if not instance.identifier_type:
             return ""
-        return mark_safe(f'<a href="{instance.identifier_url}">{instance.identifier_url}</a>')
+        return mark_safe(  # noqa: S308
+            f'<a href="{instance.identifier_url}">{instance.identifier_url}</a>'
+        )
 
 
 class PersonRoleInline(admin.TabularInline):
@@ -57,7 +57,7 @@ class PersonRoleInline(admin.TabularInline):
     verbose_name_plural = "Roles"
     model = PersonRole
     extra = 0
-    raw_id_fields = ('role',)
+    raw_id_fields = ("role",)
 
 
 class CopiedSourcesInline(GenericTabularInline):
@@ -65,31 +65,28 @@ class CopiedSourcesInline(GenericTabularInline):
     verbose_name_plural = "Sources Copied"
     model = SourceCopyist
     extra = 0
-    raw_id_fields = ('source',)
+    raw_id_fields = ("source",)
 
 
 class RelatedSourcesInline(GenericTabularInline):
     model = SourceRelationship
     extra = 0
-    raw_id_fields = ('source',)
+    raw_id_fields = ("source",)
 
 
 class ProvenanceSourcesInline(GenericTabularInline):
     model = SourceProvenance
     extra = 0
-    raw_id_fields = ('source', 'city', 'country', 'region', 'protectorate')
+    raw_id_fields = ("source", "city", "country", "region", "protectorate")
 
 
 def migrate_to_organization(modeladmin, request, queryset):
     """
-        Migrates a person to an organzation. Also migrates any relationships
-        that may point to that person.
+    Migrates a person to an organzation. Also migrates any relationships
+    that may point to that person.
     """
     for entity in queryset:
-        d = {
-            'legacy_id': entity.legacy_id,
-            'name': entity.last_name
-        }
+        d = {"legacy_id": entity.legacy_id, "name": entity.last_name}
 
         o = Organization(**d)
         o.save()
@@ -112,18 +109,17 @@ def migrate_to_organization(modeladmin, request, queryset):
 
         # delete the original entity.
         entity.delete()
+
+
 migrate_to_organization.short_description = "Migrate Person to Organization"
 
 
 class PersonBiography(admin.SimpleListFilter):
-    title = _('Has Biography')
-    parameter_name = 'biography'
+    title = _("Has Biography")
+    parameter_name = "biography"
 
     def lookups(self, request, model_admin):
-        return (
-            ("yes", _("Has biography")),
-            ("no", _("Does not have biography"))
-        )
+        return (("yes", _("Has biography")), ("no", _("Does not have biography")))
 
     def queryset(self, request, queryset):
         if not self.value():
@@ -137,38 +133,44 @@ class PersonBiography(admin.SimpleListFilter):
 @admin.register(Person)
 class PersonAdmin(VersionAdmin):
     save_on_top = True
-    list_display = ('last_name',
-                    'first_name',
-                    'title',
-                    'earliest_year',
-                    'latest_year',
-                    'floruit',
-                    'updated')
-    search_fields = ('last_name', 'first_name', 'title')
-    inlines = (PersonNoteInline, PersonRoleInline, PersonIdentifierInline,
-               CopiedSourcesInline, RelatedSourcesInline, ProvenanceSourcesInline,
-               CompositionsInline)
-    actions = ['merge_people_action']
+    list_display = (
+        "last_name",
+        "first_name",
+        "title",
+        "earliest_year",
+        "latest_year",
+        "floruit",
+        "updated",
+    )
+    search_fields = ("last_name", "first_name", "title")
+    inlines = (
+        PersonNoteInline,
+        PersonRoleInline,
+        PersonIdentifierInline,
+        CopiedSourcesInline,
+        RelatedSourcesInline,
+        ProvenanceSourcesInline,
+        CompositionsInline,
+    )
+    actions = ["merge_people_action"]
     # filter_horizontal = ('roles',)
     list_filter = [PersonBiography]
     view_on_site = True
-    readonly_fields = ('created', 'updated')
+    readonly_fields = ("created", "updated")
 
-    formfield_overrides = {
-        models.TextField: {'widget': AdminPagedownWidget}
-    }
+    formfield_overrides = {models.TextField: {"widget": AdminPagedownWidget}}
 
     def get_queryset(self, request):
-        qset = super(PersonAdmin, self).get_queryset(request)
+        qset = super().get_queryset(request)
         # qset = qset.prefetch_related('roles')
         return qset
 
     def merge_people_action(self, request, queryset):
-        if 'do_action' in request.POST:
+        if "do_action" in request.POST:
             form = MergePeopleForm(request.POST)
 
             if form.is_valid():
-                keep_old = form.cleaned_data['keep_old']
+                keep_old = form.cleaned_data["keep_old"]
                 target = queryset.first()
                 remainder = list(queryset[1:])
                 merged = merge(target, remainder, keep_old=keep_old)
@@ -193,10 +195,10 @@ class PersonAdmin(VersionAdmin):
         else:
             form = MergePeopleForm()
 
-        return render(request,
-                      'admin/person/merge_people.html', {
-                          'objects': queryset,
-                          'form': form
-                      })
+        return render(
+            request,
+            "admin/person/merge_people.html",
+            {"objects": queryset, "form": form},
+        )
 
     merge_people_action.short_description = "Merge People"

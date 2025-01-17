@@ -8,16 +8,10 @@ class SourceProvenanceSearchSerializer(serpy.Serializer):
     type = serpy.MethodField()
     pk = serpy.IntField()
 
-    source_i = serpy.IntField(
-        attr="source.pk"
-    )
-    source_s = serpy.StrField(
-        attr="source.display_name"
-    )
+    source_i = serpy.IntField(attr="source.pk")
+    source_s = serpy.StrField(attr="source.display_name")
     # Sort by the source name *with the archive sigla*
-    source_ans = serpy.StrField(
-        attr="source.display_name"
-    )
+    source_ans = serpy.StrField(attr="source.display_name")
 
     city_s = serpy.MethodField()
     city_i = serpy.MethodField()
@@ -28,30 +22,12 @@ class SourceProvenanceSearchSerializer(serpy.Serializer):
     protectorate_s = serpy.MethodField()
     protectorate_i = serpy.MethodField()
 
-    country_uncertain_b = serpy.BoolField(
-        attr="country_uncertain",
-        required=False
-    )
-    city_uncertain_b = serpy.BoolField(
-        attr="city_uncertain",
-        required=False
-    )
-    entity_uncertain_b = serpy.BoolField(
-        attr="entity_uncertain",
-        required=False
-    )
-    region_uncertain_b = serpy.BoolField(
-        attr="region_uncertain",
-        required=False
-    )
-    earliest_year_i = serpy.IntField(
-        attr="earliest_year",
-        required=False
-    )
-    latest_year_i = serpy.IntField(
-        attr="latest_year",
-        required=False
-    )
+    country_uncertain_b = serpy.BoolField(attr="country_uncertain", required=False)
+    city_uncertain_b = serpy.BoolField(attr="city_uncertain", required=False)
+    entity_uncertain_b = serpy.BoolField(attr="entity_uncertain", required=False)
+    region_uncertain_b = serpy.BoolField(attr="region_uncertain", required=False)
+    earliest_year_i = serpy.IntField(attr="earliest_year", required=False)
+    latest_year_i = serpy.IntField(attr="latest_year", required=False)
     entity_type_s = serpy.MethodField()
     entity_pk_i = serpy.MethodField()
 

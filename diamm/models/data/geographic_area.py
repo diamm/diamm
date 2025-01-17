@@ -4,7 +4,7 @@ from django.db import models
 class GeographicArea(models.Model):
     class Meta:
         app_label = "diamm_data"
-        ordering = ['name']
+        ordering = ["name"]
 
     CITY = 1
     COUNTRY = 2
@@ -17,19 +17,24 @@ class GeographicArea(models.Model):
         (COUNTRY, "Country"),
         (STATE, "County/Province/State/Canton"),
         (REGION, "Region/Cultural area/Protectorate"),
-        (FICTIONAL, "Fictional/Imaginary")
+        (FICTIONAL, "Fictional/Imaginary"),
     )
 
     name = models.CharField(max_length=255)
     type = models.IntegerField(choices=REGION_TYPES, help_text="""The region type.""")
-    parent = models.ForeignKey("self", on_delete=models.CASCADE,
-                               blank=True,
-                               null=True,
-                               help_text="""If the area is subordinate to another (e.g., city to country),
-                               you can specify this here. For regions where their historical provenance has changed 
+    parent = models.ForeignKey(
+        "self",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        help_text="""If the area is subordinate to another (e.g., city to country),
+                               you can specify this here. For regions where their historical provenance has changed
                                (e.g., Alsace and France or Germany; Vienna and Austria or Prussia), you should choose the
-                               present affiliation.""")
-    variant_names = models.CharField(max_length=255, blank=True, null=True, help_text="Separate names with a comma.")
+                               present affiliation.""",
+    )
+    variant_names = models.CharField(
+        max_length=255, blank=True, null=True, help_text="Separate names with a comma."
+    )
 
     # Legacy ID is composed of the legacy model and the PK, so 'legacy_city.4' or 'legacy_country.10'
     # This provides cross referencing between new and old objects.

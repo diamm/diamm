@@ -1,3 +1,5 @@
+# ruff: noqa: F401
+
 from diamm.models.data.archive import Archive
 from diamm.models.data.archive_identifier import ArchiveIdentifier
 from diamm.models.data.archive_note import ArchiveNote
@@ -16,6 +18,7 @@ from diamm.models.data.cycle import Cycle
 from diamm.models.data.cycle_type import CycleType
 from diamm.models.data.genre import Genre
 from diamm.models.data.geographic_area import GeographicArea
+
 # from diamm.models.data.page_condition import PageCondition
 from diamm.models.data.image import Image
 from diamm.models.data.image_note import ImageNote
@@ -25,7 +28,9 @@ from diamm.models.data.item_bibliography import ItemBibliography
 from diamm.models.data.item_composer import ItemComposer
 from diamm.models.data.item_note import ItemNote
 from diamm.models.data.language import Language
-from diamm.models.data.legacy_id import LegacyId  # Yes, this belongs here. Used to track old PKs
+from diamm.models.data.legacy_id import (
+    LegacyId,
+)  # Yes, this belongs here. Used to track old PKs
 from diamm.models.data.mensuration import Mensuration
 from diamm.models.data.notation import Notation
 from diamm.models.data.organization import Organization
@@ -41,11 +46,11 @@ from diamm.models.data.role import Role
 from diamm.models.data.set import Set
 from diamm.models.data.set_bibliography import SetBibliography
 from diamm.models.data.source import Source
+from diamm.models.data.source_authority import SourceAuthority
 from diamm.models.data.source_bibliography import SourceBibliography
 from diamm.models.data.source_catalogue_entry import SourceCatalogueEntry
 from diamm.models.data.source_copyist import SourceCopyist
 from diamm.models.data.source_identifier import SourceIdentifier
-from diamm.models.data.source_authority import SourceAuthority
 from diamm.models.data.source_manifest import SourceManifest
 from diamm.models.data.source_note import SourceNote
 from diamm.models.data.source_provenance import SourceProvenance
