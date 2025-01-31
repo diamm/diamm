@@ -6,30 +6,209 @@
 
 {% block head %}
     <meta name="description" content="{{ content.display_summary }}">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script type="application/ld+json">
-    {
-        "@context": "http://schema.org",
-        "@type": "Thing",
-        "url": "{{ request.build_absolute_uri }}",
+        {
+            "@context": "http://schema.org",
+            "@type": "Thing",
+            "url": "{{ request.build_absolute_uri }}",
         "name": "{{ content.display_name }}",
         "description": "{{ content.display_summary }}"
     }
     </script>
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.store('sourceTabs', {
+                selectedTab: null,
+                init() { this.selectedTab = 'description-tab' },
+                select(tabName) {
+                    this.selectedTab = tabName
+                },
+                isSelected(tabName) {
+                    return this.selectedTab === tabName
+                },
+                whichChild(el, parent) {
+                    return Array.from(parent.children).indexOf(el) + 1
+                }
+            })
+        })
+    </script>
+
+
 {% endblock %}
 
 {% block body %}
-    <div id="source-body"
-         data-source-id="{{ content.pk }}"
-         data-source-name="{{ content.display_name }}"
-         data-is-authenticated="{{ request.user.is_authenticated }}"
-         {% if request.user.is_authenticated %}
-             data-username="{{ request.user.full_name }}"
-             data-is-staff="{{ request.user.is_staff }}"
-             data-is-superuser="{{ request.user.is_superuser }}"
-         {% endif %}
-    ></div>
+{#    <div id="source-body"#}
+{#         data-source-id="{{ content.pk }}"#}
+{#         data-source-name="{{ content.display_name }}"#}
+{#         data-is-authenticated="{{ request.user.is_authenticated }}"#}
+{#         {% if request.user.is_authenticated %}#}
+{#             data-username="{{ request.user.full_name }}"#}
+{#             data-is-staff="{{ request.user.is_staff }}"#}
+{#             data-is-superuser="{{ request.user.is_superuser }}"#}
+{#         {% endif %}#}
+{#    ></div>#}
+<div>
+    <div id="source-heading" class="columns">
+        <div class="column is-two-thirds">
+            <h2 class="title is-3">{{ content.display_name }}</h2>
+            <h3 class="subtitle is-5" style="margin-bottom:0.5rem">
+                <a href={{ content.archive.url }}>{{ content.archive.name }}</a>,
+                <span>{{ content.archive.city }}, {{ content.archive.country }}</span>
+            </h3>
+            <h4 class="subtitle is-6">
+                {% if content.source_type %}{{ content.source_type }}:{% endif %} {{ content.date_statement }}</h4>
+        </div>
+        <div class="column source-archive-logo">
+            <a href="{{ content.archive.url }}">
+                <img src="{{ content.archive.logo }}" class="archive-header-logo"/>
+            </a>
+        </div>
+    </div>
+    <div class="columns">
+        <div class="column">
+            <div class="level">
+                <div class="level-left is-fullwidth">
+                    <div class="tabs" x-data>
+                        <ul class="source-section-selector" x-ref="tablist" role="tablist">
+                            <li :class="$store.sourceTabs.isSelected($el.id) ? 'is-active' : ''"
+                                @click="$store.sourceTabs.select($el.id)"
+                                @mousedown.prevent
+                                @focus="$store.sourceTabs.select($el.id)"
+                                id="description-tab">
+                                <a href="#/">Description</a>
+                            </li>
+                            {% if content.inventory or content.uninventoried %}
+                                <li id="inventory-tab"
+                                    :class="$store.sourceTabs.isSelected($el.id) ? 'is-active' : ''"
+                                    @click="$store.sourceTabs.select($el.id)"
+                                    @mousedown.prevent
+                                    @focus="$store.sourceTabs.select($el.id)"
+                                >
+                                    <a href="#/inventory">Inventory</a>
+                                </li>
+                            {% endif %}
+
+                            {% if content.manifest_url %}
+                                <li id="images-tab"
+                                    :class="$store.sourceTabs.isSelected($el.id) ? 'is-active' : ''"
+                                    @click="$store.sourceTabs.select($el.id); $dispatch('initialize-diva')"
+                                    @mousedown.prevent
+                                    @focus="$store.sourceTabs.select($el.id)"
+                                >
+                                    {% if request.user.is_authenticated %}
+                                        <a href="#/images">Images</a>
+                                    {% else %}
+                                        <a href="/login?next={{ request.path }}%23/images">Images (Log in to view)</a>
+                                    {% endif %}
+                                </li>
+                            {% endif %}
+
+                            {% if content.sets %}
+                                <li id="sets-tab"
+                                    :class="$store.sourceTabs.isSelected($el.id) ? 'is-active' : ''"
+                                    @click="$store.sourceTabs.select($el.id)"
+                                    @mousedown.prevent
+                                    @focus="$store.sourceTabs.select($el.id)"
+                                >
+                                    <a href="#/sets">Sets</a>
+                                </li>
+                            {% endif %}
+
+                            {% if content.bibliography %}
+                                <li id="bibliography-tab"
+                                    :class="$store.sourceTabs.isSelected($el.id) ? 'is-active' : ''"
+                                    @click="$store.sourceTabs.select($el.id)"
+                                    @mousedown.prevent
+                                    @focus="$store.sourceTabs.select($el.id)"
+                                >
+                                    <a href="#/bibliography">Bibliography</a>
+                                </li>
+                            {% endif %}
+
+                            <li id="commentary-tab"
+                                :class="$store.sourceTabs.isSelected($el.id) ? 'is-active' : ''"
+                                @click="$store.sourceTabs.select($el.id)"
+                                @mousedown.prevent
+                                @focus="$store.sourceTabs.select($el.id)"
+                            >
+                                <a href="#/commentary">Commentary</a>
+                            </li>
+                            <li id="contributors-tab"
+                                :class="$store.sourceTabs.isSelected($el.id) ? 'is-active' : ''"
+                                @click="$store.sourceTabs.select($el.id)"
+                                @mousedown.prevent
+                                @focus="$store.sourceTabs.select($el.id)"
+                            >
+                                <a href="#/contributors">Contributors</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="level-right">
+                    <div class="tabs">
+                        <ul>
+                            <li class="">
+                                <a href="#/corrections">Contribute a Change</a>
+                            </li>
+                            {% if request.user.is_staff %}
+                            <li class="">
+                                <a href="/admin/diamm_data/source/{{ content.pk }}">Edit</a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div role="tabpanels" x-data>
+        <section id="description-panel"
+                 x-show="$store.sourceTabs.isSelected('description-tab')"
+                 role="tabpanel">
+            {% include "website/source/description.jinja2" %}
+        </section>
+
+        {% if content.inventory or content.uninventoried %}
+            <section id="inventory-panel"
+                     x-show="$store.sourceTabs.isSelected('inventory-tab')"
+                     role="tabpanel">
+                {% include "website/source/inventory.jinja2" %}
+            </section>
+        {% endif %}
+
+        {% if content.manifest_url %}
+            <section id="images-panel"
+                     x-show="$store.sourceTabs.isSelected('images-tab')"
+                     role="tabpanel">
+                {% include "website/source/images.jinja2" %}
+            </section>
+        {% endif %}
+        {% if content.sets %}
+            <section id="sets-panel"
+                     x-show="$store.sourceTabs.isSelected('sets-tab')"
+                     role="tabpanel">
+            </section>
+        {% endif %}
+        {% if content.bibliography %}
+            <section id="bibliography"
+                     x-show="$store.sourceTabs.isSelected('bibliography-tab')"
+                     role="tabpanel">
+                {% include "website/source/bibliography.jinja2" %}
+            </section>
+        {% endif %}
+        <section id="commentary"
+                 x-show="$store.sourceTabs.isSelected('commentary-tab')"
+                 role="tabpanel">
+        </section>
+        <section id="contributions"
+                 x-show="$store.sourceTabs.isSelected('contributions-tab')"
+                 role="tabpanel">
+        </section>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
-    <script src="{{ static('apps/source/dist/bundle.js') }}"></script>
+    {#    <script src="{{ static('apps/source/dist/bundle.js') }}"></script>#}
 {% endblock %}

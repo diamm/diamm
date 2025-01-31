@@ -1,0 +1,147 @@
+{% macro foliation(entry) %}
+    {% if not entry.folio_start %}
+        [No start folio listed]
+    {% else %}
+        {{ entry.folio_start }}
+        {%- if entry.folio_end and entry.folio_end != entry.folio_start -%}
+        &ndash;{{ entry.folio_end }}
+        {% endif %}
+    {% endif %}
+    {% if request.user.is_authenticated %}
+        <a href="#/images?p={{ entry.folio_start }}">
+            <span class="icon is-small">
+                <i class="fa fa-file-text-o fa-border quicklook"></i>
+            </span>
+        </a>
+    {% endif %}
+{% endmacro %}
+
+{% macro composers(entry) %}
+    {% if entry.composers %}
+        {% for composer in entry.composers %}
+            <div class="composer-names">
+                {% if composer.url %}
+                    <a href="{{ composer.url }}">{{ composer.full_name }}</a>
+                {% else %}
+                    {{ composer.full_name }}
+                {% endif %}
+                {{ "(?)" if composer.uncertain else "" }}
+            </div>
+        {% endfor %}
+    {% else %}
+        Anonymous
+    {% endif %}
+{% endmacro %}
+
+{% macro voices(entry) %}
+    {% for voice in entry.voices %}
+        <div class="voice-detail">
+            {% if voice.voice_type %}
+                <div>
+                    <strong>Voice: </strong>
+                    {{ voice.voice_type }}
+                </div>
+            {% endif %}
+            {% if voice.languages %}
+                <div>
+                    <strong>Languages: </strong>
+                    {{ voice.languages|join(', ') }}
+                </div>
+            {% endif %}
+            {% if voice.mensuration %}
+                <div>
+                    <strong>Mensuration: </strong>
+                    {{ voice.mensuration }}
+                </div>
+            {% endif %}
+            {% if voice.clef %}
+                <div>
+                    <strong>Clef: </strong>
+                    {{ voice.clef }}
+                </div>
+            {% endif %}
+            {% if voice.voice_text %}
+                <div>
+                    <strong>Voice Text: </strong>
+                    {{ voice.voice_text }}
+                </div>
+            {% endif %}
+        </div>
+    {% endfor %}
+{% endmacro %}
+
+<div x-data="{
+            selectedInventoryTab: null,
+            init() { this.selectedInventoryTab = 'primary-inventory-tab' },
+            select(tabName) {
+                this.selectedInventoryTab = tabName
+            },
+            isSelected(tabName) {
+                return this.selectedInventoryTab === tabName
+            }
+        }">
+    <div class="columns">
+        <div class="column">
+            <nav class="level">
+                <div class="level-left">
+                    <div class="level-item">
+                        <div class="tabs">
+                            <ul>
+                                {% if content.inventory or content.uninventoried %}
+                                    <li id="primary-inventory-tab"
+                                        :class="isSelected($el.id) ? 'is-active' : ''"
+                                        @click="select($el.id)"
+                                    >
+                                        <a href="#">{{ "Uninventoried" if content.uninventoried else "Source Order" }}</a>
+                                    </li>
+                                {% endif %}
+                                {% if content.inventory %}
+                                    <li id="composer-inventory-tab"
+                                        :class="isSelected($el.id) ? 'is-active' : ''"
+                                        @click="select($el.id)"
+                                    >
+                                        <a href="#">By Composer (A-Z)</a>
+                                    </li>
+                                {% endif %}
+                                {% if content.inventory %}
+                                    <li id="composition-inventory-tab"
+                                        :class="isSelected($el.id) ? 'is-active' : ''"
+                                        @click="select($el.id)"
+                                    >
+                                        <a href="#">By Composition (A-Z)</a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+    <div>
+        <section id="primary-inventory-panel"
+                 x-show="isSelected('primary-inventory-tab')"
+                 class="columns">
+            {% if content.uninventoried %}
+                {% include "website/source/inventory-uninventoried.jinja2" %}
+            {% else %}
+                {% include "website/source/inventory-source-order.jinja2" %}
+            {% endif %}
+        </section>
+        {% if content.inventory %}
+            <section id="composer-inventory-panel"
+                     x-show="isSelected('composer-inventory-tab')"
+                     class="columns"
+            >
+                {% include "website/source/inventory-composer-order.jinja2" %}
+            </section>
+        {% endif %}
+        {% if content.inventory %}
+            <section id="composition-inventory-panel"
+                     x-show="isSelected('composition-inventory-tab')"
+                     class="columns">
+                {% include "website/source/inventory-composition-order.jinja2" %}
+            </section>
+        {% endif %}
+    </div>
+</div>

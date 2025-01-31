@@ -19,6 +19,10 @@ class BibliographyInline(admin.TabularInline):
 
 @admin.register(BibliographyAuthor)
 class BibliographyAuthorAdmin(admin.ModelAdmin):
-    list_display = ("last_name", "first_name")
+    list_display = (
+        "last_name",
+        "first_name",
+    )
     search_fields = ("last_name",)
     inlines = (BibliographyInline,)
+    list_filter = ()

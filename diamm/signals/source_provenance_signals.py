@@ -1,5 +1,7 @@
 from diamm.helpers.solr_helpers import solr_delete, solr_index
-from diamm.serializers.search.source_provenance import SourceProvenanceSearchSerializer
+from diamm.serializers.search_old.source_provenance import (
+    SourceProvenanceSearchSerializer,
+)
 
 
 # @receiver(post_save, sender=SourceProvenance)

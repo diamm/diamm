@@ -1,8 +1,5 @@
-from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
-
-from diamm.helpers.solr_helpers import SolrManager
 
 
 class Organization(models.Model):
@@ -45,41 +42,3 @@ class Organization(models.Model):
 
     def __str__(self):
         return f"{self.name}"
-
-    @property
-    def solr_copyist(self):
-        connection = SolrManager(settings.SOLR["SERVER"])
-        fq = [
-            "type:sourcecopyist",
-            "copyist_type_s:organization",
-            f"copyist_pk_i:{self.pk}",
-        ]
-        sort = "source_ans asc"
-        connection.search("*:*", fq=fq, sort=sort, rows=100)
-
-        return list(connection.results)
-
-    @property
-    def solr_relationships(self):
-        connection = SolrManager(settings.SOLR["SERVER"])
-        fq = [
-            "type:sourcerelationship",
-            "related_entity_type_s:organization",
-            f"related_entity_pk_i:{self.pk}",
-        ]
-        sort = "source_ans asc"
-        connection.search("*:*", fq=fq, sort=sort, rows=100)
-
-        return list(connection.results)
-
-    @property
-    def solr_provenance(self):
-        connection = SolrManager(settings.SOLR["SERVER"])
-        fq = [
-            "type:sourceprovenance",
-            "entity_type_s:organization",
-            f"entity_pk_i:{self.pk}",
-        ]
-        sort = "source_ans asc"
-        connection.search("*:*", fq=fq, sort=sort, rows=100)
-        return list(connection.results)

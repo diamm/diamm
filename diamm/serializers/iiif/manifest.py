@@ -97,22 +97,8 @@ class SourceManifestSerializer(ContextDictSerializer):
         # only the primary images (type 1) are returned.
         # images_ss:[* TO *] ensures that only records with images attached are returned.
         canvas_query = {
-            "fq": ["type:page", f"source_i:{obj['pk']}", "images_ss:[* TO *]"],
-            "fl": [
-                "id",
-                "pk",
-                "source_i",
-                "numeration_s",
-                "items_ii",
-                "page_type_i",
-                "image_type_i",
-                "width_i",
-                "height_i",
-                "image_type_s",
-                "[child parentFilter=type:page childFilter=type:image]",
-            ],
-            "sort": "sort_order_f asc, image_type_i asc, numeration_ans asc",
-            "rows": 100,
+            "fq": ["type:image", f"source_i:{obj['pk']}", "image_type_i:1"],
+            "sort": "sort_order_f asc, numeration_ans asc",
         }
         conn.search("*:*", **canvas_query)
 

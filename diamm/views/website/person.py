@@ -1,4 +1,5 @@
 from django.db.models import Prefetch
+from django.http.response import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from rest_framework import generics
 
@@ -25,7 +26,7 @@ class PersonDetail(generics.RetrieveAPIView):
 
 # Since the old DIAMM IDs have been replaced with new ones, this
 # call will handle redirections to the new records.
-def legacy_composer_redirect(req, pk: int) -> str:
+def legacy_composer_redirect(req, pk: int) -> HttpResponseRedirect:
     legacy_lookup = f"legacy_composer.{pk}"
     person = get_object_or_404(Person, legacy_id=legacy_lookup)
 

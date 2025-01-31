@@ -22,6 +22,10 @@ class GeographicAreaAdmin(VersionAdmin):
 
     get_parent.short_description = "Parent"
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related("parent__parent")
+
     def merge_areas_action(self, request, queryset):
         if "do_action" in request.POST:
             form = MergeAreasForm(request.POST)

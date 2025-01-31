@@ -43,6 +43,14 @@ class BibliographyAdmin(VersionAdmin):
     readonly_fields = ("id",)
     inlines = (AuthorsInline, PublicationInline)
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return (
+            qs.select_related("type")
+            .prefetch_related("authors__bibliography_author")
+            .all()
+        )
+
     def get_authors(self, obj):
         authors = obj.authors.all()
         if not authors:
@@ -56,3 +64,4 @@ class BibliographyAdmin(VersionAdmin):
             return f"{authlist}"
 
     get_authors.short_description = "Authors"
+    get_authors.admin_order_field = "authors__bibliography_author__last_name"

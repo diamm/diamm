@@ -35,6 +35,8 @@ class Image(models.Model):
     iiif_response_cache = models.TextField(
         blank=True, null=True, verbose_name="IIIF Image Response"
     )
+    width = models.IntegerField(default=0)
+    height = models.IntegerField(default=0)
     public = models.BooleanField(default=False)
     external = models.BooleanField(default=False)
 

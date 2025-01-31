@@ -1,6 +1,8 @@
 import serpy
+from django.conf import settings
 from rest_framework.reverse import reverse
 
+from diamm.helpers.solr_helpers import SolrManager
 from diamm.serializers.fields import StaticField
 from diamm.serializers.serializers import ContextDictSerializer
 
@@ -51,24 +53,47 @@ class ImageSerializer(ContextDictSerializer):
         )
 
     def get_resource(self, obj: dict) -> dict:
-        doclen = len(obj["_childDocuments_"])
+        if alt_ids := obj.get("alt_images_ii"):
+            conn = SolrManager(settings.SOLR["SERVER"])
 
-        if doclen == 0:
-            return {}
-
-        if doclen == 1:
-            return ImageResourceSerializer(
-                obj["_childDocuments_"][0], context={"request": self.context["request"]}
-            ).data
-        else:
-            imgs = obj["_childDocuments_"]
+            # image_type_i:1 in the field list transformer childFilter ensures that
+            # only the primary images (type 1) are returned.
+            # images_ss:[* TO *] ensures that only records with images attached are returned.
+            canvas_query = {
+                "fq": [
+                    "type:image",
+                    f"{{!terms f=pk}}{','.join(str(s) for s in alt_ids)}",
+                    "!image_type_i:1",
+                ],
+                "sort": "sort_order_f asc, image_type_i asc, numeration_ans asc",
+            }
+            print(canvas_query)
+            conn.search("*:*", **canvas_query)
 
             return {
                 "@type": "oa:Choice",
                 "default": ImageResourceSerializer(
-                    imgs[0], context={"request": self.context["request"]}
+                    obj, context={"request": self.context["request"]}
                 ).data,
                 "item": ImageResourceSerializer(
-                    imgs[1:], many=True, context={"request": self.context["request"]}
+                    conn.results,
+                    many=True,
+                    context={"request": self.context["request"]},
                 ).data,
             }
+
+        return ImageResourceSerializer(
+            obj, context={"request": self.context["request"]}
+        ).data
+        # else:
+        #     imgs = obj["_childDocuments_"]
+        #
+        #     return {
+        #         "@type": "oa:Choice",
+        #         "default": ImageResourceSerializer(
+        #             imgs[0], context={"request": self.context["request"]}
+        #         ).data,
+        #         "item": ImageResourceSerializer(
+        #             imgs[1:], many=True, context={"request": self.context["request"]}
+        #         ).data,
+        #     }

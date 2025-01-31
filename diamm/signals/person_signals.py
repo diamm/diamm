@@ -3,7 +3,7 @@ from django.dispatch import receiver
 
 from diamm.helpers.solr_helpers import solr_delete, solr_index
 from diamm.models.data.person import Person
-from diamm.serializers.search.person import PersonSearchSerializer
+from diamm.serializers.search_old.person import PersonSearchSerializer
 
 
 @receiver(post_save, sender=Person)

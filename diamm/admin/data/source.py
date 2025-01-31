@@ -84,11 +84,11 @@ class BibliographyInline(admin.TabularInline):
     verbose_name = "Bibliography Entry"
     extra = 0
     raw_id_fields = ("bibliography",)
+
     formfield_overrides = {
         models.CharField: {"widget": TextInput(attrs={"size": "160"})},
         models.TextField: {"widget": Textarea(attrs={"rows": 2, "cols": 40})},
     }
-    list_select_related = ("source__archive__city__parent", "bibliography__type")
 
     def get_queryset(self, request):
         return (
@@ -160,22 +160,20 @@ class ItemInline(admin.TabularInline):
         "source_order",
     )
     readonly_fields = ("link_id_field", "get_composers")
-    list_select_related = ("source__archive__city__parent__parent", "composition")
-    list_prefetch_related = ("composition__composers",)
 
     def get_queryset(self, request):
         return (
             super()
             .get_queryset(request)
             .select_related("source__archive__city__parent__parent", "composition")
-            .prefetch_related("composition__composers")
+            .prefetch_related("composition__composers__composer")
         )
 
     def get_composers(self, obj):
-        if obj.composition.exists():
-            cnames: list = obj.composition.composer_names
-            return mark_safe("; <br />".join(cnames))  # noqa: S308
-        return None
+        if not obj.composition_id:
+            return None
+        cnames: list = [c.composer.full_name for c in obj.composition.composers.all()]
+        return mark_safe("; <br />".join(cnames))  # noqa: S308
 
     get_composers.short_description = "Composers"
 
@@ -290,10 +288,13 @@ class SourceAdmin(VersionAdmin):
     formfield_overrides = {models.TextField: {"widget": AdminPagedownWidget}}
 
     def get_queryset(self, request):
-        print("Getting source queryset")
         return (
             super()
             .get_queryset(request)
+            .prefetch_related(
+                "bibliographies__bibliography",
+                "inventory__composition__composers",
+            )
             .select_related(
                 "archive__city__parent__parent",
                 "cover_image__page",
@@ -330,7 +331,6 @@ class SourceAdmin(VersionAdmin):
                     if target.pk == instance.pk:
                         continue
 
-                    print(f"Copying to {target.display_name}")
                     self.__copy_items_to_source(instance, target)
 
                 messages.success(request, "Inventories successfully copied.")

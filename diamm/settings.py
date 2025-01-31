@@ -86,7 +86,7 @@ MIDDLEWARE = [
 ]
 
 if DEBUG:  # noqa: F405
-    INSTALLED_APPS.append("debug_toolbar")
+    INSTALLED_APPS += ["debug_toolbar"]
     MIDDLEWARE.append(
         "debug_toolbar.middleware.DebugToolbarMiddleware",
     )
@@ -239,6 +239,9 @@ INTERFACE_FACETS = {
 SOLR = {
     "SERVER": "http://localhost:8983/solr/diamm/",
     "INDEX_SERVER": "http://localhost:8983/solr/diamm_ingest/",  # Indexing core. This is then swapped for the live one.
+    "BASE_SERVER": "http://localhost:8983/solr",
+    "INDEX_CORE": "diamm_ingest",
+    "LIVE_CORE": "diamm",
     "PAGE_SIZE": REST_FRAMEWORK[
         "PAGE_SIZE"
     ],  # use the same page size as DRF for consistency
@@ -377,6 +380,16 @@ LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "filters": {"require_debug_false": {"()": "django.utils.log.RequireDebugFalse"}},
+    "formatters": {
+        "verbose": {
+            "format": "[%(asctime)s] [%(levelname)8s] (%(name)s) %(message)s (%(filename)s:%(lineno)s)",
+            "style": "%",
+        },
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
+        },
+    },
     "handlers": {
         "mail_admins": {
             "level": "ERROR",
@@ -384,8 +397,9 @@ LOGGING = {
             "class": "django.utils.log.AdminEmailHandler",
         },
         "console": {
-            "level": "DEBUG",
+            "level": "INFO",
             "class": "logging.StreamHandler",
+            "formatter": "verbose",
         },
     },
     "loggers": {
@@ -394,9 +408,13 @@ LOGGING = {
             "level": "ERROR",
             "propagate": True,
         },
-        # 'django.db.backends': {
-        #     'level': 'DEBUG',
-        #     'handlers': ['console'],
+        "diamm": {
+            "handlers": ["console"],
+            "level": "DEBUG",
+        },
+        # "django.db.backends": {
+        #     "level": "DEBUG",
+        #     "handlers": ["console"],
         # },
         "diamm.middleware.logging": {"handlers": ["console"], "level": "DEBUG"},
     },

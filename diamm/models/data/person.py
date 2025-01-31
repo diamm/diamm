@@ -1,9 +1,6 @@
-from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.urls import reverse
-
-from diamm.helpers.solr_helpers import SolrManager
 
 
 class Person(models.Model):
@@ -61,7 +58,6 @@ class Person(models.Model):
         elif self.floruit:
             date_str = f"fl. {self.floruit}"
 
-        name_str = ""
         if self.first_name:
             name_str = f"{self.last_name}, {self.first_name}"
         else:
@@ -78,48 +74,3 @@ class Person(models.Model):
     @property
     def full_name(self) -> str:
         return self.__str__()
-
-    @property
-    def solr_relationships(self) -> list:
-        connection = SolrManager(settings.SOLR["SERVER"])
-        fq = [
-            "type:sourcerelationship",
-            "related_entity_type_s:person",
-            f"related_entity_pk_i:{self.pk}",
-        ]
-        sort = "source_ans asc"
-
-        connection.search("*:*", fq=fq, sort=sort, rows=100)
-        return list(connection.results)
-
-    @property
-    def solr_copyist(self) -> list:
-        connection = SolrManager(settings.SOLR["SERVER"])
-        fq = ["type:sourcecopyist", "copyist_type_s:person", f"copyist_pk_i:{self.pk}"]
-        sort = "source_ans asc"
-
-        connection.search("*:*", fq=fq, sort=sort, rows=100)
-        return list(connection.results)
-
-    @property
-    def solr_compositions(self) -> list:
-        connection = SolrManager(settings.SOLR["SERVER"])
-        uncertain_ids = self.compositions.filter(uncertain=True).values_list(
-            "composition__pk", flat=True
-        )
-        fq = ["type:composition", f"composers_ii:{self.pk}"]
-        sort = "title_s asc"
-        connection.search("*:*", fq=fq, sort=sort, rows=100)
-
-        if connection.hits == 0:
-            return []
-
-        reslist = []
-        for res in connection.results:
-            if res["pk"] in uncertain_ids:
-                res["uncertain"] = True
-            else:
-                res["uncertain"] = False
-            reslist.append(res)
-
-        return reslist

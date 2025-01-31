@@ -1,0 +1,31 @@
+
+<div class="column">
+    <p>This source has not been inventoried. However, it is known to contain:</p>
+    <table class="table inventory-table">
+        <tbody>
+        {% for entry in content.uninventoried %}
+        <tr>
+            <td>
+                {{ foliation(entry) }}
+            </td>
+            <td class="item-details">
+                {{ entry.source_attribution|default("[No Source Attribution]") }}
+            </td>
+            <td>
+                {{ composers(entry) }}
+            </td>
+            <td>
+                {% if entry.voices %}
+                {{ voices(entry) }}
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <hr />
+    <p>
+        If you would like to contribute an inventory please get in touch. E-mail
+        <a href="mailto:diamm@music.ox.ac.uk">diamm@music.ox.ac.uk</a>.
+    </p>
+</div>

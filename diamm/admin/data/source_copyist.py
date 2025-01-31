@@ -16,6 +16,7 @@ class SourceCopyistAdmin(admin.ModelAdmin):
         return f"{obj.source.display_name}"
 
     get_source.short_description = "source"
+    get_source.admin_order_field = "source__archive__siglum"
 
     def get_copyist(self, obj):
         if isinstance(obj.copyist, Organization):

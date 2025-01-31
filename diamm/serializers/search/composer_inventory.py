@@ -1,124 +1,61 @@
-import random
-from typing import Optional
+import logging
 
 import serpy
 
-from diamm.serializers.fields import StaticField
-from diamm.serializers.serializers import ContextSerializer
+from diamm.serializers.search.helpers import get_db_records, parallelise, record_indexer
 
-"""
-    An inventory by composer, where every 'composer' field is an array (possible
-    multiple uncertain composers) is expensive to compute on the fly, so this will
-    precompute all composer inventory relationships and store them in solr. This should
-    allow us to also group on the composer pk and get all the compositions.
-
-    type: composerinventory
-    composer_i: $COMPOSER_PK
-    composer_s: $COMPOSER_NAME
-    source_i: $SOURCE_PK
-    source_s: $SOURCE_NAME
-    composition_s: $COMPOSITION_NAME
-    composition_i: $COMPOSITION_PK
-    uncertain_b: $UNCERTAINTY
+log = logging.getLogger("diamm")
 
 
-('Alanus',
-  'Johannes',
-  8544,
-  False,
-  'Sub Arturo plebs valata / Fons citharizantium ac organizantium / In omnem terram',
-  117,
-  'Q.15',
-  None,
-  'I-Bc')
-"""
-# named indexes to keep things straight
-LAST_NAME = 0
-FIRST_NAME = 1
-COMPOSER_PK = 2
-UNCERTAIN = 3
-COMPOSITION_TITLE = 4
-SOURCE_ID = 5
-SOURCE_SHELFMARK = 6
-SOURCE_NAME = 7
-ARCHIVE_SIGLUM = 8
-COMPOSITION_PK = 9
-FOLIO_START = 10
-FOLIO_END = 11
-SOURCE_ATTRIBUTION = 12
-ITEM_PK = 13
+def index_composer_inventory(cfg: dict) -> bool:
+    log.info("Indexing composer inventory")
+    record_groups = _get_inventory(cfg)
+    parallelise(
+        record_groups, record_indexer, create_composer_inventory_index_documents, cfg
+    )
 
-# These fields will be used in two places, so they are stored centrally here and then
-# imported in the reindexing signal and in the reindex_all script.
-FIELDS_TO_INDEX = [
-    "composition__composers__composer__last_name",
-    "composition__composers__composer__first_name",
-    "composition__composers__composer__pk",
-    "composition__composers__uncertain",
-    "composition__title",
-    "source_id",
-    "source__shelfmark",
-    "source__name",
-    "source__archive__siglum",
-    "composition__pk",
-    "folio_start",
-    "folio_end",
-    "source_attribution",
-    "pk",  # item pk
-]
+    return True
 
 
-class ComposerInventorySearchSerializer(ContextSerializer):
-    type = StaticField(value="composerinventory")
-    pk = serpy.MethodField()
+def _get_inventory(cfg: dict):
+    sql_query = """SELECT it.id AS pk, 'composerinventory' AS record_type, it.id AS item_id,
+                       it.source_id AS source_id, cc.uncertain AS uncertain, it.composition_id AS composition_id,
+                       cc.composer_id AS composer_id, it.source_attribution AS source_attribution,
+                       it.folio_start AS folio_start, it.folio_end AS folio_end,
+                       (SELECT concat(c.last_name, coalesce(', ' || c.first_name, ''))
+                        FROM diamm_data_person AS c
+                        WHERE c.id = cc.composer_id)
+                           AS composer,
+                       (SELECT co.title
+                        FROM diamm_data_composition AS co
+                        WHERE co.id = it.composition_id)
+                           AS composition
+                FROM diamm_data_item AS it
+                LEFT JOIN diamm_data_compositioncomposer AS cc ON cc.composition_id = it.composition_id
+                ORDER BY it.source_id"""
+
+    return get_db_records(sql_query, cfg)
+
+
+def create_composer_inventory_index_documents(record, cfg: dict):
+    return [ComposerInventorySearchSerializer(record).data]
+
+
+class ComposerInventorySearchSerializer(serpy.DictSerializer):
+    type = serpy.StrField(attr="record_type")
+    pk = serpy.IntField()
     composer_s = serpy.MethodField()
-    composer_i = serpy.MethodField()
-    source_i = serpy.MethodField()
-    uncertain_b = serpy.MethodField()
-    composition_s = serpy.MethodField()
-    composition_i = serpy.MethodField()
-    folio_start_s = serpy.MethodField()
-    folio_end_s = serpy.MethodField()
-    source_attribution_s = serpy.MethodField()
-    item_i = serpy.MethodField()
+    composer_i = serpy.IntField(attr="composer_id", required=False)
+    source_i = serpy.IntField(attr="source_id", required=False)
+    uncertain_b = serpy.BoolField(attr="uncertain", required=False)
+    composition_s = serpy.StrField(attr="composition", required=False)
+    composition_i = serpy.IntField(attr="composition_id", required=False)
+    folio_start_s = serpy.StrField(attr="folio_start", required=False)
+    folio_end_s = serpy.StrField(attr="folio_end", required=False)
+    source_attribution_s = serpy.StrField(attr="source_attribution", required=False)
+    item_i = serpy.IntField(attr="item_id", required=False)
 
-    # The PK for this table does not map directly on to any
-    # database entity, so we can instead generate a random integer
-    # and use that.
-    def get_pk(self, obj) -> int:
-        return random.randrange(10000000)  # noqa: S311
-
-    def get_composer_s(self, obj) -> str:
-        if obj[LAST_NAME] and obj[FIRST_NAME]:
-            return f"{obj[LAST_NAME]}, {obj[FIRST_NAME]}"
-        elif obj[LAST_NAME]:
-            return f"{obj[LAST_NAME]}"
-
-        return "Anonymous"
-
-    def get_composer_i(self, obj) -> Optional[int]:
-        return obj[COMPOSER_PK]
-
-    def get_source_i(self, obj) -> Optional[int]:
-        return obj[SOURCE_ID]
-
-    def get_uncertain_b(self, obj) -> bool:
-        return obj[UNCERTAIN] is True
-
-    def get_composition_s(self, obj) -> Optional[str]:
-        return obj[COMPOSITION_TITLE]
-
-    def get_composition_i(self, obj) -> Optional[int]:
-        return obj[COMPOSITION_PK]
-
-    def get_folio_start_s(self, obj) -> Optional[str]:
-        return obj[FOLIO_START]
-
-    def get_folio_end_s(self, obj) -> Optional[str]:
-        return obj[FOLIO_END]
-
-    def get_source_attribution_s(self, obj) -> Optional[str]:
-        return obj[SOURCE_ATTRIBUTION]
-
-    def get_item_i(self, obj) -> Optional[int]:
-        return obj[ITEM_PK]
+    def get_composer_s(self, obj):
+        if not obj["composer"]:
+            return "Anonymous"
+        return str(obj["composer"])

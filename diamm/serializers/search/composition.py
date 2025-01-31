@@ -1,99 +1,141 @@
-import re
-from typing import Optional
+import logging
 
 import serpy
 
+from diamm.serializers.search.helpers import (
+    get_db_records,
+    parallelise,
+    process_composers,
+    process_sources,
+    record_indexer,
+)
 
-class CompositionSearchSerializer(serpy.Serializer):
-    type = serpy.MethodField()
-    pk = serpy.IntField()
+log = logging.getLogger("diamm")
+
+
+def index_compositions(cfg: dict) -> bool:
+    log.info("Indexing compositions")
+    record_groups = _get_compositions(cfg)
+    parallelise(record_groups, record_indexer, create_composition_index_documents, cfg)
+
+    return True
+
+
+def create_composition_index_documents(record, cfg) -> list[dict]:
+    return [CompositionSearchSerializer(record).data]
+
+
+def _get_compositions(cfg: dict):
+    sql_query = r"""SELECT c.id AS pk, 'composition' AS record_type, c.title AS title,
+                   c.anonymous AS anonymous,
+                   (SELECT array_agg(ddg.name)
+                        FROM diamm_data_composition_genres AS ddcg
+                        LEFT JOIN diamm_data_genre AS ddg ON ddcg.genre_id = ddg.id
+                        WHERE ddcg.composition_id = c.id)
+                   AS genres,
+                   (SELECT jsonb_agg(DISTINCT jsonb_build_object(
+                           'id', p2.id,
+                           'last_name', p2.last_name,
+                           'first_name', p2.first_name,
+                           'earliest_year', p2.earliest_year,
+                           'latest_year', p2.latest_year,
+                           'earliest_year_approximate', p2.earliest_year_approximate,
+                           'latest_year_approximate', p2.latest_year_approximate,
+                           'floruit', p2.floruit,
+                           'uncertain', cc2.uncertain
+                            ))
+                            FROM diamm_data_compositioncomposer AS cc2
+                            LEFT JOIN diamm_data_person AS p2 ON cc2.composer_id = p2.id
+                        WHERE c.id = cc2.composition_id)
+                    AS composition_composers,
+                   (SELECT jsonb_agg(DISTINCT jsonb_build_object(
+                            'id', s.id,
+                            'display_name', concat(a.siglum, ' ', s.shelfmark, coalesce(' (' || s.name || ')', ''))
+                            ))
+                        FROM diamm_data_item AS i
+                        LEFT JOIN diamm_data_source AS s ON i.source_id = s.id
+                        LEFT JOIN diamm_data_archive AS a ON s.archive_id = a.id
+                        WHERE i.composition_id = c.id)
+                   AS sources,
+                  ( SELECT array_agg(regexp_replace(TRIM(v.voice_text), '\W+| {2,}', ' ', 'g'))
+                    FROM diamm_data_item AS i
+                    LEFT JOIN diamm_data_voice AS v ON v.item_id = i.id
+                    WHERE i.composition_id = c.id AND LENGTH(v.voice_text) > 3 AND v.voice_text IS NOT NULL)
+                  AS voice_texts
+                FROM diamm_data_composition AS c
+                ORDER BY c.id"""
+
+    return get_db_records(sql_query, cfg)
+
+
+class CompositionSearchSerializer(serpy.DictSerializer):
+    type = serpy.StrField(attr="record_type")
+    pk = serpy.IntField(attr="pk")
 
     title_s = serpy.StrField(attr="title")
     display_name_ans = serpy.StrField(attr="title")
     anonymous_b = serpy.BoolField(attr="anonymous")
-    genres_ss = serpy.MethodField()
+    genres_ss = serpy.Field(attr="genres")
+    voice_text_txt = serpy.Field(attr="voice_texts")
     composers_ssni = serpy.MethodField()
     composers_ss = serpy.MethodField()
     composers_ii = serpy.MethodField()
-    voice_text_txt = serpy.MethodField()
     sources_ss = serpy.MethodField()
     sources_ssni = serpy.MethodField()
     sources_ii = serpy.MethodField()
 
-    def get_type(self, obj):
-        return obj.__class__.__name__.lower()
-
-    def get_genres_ss(self, obj):
-        if obj.genres:
-            return list(obj.genres.all().values_list("name", flat=True))
-        return []
-
-    def __composers(self, obj) -> Optional[list]:
-        if obj.composers.exists():
-            return [
-                (o.composer.pk, o.composer.full_name, o.uncertain)
-                for o in obj.composers.all()
-            ]
-        return None
-
     def get_composers_ss(self, obj):
-        composers = self.__composers(obj)
+        """
+        Returns an array of composer names for the purposes of filtering and searching by name.
+        """
+        ret = []
+        if obj.get("anonymous"):
+            ret.append("Anonymous")
 
-        if composers:
-            return [o[1] for o in composers]
-        return []
+        composers = process_composers(
+            obj.get("composition_composers"), obj.get("unattributed_composers")
+        )
+        return ret + [c[0] for c in composers]
 
-    def get_composers_ssni(self, obj):
-        composers = self.__composers(obj)
-        if composers:
-            return [f"{o[0]}|{o[1]}|{o[2]}" for o in composers]
-        return []
+    def get_composers_ssni(self, obj) -> list[str]:
+        """
+        Returns a array of composer names, PK, and certainty, formatted to be split
+        by the pipe (|). This is so we can store these bits of information in Solr without
+        using nested documents.
+
+        Will be broken apart on display, and the PK will be resolved to a full URL.
+        """
+        composers = process_composers(
+            obj.get("composition_composers"), obj.get("unattributed_composers")
+        )
+        all_composers = []
+        if obj.get("anonymous_composition"):
+            all_composers.append("Anonymous||")
+
+        for composer in composers:
+            name, pk, uncertain = composer
+            all_composers.append(
+                f"{name}|{pk if pk is not None else ''}|{uncertain if uncertain is not None else ''}",
+            )
+        return all_composers
 
     def get_composers_ii(self, obj):
-        composers = self.__composers(obj)
-        if composers:
-            return [o[0] for o in composers]
-        return []
-
-    def __sources(self, obj) -> Optional[list]:
-        if obj.sources.exists():
-            return [(s.source.pk, s.source.display_name) for s in obj.sources.all()]
-        return None
+        """
+        Returns an array of composer names for the purposes of filtering and searching by name.
+        """
+        composers = process_composers(
+            obj.get("composition_composers"), obj.get("unattributed_composers")
+        )
+        return [c[1] for c in composers]
 
     def get_sources_ssni(self, obj):
-        sources = self.__sources(obj)
-        if sources:
-            return [f"{s[0]}|{s[1]}" for s in sources]
-        return []
+        sources = process_sources(obj["sources"])
+        return [f"{s[0]}|{s[1]}" for s in sources]
 
     def get_sources_ss(self, obj):
-        sources = self.__sources(obj)
-        if sources:
-            return [s[1] for s in sources]
-        return []
+        sources = process_sources(obj["sources"])
+        return [s[1] for s in sources]
 
     def get_sources_ii(self, obj):
-        sources = self.__sources(obj)
-        if sources:
-            return [s[0] for s in sources]
-        return []
-
-    def get_voice_text_txt(self, obj):
-        # NB: Sources == Items in this case, since the item is the relationship
-        # between composition and source.
-        if not obj.sources.exists():
-            return None
-
-        voice_texts = set()
-        items = obj.sources.filter(
-            voices__isnull=False, voices__voice_text__isnull=False
-        )
-        for it in items:
-            for voice in it.voices.all():
-                if not voice.voice_text:
-                    continue
-                voice_text = re.sub(r"[^\w ]+", "", voice.voice_text, flags=re.UNICODE)
-                voice_text = " ".join(voice_text.split())
-                voice_texts.add(voice_text)
-
-        return list(voice_texts)
+        sources = process_sources(obj["sources"])
+        return [s[0] for s in sources]

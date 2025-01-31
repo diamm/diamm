@@ -257,11 +257,11 @@ export const Voices = ({voices, num_voices}) =>
             { voices && voices.map ( (voice, idx) => {
                 return (
                     <div key={ idx } className="voice-detail">
-                        { voice.voice_type_s && <VoiceType voicetype={ voice.voice_type_s } /> }
-                        { voice.languages_ss && <Langs langs={ voice.languages_ss } /> }
-                        { voice.mensuration_s && <Mensur mensuration={ voice.mensuration_s } /> }
-                        { voice.clef_s && <Clef clef={ voice.clef_s }/> }
-                        { voice.voice_text_s && <VoiceText voicetext={ voice.voice_text_s } /> }
+                        { voice.voice_type && <VoiceType voicetype={ voice.voice_type } /> }
+                        { voice.languages && <Langs langs={ voice.languages } /> }
+                        { voice.mensuration && <Mensur mensuration={ voice.mensuration } /> }
+                        { voice.clef && <Clef clef={ voice.clef }/> }
+                        { voice.voice_text && <VoiceText voicetext={ voice.voice_text } /> }
                     </div>
                 );
             })}

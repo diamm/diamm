@@ -30,7 +30,7 @@ const Sources = ({sources}) =>
                         </a>
 
                         <figcaption>
-                            <a href={ source.url }>{ source.display_name_s }</a>
+                            <a href={ source.url }>{ source.display_name }</a>
                         </figcaption>
                     </div>
                 );

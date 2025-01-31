@@ -1,26 +1,24 @@
 import serpy
 from rest_framework.reverse import reverse
 
-from diamm.serializers.serializers import ContextDictSerializer, ContextSerializer
+from diamm.serializers.serializers import ContextSerializer
 
 
-class SourceArchiveSerializer(ContextDictSerializer):
+class SourceArchiveSerializer(ContextSerializer):
     url = serpy.MethodField()
-    display_name = serpy.StrField(attr="display_name_s")
+    display_name = serpy.StrField(attr="display_name")
     # has_images = serpy.MethodField()
 
-    public_images = serpy.BoolField(attr="public_images_b")
-    cover_image = serpy.MethodField(required=False)
-
-    source_type = serpy.StrField(attr="source_type_s", required=False)
-
-    date_statement = serpy.StrField(attr="date_statement_s", required=False)
-
-    surface = serpy.StrField(attr="surface_type_s", required=False)
+    public_images = serpy.BoolField(attr="public_images")
+    # cover_image = serpy.MethodField(required=False)
+    #
+    source_type = serpy.StrField(attr="type", required=False)
+    date_statement = serpy.StrField(attr="date_statement", required=False)
+    # surface = serpy.StrField(attr="surface_type_s", required=False)
 
     def get_url(self, obj):
         return reverse(
-            "source-detail", kwargs={"pk": obj["pk"]}, request=self.context["request"]
+            "source-detail", kwargs={"pk": obj.pk}, request=self.context["request"]
         )
 
     def get_cover_image(self, obj):
@@ -87,7 +85,7 @@ class ArchiveDetailSerializer(ContextSerializer):
 
     def get_sources(self, obj):
         return SourceArchiveSerializer(
-            obj.solr_sources, many=True, context={"request": self.context["request"]}
+            obj.sources.all(), many=True, context={"request": self.context["request"]}
         ).data
 
     def get_notes(self, obj) -> list:

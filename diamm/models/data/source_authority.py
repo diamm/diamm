@@ -30,7 +30,7 @@ class SourceAuthority(models.Model):
 
     @property
     def identifier_label(self):
-        d = dict(IDENTIFIER_TYPES)
+        d: dict[int, str] = dict(IDENTIFIER_TYPES)
         return d[self.identifier_type]
 
     @property

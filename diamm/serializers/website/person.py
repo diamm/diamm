@@ -1,8 +1,10 @@
 import serpy
+from django.contrib.contenttypes.prefetch import GenericPrefetch
 from rest_framework.reverse import reverse
 
+from diamm.models import Organization, Person
 from diamm.models.data.person_note import PersonNote
-from diamm.serializers.serializers import ContextDictSerializer, ContextSerializer
+from diamm.serializers.serializers import ContextSerializer
 
 
 class PersonRoleSerializer(ContextSerializer):
@@ -24,69 +26,64 @@ class PersonContributionSerializer(ContextSerializer):
     updated = serpy.StrField()
 
 
-class PersonSourceCopyistSerializer(ContextDictSerializer):
+class PersonSourceCopyistSerializer(ContextSerializer):
     url = serpy.MethodField()
-    has_images = serpy.BoolField(attr="has_images_b", required=False)
-    copyist_type = serpy.StrField(attr="type_s")
-    uncertain = serpy.BoolField(attr="uncertain_b")
-    source = serpy.StrField(attr="source_s")
-    public_images = serpy.BoolField(attr="source_public_images_b", required=False)
+    has_images = serpy.BoolField(attr="source.pages.exists", call=True, required=False)
+    copyist_type = serpy.StrField(attr="copyist_type")
+    uncertain = serpy.BoolField(attr="uncertain")
+    source = serpy.StrField(attr="source.display_name")
+    public_images = serpy.BoolField(attr="source.public_images", required=False)
 
-    def get_url(self, obj: dict) -> str:
+    def get_url(self, obj) -> str:
         return reverse(
             "source-detail",
-            kwargs={"pk": obj["source_i"]},
+            kwargs={"pk": obj.source_id},
             request=self.context["request"],
         )
 
 
-class PersonSourceRelationshipSerializer(ContextDictSerializer):
+class PersonSourceRelationshipSerializer(ContextSerializer):
     url = serpy.MethodField()
-    has_images = serpy.BoolField(attr="has_images_b", required=False)
-    relationship = serpy.StrField(attr="relationship_type_s")
-    uncertain = serpy.BoolField(attr="uncertain_b")
-    source = serpy.StrField(attr="source_s")
-    public_images = serpy.BoolField(attr="source_public_images_b", required=False)
+    relationship = serpy.StrField(attr="relationship_type")
+    uncertain = serpy.BoolField(attr="uncertain")
+    source = serpy.StrField(attr="source.display_name")
+    has_images = serpy.BoolField(attr="source.pages.exists", call=True, required=False)
+    public_images = serpy.BoolField(attr="source.public_images", required=False)
 
-    def get_url(self, obj: dict) -> str:
+    def get_url(self, obj) -> str:
         return reverse(
             "source-detail",
-            kwargs={"pk": obj["source_i"]},
+            kwargs={"pk": obj.source_id},
             request=self.context["request"],
         )
 
 
-class PersonCompositionSerializer(ContextDictSerializer):
+class PersonCompositionSerializer(ContextSerializer):
     url = serpy.MethodField()
-    title = serpy.StrField(attr="title_s")
-    uncertain = (
-        serpy.BoolField()
-    )  # injected in the person model lookup for solr_compositions
+    title = serpy.StrField(attr="composition.title")
+    uncertain = serpy.BoolField()
     sources = serpy.MethodField()
 
-    def get_url(self, obj: dict) -> str:
+    def get_url(self, obj) -> str:
         return reverse(
             "composition-detail",
-            kwargs={"pk": obj["pk"]},
+            kwargs={"pk": obj.pk},
             request=self.context["request"],
         )
 
-    def get_sources(self, obj: dict) -> list:
-        if "sources_ss" not in obj:
-            return []
+    def get_sources(self, obj):
+        items = obj.composition.sources.all()
+        ret = []
+        for item in items:
+            url = reverse(
+                "source-detail",
+                kwargs={"pk": item.source.pk},
+                request=self.context["request"],
+            )
+            name = item.source.display_name
 
-        sources = []
-        for entry in obj["sources_ssni"]:
-            pk, name = entry.split("|")
-            d = {
-                "url": reverse(
-                    "source-detail", kwargs={"pk": pk}, request=self.context["request"]
-                ),
-                "name": name,
-            }
-            sources.append(d)
-
-        return sources
+            ret.append({"url": url, "name": name})
+        return ret
 
 
 class PersonIdentifierSerializer(ContextSerializer):
@@ -119,21 +116,51 @@ class PersonDetailSerializer(ContextSerializer):
 
     def get_compositions(self, obj) -> list:
         return PersonCompositionSerializer(
-            obj.solr_compositions,
+            obj.compositions.select_related("composition", "composer")
+            .prefetch_related(
+                "composition__sources__source__archive__city",
+                "composition__sources",
+                "composition__composers__composer",
+            )
+            .all(),
             context={"request": self.context["request"]},
             many=True,
         ).data
 
     def get_related_sources(self, obj) -> list:
         return PersonSourceRelationshipSerializer(
-            obj.solr_relationships,
+            obj.sources_related.select_related(
+                "relationship_type", "source__archive__city"
+            )
+            .prefetch_related(
+                GenericPrefetch(
+                    "related_entity", [Person.objects.all(), Organization.objects.all()]
+                ),
+                "source__pages__images",
+                "source__inventory",
+            )
+            .all(),
             context={"request": self.context["request"]},
             many=True,
         ).data
 
     def get_copied_sources(self, obj) -> list:
         return PersonSourceCopyistSerializer(
-            obj.solr_copyist, context={"request": self.context["request"]}, many=True
+            obj.sources_copied.select_related("source__archive__city")
+            .prefetch_related(
+                GenericPrefetch(
+                    "copyist",
+                    [
+                        Person.objects.prefetch_related("identifiers", "roles").all(),
+                        Organization.objects.prefetch_related("identifiers").all(),
+                    ],
+                ),
+                "source__pages__images",
+                "source__inventory",
+            )
+            .all(),
+            context={"request": self.context["request"]},
+            many=True,
         ).data
 
     def get_type(self, obj) -> str:

@@ -174,5 +174,8 @@ class ImageAdmin(VersionAdmin):
 
     def get_type(self, obj):
         return f"{obj.type.name}"
-
     get_type.short_description = "type"
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related("type")

@@ -1,0 +1,14 @@
+<div class="column source-bibliography content">
+    <p class="is-marginless">
+        <strong>&Dagger; <em>denotes primary source study</em></strong>
+    </p>
+    {% for entry in content.bibliography %}
+    <p class="bibliography-entry">
+        {% if entry.primary_study %}
+        <strong>&Dagger; {{ entry.prerendered|safe }}</strong>
+        {% else %}
+        {{ entry.prerendered|safe }}
+        {% endif %}
+    </p>
+    {% endfor %}
+</div>

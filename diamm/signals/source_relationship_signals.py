@@ -3,7 +3,9 @@ from django.dispatch import receiver
 
 from diamm.helpers.solr_helpers import solr_delete, solr_index
 from diamm.models.data.source_relationship import SourceRelationship
-from diamm.serializers.search.source_relationship import SourceRelationshipSerializer
+from diamm.serializers.search_old.source_relationship import (
+    SourceRelationshipSerializer,
+)
 
 
 @receiver(post_save, sender=SourceRelationship)

@@ -1,0 +1,268 @@
+<div class="columns">
+    <div class="column is-three-quarters">
+        <table class="source-details">
+            <tbody>
+            <tr>
+                <th>Archive</th>
+                <td>
+                    <a href="{{ content.archive.url }}">
+                        {{ content.archive.name }}
+                    </a>, {{ content.archive.city }}, {{ content.archive.country }}
+                    ({{ content.archive.siglum }})
+                </td>
+            </tr>
+            <tr>
+                <th>Shelfmark</th>
+                <td>
+                    {{ content.shelfmark }} {% if content.name %}({{ content.name }}){% endif %}
+                </td>
+            </tr>
+            {% if not content.public_images %}
+            <tr>
+                <th>Image Availability</th>
+                <td>
+                    {% set extmsg %}
+                    {% if content.has_external_images %}
+                        <strong>Please refer to the external links for image availability.</strong>
+                    {% endif %}
+                    {% endset %}
+                    {% if not content.has_images and not content.public_imags %}
+                        DIAMM does not have images of this source. {{ extmsg }}
+                    {% elif content.has_images and not content.public_images %}
+                        DIAMM has images of this manuscript but does not yet have permission to put them
+                        online. {{ extmsg }}
+                    {% endif %}
+                </td>
+            </tr>
+            {% endif %}
+            {% if content.surface_type %}
+                <tr>
+                    <th>Surface</th>
+                    <td>{{ content.surface_type }}</td>
+                </tr>
+            {% endif %}
+            {% if content.numbering_system_type %}
+                <tr>
+                    <th>Numbering System</th>
+                    <td>{{ content.numbering_system_type }}</td>
+                </tr>
+            {% endif %}
+            {% if content.format %}
+                <tr>
+                    <th>Format</th>
+                    <td>{{ content.format }}</td>
+                </tr>
+            {% endif %}
+            {% if content.measurements %}
+                <tr>
+                    <th>Measurements</th>
+                    <td>{{ content.measurements }}</td>
+                </tr>
+            {% endif %}
+            {% if content.identifiers %}
+                <tr>
+                    <th>Other Identifiers</th>
+                    <td>
+                        <ul class="no-style">
+                            {% for identifier in content.identifiers %}
+                                <li>{{ identifier.identifier_type }}: {{ identifier.identifier }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+            {% endif %}
+            {% if content.notations %}
+                <tr>
+                    <th>Notations</th>
+                    <td>
+                        <ul class="no-style">
+                            {% for notation in content.notations %}
+                                <li>{{ notation.name }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+            {% endif %}
+            {% if not content.inventory_provided %}
+                <tr>
+                    <th>Inventory</th>
+                    <td>
+                        This MS has not yet been inventoried by DIAMM.
+                        If you would like to submit an inventory, please
+                        send it to <a href="mailto:diamm@music.ox.ac.uk">diamm@music.ox.ac.uk</a>
+                    </td>
+                </tr>
+            {% endif %}
+            {% if content.copyists %}
+                <tr>
+                    <th>Copyists</th>
+                    <td>
+                        <ul class="no-style">
+                            {% for copyist in content.copyists %}
+                                <li>
+                                    <a href="{{ copyist.copyist.url }}">
+                                        <span>
+                                        {% if copyist.uncertain %}? {% endif %}
+                                            {{ copyist.copyist.name }}
+                                        </span>
+                                    </a>
+                                    <span>{{ copyist.type }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+            {% endif %}
+            {% if content.relationships %}
+                <tr>
+                    <th>Relationships</th>
+                    <td>
+                        <ul class="no-style">
+                            {% for rel in content.relationships %}
+                                <li>
+                                    <a href="{{ rel.related_entity.url }}">
+                                        {% if rel.uncertain %}? {% endif %}
+                                        {{ rel.related_entity.name }}
+                                    </a> <span>({{ rel.relationship_type }})</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+            {% endif %}
+            {% if content.links %}
+                <tr>
+                    <th>External Links</th>
+                    <td>
+                        <ul class="no-style">
+                            {% for link in content.links %}
+                                <li>
+                                    <a href="{{ link.link }}">{{ link.link_text }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+            {% endif %}
+            {% if content.authorities %}
+                <tr>
+                    <th>External Authorities</th>
+                    <td>
+                        <ul class="no-style">
+                            {% for authority in content.authorities %}
+                                <li>
+                                    <a href="{{ authority.url }}">{{ authority.label }}
+                                        ({{ authority.identifier }})</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+            {% endif %}
+            {% if content.provenance %}
+                <tr>
+                    <th>Provenance</th>
+                    <td>
+                        <ul class="no-style">
+                            {% for entry in content.provenance %}
+                                <li>
+                                    {% if entry.entity %}
+                                        <span>
+                                <a href="{{ entry.entity.url }}">{{ entry.entity.name }}</a>
+                                {{ "?" if entry.entity_uncertain else ", " }}
+                            </span>
+                                    {% endif %}
+                                    {% if entry.protectorate %}
+                                        <span>
+                            {{ entry.protectorate }}{{ "?" if entry.protectorate_uncertain else ", " }}
+                            </span>
+                                    {% endif %}
+                                    {%- if entry.city -%}
+                                        <span>
+                            {{ entry.city }}{{ "?" if entry.city_uncertain else ", " }}
+                            </span>
+                                    {%- endif -%}
+                                    {%- if entry.region -%}
+                                        <span>
+                            {{ entry.region }}{{ "?" if entry.region_uncertain else ", " }}
+                            </span>
+                                    {%- endif -%}
+                                    {%- if entry.country -%}
+                                        <span>
+                            {{ entry.country }}{{ "?" if entry.country_uncertain else "" }}
+                            </span>
+                                    {%- endif -%}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+            {% endif %}
+            {% if content.inventory or content.composers or content.uninventoried %}
+                <tr>
+                    <th>Contents</th>
+                    <td>
+                        {% if content.inventory and content.composers %}
+                            {{ content.inventory|length }} pieces from {{ content.composers|length }}
+                            composers
+                        {% endif %}
+                        {% if content.uninventoried %}
+                            Contains {{ content.uninventoried|length }} uninventoried works or miscellaneous
+                            sections.
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endif %}
+            </tbody>
+        </table>
+        {% if content.notes %}
+            <div class="notes">
+                {% for note in content.notes %}
+                    <section>
+                        <h5 class="title is-5">
+                            {{ note.note_type }}
+                            {% if request.user.is_staff %}
+                                <sup>
+                                    <a href="/admin/diamm_data/sourcenote/{{ note.pk }}">Edit</a>
+                                </sup>
+                            {% endif %}
+                        </h5>
+                        {% if note.type == 98 %}
+                            <p>
+                                <strong>This information is reproduced here by kind permission of the
+                                    publishers.
+                                    It is COPYRIGHT and copying/reproduction of this content without
+                                    permission may result in legal action.</strong>
+                            </p>
+                        {% endif %}
+                        <p>
+                            {{ note.note|markdown|safe }}
+                        </p>
+                        <div class="note-author">
+                            {% if note.author and note.author != "DIAMM" %}
+                                {{ note.author }}
+                            {% endif %}
+                        </div>
+                    </section>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    <div class="column">
+        {% if content.cover_image_info and content.has_images and content.public_images %}
+            <figure class="card">
+                <div class="card-image">
+                    <figure class="image">
+                        <img src="{{ content.cover_image_info.url }}"/>
+                    </figure>
+                </div>
+                <div class="card-content">
+                    <div class="content">
+                        <p class="title is-5">{{ content.cover_image_info.label }}</p>
+                    </div>
+                </div>
+            </figure>
+
+        {% endif %}
+    </div>
+</div>

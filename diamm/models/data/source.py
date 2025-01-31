@@ -179,23 +179,27 @@ class Source(models.Model):
         if not self.pages.exists():
             return None
 
-        p = self.pages.order_by("?").only("numeration").first()
-        i = (
-            p.images.filter(type=1, iiif_response_cache__isnull=False)
-            .only("id", "public")
+        cover = (
+            self.pages.filter(images__type=1, images__iiif_response_cache__isnull=False)
+            .order_by("?")
+            .values("numeration", "images__id")
             .first()
         )
-        if i and i.public:
-            cover_obj["id"] = i.id
-            cover_obj["label"] = p.numeration
-            return cover_obj
 
+        if cover:
+            return {"id": cover["images__id"], "label": cover["numeration"]}
         return None
 
-    @property
+    @cached_property
     def composers(self):
         composer_names = []
-        for item in self.inventory.all().select_related("composition"):
+        for item in (
+            self.inventory.all()
+            .select_related("composition")
+            .prefetch_related(
+                "composition__composers__composer", "unattributed_composers__composer"
+            )
+        ):
             if item.composition:
                 for composer in item.composition.composers.select_related(
                     "composer"
@@ -235,55 +239,55 @@ class Source(models.Model):
     # and sorts correctly too! Restricting the composition using [* TO *] means that
     # only attributed works are retrieved; see solr_appears_in for retrieving the records
     # where a composer is mentioned but not attached to a composition.
-    @property
-    def solr_inventory(self):
-        connection = SolrManager(settings.SOLR["SERVER"])
-        fq = ["type:item", f"source_i:{self.pk}", "composition_i:[* TO *]"]
-        fl = [
-            "bibliography_ii",
-            "composers_ssni",
-            "composition_i",
-            "composition_s",
-            "folio_start_s",
-            "folio_end_s",
-            "num_voices_s",
-            "genres_ss",
-            "pages_ii",
-            "pages_ssni",
-            "source_attribution_s",
-            "voices_ii",
-            "[child parentFilter=type:item childFilter=type:itemnote]",
-            "pk",
-        ]
-        # Set rows to an extremely high number so we get all of the item records in one go.
-        connection.search(
-            "*:*", fq=fq, fl=fl, sort="source_order_f asc, folio_start_ans asc"
-        )
-        return list(connection.results)
+    # @property
+    # def solr_inventory(self):
+    #     connection = SolrManager(settings.SOLR["SERVER"])
+    #     fq = ["type:item", f"source_i:{self.pk}", "composition_i:[* TO *]"]
+    #     fl = [
+    #         "bibliography_ii",
+    #         "composers_ssni",
+    #         "composition_i",
+    #         "composition_s",
+    #         "folio_start_s",
+    #         "folio_end_s",
+    #         "num_voices_s",
+    #         "genres_ss",
+    #         "pages_ii",
+    #         "pages_ssni",
+    #         "source_attribution_s",
+    #         "voices_ii",
+    #         "[child parentFilter=type:item childFilter=type:itemnote]",
+    #         "pk",
+    #     ]
+    #     # Set rows to an extremely high number so we get all of the item records in one go.
+    #     connection.search(
+    #         "*:*", fq=fq, fl=fl, sort="source_order_f asc, folio_start_ans asc"
+    #     )
+    #     return list(connection.results)
 
     # Like solr_inventory, but retrieves only inventory items that do not have a composition attached, i.e., composers
     #  that appear in a source but are not attached to a particular one.
-    @property
-    def solr_uninventoried(self):
-        connection = SolrManager(settings.SOLR["SERVER"])
-        fq = ["type:item", f"source_i:{self.pk}", "-composition_i:[* TO *]"]
-        fl = [
-            "bibliography_ii",
-            "composers_ssni",
-            "composition_i",
-            "composition_s",
-            "folio_start_s",
-            "folio_end_s",
-            "num_voices_s",
-            "pages_ii",
-            "pages_ssnisource_attribution_s",
-            "voices_ii",
-            "pk",
-        ]
-        sort = "composer_ans asc"
-
-        connection.search("*:*", fq=fq, fl=fl, sort=sort)
-        return list(connection.results)
+    # @property
+    # def solr_uninventoried(self):
+    #     connection = SolrManager(settings.SOLR["SERVER"])
+    #     fq = ["type:item", f"source_i:{self.pk}", "-composition_i:[* TO *]"]
+    #     fl = [
+    #         "bibliography_ii",
+    #         "composers_ssni",
+    #         "composition_i",
+    #         "composition_s",
+    #         "folio_start_s",
+    #         "folio_end_s",
+    #         "num_voices_s",
+    #         "pages_ii",
+    #         "pages_ssnisource_attribution_s",
+    #         "voices_ii",
+    #         "pk",
+    #     ]
+    #     sort = "composer_ans asc"
+    #
+    #     connection.search("*:*", fq=fq, fl=fl, sort=sort)
+    #     return list(connection.results)
 
     @property
     def inventory_by_composer(self) -> list:
@@ -316,80 +320,26 @@ class Source(models.Model):
     @property
     def solr_bibliography(self) -> list:
         # Grab a list of the ids for this record
-        bibl = (
-            self.bibliographies.select_related("bibliography")
-            .values_list("bibliography__id", "primary_study", "pages", "notes")
-            .order_by("bibliography__authors__bibliography_author__last_name")
-            .distinct()
-        )
-        id_list = ",".join([str(x[0]) for x in bibl])
         connection = SolrManager(settings.SOLR["SERVER"])
-        fq = ["type:bibliography", f"{{!terms f=pk}}{id_list}"]
+        fq = ["type:bibliography", f"sources_ii:{self.pk}"]
         connection.search("*:*", fq=fq, sort="year_ans desc, sort_ans asc")
 
         if connection.hits == 0:
             return []
 
-        mapping = {}
-        for itm in bibl:
-            additional_info = [
-                itm[1],  # primary study
-                itm[2],  # pages
-                itm[3],  # notes
-            ]
-
-            mapping[itm[0]] = additional_info
-
         reslist = []
         for res in connection.results:
-            if res["pk"] in mapping:
-                res["primary_study"] = mapping[res["pk"]][0]
-                res["pages"] = mapping[res["pk"]][1]
-                res["notes"] = mapping[res["pk"]][2]
+            if "sources_json" in res:
+                entry = [
+                    s for s in res["sources_json"] if s and s["source_id"] == self.pk
+                ]
+                if not entry:
+                    continue
+                res["primary_study"] = entry[0]["primary_study"]
+                if p := entry[0].get("pages"):
+                    res["pages"] = p
+                if n := entry[0].get("notes"):
+                    res["notes"] = n
             reslist.append(res)
 
         return reslist
-
-    @property
-    def solr_pages(self):
-        # List the pages from their Solr records
-        connection = SolrManager(settings.SOLR["SERVER"])
-        fq = ["type:page", f"source_i:{self.pk}"]
-        connection.search("*:*", fq=fq, sort="numeration_ans asc", rows=100)
-        return list(connection.results)
-
-    @property
-    def solr_sets(self):
-        connection = SolrManager(settings.SOLR["SERVER"])
-        fq = ["type:set", f"sources_ii:{self.pk}"]
-        fl = ["id", "pk", "cluster_shelfmark_s", "sources_ii", "set_type_s"]
-        sort = "shelfmark_ans asc"
-
-        connection.search("*:*", fq=fq, fl=fl, sort=sort, rows=100)
-        return list(connection.results)
-
-    @property
-    def solr_provenance(self):
-        connection = SolrManager(settings.SOLR["SERVER"])
-        fq = ["type:sourceprovenance", f"source_i:{self.pk}"]
-        sort = "earliest_year_i asc, country_s asc"
-
-        connection.search("*:*", fq=fq, sort=sort, rows=100)
-        return list(connection.results)
-
-    @property
-    def solr_relationships(self):
-        connection = SolrManager(settings.SOLR["SERVER"])
-        fq = ["type:sourcerelationship", f"source_i:{self.pk}"]
-        sort = "related_entity_s asc"
-        connection.search("*:*", fq=fq, sort=sort, rows=100)
-        return list(connection.results)
-
-    @property
-    def solr_copyists(self):
-        connection = SolrManager(settings.SOLR["SERVER"])
-        fq = ["type:sourcecopyist", f"source_i:{self.pk}"]
-        sort = "copyist_s asc"
-        connection.search("*:*", fq=fq, sort=sort, rows=100)
-
-        return list(connection.results)

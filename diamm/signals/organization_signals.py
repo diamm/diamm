@@ -1,5 +1,5 @@
 from diamm.helpers.solr_helpers import solr_delete, solr_index
-from diamm.serializers.search.organization import OrganizationSearchSerializer
+from diamm.serializers.search_old.organization import OrganizationSearchSerializer
 
 
 # @receiver(post_save, sender=Organization)

@@ -19,3 +19,7 @@ class CycleAdmin(VersionAdmin):
     list_filter = ("type",)
     search_fields = ("title", "composer__last_name", "type__name")
     inlines = (CompositionCycleInline,)
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related("type", "composer")

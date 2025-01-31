@@ -5,13 +5,13 @@ from django.dispatch import receiver
 
 from diamm.helpers.solr_helpers import SolrConnection, solr_delete, solr_index
 from diamm.models.data.item import Item
-from diamm.serializers.search.composer_inventory import (
+from diamm.serializers.search_old.composer_inventory import (
     FIELDS_TO_INDEX,
     ComposerInventorySearchSerializer,
 )
-from diamm.serializers.search.composition import CompositionSearchSerializer
-from diamm.serializers.search.item import ItemSearchSerializer
-from diamm.serializers.search.source import SourceSearchSerializer
+from diamm.serializers.search_old.composition import CompositionSearchSerializer
+from diamm.serializers.search_old.item import ItemSearchSerializer
+from diamm.serializers.search_old.source import SourceSearchSerializer
 
 
 def __composer_inventory_index(item):

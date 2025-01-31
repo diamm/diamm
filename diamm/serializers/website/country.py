@@ -38,6 +38,30 @@ class CountryCitySerializer(ContextSerializer):
 class CountryListSerializer(ContextSerializer):
     url = serpy.MethodField()
     name = serpy.StrField()
+    cities = serpy.MethodField()
+    regions = serpy.MethodField()
+    states = serpy.MethodField()
+
+    def get_cities(self, obj):
+        return CountryCitySerializer(
+            obj.cities.select_related("parent").order_by("name"),
+            many=True,
+            context=self.context,
+        ).data
+
+    def get_regions(self, obj):
+        return CountryRegionSerializer(
+            obj.regions.select_related("parent").order_by("name"),
+            many=True,
+            context=self.context,
+        ).data
+
+    def get_states(self, obj):
+        return CountryStateSerializer(
+            obj.states.select_related("parent").order_by("name"),
+            many=True,
+            context=self.context,
+        ).data
 
     def get_url(self, obj):
         return reverse(

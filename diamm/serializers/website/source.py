@@ -1,10 +1,15 @@
+import re
 from typing import Optional
 
 import serpy
 from django.conf import settings
+from django.contrib.contenttypes.prefetch import GenericPrefetch
+from django.db.models.functions.comparison import Coalesce, Collate
+from django.template.loader import get_template
 from rest_framework.reverse import reverse
 
 from diamm.helpers.solr_helpers import SolrManager
+from diamm.models import Organization, Person
 from diamm.serializers.serializers import ContextDictSerializer, ContextSerializer
 
 
@@ -19,131 +24,146 @@ class SourceCatalogueEntrySerializer(ContextSerializer):
         )
 
 
-class SourceCopyistSerializer(ContextDictSerializer):
+class SourceCopyistSerializer(ContextSerializer):
     copyist = serpy.MethodField()
-    uncertain = serpy.BoolField(attr="uncertain_b", required=False)
-    type = serpy.StrField(attr="type")
-    type_s = serpy.StrField(attr="type_s")
+    uncertain = serpy.BoolField(attr="uncertain", required=False)
+    type = serpy.StrField(attr="get_type_display", call=True)
+    type_s = serpy.StrField(attr="get_type_display", call=True)
 
     def get_copyist(self, obj) -> dict:
-        url = reverse(
-            f"{obj['copyist_type_s']}-detail",
-            kwargs={"pk": int(obj["copyist_pk_i"])},
-            request=self.context["request"],
-        )
-        return {"name": obj["copyist_s"], "url": url}
+        content_type = None
+        if obj.content_type_id == 37:
+            content_type = "person"
+        elif obj.content_type_id == 52:
+            content_type = "organization"
+
+        if content_type is not None:
+            url = reverse(
+                f"{content_type}-detail",
+                kwargs={"pk": obj.object_id},
+                request=self.context["request"],
+            )
+            return {"name": str(obj.copyist), "url": url}
+        else:
+            return {"name": str(obj.copyist)}
 
 
-class SourceRelationshipSerializer(ContextDictSerializer):
+class SourceRelationshipSerializer(ContextSerializer):
     related_entity = serpy.MethodField()
-    uncertain = serpy.BoolField(attr="uncertain_b", required=False)
-    relationship_type = serpy.StrField(attr="relationship_type_s")
+    uncertain = serpy.BoolField(attr="uncertain", required=False)
+    relationship_type = serpy.StrField(attr="relationship_type")
 
     def get_related_entity(self, obj):
-        if "related_entity_s" in obj:
+        content_type = None
+        if obj.content_type_id == 37:
+            content_type = "person"
+        elif obj.content_type_id == 52:
+            content_type = "organization"
+
+        if content_type is not None:
             url = reverse(
-                f"{obj['related_entity_type_s']}-detail",
-                kwargs={"pk": int(obj["related_entity_pk_i"])},
+                f"{content_type}-detail",
+                kwargs={"pk": obj.object_id},
                 request=self.context["request"],
             )
-            return {"name": obj["related_entity_s"], "url": url}
+            return {"name": str(obj.related_entity), "url": url}
         else:
-            return None
+            return {"name": str(obj.related_entity)}
 
 
-class SourceProvenanceSerializer(ContextDictSerializer):
-    city = serpy.MethodField()
-    country = serpy.MethodField()
-    region = serpy.MethodField()
-    protectorate = serpy.MethodField()
+class SourceProvenanceSerializer(ContextSerializer):
+    city = serpy.StrField(attr="city.name", required=False)
+    country = serpy.StrField(attr="country.name", required=False)
+    region = serpy.StrField(attr="region.name", required=False)
+    protectorate = serpy.StrField(attr="protectorate.name", required=False)
     entity = serpy.MethodField()
-    country_uncertain = serpy.BoolField(attr="country_uncertain_b")
-    city_uncertain = serpy.BoolField(attr="city_uncertain_b")
-    entity_uncertain = serpy.BoolField(attr="entity_uncertain_b")
-    region_uncertain = serpy.BoolField(attr="region_uncertain_b")
-
-    def get_city(self, obj):
-        return obj.get("city_s")
-
-    def get_country(self, obj):
-        return obj.get("country_s")
-
-    def get_region(self, obj):
-        return obj.get("region_s")
-
-    def get_protectorate(self, obj):
-        return obj.get("protectorate_s")
+    country_uncertain = serpy.BoolField(attr="country_uncertain")
+    city_uncertain = serpy.BoolField(attr="city_uncertain")
+    entity_uncertain = serpy.BoolField(attr="entity_uncertain")
+    region_uncertain = serpy.BoolField(attr="region_uncertain")
 
     def get_entity(self, obj):
-        if "entity_s" not in obj:
+        if not obj.entity:
             return None
 
-        url = reverse(
-            f"{obj['entity_type_s']}-detail",
-            kwargs={"pk": int(obj["entity_pk_i"])},
-            request=self.context["request"],
-        )
-        return {"name": obj["entity_s"], "url": url}
+        content_type = None
+        if obj.content_type_id == 37:
+            content_type = "person"
+        elif obj.content_type_id == 52:
+            content_type = "organization"
 
-
-class SourceSetSerializer(ContextDictSerializer):
-    cluster_shelfmark = serpy.StrField(attr="cluster_shelfmark_s")
-    sources = serpy.MethodField()
-    set_type = serpy.StrField(attr="set_type_s")
-
-    def get_sources(self, obj) -> list:
-        source_ids = ",".join([str(sid) for sid in obj["sources_ii"]])
-        connection = SolrManager(settings.SOLR["SERVER"])
-        fq = ["type:source", "{!terms f=pk}" + source_ids]
-
-        # Filter out the current source from the list of returned sources.
-        if "source_id" in self.context:
-            fq.append(f"-pk:{self.context['source_id']}")
-
-        fl = ["pk", "shelfmark_s", "display_name_s", "cover_image_i"]
-        sort = "shelfmark_ans asc"
-
-        connection.search("*:*", fq=fq, fl=fl, sort=sort, rows=100)
-
-        if connection.hits == 0:
-            return []
-
-        resultlist = []
-        for doc in connection.results:
-            source_url = reverse(
-                "source-detail",
-                kwargs={"pk": doc["pk"]},
+        if content_type is not None:
+            url = reverse(
+                f"{content_type}-detail",
+                kwargs={"pk": obj.object_id},
                 request=self.context["request"],
             )
+            return {"name": str(obj.entity), "url": url}
+        return {"name": str(obj.entity)}
 
-            doc["url"] = source_url
-            if doc.get("cover_image_i"):
-                doc["cover_image"] = reverse(
+
+class SourceSetSerializer(ContextSerializer):
+    cluster_shelfmark = serpy.StrField(attr="cluster_shelfmark")
+    sources = serpy.MethodField()
+    set_type = serpy.StrField(attr="set_type")
+
+    def get_sources(self, obj) -> list:
+        sources = (
+            obj.sources.select_related("archive__city", "cover_image")
+            .prefetch_related("pages")
+            .order_by(Collate(Coalesce("archive__siglum", "shelfmark"), "natsort"))
+        )
+        ret = []
+        for source in sources:
+            url = reverse(
+                "source-detail",
+                kwargs={
+                    "pk": source.pk,
+                },
+                request=self.context["request"],
+            )
+            if c := source.cover:
+                cover = reverse(
                     "image-serve-info",
-                    kwargs={"pk": doc["cover_image_i"]},
+                    kwargs={"pk": c["id"]},
                     request=self.context["request"],
                 )
             else:
-                doc["cover_image"] = None
+                cover = None
+            ret.append(
+                {
+                    "shelfmark": source.shelfmark,
+                    "display_name": source.display_name,
+                    "url": url,
+                    "cover_image": cover,
+                }
+            )
 
-            resultlist.append(doc)
-
-        return resultlist
+        return ret
 
 
 class SourceBibliographySerializer(ContextDictSerializer):
     pk = serpy.IntField()
-    prerendered = serpy.StrField(attr="prerendered_sni")
+    prerendered = serpy.MethodField()
     primary_study = serpy.BoolField()
     pages = serpy.StrField(required=False)
     notes = serpy.StrField(required=False)
+
+    def get_prerendered(self, obj):
+        template = get_template("website/bibliography/bibliography_entry.jinja2")
+        citation = template.template.render(content=obj["citation_json"])
+        # strip out any newlines from the templating process
+        citation = re.sub(r"\n", "", citation)
+        # strip out multiple spaces
+        citation = re.sub(r"\s+", " ", citation)
+        citation = citation.strip()
+        return citation
 
 
 class SourceComposerInventoryCompositionSerializer(ContextDictSerializer):
     folio_start = serpy.StrField(attr="folio_start_s", required=False)
     folio_end = serpy.StrField(attr="folio_end_s", required=False)
     uncertain = serpy.BoolField(attr="uncertain_b", required=False)
-
     source_attribution = serpy.MethodField()
 
     composition = serpy.StrField(attr="composition_s", required=False)
@@ -183,44 +203,38 @@ class SourceComposerInventorySerializer(ContextDictSerializer):
         return None
 
 
-class SourceInventoryNoteSerializer(serpy.DictSerializer):
-    note = serpy.StrField(attr="note_sni", required=False)
-    note_type = serpy.StrField(attr="note_type_s", required=False)
+class SourceInventoryNoteSerializer(serpy.Serializer):
+    note = serpy.StrField(attr="note", required=False)
+    note_type = serpy.StrField(attr="note_type", required=False)
 
 
-class SourceInventorySerializer(ContextDictSerializer):
+class SourceInventorySerializer(ContextSerializer):
     pk = serpy.IntField()
     url = serpy.MethodField()
-    num_voices = serpy.MethodField(required=False)
+    num_voices = serpy.StrField(required=False)
     genres = serpy.MethodField(required=False)
-    folio_start = serpy.MethodField(required=False)
-    folio_end = serpy.MethodField(required=False)
-    composition = serpy.MethodField(required=False)
-    composers = serpy.MethodField(required=False)
-    bibliography = serpy.MethodField(required=False)
-    voices = serpy.MethodField(required=False)
+    folio_start = serpy.StrField(required=False)
+    folio_end = serpy.StrField(required=False)
+    composition = serpy.StrField(required=False)
+    composers = serpy.MethodField()
+    # bibliography = serpy.MethodField(required=False)
+    voices = serpy.MethodField()
     pages = serpy.MethodField(required=False)
-    source_attribution = serpy.MethodField(required=False)
-    notes = serpy.MethodField(required=False)
+    source_attribution = serpy.StrField(required=False)
+    notes = serpy.MethodField()
 
     def get_pages(self, obj):
-        return obj.get("pages_ii")
-
-    def get_source_attribution(self, obj):
-        return obj.get("source_attribution_s")
-
-    def get_num_voices(self, obj):
-        return obj.get("num_voices_s")
+        return [p.pk for p in obj.pages.all()]
 
     def get_genres(self, obj):
-        return obj.get("genres_ss")
+        if not obj.composition:
+            return None
+        return [g.name for g in obj.composition.genres.all()]
 
     def get_notes(self, obj):
-        if "_childDocuments_" in obj:
-            return SourceInventoryNoteSerializer(
-                obj["_childDocuments_"], many=True
-            ).data
-        return None
+        if not obj.notes:
+            return None
+        return SourceInventoryNoteSerializer(obj.notes.all(), many=True).data
 
     # @TODO Finish Item Bibliography stuff.
     def get_bibliography(self, obj):
@@ -232,66 +246,66 @@ class SourceInventorySerializer(ContextDictSerializer):
         connection.search("*:*", fq=fq, fl=fl, sort=sort, rows=100)
         return list(connection.results)
 
-    def get_folio_end(self, obj):
-        return obj.get("folio_end_s")
-
-    def get_folio_start(self, obj):
-        return obj.get("folio_start_s")
-
     def get_url(self, obj):
-        if "composition_i" in obj:
-            return reverse(
-                "composition-detail",
-                kwargs={"pk": obj["composition_i"]},
-                request=self.context["request"],
-            )
-
-    def get_composition(self, obj):
-        return obj.get("composition_s")
-
-    def get_composers(self, obj) -> list:
-        composers = obj.get("composers_ssni")
-        if not composers:
-            return []
-
-        if "request" not in self.context:
-            return []
-
-        req = self.context["request"]
-        out = []
-        for composer in composers:
-            # Unpack the composer values. See the Item Search Serializer for more info.
-            full_name, pk, uncertain = composer.split("|")
-            url = None
-
-            if pk:
-                url = reverse("person-detail", kwargs={"pk": int(pk)}, request=req)
-
-            # cast the value of uncertain to a boolean. Will handle both false and empty values
-            uncertain = uncertain == "True"
-
-            out.append({"url": url, "full_name": full_name, "uncertain": uncertain})
-
-        return out
-
-    def get_voices(self, obj) -> Optional[list]:
-        if not obj.get("voices_ii", None):
+        if not obj.composition:
             return None
 
-        connection = SolrManager(settings.SOLR["SERVER"])
-        id_list = ",".join(str(x) for x in obj.get("voices_ii"))
-        fq = ["type:voice", "{!terms f=pk}" + id_list]
-        fl = [
-            "mensuration_s",
-            "mensuration_text_s",
-            "clef_s",
-            "languages_ss",
-            "voice_text_s",
-            "voice_type_s",
-        ]
+        return reverse(
+            "composition-detail",
+            kwargs={"pk": obj.composition_id},
+            request=self.context["request"],
+        )
 
-        connection.search("*:*", fq=fq, fl=fl, rows=100)
-        return list(connection.results)
+    def get_composers(self, obj) -> Optional[list]:
+        if unatt := obj.unattributed_composers.exists():
+            out = []
+            for comp in unatt.all():
+                out.append(
+                    {
+                        "full_name": str(comp.composer),
+                        "url": reverse(
+                            "person-detail",
+                            kwargs={"pk": comp.composer.pk},
+                            request=self.context["request"],
+                        ),
+                        "uncertain": comp.uncertain,
+                    }
+                )
+            return out
+
+        if not obj.composition:
+            return None
+
+        composers = obj.composition.composers.all()
+        out = []
+        for composer in composers:
+            out.append(
+                {
+                    "full_name": str(composer.composer),
+                    "url": reverse(
+                        "person-detail",
+                        kwargs={"pk": composer.composer.pk},
+                        request=self.context["request"],
+                    ),
+                    "uncertain": composer.uncertain,
+                }
+            )
+
+        return out or None
+
+    def get_voices(self, obj) -> Optional[list]:
+        out = []
+        for voice in obj.voices.all():
+            d = {
+                "voice_type": voice.type.name,
+                "languages": [lang.name for lang in voice.languages.all()],
+                "clef": str(voice.clef) if voice.clef else None,
+                "voice_text": voice.voice_text,
+                "mensuration": str(voice.mensuration) if voice.mensuration else None,
+            }
+            out.append({k: v for k, v in d.items() if v})
+
+        return out or None
 
 
 class SourceArchiveSerializer(ContextSerializer):
@@ -373,6 +387,7 @@ class SourceDetailSerializer(ContextSerializer):
     inventory_provided = serpy.BoolField()
     public_images = serpy.BoolField()
     open_images = serpy.BoolField()
+    has_external_images = serpy.MethodField()
     numbering_system_type = serpy.StrField(attr="numbering_system_type")
 
     has_images = serpy.MethodField(required=False)
@@ -436,6 +451,9 @@ class SourceDetailSerializer(ContextSerializer):
     def get_has_images(self, obj):
         return obj.pages.exists()
 
+    def get_has_external_images(self, obj):
+        return obj.links.filter(type=4).exists()
+
     def get_manifest_url(self, obj):
         # Return None if the document has no public images
         if not self.context["request"].user.is_authenticated:
@@ -449,8 +467,24 @@ class SourceDetailSerializer(ContextSerializer):
         )
 
     def get_inventory(self, obj):
+        "source_order_f asc, folio_start_ans asc"
         return SourceInventorySerializer(
-            obj.solr_inventory, many=True, context={"request": self.context["request"]}
+            obj.inventory.select_related("composition", "source__archive__city")
+            .prefetch_related(
+                "composition__composers__composer",
+                "composition__genres",
+                "notes",
+                "voices__languages",
+                "voices__clef",
+                "voices__type",
+                "voices__mensuration",
+                "pages",
+                "unattributed_composers",
+            )
+            .filter(composition__isnull=False)
+            .order_by("source_order", Collate("folio_start", "natsort")),
+            many=True,
+            context={"request": self.context["request"]},
         ).data
 
     def get_composer_inventory(self, obj):
@@ -462,7 +496,7 @@ class SourceDetailSerializer(ContextSerializer):
 
     def get_uninventoried(self, obj):
         return SourceInventorySerializer(
-            obj.solr_uninventoried,
+            obj.inventory.filter(composition__isnull=True),
             many=True,
             context={"request": self.context["request"]},
         ).data
@@ -474,33 +508,46 @@ class SourceDetailSerializer(ContextSerializer):
 
     def get_sets(self, obj):
         return SourceSetSerializer(
-            obj.solr_sets,
+            obj.sets.prefetch_related(
+                "sources", "sources__cover_image", "sources__archive__city"
+            ).all(),
             many=True,
             context={"request": self.context["request"], "source_id": obj.pk},
         ).data
 
     def get_provenance(self, obj):
         return SourceProvenanceSerializer(
-            obj.solr_provenance, many=True, context={"request": self.context["request"]}
+            obj.provenance.select_related(
+                "city", "country", "region", "protectorate"
+            ).all(),
+            many=True,
+            context={"request": self.context["request"]},
         ).data
 
     def get_relationships(self, obj):
         return SourceRelationshipSerializer(
-            obj.solr_relationships,
+            obj.relationships.select_related("relationship_type")
+            .prefetch_related(
+                GenericPrefetch(
+                    "related_entity", [Person.objects.all(), Organization.objects.all()]
+                )
+            )
+            .all(),
             many=True,
             context={"request": self.context["request"]},
         ).data
 
     def get_copyists(self, obj):
         return SourceCopyistSerializer(
-            obj.solr_copyists, many=True, context={"request": self.context["request"]}
+            obj.copyists.all(), many=True, context={"request": self.context["request"]}
         ).data
 
     def get_catalogue_entries(self, obj):
-        if obj.catalogue_entries.count() > 0:
-            return SourceCatalogueEntrySerializer(
-                obj.catalogue_entries.all(),
-                context={"request": self.context["request"]},
-                many=True,
-            ).data
-        return []
+        if not obj.catalogue_entries.count() > 0:
+            return []
+
+        return SourceCatalogueEntrySerializer(
+            obj.catalogue_entries.all(),
+            context={"request": self.context["request"]},
+            many=True,
+        ).data

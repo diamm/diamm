@@ -43,6 +43,12 @@ class ProblemReportAdmin(VersionAdmin):
         "get_entity",
     )
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related("contributor", "content_type").prefetch_related(
+            "record__archive__city", "record"
+        )
+
     def view_on_site(self, obj) -> Optional[str]:
         if not isinstance(obj.record, Source):
             return None

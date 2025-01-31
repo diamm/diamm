@@ -4,7 +4,7 @@ from django.dispatch import receiver
 from diamm.helpers.solr_helpers import solr_delete, solr_index
 from diamm.models.data.image import Image
 from diamm.models.data.page import Page
-from diamm.serializers.search.page import PageSearchSerializer
+from diamm.serializers.search_old.page import PageSearchSerializer
 
 
 # When an image record is saved we need to re-index the entire page since

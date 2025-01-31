@@ -1,0 +1,104 @@
+<div class="column is-full"
+     x-data="{
+        selectedItem: null,
+        itemSelected(ident) {
+            return ident === this.selectedItem
+        },
+        toggleItem(ident) {
+            if (this.selectedItem === null) {
+                this.selectedItem = ident;
+            }
+            else if (ident === this.selectedItem) {
+                this.selectedItem = null;
+            } else if (this.selectedItem !== null && this.selectedItem !== ident) {
+                this.selectedItem = ident;
+            } else {
+                this.selectedItem = null;
+            }
+        }
+    }">
+    <p>Click an entry to see more information about that item.</p>
+    <table class="table inventory-table is-fullwidth">
+        <thead>
+        <tr>
+            <th>Folio / Pages</th>
+            <th>Composition</th>
+            <th>Composers (? Uncertain)</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for entry in content.inventory %}
+            <tr @click="toggleItem($el.id)"
+                id="inventory-order-{{ loop.index }}"
+                style="cursor: pointer"
+            >
+                <td>
+                    {{ foliation(entry) }}
+                </td>
+                <td class="item-details">
+                    {{ entry.composition }}
+                </td>
+                <td>
+                    {{ composers(entry) }}
+                </td>
+            </tr>
+            <tr class="item-detail-box"
+                x-show="itemSelected('inventory-order-{{ loop.index }}')">
+                <td colspan="3">
+                    <div class="columns">
+                        <header class="column">
+                            <h4 class="title is-4">
+                                <a href="{{ entry.url }}">{{ entry.composition }}</a>
+                            </h4>
+                            <h5 class="subtitle is-5">
+                                {{ composers(entry) }}
+                            </h5>
+                        </header>
+                    </div>
+                    <div class="columns">
+                        <div class="column">
+                            <div>
+                                <strong>Appears on: </strong>
+                                {{ foliation(entry) }}
+                            </div>
+                            {% if entry.genres %}
+                                <div>
+                                    <strong>Genres: </strong>
+                                    {{ entry.genres|join(', ') }}
+                                </div>
+                            {% endif %}
+                            {% if entry.source_attribution %}
+                                <div>
+                                    <strong>Source Attribution: </strong>
+                                    {{ entry.source_attribution }}
+                                </div>
+                            {% endif %}
+                            {% if entry.voices %}
+                                {{ voices(entry) }}
+                            {% endif %}
+                        </div>
+                        <div class="column">
+                            {% if entry.notes %}
+                                {% for note in entry.notes %}
+                                <div>
+                                    <h5>{{ note.note_type }}</h5>
+                                    <p>{{ note.note }}</p>
+                                </div>
+                                {% endfor %}
+                            {% endif %}
+                            {% if entry.bibliography %}
+                                <div>
+                                    <h4>Item Bibliography</h4>
+                                    {% for bib in entry.bibliography %}
+                                        <p>{{ bib }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

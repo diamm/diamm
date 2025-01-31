@@ -3,7 +3,7 @@ from django.dispatch import receiver
 
 from diamm.helpers.solr_helpers import solr_delete, solr_index
 from diamm.models.data.composition import Composition
-from diamm.serializers.search.composition import CompositionSearchSerializer
+from diamm.serializers.search_old.composition import CompositionSearchSerializer
 
 
 @receiver(post_save, sender=Composition)

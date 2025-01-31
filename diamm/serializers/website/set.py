@@ -53,10 +53,8 @@ class SetDetailSerializer(ContextSerializer):
         )
 
     def get_sources(self, obj) -> Optional[list]:
-        if obj.sources:
-            return SetSourceSerializer(
-                obj.sources.all(),
-                many=True,
-                context={"request": self.context["request"]},
-            ).data
-        return None
+        return SetSourceSerializer(
+            obj.sources.all().select_related("archive__city").prefetch_related("pages"),
+            many=True,
+            context={"request": self.context["request"]},
+        ).data

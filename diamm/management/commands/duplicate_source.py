@@ -6,8 +6,8 @@ from django.db.models.signals import post_delete, post_save
 
 from diamm.helpers.solr_helpers import solr_index, solr_index_many
 from diamm.models import Image, Item, Page, Source
-from diamm.serializers.search.item import ItemSearchSerializer
-from diamm.serializers.search.source import SourceSearchSerializer
+from diamm.serializers.search_old.item import ItemSearchSerializer
+from diamm.serializers.search_old.source import SourceSearchSerializer
 from diamm.signals.item_signals import delete_item, index_item
 from diamm.signals.page_signals import (
     delete_image,

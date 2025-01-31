@@ -10,8 +10,8 @@ from diamm.helpers.solr_helpers import (
     solr_index_many,
 )
 from diamm.models.data.source import Source
-from diamm.serializers.search.item import ItemSearchSerializer
-from diamm.serializers.search.source import SourceSearchSerializer
+from diamm.serializers.search_old.item import ItemSearchSerializer
+from diamm.serializers.search_old.source import SourceSearchSerializer
 
 
 @receiver(post_save, sender=Source)

@@ -24,7 +24,10 @@
                         <td>
                             <ul>
                                 {% for entry in content.source_provenance %}
-                                    <li><a href="{{ entry.url }}">{{ entry.source }}</a></li>
+                                    <li>
+                                        {{ "?" if entry.entity_uncertain else "" }}
+                                        <a href="{{ entry.url }}">{{ entry.source }}</a>
+                                    </li>
                                 {% endfor %}
                             </ul>
                         </td>
@@ -57,7 +60,7 @@
                                         {{ "?" if entry.uncertain else "" }}
                                         <a href="{{ entry.url }}">
                                             {{ entry.source }}
-                                        </a> ({{ entry.type }})
+                                        </a> ({{ entry.copyist_type }})
                                     </li>
                                 {% endfor %}
                             </ul>

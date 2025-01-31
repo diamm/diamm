@@ -1,6 +1,5 @@
 from typing import Optional
 
-import requests
 from django.conf import settings
 from django.http import HttpResponse
 from rest_framework import status
@@ -25,6 +24,9 @@ def image_serve(
     The images are requested via their database PK, but since we don't necessarily
     want to bother Postgres for this (slow lookup) we'll ask Solr for it.
     """
+    if not request.user:
+        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+
     field_list = ["location_s"]
     # conn = pysolr.Solr(settings.SOLR['SERVER'])
     req = SolrConnection.search(
@@ -55,21 +57,24 @@ def image_serve(
         "X-DIAMM": diamm,
         "X-IIIF-ID": iiif_id,
         "User-Agent": settings.DIAMM_UA,
+        "Location": location,
     }
 
-    try:
-        r = requests.get(
-            location, stream=True, headers=headers, verify=True, timeout=10
-        )
-    except requests.exceptions.ConnectionError:
-        return HttpResponse(
-            "Connection error", status=status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
-
-    # If the response was a 200 (success) pass this along.
-    if 200 <= r.status_code < 300:
-        return HttpResponse(
-            r.iter_content(2048), content_type=r.headers["content-type"]
-        )
-    else:
-        return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+    # return HttpResponse(status=status.HTTP_303_SEE_OTHER, headers=headers)
+    return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    # try:
+    #     r = requests.get(
+    #         location, stream=True, headers=headers, verify=True, timeout=10
+    #     )
+    # except requests.exceptions.ConnectionError:
+    #     return HttpResponse(
+    #         "Connection error", status=status.HTTP_500_INTERNAL_SERVER_ERROR
+    #     )
+    #
+    # # If the response was a 200 (success) pass this along.
+    # if 200 <= r.status_code < 300:
+    #     return HttpResponse(
+    #         r.iter_content(2048), content_type=r.headers["content-type"]
+    #     )
+    # else:
+    #     return HttpResponse(status=status.HTTP_400_BAD_REQUEST)

@@ -3,8 +3,8 @@ from django.shortcuts import get_object_or_404, redirect
 from rest_framework import generics, permissions, response, status
 
 from diamm.helpers.solr_helpers import SolrConnection
+from diamm.models import Source
 from diamm.models.data.item import Item
-from diamm.models.data.source import Source
 from diamm.renderers.ujson_renderer import UJSONRenderer
 from diamm.serializers.iiif.canvas import CanvasSerializer
 from diamm.serializers.iiif.manifest import SourceManifestSerializer
@@ -17,30 +17,67 @@ class SourceDetail(generics.RetrieveAPIView):
     serializer_class = SourceDetailSerializer
 
     def get_queryset(self):
-        # Optimization for retrieving
-        queryset = Source.objects.all().select_related("archive__city__parent")
-        return queryset
-
-    def get(self, request, *args, **kwargs) -> response.Response:
-        # If we're asking for the source detail with HTML, only return a limited amount
-        # of information; the rest will get filled in when the JavaScript application loads
-        # the JSON data.
-        if request.accepted_renderer.format == "html":
-            try:
-                source = Source.objects.get(id=kwargs["pk"])
-            except Source.DoesNotExist:
-                return response.Response(
-                    status=status.HTTP_404_NOT_FOUND, template_name="404.jinja2"
-                )
-
-            return response.Response(
-                {
-                    "pk": kwargs["pk"],
-                    "display_name": source.display_name,
-                    "display_summary": source.display_summary,
-                }
+        return (
+            Source.objects.all()
+            .select_related("archive__city__parent", "cover_image")
+            .prefetch_related(
+                "pages",
+                "copyists",
+                "notations",
+                "links",
+                "bibliographies",
+                "sets",
+                "identifiers",
+                "authorities",
+                "notes",
+                "provenance__city",
+                "provenance__country",
+                "provenance__region",
             )
-        return super().get(request, args, kwargs)
+        )
+
+    # def get_queryset(self):
+    #
+    #     queryset = (
+    #         Source.objects.all()
+    #         .select_related("archive__city__parent", "cover_image")
+    #         .prefetch_related(
+    #             "pages", "copyists", "notations", "surface", "bibliographies"
+    #         )
+    #     )
+    #     return queryset
+
+    # def get(self, request, *args, **kwargs) -> response.Response:
+    #     # If we're asking for the source detail with HTML, only return a limited amount
+    #     # of information; the rest will get filled in when the JavaScript application loads
+    #     # the JSON data.
+    #     if request.accepted_renderer.format == "html":
+    #         try:
+    #             source = (
+    #                 Source.objects.select_related(
+    #                     "archive__city__parent", "cover_image"
+    #                 )
+    #                 .prefetch_related(
+    #                     "pages",
+    #                     "copyists",
+    #                     "notations",
+    #                     "identifiers",
+    #                 )
+    #                 .get(id=kwargs["pk"])
+    #             )
+    #         except Source.DoesNotExist:
+    #             return response.Response(
+    #                 status=status.HTTP_404_NOT_FOUND, template_name="404.jinja2"
+    #             )
+    #
+    #         return response.Response(
+    #             {
+    #                 "pk": kwargs["pk"],
+    #                 "display_name": source.display_name,
+    #                 "display_summary": source.display_summary,
+    #             }
+    #         )
+    #     return super().get(request, args, kwargs)
 
 
 class SourceManifest(generics.GenericAPIView):
@@ -48,7 +85,6 @@ class SourceManifest(generics.GenericAPIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request, pk, *args, **kwargs) -> response.Response:
-        # conn = pysolr.Solr(settings.SOLR['SERVER'])
         res = SolrConnection.search("*:*", fq=["type:source", f"pk:{pk}"], rows=1)
 
         if res.hits == 0:

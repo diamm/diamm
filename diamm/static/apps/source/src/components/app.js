@@ -86,7 +86,7 @@ class App extends React.Component
         router: PropTypes.object
     };
 
-    componentWillMount ()
+    componentDidMount ()
     {
         const parentElement = document.getElementById("source-body");
         const isAuthenticated = parentElement.getAttribute("data-is-authenticated");

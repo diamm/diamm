@@ -1,0 +1,22 @@
+<div class="columns">
+    <div class="column is-three-quarters">
+        <div id="diva-wrapper"></div>
+            <script src="/static/vendor/diva.js/diva.js"></script>
+            <link rel="stylesheet" href="/static/vendor/diva.js/diva.css" />
+            <script>
+                let diva = null;
+
+                document.addEventListener('initialize-diva', function ()
+                {
+                    if (!diva) {
+                        diva = new Diva('diva-wrapper', {
+                            objectData: "{{ content.manifest_url }}",
+                        });
+                    }
+                }, false)
+            </script>
+    </div>
+    <div class="column">
+{#        <PageData viewer={ this.refs.divaViewer } />#}
+    </div>
+</div>

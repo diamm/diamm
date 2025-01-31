@@ -1,3 +1,5 @@
+from typing import Optional
+
 from django.contrib import admin, messages
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
@@ -61,6 +63,12 @@ class CompositionAdmin(VersionAdmin):
     actions = ["merge_compositions_action", "assign_genre_action"]
     readonly_fields = ("created", "updated")
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.prefetch_related(
+            "sources__source__archive__city", "composers__composer", "sources__source"
+        )
+
     def get_composers(self, obj):
         c = "; ".join([c.composer.full_name for c in obj.composers.all()])
         return f"{c}"
@@ -74,14 +82,12 @@ class CompositionAdmin(VersionAdmin):
 
     get_genres.short_description = "Genres"
 
-    def appears_in(self, obj):
+    def appears_in(self, obj) -> Optional[str]:
         if not obj.sources.exists():
             return None
         sources = [
-            f"<a href='/admin/diamm_data/source/{x[0]}/change'>{x[1]} {x[2]}</a><br />"
-            for x in obj.sources.select_related("source__archive__city").values_list(
-                "source__pk", "source__archive__siglum", "source__shelfmark"
-            )
+            f"<a href='/admin/diamm_data/source/{x.source.pk}/change'>{x.source.display_name}</a><br />"
+            for x in obj.sources.all()
         ]
         return mark_safe("".join(sources))  # noqa: S308
 

@@ -139,10 +139,11 @@ class ItemAdmin(VersionAdmin):
     get_source.admin_order_field = "source__shelfmark"
 
     def get_composers(self, obj):
-        if obj.composition:
-            cnames: list = obj.composition.composer_names
-            return mark_safe("; <br />".join(cnames))  # noqa: S308
-        return None
+        if not obj.composition:
+            return None
+
+        cnames: list = [c.composer.full_name for c in obj.composition.composers.all()]
+        return mark_safe("; <br />".join(cnames))  # noqa: S308
 
     get_composers.short_description = "Composers"
     get_composers.short_description = "composers"
@@ -157,7 +158,6 @@ class ItemAdmin(VersionAdmin):
 
     def get_queryset(self, request):
         qset = super().get_queryset(request)
-        qset = qset.select_related("source__archive", "composition").prefetch_related(
-            "pages"
+        return qset.select_related("source__archive", "composition").prefetch_related(
+            "pages", "composition__composers__composer"
         )
-        return qset

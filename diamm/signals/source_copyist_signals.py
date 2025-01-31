@@ -3,7 +3,7 @@ from django.dispatch import receiver
 
 from diamm.helpers.solr_helpers import solr_delete, solr_index
 from diamm.models.data.source_copyist import SourceCopyist
-from diamm.serializers.search.source_copyist import SourceCopyistSearchSerializer
+from diamm.serializers.search_old.source_copyist import SourceCopyistSearchSerializer
 
 
 @receiver(post_save, sender=SourceCopyist)

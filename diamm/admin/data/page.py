@@ -47,3 +47,7 @@ class PageAdmin(VersionAdmin):
         return f"{obj.source.display_name}"
 
     get_source.short_description = "source"
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related("source__archive__city").prefetch_related("images")
