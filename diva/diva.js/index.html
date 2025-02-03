@@ -16,21 +16,15 @@
     <script src="/build/plugins/manipulation.js"></script>
     <script src="/build/plugins/metadata.js"></script>
     <script>
-        function initializeDiva() {
+        document.addEventListener('DOMContentLoaded', function ()
+        {
             diva = new Diva('diva-wrapper', {
                 objectData: "./test/manifests/iiifv3.json",
                 plugins: [Diva.DownloadPlugin, Diva.ManipulationPlugin, Diva.MetadataPlugin]
             });
-        }
 
-
-        if (document.readyState === "loading") {
-            // Loading hasn't finished yet
-            document.addEventListener("DOMContentLoaded", initializeDiva);
-        } else {
-            // `DOMContentLoaded` has already fired
-            initializeDiva();
-        }
+            Diva.Events.subscribe("ViewerDidLoad", function () {console.log(this)})
+        }, false)
     </script>
 </body>
 </html>

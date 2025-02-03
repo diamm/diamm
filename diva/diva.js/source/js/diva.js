@@ -817,6 +817,17 @@ class Diva
     }
 
     /**
+     * Get the canvas label for the currently visible page.
+     *
+     * @public
+     * @returns {string} - The label of the currently visible canvas.
+     **/
+    getCurrentCanvasLabel ()
+    {
+        return this.settings.manifest.pages[this.settings.activePageIndex].l;
+    }
+
+    /**
      * Returns the dimensions of the current page at the current zoom level. Also works in
      * grid view.
      *
@@ -867,7 +878,7 @@ class Diva
      * Shortcut to getPageOffset for current page.
      *
      * @public
-     * @returns {} -
+     * @returns {object} - The offset between the upper left corner and the page.
      * */
     getCurrentPageOffset ()
     {

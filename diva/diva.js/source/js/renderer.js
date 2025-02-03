@@ -20,6 +20,7 @@ export default class Renderer
 
         this._canvas = elt('canvas', { class: 'diva-viewer-canvas' });
         this._ctx = this._canvas.getContext('2d');
+        this._ctx.imageSmoothingEnabled = true;
 
         this.layout = null;
 
