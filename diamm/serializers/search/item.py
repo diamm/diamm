@@ -18,66 +18,82 @@ def _get_items(cfg: dict):
        (SELECT array_agg(ddip.page_id)
         FROM diamm_data_item_pages AS ddip
         WHERE ddip.item_id = i.id)
-       AS page_ids,
+           AS page_ids,
        (SELECT array_agg(CONCAT(p.id, '|', p.numeration))
-            FROM diamm_data_item_pages AS ddip
-            LEFT JOIN diamm_data_page AS p ON ddip.page_id = p.id
-            WHERE ddip.item_id = i.id)
-        AS page_numeration,
-        i.num_voices AS num_voices, i.item_title AS item_title, i.source_attribution AS source_attribution,
-        NULLIF(i.source_incipit, '') AS source_incipit, i.source_order AS source_order,
-        i.folio_start AS folio_start, i.folio_end AS folio_end,
-        i.composition_id AS composition, c.title AS composition_title,
-        c.anonymous AS anonymous_composition,
-        (SELECT jsonb_agg(jsonb_build_object(
-            'id', p2.id,
-            'last_name', p2.last_name,
-            'first_name', p2.first_name,
-            'earliest_year', p2.earliest_year,
-            'latest_year', p2.latest_year,
-            'earliest_year_approximate', p2.earliest_year_approximate,
-            'latest_year_approximate', p2.latest_year_approximate,
-            'floruit', p2.floruit,
-            'uncertain', cc2.uncertain
+        FROM diamm_data_item_pages AS ddip
+                 LEFT JOIN diamm_data_page AS p ON ddip.page_id = p.id
+        WHERE ddip.item_id = i.id)
+           AS page_numeration,
+       i.num_voices AS num_voices, i.item_title AS item_title, i.source_attribution AS source_attribution,
+       NULLIF(i.source_incipit, '') AS source_incipit, i.source_order AS source_order,
+       i.folio_start AS folio_start, i.folio_end AS folio_end,
+       i.composition_id AS composition, c.title AS composition_title,
+       c.anonymous AS anonymous_composition,
+       (SELECT jsonb_agg(jsonb_build_object(
+               'id', p2.id,
+               'last_name', p2.last_name,
+               'first_name', p2.first_name,
+               'earliest_year', p2.earliest_year,
+               'latest_year', p2.latest_year,
+               'earliest_year_approximate', p2.earliest_year_approximate,
+               'latest_year_approximate', p2.latest_year_approximate,
+               'floruit', p2.floruit,
+               'uncertain', cc2.uncertain
+                         ))
+        FROM diamm_data_compositioncomposer AS cc2
+                 LEFT JOIN diamm_data_composition AS c2 ON cc2.composition_id = c2.id
+                 LEFT JOIN diamm_data_person AS p2 ON cc2.composer_id = p2.id
+        WHERE i.composition_id = cc2.composition_id)
+           AS composition_composers,
+       (SELECT jsonb_agg(jsonb_build_object(
+               'id', p2.id,
+               'last_name', p2.last_name,
+               'first_name', p2.first_name,
+               'earliest_year', p2.earliest_year,
+               'latest_year', p2.latest_year,
+               'earliest_year_approximate', p2.earliest_year_approximate,
+               'latest_year_approximate', p2.latest_year_approximate,
+               'floruit', p2.floruit,
+               'uncertain', ddic.uncertain
+                         ))
+        FROM diamm_data_itemcomposer AS ddic
+                 LEFT JOIN diamm_data_person AS p2 ON ddic.composer_id = p2.id
+        WHERE i.id = ddic.item_id)
+           AS unattributed_composers,
+       (SELECT array_agg(ddg.name)
+        FROM diamm_data_composition_genres AS ddcg
+                 LEFT JOIN diamm_data_genre AS ddg ON ddcg.genre_id = ddg.id
+        WHERE ddcg.composition_id = i.composition_id)
+           AS genres,
+--        (SELECT array_agg(ddv.id)
+--         FROM diamm_data_voice AS ddv
+--         WHERE i.id = ddv.item_id)
+--            AS voices,
+       (SELECT array_agg(ddib.id)
+        FROM diamm_data_itembibliography AS ddib
+        WHERE i.id = ddib.item_id)
+           AS bibliography,
+       (SELECT jsonb_agg(jsonb_build_object(
+            'type', ddvt.name,
+            'text', ddv.voice_text,
+            'label', ddv.label,
+            'position', ddv.position,
+            'clef', ddc.name,
+            'mensuration', ddm.sign,
+            'standard_text', ddt.text
             ))
-            FROM diamm_data_compositioncomposer AS cc2
-            LEFT JOIN diamm_data_composition AS c2 ON cc2.composition_id = c2.id
-            LEFT JOIN diamm_data_person AS p2 ON cc2.composer_id = p2.id
-            WHERE i.composition_id = cc2.composition_id)
-        AS composition_composers,
-        (SELECT jsonb_agg(jsonb_build_object(
-            'id', p2.id,
-            'last_name', p2.last_name,
-            'first_name', p2.first_name,
-            'earliest_year', p2.earliest_year,
-            'latest_year', p2.latest_year,
-            'earliest_year_approximate', p2.earliest_year_approximate,
-            'latest_year_approximate', p2.latest_year_approximate,
-            'floruit', p2.floruit,
-            'uncertain', ddic.uncertain
-            ))
-            FROM diamm_data_itemcomposer AS ddic
-            LEFT JOIN diamm_data_person AS p2 ON ddic.composer_id = p2.id
-            WHERE i.id = ddic.item_id)
-        AS unattributed_composers,
-        (SELECT array_agg(ddg.name)
-         FROM diamm_data_composition_genres AS ddcg
-         LEFT JOIN diamm_data_genre AS ddg ON ddcg.genre_id = ddg.id
-         WHERE ddcg.composition_id = i.composition_id) 
-         AS genres,
-        (SELECT array_agg(ddv.id)
         FROM diamm_data_voice AS ddv
-        WHERE i.id = ddv.item_id)
-        AS voices,
-        (SELECT array_agg(ddib.id)
-         FROM diamm_data_itembibliography AS ddib
-         WHERE i.id = ddib.item_id)
-        AS bibliography
-    FROM diamm_data_item AS i
-    LEFT JOIN diamm_data_source AS s ON i.source_id = s.id
-    LEFT JOIN diamm_data_archive AS a ON s.archive_id = a.id
-    LEFT JOIN diamm_data_composition AS c ON i.composition_id = c.id
-    ORDER BY i.id"""
+        LEFT JOIN diamm_data_voicetype AS ddvt ON ddv.type_id = ddvt.id
+        LEFT JOIN diamm_data_clef AS ddc ON ddv.clef_id = ddc.id
+        LEFT JOIN diamm_data_mensuration AS ddm ON ddv.mensuration_id = ddm.id
+        LEFT JOIN diamm_data_text AS ddt ON ddv.standard_text_id = ddt.id
+        WHERE ddv.item_id = i.id)
+        AS voices
+FROM diamm_data_item AS i
+         LEFT JOIN diamm_data_source AS s ON i.source_id = s.id
+         LEFT JOIN diamm_data_archive AS a ON s.archive_id = a.id
+         LEFT JOIN diamm_data_composition AS c ON i.composition_id = c.id
+ORDER BY i.id"""
 
     return get_db_records(sql_query, cfg)
 
@@ -163,7 +179,7 @@ class ItemSearchSerializer(serpy.DictSerializer):
     composers_ss = serpy.MethodField()
     composer_ans = serpy.MethodField()
     bibliography_ii = serpy.Field(attr="bibliography")
-    voices_ii = serpy.Field(attr="voices")
+    voices_json = serpy.MethodField()
     genres_ss = serpy.Field(attr="genres")
 
     def get_composers_ssni(self, obj) -> list[str]:
@@ -212,3 +228,9 @@ class ItemSearchSerializer(serpy.DictSerializer):
         if len(composers) > 0:
             return composers[0][0]
         return "Anonymous"
+
+    def get_voices_json(self, obj):
+        if not obj.get("voices"):
+            return None
+
+        return obj["voices"]

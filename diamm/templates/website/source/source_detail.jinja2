@@ -12,9 +12,9 @@
             "@context": "http://schema.org",
             "@type": "Thing",
             "url": "{{ request.build_absolute_uri }}",
-        "name": "{{ content.display_name }}",
-        "description": "{{ content.display_summary }}"
-    }
+            "name": "{{ content.display_name }}",
+            "description": "{{ content.display_summary }}"
+        }
     </script>
     <script>
         document.addEventListener('alpine:init', () => {
@@ -67,9 +67,9 @@
     </div>
     <div class="columns">
         <div class="column">
-            <div class="level">
+            <div class="level" x-data>
                 <div class="level-left is-fullwidth">
-                    <div class="tabs" x-data>
+                    <div class="tabs">
                         <ul class="source-section-selector" x-ref="tablist" role="tablist">
                             <li :class="$store.sourceTabs.isSelected($el.id) ? 'is-active' : ''"
                                 @click="$store.sourceTabs.select($el.id)"
@@ -134,13 +134,13 @@
                             >
                                 <a href="#/commentary">Commentary</a>
                             </li>
-                            <li id="contributors-tab"
+                            <li id="contributions-tab"
                                 :class="$store.sourceTabs.isSelected($el.id) ? 'is-active' : ''"
                                 @click="$store.sourceTabs.select($el.id)"
                                 @mousedown.prevent
                                 @focus="$store.sourceTabs.select($el.id)"
                             >
-                                <a href="#/contributors">Contributors</a>
+                                <a href="#/contributions">Contributions</a>
                             </li>
                         </ul>
                     </div>
@@ -148,7 +148,12 @@
                 <div class="level-right">
                     <div class="tabs">
                         <ul>
-                            <li class="">
+                            <li id="corrections-tab"
+                                :class="$store.sourceTabs.isSelected($el.id) ? 'is-active' : ''"
+                                @click="$store.sourceTabs.select($el.id)"
+                                @mousedown.prevent
+                                @focus="$store.sourceTabs.select($el.id)"
+                            >
                                 <a href="#/corrections">Contribute a Change</a>
                             </li>
                             {% if request.user.is_staff %}
@@ -204,7 +209,14 @@
         <section id="contributions"
                  x-show="$store.sourceTabs.isSelected('contributions-tab')"
                  role="tabpanel">
+            {% include "website/source/contributions.jinja2" %}
         </section>
+        <section id="corrections"
+                 x-show="$store.sourceTabs.isSelected('corrections-tab')"
+                 role="tabpanel">
+            {% include "website/source/corrections.jinja2" %}
+        </section>
+
     </div>
 </div>
 {% endblock %}

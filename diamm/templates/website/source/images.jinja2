@@ -1,22 +1,147 @@
 <div class="columns">
     <div class="column is-three-quarters">
         <div id="diva-wrapper"></div>
-            <script src="/static/vendor/diva.js/diva.js"></script>
-            <link rel="stylesheet" href="/static/vendor/diva.js/diva.css" />
-            <script>
-                let diva = null;
-
-                document.addEventListener('initialize-diva', function ()
-                {
-                    if (!diva) {
-                        diva = new Diva('diva-wrapper', {
-                            objectData: "{{ content.manifest_url }}",
-                        });
-                    }
-                }, false)
-            </script>
     </div>
     <div class="column">
-{#        <PageData viewer={ this.refs.divaViewer } />#}
+        <div id="diva-page-details"></div>
     </div>
+    <script src="/static/vendor/diva.js/diva.js"></script>
+    <link rel="stylesheet" href="/static/vendor/diva.js/diva.css" />
+    <script>
+        function createStructureDataLookup(responseData) /* -> object */
+        {
+            if (!responseData.hasOwnProperty("structures"))
+            {
+                return {}
+            }
+            let rangeLookup = {}
+            for (let range of responseData.structures)
+            {
+                if (!range.hasOwnProperty("canvases"))
+                {
+                    console.log(range)
+                    continue;
+                }
+
+                for (let canvasId of range.canvases)
+                {
+                    if (!rangeLookup.hasOwnProperty(canvasId))
+                    {
+                        rangeLookup[canvasId] = []
+                    }
+                    rangeLookup[canvasId].push(range)
+
+                }
+            }
+
+            return rangeLookup
+        }
+
+        function updatePageDetails(currentCanvasLabel, ranges)
+        {
+            let template = document.getElementById("diva-page-details-template");
+            const clone = template.content.cloneNode(true);
+
+            let header = clone.querySelector("slot[name=page-header]");
+            header.outerHTML = currentCanvasLabel;
+
+            let detailsBody = clone.querySelector("slot[name=page-range-contents]");
+            let contentParent = document.createElement("div")
+            contentParent.classList.add("content");
+            detailsBody.replaceWith(contentParent);
+
+            for (let range of ranges)
+            {
+                if (!range.hasOwnProperty('metadata'))
+                {
+                    continue;
+                }
+                let title = document.createElement("h5")
+                title.classList.add("title", "is-5", "is-marginless");
+                title.innerText = range.label;
+                contentParent.appendChild(title);
+
+                let metaList = document.createElement("ul");
+                contentParent.appendChild(metaList);
+
+                let voiceBlock = document.createElement("div");
+                contentParent.appendChild(voiceBlock);
+
+                for (let d of range.metadata)
+                {
+                    let metaListItem = document.createElement("li");
+
+                    if (d.value.startsWith("<"))
+                    {
+                        voiceBlock.innerHTML = d.value;
+                    }
+                    else
+                    {
+                        let label = document.createElement("strong");
+                        let content = document.createTextNode(d.value);
+                        label.innerText = `${d.label}: `;
+                        metaListItem.appendChild(label);
+                        metaListItem.appendChild(content);
+                        metaList.appendChild(metaListItem);
+                    }
+                }
+            }
+
+            let parent = document.getElementById("diva-page-details");
+            parent.replaceChildren(clone);
+        }
+
+        let divaInstance = null;
+
+        document.addEventListener('initialize-diva', function ()
+        {
+            if (!divaInstance)
+            {
+                divaInstance = new Diva('diva-wrapper', {
+                    objectData: "{{ content.manifest_url }}",
+                    enableAutoTitle: false,
+                    fixedHeightGrid: false,
+                    enableImageTitles: true
+                });
+
+                Diva.Events.subscribe("ViewerDidLoad", function ()
+                {
+                    // force the document to show in document view on initial load. x
+                    this.changeView('document');
+
+                    // When the document is loaded set the contents block to the contents
+                    // of the active page. This depends on the ManifestDidLoad process to
+                    // generate the rangeLookup property first, but ViewerDidLoad should be
+                    // the last thing to fire on viewer initialization.
+                    let currentCanvasId = this.getCurrentCanvas();
+                    let ranges = this.rangeLookup[currentCanvasId] || [];
+                    updatePageDetails(this.getCurrentCanvasLabel(), ranges);
+                });
+                Diva.Events.subscribe("ManifestDidLoad", function (responseData)
+                {
+                    // add a property to the diva instance that contains a lookup
+                    // for matching the canvas ID to one or more ranges.
+                    this.rangeLookup = createStructureDataLookup(responseData)
+                });
+                Diva.Events.subscribe("ActivePageDidChange", function (activePage)
+                {
+                    let currentCanvasId = this.getCurrentCanvas();
+                    let ranges = this.rangeLookup[currentCanvasId] || [];
+                    updatePageDetails(this.getCurrentCanvasLabel(), ranges);
+                });
+            }
+        }, false)
+    </script>
+    <template id="diva-page-details-template">
+        <div class="card is-fullwidth">
+            <header class="card-header">
+                <h4 class="card-header-title title is-4 is-not-bold">
+                    <slot name="page-header">PAGE HEADER</slot>
+                </h4>
+            </header>
+            <div class="card-content">
+                <slot name="page-range-contents">RANGE CONTENTS</slot>
+            </div>
+        </div>
+    </template>
 </div>

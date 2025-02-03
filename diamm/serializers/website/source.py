@@ -10,6 +10,7 @@ from rest_framework.reverse import reverse
 
 from diamm.helpers.solr_helpers import SolrManager
 from diamm.models import Organization, Person
+from diamm.serializers.fields import DateTimeField
 from diamm.serializers.serializers import ContextDictSerializer, ContextSerializer
 
 
@@ -370,6 +371,13 @@ class SourceListSerializer(ContextSerializer):
         )
 
 
+class SourceContributionSerializer(ContextSerializer):
+    summary = serpy.StrField()
+    contributor = serpy.StrField(attr="contributor.full_name", required=False)
+    credit = serpy.StrField(required=False)
+    updated = DateTimeField(date_format="%A, %-d %B, %Y")
+
+
 class SourceDetailSerializer(ContextSerializer):
     pk = serpy.IntField()
     url = serpy.MethodField()
@@ -413,6 +421,7 @@ class SourceDetailSerializer(ContextSerializer):
         attr="authorities.all", call=True, many=True
     )
     notes = serpy.MethodField(required=False)
+    contributions = serpy.MethodField()
 
     def get_type(self, obj):
         return obj.__class__.__name__.lower()
@@ -467,7 +476,7 @@ class SourceDetailSerializer(ContextSerializer):
         )
 
     def get_inventory(self, obj):
-        "source_order_f asc, folio_start_ans asc"
+        # source_order_f asc, folio_start_ans asc
         return SourceInventorySerializer(
             obj.inventory.select_related("composition", "source__archive__city")
             .prefetch_related(
@@ -548,6 +557,16 @@ class SourceDetailSerializer(ContextSerializer):
 
         return SourceCatalogueEntrySerializer(
             obj.catalogue_entries.all(),
+            context={"request": self.context["request"]},
+            many=True,
+        ).data
+
+    def get_contributions(self, obj):
+        if not obj.contributions.count() > 0:
+            return None
+
+        return SourceContributionSerializer(
+            obj.contributions.filter(accepted=True).order_by("-updated"),
             context={"request": self.context["request"]},
             many=True,
         ).data

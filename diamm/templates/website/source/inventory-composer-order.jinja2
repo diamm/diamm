@@ -7,6 +7,7 @@
         </tr>
         </thead>
         <tbody>
+        {% set show_imagelinks = content.manifest_url is defined %}
         {% for entry in content.composer_inventory %}
         <tr class="composer-order">
             <td class="composer">
@@ -23,7 +24,7 @@
                     {% for cmp in entry.inventory %}
                     <li>
                         {{ cmp.composition|default("[No description]") }} {{ "(?)" if cmp.uncertain else "" }}
-                        {{ foliation(cmp) }}
+                        {{ foliation(cmp, show_imagelinks) }}
                     </li>
                     {% endfor %}
                 </ul>

@@ -27,13 +27,14 @@
         </tr>
         </thead>
         <tbody>
+        {% set show_imagelinks = content.manifest_url is defined %}
         {% for entry in content.inventory %}
             <tr @click="toggleItem($el.id)"
                 id="inventory-order-{{ loop.index }}"
                 style="cursor: pointer"
             >
                 <td>
-                    {{ foliation(entry) }}
+                    {{ foliation(entry, show_imagelinks) }}
                 </td>
                 <td class="item-details">
                     {{ entry.composition }}
@@ -59,7 +60,7 @@
                         <div class="column">
                             <div>
                                 <strong>Appears on: </strong>
-                                {{ foliation(entry) }}
+                                {{ foliation(entry, show_imagelinks) }}
                             </div>
                             {% if entry.genres %}
                                 <div>

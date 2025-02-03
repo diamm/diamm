@@ -16,19 +16,9 @@ from rest_framework.reverse import reverse
 from diamm.helpers.solr_helpers import SolrManager
 from diamm.serializers.fields import StaticField
 from diamm.serializers.iiif.canvas import CanvasSerializer
+from diamm.serializers.iiif.helpers import create_metadata_block
 from diamm.serializers.iiif.structure import StructureSerializer
 from diamm.serializers.serializers import ContextDictSerializer
-
-METADATA_MAPPING = {
-    "name_s": "Name",
-    "shelfmark_s": "Shelfmark",
-    "archive_s": "Archive",
-    "surface_type_s": "Surface Type",
-    "measurements_s": "Measurements",
-    "identifiers_ss": "Identifiers",
-    "date_statement_s": "Date Statement",
-    "source_type_s": "Source Type",
-}
 
 
 class SourceManifestSerializer(ContextDictSerializer):
@@ -57,18 +47,7 @@ class SourceManifestSerializer(ContextDictSerializer):
         )
 
     def get_metadata(self, obj: dict) -> list:  # noqa: UP006
-        metadata_entries = []
-        for field, label in METADATA_MAPPING.items():
-            if field not in obj:
-                continue
-
-            value = obj[field]
-            if isinstance(value, list):
-                for v in value:
-                    metadata_entries.append({"label": label, "value": v})
-            else:
-                metadata_entries.append({"label": label, "value": value})
-        return metadata_entries
+        return create_metadata_block(obj)
 
     def get_description(self, obj: dict) -> Optional[str]:
         if "notes_txt" in obj:
@@ -147,7 +126,6 @@ class SourceManifestSerializer(ContextDictSerializer):
         # The pages_ii query ensures we retrieve only those records that have images associated with them.
         structure_query = {
             "fq": ["type:item", f"source_i:{obj['pk']}", "pages_ii:[* TO *]"],
-            "fl": ["pages_ii", "pages_ssni", "source_i", "pk", "composition_s"],
             "sort": "folio_start_ans asc",
             "rows": 100,
         }

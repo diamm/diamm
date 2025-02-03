@@ -1,12 +1,12 @@
-
 <div class="column">
     <p>This source has not been inventoried. However, it is known to contain:</p>
     <table class="table inventory-table">
         <tbody>
+        {% set show_imagelinks = content.manifest_url is defined %}
         {% for entry in content.uninventoried %}
         <tr>
             <td>
-                {{ foliation(entry) }}
+                {{ foliation(entry, show_imagelinks) }}
             </td>
             <td class="item-details">
                 {{ entry.source_attribution|default("[No Source Attribution]") }}

@@ -67,7 +67,6 @@ class ImageSerializer(ContextDictSerializer):
                 ],
                 "sort": "sort_order_f asc, image_type_i asc, numeration_ans asc",
             }
-            print(canvas_query)
             conn.search("*:*", **canvas_query)
 
             return {

@@ -1,6 +1,7 @@
 from typing import Optional
 
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.urls import reverse
 from django.utils.functional import cached_property
@@ -105,6 +106,7 @@ class Source(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     sort_order = models.IntegerField(blank=True, null=True)
+    contributions = GenericRelation("diamm_site.ProblemReport")
 
     def __str__(self) -> str:
         name: str = f" ({self.name})" if self.name else ""

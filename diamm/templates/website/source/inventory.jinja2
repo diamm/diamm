@@ -1,4 +1,4 @@
-{% macro foliation(entry) %}
+{% macro foliation(entry, show_imagelinks) %}
     {% if not entry.folio_start %}
         [No start folio listed]
     {% else %}
@@ -7,7 +7,7 @@
         &ndash;{{ entry.folio_end }}
         {% endif %}
     {% endif %}
-    {% if request.user.is_authenticated %}
+    {% if request.user.is_authenticated and show_imagelinks %}
         <a href="#/images?p={{ entry.folio_start }}">
             <span class="icon is-small">
                 <i class="fa fa-file-text-o fa-border quicklook"></i>

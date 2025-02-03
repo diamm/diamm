@@ -33,6 +33,7 @@ class SourceDetail(generics.RetrieveAPIView):
                 "provenance__city",
                 "provenance__country",
                 "provenance__region",
+                "contributions",
             )
         )
 
