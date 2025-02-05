@@ -31,6 +31,7 @@ from django.contrib.auth.views import (
 )
 from django.contrib.sitemaps import views as sitemap_views
 from django.contrib.staticfiles.storage import staticfiles_storage
+from django.http.response import HttpResponseRedirectBase
 from django.urls import path, re_path
 from django.views.generic import RedirectView, TemplateView
 from django_jinja import views as jinja_views
@@ -52,7 +53,11 @@ from diamm.views.website.composition import CompositionDetail
 from diamm.views.website.contributor import ContributorList
 from diamm.views.website.correction import CorrectionCreate
 from diamm.views.website.country import CountryDetail, CountryList
-from diamm.views.website.image import image_serve
+from diamm.views.website.image import (
+    cover_image_serve,
+    image_serve,
+    image_serve_redirect,
+)
 from diamm.views.website.organization import OrganizationDetail
 from diamm.views.website.person import PersonDetail, legacy_composer_redirect
 from diamm.views.website.region import RegionDetail
@@ -71,6 +76,10 @@ handler404 = jinja_views.PageNotFound.as_view()
 handler403 = jinja_views.PermissionDenied.as_view()
 handler400 = jinja_views.ErrorView.as_view()
 # handler500 = jinja_views.ServerError.as_view()
+
+
+def redirect_303(request, new_url):
+    return HttpResponseRedirectBase(new_url, status=303, request=request)
 
 
 sitemaps = {
@@ -215,11 +224,13 @@ urlpatterns = [
     path("sets/<int:pk>/", SetDetail.as_view(), name="set-detail"),
     path("authors/<int:pk>/", BibliographyAuthorDetail.as_view(), name="author-detail"),
     re_path(
-        r"^images/(?P<pk>[0-9]+)/(?P<region>.*)/(?P<size>.*)/(?P<rotation>.*)/default\.jpg$",
+        r"^images/(?P<pk>[0-9]+)/(?P<region>(?:pct:)?[0-9,]+|full|square)/(?P<size>.*)/(?P<rotation>.*)/default\.jpg$",
         image_serve,
         name="image-serve",
     ),
-    path("images/<int:pk>/", image_serve, name="image-serve-info"),
+    path("images/<int:pk>/", image_serve_redirect, name="image-serve-redirect"),
+    path("images/<int:pk>/info.json", image_serve, name="image-serve-info"),
+    path("cover/<int:pk>/", cover_image_serve, name="cover-image"),
     path("commentary/", CommentaryList.as_view(), name="commentary-list"),
     # Two views on the same content; see the problem_report model for clarification.
     path("corrections/", CorrectionCreate.as_view(), name="correction-create"),

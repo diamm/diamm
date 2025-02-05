@@ -107,6 +107,7 @@ class Source(models.Model):
 
     sort_order = models.IntegerField(blank=True, null=True)
     contributions = GenericRelation("diamm_site.ProblemReport")
+    commentary = GenericRelation("diamm_site.Commentary")
 
     def __str__(self) -> str:
         name: str = f" ({self.name})" if self.name else ""
@@ -182,7 +183,7 @@ class Source(models.Model):
             return None
 
         cover = (
-            self.pages.filter(images__type=1, images__iiif_response_cache__isnull=False)
+            self.pages.filter(images__type=1, images__location__isnull=False)
             .order_by("?")
             .values("numeration", "images__id")
             .first()
@@ -290,34 +291,6 @@ class Source(models.Model):
     #
     #     connection.search("*:*", fq=fq, fl=fl, sort=sort)
     #     return list(connection.results)
-
-    @property
-    def inventory_by_composer(self) -> list:
-        connection = SolrManager(settings.SOLR["SERVER"])
-
-        fq: list = ["type:composerinventory", f"source_i:{self.pk}"]
-        sort: str = "composer_s asc"
-
-        connection.grouped_search(
-            "composer_s", "composition_s asc", "*:*", fq=fq, sort=sort
-        )
-        groups = connection.grouped_results
-
-        reslist = []
-        for doc in groups:
-            composer = doc["groupValue"]
-            inventory = doc["doclist"]["docs"]
-
-            composer_pk = None
-            if inventory:
-                # get composer pk from the first record.
-                composer_pk = inventory[0].get("composer_i", None)
-
-            reslist.append(
-                {"composer": composer, "pk": composer_pk, "inventory": inventory}
-            )
-
-        return reslist
 
     @property
     def solr_bibliography(self) -> list:

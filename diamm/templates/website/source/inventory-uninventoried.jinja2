@@ -1,6 +1,14 @@
 <div class="column">
     <p>This source has not been inventoried. However, it is known to contain:</p>
     <table class="table inventory-table">
+        <thead>
+            <tr>
+                <th>Folios / Pages</th>
+                <th>Attribution in Source</th>
+                <th>Composers (? Uncertain)</th>
+                <th>Voices</th>
+            </tr>
+        </thead>
         <tbody>
         {% set show_imagelinks = content.manifest_url is defined %}
         {% for entry in content.uninventoried %}

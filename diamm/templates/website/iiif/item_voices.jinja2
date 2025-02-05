@@ -1,33 +1,41 @@
-<div>
-    {% for voice in content %}
-        <ul>
-            {% if voice.label %}
-            <li><strong>Voice: </strong> {{ voice.label }}</li>
-            {% endif %}
 
-            {% if voice.type %}
-                <li><strong>Voice Type: </strong> {{ voice.type }}</li>
-            {% endif %}
+<dl>
+{% for voice in content %}
+    <div>
+        {% if voice.label %}
+            <dt>Voice</dt>
+            <dd>{{ voice.label }}</dd>
+        {% endif %}
 
-            {% if voice.text %}
-                <li><strong>Text: </strong> {{ voice.text }}</li>
-            {% endif %}
+        {% if voice.type %}
+            <dt>Voice Type</dt>
+            <dd>{{ voice.type }}</dd>
+        {% endif %}
 
-            {% if voice.standard_text %}
-                <li><strong>Standard Text: </strong> {{ voice.standard_text }}</li>
-            {% endif %}
+        {% if voice.text %}
+            <dt>Text</dt>
+            <dd>{{ voice.text }}</dd>
+        {% endif %}
 
-            {% if voice.clef %}
-                <li><strong>Clef: </strong> {{ voice.clef }}</li>
-            {% endif %}
+        {% if voice.standard_text %}
+            <dt>Standard Text</dt>
+            <dd>{{ voice.standard_text }}</dd>
+        {% endif %}
 
-            {% if voice.mensuration %}
-                <li><strong>Mensuration: </strong> {{ voice.mensuration }}</li>
-            {% endif %}
+        {% if voice.clef %}
+            <dt>Clef</dt>
+            <dd>{{ voice.clef }}</dd>
+        {% endif %}
 
-            {% if voice.position %}
-                <li><strong>Position: </strong> {{ voice.position }}</li>
-            {% endif %}
-        </ul>
-    {% endfor %}
-</div>
+        {% if voice.mensuration %}
+            <dt>Mensuration</dt>
+            <dd>{{ voice.mensuration }}</dd>
+        {% endif %}
+
+        {% if voice.position %}
+            <dt>Position</dt>
+            <dd>{{ voice.position }}</dd>
+        {% endif %}
+    </div>
+{% endfor %}
+</dl>

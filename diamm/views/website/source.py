@@ -34,6 +34,7 @@ class SourceDetail(generics.RetrieveAPIView):
                 "provenance__country",
                 "provenance__region",
                 "contributions",
+                "commentary",
             )
         )
 

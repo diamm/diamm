@@ -4,7 +4,7 @@ from typing import Optional
 import serpy
 from django.conf import settings
 from django.contrib.contenttypes.prefetch import GenericPrefetch
-from django.db.models.functions.comparison import Coalesce, Collate
+from django.db.models.functions.comparison import Collate
 from django.template.loader import get_template
 from rest_framework.reverse import reverse
 
@@ -103,38 +103,35 @@ class SourceProvenanceSerializer(ContextSerializer):
         return {"name": str(obj.entity)}
 
 
-class SourceSetSerializer(ContextSerializer):
-    cluster_shelfmark = serpy.StrField(attr="cluster_shelfmark")
+class SourceSetSerializer(ContextDictSerializer):
+    pk = serpy.IntField()
+    cluster_shelfmark = serpy.StrField(attr="cluster_shelfmark_s")
+    set_type = serpy.StrField(attr="set_type_s")
     sources = serpy.MethodField()
-    set_type = serpy.StrField(attr="set_type")
 
     def get_sources(self, obj) -> list:
-        sources = (
-            obj.sources.select_related("archive__city", "cover_image")
-            .prefetch_related("pages")
-            .order_by(Collate(Coalesce("archive__siglum", "shelfmark"), "natsort"))
-        )
+        sources = obj["sources_json"]
         ret = []
         for source in sources:
             url = reverse(
                 "source-detail",
                 kwargs={
-                    "pk": source.pk,
+                    "pk": source["pk"],
                 },
                 request=self.context["request"],
             )
-            if c := source.cover:
+            if c := source.get("cover_image"):
                 cover = reverse(
-                    "image-serve-info",
-                    kwargs={"pk": c["id"]},
+                    "cover-image",
+                    kwargs={"pk": c},
                     request=self.context["request"],
                 )
             else:
                 cover = None
+
             ret.append(
                 {
-                    "shelfmark": source.shelfmark,
-                    "display_name": source.display_name,
+                    "display_name": source["display_name"],
                     "url": url,
                     "cover_image": cover,
                 }
@@ -258,9 +255,9 @@ class SourceInventorySerializer(ContextSerializer):
         )
 
     def get_composers(self, obj) -> Optional[list]:
-        if unatt := obj.unattributed_composers.exists():
+        if obj.unattributed_composers.exists():
             out = []
-            for comp in unatt.all():
+            for comp in obj.unattributed_composers.all():
                 out.append(
                     {
                         "full_name": str(comp.composer),
@@ -372,9 +369,17 @@ class SourceListSerializer(ContextSerializer):
 
 
 class SourceContributionSerializer(ContextSerializer):
+    pk = serpy.IntField()
     summary = serpy.StrField()
     contributor = serpy.StrField(attr="contributor.full_name", required=False)
     credit = serpy.StrField(required=False)
+    updated = DateTimeField(date_format="%A, %-d %B, %Y")
+
+
+class SourceCommentarySerializer(ContextSerializer):
+    pk = serpy.IntField()
+    comment = serpy.StrField()
+    author = serpy.StrField(attr="author.full_name", required=False)
     updated = DateTimeField(date_format="%A, %-d %B, %Y")
 
 
@@ -422,6 +427,7 @@ class SourceDetailSerializer(ContextSerializer):
     )
     notes = serpy.MethodField(required=False)
     contributions = serpy.MethodField()
+    commentary = serpy.MethodField()
 
     def get_type(self, obj):
         return obj.__class__.__name__.lower()
@@ -449,7 +455,7 @@ class SourceDetailSerializer(ContextSerializer):
 
         obj = {
             "url": reverse(
-                "image-serve-info",
+                "cover-image",
                 kwargs={"pk": cover_obj["id"]},
                 request=self.context["request"],
             ),
@@ -497,8 +503,31 @@ class SourceDetailSerializer(ContextSerializer):
         ).data
 
     def get_composer_inventory(self, obj):
+        connection = SolrManager(settings.SOLR["SERVER"])
+        fq: list = ["type:composerinventory", f"source_i:{obj.pk}"]
+        sort: str = "composer_s asc"
+
+        connection.grouped_search(
+            "composer_s", "composition_s asc", "*:*", fq=fq, sort=sort
+        )
+        groups = connection.grouped_results
+
+        reslist = []
+        for doc in groups:
+            composer = doc["groupValue"]
+            inventory = doc["doclist"]["docs"]
+
+            composer_pk = None
+            if inventory:
+                # get composer pk from the first record.
+                composer_pk = inventory[0].get("composer_i", None)
+
+            reslist.append(
+                {"composer": composer, "pk": composer_pk, "inventory": inventory}
+            )
+
         return SourceComposerInventorySerializer(
-            obj.inventory_by_composer,
+            reslist,
             many=True,
             context={"request": self.context["request"]},
         ).data
@@ -516,10 +545,13 @@ class SourceDetailSerializer(ContextSerializer):
         ).data
 
     def get_sets(self, obj):
+        connection = SolrManager(settings.SOLR["SERVER"])
+        fq: list = ["type:set", f"sources_ii:{obj.pk}"]
+
+        connection.search("*:*", fq=fq)
+
         return SourceSetSerializer(
-            obj.sets.prefetch_related(
-                "sources", "sources__cover_image", "sources__archive__city"
-            ).all(),
+            connection.results,
             many=True,
             context={"request": self.context["request"], "source_id": obj.pk},
         ).data
@@ -570,3 +602,36 @@ class SourceDetailSerializer(ContextSerializer):
             context={"request": self.context["request"]},
             many=True,
         ).data
+
+    def get_commentary(self, obj):
+        if not obj.commentary.count() > 0:
+            return None
+
+        public_comments = obj.commentary.filter(comment_type=1).exists()
+
+        private_comments = None
+        req = self.context["request"]
+        if req.user:
+            private_comments = obj.commentary.filter(
+                comment_type=0, author=req.user
+            ).order_by("-updated")
+
+        if not public_comments and not private_comments:
+            return None
+
+        all_comments = {
+            "public": SourceCommentarySerializer(
+                obj.commentary.filter(comment_type=1).order_by("-updated"),
+                context={"request": self.context["request"]},
+                many=True,
+            ).data,
+        }
+
+        if private_comments:
+            all_comments["private"] = SourceCommentarySerializer(
+                private_comments,
+                context={"request": self.context["request"]},
+                many=True,
+            ).data
+
+        return all_comments

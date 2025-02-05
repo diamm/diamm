@@ -18,14 +18,14 @@ class ImageResourceSerializer(ContextDictSerializer):
 
     def get_id(self, obj: dict) -> str:
         return reverse(
-            "image-serve-info",
+            "image-serve-redirect",
             kwargs={"pk": obj["pk"]},
             request=self.context["request"],
         )
 
     def get_service(self, obj: dict) -> dict:
         proxied_image_url = reverse(
-            "image-serve-info",
+            "image-serve-redirect",
             kwargs={"pk": obj["pk"]},
             request=self.context["request"],
         )

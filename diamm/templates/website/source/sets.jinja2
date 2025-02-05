@@ -1,0 +1,37 @@
+<div class="columns">
+    <div class="column">
+        {% for source_set in content.sets %}
+            <div class="source-set">
+                <h3 class="title is-4">Set: {{ source_set.cluster_shelfmark }}</h3>
+                <h4 class="subtitle is-5">
+                    <strong>Type: </strong>{{ source_set.set_type }}
+                </h4>
+                <div class="set-sources">
+                    {% for a_source in source_set.sources %}
+                    <div class="box">
+                        {% if a_source.cover_image %}
+                            <a href={{ a_source.url }}>
+                                <figure class="image" style="width: 100px; margin: auto;">
+                                    <img loading="lazy" src="{{ a_source.cover_image }}"/>
+                                </figure>
+                            </a>
+                        {% else %}
+                            <div class="no-image">
+                                <div>
+                                    <i class="fa fa-eye-slash"></i>
+                                </div>
+                                <div>
+                                    <small>No images available</small>
+                                </div>
+                            </div>
+                        {% endif %}
+                        <p>
+                            <a href={{ a_source.url }}>{{ a_source.display_name }}</a>
+                        </p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>

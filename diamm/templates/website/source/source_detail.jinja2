@@ -189,12 +189,15 @@
                 {% include "website/source/images.jinja2" %}
             </section>
         {% endif %}
+
         {% if content.sets %}
             <section id="sets-panel"
                      x-show="$store.sourceTabs.isSelected('sets-tab')"
                      role="tabpanel">
+                {% include "website/source/sets.jinja2" %}
             </section>
         {% endif %}
+
         {% if content.bibliography %}
             <section id="bibliography"
                      x-show="$store.sourceTabs.isSelected('bibliography-tab')"
@@ -202,15 +205,21 @@
                 {% include "website/source/bibliography.jinja2" %}
             </section>
         {% endif %}
+
         <section id="commentary"
                  x-show="$store.sourceTabs.isSelected('commentary-tab')"
                  role="tabpanel">
+            {% include "website/source/commentary.jinja2" %}
         </section>
+
+        {% if content.contributions %}
         <section id="contributions"
                  x-show="$store.sourceTabs.isSelected('contributions-tab')"
                  role="tabpanel">
             {% include "website/source/contributions.jinja2" %}
         </section>
+        {% endif %}
+
         <section id="corrections"
                  x-show="$store.sourceTabs.isSelected('corrections-tab')"
                  role="tabpanel">

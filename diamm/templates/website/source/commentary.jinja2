@@ -1,0 +1,36 @@
+<div class="columns">
+{% if not content.commentary %}
+    <div class="column">
+        <div class="notification">
+            <p>No comments have been made.</p>
+        </div>
+    </div>
+{% else %}
+    <div class="column">
+        {% set public = content.commentary.public %}
+        {% set private = content.commentary.private %}
+        {% if public %}
+            <div class="content">
+            {% for comment in public %}
+                <article class="media box">
+                    <div class="media-content">
+                        <h3 class="title is-5">
+                            <span>{{ comment.author }}</span>
+                        </h3>
+                        <h4 class="subtitle is-6">{{ comment.updated }}</h4>
+                        <p>
+                            {{ comment.comment|markdown|safe }}
+                        </p>
+                    </div>
+                </article>
+            {% endfor %}
+            </div>
+        {% endif %}
+        {% if private %}
+            <div class="content">
+                PRIVATE
+            </div>
+        {% endif %}
+    </div>
+{% endif %}
+</div>

@@ -23,8 +23,8 @@
                 <ul>
                     {% for cmp in entry.inventory %}
                     <li>
-                        {{ cmp.composition|default("[No description]") }} {{ "(?)" if cmp.uncertain else "" }}
-                        {{ foliation(cmp, show_imagelinks) }}
+                        {{ "(?) " if cmp.uncertain else "" }}{{ cmp.composition|default("[No description]") }}
+                        &ndash;{{ foliation(cmp, show_imagelinks) }}
                     </li>
                     {% endfor %}
                 </ul>

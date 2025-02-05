@@ -12,14 +12,13 @@
         {
             if (!responseData.hasOwnProperty("structures"))
             {
-                return {}
+                return {};
             }
-            let rangeLookup = {}
+            let rangeLookup = {};
             for (let range of responseData.structures)
             {
                 if (!range.hasOwnProperty("canvases"))
                 {
-                    console.log(range)
                     continue;
                 }
 
@@ -27,14 +26,14 @@
                 {
                     if (!rangeLookup.hasOwnProperty(canvasId))
                     {
-                        rangeLookup[canvasId] = []
+                        rangeLookup[canvasId] = [];
                     }
-                    rangeLookup[canvasId].push(range)
+                    rangeLookup[canvasId].push(range);
 
                 }
             }
 
-            return rangeLookup
+            return rangeLookup;
         }
 
         function updatePageDetails(currentCanvasLabel, ranges)
@@ -46,22 +45,21 @@
             header.outerHTML = currentCanvasLabel;
 
             let detailsBody = clone.querySelector("slot[name=page-range-contents]");
-            let contentParent = document.createElement("div")
-            contentParent.classList.add("content");
+            let contentParent = document.createElement("div");
             detailsBody.replaceWith(contentParent);
 
             for (let range of ranges)
             {
-                if (!range.hasOwnProperty('metadata'))
+                if (!range.hasOwnProperty("metadata"))
                 {
                     continue;
                 }
-                let title = document.createElement("h5")
+                let title = document.createElement("h5");
                 title.classList.add("title", "is-5", "is-marginless");
                 title.innerText = range.label;
                 contentParent.appendChild(title);
 
-                let metaList = document.createElement("ul");
+                let metaList = document.createElement("dl");
                 contentParent.appendChild(metaList);
 
                 let voiceBlock = document.createElement("div");
@@ -69,20 +67,20 @@
 
                 for (let d of range.metadata)
                 {
-                    let metaListItem = document.createElement("li");
+                    let label = document.createElement("dt");
+                    label.innerText = d.label;
+                    metaList.appendChild(label);
+
+                    let content = document.createElement("dd");
+                    metaList.appendChild(content);
 
                     if (d.value.startsWith("<"))
                     {
-                        voiceBlock.innerHTML = d.value;
+                        content.innerHTML = d.value;
                     }
                     else
                     {
-                        let label = document.createElement("strong");
-                        let content = document.createTextNode(d.value);
-                        label.innerText = `${d.label}: `;
-                        metaListItem.appendChild(label);
-                        metaListItem.appendChild(content);
-                        metaList.appendChild(metaListItem);
+                        content.innerText = d.value;
                     }
                 }
             }
@@ -93,11 +91,11 @@
 
         let divaInstance = null;
 
-        document.addEventListener('initialize-diva', function ()
+        document.addEventListener("initialize-diva", function ()
         {
             if (!divaInstance)
             {
-                divaInstance = new Diva('diva-wrapper', {
+                divaInstance = new Diva("diva-wrapper", {
                     objectData: "{{ content.manifest_url }}",
                     enableAutoTitle: false,
                     fixedHeightGrid: false,
@@ -107,7 +105,7 @@
                 Diva.Events.subscribe("ViewerDidLoad", function ()
                 {
                     // force the document to show in document view on initial load. x
-                    this.changeView('document');
+                    this.changeView("document");
 
                     // When the document is loaded set the contents block to the contents
                     // of the active page. This depends on the ManifestDidLoad process to
@@ -121,7 +119,7 @@
                 {
                     // add a property to the diva instance that contains a lookup
                     // for matching the canvas ID to one or more ranges.
-                    this.rangeLookup = createStructureDataLookup(responseData)
+                    this.rangeLookup = createStructureDataLookup(responseData);
                 });
                 Diva.Events.subscribe("ActivePageDidChange", function (activePage)
                 {
@@ -130,9 +128,24 @@
                     updatePageDetails(this.getCurrentCanvasLabel(), ranges);
                 });
             }
-        }, false)
+        }, false);
     </script>
     <template id="diva-page-details-template">
+        <style>
+            dt {
+                font-weight: bold;
+            }
+            dd {
+                margin: 0;
+                padding: 0 0 0.5em 0.5em !important;
+            }
+
+            dd > dl > div {
+                padding-left: 0.5em !important;
+                margin-bottom: 0.5em;
+                border-bottom: 1px solid #dedede;
+            }
+        </style>
         <div class="card is-fullwidth">
             <header class="card-header">
                 <h4 class="card-header-title title is-4 is-not-bold">

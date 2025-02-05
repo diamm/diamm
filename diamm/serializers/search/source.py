@@ -15,7 +15,7 @@ log = logging.getLogger("diamm")
 
 def _get_sources(cfg: dict):
     sql_query = """SELECT 'source' AS type, s.id AS pk, s.shelfmark AS shelfmark, s.name AS name,
-              concat(a.siglum, ' ', s.shelfmark, ' ', coalesce('(' || s.name || ')', ''))  AS display_name,
+              concat(a.siglum, ' ', s.shelfmark, coalesce(' (' || s.name || ')', ''))  AS display_name,
               a.name AS "archive.name", a.id AS "archive.pk", ag.name AS "archive.city.name", s.type AS source_type,
               ag2.name AS "archive.city.parent.name",
                 COALESCE(
