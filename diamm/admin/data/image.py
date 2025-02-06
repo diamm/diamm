@@ -1,7 +1,4 @@
-from urllib.parse import urljoin
-
-import requests
-import ujson
+import httpx
 from django import forms
 from django.conf import settings
 from django.contrib import admin
@@ -45,7 +42,7 @@ class ImageSourceListFilter(admin.SimpleListFilter):
     parameter_name = "source_attach"
 
     def lookups(self, request, model_admin):
-        return (("True", _("No Source Attached")), ("False", _("Attached to a Source")))
+        return ("True", _("No Source Attached")), ("False", _("Attached to a Source"))
 
     def queryset(self, request, queryset):
         val = self.value()
@@ -64,7 +61,7 @@ class IIIFDataListFilter(admin.SimpleListFilter):
     parameter_name = "iiif_info"
 
     def lookups(self, request, model_admin):
-        return (("False", _("No IIIF Description")), ("True", _("IIIF Description")))
+        return ("False", _("No IIIF Description")), ("True", _("IIIF Description"))
 
     def queryset(self, request, queryset):
         val = self.value()
@@ -72,11 +69,11 @@ class IIIFDataListFilter(admin.SimpleListFilter):
             return queryset
         if val == "True":
             return queryset.filter(
-                location__isnull=False, iiif_response_cache__isnull=False
+                location__isnull=False, width__isnull=False, height__isnull=False
             )
         elif val == "False":
             return queryset.filter(
-                location__isnull=False, iiif_response_cache__isnull=True
+                location__isnull=False, width__isnull=True, height__isnull=True
             )
 
 
@@ -95,27 +92,32 @@ class SourceKeyFilter(InputFilter):
 
 
 def refetch_iiif_info(modeladmin, request, queryset):
-    for img in queryset:
-        location = img.location
-        if not location:
-            continue
+    with httpx.Client() as client:
+        for img in queryset:
+            location = img.location
+            if not location:
+                continue
 
-        url = urljoin(location + "/", "info.json")
+            url: str = f"{settings.DIAMM_IMAGE_SERVER}{location}/info.json"
 
-        r = requests.get(
-            url,
-            headers={
-                "referer": f"https://{settings.HOSTNAME}",
-                "X-DIAMM": settings.DIAMM_IMAGE_KEY,
-                "User-Agent": settings.DIAMM_UA,
-            },
-            timeout=10,
-        )
+            r = client.get(
+                url,
+                headers={
+                    "referer": f"https://{settings.HOSTNAME}",
+                    "X-DIAMM": settings.DIAMM_IMAGE_KEY,
+                    "User-Agent": settings.DIAMM_UA,
+                },
+                timeout=10,
+            )
 
-        if 200 <= r.status_code < 300:
-            j = r.json()
-            img.iiif_response_cache = ujson.dumps(j)
-            img.save()
+            if 200 <= r.status_code < 300:
+                j = r.json()
+                width = j.get("width")
+                height = j.get("height")
+                img.width = width
+                img.height = height
+
+        Image.objects.bulk_update(queryset, ["width", "height"])
 
 
 refetch_iiif_info.short_description = "Re-Fetch IIIF Image Info"
@@ -174,6 +176,7 @@ class ImageAdmin(VersionAdmin):
 
     def get_type(self, obj):
         return f"{obj.type.name}"
+
     get_type.short_description = "type"
 
     def get_queryset(self, request):

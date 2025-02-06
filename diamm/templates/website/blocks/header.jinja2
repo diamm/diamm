@@ -37,7 +37,10 @@
                                 <a href="{{ url("user-account") }}">Your profile</a>
                             </div>
                             <div>
-                                <a href="{{ url('logout') }}">Log out</a>
+                                <form method="post" action="{{ url('logout') }}">
+                                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                                    <button type="submit" style="background: none!important;border: none;padding: 0!important;cursor: pointer;font-size:1rem;">Log out</button>
+                                </form>
                             </div>
                             {% if request.user.is_superuser %}
                             <div>

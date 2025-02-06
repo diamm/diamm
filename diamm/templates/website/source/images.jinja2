@@ -89,7 +89,34 @@
             parent.replaceChildren(clone);
         }
 
+        function updateFromHashParameters(instance)
+        {
+            const parsedUrl = new URL(window.location.href);
+            const hashAndQuery = parsedUrl.hash.split("?");
+
+            let queryParams = "";
+            if (hashAndQuery.length > 1)
+            {
+                queryParams = hashAndQuery[1];
+                let params = new URLSearchParams(queryParams);
+                if (!params.has('p'))
+                    return;
+
+                instance.gotoPageByLabel(params.get("p"));
+            }
+        }
+
         let divaInstance = null;
+
+
+        document.addEventListener("update-diva", function ()
+        {
+            if (divaInstance && divaInstance.isReady())
+            {
+                updateFromHashParameters(divaInstance);
+            }
+
+        });
 
         document.addEventListener("initialize-diva", function ()
         {
@@ -114,6 +141,8 @@
                     let currentCanvasId = this.getCurrentCanvas();
                     let ranges = this.rangeLookup[currentCanvasId] || [];
                     updatePageDetails(this.getCurrentCanvasLabel(), ranges);
+                    updateFromHashParameters(divaInstance);
+
                 });
                 Diva.Events.subscribe("ManifestDidLoad", function (responseData)
                 {

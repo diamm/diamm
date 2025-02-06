@@ -24,7 +24,7 @@ class Image(models.Model):
         default=1,
         on_delete=models.CASCADE,
     )
-    location = models.URLField(max_length=1024, blank=True, null=True)
+    location = models.CharField(max_length=1024, blank=True, null=True)
 
     # folio = models.CharField(max_length=256, blank=True, null=True)
     # caption = models.TextField(blank=True, null=True)
@@ -32,11 +32,8 @@ class Image(models.Model):
     legacy_id = models.CharField(max_length=256, blank=True, null=True)
     legacy_filename = models.CharField(max_length=1024, blank=True, null=True)
 
-    iiif_response_cache = models.TextField(
-        blank=True, null=True, verbose_name="IIIF Image Response"
-    )
-    width = models.IntegerField(default=0)
-    height = models.IntegerField(default=0)
+    width = models.IntegerField(default=0, blank=True, null=True)
+    height = models.IntegerField(default=0, blank=True, null=True)
     public = models.BooleanField(default=False)
     external = models.BooleanField(default=False)
 

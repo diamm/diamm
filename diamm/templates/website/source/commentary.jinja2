@@ -1,16 +1,52 @@
+{% macro commentblock() %}
+    <div>
+        <hr />
+        <form action="/commentary/" method="POST">
+            <div class="field">
+                <div class="control">
+                    <textarea name="comment" class="textarea"></textarea>
+                </div>
+            </div>
+            <div class="field has-addons is-pulled-right">
+                <div class="control">
+                    <div class="select">
+                        <select name="comment_type">
+                            <option value="public">Public Comment (Visible to Everyone)</option>
+                            <option value="private">Private Comment (Visible to only you)
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="control">
+                    <button type="submit" class="button is-primary">
+                        Add Comment
+                    </button>
+                </div>
+            </div>
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+            <input type="hidden" name="record_pk" value="{{ content.pk }}">
+            <input type="hidden" name="record_type" value="source">
+        </form>
+    </div>
+{% endmacro %}
+
 <div class="columns">
 {% if not content.commentary %}
-    <div class="column">
+    <div class="column is-two-thirds">
         <div class="notification">
             <p>No comments have been made.</p>
         </div>
+        {% if request.user.is_authenticated %}
+            {{ commentblock() }}
+        {% endif %}
     </div>
 {% else %}
-    <div class="column">
+    <div class="column is-two-thirds">
         {% set public = content.commentary.public %}
         {% set private = content.commentary.private %}
         {% if public %}
-            <div class="content">
+            <div>
+            <h4 class="title is-4">Public Comments</h4>
             {% for comment in public %}
                 <article class="media box">
                     <div class="media-content">
@@ -18,7 +54,7 @@
                             <span>{{ comment.author }}</span>
                         </h3>
                         <h4 class="subtitle is-6">{{ comment.updated }}</h4>
-                        <p>
+                        <p class="content">
                             {{ comment.comment|markdown|safe }}
                         </p>
                     </div>
@@ -27,9 +63,26 @@
             </div>
         {% endif %}
         {% if private %}
-            <div class="content">
-                PRIVATE
+            <hr />
+            <div>
+                <h4 class="title is-4">Private Comments</h4>
+                {% for comment in private %}
+                    <article class="media box">
+                        <div class="media-content">
+                            <h3 class="title is-5">
+                                <span>{{ comment.author }}</span>
+                            </h3>
+                            <h4 class="subtitle is-6">{{ comment.updated }}</h4>
+                            <p class="content">
+                                {{ comment.comment|markdown|safe }}
+                            </p>
+                        </div>
+                    </article>
+                {% endfor %}
             </div>
+        {% endif %}
+        {% if request.user.is_authenticated %}
+            {{ commentblock() }}
         {% endif %}
     </div>
 {% endif %}

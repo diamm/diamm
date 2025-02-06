@@ -1,39 +1,27 @@
+from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
-from rest_framework import generics, permissions, response, status
+from django.shortcuts import redirect
+from django.views.decorators.http import require_POST
 
 from diamm.models.site.problem_report import ProblemReport
-from diamm.renderers.ujson_renderer import UJSONRenderer
 
 
-# Part of the problem report / correction / contributors functionality. This
-# view *only* accepts incoming corrections via POST. See the models/site/problem_report
-# model for further clarification, and the 'contributors' view for the corresponding
-# functionality for listing contributions.
-class CorrectionCreate(generics.CreateAPIView):
-    renderer_classes = (UJSONRenderer,)
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+@require_POST
+def correction_submit(request):
+    data = request.POST
+    record_type = data.get("record_type")
+    record_pk = data.get("record_pk")
+    note = data.get("note")
+    user = request.user
+    record_type = ContentType.objects.get(
+        app_label="diamm_data", model=record_type
+    ).model_class()
+    record = record_type.objects.get(pk=record_pk)
 
-    # Create a new problem report for an object. The body of the post must contain the following parameters:
-    # objtype - The content type of the object. At present only a value of 'source' is supported.
-    # objpk - The PK of the object for which a problem report is being filed.
-    # note - The body of the problem report.
-    #
-    # The user filing the problem report will be filed as the user authenticated to send the request.
-    #
-    def post(self, request, *args, **kwargs) -> response.Response:
-        data = self.request.data
-        objtype = data.get("objtype")
-        objpk = data.get("objpk")
-        note = data.get("note")
-        user = self.request.user
-        record_type = ContentType.objects.get(
-            app_label="diamm_data", model=objtype
-        ).model_class()
-        record = record_type.objects.get(pk=objpk)
+    d = {"record": record, "note": note, "contributor": user}
 
-        d = {"record": record, "note": note, "contributor": user}
+    c = ProblemReport(**d)
+    c.save()
 
-        c = ProblemReport(**d)
-        c.save()
-
-        return response.Response(status.HTTP_201_CREATED)
+    messages.add_message(request, messages.SUCCESS, "Your submission was successful.")
+    return redirect("source-detail", pk=record_pk)

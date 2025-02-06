@@ -3,7 +3,6 @@ from django.conf import settings
 from django.contrib import admin, messages
 from django.db import models
 from django.db.models import Q
-from django.db.models.signals import post_delete, post_save
 from django.forms import Textarea, TextInput
 from django.shortcuts import redirect, render
 from django.urls import path
@@ -27,7 +26,6 @@ from diamm.models.data.source_note import SourceNote
 from diamm.models.data.source_provenance import SourceProvenance
 from diamm.models.data.source_relationship import SourceRelationship
 from diamm.models.data.source_url import SourceURL
-from diamm.signals.item_signals import delete_item, index_item
 
 
 class SourceCopyistInline(admin.StackedInline):
@@ -83,12 +81,21 @@ class BibliographyInline(admin.TabularInline):
     verbose_name_plural = "Bibliography Entries"
     verbose_name = "Bibliography Entry"
     extra = 0
-    raw_id_fields = ("bibliography",)
+    autocomplete_fields = ("bibliography",)
 
     formfield_overrides = {
         models.CharField: {"widget": TextInput(attrs={"size": "160"})},
         models.TextField: {"widget": Textarea(attrs={"rows": 2, "cols": 40})},
     }
+
+    # def get_bibliography(self, obj):
+    #     if not obj.bibliography:
+    #         return None
+    #     change_url = reverse(
+    #         "admin:diamm_data_bibliography_change",
+    #         args=(obj.bibliography_id,),
+    #     )
+    #     return mark_safe(f"<a href='{change_url}'>{obj.bibliography}</a>")  # noqa: S308
 
     def get_queryset(self, request):
         return (
@@ -150,16 +157,16 @@ class ItemInline(admin.TabularInline):
     model = Item
     extra = 0
     classes = ("collapse",)
-    raw_id_fields = ("composition",)
     fields = (
         "link_id_field",
         "folio_start",
         "folio_end",
-        "composition",
+        # "composition",
+        "get_composition",
         "get_composers",
         "source_order",
     )
-    readonly_fields = ("link_id_field", "get_composers")
+    readonly_fields = ("link_id_field", "get_composers", "get_composition")
 
     def get_queryset(self, request):
         return (
@@ -168,6 +175,16 @@ class ItemInline(admin.TabularInline):
             .select_related("source__archive__city__parent__parent", "composition")
             .prefetch_related("composition__composers__composer")
         )
+
+    def get_composition(self, obj):
+        if not obj.composition_id:
+            return None
+        change_url = reverse(
+            "admin:diamm_data_composition_change", args=(obj.composition_id,)
+        )
+        return mark_safe(f'<a href="{change_url}">{obj.composition.title}</a>')  # noqa: S308
+
+    get_composition.short_description = "Composition"
 
     def get_composers(self, obj):
         if not obj.composition_id:
@@ -209,8 +226,8 @@ class CountryListFilter(admin.SimpleListFilter):
     def lookups(self, request, model_admin):
         countries = GeographicArea.objects.filter(
             Q(type=GeographicArea.COUNTRY) | Q(type=GeographicArea.STATE)
-        ).values_list("id", "name")
-        return list(countries)
+        )
+        return [(c.id, c.name) for c in countries]
 
     def queryset(self, request, queryset):
         if not self.value():
@@ -292,8 +309,20 @@ class SourceAdmin(VersionAdmin):
             super()
             .get_queryset(request)
             .prefetch_related(
+                "pages",
+                "copyists",
+                "notations",
+                "links",
                 "bibliographies__bibliography",
-                "inventory__composition__composers",
+                "sets",
+                "identifiers",
+                "authorities",
+                "notes",
+                "provenance__city",
+                "provenance__country",
+                "provenance__region",
+                "contributions",
+                "commentary",
             )
             .select_related(
                 "archive__city__parent__parent",
@@ -317,8 +346,6 @@ class SourceAdmin(VersionAdmin):
         if "do_action" not in request.POST:
             form = CopyInventoryForm(instance=instance)
         else:
-            post_save.disconnect(index_item, sender=Item)
-            post_delete.disconnect(delete_item, sender=Item)
             form = CopyInventoryForm(request.POST, instance=instance)
             if not form.is_valid():
                 messages.error(request, "There was an error in the form")
@@ -334,8 +361,6 @@ class SourceAdmin(VersionAdmin):
                     self.__copy_items_to_source(instance, target)
 
                 messages.success(request, "Inventories successfully copied.")
-                post_save.connect(index_item, sender=Item)
-                post_delete.connect(index_item, sender=Item)
 
                 return redirect("admin:diamm_data_source_change", pk)
 

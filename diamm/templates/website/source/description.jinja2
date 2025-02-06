@@ -198,12 +198,12 @@
                     </td>
                 </tr>
             {% endif %}
-            {% if content.inventory or content.composers or content.uninventoried %}
+            {% if content.inventory or content.composer_inventory or content.uninventoried %}
                 <tr>
                     <th>Contents</th>
                     <td>
-                        {% if content.inventory and content.composers %}
-                            {{ content.inventory|length }} pieces from {{ content.composers|length }}
+                        {% if content.inventory and content.composer_inventory %}
+                            {{ content.inventory|length }} pieces from {{ content.composer_inventory|length }}
                             composers
                         {% endif %}
                         {% if content.uninventoried %}

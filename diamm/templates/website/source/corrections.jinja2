@@ -5,15 +5,20 @@
             Your submission will be reviewed by DIAMM staff and, if accepted you will be acknowledged in the "Contributors"
             section of the source record.
         </p>
-        <div class="field">
-            <div class="control">
-                <textarea class="textarea"></textarea>
+        <form action="/corrections/" method="POST">
+            <div class="field">
+                <div class="control">
+                    <textarea name="note" class="textarea"></textarea>
+                </div>
             </div>
-        </div>
-        <p class="control is-pulled-right">
-            <button class="button is-primary">
-                Submit
-            </button>
-        </p>
+            <p class="control is-pulled-right">
+                <button type="submit" class="button is-primary">
+                    Submit
+                </button>
+            </p>
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+            <input type="hidden" name="record_pk" value="{{ content.pk }}">
+            <input type="hidden" name="record_type" value="source">
+        </form>
     </div>
 </div>

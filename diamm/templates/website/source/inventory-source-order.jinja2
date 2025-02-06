@@ -97,6 +97,15 @@
                             {% endif %}
                         </div>
                     </div>
+                {% if request.user.is_staff %}
+                    <div class="columns">
+                        <div class="column">
+                            <a class="button" href="/admin/diamm_data/item/{{ entry.pk }}">
+                                Edit
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
                 </td>
             </tr>
         {% endfor %}

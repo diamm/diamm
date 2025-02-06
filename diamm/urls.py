@@ -48,10 +48,9 @@ from diamm.views.user import ProfileEditView, ProfileView
 from diamm.views.website.archive import ArchiveDetail
 from diamm.views.website.bibliography_author import BibliographyAuthorDetail
 from diamm.views.website.city import CityDetail, CityList
-from diamm.views.website.commentary import CommentaryList
+from diamm.views.website.commentary import commentary_submit
 from diamm.views.website.composition import CompositionDetail
-from diamm.views.website.contributor import ContributorList
-from diamm.views.website.correction import CorrectionCreate
+from diamm.views.website.correction import correction_submit
 from diamm.views.website.country import CountryDetail, CountryList
 from diamm.views.website.image import (
     cover_image_serve,
@@ -231,10 +230,9 @@ urlpatterns = [
     path("images/<int:pk>/", image_serve_redirect, name="image-serve-redirect"),
     path("images/<int:pk>/info.json", image_serve, name="image-serve-info"),
     path("cover/<int:pk>/", cover_image_serve, name="cover-image"),
-    path("commentary/", CommentaryList.as_view(), name="commentary-list"),
+    path("commentary/", commentary_submit, name="commentary-submit"),
     # Two views on the same content; see the problem_report model for clarification.
-    path("corrections/", CorrectionCreate.as_view(), name="correction-create"),
-    path("contributors/", ContributorList.as_view(), name="contributor-list"),
+    path("corrections/", correction_submit, name="correction-create"),
     # Cataloguing view
     # url(r'^catalogue/(.*)$', CatalogueView.as_view(), name="catalogue-view"),
     # Any routes that are not matched by the previous are routed to the Wagtail module

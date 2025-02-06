@@ -1,40 +1,32 @@
-[tool.poetry]
+[project]
 name = "diamm"
 version = "1.11.1"
 description = ""
-authors = ["Andrew Hankinson <andrew.hankinson@gmail.com>"]
+authors = [{ name = "Andrew Hankinson", email = "andrew.hankinson@gmail.com" }]
 package-mode = false
+requires-python = '>=3.10,<4.0'
+dependencies = [
+    'django (>=5.0,<6.0)',
+    'wagtail (>=6.0,<7.0)',
+    'djangorestframework (>=3.11.0,<4.0.0)',
+    'django-extensions (>=3.0,<4.0)',
+    'django-registration (>=5.0,<6.0)',
+    'jinja2 (>=3.0,<4.0)',
+    'django-jinja (>=2.6.0,<3.0.0)',
+    'pysolr @ git+https://github.com/django-haystack/pysolr/@master',
+    'django-pagedown (>=2.0.3,<3.0.0)', 'django-reversion (>=5.0,<6.0)',
+    'ujson (>=5.0,<6.0)', 'serpy (>=0.3.1,<0.4.0)',
+    'markdown2 (>=2.3.8,<3.0.0)', 'gunicorn (>=23.0.0,<24.0.0)',
+    'blessings (>=1.7,<2.0)', 'ipython (>=8.24.0,<9.0.0)',
+    'tablib (>=3.5.0,<4.0.0)', 'requests (==2.32.3)',
+    'traitlets (>=5.14.3,<6.0.0)', 'Pillow (>=10.0,<11.0)',
+    'markupsafe (>=3.0.1,<4.0.0)', 'psycopg (>=3.1.9,<4.0.0)',
+    'aiohttp (==3.11.11)',
+    'werkzeug (>=3.0.3,<4.0.0)',
+    'httpx (>=0.28.1,<0.29.0)']
 
-[tool.poetry.dependencies]
-python = "^3.10"
-django = "^5.0"
-wagtail = "^6.0"
-djangorestframework = "^3.11.0"
-django-extensions = "^3.0"
-django-registration = "^5.0"
-jinja2 = "^3.0"
-django-jinja = "^2.6.0"
-pysolr = { git = "https://github.com/django-haystack/pysolr/", rev="master"}
-django-pagedown = "^2.0.3"
-django-reversion = "^5.0"
-ujson = "^5.0"
-serpy = "^0.3.1"
-markdown2 = "^2.3.8"
-gunicorn = "^23.0.0"
-blessings = "^1.7"
-ipython = "^8.24.0"
-tablib = "^3.5.0"
-requests = "2.32.3"
-traitlets = "^5.14.3"
-Pillow = "^10.0"
-markupsafe = "^3.0.1"
-psycopg = "^3.1.9"
-aiohttp = "3.11.11"
-werkzeug = "^3.0.3"
-httpx = "^0.28.1"
-
-[tool.poetry.dev-dependencies]
-
+[tool.poetry]
+requires-poetry = '>=2.0,<3.0'
 [tool.poetry.group.dev.dependencies]
 django-debug-toolbar = "^4.1.0"
 django-stubs = "^5.1.2"

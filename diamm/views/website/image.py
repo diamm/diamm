@@ -1,5 +1,4 @@
 import urllib.parse
-from typing import Optional
 
 import httpx
 from django.conf import settings
@@ -16,7 +15,6 @@ client = httpx.Client()
 def cover_image_serve(request: HttpRequest, pk) -> HttpResponse:
     # allow unauthenticated access, but hardcode the image parameters so that
     # the high-res image cannot be downloaded
-    print("cover request", pk)
     return _image_lookup(request, pk, region="full", size="400,", rotation="0")
 
 
@@ -65,24 +63,21 @@ def _image_lookup(
         "*:*", fq=["type:image", f"pk:{pk}"], fl=field_list, rows=1
     )  # ensure only one result is returned
 
-    print(req.hits)
-
     if req.hits == 0:
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
     result = req.docs[0]
-    location: Optional[str] = result.get("location_s")
+    location: str | None = result.get("location_s")
     if not location or location == "None":
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
     referer: str = f"{request.scheme}://{request.get_host()}"
     if region and size and rotation:
-        location: str = f"{location}/{region}/{size}/{rotation}/default.jpg"
+        location += f"/{region}/{size}/{rotation}/default.jpg"
     elif not location.endswith("/info.json"):
         location += "/info.json"
 
-    full_location = f"{settings.DIAMM_IMAGE_SERVER}/iip/iipsrv.fcgi?IIIF={location}"
-    print(full_location)
+    full_location = f"{settings.DIAMM_IMAGE_SERVER}{location}"
     iiif_id = request.META.get("HTTP_X_IIIF_ID")
     headers: dict = {
         "referer": referer,

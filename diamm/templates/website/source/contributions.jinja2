@@ -6,25 +6,23 @@
             </div>
         </div>
     {% else %}
-        <div class="column is-8">
+        <div class="column is-two-thirds">
             <p class="contributions-intro">Contributions to this record are recorded here. If you wish to contribute
                 information or a correction to this record, use the "Contribute a Change" link. This
                 will then be reviewed by DIAMM staff and, if accepted, your contribution will be acknowledged here.</p>
             {% for entry in content.contributions %}
-            <div class="media">
+            <div class="media box">
                 <div class="media-content">
-                    <div class="content">
-                        <h3 class="title is-5">
-                            <span>{{ entry.contributor if entry.contributor else entry.credit }}</span>
-                            {% if request.user.is_staff %}
-                                <sup>
-                                    <a href="/admin/diamm_site/problemreport/{{ entry.pk }}">Edit</a>
-                                </sup>
-                            {% endif %}
-                        </h3>
-                        <h4 class="subtitle is-6">{{ entry.updated }}</h4>
-                        <p>{{ entry.summary }}</p>
-                    </div>
+                    <h3 class="title is-5">
+                        <span>{{ entry.contributor if entry.contributor else entry.credit }}</span>
+                        {% if request.user.is_staff %}
+                            <sup>
+                                <a href="/admin/diamm_site/problemreport/{{ entry.pk }}">Edit</a>
+                            </sup>
+                        {% endif %}
+                    </h3>
+                    <h4 class="subtitle is-6">{{ entry.updated }}</h4>
+                    <p class="content">{{ entry.summary }}</p>
                 </div>
             </div>
             {% endfor %}

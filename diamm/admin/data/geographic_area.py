@@ -21,6 +21,7 @@ class GeographicAreaAdmin(VersionAdmin):
         return None
 
     get_parent.short_description = "Parent"
+    get_parent.admin_order_field = "parent"
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)

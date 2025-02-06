@@ -1,5 +1,4 @@
 import re
-from typing import Optional
 
 import serpy
 from django.conf import settings
@@ -167,10 +166,10 @@ class SourceComposerInventoryCompositionSerializer(ContextDictSerializer):
     composition = serpy.StrField(attr="composition_s", required=False)
     url = serpy.MethodField()
 
-    def get_source_attribution(self, obj) -> Optional[str]:
+    def get_source_attribution(self, obj) -> str | None:
         return obj.get("source_attribution_s")
 
-    def get_url(self, obj) -> Optional[str]:
+    def get_url(self, obj) -> str | None:
         if "composition_i" not in obj:
             return None
 
@@ -254,7 +253,7 @@ class SourceInventorySerializer(ContextSerializer):
             request=self.context["request"],
         )
 
-    def get_composers(self, obj) -> Optional[list]:
+    def get_composers(self, obj) -> list | None:
         if obj.unattributed_composers.exists():
             out = []
             for comp in obj.unattributed_composers.all():
@@ -291,7 +290,7 @@ class SourceInventorySerializer(ContextSerializer):
 
         return out or None
 
-    def get_voices(self, obj) -> Optional[list]:
+    def get_voices(self, obj) -> list | None:
         out = []
         for voice in obj.voices.all():
             d = {
@@ -611,7 +610,7 @@ class SourceDetailSerializer(ContextSerializer):
 
         private_comments = None
         req = self.context["request"]
-        if req.user:
+        if req.user.is_authenticated:
             private_comments = obj.commentary.filter(
                 comment_type=0, author=req.user
             ).order_by("-updated")

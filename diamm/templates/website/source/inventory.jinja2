@@ -7,12 +7,17 @@
         &ndash;{{ entry.folio_end }}
         {% endif %}
     {% endif %}
-    {% if request.user.is_authenticated and show_imagelinks %}
-        <a href="#/images?p={{ entry.folio_start }}">
+    {#  Show a link to the pages if:
+        - the user is authenticated
+        - there are images attached to the source
+        - there are pages attached to the item (no pages, no images)
+    #}
+    {% if request.user.is_authenticated and show_imagelinks and entry.pages %}
+        <button x-on:click="history.pushState({}, '', '#/images?p={{ entry.folio_start }}'); $store.sourceTabs.select('images-tab');">
             <span class="icon is-small">
                 <i class="fa fa-file-text-o fa-border quicklook"></i>
             </span>
-        </a>
+        </button>
     {% endif %}
 {% endmacro %}
 
@@ -70,16 +75,7 @@
     {% endfor %}
 {% endmacro %}
 
-<div x-data="{
-            selectedInventoryTab: null,
-            init() { this.selectedInventoryTab = 'primary-inventory-tab' },
-            select(tabName) {
-                this.selectedInventoryTab = tabName
-            },
-            isSelected(tabName) {
-                return this.selectedInventoryTab === tabName
-            }
-        }">
+<div x-data>
     <div class="columns">
         <div class="column">
             <nav class="level">
@@ -89,26 +85,26 @@
                             <ul>
                                 {% if content.inventory or content.uninventoried %}
                                     <li id="primary-inventory-tab"
-                                        :class="isSelected($el.id) ? 'is-active' : ''"
-                                        @click="select($el.id)"
+                                        :class="$store.inventoryTabs.isSelected($el.id) ? 'is-active' : ''"
+                                        @click="$store.inventoryTabs.select($el.id)"
                                     >
-                                        <a href="#">{{ "Uninventoried" if content.uninventoried else "Source Order" }}</a>
+                                        <a href="#/inventory">{{ "Uninventoried" if content.uninventoried else "Source Order" }}</a>
                                     </li>
                                 {% endif %}
                                 {% if content.inventory %}
                                     <li id="composer-inventory-tab"
-                                        :class="isSelected($el.id) ? 'is-active' : ''"
-                                        @click="select($el.id)"
+                                        :class="$store.inventoryTabs.isSelected($el.id) ? 'is-active' : ''"
+                                        @click="$store.inventoryTabs.select($el.id)"
                                     >
-                                        <a href="#">By Composer (A-Z)</a>
+                                        <a href="#/inventory/composer">By Composer (A-Z)</a>
                                     </li>
                                 {% endif %}
                                 {% if content.inventory %}
                                     <li id="composition-inventory-tab"
-                                        :class="isSelected($el.id) ? 'is-active' : ''"
-                                        @click="select($el.id)"
+                                        :class="$store.inventoryTabs.isSelected($el.id) ? 'is-active' : ''"
+                                        @click="$store.inventoryTabs.select($el.id)"
                                     >
-                                        <a href="#">By Composition (A-Z)</a>
+                                        <a href="#/inventory/alphabetical">By Composition (A-Z)</a>
                                     </li>
                                 {% endif %}
                             </ul>
@@ -120,7 +116,7 @@
     </div>
     <div>
         <section id="primary-inventory-panel"
-                 x-show="isSelected('primary-inventory-tab')"
+                 x-show="$store.inventoryTabs.isSelected('primary-inventory-tab')"
                  class="columns">
             {% if content.uninventoried %}
                 {% include "website/source/inventory-uninventoried.jinja2" %}
@@ -130,7 +126,7 @@
         </section>
         {% if content.inventory %}
             <section id="composer-inventory-panel"
-                     x-show="isSelected('composer-inventory-tab')"
+                     x-show="$store.inventoryTabs.isSelected('composer-inventory-tab')"
                      class="columns"
             >
                 {% include "website/source/inventory-composer-order.jinja2" %}
@@ -138,7 +134,7 @@
         {% endif %}
         {% if content.inventory %}
             <section id="composition-inventory-panel"
-                     x-show="isSelected('composition-inventory-tab')"
+                     x-show="$store.inventoryTabs.isSelected('composition-inventory-tab')"
                      class="columns">
                 {% include "website/source/inventory-composition-order.jinja2" %}
             </section>

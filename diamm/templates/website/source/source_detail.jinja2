@@ -18,23 +18,100 @@
     </script>
     <script>
         document.addEventListener('alpine:init', () => {
+            const parsedUrl = new URL(window.location.href);
+            const hashAndQuery = parsedUrl.hash.split("?");
+            let rawHashParams = hashAndQuery[0].replace("#", '').split("/");
+            let hashParams = rawHashParams.filter(item => item);
+
+            let selectedTab = "description-tab";
+            let inventoryTab = "primary-inventory-tab";
+            if (hashParams.length > 0)
+            {
+                let firstHash = hashParams[0]
+                switch (firstHash)
+                {
+                    {% if content.inventory or content.uninventoried %}
+                        case "inventory":
+                            selectedTab = "inventory-tab";
+                            if (hashParams.length > 1)
+                            {
+                                let secondHash = hashParams[1];
+                                switch (secondHash)
+                                {
+                                    case "composer":
+                                        inventoryTab = "composer-inventory-tab";
+                                        break;
+                                    case "alphabetical":
+                                        inventoryTab = "composition-inventory-tab";
+                                        break;
+                                    default:
+                                        inventoryTab = "primary-inventory-tab";
+                                        break;
+                                }
+                            }
+                            break;
+                    {% endif %}
+                    {% if content.manifest_url %}
+                        case "images":
+                            selectedTab = "images-tab";
+                            break;
+                    {% endif %}
+                    {% if content.sets %}
+                        case "sets":
+                            selectedTab = "sets-tab";
+                            break;
+                    {% endif %}
+                    {% if content.bibliography %}
+                    case "bibliography":
+                        selectedTab = "bibliography-tab";
+                        break;
+                    {% endif %}
+                    case "commentary":
+                        selectedTab = "commentary-tab";
+                        break;
+                    {% if content.contributions %}
+                    case "contributions":
+                        selectedTab = "contributions-tab";
+                        break;
+                    {% endif %}
+                    {% if request.user.is_authenticated %}
+                    case "corrections":
+                        selectedTab = "corrections-tab";
+                        break;
+                    {% endif %}
+                    default:
+                        selectedTab = "description-tab";
+                        break;
+                }
+            }
+            else
+            {
+                selectedTab = "description-tab";
+            }
+
             Alpine.store('sourceTabs', {
                 selectedTab: null,
-                init() { this.selectedTab = 'description-tab' },
+                init() { this.selectedTab = selectedTab },
                 select(tabName) {
-                    this.selectedTab = tabName
+                    this.selectedTab = tabName;
                 },
                 isSelected(tabName) {
-                    return this.selectedTab === tabName
+                    return this.selectedTab === tabName;
                 },
-                whichChild(el, parent) {
-                    return Array.from(parent.children).indexOf(el) + 1
-                }
+            });
+
+            Alpine.store('inventoryTabs', {
+                selectedTab: null,
+                init() { this.selectedTab = inventoryTab },
+                select(tabName) {
+                    this.selectedTab = tabName;
+                },
+                isSelected(tabName) {
+                    return this.selectedTab === tabName;
+                },
             })
         })
     </script>
-
-
 {% endblock %}
 
 {% block body %}
@@ -92,7 +169,7 @@
                             {% if content.manifest_url %}
                                 <li id="images-tab"
                                     :class="$store.sourceTabs.isSelected($el.id) ? 'is-active' : ''"
-                                    @click="$store.sourceTabs.select($el.id); $dispatch('initialize-diva')"
+                                    @click="$store.sourceTabs.select($el.id);"
                                     @mousedown.prevent
                                     @focus="$store.sourceTabs.select($el.id)"
                                 >
@@ -148,6 +225,7 @@
                 <div class="level-right">
                     <div class="tabs">
                         <ul>
+                            {% if request.user.is_authenticated %}
                             <li id="corrections-tab"
                                 :class="$store.sourceTabs.isSelected($el.id) ? 'is-active' : ''"
                                 @click="$store.sourceTabs.select($el.id)"
@@ -156,6 +234,8 @@
                             >
                                 <a href="#/corrections">Contribute a Change</a>
                             </li>
+                            {% endif %}
+
                             {% if request.user.is_staff %}
                             <li class="">
                                 <a href="/admin/diamm_data/source/{{ content.pk }}">Edit</a>
@@ -185,6 +265,7 @@
         {% if content.manifest_url %}
             <section id="images-panel"
                      x-show="$store.sourceTabs.isSelected('images-tab')"
+                     x-effect="if ($store.sourceTabs.isSelected('images-tab')) $nextTick(() => {$dispatch('initialize-diva'); $dispatch('update-diva');})"
                      role="tabpanel">
                 {% include "website/source/images.jinja2" %}
             </section>
@@ -220,16 +301,17 @@
         </section>
         {% endif %}
 
+        {% if request.user.is_authenticated %}
         <section id="corrections"
                  x-show="$store.sourceTabs.isSelected('corrections-tab')"
                  role="tabpanel">
             {% include "website/source/corrections.jinja2" %}
         </section>
+        {% endif %}
 
     </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
-    {#    <script src="{{ static('apps/source/dist/bundle.js') }}"></script>#}
 {% endblock %}
