@@ -312,6 +312,7 @@ class SourceArchiveSerializer(ContextSerializer):
     city = serpy.StrField(attr="city.name")
     country = serpy.StrField(attr="city.parent.name", required=False)
     logo = serpy.MethodField()
+    copyright = serpy.StrField(attr="copyright_statement", required=False)
 
     def get_url(self, obj):
         return reverse(

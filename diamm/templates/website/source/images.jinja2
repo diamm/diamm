@@ -187,3 +187,12 @@
         </div>
     </template>
 </div>
+{% if content.archive.copyright %}
+<div class="columns">
+    <div class="column is-three-quarters">
+        <p class="is-pulled-right">
+            Images {{ content.archive.copyright }}
+        </p>
+    </div>
+</div>
+{% endif %}

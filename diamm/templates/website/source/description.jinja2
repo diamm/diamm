@@ -252,8 +252,8 @@
         {% if content.cover_image_info and content.has_images and content.public_images %}
             <figure class="card is-center" style="width: 400px; margin: auto;">
                 <div class="card-image">
-                    <figure class="image">
-                        <img src="{{ content.cover_image_info.url }}"/>
+                    <figure class="image" style="max-height: 400px; overflow: hidden">
+                        <img src="{{ content.cover_image_info.url }}" style="object-fit: cover"/>
                     </figure>
                 </div>
                 <div class="card-content">

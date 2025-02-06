@@ -48,7 +48,8 @@ def _get_pages(cfg):
                           AS items,
                           (SELECT array_agg(im.location)
                              FROM diamm_data_image AS im
-                            WHERE im.public IS TRUE AND im.page_id = p.id)
+                            WHERE im.public IS TRUE AND im.page_id = p.id
+                                  AND im.width != 0 AND im.height != 0)
                           AS images
                      FROM diamm_data_page AS p
                  ORDER BY p.id"""
@@ -66,10 +67,14 @@ def _get_images(cfg):
                             WHERE i.type_id = it.id) AS image_type,
                           (SELECT array_agg(i2.id)
                              FROM diamm_data_image AS i2
-                             WHERE i2.page_id = p.id AND i2.public IS TRUE AND i2.type_id != 1) AS alt_images
+                             WHERE i2.page_id = p.id AND i2.public IS TRUE
+                                    AND i2.type_id != 1 AND i2.width != 0
+                                    AND i2.height != 0)
+                          AS alt_images
                      FROM diamm_data_image AS i
                      LEFT JOIN diamm_data_page AS p ON i.page_id = p.id
                     WHERE i.public IS TRUE AND i.page_id IS NOT NULL
+                          AND i.width != 0 AND i.height != 0
                  ORDER BY i.id"""
     return get_db_records(sql_query, cfg)
 
