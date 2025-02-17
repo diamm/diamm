@@ -1,5 +1,4 @@
 import logging
-from typing import Optional
 
 import serpy
 
@@ -166,7 +165,7 @@ class SourceSearchSerializer(serpy.DictSerializer):
     external_images_b = serpy.BoolField(attr="has_external_images", required=False)
     bibliography_json = serpy.Field(attr="bibliography")
 
-    def get_composers_ss(self, obj) -> Optional[list]:
+    def get_composers_ss(self, obj) -> list | None:
         if not obj.get("composers"):
             return None
         return [format_person_name(p) for p in obj["composers"]]

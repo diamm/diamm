@@ -1,4 +1,3 @@
-from typing import Optional
 
 import serpy
 
@@ -28,7 +27,7 @@ class ArchiveSearchSerializer(ContextSerializer):
     def get_sources_ss(self, obj) -> list:
         return [source.display_name for source in obj.sources.all()]
 
-    def get_former_sigla_ss(self, obj) -> Optional[list]:
+    def get_former_sigla_ss(self, obj) -> list | None:
         if obj.former_sigla:
             return obj.former_sigla.split(",")
         return None

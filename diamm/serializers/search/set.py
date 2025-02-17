@@ -1,6 +1,5 @@
 import functools
 import logging
-from typing import Optional
 
 import serpy
 import ujson
@@ -85,16 +84,16 @@ class SetSearchSerializer(serpy.DictSerializer):
     sources_json = serpy.Field()
 
     # add archive names to sets so that people can search for "partbooks oxford" or "trinity college partbooks"
-    def get_archives_ss(self, obj) -> Optional[list]:
+    def get_archives_ss(self, obj) -> list | None:
         archives = process_archives(obj["archives"]) if obj.get("archives") else []
         return list({f"{a['siglum']} {a['name']} {a['city']}" for a in archives})
 
     # add archive cities so that people can search for e.g., 'london partbooks' or 'cambridge partbooks'
-    def get_archives_cities_ss(self, obj) -> Optional[list]:
+    def get_archives_cities_ss(self, obj) -> list | None:
         archives = process_archives(obj["archives"]) if obj.get("archives") else []
         return list({f"{a['city']}" for a in archives})
 
 
 @functools.lru_cache
-def process_archives(archive_str: Optional[str]) -> Optional[list]:
+def process_archives(archive_str: str | None) -> list | None:
     return ujson.loads(archive_str) if archive_str else None

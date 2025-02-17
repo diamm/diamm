@@ -1,5 +1,4 @@
 import random
-from typing import Optional
 
 import serpy
 
@@ -96,29 +95,29 @@ class ComposerInventorySearchSerializer(ContextSerializer):
 
         return "Anonymous"
 
-    def get_composer_i(self, obj) -> Optional[int]:
+    def get_composer_i(self, obj) -> int | None:
         return obj[COMPOSER_PK]
 
-    def get_source_i(self, obj) -> Optional[int]:
+    def get_source_i(self, obj) -> int | None:
         return obj[SOURCE_ID]
 
     def get_uncertain_b(self, obj) -> bool:
         return obj[UNCERTAIN] is True
 
-    def get_composition_s(self, obj) -> Optional[str]:
+    def get_composition_s(self, obj) -> str | None:
         return obj[COMPOSITION_TITLE]
 
-    def get_composition_i(self, obj) -> Optional[int]:
+    def get_composition_i(self, obj) -> int | None:
         return obj[COMPOSITION_PK]
 
-    def get_folio_start_s(self, obj) -> Optional[str]:
+    def get_folio_start_s(self, obj) -> str | None:
         return obj[FOLIO_START]
 
-    def get_folio_end_s(self, obj) -> Optional[str]:
+    def get_folio_end_s(self, obj) -> str | None:
         return obj[FOLIO_END]
 
-    def get_source_attribution_s(self, obj) -> Optional[str]:
+    def get_source_attribution_s(self, obj) -> str | None:
         return obj[SOURCE_ATTRIBUTION]
 
-    def get_item_i(self, obj) -> Optional[int]:
+    def get_item_i(self, obj) -> int | None:
         return obj[ITEM_PK]

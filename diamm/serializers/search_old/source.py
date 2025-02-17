@@ -1,4 +1,3 @@
-from typing import Optional
 
 import serpy
 
@@ -65,7 +64,7 @@ class SourceSearchSerializer(serpy.Serializer):
 
         return list(obj.identifiers.values_list("identifier", flat=True))
 
-    def get_cover_image_i(self, obj) -> Optional[int]:
+    def get_cover_image_i(self, obj) -> int | None:
         c = obj.cover
         return c.get("id") if c else None
 

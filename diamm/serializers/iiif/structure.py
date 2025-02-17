@@ -1,4 +1,3 @@
-from typing import Optional
 
 import serpy
 from rest_framework.reverse import reverse
@@ -17,7 +16,7 @@ class StructureSerializer(ContextDictSerializer):
 
     # service = serpy.MethodField()
 
-    def get_canvases(self, obj: dict) -> Optional[list]:
+    def get_canvases(self, obj: dict) -> list | None:
         if not obj.get("pages_ii"):
             return None
 

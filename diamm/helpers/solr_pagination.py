@@ -1,6 +1,5 @@
 import math
 from collections import OrderedDict
-from typing import Optional
 
 import pysolr
 import serpy
@@ -69,7 +68,7 @@ class SolrResultSerializer(ContextDictSerializer):
         else:
             return "[Unknown Heading]"
 
-    def get_sources(self, obj: dict) -> Optional[int]:
+    def get_sources(self, obj: dict) -> int | None:
         if obj.get("sources_ii"):
             return len(obj.get("sources_ii"))
         return None
@@ -227,7 +226,7 @@ class SolrPage:
         # to display in the search results.
         filtered_facets: list = [
             k
-            for k in sorted(zip(i, i), key=lambda f: f[0])
+            for k in sorted(zip(i, i, strict=False), key=lambda f: f[0])
             if k[0] in settings.SOLR["SEARCH_TYPES"]
         ]
 
@@ -237,7 +236,7 @@ class SolrPage:
 
         if image_count:
             i = iter(image_count)
-            d = dict(zip(i, i))
+            d = dict(zip(i, i, strict=False))
             if d.get("true"):
                 filtered_facets.append(("sources_with_images", d["true"]))
 
@@ -299,7 +298,7 @@ class SolrPage:
         )
 
     @property
-    def next_url(self) -> Optional[str]:
+    def next_url(self) -> str | None:
         if not self.has_next:
             return None
         url: str = self.paginator.request.build_absolute_uri()
@@ -307,7 +306,7 @@ class SolrPage:
         return replace_query_param(url, "page", page_number)
 
     @property
-    def previous_url(self) -> Optional[str]:
+    def previous_url(self) -> str | None:
         if not self.has_previous:
             return None
         url: str = self.paginator.request.build_absolute_uri()

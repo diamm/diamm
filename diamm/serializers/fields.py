@@ -1,5 +1,4 @@
 from datetime import date, datetime, time
-from typing import Union
 
 import serpy
 
@@ -26,7 +25,7 @@ class DateField(serpy.Field):
         super().__init__(**kwargs)
         self.date_format = date_format or self.date_format
 
-    def to_value(self, value: Union[datetime, time, date]) -> str:
+    def to_value(self, value: datetime | time | date) -> str:
         if value:
             return value.strftime(self.date_format)
 

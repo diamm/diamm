@@ -1,4 +1,3 @@
-from typing import Optional
 
 import serpy
 
@@ -23,7 +22,7 @@ class SetSearchSerializer(serpy.Serializer):
         return obj.__class__.__name__.lower()
 
     # add archive names to sets so that people can search for "partbooks oxford" or "trinity college partbooks"
-    def get_archives_ss(self, obj) -> Optional[list]:
+    def get_archives_ss(self, obj) -> list | None:
         if obj.sources.exists():
             archives_set = set(
                 obj.sources.all()
@@ -35,7 +34,7 @@ class SetSearchSerializer(serpy.Serializer):
         return None
 
     # add archive cities so that people can search for e.g., 'london partbooks' or 'cambridge partbooks'
-    def get_archives_cities_ss(self, obj) -> Optional[list]:
+    def get_archives_cities_ss(self, obj) -> list | None:
         if obj.sources.exists():
             return list(
                 set(

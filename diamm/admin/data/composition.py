@@ -1,4 +1,3 @@
-from typing import Optional
 
 from django.contrib import admin, messages
 from django.shortcuts import render
@@ -82,7 +81,7 @@ class CompositionAdmin(VersionAdmin):
 
     get_genres.short_description = "Genres"
 
-    def appears_in(self, obj) -> Optional[str]:
+    def appears_in(self, obj) -> str | None:
         if not obj.sources.exists():
             return None
         sources = [

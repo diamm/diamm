@@ -1,5 +1,4 @@
 import uuid
-from typing import Optional
 
 import serpy
 
@@ -63,12 +62,12 @@ class ItemSearchSerializer(serpy.Serializer):
         page_strs = [f"{o[0]}|{o[1]}" for o in pages]
         return page_strs
 
-    def get_composition_i(self, obj) -> Optional[int]:
+    def get_composition_i(self, obj) -> int | None:
         if obj.composition:
             return obj.composition.pk
         return None
 
-    def get_composition_s(self, obj) -> Optional[str]:
+    def get_composition_s(self, obj) -> str | None:
         if obj.composition:
             return obj.composition.title
         return None
@@ -82,7 +81,7 @@ class ItemSearchSerializer(serpy.Serializer):
             )
         return []
 
-    def __composers(self, obj) -> list[tuple[str, Optional[int], Optional[bool]]]:
+    def __composers(self, obj) -> list[tuple[str, int | None, bool | None]]:
         """
         Returns an array of composer names, PK, and certainty.
         """

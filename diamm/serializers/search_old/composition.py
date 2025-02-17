@@ -1,5 +1,4 @@
 import re
-from typing import Optional
 
 import serpy
 
@@ -28,7 +27,7 @@ class CompositionSearchSerializer(serpy.Serializer):
             return list(obj.genres.all().values_list("name", flat=True))
         return []
 
-    def __composers(self, obj) -> Optional[list]:
+    def __composers(self, obj) -> list | None:
         if obj.composers.exists():
             return [
                 (o.composer.pk, o.composer.full_name, o.uncertain)
@@ -55,7 +54,7 @@ class CompositionSearchSerializer(serpy.Serializer):
             return [o[0] for o in composers]
         return []
 
-    def __sources(self, obj) -> Optional[list]:
+    def __sources(self, obj) -> list | None:
         if obj.sources.exists():
             return [(s.source.pk, s.source.display_name) for s in obj.sources.all()]
         return None

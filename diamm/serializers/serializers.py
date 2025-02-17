@@ -1,4 +1,3 @@
-from typing import Union
 
 import serpy
 
@@ -19,7 +18,7 @@ class ContextSerializer(serpy.Serializer):
     def __remove_none(self, d: dict) -> dict:
         return {k: v for k, v in d.items() if v is not None}
 
-    def to_value(self, instance: Union[dict, list]) -> Union[dict, list]:
+    def to_value(self, instance: dict | list) -> dict | list:
         """
         Filters out values that have been serialized to 'None' to prevent
         them from being sent to the browser.
@@ -49,7 +48,7 @@ class ContextDictSerializer(serpy.DictSerializer):
     def __remove_none(self, d: dict) -> dict:
         return {k: v for k, v in d.items() if v is not None}
 
-    def to_value(self, instance: Union[dict, list]) -> Union[dict, list]:
+    def to_value(self, instance: dict | list) -> dict | list:
         """
         Filters out values that have been serialized to 'None' to prevent
         them from being sent to the browser.

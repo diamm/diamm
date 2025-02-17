@@ -1,5 +1,3 @@
-from typing import Optional
-
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 from rest_framework.reverse import reverse
@@ -29,7 +27,7 @@ class ProblemReportAdmin(VersionAdmin):
     fields = (
         "content_type",
         "object_id",
-        "get_entity",
+        # "get_entity",
         "note",
         "internal_note",
         "accepted",
@@ -37,11 +35,11 @@ class ProblemReportAdmin(VersionAdmin):
         "credit",
         "contributor",
     )
-    readonly_fields = (
-        "content_type",
-        "object_id",
-        "get_entity",
-    )
+    # readonly_fields = (
+    #     "content_type",
+    #     "object_id",
+    #     "get_entity",
+    # )
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -49,7 +47,7 @@ class ProblemReportAdmin(VersionAdmin):
             "record__archive__city", "record"
         )
 
-    def view_on_site(self, obj) -> Optional[str]:
+    def view_on_site(self, obj) -> str | None:
         if not isinstance(obj.record, Source):
             return None
 

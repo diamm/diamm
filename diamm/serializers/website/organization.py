@@ -1,4 +1,3 @@
-from typing import Optional
 
 import serpy
 from django.contrib.contenttypes.prefetch import GenericPrefetch
@@ -14,7 +13,7 @@ class OrganizationLocationSerializer(ContextSerializer):
     name = serpy.StrField(attr="name")
     parent = serpy.StrField(attr="parent")
 
-    def get_url(self, obj) -> Optional[str]:
+    def get_url(self, obj) -> str | None:
         view_type: str
         if obj.type == GeographicArea.CITY:
             view_type = "city-detail"

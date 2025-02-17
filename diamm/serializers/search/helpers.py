@@ -3,7 +3,6 @@ import functools
 import logging
 from collections.abc import Callable, Iterable
 from operator import itemgetter
-from typing import Optional
 
 import httpx
 import ujson
@@ -19,7 +18,7 @@ def get_db_records(sql_query: str, cfg: dict):
         columns = [col[0] for col in cursor.description]
 
         while rows := cursor.fetchmany(size=cfg["resultsize"]):
-            yield [dict(zip(columns, row)) for row in rows]
+            yield [dict(zip(columns, row, strict=False)) for row in rows]
 
 
 def parallelise(records: Iterable, func: Callable, *args, **kwargs) -> None:
@@ -158,8 +157,8 @@ def _commit_changes(cfg: dict, core: str) -> bool:
 
 @functools.lru_cache
 def process_composers(
-    composers_str: Optional[str], unatt_composers_str: Optional[str]
-) -> list[tuple[str, Optional[int], Optional[bool]]]:
+    composers_str: str | None, unatt_composers_str: str | None
+) -> list[tuple[str, int | None, bool | None]]:
     """
     Returns an array of composer names, PK, and certainty.
     """
@@ -176,7 +175,7 @@ def process_composers(
 
 
 @functools.lru_cache
-def process_sources(sources_str=Optional[str]) -> list[tuple[str, str]]:
+def process_sources(sources_str: str | None) -> list[tuple[str, str]]:
     sources = ujson.loads(sources_str) if sources_str else []
     return sorted([(s["id"], s["display_name"]) for s in sources], key=itemgetter(1))
 

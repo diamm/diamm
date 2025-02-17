@@ -1,4 +1,3 @@
-from typing import Optional
 
 import pysolr
 import serpy
@@ -50,7 +49,7 @@ class ServiceSerializer(ContextDictSerializer):
             request=self.context["request"],
         )
 
-    def get_composers(self, obj: dict) -> Optional[list]:
+    def get_composers(self, obj: dict) -> list | None:
         if "composers_ssni" not in obj:
             return None
 
@@ -75,7 +74,7 @@ class ServiceSerializer(ContextDictSerializer):
             composers.append(c)
         return composers
 
-    def get_voices(self, obj: dict) -> Optional[list]:
+    def get_voices(self, obj: dict) -> list | None:
         if "voices_ii" not in obj:
             return None
 
@@ -135,7 +134,7 @@ class ServiceSerializer(ContextDictSerializer):
 
         return f
 
-    def get_composition(self, obj: dict) -> Optional[dict]:
+    def get_composition(self, obj: dict) -> dict | None:
         if "composition_i" not in obj:
             return None
 
@@ -151,7 +150,7 @@ class ServiceSerializer(ContextDictSerializer):
 
         return composition
 
-    def get_pages(self, obj: dict) -> Optional[list]:
+    def get_pages(self, obj: dict) -> list | None:
         if "pages_ssni" not in obj:
             return None
 

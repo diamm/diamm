@@ -6,7 +6,6 @@
 #    problems with loading insecure content (DIAMM is served over HTTPS, and
 #    most browsers will refuse to cross-load secure and insecure content). This also
 #    simplifies loading images into a canvas.
-from typing import Optional
 
 import serpy
 from django.conf import settings
@@ -49,7 +48,7 @@ class SourceManifestSerializer(ContextDictSerializer):
     def get_metadata(self, obj: dict) -> list:  # noqa: UP006
         return create_metadata_block(obj)
 
-    def get_description(self, obj: dict) -> Optional[str]:
+    def get_description(self, obj: dict) -> str | None:
         if "notes_txt" in obj:
             # return the first note for the description. Truncate it to 300 words
             return truncatewords(obj["notes_txt"][0], 300)
@@ -101,7 +100,7 @@ class SourceManifestSerializer(ContextDictSerializer):
             }
         ]
 
-    def get_thumbnail(self, obj: dict) -> Optional[dict]:
+    def get_thumbnail(self, obj: dict) -> dict | None:
         if "cover_image_url_sni" not in obj:
             return None
         else:

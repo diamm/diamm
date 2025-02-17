@@ -1,4 +1,3 @@
-from typing import Optional
 
 import serpy
 from django.contrib.contenttypes.models import ContentType
@@ -35,7 +34,7 @@ class UserCommentSerializer(serializers.ContextSerializer):
     created = serpy.MethodField()
     attachment = serpy.MethodField()
 
-    def get_attachment(self, obj) -> Optional[str]:
+    def get_attachment(self, obj) -> str | None:
         if isinstance(obj.attachment, Source):
             return obj.attachment.display_name
 

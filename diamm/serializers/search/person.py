@@ -1,5 +1,4 @@
 import logging
-from typing import Optional
 
 import serpy
 import ujson
@@ -71,7 +70,7 @@ class PersonSearchSerializer(serpy.DictSerializer):
     variant_names_ss = serpy.MethodField()
     compositions_ss = serpy.Field(attr="compositions")
 
-    def get_variant_names_ss(self, obj) -> Optional[list]:
+    def get_variant_names_ss(self, obj) -> list | None:
         if variant_names := obj.get("variant_names"):
             return [
                 name.strip() for names in variant_names for name in names.split(";")
