@@ -1,6 +1,5 @@
 import logging
 from collections.abc import Iterator
-from typing import Optional
 
 import pysolr
 from django.conf import settings
@@ -87,10 +86,11 @@ class SolrManager:
 
     def __init__(self, url: str, curs_sort_statement: str = "id asc") -> None:
         # self._conn: pysolr.Solr = pysolr.Solr(url)
-        self._res: Optional[pysolr.Results] = None
+        self._res: pysolr.Results | None = None
         self._curs_sort_statement: str = curs_sort_statement
         self._hits: int = 0
-        self._q: Optional[str] = None
+        self.docs: list[dict] = []
+        self._q: str | None = None
         self._q_kwargs: dict = {}
         self._cursorMark: str = "*"
         self._idx: int = 0
@@ -128,6 +128,13 @@ class SolrManager:
         self._q_kwargs["cursorMark"] = self._cursorMark
         self._res = SolrConnection.search(q, **self._q_kwargs)
         self._hits = self._res.hits
+        self.docs = self._res.docs
+
+    @property
+    def first(self) -> dict | None:
+        if len(self.docs) == 0:
+            return None
+        return self.docs[0]
 
     @property
     def hits(self) -> int:

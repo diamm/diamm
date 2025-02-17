@@ -1,5 +1,3 @@
-from typing import Optional
-
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
@@ -12,7 +10,7 @@ from diamm.helpers.solr_helpers import SolrManager
 class Source(models.Model):
     class Meta:
         app_label = "diamm_data"
-        ordering = ["archive__city__name", "sort_order"]
+        ordering = ["archive__siglum", "sort_order"]
 
     HELP_INVENTORY = """Use this checkbox to mark whether DIAMM has provided an inventory for this
     source. Note that if there are items attached to this source they will still appear, but there will be a note on
@@ -52,7 +50,7 @@ class Source(models.Model):
     archive = models.ForeignKey(
         "diamm_data.Archive", related_name="sources", on_delete=models.CASCADE
     )
-    name: Optional[str] = models.CharField(max_length=255, blank=True, null=True)
+    name = models.CharField(max_length=255, blank=True, null=True)
     shelfmark = models.CharField(max_length=255, blank=True, null=True)
     type = models.CharField(
         max_length=255,
@@ -148,22 +146,22 @@ class Source(models.Model):
         d = dict(self.NUMBERING_SYSTEM)
         return d[self.numbering_system]
 
-    @cached_property
-    def public_notes(self):
-        return self.notes.exclude(type=99).order_by("sort")  # exclude private notes
+    # @cached_property
+    # def public_notes(self):
+    #     return self.notes.exclude(type=99).order_by("sort")
 
-    @property
-    def date_notes(self):
-        return self.public_notes.filter(type=11)
-
-    @cached_property
-    def has_external_images(self):
-        """
-        Does the source have an external URL pointing to images
-        on another website
-        """
-        # type 4 is the links to external images
-        return self.links.filter(type=4).exists()
+    # @property
+    # def date_notes(self):
+    #     return self.public_notes.filter(type=11)
+    #
+    # @cached_property
+    # def has_external_images(self):
+    #     """
+    #     Does the source have an external URL pointing to images
+    #     on another website
+    #     """
+    #     # type 4 is the links to external images
+    #     return self.links.filter(type=4).exists()
 
     @cached_property
     def cover(self):
@@ -173,57 +171,52 @@ class Source(models.Model):
         if not self.public_images:
             return None
 
+        if not self.pages.exists():
+            return None
+
         cover_obj = {}
         if self.cover_image:
             cover_obj["id"] = self.cover_image.id
             cover_obj["label"] = self.cover_image.page.numeration
             return cover_obj
 
-        if not self.pages.exists():
-            return None
-
         cover = (
             self.pages.filter(images__type=1, images__location__isnull=False)
             .order_by("?")
-            .values("numeration", "images__id")
             .first()
         )
 
         if cover:
-            return {"id": cover["images__id"], "label": cover["numeration"]}
+            return {"id": cover.images.first().pk, "label": cover.numeration}
         return None
 
-    @cached_property
-    def composers(self):
-        composer_names = []
-        for item in (
-            self.inventory.all()
-            .select_related("composition")
-            .prefetch_related(
-                "composition__composers__composer", "unattributed_composers__composer"
-            )
-        ):
-            if item.composition:
-                for composer in item.composition.composers.select_related(
-                    "composer"
-                ).all():
-                    composer_names.append(composer.composer_name)
-
-            if item.unattributed_composers:
-                for itcomposer in item.unattributed_composers.select_related(
-                    "composer"
-                ).all():
-                    composer_names.append(itcomposer.composer.full_name)
-                continue
-
-        composer_names = list(set(composer_names))
-        composer_names.sort()
-
-        return composer_names
-
-    @property
-    def num_composers(self) -> int:
-        return len(self.composers)
+    # @cached_property
+    # def composers(self):
+    #     composer_names = []
+    #     for item in (
+    #         self.inventory.all()
+    #         .select_related("composition")
+    #         .prefetch_related(
+    #             "composition__composers__composer", "unattributed_composers__composer"
+    #         )
+    #     ):
+    #         if item.composition:
+    #             for composer in item.composition.composers.select_related(
+    #                 "composer"
+    #             ).all():
+    #                 composer_names.append(composer.composer_name)
+    #
+    #         if item.unattributed_composers:
+    #             for itcomposer in item.unattributed_composers.select_related(
+    #                 "composer"
+    #             ).all():
+    #                 composer_names.append(itcomposer.composer.full_name)
+    #             continue
+    #
+    #     composer_names = list(set(composer_names))
+    #     composer_names.sort()
+    #
+    #     return composer_names
 
     @property
     def compositions(self):

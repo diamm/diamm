@@ -21,10 +21,7 @@
                     <tr>
                         <th>Holding archives</th>
                         <td>
-                            {% set comma = joiner("; ") %}
-                            {%- for group in content.sources | groupby('archive_name') -%}
-                                {{ comma() }}{{ group.grouper }}
-                            {%- endfor -%}
+                            {{ content.holding_archives|join("; ") }}
                         </td>
                     </tr>
                     {% if content.description %}
@@ -32,6 +29,18 @@
                         <th>Set description</th>
                         <td>
                             {{ content.description | markdown | safe }}
+                        </td>
+                    </tr>
+                    {% endif %}
+                    {% if content.bibliography %}
+                    <tr>
+                        <th>Bibliography</th>
+                        <td>
+                            {% for entry in content.bibliography %}
+                            <p class="bibliography-entry">
+                                {{ entry.prerendered|safe }}
+                            </p>
+                            {% endfor %}
                         </td>
                     </tr>
                     {% endif %}
@@ -46,9 +55,11 @@
             <div class="archive-sources">
                 {% for source in content.sources %}
                     <div class="box">
-                        {% if source.public_images %}
-                            <a href="{{ source.url }}">
-                                <img src="{{ source.cover }}" />
+                        {% if source.cover_image %}
+                            <a href={{ source.url }}>
+                                <figure class="image" style="width: 100px; margin: auto;">
+                                    <img loading="lazy" src="{{ source.cover_image }}"/>
+                                </figure>
                             </a>
                         {% else %}
                             <div class="no-image">
@@ -60,9 +71,9 @@
                                 </div>
                             </div>
                         {% endif %}
-                        <div>
-                            <a href="{{ source.url }}">{{ source.display_name }}</a> ({{ source.archive_name }})
-                        </div>
+                        <p>
+                            <a href={{ source.url }}>{{ source.display_name }}</a>
+                        </p>
                     </div>
                 {% endfor %}
             </div>

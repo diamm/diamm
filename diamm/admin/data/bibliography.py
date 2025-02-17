@@ -15,7 +15,7 @@ class SourceInline(admin.TabularInline):
 class AuthorsInline(admin.TabularInline):
     model = BibliographyAuthorRole
     extra = 0
-    raw_id_fields = ("bibliography_author",)
+    autocomplete_fields = ("bibliography_author",)
 
     def get_queryset(self, request):
         return (

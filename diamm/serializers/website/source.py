@@ -104,9 +104,15 @@ class SourceProvenanceSerializer(ContextSerializer):
 
 class SourceSetSerializer(ContextDictSerializer):
     pk = serpy.IntField()
+    url = serpy.MethodField()
     cluster_shelfmark = serpy.StrField(attr="cluster_shelfmark_s")
     set_type = serpy.StrField(attr="set_type_s")
     sources = serpy.MethodField()
+
+    def get_url(self, obj):
+        return reverse(
+            "set-detail", kwargs={"pk": obj["pk"]}, request=self.context["request"]
+        )
 
     def get_sources(self, obj) -> list:
         sources = obj["sources_json"]
@@ -417,7 +423,7 @@ class SourceDetailSerializer(ContextSerializer):
 
     links = SourceURLSerializer(attr="links.all", call=True, many=True)
 
-    bibliography = SourceBibliographySerializer(attr="solr_bibliography", many=True)
+    bibliography = serpy.MethodField(required=False)
     identifiers = SourceIdentifierSerializer(
         attr="identifiers.all", call=True, many=True
     )
@@ -437,9 +443,37 @@ class SourceDetailSerializer(ContextSerializer):
             "source-detail", kwargs={"pk": obj.pk}, request=self.context["request"]
         )
 
+    def get_bibliography(self, obj) -> list[dict]:
+        connection = SolrManager(settings.SOLR["SERVER"])
+        fq = ["type:bibliography", f"sources_ii:{obj.pk}"]
+        connection.search("*:*", fq=fq, sort="year_ans desc, sort_ans asc")
+
+        if connection.hits == 0:
+            return []
+
+        reslist = []
+        for res in connection.results:
+            if "sources_json" in res:
+                entry_list = [
+                    s for s in res["sources_json"] if s and s["source_id"] == obj.pk
+                ]
+                if not entry_list:
+                    continue
+                entry = entry_list[0]
+                res["primary_study"] = entry["primary_study"]
+                if p := entry.get("pages"):
+                    res["pages"] = p
+                if n := entry.get("notes"):
+                    res["notes"] = n
+
+                reslist.append(SourceBibliographySerializer(res).data)
+
+        return reslist
+
     def get_notes(self, obj):
+        # exclude private notes
         return SourceNoteSerializer(
-            obj.public_notes.order_by("type", "sort"),
+            obj.notes.exclude(type=99).order_by("type", "sort"),
             many=True,
             context={"request": self.context["request"]},
         ).data

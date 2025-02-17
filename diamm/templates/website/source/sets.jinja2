@@ -2,7 +2,7 @@
     <div class="column">
         {% for source_set in content.sets %}
             <div class="source-set">
-                <h3 class="title is-4">Set: {{ source_set.cluster_shelfmark }}</h3>
+                <h3 class="title is-4">Set: <a href="{{ source_set.url }}">{{ source_set.cluster_shelfmark }}</a></h3>
                 <h4 class="subtitle is-5">
                     <strong>Type: </strong>{{ source_set.set_type }}
                 </h4>

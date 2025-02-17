@@ -1,6 +1,5 @@
 import functools
 import logging
-from typing import Optional
 
 import serpy
 import ujson
@@ -68,6 +67,14 @@ def _get_bibliography(cfg: dict):
                     WHERE s.bibliography_id = b.id)
                 AS sources,
                 (SELECT jsonb_agg(jsonb_strip_nulls(jsonb_build_object(
+                    'set_id', s.set_id,
+                    'pages', s.pages,
+                    'notes', s.notes
+                    )))
+                    FROM diamm_data_setbibliography AS s
+                    WHERE s.bibliography_id = b.id)
+                AS sets,
+                (SELECT jsonb_agg(jsonb_strip_nulls(jsonb_build_object(
                         'item_id', i.item_id,
                         'pages', i.pages,
                         'notes', i.notes
@@ -108,7 +115,9 @@ class BibliographySearchSerializer(serpy.DictSerializer):
     citation_json = serpy.MethodField()
     sort_ans = serpy.MethodField()
     sources_ii = serpy.MethodField()
+    sets_ii = serpy.MethodField()
     sources_json = serpy.MethodField()
+    sets_json = serpy.MethodField()
     items_ii = serpy.MethodField()
     items_json = serpy.MethodField()
     compositions_ii = serpy.MethodField()
@@ -129,7 +138,7 @@ class BibliographySearchSerializer(serpy.DictSerializer):
         authors = process_authors(obj["authors"])
         return [n[2] for n in authors] if authors else None
 
-    def get_sort_ans(self, obj) -> Optional[str]:
+    def get_sort_ans(self, obj) -> str | None:
         authors = process_authors(obj["authors"])
         last_names = [n[1] for n in authors]
         return " ".join(last_names) if authors else None
@@ -140,10 +149,21 @@ class BibliographySearchSerializer(serpy.DictSerializer):
         sources = process_sources(obj["sources"])
         return [s["source_id"] for s in sources]
 
+    def get_sets_ii(self, obj):
+        if not obj.get("sets"):
+            return None
+        sets = process_sets(obj["sets"])
+        return [s["set_id"] for s in sets]
+
     def get_sources_json(self, obj):
         if not obj.get("sources"):
             return None
         return obj["sources"]
+
+    def get_sets_json(self, obj):
+        if not obj.get("sets"):
+            return None
+        return obj["sets"]
 
     def get_items_ii(self, obj):
         if not obj.get("items"):
@@ -185,27 +205,32 @@ class BibliographySearchSerializer(serpy.DictSerializer):
 
 
 @functools.lru_cache
-def process_sources(sources_str: Optional[str]):
+def process_sources(sources_str: str | None):
     return ujson.loads(sources_str) if sources_str else []
 
 
 @functools.lru_cache
-def process_items(items_str: Optional[str]):
+def process_sets(sets_str: str | None):
+    return ujson.loads(sets_str) if sets_str else []
+
+
+@functools.lru_cache
+def process_items(items_str: str | None):
     return ujson.loads(items_str) if items_str else []
 
 
 @functools.lru_cache
-def process_compositions(compositions_str: Optional[str]):
+def process_compositions(compositions_str: str | None):
     return ujson.loads(compositions_str) if compositions_str else []
 
 
 @functools.lru_cache
-def process_authors(author_str: Optional[str]) -> Optional[list]:
+def process_authors(author_str: str | None) -> list | None:
     authors = ujson.loads(author_str) if author_str else []
     return [(a["position"], a["last_name"], a["id"]) for a in authors]
 
 
-def process_bibliography_entries(bibliography_str: Optional[str]):
+def process_bibliography_entries(bibliography_str: str | None):
     if not bibliography_str:
         return None
     entries = ujson.loads(bibliography_str)
