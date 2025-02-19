@@ -150,7 +150,8 @@
     {% if content["type"] == 1 -%}
         {# journal #}
         {% set volume_no = content["volume_nos"]|first -%}
-        {% if volume_no -%}{{ volume_no["entry"] }}:&nbsp;{% endif -%}{{ pages(content) }}.
+        {% set pg = pages(content) -%}
+        {% if volume_no -%}{{ volume_no["entry"] }}:&nbsp;{% endif -%}{{ pg }}{{ "." if not pg.endswith(".") else "" }}
     {% elif content["type"] in (2, 3, 5, 6, 9) -%}
         {# book #}
         {% set pg = pages(content) -%}
@@ -159,18 +160,18 @@
         {% set vols = volumes(content) -%}
         {% set ser = series(content) -%}
 
-        {% if ser -%}{{ ser }}.&nbsp;{%- endif  %}
+        {% if ser -%}{{ ser }}{{ "." if not ser.endswith(".") else "" }}&nbsp;{%- endif  %}
         {% if eds -%}{{ eds }},&nbsp;{%- endif %}
         {% if vols -%}{{ vols }}{%- endif %}
-        {% if pg -%}{{ pg }}.{%- endif %}
-        {% if pub -%}&nbsp;{{ pub }}.{%- endif %}
+        {% if pg -%}{{ pg }}{{ "." if not pg.endswith(".") else "" }}{%- endif %}
+        {% if pub -%}&nbsp;{{ pub }}{{ "." if not pub.endswith(".") else "" }}{%- endif %}
     {% elif content["type"] == 4 -%}
         {# dissertation #}
         {% set deg = degree(content) -%}
-        {% if deg -%}{{ deg }}.{%- endif %}
+        {% if deg -%}{{ deg }}{{ "." if not deg.endswith(".") else "" }}{%- endif %}
     {%- elif content["type"] == 7 -%}
         {% set cnf = conference(content) %}
-        {%- if cnf -%}{{ cnf }}.{%- endif -%}
+        {%- if cnf -%}{{ cnf }}{{ "." if not cnf.endswith(".") else "" }}{%- endif -%}
     {%- endif -%}
 {% endmacro -%}
 

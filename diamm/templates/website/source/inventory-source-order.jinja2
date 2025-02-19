@@ -91,7 +91,15 @@
                                 <div>
                                     <h4>Item Bibliography</h4>
                                     {% for bib in entry.bibliography %}
-                                        <p>{{ bib }}</p>
+                                        <p class="bibliography-entry">
+                                            {{ bib.prerendered|safe }}
+                                            {% if bib.pages %}
+                                                Pages: {{ bib.pages }}{{ "." if not bib.pages.endswith(".") else "" }}
+                                            {% endif %}
+                                            {% if bib.notes %}
+                                                Notes: {{ bib.notes }}{{ "." if not bib.notes.endswith(".") else "" }}
+                                            {% endif %}
+                                        </p>
                                     {% endfor %}
                                 </div>
                             {% endif %}

@@ -216,6 +216,7 @@ REST_FRAMEWORK = {
         "diamm.renderers.ujson_renderer.UJSONRenderer",
     ),
     "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.SessionAuthentication",
         "diamm.authentication.DiammTokenAuthentication",
     ),
 }

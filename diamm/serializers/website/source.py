@@ -211,6 +211,23 @@ class SourceInventoryNoteSerializer(serpy.Serializer):
     note_type = serpy.StrField(attr="note_type", required=False)
 
 
+class SourceInventoryBibliographySerializer(ContextDictSerializer):
+    pk = serpy.IntField()
+    prerendered = serpy.MethodField()
+    pages = serpy.StrField(required=False)
+    notes = serpy.StrField(required=False)
+
+    def get_prerendered(self, obj):
+        template = get_template("website/bibliography/bibliography_entry.jinja2")
+        citation = template.template.render(content=obj["citation_json"])
+        # strip out any newlines from the templating process
+        citation = re.sub(r"\n", "", citation)
+        # strip out multiple spaces
+        citation = re.sub(r"\s+", " ", citation)
+        citation = citation.strip()
+        return citation
+
+
 class SourceInventorySerializer(ContextSerializer):
     pk = serpy.IntField()
     url = serpy.MethodField()
@@ -220,7 +237,7 @@ class SourceInventorySerializer(ContextSerializer):
     folio_end = serpy.StrField(required=False)
     composition = serpy.StrField(required=False)
     composers = serpy.MethodField()
-    # bibliography = serpy.MethodField(required=False)
+    bibliography = serpy.MethodField(required=False)
     voices = serpy.MethodField()
     pages = serpy.MethodField(required=False)
     source_attribution = serpy.StrField(required=False)
@@ -239,15 +256,29 @@ class SourceInventorySerializer(ContextSerializer):
             return None
         return SourceInventoryNoteSerializer(obj.notes.all(), many=True).data
 
-    # @TODO Finish Item Bibliography stuff.
     def get_bibliography(self, obj):
         connection = SolrManager(settings.SOLR["SERVER"])
-        fq = ["type:itembibliography", f"item_i:{obj['pk']}"]
-        sort = "prerendered_s asc"
-        fl = ["pages_s", "prerendered_s", "notes_s"]
+        fq = ["type:bibliography", f"items_ii:{obj.pk}"]
+        sort = "year_ans desc, sort_ans asc"
 
-        connection.search("*:*", fq=fq, fl=fl, sort=sort, rows=100)
-        return list(connection.results)
+        connection.search("*:*", fq=fq, sort=sort)
+        reslist = []
+        for res in connection.results:
+            if "items_json" in res:
+                entry_list = [
+                    s for s in res["items_json"] if s and s["item_id"] == obj.pk
+                ]
+                if not entry_list:
+                    continue
+                entry = entry_list[0]
+                if p := entry.get("pages"):
+                    res["pages"] = p
+                if n := entry.get("notes"):
+                    res["notes"] = n
+
+                reslist.append(SourceInventoryBibliographySerializer(res).data)
+
+        return reslist
 
     def get_url(self, obj):
         if not obj.composition:

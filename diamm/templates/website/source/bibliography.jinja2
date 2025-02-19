@@ -9,6 +9,12 @@
         {% else %}
         {{ entry.prerendered|safe }}
         {% endif %}
+        {% if entry.pages %}
+            Pages: {{ entry.pages }}{{ "." if not entry.pages.endswith(".") else "" }}
+        {% endif %}
+        {% if entry.notes %}
+            Notes: {{ entry.notes }}{{ "." if not entry.notes.endswith(".") else "" }}
+        {% endif %}
     </p>
     {% endfor %}
 </div>
