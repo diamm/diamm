@@ -1,0 +1,2 @@
+def check_auth(api_key: str, api_secret: str) -> bool:
+    return True

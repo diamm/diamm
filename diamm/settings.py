@@ -47,7 +47,6 @@ INSTALLED_APPS = [
     "diamm.diamm_site",
     "reversion",
     "rest_framework",
-    "rest_framework.authtoken",
     "django_extensions",
     "django_jinja",
     "django_jinja.contrib._humanize",
@@ -215,6 +214,9 @@ REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": (
         "diamm.renderers.html_renderer.HTMLRenderer",
         "diamm.renderers.ujson_renderer.UJSONRenderer",
+    ),
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "diamm.authentication.DiammTokenAuthentication",
     ),
 }
 

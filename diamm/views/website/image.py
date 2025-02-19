@@ -6,7 +6,15 @@ from django.http import HttpResponse
 from django.http.request import HttpRequest
 from django.http.response import HttpResponseRedirect
 from rest_framework import status
+from rest_framework.authentication import SessionAuthentication
+from rest_framework.decorators import (
+    api_view,
+    authentication_classes,
+    permission_classes,
+)
+from rest_framework.permissions import IsAuthenticated
 
+from diamm.authentication import DiammTokenAuthentication
 from diamm.helpers.solr_helpers import SolrConnection
 
 client = httpx.Client()
@@ -25,6 +33,9 @@ def image_serve_redirect(request: HttpRequest, pk) -> HttpResponse:
     )
 
 
+@api_view(["GET"])
+@authentication_classes([DiammTokenAuthentication, SessionAuthentication])
+@permission_classes([IsAuthenticated])
 def image_serve(
     request,
     pk,
@@ -48,9 +59,6 @@ def image_serve(
     The images are requested via their database PK, but since we don't necessarily
     want to bother Postgres for this (slow lookup) we'll ask Solr for it.
     """
-    if not request.user:
-        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
-
     return _image_lookup(request, pk, region, size, rotation)
 
 
