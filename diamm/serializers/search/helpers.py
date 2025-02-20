@@ -42,7 +42,7 @@ def parallelise(records: Iterable, func: Callable, *args, **kwargs) -> None:
 
 def record_indexer(records: list, converter: Callable, cfg: dict) -> bool:
     idx_records = []
-    log.info("processing record group with", converter.__name__)
+    log.info("processing record group with %s", converter.__name__)
     for record in records:
         docs: list = converter(record, cfg)
         idx_records.extend(docs)
