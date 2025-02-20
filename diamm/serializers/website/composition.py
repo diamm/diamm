@@ -1,19 +1,23 @@
 import re
 
 import serpy
+from django.conf import settings
 from django.template.loader import get_template
 from rest_framework.reverse import reverse
 
-from diamm.serializers.serializers import ContextSerializer
+from diamm.helpers.solr_helpers import SolrManager
+from diamm.serializers.serializers import ContextDictSerializer, ContextSerializer
 
 
-class CompositionBibliographySerializer(ContextSerializer):
+class CompositionBibliographySerializer(ContextDictSerializer):
+    pk = serpy.IntField()
     citation = serpy.MethodField()
-    pages = serpy.StrField()
+    pages = serpy.StrField(required=False)
+    notes = serpy.StrField(required=False)
 
     def get_citation(self, obj):
         template = get_template("website/bibliography/bibliography_entry.jinja2")
-        citation = template.template.render(content=obj.bibliography)
+        citation = template.template.render(content=obj["citation_json"])
         # strip out any newlines from the templating process
         citation = re.sub("\n", "", citation)
         # strip out multiple spaces
@@ -157,4 +161,26 @@ class CompositionDetailSerializer(ContextSerializer):
         return []
 
     def get_bibliography(self, obj):
-        return CompositionBibliographySerializer(obj.bibliography.all(), many=True).data
+        connection = SolrManager(settings.SOLR["SERVER"])
+        fq = ["type:bibliography", f"compositions_ii:{obj.pk}"]
+        sort = "year_ans desc, sort_ans asc"
+
+        connection.search("*:*", fq=fq, sort=sort)
+        reslist = []
+        for res in connection.results:
+            if "compositions_json" in res:
+                entry_list = [
+                    s
+                    for s in res["compositions_json"]
+                    if s and s["composition_id"] == obj.pk
+                ]
+                if not entry_list:
+                    continue
+                entry = entry_list[0]
+                if p := entry.get("pages"):
+                    res["pages"] = p
+                if n := entry.get("notes"):
+                    res["notes"] = n
+
+                reslist.append(CompositionBibliographySerializer(res).data)
+        return reslist
