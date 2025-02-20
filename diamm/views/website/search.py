@@ -58,7 +58,7 @@ class SearchView(generics.GenericAPIView):
             exclusive_filters.update(
                 {
                     "composers_ss": [
-                        f'"{p.replace('"', r"\"")}"'
+                        f'"{p.replace('"', '\\"')}"'
                         for p in request.GET.getlist("composer")
                     ]
                 }
@@ -68,7 +68,7 @@ class SearchView(generics.GenericAPIView):
             exclusive_filters.update(
                 {
                     "genres_ss": [
-                        f'"{p.replace('"', r"\"")}"'
+                        f'"{p.replace('"', '\\"')}"'
                         for p in request.GET.getlist("genre")
                     ]
                 }
@@ -78,7 +78,7 @@ class SearchView(generics.GenericAPIView):
             exclusive_filters.update(
                 {
                     "notations_ss": [
-                        f'"{p.replace('"', r"\"")}"'
+                        f'"{p.replace('"', '\\"')}"'
                         for p in request.GET.getlist("notation")
                     ]
                 }
@@ -88,7 +88,7 @@ class SearchView(generics.GenericAPIView):
             exclusive_filters.update(
                 {
                     "source_type_s": [
-                        f'"{p.replace('"', r"\"")}"'
+                        f'"{p.replace('"', '\\"')}"'
                         for p in request.GET.getlist("sourcetype")
                     ]
                 }
