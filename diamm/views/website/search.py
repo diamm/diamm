@@ -56,42 +56,20 @@ class SearchView(generics.GenericAPIView):
 
         if "composer" in request.GET:
             exclusive_filters.update(
-                {
-                    "composers_ss": [
-                        f'"{p.replace('"', '\\"')}"'
-                        for p in request.GET.getlist("composer")
-                    ]
-                }
+                {"composers_ss": list(request.GET.getlist("composer"))}
             )
 
         if "genre" in request.GET:
-            exclusive_filters.update(
-                {
-                    "genres_ss": [
-                        f'"{p.replace('"', '\\"')}"'
-                        for p in request.GET.getlist("genre")
-                    ]
-                }
-            )
+            exclusive_filters.update({"genres_ss": list(request.GET.getlist("genre"))})
 
         if "notation" in request.GET:
             exclusive_filters.update(
-                {
-                    "notations_ss": [
-                        f'"{p.replace('"', '\\"')}"'
-                        for p in request.GET.getlist("notation")
-                    ]
-                }
+                {"notations_ss": list(request.GET.getlist("notation"))}
             )
 
         if "sourcetype" in request.GET:
             exclusive_filters.update(
-                {
-                    "source_type_s": [
-                        f'"{p.replace('"', '\\"')}"'
-                        for p in request.GET.getlist("sourcetype")
-                    ]
-                }
+                {"source_type_s": list(request.GET.getlist("sourcetype"))}
             )
 
         if "has_inventory" in request.GET:
