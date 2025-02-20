@@ -25,8 +25,8 @@ UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTOCOL", "https")
 
-CSRF_TRUSTED_ORIGINS = ["http://dev.diamm.ac.uk"]
-ALLOWED_HOSTS = ["dev.diamm.ac.uk"]
+CSRF_TRUSTED_ORIGINS = ["https://www.diamm.ac.uk"]
+ALLOWED_HOSTS = ["www.diamm.ac.uk"]
 INTERNAL_IPS = "127.0.0.1"
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
