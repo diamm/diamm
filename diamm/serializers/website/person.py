@@ -67,7 +67,7 @@ class PersonCompositionSerializer(ContextSerializer):
     def get_url(self, obj) -> str:
         return reverse(
             "composition-detail",
-            kwargs={"pk": obj.pk},
+            kwargs={"pk": obj.composition_id},
             request=self.context["request"],
         )
 
