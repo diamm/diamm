@@ -69,18 +69,31 @@ class SetDetailSerializer(ContextSerializer):
 
         return reslist
 
-    def get_holding_archives(self, obj) -> list[str]:
+    def get_holding_archives(self, obj) -> list[dict]:
         archives = (
             obj.sources.annotate(
                 archive_name=Concat(
                     F("archive__name"), Value(" ("), F("archive__siglum"), Value(")")
                 )
             )
-            .values_list("archive_name", flat=True)
+            .values_list("archive_name", "archive_id")
             .order_by("archive__name")
             .distinct("archive__name")
         )
-        return list(archives)
+        res = []
+        for archive in archives:
+            res.append(
+                {
+                    "url": reverse(
+                        "archive-detail",
+                        kwargs={"pk": archive[1]},
+                        request=self.context["request"],
+                    ),
+                    "name": archive[0],
+                }
+            )
+
+        return res
 
     def get_sources(self, obj) -> list:
         connection = SolrManager(settings.SOLR["SERVER"])
