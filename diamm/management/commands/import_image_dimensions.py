@@ -29,6 +29,12 @@ class Command(BaseCommand):
                     )
                     continue
 
+                if img.width != 0 and img.height != 0:
+                    self.stdout.write(
+                        f"Skipping {img.pk} becuase it seems to already have a width and height"
+                    )
+                    continue
+
                 img.width = csvinfo["width"]
                 img.height = csvinfo["height"]
                 self.stdout.write(f"Saving image {img.pk}")
