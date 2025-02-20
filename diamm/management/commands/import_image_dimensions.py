@@ -19,8 +19,9 @@ class Command(BaseCommand):
             for row in csvreader:
                 lookup_table[row["filename"]] = row
 
-            all_images = Image.objects.all()
-            for img in all_images:
+            all_images = Image.objects.all().iterator(chunk_size=10000)
+            chunk = []
+            for i, img in enumerate(all_images):
                 loc = img.location
                 csvinfo = lookup_table.get(loc)
                 if not csvinfo:
@@ -29,15 +30,18 @@ class Command(BaseCommand):
                     )
                     continue
 
-                if img.width != 0 and img.height != 0:
-                    self.stdout.write(
-                        f"Skipping {img.pk} becuase it seems to already have a width and height"
-                    )
-                    continue
+                # if img.width != 0 and img.height != 0:
+                #     self.stdout.write(
+                #         f"Skipping {img.pk} becuase it seems to already have a width and height"
+                #     )
+                #     continue
 
                 img.width = csvinfo["width"]
                 img.height = csvinfo["height"]
-                self.stdout.write(f"Saving image {img.pk}")
-                img.save()
+                chunk.append(img)
+                if i % 10000 == 0:
+                    Image.objects.bulk_update(chunk, ["width", "height"])
+                    chunk = []
 
-            # Image.objects.bulk_update(all_images, ["width", "height"])
+            if chunk:
+                Image.objects.bulk_update(chunk, ["width", "height"])
