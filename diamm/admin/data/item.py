@@ -6,11 +6,18 @@ from django.utils.translation import gettext_lazy as _
 from reversion.admin import VersionAdmin
 
 from diamm.admin.filters.input_filter import InputFilter
+from diamm.models import Voice
 from diamm.models.data.item import Item
 from diamm.models.data.item_bibliography import ItemBibliography
 from diamm.models.data.item_composer import ItemComposer
 from diamm.models.data.item_note import ItemNote
 from diamm.models.data.page import Page
+
+
+class ItemVoice(admin.StackedInline):
+    model = Voice
+    extra = 0
+    autocomplete_fields = ["standard_text"]
 
 
 # This custom form will reduce the number of options for the pages to only those
@@ -121,7 +128,7 @@ class ItemAdmin(VersionAdmin):
         "=source__pk",
     )
     # list_filter = (AggregateComposerListFilter,)
-    inlines = (ItemNoteInline, ItemComposerInline, BibliographyInline)
+    inlines = (ItemNoteInline, ItemComposerInline, BibliographyInline, ItemVoice)
     filter_horizontal = ["pages"]
     # exclude = ("pages",)
     raw_id_fields = ("source", "composition")
@@ -159,5 +166,5 @@ class ItemAdmin(VersionAdmin):
     def get_queryset(self, request):
         qset = super().get_queryset(request)
         return qset.select_related("source__archive", "composition").prefetch_related(
-            "pages", "composition__composers__composer"
+            "pages", "composition__composers__composer", "voices"
         )
