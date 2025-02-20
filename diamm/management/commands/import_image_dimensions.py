@@ -31,6 +31,7 @@ class Command(BaseCommand):
 
                 img.width = csvinfo["width"]
                 img.height = csvinfo["height"]
+                self.stdout.write(f"Saving image {img.pk}")
                 img.save()
 
             # Image.objects.bulk_update(all_images, ["width", "height"])
