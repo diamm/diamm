@@ -1,4 +1,9 @@
 {% extends "base.jinja2" %}
+{% from "website/macros.jinja2" import voices, foliation, composers %}
+
+{% block head %}
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+{% endblock %}
 
 {% block title %}
     <title>Digital Image Archive of Medieval Music :: {{ content.title }}</title>
@@ -17,16 +22,7 @@
                     <tr>
                         <th>Composer{% if content.composers | length > 1 %}s{% endif %}</th>
                         <td>
-                        {% if content.composers %}
-                            {% for composer in content.composers %}
-                                <a href="{{ composer.url }}">{{ composer.full_name }} </a>
-                                {% if composer.uncertain %}
-                                    (uncertain)
-                                {% endif %}
-                            {% endfor %}
-                        {% elif content.anonymous %}
-                            Anonymous
-                        {% endif %}
+                            {{ composers(content) }}
                         </td>
                     </tr>
                     {% if content.genres %}
@@ -52,19 +48,41 @@
                         </td>
                     </tr>
                     {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="columns">
+        <div class="column">
+            <h3 class="title is-4">Appears in</h3>
+            <table class="table is-narrow" x-data>
+                <thead>
                     <tr>
-                        <th>Appears in</th>
+                        <th>Source</th>
+                        <th>Location</th>
+                        <th>Voices</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for source in content.sources %}
+                    {% set has_images = source.has_images and source.public_images %}
+                    <tr>
                         <td>
-                            {% for source in content.sources %}
-                                <div>
-                                    {% if source.has_images and source.public_images %}
-                                        <i class="fa fa-picture-o" aria-hidden="true"></i>
-                                    {% endif %}
-                                    <a href="{{ source.url }}">{{ source.display_name }}</a> {% if source.folios %}({{ source.folios }}){% endif %}
-                                </div>
-                            {% endfor %}
+                            {% if has_images %}
+                                <i class="fa fa-picture-o" aria-hidden="true"></i>
+                            {% endif %}
+                            <a href="{{ source.url }}">{{ source.display_name }}</a>
+                        </td>
+                        <td>
+                            {{ foliation(source, False) }}
+                        </td>
+                        <td>
+                            {% if source.voices %}
+                            {{ voices(source) }}
+                            {% endif %}
                         </td>
                     </tr>
+                {% endfor %}
                 </tbody>
             </table>
         </div>

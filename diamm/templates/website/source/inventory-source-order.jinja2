@@ -1,3 +1,4 @@
+{% from "website/macros.jinja2" import foliation, voices, composers %}
 <div class="column is-full"
      x-data="{
         selectedItem: null,
@@ -27,14 +28,14 @@
         </tr>
         </thead>
         <tbody>
-        {% set show_imagelinks = content.manifest_url is defined %}
+        {% set show_imagelinks = content.manifest_url is defined and request.user.is_authenticated %}
         {% for entry in content.inventory %}
             <tr @click="toggleItem($el.id)"
                 id="inventory-order-{{ loop.index }}"
                 style="cursor: pointer"
             >
                 <td>
-                    {{ foliation(entry, show_imagelinks) }}
+                    {{ foliation(entry, show_imagelinks and entry.pages) }}
                 </td>
                 <td class="item-details">
                     {{ entry.composition }}
@@ -60,7 +61,7 @@
                         <div class="column">
                             <div>
                                 <strong>Appears on: </strong>
-                                {{ foliation(entry, show_imagelinks) }}
+                                {{ foliation(entry, show_imagelinks and entry.pages) }}
                             </div>
                             {% if entry.genres %}
                                 <div>

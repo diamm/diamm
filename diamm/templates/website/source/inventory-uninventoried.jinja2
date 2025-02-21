@@ -1,3 +1,5 @@
+{% from "website/macros.jinja2" import foliation, composers, voices %}
+
 <div class="column">
     <p>This source has not been inventoried. However, it is known to contain:</p>
     <table class="table inventory-table">
@@ -10,11 +12,11 @@
             </tr>
         </thead>
         <tbody>
-        {% set show_imagelinks = content.manifest_url is defined %}
+        {% set show_imagelinks = content.manifest_url is defined and request.user.is_authenticated %}
         {% for entry in content.uninventoried %}
         <tr>
             <td>
-                {{ foliation(entry, show_imagelinks) }}
+                {{ foliation(entry, show_imagelinks and entry.pages) }}
             </td>
             <td class="item-details">
                 {{ entry.source_attribution|default("[No Source Attribution]") }}

@@ -1,3 +1,5 @@
+{% from "website/macros.jinja2" import foliation %}
+
 <div class="column is-two-thirds">
     <table class="table">
         <thead>
@@ -24,7 +26,7 @@
                     {% for cmp in entry.inventory %}
                     <li>
                         {{ "(?) " if cmp.uncertain else "" }}{{ cmp.composition|default("[No description]") }}
-                        &ndash;{{ foliation(cmp, show_imagelinks) }}
+                        &ndash;{{ foliation(cmp, show_imagelinks and entry.pages and request.user.is_authenticated) }}
                     </li>
                     {% endfor %}
                 </ul>

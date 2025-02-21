@@ -13,7 +13,7 @@ class Voice(models.Model):
         max_length=256,
         blank=True,
         null=True,
-        help_text="Former Text positiononpage field",
+        help_text="",
     )
     type = models.ForeignKey("diamm_data.VoiceType", on_delete=models.CASCADE)
     item = models.ForeignKey(

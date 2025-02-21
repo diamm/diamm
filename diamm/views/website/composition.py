@@ -10,4 +10,6 @@ class CompositionDetail(generics.RetrieveAPIView):
     template_name = "website/composition/composition_detail.jinja2"
     renderer_classes = (HTMLRenderer, UJSONRenderer)
     serializer_class = CompositionDetailSerializer
-    queryset = Composition.objects.all()
+    queryset = Composition.objects.all().prefetch_related(
+        "sources__voices", "sources__pages"
+    )

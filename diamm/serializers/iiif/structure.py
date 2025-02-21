@@ -1,4 +1,3 @@
-
 import serpy
 from rest_framework.reverse import reverse
 
@@ -11,10 +10,9 @@ class StructureSerializer(ContextDictSerializer):
     id = serpy.MethodField(label="@id")
     type = StaticField(label="@type", value="sc:Range")
     label = serpy.StrField(attr="composition_s", required=False)
+    rendering = serpy.MethodField()
     canvases = serpy.MethodField()
     metadata = serpy.MethodField()
-
-    # service = serpy.MethodField()
 
     def get_canvases(self, obj: dict) -> list | None:
         if not obj.get("pages_ii"):
@@ -30,6 +28,17 @@ class StructureSerializer(ContextDictSerializer):
             members.append(canvas_id)
 
         return members
+
+    def get_rendering(self, obj: dict) -> dict:
+        return {
+            "@id": reverse(
+                "composition-detail",
+                kwargs={"pk": obj["composition_i"]},
+                request=self.context["request"],
+            ),
+            "format": "text/html",
+            "label": obj["composition_s"],
+        }
 
     def get_id(self, obj: dict) -> str:
         return reverse(

@@ -50,14 +50,27 @@
 
             for (let range of ranges)
             {
+                let title = document.createElement("h5");
+                title.classList.add("title", "is-5", "is-marginless");
+
+                if (range.hasOwnProperty("rendering"))
+                {
+                    let compositionLink = range.rendering["@id"];
+                    let compositionEl = document.createElement("a");
+                    compositionEl.setAttribute("href", compositionLink);
+                    compositionEl.innerText = range.label;
+                    title.appendChild(compositionEl)
+                }
+                else
+                {
+                    title.innerText = range.label;
+                }
+                contentParent.appendChild(title);
+
                 if (!range.hasOwnProperty("metadata"))
                 {
                     continue;
                 }
-                let title = document.createElement("h5");
-                title.classList.add("title", "is-5", "is-marginless");
-                title.innerText = range.label;
-                contentParent.appendChild(title);
 
                 let metaList = document.createElement("dl");
                 contentParent.appendChild(metaList);

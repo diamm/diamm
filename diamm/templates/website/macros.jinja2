@@ -1,0 +1,79 @@
+{% macro voices(entry) %}
+    {% for voice in entry.voices %}
+        <div class="voice-detail">
+            {% if voice.voice_type %}
+                <div>
+                    <strong>Voice: </strong>
+                    {{ voice.voice_type }}
+                </div>
+            {% endif %}
+            {% if voice.languages %}
+                <div>
+                    <strong>Languages: </strong>
+                    {{ voice.languages|join(', ') }}
+                </div>
+            {% endif %}
+            {% if voice.mensuration %}
+                <div>
+                    <strong>Mensuration: </strong>
+                    {{ voice.mensuration }}
+                </div>
+            {% endif %}
+            {% if voice.clef %}
+                <div>
+                    <strong>Clef: </strong>
+                    {{ voice.clef }}
+                </div>
+            {% endif %}
+            {% if voice.voice_text %}
+                <div>
+                    <strong>Voice Text: </strong>
+                    {{ voice.voice_text }}
+                </div>
+            {% endif %}
+        </div>
+        {% if not loop.last %}
+        <hr style="margin: 0.5em;" />
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro foliation(entry, show_imagelinks) %}
+    {% if not entry.folio_start %}
+        [No start folio listed]
+    {% else %}
+        {{ entry.folio_start }}
+        {%- if entry.folio_end and entry.folio_end != entry.folio_start -%}
+            &ndash;{{ entry.folio_end }}
+        {% endif %}
+    {% endif %}
+    {#  Show a link to the pages if:
+        - the user is authenticated
+        - there are images attached to the source
+        - there are pages attached to the item (no pages, no images)
+    #}
+    {% if show_imagelinks %}
+        <button x-on:click="history.pushState({}, '', '#/images?p={{ entry.folio_start }}'); $store.sourceTabs.select('images-tab');">
+            <span class="icon is-small">
+                <i class="fa fa-file-text-o fa-border quicklook"></i>
+            </span>
+        </button>
+    {% endif %}
+{% endmacro %}
+
+{% macro composers(entry) %}
+    {% if entry.composers %}
+        {% for composer in entry.composers %}
+            <div class="composer-names">
+                {% if composer.url %}
+                    <a href="{{ composer.url }}">{{ composer.full_name }}</a>
+                {% else %}
+                    {{ composer.full_name }}
+                {% endif %}
+                {{ "(?)" if composer.uncertain else "" }}
+            </div>
+        {% endfor %}
+    {% else %}
+        Anonymous
+    {% endif %}
+{% endmacro %}

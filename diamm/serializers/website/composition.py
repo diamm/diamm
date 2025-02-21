@@ -63,23 +63,10 @@ class CompositionSourceSerializer(ContextSerializer):
     display_name = serpy.StrField(attr="source.display_name")
 
     has_images = serpy.MethodField()
-
     public_images = serpy.BoolField(attr="source.public_images")
-    folios = serpy.MethodField()
-
-    def get_folios(self, obj):
-        folio_start = obj.folio_start
-        folio_end = obj.folio_end
-
-        folios = ""
-
-        if folio_start:
-            folios += f"{folio_start}"
-
-        if folio_end and folio_start != folio_end:
-            folios += f"—{folio_end}"
-
-        return folios
+    folio_start = serpy.StrField(required=False)
+    folio_end = serpy.StrField(required=False)
+    voices = serpy.MethodField()
 
     def get_url(self, obj):
         return reverse(
@@ -90,6 +77,19 @@ class CompositionSourceSerializer(ContextSerializer):
 
     def get_has_images(self, obj):
         return obj.pages.exists()
+
+    def get_voices(self, obj):
+        if obj.voices:
+            return CompositionSourceVoiceSerializer(obj.voices.all(), many=True).data
+        return None
+
+
+class CompositionSourceVoiceSerializer(ContextSerializer):
+    voice_text = serpy.StrField(required=False)
+    clef = serpy.StrField(required=False)
+    mensuration = serpy.StrField(required=False)
+    voice_type = serpy.StrField(required=False, attr="type")
+    position = serpy.StrField(required=False)
 
 
 class CompositionComposerSerializer(ContextSerializer):
@@ -126,17 +126,20 @@ class CompositionDetailSerializer(ContextSerializer):
     def get_type(self, obj):
         return obj.__class__.__name__.lower()
 
-    def get_sources(self, obj):
+    def get_sources(self, obj) -> list:
         if obj.sources:
             return CompositionSourceSerializer(
-                obj.sources.all().order_by("source__sort_order"),
+                obj.sources.select_related("source__archive__city")
+                .prefetch_related("voices__type", "pages")
+                .all()
+                .order_by("source__sort_order"),
                 context={"request": self.context["request"]},
                 many=True,
             ).data
         else:
             return []
 
-    def get_composers(self, obj):
+    def get_composers(self, obj) -> list:
         if obj.composers:
             return CompositionComposerSerializer(
                 obj.composers.all(),
