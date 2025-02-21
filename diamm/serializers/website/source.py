@@ -173,7 +173,7 @@ class SourceComposerInventoryCompositionSerializer(ContextDictSerializer):
     url = serpy.MethodField()
 
     def get_url(self, obj) -> str | None:
-        if "id" not in obj:
+        if "id" not in obj or obj["id"] is None:
             return None
 
         return reverse(
