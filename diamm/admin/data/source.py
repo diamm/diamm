@@ -156,7 +156,7 @@ class URLsInline(admin.TabularInline):
 
 # Uses a custom raw id mixin because of a bug in the built-in mixin
 # See: https://deepintodjango.com/reducing-queries-for-foreignkeys-in-django-admin-inlines
-class ItemInline(RawIdWidgetAdminMixin, admin.StackedInline):
+class ItemInline(RawIdWidgetAdminMixin, admin.TabularInline):
     model = Item
     extra = 0
     classes = ("collapse",)
