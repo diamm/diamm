@@ -14,6 +14,7 @@ from reversion.admin import VersionAdmin
 
 from diamm.admin.filters.input_filter import InputFilter
 from diamm.admin.forms.copy_inventory import CopyInventoryForm
+from diamm.admin.helpers.optimized_raw_id import RawIdWidgetAdminMixin
 from diamm.models.data.geographic_area import GeographicArea
 from diamm.models.data.item import Item
 from diamm.models.data.page import Page
@@ -56,7 +57,7 @@ class SourceRelationshipInline(admin.StackedInline):
         )
 
 
-class SourceProvenanceInline(admin.StackedInline):
+class SourceProvenanceInline(RawIdWidgetAdminMixin, admin.StackedInline):
     model = SourceProvenance
     extra = 0
     verbose_name = "Provenance"
@@ -76,12 +77,12 @@ class SourceProvenanceInline(admin.StackedInline):
         )
 
 
-class BibliographyInline(admin.TabularInline):
+class BibliographyInline(RawIdWidgetAdminMixin, admin.TabularInline):
     model = SourceBibliography
     verbose_name_plural = "Bibliography Entries"
     verbose_name = "Bibliography Entry"
     extra = 0
-    autocomplete_fields = ("bibliography",)
+    raw_id_fields = ("bibliography",)
 
     formfield_overrides = {
         models.CharField: {"widget": TextInput(attrs={"size": "160"})},
@@ -153,19 +154,22 @@ class URLsInline(admin.TabularInline):
     extra = 0
 
 
-class ItemInline(admin.TabularInline):
+# Uses a custom raw id mixin because of a bug in the built-in mixin
+# See: https://deepintodjango.com/reducing-queries-for-foreignkeys-in-django-admin-inlines
+class ItemInline(RawIdWidgetAdminMixin, admin.StackedInline):
     model = Item
     extra = 0
     classes = ("collapse",)
     fields = (
         "link_id_field",
+        "composition",
         "folio_start",
         "folio_end",
-        # "composition",
         "get_composition",
         "get_composers",
         "source_order",
     )
+    raw_id_fields = ("composition",)
     readonly_fields = ("link_id_field", "get_composers", "get_composition")
 
     def get_queryset(self, request):
