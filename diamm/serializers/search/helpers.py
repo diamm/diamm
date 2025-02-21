@@ -169,7 +169,7 @@ def process_composers(
     res = []
     for composer in all_composers:
         formatted_name = format_person_name(composer)
-        res.append((formatted_name, composer["id"], composer["uncertain"]))
+        res.append((formatted_name, composer["id"], composer.get("uncertain", False)))
 
     return res
 

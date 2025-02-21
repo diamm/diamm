@@ -146,23 +146,6 @@ class Source(models.Model):
         d = dict(self.NUMBERING_SYSTEM)
         return d[self.numbering_system]
 
-    # @cached_property
-    # def public_notes(self):
-    #     return self.notes.exclude(type=99).order_by("sort")
-
-    # @property
-    # def date_notes(self):
-    #     return self.public_notes.filter(type=11)
-    #
-    # @cached_property
-    # def has_external_images(self):
-    #     """
-    #     Does the source have an external URL pointing to images
-    #     on another website
-    #     """
-    #     # type 4 is the links to external images
-    #     return self.links.filter(type=4).exists()
-
     @cached_property
     def cover(self):
         """
@@ -190,34 +173,6 @@ class Source(models.Model):
             return {"id": cover.images.first().pk, "label": cover.numeration}
         return None
 
-    # @cached_property
-    # def composers(self):
-    #     composer_names = []
-    #     for item in (
-    #         self.inventory.all()
-    #         .select_related("composition")
-    #         .prefetch_related(
-    #             "composition__composers__composer", "unattributed_composers__composer"
-    #         )
-    #     ):
-    #         if item.composition:
-    #             for composer in item.composition.composers.select_related(
-    #                 "composer"
-    #             ).all():
-    #                 composer_names.append(composer.composer_name)
-    #
-    #         if item.unattributed_composers:
-    #             for itcomposer in item.unattributed_composers.select_related(
-    #                 "composer"
-    #             ).all():
-    #                 composer_names.append(itcomposer.composer.full_name)
-    #             continue
-    #
-    #     composer_names = list(set(composer_names))
-    #     composer_names.sort()
-    #
-    #     return composer_names
-
     @property
     def compositions(self):
         composition_names = (
@@ -230,60 +185,6 @@ class Source(models.Model):
     @property
     def num_compositions(self) -> int:
         return self.inventory.filter(composition__isnull=False).count()
-
-    # Fetches results for a source from Solr. Much quicker than hitting up postgres
-    # and sorts correctly too! Restricting the composition using [* TO *] means that
-    # only attributed works are retrieved; see solr_appears_in for retrieving the records
-    # where a composer is mentioned but not attached to a composition.
-    # @property
-    # def solr_inventory(self):
-    #     connection = SolrManager(settings.SOLR["SERVER"])
-    #     fq = ["type:item", f"source_i:{self.pk}", "composition_i:[* TO *]"]
-    #     fl = [
-    #         "bibliography_ii",
-    #         "composers_ssni",
-    #         "composition_i",
-    #         "composition_s",
-    #         "folio_start_s",
-    #         "folio_end_s",
-    #         "num_voices_s",
-    #         "genres_ss",
-    #         "pages_ii",
-    #         "pages_ssni",
-    #         "source_attribution_s",
-    #         "voices_ii",
-    #         "[child parentFilter=type:item childFilter=type:itemnote]",
-    #         "pk",
-    #     ]
-    #     # Set rows to an extremely high number so we get all of the item records in one go.
-    #     connection.search(
-    #         "*:*", fq=fq, fl=fl, sort="source_order_f asc, folio_start_ans asc"
-    #     )
-    #     return list(connection.results)
-
-    # Like solr_inventory, but retrieves only inventory items that do not have a composition attached, i.e., composers
-    #  that appear in a source but are not attached to a particular one.
-    # @property
-    # def solr_uninventoried(self):
-    #     connection = SolrManager(settings.SOLR["SERVER"])
-    #     fq = ["type:item", f"source_i:{self.pk}", "-composition_i:[* TO *]"]
-    #     fl = [
-    #         "bibliography_ii",
-    #         "composers_ssni",
-    #         "composition_i",
-    #         "composition_s",
-    #         "folio_start_s",
-    #         "folio_end_s",
-    #         "num_voices_s",
-    #         "pages_ii",
-    #         "pages_ssnisource_attribution_s",
-    #         "voices_ii",
-    #         "pk",
-    #     ]
-    #     sort = "composer_ans asc"
-    #
-    #     connection.search("*:*", fq=fq, fl=fl, sort=sort)
-    #     return list(connection.results)
 
     @property
     def solr_bibliography(self) -> list:

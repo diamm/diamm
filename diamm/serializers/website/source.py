@@ -164,36 +164,35 @@ class SourceBibliographySerializer(ContextDictSerializer):
 
 
 class SourceComposerInventoryCompositionSerializer(ContextDictSerializer):
-    folio_start = serpy.StrField(attr="folio_start_s", required=False)
-    folio_end = serpy.StrField(attr="folio_end_s", required=False)
-    uncertain = serpy.BoolField(attr="uncertain_b", required=False)
-    source_attribution = serpy.MethodField()
+    folio_start = serpy.StrField(required=False)
+    folio_end = serpy.StrField(required=False)
+    uncertain = serpy.BoolField(required=False)
+    source_attribution = serpy.StrField(attr="attribution", required=False)
 
-    composition = serpy.StrField(attr="composition_s", required=False)
+    composition = serpy.StrField(attr="title", required=False)
     url = serpy.MethodField()
 
-    def get_source_attribution(self, obj) -> str | None:
-        return obj.get("source_attribution_s")
-
     def get_url(self, obj) -> str | None:
-        if "composition_i" not in obj:
+        if "id" not in obj:
             return None
 
         return reverse(
             "composition-detail",
-            kwargs={"pk": obj["composition_i"]},
+            kwargs={"pk": obj["id"]},
             request=self.context["request"],
         )
 
 
 class SourceComposerInventorySerializer(ContextDictSerializer):
     url = serpy.MethodField(required=False)
-    name = serpy.StrField(attr="composer")
+    name = serpy.StrField(attr="composer_s")
     inventory = serpy.MethodField(required=False)
 
     def get_inventory(self, obj):
         return SourceComposerInventoryCompositionSerializer(
-            obj["inventory"], many=True, context={"request": self.context["request"]}
+            obj["compositions_json"],
+            many=True,
+            context={"request": self.context["request"]},
         ).data
 
     def get_url(self, obj):
@@ -572,27 +571,10 @@ class SourceDetailSerializer(ContextSerializer):
         fq: list = ["type:composerinventory", f"source_i:{obj.pk}"]
         sort: str = "composer_s asc"
 
-        connection.grouped_search(
-            "composer_s", "composition_s asc", "*:*", fq=fq, sort=sort
-        )
-        groups = connection.grouped_results
-
-        reslist = []
-        for doc in groups:
-            composer = doc["groupValue"]
-            inventory = doc["doclist"]["docs"]
-
-            composer_pk = None
-            if inventory:
-                # get composer pk from the first record.
-                composer_pk = inventory[0].get("composer_i", None)
-
-            reslist.append(
-                {"composer": composer, "pk": composer_pk, "inventory": inventory}
-            )
+        connection.search("*:*", fq=fq, sort=sort)
 
         return SourceComposerInventorySerializer(
-            reslist,
+            connection.results,
             many=True,
             context={"request": self.context["request"]},
         ).data
