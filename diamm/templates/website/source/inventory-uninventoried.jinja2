@@ -8,7 +8,6 @@
                 <th>Folios / Pages</th>
                 <th>Attribution in Source</th>
                 <th>Composers (? Uncertain)</th>
-                <th>Voices</th>
             </tr>
         </thead>
         <tbody>
@@ -23,11 +22,6 @@
             </td>
             <td>
                 {{ composers(entry) }}
-            </td>
-            <td>
-                {% if entry.voices %}
-                {{ voices(entry) }}
-                {% endif %}
             </td>
         </tr>
         {% endfor %}

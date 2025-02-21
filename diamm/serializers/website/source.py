@@ -189,11 +189,13 @@ class SourceComposerInventorySerializer(ContextDictSerializer):
     inventory = serpy.MethodField(required=False)
 
     def get_inventory(self, obj):
-        return SourceComposerInventoryCompositionSerializer(
+        inventory = SourceComposerInventoryCompositionSerializer(
             obj["compositions_json"],
             many=True,
             context={"request": self.context["request"]},
         ).data
+
+        return [f for f in inventory if f]
 
     def get_url(self, obj):
         if "pk" in obj and obj.get("pk"):
@@ -225,6 +227,28 @@ class SourceInventoryBibliographySerializer(ContextDictSerializer):
         citation = re.sub(r"\s+", " ", citation)
         citation = citation.strip()
         return citation
+
+
+class SourceUninventoriedSerializer(ContextDictSerializer):
+    composers = serpy.MethodField()
+
+    def get_composers(self, obj) -> list | None:
+        if obj.unattributed_composers.exists():
+            out = []
+            for comp in obj.unattributed_composers.all():
+                out.append(
+                    {
+                        "full_name": str(comp.composer),
+                        "url": reverse(
+                            "person-detail",
+                            kwargs={"pk": comp.composer.pk},
+                            request=self.context["request"],
+                        ),
+                        "uncertain": comp.uncertain,
+                        "note": comp.note,
+                    }
+                )
+            return out
 
 
 class SourceInventorySerializer(ContextSerializer):
@@ -290,22 +314,6 @@ class SourceInventorySerializer(ContextSerializer):
         )
 
     def get_composers(self, obj) -> list | None:
-        if obj.unattributed_composers.exists():
-            out = []
-            for comp in obj.unattributed_composers.all():
-                out.append(
-                    {
-                        "full_name": str(comp.composer),
-                        "url": reverse(
-                            "person-detail",
-                            kwargs={"pk": comp.composer.pk},
-                            request=self.context["request"],
-                        ),
-                        "uncertain": comp.uncertain,
-                    }
-                )
-            return out
-
         if not obj.composition:
             return None
 
@@ -560,7 +568,7 @@ class SourceDetailSerializer(ContextSerializer):
                 "pages",
                 "unattributed_composers",
             )
-            .filter(composition__isnull=False)
+            .filter(unattributed_composers__isnull=True)
             .order_by("source_order", Collate("folio_start", "natsort")),
             many=True,
             context={"request": self.context["request"]},
@@ -573,15 +581,19 @@ class SourceDetailSerializer(ContextSerializer):
 
         connection.search("*:*", fq=fq, sort=sort)
 
-        return SourceComposerInventorySerializer(
+        composer_inventory = SourceComposerInventorySerializer(
             connection.results,
             many=True,
             context={"request": self.context["request"]},
         ).data
 
+        return [c for c in composer_inventory if c.get("inventory")]
+
     def get_uninventoried(self, obj):
-        return SourceInventorySerializer(
-            obj.inventory.filter(composition__isnull=True),
+        return SourceUninventoriedSerializer(
+            obj.inventory.filter(unattributed_composers__isnull=False)
+            .distinct("pk")
+            .order_by("pk"),
             many=True,
             context={"request": self.context["request"]},
         ).data

@@ -7,14 +7,12 @@
                     <div class="level-item">
                         <div class="tabs">
                             <ul>
-                                {% if content.inventory or content.uninventoried %}
-                                    <li id="primary-inventory-tab"
-                                        :class="$store.inventoryTabs.isSelected($el.id) ? 'is-active' : ''"
-                                        @click="$store.inventoryTabs.select($el.id)"
-                                    >
-                                        <a href="#/inventory">{{ "Uninventoried" if content.uninventoried else "Source Order" }}</a>
-                                    </li>
-                                {% endif %}
+                                <li id="primary-inventory-tab"
+                                    :class="$store.inventoryTabs.isSelected($el.id) ? 'is-active' : ''"
+                                    @click="$store.inventoryTabs.select($el.id)"
+                                >
+                                    <a href="#/inventory">{{ "Uninventoried" if content.uninventoried else "Source Order" }}</a>
+                                </li>
                                 {% if content.inventory %}
                                     <li id="composer-inventory-tab"
                                         :class="$store.inventoryTabs.isSelected($el.id) ? 'is-active' : ''"
