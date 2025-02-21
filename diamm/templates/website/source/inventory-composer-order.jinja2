@@ -25,7 +25,8 @@
                 <ul>
                     {% for cmp in entry.inventory %}
                     <li>
-                        {{ "(?) " if cmp.uncertain else "" }}{{ cmp.composition|default("[No description]") }}
+                        {{ "(?) " if cmp.uncertain else "" }}
+                        <a href="{{ cmp.url }}">{{ cmp.composition|default("[No description]") }}</a>
                         &ndash;{{ foliation(cmp, show_imagelinks and entry.pages and request.user.is_authenticated) }}
                     </li>
                     {% endfor %}
