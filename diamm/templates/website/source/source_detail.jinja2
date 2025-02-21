@@ -7,6 +7,9 @@
 {% block head %}
     <meta name="description" content="{{ content.display_summary }}">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
     <script type="application/ld+json">
         {
             "@context": "http://schema.org",
@@ -201,6 +204,7 @@
                             >
                                 <a href="#/commentary">Commentary</a>
                             </li>
+                            {% if content.contributions %}
                             <li id="contributions-tab"
                                 :class="$store.sourceTabs.isSelected($el.id) ? 'is-active' : ''"
                                 @click="$store.sourceTabs.select($el.id)"
@@ -209,6 +213,7 @@
                             >
                                 <a href="#/contributions">Contributions</a>
                             </li>
+                            {% endif %}
                         </ul>
                     </div>
                 </div>
@@ -240,6 +245,7 @@
     <div role="tabpanels" x-data>
         <section id="description-panel"
                  x-show="$store.sourceTabs.isSelected('description-tab')"
+                 x-cloak
                  role="tabpanel">
             {% include "website/source/description.jinja2" %}
         </section>
@@ -247,6 +253,7 @@
         {% if content.inventory or content.uninventoried %}
             <section id="inventory-panel"
                      x-show="$store.sourceTabs.isSelected('inventory-tab')"
+                     x-cloak
                      role="tabpanel">
                 {% include "website/source/inventory.jinja2" %}
             </section>
@@ -255,6 +262,7 @@
         {% if content.manifest_url %}
             <section id="images-panel"
                      x-show="$store.sourceTabs.isSelected('images-tab')"
+                     x-cloak
                      x-effect="if ($store.sourceTabs.isSelected('images-tab')) $nextTick(() => {$dispatch('initialize-diva'); $dispatch('update-diva');})"
                      role="tabpanel">
                 {% include "website/source/images.jinja2" %}
@@ -264,6 +272,7 @@
         {% if content.sets %}
             <section id="sets-panel"
                      x-show="$store.sourceTabs.isSelected('sets-tab')"
+                     x-cloak
                      role="tabpanel">
                 {% include "website/source/sets.jinja2" %}
             </section>
@@ -272,6 +281,7 @@
         {% if content.bibliography %}
             <section id="bibliography"
                      x-show="$store.sourceTabs.isSelected('bibliography-tab')"
+                     x-cloak
                      role="tabpanel">
                 {% include "website/source/bibliography.jinja2" %}
             </section>
@@ -279,6 +289,7 @@
 
         <section id="commentary"
                  x-show="$store.sourceTabs.isSelected('commentary-tab')"
+                 x-cloak
                  role="tabpanel">
             {% include "website/source/commentary.jinja2" %}
         </section>
@@ -286,6 +297,7 @@
         {% if content.contributions %}
         <section id="contributions"
                  x-show="$store.sourceTabs.isSelected('contributions-tab')"
+                 x-cloak
                  role="tabpanel">
             {% include "website/source/contributions.jinja2" %}
         </section>
@@ -294,6 +306,7 @@
         {% if request.user.is_authenticated %}
         <section id="corrections"
                  x-show="$store.sourceTabs.isSelected('corrections-tab')"
+                 x-cloak
                  role="tabpanel">
             {% include "website/source/corrections.jinja2" %}
         </section>
