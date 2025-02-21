@@ -33,6 +33,10 @@
 <div class="columns">
 {% if not content.commentary %}
     <div class="column is-two-thirds">
+        <p class="notification is-warning is-light">
+            This form is used to make comments on a source. If you wish to notify us of a correction to
+            the record, you should use the "Contribute a change" form instead.
+        </p>
         <div class="notification">
             <p>No comments have been made.</p>
         </div>
@@ -47,6 +51,10 @@
         {% if public %}
             <div>
             <h4 class="title is-4">Public Comments</h4>
+            <p class="notification is-warning is-light">
+                This form is used to make comments on a source. If you wish to notify us of a correction to
+                the record, you should use the "Contribute a change" form instead.
+            </p>
             {% for comment in public %}
                 <article class="media box">
                     <div class="media-content">
