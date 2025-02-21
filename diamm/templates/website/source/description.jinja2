@@ -235,9 +235,9 @@
                                     permission may result in legal action.</strong>
                             </p>
                         {% endif %}
-                        <p>
+                        <div class="content">
                             {{ note.note|markdown|safe }}
-                        </p>
+                        </div>
                         <div class="note-author">
                             {% if note.author and note.author != "DIAMM" %}
                                 {{ note.author }}
