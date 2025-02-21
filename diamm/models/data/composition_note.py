@@ -5,11 +5,17 @@ class CompositionNote(models.Model):
     ALTERNATE_TITLE = 1
     PARS = 2
     GENERAL_NOTE = 3
+    ATTRIBUTION_NOTE = 4
+    CONTRAFACT_NOTE = 5
+    INTABULATION_NOTE = 6
 
     NOTE_TYPES = (
         (ALTERNATE_TITLE, "Alternate Title"),
         (PARS, "Pars"),
         (GENERAL_NOTE, "General Note"),
+        (ATTRIBUTION_NOTE, "Attribution Note"),
+        (CONTRAFACT_NOTE, "Contrafact Note"),
+        (INTABULATION_NOTE, "Intabulation Note"),
     )
 
     class Meta:
