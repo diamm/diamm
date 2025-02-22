@@ -29,7 +29,10 @@ class StructureSerializer(ContextDictSerializer):
 
         return members
 
-    def get_rendering(self, obj: dict) -> dict:
+    def get_rendering(self, obj: dict) -> None | dict:
+        if not obj.get("composition_i"):
+            return None
+
         return {
             "@id": reverse(
                 "composition-detail",
