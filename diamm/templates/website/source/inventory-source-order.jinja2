@@ -24,6 +24,7 @@
         <tr>
             <th>Folio / Pages</th>
             <th>Composition</th>
+            <th>Source attribution</th>
             <th>Composers (? Uncertain)</th>
         </tr>
         </thead>
@@ -38,7 +39,10 @@
                     {{ foliation(entry, show_imagelinks and entry.pages) }}
                 </td>
                 <td class="item-details">
-                    {{ entry.composition }}
+                    {{ entry.composition|default("-") }}
+                </td>
+                <td>
+                    {{ entry.source_attribution|default("-") }}
                 </td>
                 <td>
                     {{ composers(entry) }}

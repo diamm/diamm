@@ -12,7 +12,7 @@
         </thead>
         <tbody>
         {% set show_imagelinks = content.manifest_url is defined and request.user.is_authenticated %}
-        {% for entry in content.inventory|sort(attribute="composition") %}
+        {% for entry in content.inventory | selectattr("composition") | sort(attribute="composition") %}
         <tr class="alpha-order">
             <td class="item-details">
                 {{ entry.composition }}
