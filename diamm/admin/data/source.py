@@ -165,12 +165,16 @@ class ItemInline(RawIdWidgetAdminMixin, admin.TabularInline):
         "composition",
         "folio_start",
         "folio_end",
-        "get_composition",
+        # "get_composition",
         "get_composers",
         "source_order",
     )
     raw_id_fields = ("composition",)
     readonly_fields = ("link_id_field", "get_composers", "get_composition")
+
+    formfield_overrides = {
+        models.CharField: {"widget": TextInput(attrs={"size": "10"})},
+    }
 
     def get_queryset(self, request):
         return (
