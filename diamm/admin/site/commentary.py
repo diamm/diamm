@@ -17,6 +17,7 @@ class CommentaryAdmin(admin.ModelAdmin):
         "content_type",
     )
     list_filter = ("comment_type", "content_type")
+    autocomplete_fields = ("author",)
 
     fields = ("comment", "author", "comment_type", "get_entity")
 
