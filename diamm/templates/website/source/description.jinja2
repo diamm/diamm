@@ -5,10 +5,8 @@
             <tr>
                 <th>Archive</th>
                 <td>
-                    <a href="{{ content.archive.url }}">
-                        {{ content.archive.name }}
-                    </a>, {{ content.archive.city }}, {{ content.archive.country }}
-                    ({{ content.archive.siglum }})
+                    <a href={{ content.archive.url }}>{{ content.archive.name }}</a>,
+                    <span>{{ content.archive.city }}, {{ content.archive.country }} ({{ content.archive.siglum }})</span>
                 </td>
             </tr>
             <tr>
