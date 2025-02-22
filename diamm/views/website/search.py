@@ -26,6 +26,8 @@ class SearchView(generics.GenericAPIView):
             query = "*:*"
 
         filters.update({"{!tag=type}type": settings.SOLR["SEARCH_TYPES"]})
+        if not request.user.is_staff:
+            filters.update({"public_b": True})
 
         type_query = request.GET.get("type", None)
 

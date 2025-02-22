@@ -127,11 +127,13 @@ class CompositionDetailSerializer(ContextSerializer):
         return obj.__class__.__name__.lower()
 
     def get_sources(self, obj) -> list:
+        req = self.context["request"]
+        public_filter = {} if req.user.is_staff else {"source__public": True}
         if obj.sources:
             return CompositionSourceSerializer(
                 obj.sources.select_related("source__archive__city")
                 .prefetch_related("voices__type", "pages")
-                .all()
+                .filter(**public_filter)
                 .order_by("source__sort_order"),
                 context={"request": self.context["request"]},
                 many=True,

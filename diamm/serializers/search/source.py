@@ -31,7 +31,7 @@ def _get_sources(cfg: dict):
                            )::text, ''
                ) AS surface_type,
             s.date_statement AS date_statement, s.measurements AS measurements, s.inventory_provided AS inventory_provided,
-            s.start_date AS start_date, s.end_date AS end_date,
+            s.start_date AS start_date, s.end_date AS end_date, s.public AS public,
             (SELECT count(itc.id)
                 FROM diamm_data_item AS it
                 LEFT JOIN diamm_data_composition AS itc ON it.composition_id = itc.id
@@ -161,6 +161,7 @@ class SourceSearchSerializer(serpy.DictSerializer):
     end_date_i = serpy.IntField(attr="end_date", required=False)
     cover_image_i = serpy.IntField(attr="cover_image", required=False)
     public_images_b = serpy.BoolField(attr="public_images", required=False)
+    public_b = serpy.BoolField(attr="public", required=False)
     open_images_b = serpy.BoolField(attr="open_images", required=False)
     external_images_b = serpy.BoolField(attr="has_external_images", required=False)
     bibliography_json = serpy.Field(attr="bibliography")

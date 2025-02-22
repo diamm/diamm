@@ -4,6 +4,7 @@ import logging
 import serpy
 import ujson
 
+from diamm.serializers.fields import StaticField
 from diamm.serializers.search.helpers import get_db_records, parallelise, record_indexer
 
 log = logging.getLogger("diamm")
@@ -24,6 +25,7 @@ def _get_sets(cfg):
                     WHERE ss.set_id = s.id) AS sources,
                    (SELECT jsonb_agg(jsonb_build_object(
                            'pk', ss.source_id,
+                           'public', so.public,
                            'display_name', concat(a.siglum, ' ', so.shelfmark, coalesce(' (' || so.name || ')', '')),
                            'cover_image', (SELECT i.id
                                            FROM diamm_data_page AS pg
@@ -72,6 +74,7 @@ class SetSearchSerializer(serpy.DictSerializer):
     type = serpy.StrField(attr="record_type")
     pk = serpy.IntField()
     cluster_shelfmark_s = serpy.StrField(attr="cluster_shelfmark")
+    public_b = StaticField(True)
 
     # allow sorting by alpha-numeric shelfmark.
     cluster_shelfmark_ans = serpy.StrField(attr="cluster_shelfmark")

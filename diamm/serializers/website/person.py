@@ -72,9 +72,13 @@ class PersonCompositionSerializer(ContextSerializer):
         )
 
     def get_sources(self, obj):
+        req = self.context["request"]
         items = obj.composition.sources.all()
         ret = []
         for item in items:
+            if not req.user.is_staff and not item.source.public:
+                continue
+
             url = reverse(
                 "source-detail",
                 kwargs={"pk": item.source.pk},

@@ -84,8 +84,12 @@ class ArchiveDetailSerializer(ContextSerializer):
         ).data
 
     def get_sources(self, obj):
+        req = self.context["request"]
+        public_filter = {} if req.user.is_staff else {"public": True}
         return SourceArchiveSerializer(
-            obj.sources.all(), many=True, context={"request": self.context["request"]}
+            obj.sources.filter(**public_filter),
+            many=True,
+            context={"request": self.context["request"]},
         ).data
 
     def get_notes(self, obj) -> list:

@@ -2,6 +2,7 @@ import logging
 
 import serpy
 
+from diamm.serializers.fields import StaticField
 from diamm.serializers.search.helpers import (
     get_db_records,
     parallelise,
@@ -43,7 +44,7 @@ def _get_organizations(cfg: dict):
 class OrganizationSearchSerializer(serpy.DictSerializer):
     type = serpy.StrField(attr="record_type")
     pk = serpy.IntField()
-
+    public_b = StaticField(True)
     location_s = serpy.Field(attr="location")
 
     name_s = serpy.StrField(attr="name")

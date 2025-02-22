@@ -96,6 +96,9 @@ class SetDetailSerializer(ContextSerializer):
         return res
 
     def get_sources(self, obj) -> list:
+        req = self.context["request"]
+        is_staff = req.user.is_staff
+
         connection = SolrManager(settings.SOLR["SERVER"])
         fq: list = ["type:set", f"pk:{obj.pk}"]
 
@@ -112,6 +115,9 @@ class SetDetailSerializer(ContextSerializer):
         ret = []
 
         for source in sources:
+            if not source.get("public", False) and not is_staff:
+                continue
+
             url = reverse(
                 "source-detail",
                 kwargs={

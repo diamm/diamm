@@ -3,6 +3,7 @@ import logging
 import serpy
 import ujson
 
+from diamm.serializers.fields import StaticField
 from diamm.serializers.search.helpers import (
     format_person_name,
     get_db_records,
@@ -59,6 +60,7 @@ class PersonSearchSerializer(serpy.DictSerializer):
     pk = serpy.IntField()
     type = serpy.StrField(attr="record_type")
     name_s = serpy.MethodField(method="names")
+    public_b = StaticField(True)
     # Copy the full name to a sorting field
     display_name_ans = serpy.MethodField(method="names")
     last_name_s = serpy.StrField(attr="last_name")

@@ -17,8 +17,9 @@ class SourceDetail(generics.RetrieveAPIView):
     serializer_class = SourceDetailSerializer
 
     def get_queryset(self):
+        public_filter = {} if self.request.user.is_staff else {"public": True}
         return (
-            Source.objects.all()
+            Source.objects.filter(**public_filter)
             .select_related("archive__city__parent", "cover_image")
             .prefetch_related(
                 "pages",
@@ -38,59 +39,24 @@ class SourceDetail(generics.RetrieveAPIView):
             )
         )
 
-    # def get_queryset(self):
-    #
-    #     queryset = (
-    #         Source.objects.all()
-    #         .select_related("archive__city__parent", "cover_image")
-    #         .prefetch_related(
-    #             "pages", "copyists", "notations", "surface", "bibliographies"
-    #         )
-    #     )
-    #     return queryset
-
-    # def get(self, request, *args, **kwargs) -> response.Response:
-    #     # If we're asking for the source detail with HTML, only return a limited amount
-    #     # of information; the rest will get filled in when the JavaScript application loads
-    #     # the JSON data.
-    #     if request.accepted_renderer.format == "html":
-    #         try:
-    #             source = (
-    #                 Source.objects.select_related(
-    #                     "archive__city__parent", "cover_image"
-    #                 )
-    #                 .prefetch_related(
-    #                     "pages",
-    #                     "copyists",
-    #                     "notations",
-    #                     "identifiers",
-    #                 )
-    #                 .get(id=kwargs["pk"])
-    #             )
-    #         except Source.DoesNotExist:
-    #             return response.Response(
-    #                 status=status.HTTP_404_NOT_FOUND, template_name="404.jinja2"
-    #             )
-    #
-    #         return response.Response(
-    #             {
-    #                 "pk": kwargs["pk"],
-    #                 "display_name": source.display_name,
-    #                 "display_summary": source.display_summary,
-    #             }
-    #         )
-    #     return super().get(request, args, kwargs)
-
 
 class SourceManifest(generics.GenericAPIView):
     renderer_classes = (UJSONRenderer,)
     permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request, pk, *args, **kwargs) -> response.Response:
-        res = SolrConnection.search("*:*", fq=["type:source", f"pk:{pk}"], rows=1)
+        fq = ["type:source", f"pk:{pk}"]
+        if not request.user.is_staff:
+            fq.append("public_b:true")
+
+        res = SolrConnection.search("*:*", fq=fq, rows=1)
 
         if res.hits == 0:
-            return response.Response(status=status.HTTP_404_NOT_FOUND)
+            return response.Response(
+                status=status.HTTP_404_NOT_FOUND,
+                content_type="text/html",
+                data="404 Not Found",
+            )
 
         manifest = SourceManifestSerializer(res.docs[0], context={"request": request})
         return response.Response(manifest.data)

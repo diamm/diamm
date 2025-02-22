@@ -2,6 +2,7 @@ import logging
 
 import serpy
 
+from diamm.serializers.fields import StaticField
 from diamm.serializers.search.helpers import (
     get_db_records,
     parallelise,
@@ -71,7 +72,7 @@ def _get_compositions(cfg: dict):
 class CompositionSearchSerializer(serpy.DictSerializer):
     type = serpy.StrField(attr="record_type")
     pk = serpy.IntField(attr="pk")
-
+    public_b = StaticField(True)
     title_s = serpy.StrField(attr="title")
     display_name_ans = serpy.StrField(attr="title")
     anonymous_b = serpy.BoolField(attr="anonymous")

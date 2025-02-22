@@ -2,6 +2,7 @@ import logging
 
 import serpy
 
+from diamm.serializers.fields import StaticField
 from diamm.serializers.search.helpers import (
     get_db_records,
     parallelise,
@@ -52,6 +53,7 @@ def _get_archives(cfg: dict):
 class ArchiveSearchSerializer(serpy.DictSerializer):
     pk = serpy.IntField()
     type = serpy.StrField(attr="record_type")
+    public_b = StaticField(True)
     sources_ss = serpy.Field(attr="sources")
     city_s = serpy.StrField(attr="city.name")
     city_variants_ss = serpy.Field(attr="city.variant_names")

@@ -298,6 +298,7 @@ class SourceAdmin(VersionAdmin):
         ItemInline,
     )
     list_filter = (
+        "public",
         SourceKeyFilter,
         ArchiveKeyFilter,
         CountryListFilter,
