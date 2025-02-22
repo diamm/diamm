@@ -1,0 +1,16 @@
+{% extends "base.jinja2" %}
+{% import "website/blocks/form_field.jinja2" as form_field %}
+
+{% block body %}
+    <div class="columns">
+        <div class="column is-half is-offset-one-quarter">
+            <h2 class="title">Confirm Activation</h2>
+            <p>Please confirm your account activation.</p>
+            <form action="{{ url('registration_activate') }}" method="post">
+                {% csrf_token %}
+                {{ form_field.format(form.activation_key, "text") }}
+                <button type="submit" class="button is-primary pull-right">Confirm</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

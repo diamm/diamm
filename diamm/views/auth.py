@@ -85,18 +85,17 @@ class CreateAccount(FormView):
         )
 
         to_address = settings.ADMIN_EMAIL if settings.DEBUG else email
-
+        confirmation_link = reverse(
+            "registration_activate",
+            request=self.request,
+        )
         send_mail(
             "Registration Confirmation for DIAMM",
             settings.MAIL["CONFIRMATION_MESSAGE"].format(
                 first_name=first_name,
                 last_name=last_name,
                 hostname=f"https://{settings.HOSTNAME}",
-                confirmation_link=reverse(
-                    "registration_activate",
-                    kwargs={"activation_key": activation_key},
-                    request=self.request,
-                ),
+                confirmation_link=f"{confirmation_link}?activation_key={activation_key}",
             ),
             settings.DEFAULT_FROM_EMAIL,
             [to_address],

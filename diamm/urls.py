@@ -168,8 +168,8 @@ urlpatterns = [
         name="password-change-done",
     ),
     re_path(
-        r"activate/(?P<activation_key>[-:\w]+)/$",
-        ActivationView.as_view(template_name="website/auth/activation.jinja2"),
+        r"activate/$",
+        ActivationView.as_view(template_name="website/auth/activation_form.jinja2"),
         name="registration_activate",
     ),
     path(
