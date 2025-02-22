@@ -197,14 +197,15 @@ class SourceComposerInventorySerializer(ContextDictSerializer):
 
         return [f for f in inventory if f]
 
-    def get_url(self, obj):
-        if "pk" in obj and obj.get("pk"):
-            return reverse(
-                "person-detail",
-                kwargs={"pk": obj["pk"]},
-                request=self.context["request"],
-            )
-        return None
+    def get_url(self, obj) -> str | None:
+        if "composer_i" not in obj or obj["composer_i"] is None:
+            return None
+
+        return reverse(
+            "person-detail",
+            kwargs={"pk": obj["composer_i"]},
+            request=self.context["request"],
+        )
 
 
 class SourceInventoryNoteSerializer(serpy.Serializer):
