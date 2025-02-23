@@ -88,6 +88,26 @@ class UserChangeForm(forms.ModelForm):
         return self.initial["password"]
 
 
+class CommentaryFilter(admin.SimpleListFilter):
+    title = _("Commentary")
+    parameter_name = "commentary"
+
+    def lookups(self, request, model_admin):
+        return (
+            ("yes", _("User has commentary")),
+            ("no", _("User does not have commentary")),
+        )
+
+    def queryset(self, request, queryset):
+        if not self.value():
+            return queryset
+        val = self.value()
+        if val == "yes":
+            return queryset.filter(commentaries__isnull=False).distinct()
+        elif val == "no":
+            return queryset.filter(commentaries__isnull=True).distinct()
+
+
 @admin.register(CustomUserModel)
 class UserAdmin(BaseUserAdmin):
     form = UserChangeForm
@@ -101,7 +121,13 @@ class UserAdmin(BaseUserAdmin):
         "legacy_username",
         "last_login",
     )
-    list_filter = ("is_staff", "is_active", "is_superuser")
+    list_filter = (
+        "is_staff",
+        "is_active",
+        "is_superuser",
+        CommentaryFilter,
+        ("last_login", admin.EmptyFieldListFilter),
+    )
 
     fieldsets = (
         (None, {"fields": ("email", "password")}),
