@@ -112,7 +112,7 @@ class CommentaryFilter(admin.SimpleListFilter):
 class UserAdmin(BaseUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
-
+    list_per_page = 400
     list_display = (
         "email",
         "affiliation",
