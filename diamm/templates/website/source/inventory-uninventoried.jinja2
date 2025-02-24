@@ -6,6 +6,7 @@
         <thead>
             <tr>
                 <th>Folios / Pages</th>
+                <th>Item title</th>
                 <th>Attribution in Source</th>
                 <th>Composers (? Uncertain)</th>
             </tr>
@@ -17,8 +18,11 @@
             <td>
                 {{ foliation(entry, show_imagelinks and entry.pages) }}
             </td>
+            <td>
+                {{ entry.item_title|default("-") }}
+            </td>
             <td class="item-details">
-                {{ entry.source_attribution|default("[No Source Attribution]") }}
+                {{ entry.source_attribution|default("-") }}
             </td>
             <td>
                 {{ composers(entry) }}

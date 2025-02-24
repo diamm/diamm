@@ -163,6 +163,7 @@ class ItemInline(RawIdWidgetAdminMixin, admin.TabularInline):
     fields = (
         "link_id_field",
         "composition",
+        "item_title",
         "folio_start",
         "folio_end",
         # "get_composition",

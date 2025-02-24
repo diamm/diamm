@@ -23,7 +23,7 @@
         <thead>
         <tr>
             <th>Folio / Pages</th>
-            <th>Composition</th>
+            <th>Composition / Item title</th>
             <th>Source attribution</th>
             <th>Composers (? Uncertain)</th>
         </tr>
@@ -39,7 +39,13 @@
                     {{ foliation(entry, show_imagelinks and entry.pages) }}
                 </td>
                 <td class="item-details">
-                    {{ entry.composition|default("-") }}
+                    {% if entry.composition %}
+                        {{ entry.composition }}
+                    {% elif entry.item_title %}
+                        {{ entry.item_title }}
+                    {% else %}
+                    -
+                    {% endif %}
                 </td>
                 <td>
                     {{ entry.source_attribution|default("-") }}
@@ -53,12 +59,18 @@
                 <td colspan="3">
                     <div class="columns">
                         <header class="column">
+                            {% if entry.composition %}
                             <h4 class="title is-4">
                                 <a href="{{ entry.url }}">{{ entry.composition }}</a>
                             </h4>
                             <h5 class="subtitle is-5">
                                 {{ composers(entry) }}
                             </h5>
+                            {% elif entry.item_title %}
+                                <h4 class="title is-4">{{ entry.item_title }}</h4>
+                            {% else %}
+                                <h4 class="title is-4">[Unknown Title]</h4>
+                            {% endif %}
                         </header>
                     </div>
                     <div class="columns">

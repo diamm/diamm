@@ -230,7 +230,8 @@ class SourceInventoryBibliographySerializer(ContextDictSerializer):
         return citation
 
 
-class SourceUninventoriedSerializer(ContextDictSerializer):
+class SourceUninventoriedSerializer(ContextSerializer):
+    pk = serpy.IntField()
     composers = serpy.MethodField()
 
     def get_composers(self, obj) -> list | None:
@@ -261,6 +262,7 @@ class SourceInventorySerializer(ContextSerializer):
     folio_end = serpy.StrField(required=False)
     composition = serpy.StrField(required=False)
     composers = serpy.MethodField()
+    item_title = serpy.StrField(required=False)
     bibliography = serpy.MethodField(required=False)
     voices = serpy.MethodField()
     pages = serpy.MethodField(required=False)

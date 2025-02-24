@@ -73,6 +73,8 @@
                 {{ "(?)" if composer.uncertain else "" }}
             </div>
         {% endfor %}
+    {% elif entry.item_title %}
+        -
     {% else %}
         Anonymous
     {% endif %}
