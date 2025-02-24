@@ -1,5 +1,7 @@
 from django.contrib import admin
+from django.db import models
 from django.forms import ModelForm
+from django.forms.widgets import TextInput
 from django.template.defaultfilters import truncatewords
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
@@ -107,6 +109,7 @@ class ItemAdmin(VersionAdmin):
         "get_source",
         "get_composition",
         "get_composers",
+        "item_title",
         "folio_start",
         "folio_end",
         "source_order",
@@ -114,7 +117,7 @@ class ItemAdmin(VersionAdmin):
         "created",
         "updated",
     )
-    list_editable = ("source_order", "folio_start", "folio_end")
+    list_editable = ("item_title", "source_order", "folio_start", "folio_end")
     list_filter = (
         SourceKeyFilter,
         CompositionKeyFilter,
@@ -127,6 +130,10 @@ class ItemAdmin(VersionAdmin):
         "composition__title",
         "=source__pk",
     )
+    formfield_overrides = {
+        models.CharField: {"widget": TextInput(attrs={"size": "10"})},
+    }
+
     # list_filter = (AggregateComposerListFilter,)
     inlines = (ItemNoteInline, ItemComposerInline, BibliographyInline, ItemVoice)
     filter_horizontal = ["pages"]
