@@ -96,6 +96,19 @@ class PersonIdentifierSerializer(ContextSerializer):
     identifier = serpy.StrField()
 
 
+class PersonUninventoriedItemsSerializer(ContextSerializer):
+    title = serpy.StrField("item.title", required=False)
+    source = serpy.StrField("item.source.display_name")
+    source_url = serpy.MethodField()
+
+    def get_source_url(self, obj):
+        return reverse(
+            "source-detail",
+            kwargs={"pk": obj.item.source_id},
+            request=self.context["request"],
+        )
+
+
 class PersonDetailSerializer(ContextSerializer):
     url = serpy.MethodField()
     pk = serpy.IntField()
@@ -112,11 +125,21 @@ class PersonDetailSerializer(ContextSerializer):
     variant_names = serpy.MethodField()
     roles = serpy.MethodField()
     identifiers = serpy.MethodField(required=False)
+    uninventoried_items = serpy.MethodField()
 
     def get_url(self, obj) -> str:
         return reverse(
             "person-detail", kwargs={"pk": obj.pk}, request=self.context["request"]
         )
+
+    def get_uninventoried_items(self, obj):
+        return PersonUninventoriedItemsSerializer(
+            obj.unattributed_works.select_related("item__source__archive").distinct(
+                "item__source"
+            ),
+            context={"request": self.context["request"]},
+            many=True,
+        ).data
 
     def get_compositions(self, obj) -> list:
         return PersonCompositionSerializer(

@@ -8,7 +8,9 @@ from pagedown.widgets import AdminPagedownWidget
 from reversion.admin import VersionAdmin
 
 from diamm.admin.forms.merge_people import MergePeopleForm
+from diamm.admin.helpers.optimized_raw_id import RawIdWidgetAdminMixin
 from diamm.admin.merge_models import merge
+from diamm.models import ItemComposer
 from diamm.models.data.composition_composer import CompositionComposer
 from diamm.models.data.organization import Organization
 from diamm.models.data.person import Person
@@ -20,12 +22,16 @@ from diamm.models.data.source_provenance import SourceProvenance
 from diamm.models.data.source_relationship import SourceRelationship
 
 
-class CompositionsInline(admin.TabularInline):
+class CompositionsInline(RawIdWidgetAdminMixin, admin.TabularInline):
     verbose_name = "Composition"
     verbose_name_plural = "Compositions"
     model = CompositionComposer
     extra = 0
     raw_id_fields = ("composition",)
+    classes = ("collapse",)
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related()
 
 
 class PersonNoteInline(admin.TabularInline):
@@ -130,6 +136,17 @@ class PersonBiography(admin.SimpleListFilter):
             return queryset
 
 
+class PersonUnattributedInline(RawIdWidgetAdminMixin, admin.TabularInline):
+    verbose_name = "Unattributed Item"
+    verbose_name_plural = "Unattributed Items"
+    model = ItemComposer
+    extra = 0
+    raw_id_fields = ("item",)
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related()
+
+
 @admin.register(Person)
 class PersonAdmin(VersionAdmin):
     save_on_top = True
@@ -151,6 +168,7 @@ class PersonAdmin(VersionAdmin):
         RelatedSourcesInline,
         ProvenanceSourcesInline,
         CompositionsInline,
+        PersonUnattributedInline,
     )
     actions = ["merge_people_action"]
     # filter_horizontal = ('roles',)
@@ -161,8 +179,11 @@ class PersonAdmin(VersionAdmin):
     formfield_overrides = {models.TextField: {"widget": AdminPagedownWidget}}
 
     def get_queryset(self, request):
-        qset = super().get_queryset(request)
-        # qset = qset.prefetch_related('roles')
+        qset = (
+            super()
+            .get_queryset(request)
+            .prefetch_related("compositions", "unattributed_works__item__source")
+        )
         return qset
 
     def merge_people_action(self, request, queryset):

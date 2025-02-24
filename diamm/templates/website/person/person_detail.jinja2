@@ -48,38 +48,15 @@
                     </td>
                 </tr>
                 {% endif %}
-                {% if content.compositions %}
+                {% if content.uninventoried_items %}
                 <tr>
-                    <th>Compositions</th>
+                    <th>Uninventoried Source Relationships</th>
                     <td>
-                        <table class="table is-striped is-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Composition</th>
-                                    <th>Appears in</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            {% for composition in content.compositions %}
-                                <tr>
-                                    <td>
-                                        <a href="{{ composition.url }}">
-                                            {{ "? " if composition.uncertain else "" }}{{ composition.title }}
-                                        </a>
-                                    </td>
-                                    <td>
-                                        {% if composition.sources %}
-                                            {% for source in composition.sources %}
-                                                <div>
-                                                    <a href="{{ source.url }}">{{ source.name }}</a>
-                                                </div>
-                                            {% endfor %}
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
+                        <ul>
+                        {% for item in content.uninventoried_items %}
+                            <li><a href="{{ item.source_url }}">{{ item.source }}</a></li>
+                        {% endfor %}
+                        </ul>
                     </td>
                 </tr>
                 {% endif %}
@@ -145,6 +122,41 @@
                 {% endif %}
                 </tbody>
             </table>
+        </div>
+    </div>
+    {% if content.compositions %}
+    <div class="columns">
+        <div class="column">
+            <h3 class="title is-3">Compositions</h3>
+                <table class="table is-striped is-bordered">
+                    <thead>
+                    <tr>
+                        <th>Composition</th>
+                        <th>Appears in</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for composition in content.compositions %}
+                        <tr>
+                            <td>
+                                <a href="{{ composition.url }}">
+                                    {{ "? " if composition.uncertain else "" }}{{ composition.title }}
+                                </a>
+                            </td>
+                            <td>
+                                {% if composition.sources %}
+                                    {% for source in composition.sources %}
+                                        <div>
+                                            <a href="{{ source.url }}">{{ source.name }}</a>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
         </div>
     </div>
     {% if request.user.is_staff %}
