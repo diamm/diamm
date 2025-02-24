@@ -27,7 +27,7 @@ class ProblemReportAdmin(VersionAdmin):
     fields = (
         "content_type",
         "object_id",
-        # "get_entity",
+        "get_entity",
         "note",
         "internal_note",
         "accepted",
@@ -35,11 +35,7 @@ class ProblemReportAdmin(VersionAdmin):
         "credit",
         "contributor",
     )
-    # readonly_fields = (
-    #     "content_type",
-    #     "object_id",
-    #     "get_entity",
-    # )
+    readonly_fields = ("get_entity",)
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -64,6 +60,9 @@ class ProblemReportAdmin(VersionAdmin):
     get_contributor.short_description = "contributor"
 
     def get_entity(self, obj):
+        if not obj.record:
+            return "-"
+
         obj_pk = obj.record.id
         if isinstance(obj.record, Source):
             url = reverse("admin:diamm_data_source_change", args=[obj_pk])
@@ -78,4 +77,4 @@ class ProblemReportAdmin(VersionAdmin):
             url = reverse("admin:diamm_data_composition_change", args=[obj_pk])
             return mark_safe(f"<a href='{url}'>{obj.record.title} (composition)</a>")  # noqa: S308
 
-    get_entity.short_description = "entity"
+    get_entity.short_description = "Linked Record"
