@@ -9,6 +9,7 @@ from reversion.admin import VersionAdmin
 
 from diamm.admin.filters.input_filter import InputFilter
 from diamm.models import Voice
+from diamm.models.data.external_page import ExternalPage
 from diamm.models.data.item import Item
 from diamm.models.data.item_bibliography import ItemBibliography
 from diamm.models.data.item_composer import ItemComposer
@@ -41,8 +42,14 @@ class ItemAdminForm(ModelForm):
                 .select_related("source")
                 .order_by("sort_order")
             )
+            self.fields["external_pages"].queryset = (
+                ExternalPage.objects.filter(source=self.instance.source)
+                .select_related("source")
+                .order_by("sort_order")
+            )
         else:
             self.fields["pages"].queryset = Page.objects.none()
+            self.fields["external_pages"].queryset = ExternalPage.objects.none()
 
 
 class ItemNoteInline(admin.TabularInline):
@@ -56,6 +63,7 @@ class BibliographyInline(admin.TabularInline):
     model = ItemBibliography
     extra = 0
     raw_id_fields = ("bibliography",)
+    list_select_related = True
 
 
 class ItemComposerInline(admin.TabularInline):

@@ -311,6 +311,7 @@ class SourceAdmin(VersionAdmin):
         ArchiveKeyFilter,
         CountryListFilter,
         InventoryFilter,
+        ("external_manifest", admin.BooleanFieldListFilter),
     )
     list_editable = ("sort_order",)
     filter_horizontal = ["notations"]

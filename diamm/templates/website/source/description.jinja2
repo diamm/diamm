@@ -18,13 +18,20 @@
             {% if not content.public_images %}
             <tr>
                 <th>Image Availability</th>
-                <td>
+                <td class="is-vcentered">
                     {% set extmsg %}
-                    {% if content.has_external_images %}
-                        <strong>Please refer to the external links for image availability.</strong>
-                    {% endif %}
+                        {% if content.has_external_images %}
+                            <strong>Please refer to the external links for image availability.</strong>
+                        {% endif %}
                     {% endset %}
-                    {% if not content.has_images and not content.public_imags %}
+
+                    {% if content.has_external_manifest %}
+                         The images on this record are linked using <a href="https://iiif.io">IIIF</a>. <br />
+                        <a href="{{ content.manifest_url }}">
+                            <img src="{{ static("images/iiif.png") }}" style="width: 20px;" alt="IIIF logo" />
+                            View the IIIF Manifest
+                        </a>
+                    {% elif not content.has_images and not content.public_images %}
                         DIAMM does not have images of this source. {{ extmsg }}
                     {% elif content.has_images and not content.public_images %}
                         DIAMM has images of this manuscript but does not yet have permission to put them

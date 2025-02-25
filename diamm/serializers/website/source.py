@@ -448,6 +448,7 @@ class SourceDetailSerializer(ContextSerializer):
     public_images = serpy.BoolField()
     open_images = serpy.BoolField()
     has_external_images = serpy.MethodField()
+    has_external_manifest = serpy.MethodField()
     numbering_system_type = serpy.StrField(attr="numbering_system_type")
 
     has_images = serpy.MethodField(required=False)
@@ -544,7 +545,15 @@ class SourceDetailSerializer(ContextSerializer):
     def get_has_external_images(self, obj):
         return obj.links.filter(type=4).exists()
 
+    def get_has_external_manifest(self, obj) -> bool:
+        return obj.external_manifest is not None
+
     def get_manifest_url(self, obj):
+        # The assumption here is that if we have an external manifest,
+        # it is public.
+        if obj.external_manifest:
+            return obj.external_manifest
+
         # Return None if the document has no public images
         if not self.context["request"].user.is_authenticated:
             return None

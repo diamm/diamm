@@ -38,6 +38,10 @@
 
         function updatePageDetails(currentCanvasLabel, ranges)
         {
+            if (ranges.length === 0)
+            {
+                return null;
+            }
             let template = document.getElementById("diva-page-details-template");
             const clone = template.content.cloneNode(true);
 

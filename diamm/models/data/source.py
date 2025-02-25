@@ -106,6 +106,12 @@ class Source(models.Model):
     sort_order = models.IntegerField(blank=True, null=True)
     contributions = GenericRelation("diamm_site.ProblemReport")
     commentary = GenericRelation("diamm_site.Commentary")
+    external_manifest = models.URLField(
+        blank=True,
+        null=True,
+        help_text="""URL to external IIIF manifest. This overrides any DIAMM manifest so it should be left blank 
+                     for sources that have DIAMM images attached.""",
+    )
 
     def __str__(self) -> str:
         name: str = f" ({self.name})" if self.name else ""

@@ -25,6 +25,12 @@ class Item(models.Model):
     )
 
     pages = models.ManyToManyField("diamm_data.Page", related_name="items", blank=True)
+    external_pages = models.ManyToManyField(
+        "diamm_data.ExternalPage",
+        related_name="external_items",
+        blank=True,
+        help_text="Only use with an external IIIF manifest. Use the 'pages' field for all other sources.",
+    )
 
     composition = models.ForeignKey(
         "diamm_data.Composition",
