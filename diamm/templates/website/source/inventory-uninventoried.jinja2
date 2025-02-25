@@ -1,20 +1,59 @@
 {% from "website/macros.jinja2" import foliation, composers, voices %}
 
 <div class="column">
-    <p>This source has not been inventoried. However, it is known to contain:</p>
+    <p>This source has not been fully inventoried. If you would like to contribute an inventory please get in touch. E-mail
+        <a href="mailto:diamm@music.ox.ac.uk">diamm@music.ox.ac.uk</a>.</p>
+    {% if content.inventory %}
+    <h4 class="title is-4">Known compositions</h4>
     <table class="table inventory-table">
         <thead>
             <tr>
+                <th>Composition</th>
+                <th>Composers (? Uncertain)</th>
+                <th>Folios / Pages</th>
+                <th>Source Attribution</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% set show_imagelinks = content.manifest_url is defined and request.user.is_authenticated %}
+        {% for entry in content.inventory | selectattr("composition") | sort(attribute="composition") %}
+            <tr class="alpha-order">
+                <td class="item-details">
+                    {{ entry.composition }}
+                </td>
+                <td>
+                    {{ composers(entry) }}
+                </td>
+                <td>
+                    {{ foliation(entry, show_imagelinks and entry.pages) }}
+                </td>
+                <td>
+                    {{ entry.source_attribution|default("-") }}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
+    <h4 class="title is-4">Known composers</h4>
+    <table class="table inventory-table">
+        <thead>
+            <tr>
+                <th>Composers (? Uncertain)</th>
                 <th>Folios / Pages</th>
                 <th>Item title</th>
                 <th>Attribution in Source</th>
-                <th>Composers (? Uncertain)</th>
+
             </tr>
         </thead>
         <tbody>
         {% set show_imagelinks = content.manifest_url is defined and request.user.is_authenticated %}
         {% for entry in content.uninventoried %}
         <tr>
+            <td>
+                Works by {{ composers(entry) }}
+            </td>
             <td>
                 {{ foliation(entry, show_imagelinks and entry.pages) }}
             </td>
@@ -24,16 +63,9 @@
             <td class="item-details">
                 {{ entry.source_attribution|default("-") }}
             </td>
-            <td>
-                {{ composers(entry) }}
-            </td>
         </tr>
         {% endfor %}
         </tbody>
     </table>
     <hr />
-    <p>
-        If you would like to contribute an inventory please get in touch. E-mail
-        <a href="mailto:diamm@music.ox.ac.uk">diamm@music.ox.ac.uk</a>.
-    </p>
 </div>

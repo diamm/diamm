@@ -196,10 +196,17 @@ class ItemInline(RawIdWidgetAdminMixin, admin.TabularInline):
     get_composition.short_description = "Composition"
 
     def get_composers(self, obj):
-        if not obj.composition_id:
-            return None
-        cnames: list = [c.composer.full_name for c in obj.composition.composers.all()]
-        return mark_safe("; <br />".join(cnames))  # noqa: S308
+        if obj.composition_id:
+            cnames: list = [
+                c.composer.full_name for c in obj.composition.composers.all()
+            ]
+            return mark_safe("; <br />".join(cnames))  # noqa: S308
+        elif obj.unattributed_composers:
+            cnames: list = [
+                f"[{c.composer.full_name}]" for c in obj.unattributed_composers.all()
+            ]
+            return mark_safe("; <br />".join(cnames))  # noqa: S308
+        return "-"
 
     get_composers.short_description = "Composers"
 

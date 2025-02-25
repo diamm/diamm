@@ -40,7 +40,7 @@
 
 {% macro foliation(entry, show_imagelinks) %}
     {% if not entry.folio_start %}
-        [No start folio listed]
+        [-]
     {% else %}
         {{ entry.folio_start }}
         {%- if entry.folio_end and entry.folio_end != entry.folio_start -%}
