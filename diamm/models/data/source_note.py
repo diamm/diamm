@@ -28,6 +28,7 @@ class SourceNote(models.Model):
     CONTENTS_NOTE = 16
     SURFACE_NOTE = 17
     DIAMM_NOTE = 18
+    INVENTORY_NOTE = 19
     RISM_NOTE = 97  # was 2
     CCM_NOTE = 98  # was 3
     PRIVATE_NOTE = 99
@@ -52,6 +53,7 @@ class SourceNote(models.Model):
         (SURFACE_NOTE, "Surface"),
         (DIAMM_NOTE, "DIAMM Note"),
         (PRIVATE_NOTE, "Private Note"),
+        (INVENTORY_NOTE, "Inventory"),
     )
 
     type = models.IntegerField(choices=NOTE_TYPES)
