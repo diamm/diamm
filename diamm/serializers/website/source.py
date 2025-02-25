@@ -8,7 +8,7 @@ from django.template.loader import get_template
 from rest_framework.reverse import reverse
 
 from diamm.helpers.solr_helpers import SolrManager
-from diamm.models import Organization, Person
+from diamm.models import Organization, Person, SourceURL
 from diamm.serializers.fields import DateTimeField
 from diamm.serializers.serializers import ContextDictSerializer, ContextSerializer
 
@@ -546,19 +546,21 @@ class SourceDetailSerializer(ContextSerializer):
         return obj.links.filter(type=4).exists()
 
     def get_has_external_manifest(self, obj) -> bool:
-        return obj.external_manifest is not None
+        return (
+            self.get_has_images(obj) is False
+            and obj.links.filter(type=SourceURL.IIIF_MANIFEST).exists() is True
+        )
 
     def get_manifest_url(self, obj):
         # The assumption here is that if we have an external manifest,
         # it is public.
-        if obj.external_manifest:
-            return obj.external_manifest
+        if not self.get_has_images(obj):
+            if iiif_link := obj.links.filter(type=SourceURL.IIIF_MANIFEST).first():
+                return iiif_link.link
+            return None
 
         # Return None if the document has no public images
         if not self.context["request"].user.is_authenticated:
-            return None
-
-        if not self.get_has_images(obj):
             return None
 
         return reverse(

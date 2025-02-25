@@ -13,7 +13,7 @@ class SourceURL(models.Model):
     EXTERNAL_IMAGES = 4
 
     URL_TYPES = (
-        (IIIF_MANIFEST, "IIIF"),
+        (IIIF_MANIFEST, "IIIF Manifest"),
         (HOST, "Host Institution"),
         (ANCILLARY, "Ancillary"),
         (EXTERNAL_IMAGES, "External Images"),
@@ -21,7 +21,7 @@ class SourceURL(models.Model):
 
     type = models.IntegerField(choices=URL_TYPES)
     link_text = models.CharField(max_length=1024, blank=True, null=True)
-    link = models.CharField(max_length=1024)
+    link = models.URLField(max_length=1024)
     source = models.ForeignKey(
         "diamm_data.Source", related_name="links", on_delete=models.CASCADE
     )
