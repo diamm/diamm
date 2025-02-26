@@ -1,39 +1,27 @@
 import serpy
 from rest_framework.reverse import reverse
 
+from diamm.models import SourceURL
 from diamm.serializers.serializers import ContextSerializer
 
 
 class SourceArchiveSerializer(ContextSerializer):
     url = serpy.MethodField()
     display_name = serpy.StrField(attr="display_name")
-    # has_images = serpy.MethodField()
-
     public_images = serpy.BoolField(attr="public_images")
-    # cover_image = serpy.MethodField(required=False)
-    #
     source_type = serpy.StrField(attr="type", required=False)
     date_statement = serpy.StrField(attr="date_statement", required=False)
-    # surface = serpy.StrField(attr="surface_type_s", required=False)
+    has_external_manifest = serpy.MethodField()
 
     def get_url(self, obj):
         return reverse(
             "source-detail", kwargs={"pk": obj.pk}, request=self.context["request"]
         )
 
-    def get_cover_image(self, obj):
-        if not obj.get("cover_image_i"):
-            return None
-
-        return reverse(
-            "image-serve",
-            kwargs={
-                "pk": obj["cover_image_i"],
-                "region": "full",
-                "size": "100,",
-                "rotation": 0,
-            },
-            request=self.context["request"],
+    def get_has_external_manifest(self, obj) -> bool:
+        return (
+            obj.public_images is False
+            and obj.links.filter(type=SourceURL.IIIF_MANIFEST).exists() is True
         )
 
 
