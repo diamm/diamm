@@ -68,7 +68,8 @@ export default class Renderer
         // FIXME(wabain): Remove this when there's more confidence the check shouldn't be needed
         if (!this.layout.getPageInfo(viewportPosition.anchorPage))
         {
-            throw new Error('invalid page: ' + viewportPosition.anchorPage);
+            //throw new Error('invalid page: ' + viewportPosition.anchorPage);
+            viewportPosition.anchorPage = parseInt(this.layout.getIndexOfFirstPage(), 10);
         }
 
         if (this._canvas.width !== this._viewport.width || this._canvas.height !== this._viewport.height)

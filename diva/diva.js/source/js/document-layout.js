@@ -32,6 +32,17 @@ export default class DocumentLayout
     }
 
     /**
+     * Gets the page index of the first page so that we don't accidentally assume a first page index.
+     * This is particularly useful when non-paged pages are skipped but we assume the default of 0
+     * as the first page.
+     * @returns {string}
+     */
+    getIndexOfFirstPage()
+    {
+        return Object.keys(this._pageLookup)[0];
+    }
+
+    /**
      * Get the dimensions of a page
      *
      * @param pageIndex

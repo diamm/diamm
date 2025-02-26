@@ -19,7 +19,8 @@
         document.addEventListener('DOMContentLoaded', function ()
         {
             diva = new Diva('diva-wrapper', {
-                objectData: "./test/manifests/iiifv3.json",
+                objectData: "https://digi.vatlib.it/iiif/MSS_Capp.Sist.41/manifest.json",
+                //objectData: "https://iiif.bodleian.ox.ac.uk/iiif/manifest/a4120d22-b62f-4b57-861d-43c839c790a0.json",
                 plugins: [Diva.DownloadPlugin, Diva.ManipulationPlugin, Diva.MetadataPlugin]
             });
 
