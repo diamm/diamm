@@ -6,6 +6,7 @@ from django.template.loader import get_template
 from rest_framework.reverse import reverse
 
 from diamm.helpers.solr_helpers import SolrManager
+from diamm.models import SourceURL
 from diamm.serializers.serializers import ContextDictSerializer, ContextSerializer
 
 
@@ -63,6 +64,7 @@ class CompositionSourceSerializer(ContextSerializer):
     display_name = serpy.StrField(attr="source.display_name")
 
     has_images = serpy.MethodField()
+    has_external_manifest = serpy.MethodField()
     public_images = serpy.BoolField(attr="source.public_images")
     folio_start = serpy.StrField(required=False)
     folio_end = serpy.StrField(required=False)
@@ -76,7 +78,13 @@ class CompositionSourceSerializer(ContextSerializer):
         )
 
     def get_has_images(self, obj):
-        return obj.pages.exists()
+        return obj.source.pages.exists()
+
+    def get_has_external_manifest(self, obj):
+        return (
+            self.get_has_images(obj) is False
+            and obj.source.links.filter(type=SourceURL.IIIF_MANIFEST).exists() is True
+        )
 
     def get_voices(self, obj):
         if obj.voices:

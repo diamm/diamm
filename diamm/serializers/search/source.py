@@ -83,6 +83,7 @@ def _get_sources(cfg: dict):
             s.cover_image_id AS cover_image,s.open_images AS open_images,
             (SELECT EXISTS(SELECT ddp.id FROM diamm_data_page AS ddp WHERE ddp.source_id = s.id) AND s.public_images) AS public_images,
             (SELECT EXISTS(SELECT ddu.id FROM diamm_data_sourceurl AS ddu WHERE ddu.source_id = s.id AND ddu.type = 4)) AS has_external_images,
+            (SELECT EXISTS(SELECT ddu.id FROM diamm_data_sourceurl AS ddu WHERE ddu.source_id = s.id AND ddu.type = 1)) AS has_external_manifest,
             (SELECT jsonb_agg(jsonb_build_object(
                 'primary_study', sb.primary_study,
                 'pages', to_jsonb(sb.pages),
@@ -164,9 +165,16 @@ class SourceSearchSerializer(serpy.DictSerializer):
     public_b = serpy.BoolField(attr="public", required=False)
     open_images_b = serpy.BoolField(attr="open_images", required=False)
     external_images_b = serpy.BoolField(attr="has_external_images", required=False)
+    external_manifest_b = serpy.BoolField(attr="has_external_manifest", required=False)
     bibliography_json = serpy.Field(attr="bibliography")
+    source_with_images_b = serpy.MethodField()
 
     def get_composers_ss(self, obj) -> list | None:
         if not obj.get("composers"):
             return None
         return [format_person_name(p) for p in obj["composers"]]
+
+    def get_source_with_images_b(self, obj) -> bool:
+        return obj.get("public_images", False) or obj.get(
+            "has_external_manifest", False
+        )

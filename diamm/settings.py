@@ -267,7 +267,7 @@ SOLR = {
     ],
     "FACET_FIELDS": [  # Use the interface facets to define public-facing facet fields.
         "{!ex=type}type",
-        "{!ex=type}public_images_b",
+        "{!ex=type}source_with_images_b",
     ],
     "FACET_PIVOTS": [],
     "FACET_SORT": {  # custom sorting for certain facets (default is by count; index is alphanumeric)

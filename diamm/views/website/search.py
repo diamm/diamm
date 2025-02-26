@@ -43,8 +43,12 @@ class SearchView(generics.GenericAPIView):
         elif type_query and type_query in settings.SOLR["SEARCH_TYPES"]:
             filters.update({"{!tag=type}type": type_query})
         elif type_query and type_query == "sources_with_images":
+            # external manifest items should show up in sources with images.
             filters.update(
-                {"{!tag=type}type": "source", "{!tag=type}public_images_b": True}
+                {
+                    "{!tag=type}type": "source",
+                    "{!tag=type}source_with_images_b": True,
+                }
             )
 
         if "country_s" in request.GET:

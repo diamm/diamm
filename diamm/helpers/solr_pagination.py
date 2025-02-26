@@ -232,7 +232,7 @@ class SolrPage:
 
         # For the public_images_b facet, we will get the count for this value
         # and send it along with the sources_with_images key.
-        image_count = self.result.facets["facet_fields"].get("public_images_b")
+        image_count = self.result.facets["facet_fields"].get("source_with_images_b")
 
         if image_count:
             i = iter(image_count)
@@ -264,29 +264,8 @@ class SolrPage:
 
         return data
 
-        # highlights = self.result.highlighting
-        # Generate fully qualified URLs for the resources in Solr when the results are returned.
-        # This way we don't have to store the full URL in Solr.
-        # for obj in docs:
-        #     url = reverse("{0}-detail".format(obj['type']),
-        #                   kwargs={'pk': obj['pk']},
-        #                   request=self.paginator.request)
-        #     obj['url'] = url
-        #
-        #     hl = highlights.get(obj['id'], None)
-        #     if hl:
-        #         obj['result_text'] = "; ".join(hl['text'])
-        #
-        # return docs
-
     @property
     def pagination(self) -> dict:
-        # pages = {}
-        # for pnum in range(self.paginator.num_pages):
-        #     url = self.paginator.request.build_absolute_uri()
-        #     pg_url = replace_query_param(url, 'page', pnum + 1)
-        #     pages[pnum + 1] = pg_url
-
         return OrderedDict(
             [
                 ("next", self.next_url),
