@@ -19,3 +19,4 @@ env
 /solr/core.properties
 .venv
 diamm.egg-info
+search-app/dist
