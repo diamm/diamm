@@ -20,7 +20,7 @@ class SourceArchiveSerializer(ContextSerializer):
 
     def get_has_external_manifest(self, obj) -> bool:
         return (
-            obj.public_images is False
+            obj.pages.filter(images__public=True) is False
             and obj.links.filter(type=SourceURL.IIIF_MANIFEST).exists() is True
         )
 

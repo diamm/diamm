@@ -78,7 +78,7 @@ class CompositionSourceSerializer(ContextSerializer):
         )
 
     def get_has_images(self, obj):
-        return obj.source.pages.exists()
+        return obj.source.pages.filter(images__public=True).exists()
 
     def get_has_external_manifest(self, obj):
         return (
