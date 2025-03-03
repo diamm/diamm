@@ -98,7 +98,7 @@ type alias FacetBlock =
 facetBlockDecoder : Decoder FacetBlock
 facetBlockDecoder =
     Decode.succeed FacetBlock
-        |> required "city" (list facetItemDecoder)
+        |> required "cities" (list facetItemDecoder)
         |> required "genres" (list facetItemDecoder)
         |> required "notations" (list facetItemDecoder)
         |> required "composers" (list facetItemDecoder)

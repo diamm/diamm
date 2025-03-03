@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "develop": "chokidar 'src/**/*.elm' -c 'clear && elm make src/Main.elm --debug --output=dist/search.js'",
-    "production": "./optimize.sh src/Main.elm dist/search.js dist/search.js"
+    "production": "./optimize.sh src/Main.elm dist/search.js dist/search.js",
+    "deploy": "cp dist/search.js ../diamm/static/apps/search/"
   },
   "dependencies": {
     "chokidar": "^4.0.3",

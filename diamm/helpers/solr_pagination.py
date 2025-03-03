@@ -103,6 +103,7 @@ class SolrPaginator:
             "facet.field": settings.SOLR["FACET_FIELDS"],
             "facet.mincount": 1,
             "facet.limit": -1,
+            "json.nl": "arrmap",
             "facet.pivot": settings.SOLR["FACET_PIVOTS"],
             "hl": "true",
             "defType": "edismax",
@@ -216,42 +217,39 @@ class SolrPage:
         # Takes a list of facets ['foo', 1, 'bar', 2] and converts them to
         # {'foo': 1, 'bar': 2} using some stupid python iterator tricks.
         facet_fields: dict = self.result.facets.get("facet_fields", {})
-        facets: dict = facet_fields.get("type")
+        facets: dict = facet_fields.get("type", {})
 
-        if not facets:
-            return {}
+        type_numbers = {
+            key: val
+            for k in facets
+            for key, val in k.items()
+            if key in settings.SOLR["SEARCH_TYPES"]
+        }
 
-        i = iter(facets)
-        # Since Solr doesn't filter by facet _value_, we remove some of the values that we don't want
-        # to display in the search results.
-        filtered_facets: list = [
-            k
-            for k in sorted(zip(i, i, strict=False), key=lambda f: f[0])
-            if k[0] in settings.SOLR["SEARCH_TYPES"]
-        ]
-
-        # For the public_images_b facet, we will get the count for this value
-        # and send it along with the sources_with_images key.
         image_count = self.result.facets["facet_fields"].get("source_with_images_b")
+        image_numbers = {key: val for k in image_count for key, val in k.items()}
+        type_numbers["sources_with_images"] = image_numbers.get("true", 0)
 
-        if image_count:
-            i = iter(image_count)
-            d = dict(zip(i, i, strict=False))
-            if d.get("true"):
-                filtered_facets.append(("sources_with_images", d["true"]))
-
-        return OrderedDict(filtered_facets)
+        return type_numbers
 
     @property
     def facet_list(self) -> dict:
         solr_facets = self.result.facets.get("facet_fields", None)
         pivot_facets = self.result.facets.get("facet_pivot", None)
-        facets: dict = {
-            key: value
-            for (key, value) in solr_facets.items()
-            if key in settings.INTERFACE_FACETS
-        }
-        facets.update(pivot_facets)
+        # facets: dict = {
+        #     key: value
+        #     for (key, value) in solr_facets.items()
+        #     if key in settings.INTERFACE_FACETS
+        # }
+        # facets.update(pivot_facets)
+        facets = {}
+        for f, f_values in solr_facets.items():
+            if f not in settings.INTERFACE_FACETS:
+                continue
+
+            facets[f] = [
+                {"value": v, "count": c} for n in f_values for v, c in n.items()
+            ]
 
         return facets
 

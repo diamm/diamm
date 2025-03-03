@@ -1,28 +1,27 @@
 module Views exposing (..)
 
 import Browser
-import Element exposing (Element, centerX, column, el, fill, fillPortion, height, htmlAttribute, layout, none, px, row, text, width)
+import Element exposing (Element, alignBottom, centerX, column, el, fill, fillPortion, height, htmlAttribute, layout, none, px, row, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
+import Html exposing (Html)
 import Html.Attributes as HA
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Style exposing (colourScheme)
 
 
-view : Model -> Browser.Document Msg
+view : Model -> Html Msg
 view model =
-    { title = "DIAMM Search"
-    , body =
-        [ layout
-            [ Font.family
-                [ Font.typeface "Rubik" ]
-            ]
-            (searchView model)
+    layout
+        [ Font.family
+            [ Font.typeface "Rubik" ]
+        , width fill
+        , height fill
         ]
-    }
+        (searchView model)
 
 
 searchView : Model -> Element Msg
@@ -62,6 +61,9 @@ searchView model =
                     , Font.bold
                     ]
                     (text "Filters")
+                , el
+                    []
+                    (text "Show all")
                 ]
             , row
                 [ width fill
@@ -73,10 +75,12 @@ searchView model =
                     , Border.widthEach { top = 0, bottom = 0, left = 0, right = 2 }
                     , Border.color colourScheme.lightGrey
                     ]
-                    []
+                    [ text "hello" ]
                 , column
-                    [ width (fillPortion 4) ]
-                    []
+                    [ width (fillPortion 4)
+                    , height fill
+                    ]
+                    [ el [ alignBottom ] (text "World") ]
                 ]
             ]
         ]

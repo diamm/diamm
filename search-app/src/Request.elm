@@ -21,7 +21,7 @@ createRequest :
     -> String
     -> Cmd msg
 createRequest responseMsg responseDecoder url =
-    createRequestWithAcceptAndExpect "application/ld+json" (Http.Detailed.expectJson responseMsg responseDecoder) url
+    createRequestWithAcceptAndExpect "application/json" (Http.Detailed.expectJson responseMsg responseDecoder) url
 
 
 createRequestWithAcceptAndExpect : String -> Expect msg -> String -> Cmd msg

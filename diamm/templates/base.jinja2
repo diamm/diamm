@@ -62,52 +62,6 @@
         {% endblock %}
     </main>
 
-    <footer class="footer">
-        <div class="container columns">
-            <div class="column is-one-third footer-address">
-                <div class="container" style="height: 70px;">
-                    <img src="{{ static('images/headerLogo.png') }}" alt="DIAMM Logo" style="height: 70px; width: auto;"/>
-                </div>
-                <h5 class="title is-5">The Digital Image Archive of Medieval Music</h5>
-                <p>University of Oxford<br />
-                    Faculty of Music<br />
-                    St. Aldates<br />
-                    Oxford, OX1 1DB<br />
-                    United Kingdom
-                </p>
-                <a href="https://www.ox.ac.uk" target="_blank">
-                    <img src="{{ static('images/oxford-large.png') }}" alt="University of Oxford" style="height: 70px; width: auto;"/>
-                </a>
-            </div>
-             <div class="column is-two-thirds footer-address">
-                 <div class="container" style="height: 70px;">
-                     <a href="https://alliancecan.ca/en" target="_blank">
-                        <img src="{{ static('images/digital-research-alliance.png') }}" alt="Digital Research Alliance of Canada Logo"
-                             style="max-height: 50px; width: auto"/>
-                     </a>
-                 </div>
-                 <h5 class="title is-5">DIAMM is hosted by the Digital Research Alliance of Canada</h5>
-                 <div class="container" style="height: 70px;">
-                     <a href="https://rism.digital" target="_blank">
-                        <img src="{{ static('images/rism-logo.png') }}" alt="RISM Digital Center" style="height: 60px; width: auto;"/>
-                     </a>
-                 </div>
-                 <h5 class="title is-5">In partnership with the RISM Digital Center.</h5>
-             </div>
-        </div>
-    </footer>
-    {% block scripts %}
-    {% endblock %}
-    {% if not debug %}
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BX71EKZJVX"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-
-        gtag('config', 'G-BX71EKZJVX');
-    </script>
-    {% endif %}
+    {% include "website/blocks/footer.jinja2" %}
 </body>
 </html>

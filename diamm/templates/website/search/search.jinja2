@@ -1,15 +1,67 @@
-{% extends "base.jinja2" %}
-
-{% block title %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="search" href="{{ request.scheme }}://{{ request.get_host() }}{{ url('opensearch') }}" type="application/opensearchdescription+xml" title="DIAMM"/>
+    <link rel="stylesheet" href="{{ static('stylesheets/styles.css') }}" />
     <title>Digital Image Archive of Medieval Music :: Search</title>
-{% endblock %}
-
-{% block fullwidth %}
-    <div id="search-body">
-        <!-- filled by react application -->
+    <script type="application/json">
+        {
+            "@context": "http://schema.org",
+            "@type": "Organization",
+            "name": "Digital Image Archive of Medieval Music",
+            "url": "https://www.diamm.ac.uk",
+            "address": {
+                "@type": "PostalAddress",
+                "addressCountry": "United Kingdom",
+                "addressLocality": "Oxford",
+                "addressRegion": "Oxfordshire",
+                "streetAddress": "St. Aldates",
+                "postalCode": "OX1 1DB"
+            }
+            "contactPoint": [{
+                "@type": "ContactPoint",
+                "telephone": "+44 (0)1865 241323",
+                "contactType": "customer service",
+                "email": "diamm@music.ox.ac.uk",
+                "hoursAvailable": {
+                    "@type": "OpeningHoursSpecification",
+                    "opens": "10:00:00Z+00:00",
+                    "closes": "19:00:00Z+00:00"
+                }
+            }]
+        }
+    </script>
+    <script src="{{ static('apps/search/search.js') }}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () =>
+        {
+            const app = Elm.Main.init({
+                node: document.getElementById('search-body'),
+                flags: {}
+            });
+        });
+    </script>
+</head>
+<body>
+{% if messages %}
+    <div class="columns is-marginless">
+        <div class="column is-marginless is-paddingless">
+            {% for message in messages %}
+                <div class="notification is-info">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
     </div>
-{% endblock %}
+{% endif %}
+{% include "website/blocks/header.jinja2" %}
 
-{% block scripts %}
-    <script src="{{ static('apps/search/dist/bundle.js') }}"></script>
-{% endblock %}
+<main class="is-fluid is-fullheight" style="flex: 1">
+    <div id="search-body"></div>
+</main>
+
+{% include "website/blocks/footer.jinja2" %}
+</body>
+</html>
