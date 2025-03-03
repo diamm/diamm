@@ -105,7 +105,7 @@ const Composers = ({composers}) =>
     return (
         <div>
             { composers.map( (composer, idx) => {
-                let [ pk, full_name, uncertain ] = composer.split("|");
+                let [ full_name, pk, uncertain ] = composer.split("|");
                 return (
                     <span key={ idx } className="composer-names">
                         { full_name } { uncertain === "True" ? "(?) " : "" }
