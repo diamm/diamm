@@ -245,3 +245,4 @@ urlpatterns = [
 if settings.DEBUG:
     urlpatterns += static("/static/", document_root=settings.STATIC_ROOT)
     urlpatterns += static("/media/", document_root=settings.MEDIA_ROOT)
+    urlpatterns += static("/search-app/", document_root=settings.SEARCH_APP_ROOT)

@@ -1,8 +1,13 @@
 module Route exposing (..)
 
 import Url exposing (Url)
-import Url.Parser as P
+import Url.Parser as P exposing ((<?>), s)
 import Url.Parser.Query as Q
+
+
+type Route
+    = SearchPageRoute QueryArgs
+    | UnknownRoute
 
 
 type alias QueryArgs =
@@ -21,10 +26,20 @@ apply argParser funcParser =
     Q.map2 (<|) funcParser argParser
 
 
-parseUrl : Url -> QueryArgs
+parseUrl : Url -> Maybe Route
 parseUrl url =
     P.parse routeParser url
-        |> Maybe.withDefault defaultQueryArgs
+
+
+routeParser : P.Parser (Route -> a) a
+routeParser =
+    P.map SearchPageRoute (s "search" <?> queryParamsParser)
+
+
+queryParamsParser : Q.Parser QueryArgs
+queryParamsParser =
+    Q.map QueryArgs (Q.string "q")
+        |> apply (Q.string "type")
 
 
 defaultQueryArgs : QueryArgs
@@ -34,9 +49,11 @@ defaultQueryArgs =
     }
 
 
-routeParser : P.Parser (QueryArgs -> a) a
-routeParser =
-    P.map QueryArgs
-        (Q.map QueryArgs (Q.string "q")
-            |> apply (Q.string "type")
-        )
+locationHrefToRoute : String -> Maybe Route
+locationHrefToRoute locationHref =
+    case Url.fromString locationHref of
+        Nothing ->
+            Nothing
+
+        Just url ->
+            parseUrl url

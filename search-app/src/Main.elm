@@ -1,4 +1,4 @@
-module Main exposing (main)
+port module Main exposing (main)
 
 import Browser
 import Browser.Navigation as Nav
@@ -7,6 +7,7 @@ import Model exposing (Model)
 import Msg exposing (Msg(..))
 import RecordTypes exposing (searchBodyDecoder)
 import Request exposing (createRequest, serverUrl)
+import Route exposing (locationHrefToRoute)
 import Update
 import Url exposing (Url)
 import Views
@@ -23,7 +24,7 @@ main =
 
         --, onUrlChange = Msg.ClientChangedUrl
         --, onUrlRequest = Msg.UserRequestedUrlChange
-        , subscriptions = \_ -> Sub.none
+        , subscriptions = subscriptions
         , update = Update.update
         , view = Views.view
         }
@@ -40,3 +41,14 @@ init flags =
                 |> createRequest ServerRespondedWithSearchData searchBodyDecoder
     in
     ( model, initialRequest )
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    onUrlChange (locationHrefToRoute >> UrlChanged)
+
+
+port onUrlChange : (String -> msg) -> Sub msg
+
+
+port pushUrl : String -> Cmd msg

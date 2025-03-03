@@ -1,4 +1,4 @@
-module RecordTypes exposing (SearchBody, searchBodyDecoder)
+module RecordTypes exposing (FacetItem, SearchBody, SearchTypesBlock, searchBodyDecoder)
 
 import Json.Decode as Decode exposing (Decoder, int, list, maybe, string)
 import Json.Decode.Pipeline exposing (optional, required)
