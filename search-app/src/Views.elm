@@ -1,7 +1,7 @@
 module Views exposing (..)
 
 import Browser
-import Element exposing (Element, alignBottom, centerX, column, el, fill, fillPortion, height, htmlAttribute, layout, none, px, row, spacing, text, width)
+import Element exposing (Element, alignBottom, alignRight, centerX, column, el, fill, fillPortion, height, htmlAttribute, layout, none, padding, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -20,7 +20,9 @@ view : Model -> Html Msg
 view model =
     layout
         [ Font.family
-            [ Font.typeface "Rubik" ]
+            [ Font.typeface "Rubik"
+            ]
+        , Font.size 16
         , width fill
         , height fill
         ]
@@ -80,8 +82,20 @@ searchView body =
                     , height fill
                     , Border.widthEach { top = 0, bottom = 0, left = 0, right = 2 }
                     , Border.color colourScheme.lightGrey
+                    , padding 12
                     ]
-                    [ viewFacets body ]
+                    [ viewResultsControls body
+                    , row
+                        [ width fill
+                        , Border.widthEach { top = 0, bottom = 1, left = 0, right = 0 }
+                        , Border.color colourScheme.lightGrey
+                        ]
+                        [ el
+                            [ Font.bold ]
+                            (text "Filter Results")
+                        ]
+                    , viewFacets body
+                    ]
                 , column
                     [ width (fillPortion 4)
                     , height fill
@@ -126,6 +140,29 @@ mainFilterList searchTypes =
         [ centerX ]
         (text ("Sources With Images (" ++ String.fromInt searchTypes.sourceWithImages ++ ")"))
     ]
+
+
+viewResultsControls : SearchBody -> Element msg
+viewResultsControls body =
+    row
+        [ width fill ]
+        [ column
+            [ width fill ]
+            [ el [ Font.bold ] (text (String.fromInt body.count ++ " results found.")) ]
+        , column
+            [ width fill ]
+            [ Input.button
+                [ Background.color colourScheme.red
+                , Font.color colourScheme.white
+                , Border.rounded 3
+                , padding 10
+                , alignRight
+                ]
+                { label = text "Clear Search"
+                , onPress = Nothing
+                }
+            ]
+        ]
 
 
 viewFacets : SearchBody -> Element msg

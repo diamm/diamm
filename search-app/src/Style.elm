@@ -10,6 +10,7 @@ colourScheme :
     , lightGrey : Element.Color
     , darkBlue : Element.Color
     , lightBlue : Element.Color
+    , white : Element.Color
     }
 colourScheme =
     { black =
@@ -53,5 +54,12 @@ colourScheme =
             , red = 20
             , green = 133
             , blue = 204
+            }
+    , white =
+        Element.fromRgb255
+            { alpha = 1
+            , red = 255
+            , green = 255
+            , blue = 255
             }
     }
