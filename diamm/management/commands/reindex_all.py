@@ -1,4 +1,5 @@
 import logging
+import timeit
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -29,6 +30,7 @@ class Command(BaseCommand):
                 "live_core": settings.SOLR["LIVE_CORE"],
             },
         }
+        start = timeit.default_timer()
         success: bool = empty_solr_core(cfg)
         success &= index_sources(cfg)
         success &= index_items(cfg)
@@ -42,5 +44,12 @@ class Command(BaseCommand):
         success &= index_sets(cfg)
         success &= commit_changes(cfg)
         success &= swap_cores(cfg)
+        end = timeit.default_timer()
+        elapsed: float = end - start
+
+        hours, remainder = divmod(elapsed, 60 * 60)
+        minutes, seconds = divmod(remainder, 60)
+
+        log.info("Total time to index: %02i:%02i:%02.2f", hours, minutes, seconds)
 
         log.info(f"Success: {success}")
