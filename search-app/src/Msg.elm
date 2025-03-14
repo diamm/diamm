@@ -1,14 +1,14 @@
 module Msg exposing (..)
 
-import Browser exposing (UrlRequest)
+import Facets.SelectFacet exposing (SelectFacetMsg)
 import Http
 import Http.Detailed
-import RecordTypes exposing (SearchBody)
+import RecordTypes exposing (FacetTypes, SearchBody)
 import Route exposing (Route)
-import Url exposing (Url)
 
 
 type Msg
     = NothingHappened
     | ServerRespondedWithSearchData (Result (Http.Detailed.Error String) ( Http.Metadata, SearchBody ))
     | UrlChanged (Maybe Route)
+    | UserInteractedWithSelectFacet FacetTypes SelectFacetMsg

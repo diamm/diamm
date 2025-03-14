@@ -7,6 +7,7 @@ colourScheme :
     { black : Element.Color
     , red : Element.Color
     , grey : Element.Color
+    , midGrey : Element.Color
     , lightGrey : Element.Color
     , darkBlue : Element.Color
     , lightBlue : Element.Color
@@ -33,6 +34,13 @@ colourScheme =
             , red = 42
             , green = 44
             , blue = 43
+            }
+    , midGrey =
+        Element.fromRgb255
+            { alpha = 1
+            , red = 169
+            , green = 172
+            , blue = 171
             }
     , lightGrey =
         Element.fromRgb255

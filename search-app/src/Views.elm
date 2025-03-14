@@ -1,18 +1,18 @@
 module Views exposing (..)
 
-import Browser
-import Element exposing (Element, alignBottom, alignRight, centerX, column, el, fill, fillPortion, height, htmlAttribute, layout, none, padding, px, row, spacing, text, width)
+import Element exposing (Element, alignBottom, alignRight, centerX, column, el, fill, fillPortion, height, layout, none, padding, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
-import Helpers exposing (viewIf)
+import Facets exposing (FacetModel, viewFacets)
+import Helpers exposing (viewIf, viewMaybe)
 import Html exposing (Html)
-import Html.Attributes as HA
 import Model exposing (Model)
 import Msg exposing (Msg(..))
-import RecordTypes exposing (FacetItem, SearchBody, SearchTypesBlock)
+import RecordTypes exposing (FacetBlock, FacetItem, SearchBody, SearchTypesBlock)
 import Request exposing (Response(..))
+import Results exposing (resultView)
 import Style exposing (colourScheme)
 
 
@@ -33,14 +33,14 @@ responseRouter : Model -> Element Msg
 responseRouter model =
     case model.response of
         Response searchBody ->
-            searchView searchBody
+            searchView model.facets searchBody
 
         _ ->
             none
 
 
-searchView : SearchBody -> Element Msg
-searchView body =
+searchView : Maybe FacetModel -> SearchBody -> Element Msg
+searchView facetModel body =
     row
         [ width fill
         , height fill
@@ -94,13 +94,25 @@ searchView body =
                             [ Font.bold ]
                             (text "Filter Results")
                         ]
-                    , viewFacets body
+                    , viewMaybe viewFacets facetModel
                     ]
                 , column
                     [ width (fillPortion 4)
                     , height fill
+                    , padding 20
                     ]
-                    [ el [ alignBottom ] (text "World") ]
+                    [ row
+                        [ width fill ]
+                        [ column
+                            [ width fill
+                            , spacing 16
+                            ]
+                            (List.map resultView body.results)
+                        ]
+                    , row
+                        []
+                        []
+                    ]
                 ]
             ]
         ]
@@ -163,50 +175,3 @@ viewResultsControls body =
                 }
             ]
         ]
-
-
-viewFacets : SearchBody -> Element msg
-viewFacets body =
-    let
-        facets =
-            body.facets
-
-        cityFacet =
-            viewIf (viewCityFacet facets.city) (List.length facets.city > 0)
-
-        anonymousFacet =
-            viewIf (viewAnonymousFacet facets.anonymous) (List.length facets.anonymous > 0)
-
-        genresFacet =
-            viewIf (viewGenresFacet facets.genres) (List.length facets.genres > 0)
-    in
-    row
-        []
-        [ column
-            []
-            [ anonymousFacet
-            , genresFacet
-            , cityFacet
-            ]
-        ]
-
-
-viewCityFacet : List FacetItem -> Element msg
-viewCityFacet items =
-    row
-        [ width fill ]
-        [ text "City facet" ]
-
-
-viewAnonymousFacet : List FacetItem -> Element msg
-viewAnonymousFacet items =
-    row
-        [ width fill ]
-        [ text "Anonymous facet" ]
-
-
-viewGenresFacet : List FacetItem -> Element msg
-viewGenresFacet items =
-    row
-        [ width fill ]
-        [ text "Genres facet" ]

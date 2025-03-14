@@ -1,7 +1,11 @@
-module RecordTypes exposing (FacetItem, SearchBody, SearchTypesBlock, searchBodyDecoder)
+module RecordTypes exposing (ArchiveResultBody, CompositionResultBody, FacetBlock, FacetItem, FacetTypes(..), OrganizationResultBody, PersonResultBody, SearchBody, SearchResult(..), SearchTypesBlock, SetResultBody, SourceResultBody, facetItemToLabel, searchBodyDecoder)
 
-import Json.Decode as Decode exposing (Decoder, int, list, maybe, string)
+import Json.Decode as Decode exposing (Decoder, bool, int, list, maybe, string)
 import Json.Decode.Pipeline exposing (optional, required)
+
+
+type FacetTypes
+    = Genres
 
 
 type alias PaginationBlock =
@@ -27,6 +31,14 @@ type alias SourceResultBody =
     { pk : String
     , url : String
     , heading : String
+    , archiveName : String
+    , archiveCity : String
+    , sourceType : String
+    , dateStatement : String
+    , surface : String
+    , measurements : Maybe String
+    , numberOfCompositions : Int
+    , publicImages : Bool
     }
 
 
@@ -77,6 +89,11 @@ type SearchResult
 
 type alias FacetItem =
     { value : String, count : Int }
+
+
+facetItemToLabel : FacetItem -> String
+facetItemToLabel item =
+    item.value ++ " (" ++ String.fromInt item.count ++ ")"
 
 
 type alias FacetBlock =
@@ -196,6 +213,14 @@ sourceResultBodyDecoder =
         |> required "pk" string
         |> required "url" string
         |> required "heading" string
+        |> required "archive_name" string
+        |> required "archive_city" string
+        |> required "source_type" string
+        |> required "date_statement" string
+        |> required "surface" string
+        |> optional "measurements" (maybe string) Nothing
+        |> required "number_of_compositions" int
+        |> required "public_images" bool
 
 
 personResultBodyDecoder : Decoder PersonResultBody

@@ -1,26 +1,17 @@
 module Facets exposing (..)
 
+import Element exposing (Element, column, fill, row, text, width)
+import Facets.SelectFacet exposing (SelectFacetModel, initialSelectModel, viewSelectFacet)
+import Helpers exposing (viewMaybe)
 import Msg exposing (Msg(..))
-import RecordTypes exposing (FacetItem)
-import Select
-import Simple.Fuzzy
-
-
-type alias SelectFacetModel =
-    { id : String
-    , available : List FacetItem
-    , itemToLabel : FacetItem -> String
-    , selected : List FacetItem
-    , selectState : Select.State
-    , selectConfig : Select.Config Msg FacetItem
-    }
+import RecordTypes exposing (FacetBlock, FacetItem, FacetTypes(..), SearchBody)
 
 
 type alias FacetModel =
     { city : Maybe Never
-    , genres : SelectFacetModel
+    , genres : Maybe SelectFacetModel
     , notations : Maybe Never
-    , composers : SelectFacetModel
+    , composers : Maybe SelectFacetModel
     , sourceType : Maybe Never
     , hasInventory : Maybe Never
     , organizationType : Maybe Never
@@ -30,37 +21,71 @@ type alias FacetModel =
     }
 
 
-initialSelectModel :
-    { identifier : String
-    , available : List FacetItem
+createFacetConfigurations : FacetBlock -> FacetModel
+createFacetConfigurations facetBlock =
+    let
+        genreFacet =
+            if not (List.isEmpty facetBlock.genres) then
+                Just
+                    (initialSelectModel
+                        { identifier = "genres"
+                        , available = facetBlock.genres
+                        }
+                    )
+
+            else
+                Nothing
+
+        composersFacet =
+            if not (List.isEmpty facetBlock.composers) then
+                Just
+                    (initialSelectModel
+                        { identifier = "composers"
+                        , available = facetBlock.composers
+                        }
+                    )
+
+            else
+                Nothing
+    in
+    { city = Nothing
+    , genres = genreFacet
+    , notations = Nothing
+    , composers = composersFacet
+    , sourceType = Nothing
+    , hasInventory = Nothing
+    , organizationType = Nothing
+    , location = Nothing
+    , archive = Nothing
+    , anonymous = Nothing
     }
-    -> SelectFacetModel
-initialSelectModel cfg =
-    { id = cfg.identifier
-    , available = cfg.available
-    , itemToLabel = .value
-    , selected = []
-    , selectState = Select.init cfg.identifier
-    , selectConfig = selectConfig
-    }
 
 
-selectConfig : Select.Config Msg FacetItem
-selectConfig =
-    Select.newConfig
-        { onSelect = \_ -> NothingHappened
-        , toLabel = .value
-        , filter = filter 2 .value
-        , toMsg = \_ -> NothingHappened
-        }
+viewFacets : FacetModel -> Element Msg
+viewFacets facetModel =
+    let
+        genresFacet =
+            viewMaybe viewSelectFacet facetModel.genres
+                |> Element.map (UserInteractedWithSelectFacet Genres)
+    in
+    row
+        [ width fill ]
+        [ column
+            [ width fill ]
+            [ genresFacet
+            ]
+        ]
 
 
-filter : Int -> (FacetItem -> String) -> String -> List FacetItem -> Maybe (List FacetItem)
-filter minChars toLabel query items =
-    if String.length query < minChars then
-        Nothing
+viewCityFacet : List FacetItem -> Element msg
+viewCityFacet items =
+    row
+        [ width fill ]
+        [ text "City facet" ]
 
-    else
-        items
-            |> Simple.Fuzzy.filter toLabel query
-            |> Just
+
+viewAnonymousFacet : List FacetItem -> Element msg
+viewAnonymousFacet items =
+    row
+        [ width fill ]
+        [ text "Anonymous facet" ]
