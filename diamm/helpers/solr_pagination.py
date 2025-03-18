@@ -41,7 +41,7 @@ class SolrResultSerializer(ContextDictSerializer):
     name = serpy.StrField(attr="name_s", required=False)
     location = serpy.StrField(attr="location_s", required=False)
     title = serpy.StrField(attr="title_s", required=False)
-    composers = serpy.Field(attr="composers_ssni", required=False)
+    composers = serpy.Field(attr="composers_ss", required=False)
     siglum = serpy.StrField(attr="siglum_s", required=False)
     city = serpy.StrField(attr="city_s", required=False)
     country = serpy.StrField(attr="country_s", required=False)
