@@ -2,7 +2,7 @@ module Results exposing (..)
 
 import Element exposing (Element, column, el, fill, link, none, row, spacing, text, width)
 import Element.Font as Font
-import RecordTypes exposing (SearchResult(..), SourceResultBody)
+import RecordTypes exposing (ArchiveResultBody, CompositionResultBody, OrganizationResultBody, PersonResultBody, SearchResult(..), SetResultBody, SourceResultBody)
 import Style exposing (colourScheme)
 
 
@@ -13,23 +13,23 @@ resultView result =
             viewSourceResult sourceBody
 
         CompositionResult compositionBody ->
-            none
+            viewCompositionResult compositionBody
 
         ArchiveResult archiveBody ->
-            none
+            viewArchiveResult archiveBody
 
         OrganizationResult organizationBody ->
-            none
+            viewOrganizationResult organizationBody
 
         PersonResult personBody ->
-            none
+            viewPersonResult personBody
 
         SetResult setBody ->
-            none
+            viewSetResult setBody
 
 
-resultTemplate : String -> String -> List (Element msg) -> Element msg
-resultTemplate url heading body =
+resultTemplate : { url : String, heading : String, resultType : String } -> List (Element msg) -> Element msg
+resultTemplate { url, heading, resultType } body =
     row
         [ width fill ]
         [ column
@@ -45,12 +45,14 @@ resultTemplate url heading body =
                     { url = url
                     , label =
                         el
-                            [ Font.size 24 ]
+                            [ Font.size 21, Font.medium ]
                             (text heading)
                     }
                 , el
-                    [ Font.size 24, Font.color colourScheme.midGrey ]
-                    (text "Source")
+                    [ Font.size 21
+                    , Font.color colourScheme.midGrey
+                    ]
+                    (text resultType)
                 ]
             , row
                 [ width fill ]
@@ -67,12 +69,74 @@ resultTemplate url heading body =
 viewSourceResult : SourceResultBody -> Element msg
 viewSourceResult source =
     resultTemplate
-        source.url
-        source.heading
+        { url = source.url
+        , heading = source.heading
+        , resultType = "Source"
+        }
         [ row
             [ width fill ]
             [ text (source.archiveCity ++ ", " ++ source.archiveName) ]
         , row
             [ width fill ]
             [ text (source.sourceType ++ ", " ++ source.dateStatement ++ ", " ++ source.surface) ]
+        ]
+
+
+viewArchiveResult : ArchiveResultBody -> Element msg
+viewArchiveResult archive =
+    let
+        archiveHeading =
+            archive.heading ++ " (" ++ archive.siglum ++ ")"
+    in
+    resultTemplate
+        { url = archive.url
+        , heading = archiveHeading
+        , resultType = "Archive"
+        }
+        [ row
+            [ width fill ]
+            [ text (archive.city ++ ", " ++ archive.country) ]
+        ]
+
+
+viewSetResult : SetResultBody -> Element msg
+viewSetResult set =
+    resultTemplate
+        { url = set.url
+        , heading = set.heading
+        , resultType = "Set"
+        }
+        []
+
+
+viewPersonResult : PersonResultBody -> Element msg
+viewPersonResult person =
+    resultTemplate
+        { url = person.url
+        , heading = person.heading
+        , resultType = "Person"
+        }
+        []
+
+
+viewCompositionResult : CompositionResultBody -> Element msg
+viewCompositionResult composition =
+    resultTemplate
+        { url = composition.url
+        , heading = composition.heading
+        , resultType = "Composition"
+        }
+        []
+
+
+viewOrganizationResult : OrganizationResultBody -> Element msg
+viewOrganizationResult organization =
+    resultTemplate
+        { url = organization.url
+        , heading = organization.heading
+        , resultType = "Organization"
+        }
+        [ row
+            [ width fill ]
+            [ text organization.location ]
         ]

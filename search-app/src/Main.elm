@@ -1,29 +1,25 @@
 port module Main exposing (main)
 
 import Browser
-import Browser.Navigation as Nav
-import Config as C
+import Config as C exposing (defaultSearchUrl)
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import RecordTypes exposing (searchBodyDecoder)
 import Request exposing (createRequest, serverUrl)
-import Route exposing (locationHrefToRoute)
+import Route exposing (Route(..), buildQueryParameters, defaultQueryArgs, locationHrefToRoute, parseUrl)
 import Update
-import Url exposing (Url)
+import Url exposing (Protocol(..), Url)
 import Views
 
 
 type alias Flags =
-    {}
+    { initialUrl : String }
 
 
 main : Program Flags Model Msg
 main =
     Browser.element
         { init = init
-
-        --, onUrlChange = Msg.ClientChangedUrl
-        --, onUrlRequest = Msg.UserRequestedUrlChange
         , subscriptions = subscriptions
         , update = Update.update
         , view = Views.view
@@ -33,11 +29,28 @@ main =
 init : Flags -> ( Model, Cmd Msg )
 init flags =
     let
+        initialRoute =
+            Url.fromString flags.initialUrl
+                |> Maybe.withDefault C.defaultSearchUrl
+                |> parseUrl
+                |> Maybe.withDefault UnknownRoute
+
+        initialQueryParams =
+            case initialRoute of
+                SearchPageRoute queryArgs ->
+                    queryArgs
+
+                _ ->
+                    defaultQueryArgs
+
         model =
-            Model.init
+            Model.init initialQueryParams
+
+        apiRequestQueryParameters =
+            buildQueryParameters initialQueryParams
 
         initialRequest =
-            serverUrl [ "search" ] []
+            serverUrl [ "search" ] apiRequestQueryParameters
                 |> createRequest ServerRespondedWithSearchData searchBodyDecoder
     in
     ( model, initialRequest )

@@ -1,6 +1,24 @@
 module Config exposing (..)
 
+import Url exposing (Protocol(..), Url)
+
+
+serverHost : String
+serverHost =
+    "dev.diamm.ac.uk"
+
 
 serverUrl : String
 serverUrl =
-    "http://dev.diamm.ac.uk"
+    "http://" ++ serverHost
+
+
+defaultSearchUrl : Url
+defaultSearchUrl =
+    { protocol = Https
+    , host = serverHost
+    , port_ = Nothing
+    , path = "search"
+    , query = Nothing
+    , fragment = Nothing
+    }

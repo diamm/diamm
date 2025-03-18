@@ -1,10 +1,16 @@
-module RecordTypes exposing (ArchiveResultBody, CompositionResultBody, FacetBlock, FacetItem, FacetTypes(..), OrganizationResultBody, PersonResultBody, SearchBody, SearchResult(..), SearchTypesBlock, SetResultBody, SourceResultBody, facetItemToLabel, searchBodyDecoder)
+module RecordTypes exposing (ArchiveResultBody, CheckboxFacetTypes(..), CompositionResultBody, FacetBlock, FacetItem, OrganizationResultBody, PersonResultBody, RecordTypeFilters(..), SearchBody, SearchResult(..), SearchTypesBlock, SelectFacetTypes(..), SetResultBody, SourceResultBody, facetItemToLabel, resultTypeOptions, searchBodyDecoder)
 
 import Json.Decode as Decode exposing (Decoder, bool, int, list, maybe, string)
 import Json.Decode.Pipeline exposing (optional, required)
 
 
-type FacetTypes
+type SelectFacetTypes
+    = Composers
+    | SourceTypes
+    | Notations
+
+
+type CheckboxFacetTypes
     = Genres
 
 
@@ -17,13 +23,13 @@ type alias PaginationBlock =
 
 
 type alias SearchTypesBlock =
-    { archive : Int
-    , composition : Int
-    , organization : Int
-    , person : Int
-    , set : Int
-    , source : Int
-    , sourceWithImages : Int
+    { archive : Maybe Int
+    , composition : Maybe Int
+    , organization : Maybe Int
+    , person : Maybe Int
+    , set : Maybe Int
+    , source : Maybe Int
+    , sourceWithImages : Maybe Int
     }
 
 
@@ -47,6 +53,8 @@ type alias ArchiveResultBody =
     , url : String
     , heading : String
     , siglum : String
+    , city : String
+    , country : String
     }
 
 
@@ -61,6 +69,7 @@ type alias OrganizationResultBody =
     { pk : String
     , url : String
     , heading : String
+    , location : String
     }
 
 
@@ -85,6 +94,30 @@ type SearchResult
     | OrganizationResult OrganizationResultBody
     | PersonResult PersonResultBody
     | SetResult SetResultBody
+
+
+type RecordTypeFilters
+    = SourceRecords
+    | ArchiveRecords
+    | CompositionRecords
+    | OrganizationRecords
+    | PersonRecords
+    | SetRecords
+    | SourcesWithImagesRecords
+    | ShowAllRecords
+
+
+resultTypeOptions : List ( String, RecordTypeFilters )
+resultTypeOptions =
+    [ ( "all", ShowAllRecords )
+    , ( "source", SourceRecords )
+    , ( "archive", ArchiveRecords )
+    , ( "organization", OrganizationRecords )
+    , ( "composition", CompositionRecords )
+    , ( "person", PersonRecords )
+    , ( "sources_with_images", SourcesWithImagesRecords )
+    , ( "set", SetRecords )
+    ]
 
 
 type alias FacetItem =
@@ -167,13 +200,13 @@ paginationBlockDecoder =
 searchTypesBlockDecoder : Decoder SearchTypesBlock
 searchTypesBlockDecoder =
     Decode.succeed SearchTypesBlock
-        |> required "archive" int
-        |> required "composition" int
-        |> required "organization" int
-        |> required "person" int
-        |> required "set" int
-        |> required "source" int
-        |> required "sources_with_images" int
+        |> optional "archive" (maybe int) Nothing
+        |> optional "composition" (maybe int) Nothing
+        |> optional "organization" (maybe int) Nothing
+        |> optional "person" (maybe int) Nothing
+        |> optional "set" (maybe int) Nothing
+        |> optional "source" (maybe int) Nothing
+        |> optional "sources_with_images" (maybe int) Nothing
 
 
 searchResultDecoder : Decoder SearchResult
@@ -237,6 +270,7 @@ organizationResultBodyDecoder =
         |> required "pk" string
         |> required "url" string
         |> required "heading" string
+        |> required "location" string
 
 
 setResultBodyDecoder : Decoder SetResultBody
@@ -262,3 +296,5 @@ archiveResultBodyDecoder =
         |> required "url" string
         |> required "heading" string
         |> required "siglum" string
+        |> required "city" string
+        |> required "country" string

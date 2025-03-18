@@ -1,16 +1,17 @@
 module Views exposing (..)
 
-import Element exposing (Element, alignBottom, alignRight, centerX, column, el, fill, fillPortion, height, layout, none, padding, px, row, spacing, text, width)
+import Element exposing (Element, alignBottom, alignRight, centerX, column, el, fill, fillPortion, height, layout, none, padding, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
+import Element.Events exposing (onClick)
 import Element.Font as Font
-import Element.Input as Input
+import Element.Input as Input exposing (placeholder)
 import Facets exposing (FacetModel, viewFacets)
-import Helpers exposing (viewIf, viewMaybe)
+import Helpers exposing (onEnter, viewIf, viewMaybe)
 import Html exposing (Html)
 import Model exposing (Model)
 import Msg exposing (Msg(..))
-import RecordTypes exposing (FacetBlock, FacetItem, SearchBody, SearchTypesBlock)
+import RecordTypes exposing (FacetBlock, FacetItem, RecordTypeFilters(..), SearchBody, SearchTypesBlock)
 import Request exposing (Response(..))
 import Results exposing (resultView)
 import Style exposing (colourScheme)
@@ -33,14 +34,14 @@ responseRouter : Model -> Element Msg
 responseRouter model =
     case model.response of
         Response searchBody ->
-            searchView model.facets searchBody
+            searchView model searchBody
 
         _ ->
             none
 
 
-searchView : Maybe FacetModel -> SearchBody -> Element Msg
-searchView facetModel body =
+searchView : Model -> SearchBody -> Element Msg
+searchView model body =
     row
         [ width fill
         , height fill
@@ -55,12 +56,15 @@ searchView facetModel body =
                 , Background.color colourScheme.lightGrey
                 ]
                 [ Input.text
-                    [ width (px 600)
+                    [ width (px 800)
                     , centerX
+                    , Font.size 21
+                    , Font.medium
+                    , onEnter UserPressedEnterOnQueryBox
                     ]
-                    { onChange = \_ -> NothingHappened
-                    , text = ""
-                    , placeholder = Nothing
+                    { onChange = UserEnteredTextIntoQueryBox
+                    , text = Maybe.withDefault "" (.keywordQuery model.currentQueryArgs)
+                    , placeholder = Just (placeholder [] (text "Search"))
                     , label = Input.labelHidden "Search input"
                     }
                 ]
@@ -72,7 +76,7 @@ searchView facetModel body =
                 , Font.size 16
                 , spacing 15
                 ]
-                (mainFilterList body.types)
+                (mainFilterList model.activeRecordType body.types)
             , row
                 [ width fill
                 , height fill
@@ -83,21 +87,13 @@ searchView facetModel body =
                     , Border.widthEach { top = 0, bottom = 0, left = 0, right = 2 }
                     , Border.color colourScheme.lightGrey
                     , padding 12
+                    , spacing 10
                     ]
                     [ viewResultsControls body
-                    , row
-                        [ width fill
-                        , Border.widthEach { top = 0, bottom = 1, left = 0, right = 0 }
-                        , Border.color colourScheme.lightGrey
-                        ]
-                        [ el
-                            [ Font.bold ]
-                            (text "Filter Results")
-                        ]
-                    , viewMaybe viewFacets facetModel
+                    , viewMaybe viewFacets model.facets
                     ]
                 , column
-                    [ width (fillPortion 4)
+                    [ width (fillPortion 3)
                     , height fill
                     , padding 20
                     ]
@@ -118,40 +114,55 @@ searchView facetModel body =
         ]
 
 
-mainFilterList : SearchTypesBlock -> List (Element Msg)
-mainFilterList searchTypes =
+mainFilterList : RecordTypeFilters -> SearchTypesBlock -> List (Element Msg)
+mainFilterList currentSelection searchTypes =
     [ el
         [ centerX
         , Font.bold
         ]
         (text "Filter:")
-    , el
-        [ centerX
-        , Font.bold
-        ]
-        (text "Show all")
-    , el
-        [ centerX ]
-        (text ("Archive (" ++ String.fromInt searchTypes.archive ++ ")"))
-    , el
-        [ centerX ]
-        (text ("Composition (" ++ String.fromInt searchTypes.composition ++ ")"))
-    , el
-        [ centerX ]
-        (text ("Organization (" ++ String.fromInt searchTypes.organization ++ ")"))
-    , el
-        [ centerX ]
-        (text ("Person (" ++ String.fromInt searchTypes.person ++ ")"))
-    , el
-        [ centerX ]
-        (text ("Set (" ++ String.fromInt searchTypes.set ++ ")"))
-    , el
-        [ centerX ]
-        (text ("Source (" ++ String.fromInt searchTypes.source ++ ")"))
-    , el
-        [ centerX ]
-        (text ("Sources With Images (" ++ String.fromInt searchTypes.sourceWithImages ++ ")"))
+    , viewFilter { currentSelection = currentSelection, thisMenu = ShowAllRecords, count = 0, label = "Show All" }
+    , viewMaybe (\f -> viewFilter { currentSelection = currentSelection, thisMenu = ArchiveRecords, count = f, label = "Archive" }) searchTypes.archive
+    , viewMaybe (\f -> viewFilter { currentSelection = currentSelection, thisMenu = CompositionRecords, count = f, label = "Composition" }) searchTypes.composition
+    , viewMaybe (\f -> viewFilter { currentSelection = currentSelection, thisMenu = OrganizationRecords, count = f, label = "Organization" }) searchTypes.organization
+    , viewMaybe (\f -> viewFilter { currentSelection = currentSelection, thisMenu = PersonRecords, count = f, label = "Person" }) searchTypes.person
+    , viewMaybe (\f -> viewFilter { currentSelection = currentSelection, thisMenu = SetRecords, count = f, label = "Set" }) searchTypes.set
+    , viewMaybe (\f -> viewFilter { currentSelection = currentSelection, thisMenu = SourceRecords, count = f, label = "Source" }) searchTypes.source
+    , viewMaybe (\f -> viewFilter { currentSelection = currentSelection, thisMenu = SourcesWithImagesRecords, count = f, label = "Sources With Images" }) searchTypes.sourceWithImages
     ]
+
+
+viewFilter :
+    { currentSelection : RecordTypeFilters
+    , thisMenu : RecordTypeFilters
+    , label : String
+    , count : Int
+    }
+    -> Element Msg
+viewFilter cfg =
+    let
+        countLabel =
+            if cfg.count > 0 then
+                " (" ++ String.fromInt cfg.count ++ ")"
+
+            else
+                ""
+
+        selectedFont =
+            if cfg.currentSelection == cfg.thisMenu then
+                Font.semiBold
+
+            else
+                Font.regular
+    in
+    el
+        [ centerX
+        , onClick (UserClickedRecordTypeFilter cfg.thisMenu)
+        , pointer
+        , Font.color colourScheme.red
+        , selectedFont
+        ]
+        (text (cfg.label ++ countLabel))
 
 
 viewResultsControls : SearchBody -> Element msg

@@ -1,9 +1,15 @@
 module Facets.SelectFacet exposing (..)
 
-import Element exposing (Element, column, fill, html, row, text, width)
+import Element exposing (Element, alignRight, column, el, fill, html, padding, pointer, row, spacing, text, width)
+import Element.Background as Background
+import Element.Border as Border
+import Element.Events as Events
+import Element.Font as Font
+import Html.Attributes as HA
 import RecordTypes exposing (FacetItem, facetItemToLabel)
 import Select
 import Simple.Fuzzy
+import Style exposing (colourScheme)
 
 
 type SelectFacetMsg
@@ -14,6 +20,7 @@ type SelectFacetMsg
     | OnFocus
     | OnBlur
     | OnEsc
+    | OnClear
 
 
 type alias SelectFacetModel =
@@ -49,6 +56,12 @@ selectConfig =
         , filter = filter 2 .value
         , toMsg = SelectMsg
         }
+        |> Select.withEmptySearch True
+        |> Select.withNotFound "No matches"
+        |> Select.withInputWrapperAttrs [ HA.class "control" ]
+        |> Select.withInputAttrs [ HA.class "input" ]
+        |> Select.withClear False
+        |> Select.withMenuAttrs [ HA.style "border" "1px solid #000", HA.style "box-shadow" "5px 6px 8px -2px #E0E0E0" ]
 
 
 update : SelectFacetMsg -> SelectFacetModel -> ( SelectFacetModel, Cmd SelectFacetMsg )
@@ -96,9 +109,12 @@ update msg model =
         OnEsc ->
             ( model, Cmd.none )
 
+        OnClear ->
+            ( { model | selected = [] }, Cmd.none )
 
-viewSelectFacet : SelectFacetModel -> Element SelectFacetMsg
-viewSelectFacet facetModel =
+
+viewSelectFacet : String -> SelectFacetModel -> Element SelectFacetMsg
+viewSelectFacet title facetModel =
     let
         facetView =
             Select.view
@@ -110,18 +126,52 @@ viewSelectFacet facetModel =
 
         selected =
             List.map facetItemToLabel facetModel.selected
-                |> List.map text
+                |> List.map
+                    (\t ->
+                        el
+                            [ Background.color colourScheme.red
+                            , padding 8
+                            , Font.color colourScheme.white
+                            , Border.rounded 4
+                            , Font.size 12
+                            ]
+                            (text t)
+                    )
     in
     row
-        [ width fill ]
+        [ width fill
+        , Border.widthEach { top = 1, left = 0, right = 0, bottom = 0 }
+        , Border.color colourScheme.lightGrey
+        ]
         [ column
-            [ width fill ]
+            [ width fill
+            , spacing 10
+            , padding 10
+            ]
             [ row
+                [ width fill ]
+                [ el [ Font.semiBold ] (text title)
+                , el
+                    [ alignRight
+                    , Events.onClick OnClear
+                    , Font.color colourScheme.red
+                    , pointer
+                    ]
+                    (text "Clear all")
+                ]
+            , row
                 [ width fill ]
                 [ facetView ]
             , row
-                [ width fill ]
-                selected
+                [ width fill
+                , spacing 6
+                ]
+                [ column
+                    [ width fill
+                    , spacing 6
+                    ]
+                    selected
+                ]
             ]
         ]
 

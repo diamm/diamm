@@ -1,18 +1,19 @@
 module Facets exposing (..)
 
-import Element exposing (Element, column, fill, row, text, width)
+import Element exposing (Element, column, fill, row, spacing, width)
+import Facets.CheckboxFacet exposing (CheckBoxFacetModel, initialCheckboxModel, viewCheckboxFacet)
 import Facets.SelectFacet exposing (SelectFacetModel, initialSelectModel, viewSelectFacet)
 import Helpers exposing (viewMaybe)
 import Msg exposing (Msg(..))
-import RecordTypes exposing (FacetBlock, FacetItem, FacetTypes(..), SearchBody)
+import RecordTypes exposing (CheckboxFacetTypes(..), FacetBlock, FacetItem, SearchBody, SelectFacetTypes(..))
 
 
 type alias FacetModel =
     { city : Maybe Never
-    , genres : Maybe SelectFacetModel
-    , notations : Maybe Never
+    , genres : Maybe CheckBoxFacetModel
+    , notations : Maybe SelectFacetModel
     , composers : Maybe SelectFacetModel
-    , sourceType : Maybe Never
+    , sourceTypes : Maybe SelectFacetModel
     , hasInventory : Maybe Never
     , organizationType : Maybe Never
     , location : Maybe Never
@@ -27,7 +28,7 @@ createFacetConfigurations facetBlock =
         genreFacet =
             if not (List.isEmpty facetBlock.genres) then
                 Just
-                    (initialSelectModel
+                    (initialCheckboxModel
                         { identifier = "genres"
                         , available = facetBlock.genres
                         }
@@ -47,12 +48,36 @@ createFacetConfigurations facetBlock =
 
             else
                 Nothing
+
+        notationsFacet =
+            if not (List.isEmpty facetBlock.notations) then
+                Just
+                    (initialSelectModel
+                        { identifier = "notations"
+                        , available = facetBlock.notations
+                        }
+                    )
+
+            else
+                Nothing
+
+        sourceTypesFacet =
+            if not (List.isEmpty facetBlock.sourceType) then
+                Just
+                    (initialSelectModel
+                        { identifier = "sourceType"
+                        , available = facetBlock.sourceType
+                        }
+                    )
+
+            else
+                Nothing
     in
     { city = Nothing
     , genres = genreFacet
-    , notations = Nothing
+    , notations = notationsFacet
     , composers = composersFacet
-    , sourceType = Nothing
+    , sourceTypes = sourceTypesFacet
     , hasInventory = Nothing
     , organizationType = Nothing
     , location = Nothing
@@ -65,27 +90,51 @@ viewFacets : FacetModel -> Element Msg
 viewFacets facetModel =
     let
         genresFacet =
-            viewMaybe viewSelectFacet facetModel.genres
-                |> Element.map (UserInteractedWithSelectFacet Genres)
+            viewMaybe (viewCheckboxFacet "Genres") facetModel.genres
+                |> Element.map (UserInteractedWithCheckboxFacet Genres)
+
+        composersFacet =
+            viewMaybe (viewSelectFacet "Composers") facetModel.composers
+                |> Element.map (UserInteractedWithSelectFacet Composers)
+
+        sourceTypesFacet =
+            viewMaybe (viewSelectFacet "Source Types") facetModel.sourceTypes
+                |> Element.map (UserInteractedWithSelectFacet SourceTypes)
+
+        notationsFacet =
+            viewMaybe (viewSelectFacet "Notation") facetModel.notations
+                |> Element.map (UserInteractedWithSelectFacet Notations)
     in
     row
-        [ width fill ]
+        [ width fill
+        ]
         [ column
-            [ width fill ]
+            [ width fill
+            , spacing 10
+            ]
             [ genresFacet
+            , composersFacet
+            , sourceTypesFacet
+            , notationsFacet
             ]
         ]
 
 
-viewCityFacet : List FacetItem -> Element msg
-viewCityFacet items =
-    row
-        [ width fill ]
-        [ text "City facet" ]
+setSourceTypes : Maybe SelectFacetModel -> { a | sourceTypes : Maybe SelectFacetModel } -> { a | sourceTypes : Maybe SelectFacetModel }
+setSourceTypes newValue oldRecord =
+    { oldRecord | sourceTypes = newValue }
 
 
-viewAnonymousFacet : List FacetItem -> Element msg
-viewAnonymousFacet items =
-    row
-        [ width fill ]
-        [ text "Anonymous facet" ]
+setComposers : Maybe SelectFacetModel -> { a | composers : Maybe SelectFacetModel } -> { a | composers : Maybe SelectFacetModel }
+setComposers newValue oldRecord =
+    { oldRecord | composers = newValue }
+
+
+setNotations : Maybe SelectFacetModel -> { a | notations : Maybe SelectFacetModel } -> { a | notations : Maybe SelectFacetModel }
+setNotations newValue oldRecord =
+    { oldRecord | notations = newValue }
+
+
+setGenres : Maybe CheckBoxFacetModel -> { a | genres : Maybe CheckBoxFacetModel } -> { a | genres : Maybe CheckBoxFacetModel }
+setGenres newValue oldRecord =
+    { oldRecord | genres = newValue }

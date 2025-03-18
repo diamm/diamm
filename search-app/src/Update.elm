@@ -1,12 +1,14 @@
 module Update exposing (..)
 
-import Facets exposing (createFacetConfigurations)
-import Facets.SelectFacet as SelectFacet
+import Facets exposing (FacetModel, createFacetConfigurations, setComposers, setGenres, setNotations, setSourceTypes)
+import Facets.CheckboxFacet as CheckboxFacet exposing (CheckBoxFacetModel, CheckBoxFacetMsg)
+import Facets.SelectFacet as SelectFacet exposing (SelectFacetModel, SelectFacetMsg)
 import Maybe.Extra as ME
-import Model exposing (Model)
+import Model exposing (Model, toNextQuery)
 import Msg exposing (Msg(..))
-import RecordTypes exposing (FacetTypes(..))
-import Request exposing (Response(..))
+import RecordTypes exposing (CheckboxFacetTypes(..), SelectFacetTypes(..), searchBodyDecoder)
+import Request exposing (Response(..), createRequest, serverUrl)
+import Route exposing (buildQueryParameters, setKeywordQuery, setType)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -33,31 +35,143 @@ update msg model =
         UrlChanged route ->
             ( model, Cmd.none )
 
-        UserInteractedWithSelectFacet facet subMsg ->
+        UserClickedRecordTypeFilter typeFilter ->
             let
-                ( newModel, newCmd ) =
+                newQueryArgs =
+                    model.currentQueryArgs
+                        |> setType typeFilter
+
+                updateResultsCmd =
+                    buildQueryParameters newQueryArgs
+                        |> serverUrl [ "search" ]
+                        |> createRequest ServerRespondedWithSearchData searchBodyDecoder
+            in
+            ( { model
+                | activeRecordType = typeFilter
+                , currentQueryArgs = newQueryArgs
+              }
+            , updateResultsCmd
+            )
+
+        UserInteractedWithCheckboxFacet facet subMsg ->
+            let
+                updatedFacet =
                     Maybe.map
                         (\facetBlock ->
+                            let
+                                helperPartial =
+                                    checkboxFacetUpdateHelper subMsg facetBlock
+                            in
                             case facet of
                                 Genres ->
-                                    Maybe.map
-                                        (\genreFacet ->
-                                            let
-                                                ( subModel, subCmd ) =
-                                                    SelectFacet.update subMsg genreFacet
-
-                                                newFacetBlock =
-                                                    { facetBlock | genres = Just subModel }
-
-                                                updatedModel =
-                                                    { model | facets = Just newFacetBlock }
-                                            in
-                                            ( updatedModel, Cmd.map (UserInteractedWithSelectFacet facet) subCmd )
-                                        )
-                                        facetBlock.genres
+                                    helperPartial setGenres .genres
                         )
                         model.facets
                         |> ME.join
-                        |> Maybe.withDefault ( model, Cmd.none )
             in
-            ( newModel, newCmd )
+            Maybe.map
+                (\( newFacetBlock, newSubCmd ) ->
+                    ( { model | facets = Just newFacetBlock }, Cmd.map (UserInteractedWithCheckboxFacet facet) newSubCmd )
+                )
+                updatedFacet
+                |> Maybe.withDefault ( model, Cmd.none )
+
+        UserInteractedWithSelectFacet facet subMsg ->
+            let
+                updatedFacet =
+                    Maybe.map
+                        (\facetBlock ->
+                            let
+                                -- partially apply the update helper with the common
+                                -- parameters then call it with the actual field selectors.
+                                helperPartial =
+                                    selectFacetUpdateHelper subMsg facetBlock
+                            in
+                            case facet of
+                                Composers ->
+                                    helperPartial setComposers .composers
+
+                                SourceTypes ->
+                                    helperPartial setSourceTypes .sourceTypes
+
+                                Notations ->
+                                    helperPartial setNotations .notations
+                        )
+                        model.facets
+                        |> ME.join
+            in
+            Maybe.map
+                (\( newFacetBlock, newSubCmd ) ->
+                    ( { model | facets = Just newFacetBlock }, Cmd.map (UserInteractedWithSelectFacet facet) newSubCmd )
+                )
+                updatedFacet
+                |> Maybe.withDefault ( model, Cmd.none )
+
+        UserEnteredTextIntoQueryBox queryText ->
+            let
+                newText =
+                    if String.isEmpty queryText then
+                        Nothing
+
+                    else
+                        Just queryText
+
+                newQueryArgs =
+                    setKeywordQuery newText model.currentQueryArgs
+            in
+            ( { model
+                | currentQueryArgs = newQueryArgs
+              }
+            , Cmd.none
+            )
+
+        UserPressedEnterOnQueryBox ->
+            let
+                updateResultsCmd =
+                    buildQueryParameters model.currentQueryArgs
+                        |> serverUrl [ "search" ]
+                        |> createRequest ServerRespondedWithSearchData searchBodyDecoder
+            in
+            ( model, updateResultsCmd )
+
+
+selectFacetUpdateHelper :
+    SelectFacetMsg
+    -> FacetModel
+    -> (Maybe SelectFacetModel -> FacetModel -> FacetModel)
+    -> (FacetModel -> Maybe SelectFacetModel)
+    -> Maybe ( FacetModel, Cmd SelectFacetMsg )
+selectFacetUpdateHelper subMsg model facetModelUpdateFn selector =
+    facetUpdateHelper subMsg SelectFacet.update model facetModelUpdateFn selector
+
+
+checkboxFacetUpdateHelper :
+    CheckBoxFacetMsg
+    -> FacetModel
+    -> (Maybe CheckBoxFacetModel -> FacetModel -> FacetModel)
+    -> (FacetModel -> Maybe CheckBoxFacetModel)
+    -> Maybe ( FacetModel, Cmd CheckBoxFacetMsg )
+checkboxFacetUpdateHelper subMsg model facetModelUpdateFn selector =
+    facetUpdateHelper subMsg CheckboxFacet.update model facetModelUpdateFn selector
+
+
+facetUpdateHelper :
+    msg
+    -> (msg -> a -> ( a, Cmd msg ))
+    -> FacetModel
+    -> (Maybe a -> FacetModel -> FacetModel)
+    -> (FacetModel -> Maybe a)
+    -> Maybe ( FacetModel, Cmd msg )
+facetUpdateHelper subMsg updateFn model facetModelUpdateFn selector =
+    selector model
+        |> Maybe.map
+            (\facet ->
+                let
+                    ( subModel, subCmd ) =
+                        updateFn subMsg facet
+
+                    newFacetBlock =
+                        facetModelUpdateFn (Just subModel) model
+                in
+                ( newFacetBlock, subCmd )
+            )

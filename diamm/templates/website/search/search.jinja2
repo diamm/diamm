@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="search" href="{{ request.scheme }}://{{ request.get_host() }}{{ url('opensearch') }}" type="application/opensearchdescription+xml" title="DIAMM"/>
     <link rel="stylesheet" href="{{ static('stylesheets/styles.css') }}" />
+    <link rel="stylesheet" href="{{ static('stylesheets/elm-select.css') }}" />
     <title>Digital Image Archive of Medieval Music :: Search</title>
     <script type="application/json">
         {
@@ -39,7 +40,9 @@
         {
             const app = Elm.Main.init({
                 node: document.getElementById('search-body'),
-                flags: {}
+                flags: {
+                    "initialUrl": location.href
+                }
             });
         });
     </script>
