@@ -69,6 +69,18 @@ resultTemplate { url, heading, resultType } body =
 
 viewSourceResult : SourceResultBody -> Element msg
 viewSourceResult source =
+    let
+        sourceType =
+            Maybe.map (\s -> s ++ ", ") source.sourceType
+                |> Maybe.withDefault ""
+
+        sourceDate =
+            Maybe.map (\s -> s ++ ", ") source.dateStatement
+                |> Maybe.withDefault ""
+
+        sourceSurface =
+            Maybe.withDefault "" source.surface
+    in
     resultTemplate
         { url = source.url
         , heading = source.heading
@@ -79,7 +91,7 @@ viewSourceResult source =
             [ text (source.archiveCity ++ ", " ++ source.archiveName) ]
         , row
             [ width fill ]
-            [ text (source.sourceType ++ ", " ++ source.dateStatement ++ ", " ++ source.surface) ]
+            [ text (sourceType ++ sourceDate ++ sourceSurface) ]
         ]
 
 

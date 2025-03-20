@@ -21,6 +21,8 @@ type OneChoiceFacetTypes
 type alias PaginationBlock =
     { next : Maybe String
     , previous : Maybe String
+    , first : String
+    , last : String
     , currentPage : Int
     , numPages : Int
     }
@@ -43,11 +45,11 @@ type alias SourceResultBody =
     , heading : String
     , archiveName : String
     , archiveCity : String
-    , sourceType : String
-    , dateStatement : String
-    , surface : String
+    , sourceType : Maybe String
+    , dateStatement : Maybe String
+    , surface : Maybe String
     , measurements : Maybe String
-    , numberOfCompositions : Int
+    , numberOfCompositions : Maybe Int
     , publicImages : Bool
     }
 
@@ -197,6 +199,8 @@ paginationBlockDecoder =
     Decode.succeed PaginationBlock
         |> optional "next" (maybe string) Nothing
         |> optional "previous" (maybe string) Nothing
+        |> required "first" string
+        |> required "last" string
         |> required "current_page" int
         |> required "num_pages" int
 
@@ -252,11 +256,11 @@ sourceResultBodyDecoder =
         |> required "heading" string
         |> required "archive_name" string
         |> required "archive_city" string
-        |> required "source_type" string
-        |> required "date_statement" string
-        |> required "surface" string
+        |> optional "source_type" (maybe string) Nothing
+        |> optional "date_statement" (maybe string) Nothing
+        |> optional "surface" (maybe string) Nothing
         |> optional "measurements" (maybe string) Nothing
-        |> required "number_of_compositions" int
+        |> optional "number_of_compositions" (maybe int) Nothing
         |> required "public_images" bool
 
 

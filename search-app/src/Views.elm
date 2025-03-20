@@ -1,6 +1,6 @@
 module Views exposing (..)
 
-import Element exposing (Element, alignBottom, alignRight, centerX, column, el, fill, fillPortion, height, layout, none, padding, pointer, px, row, spacing, text, width)
+import Element exposing (Element, alignBottom, alignRight, centerX, column, el, fill, fillPortion, height, layout, link, none, padding, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events as Events exposing (onClick)
@@ -188,12 +188,8 @@ viewResultsControls body =
         ]
 
 
-viewPagination : Maybe String -> PaginationBlock -> Element Msg
+viewPagination : String -> PaginationBlock -> Element Msg
 viewPagination gotoPageValue pagination =
-    let
-        pageValue =
-            Maybe.withDefault "" gotoPageValue
-    in
     row
         [ width fill
         , spacing 10
@@ -209,19 +205,27 @@ viewPagination gotoPageValue pagination =
                     { label = Input.labelLeft [] (text "Go to page:")
                     , onChange = UserEnteredTextIntoPageGotoBox pagination.numPages
                     , placeholder = Nothing
-                    , text = pageValue
+                    , text = gotoPageValue
                     }
                 , el [] (text (" of " ++ String.fromInt pagination.numPages ++ " pages"))
                 ]
             ]
         , column
-            [ width (fillPortion 7) ]
+            [ width (fillPortion 4) ]
             [ row
                 [ spacing 10 ]
-                [ text "First"
+                [ link
+                    []
+                    { url = pagination.first
+                    , label = text "First"
+                    }
                 , text "Previous"
                 , text "Next"
-                , text "Last"
+                , link
+                    []
+                    { url = pagination.last
+                    , label = text "Last"
+                    }
                 ]
             ]
         ]

@@ -167,25 +167,21 @@ update msg model =
                         |> Maybe.withDefault 1
 
                 guardedPageNumber =
-                    if String.isEmpty pageNumber then
-                        Nothing
-
-                    else if parsedPageNumber > totalPages then
-                        Just (String.fromInt totalPages)
+                    if parsedPageNumber > totalPages then
+                        String.fromInt totalPages
 
                     else if parsedPageNumber < 1 then
-                        Nothing
+                        "1"
 
                     else
-                        Just (String.fromInt parsedPageNumber)
+                        pageNumber
             in
             ( { model | gotoPageValue = guardedPageNumber }, Cmd.none )
 
         UserSubmittedPageGoto totalPages ->
             let
                 parsedPageNumber =
-                    Maybe.map String.toInt model.gotoPageValue
-                        |> ME.join
+                    String.toInt model.gotoPageValue
                         |> Maybe.withDefault 1
 
                 guardedPageNumber =

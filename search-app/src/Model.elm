@@ -11,7 +11,7 @@ type alias Model =
     , response : Response
     , facets : Maybe FacetModel
     , activeRecordType : RecordTypeFilters
-    , gotoPageValue : Maybe String
+    , gotoPageValue : String
     }
 
 
@@ -21,7 +21,7 @@ init initalQueryArgs =
     , response = NoResponseToShow
     , facets = Nothing
     , activeRecordType = initalQueryArgs.resultType
-    , gotoPageValue = Nothing
+    , gotoPageValue = ""
     }
 
 
