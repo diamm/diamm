@@ -47,7 +47,7 @@ def preflight_checks(csvdata):
         source = row["source_id"]
         print(term.blue(f"Checking {folder}..."))
         # check that the folder exists
-        foldername = os.path.join("/images", "images", folder)
+        foldername = os.path.join("/images", folder)
         if not os.path.exists(foldername):
             passed = False
             print(term.red(f"Folder {foldername} does not exist"))
@@ -122,7 +122,7 @@ class Command(BaseCommand):
         for row in datareader:
             folder = row["folder"]
             source_id = row["source_id"]
-            foldername = os.path.join("/images", "images", folder)
+            foldername = os.path.join("/images", folder)
             source = Source.objects.get(pk=source_id)
 
             # get filenames in directory
