@@ -1,4 +1,5 @@
 import serpy
+from django.db.models.functions.comparison import Collate
 from rest_framework.reverse import reverse
 
 from diamm.models import SourceURL
@@ -20,7 +21,7 @@ class SourceArchiveSerializer(ContextSerializer):
 
     def get_has_external_manifest(self, obj) -> bool:
         return (
-            obj.public_images is False
+            obj.pages.filter(images__public=True).exists() is False
             and obj.links.filter(type=SourceURL.IIIF_MANIFEST).exists() is True
         )
 
@@ -75,7 +76,9 @@ class ArchiveDetailSerializer(ContextSerializer):
         req = self.context["request"]
         public_filter = {} if req.user.is_staff else {"public": True}
         return SourceArchiveSerializer(
-            obj.sources.filter(**public_filter),
+            obj.sources.filter(**public_filter).order_by(
+                Collate("shelfmark", collation="natsort")
+            ),
             many=True,
             context={"request": self.context["request"]},
         ).data

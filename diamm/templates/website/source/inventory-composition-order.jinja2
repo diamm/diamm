@@ -1,7 +1,6 @@
 {% from "website/macros.jinja2" import foliation, composers %}
 
 <div class="column">
-    <p>Click an entry to see more information about that item.</p>
     <table class="table inventory-table">
         <thead>
         <tr>
@@ -15,7 +14,7 @@
         {% for entry in content.inventory | selectattr("composition") | sort(attribute="composition") %}
         <tr class="alpha-order">
             <td class="item-details">
-                {{ entry.composition }}
+                <a href="{{ entry.url }}">{{ entry.composition }}</a>
             </td>
             <td>
                 {{ composers(entry) }}

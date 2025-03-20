@@ -540,7 +540,7 @@ class SourceDetailSerializer(ContextSerializer):
         return obj
 
     def get_has_images(self, obj):
-        return obj.pages.exists()
+        return obj.pages.filter(images__public=True).exists()
 
     def get_has_external_images(self, obj):
         return obj.links.filter(type=4).exists()
