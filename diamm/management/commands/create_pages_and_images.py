@@ -157,7 +157,7 @@ class Command(BaseCommand):
         if dryrun:
             log.info(term.yellow("DRY RUN. Changes will not be committed."))
 
-        folderpath = os.path.join("/data", "images", foldername)
+        folderpath = os.path.join("/images", foldername)
         if not os.path.exists(folderpath):
             log.error(term.red(f"Folder {foldername} does not exist. Exiting."))
             sys.exit(-1)
@@ -205,8 +205,8 @@ class Command(BaseCommand):
             image_name = os.path.basename(imagepath)
 
             # Try to retrieve the image.
-            loc = f"https://{settings.HOSTNAME}/iiif/image/{foldername}/{image_name}"
-            url = urljoin(loc + "/", "info.json")
+            location = f"{foldername}/{image_name}"
+            url: str = f"{settings.DIAMM_IMAGE_SERVER}{location}/info.json"
 
             log.info(term.green(f"Retrieving {url}"))
             r = requests.get(
@@ -217,19 +217,22 @@ class Command(BaseCommand):
                 },
             )
 
-            iiif_resp = None
+            width = None
+            height = None
             if 200 <= r.status_code < 300:
                 log.info(
                     term.green("Received a success response from info.json retrieval")
                 )
                 j = r.json()
-                iiif_resp = ujson.dumps(j)
+                width = j.get("width")
+                height = j.get("height")
+
             elif r.status_code == 404:
-                log.warning(term.yellow(f"404 not found for {loc}"))
+                log.warning(term.yellow(f"404 not found for {url}"))
                 log.warning(term.yellow("Skipping."))
                 continue
 
-            if iiif_resp is None:
+            if width is None:
                 log.warning(term.yellow("No valid IIIF image response. Skipping."))
                 continue
 
@@ -301,9 +304,10 @@ class Command(BaseCommand):
             im = {
                 "page": pg,
                 "type": imtype,
-                "location": loc,
+                "location": location,
                 "public": True,
-                "iiif_response_cache": iiif_resp,
+                "width": width,
+                "height": height,
             }
 
             if not dryrun:
