@@ -19,6 +19,7 @@ type alias QueryArgs =
     , resultType : RecordTypeFilters
     , composers : List String
     , notations : List String
+    , currentPage : Int
     }
 
 
@@ -48,6 +49,7 @@ queryParamsParser =
         |> apply resultTypeParamParser
         |> apply composerParamParser
         |> apply notationParamParser
+        |> apply pageParamParser
 
 
 resultTypeParamParser : Q.Parser RecordTypeFilters
@@ -63,6 +65,20 @@ composerParamParser =
 notationParamParser : Q.Parser (List String)
 notationParamParser =
     Q.custom "notation" identity
+
+
+pageParamParser : Q.Parser Int
+pageParamParser =
+    -- returns 1 if the page parameter cannot be parsed to an int.
+    Q.custom "page"
+        (\stringList ->
+            case stringList of
+                [ str ] ->
+                    Maybe.withDefault 1 (String.toInt str)
+
+                _ ->
+                    1
+        )
 
 
 typeQueryStringToResultType : List String -> RecordTypeFilters
@@ -85,6 +101,7 @@ defaultQueryArgs =
     , resultType = ShowAllRecords
     , composers = []
     , notations = []
+    , currentPage = 1
     }
 
 
@@ -110,8 +127,13 @@ buildQueryParameters queryArgs =
 
         composerParam =
             List.map (\c -> Url.Builder.string "composer" c) queryArgs.composers
+
+        pageParam =
+            [ String.fromInt queryArgs.currentPage
+                |> Url.Builder.string "page"
+            ]
     in
-    List.concat [ qParam, typeParam, composerParam ]
+    List.concat [ qParam, typeParam, composerParam, pageParam ]
 
 
 parseResultTypeToString : RecordTypeFilters -> String
@@ -130,3 +152,8 @@ setType newType oldRecord =
 setKeywordQuery : Maybe String -> { a | keywordQuery : Maybe String } -> { a | keywordQuery : Maybe String }
 setKeywordQuery newQuery oldRecord =
     { oldRecord | keywordQuery = newQuery }
+
+
+setCurrentPage : Int -> { a | currentPage : Int } -> { a | currentPage : Int }
+setCurrentPage newPage oldRecord =
+    { oldRecord | currentPage = newPage }

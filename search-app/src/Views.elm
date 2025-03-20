@@ -3,7 +3,7 @@ module Views exposing (..)
 import Element exposing (Element, alignBottom, alignRight, centerX, column, el, fill, fillPortion, height, layout, none, padding, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
-import Element.Events exposing (onClick)
+import Element.Events as Events exposing (onClick)
 import Element.Font as Font
 import Element.Input as Input exposing (placeholder)
 import Facets exposing (FacetModel, viewFacets)
@@ -11,9 +11,10 @@ import Helpers exposing (onEnter, viewIf, viewMaybe)
 import Html exposing (Html)
 import Model exposing (Model)
 import Msg exposing (Msg(..))
-import RecordTypes exposing (FacetBlock, FacetItem, RecordTypeFilters(..), SearchBody, SearchTypesBlock)
+import RecordTypes exposing (FacetBlock, FacetItem, PaginationBlock, RecordTypeFilters(..), SearchBody, SearchTypesBlock)
 import Request exposing (Response(..))
 import Results exposing (resultView)
+import Route exposing (QueryArgs)
 import Style exposing (colourScheme)
 
 
@@ -96,6 +97,7 @@ searchView model body =
                     [ width (fillPortion 3)
                     , height fill
                     , padding 20
+                    , spacing 20
                     ]
                     [ row
                         [ width fill ]
@@ -105,9 +107,7 @@ searchView model body =
                             ]
                             (List.map resultView body.results)
                         ]
-                    , row
-                        []
-                        []
+                    , viewPagination model.gotoPageValue body.pagination
                     ]
                 ]
             ]
@@ -184,5 +184,44 @@ viewResultsControls body =
                 { label = text "Clear Search"
                 , onPress = Nothing
                 }
+            ]
+        ]
+
+
+viewPagination : Maybe String -> PaginationBlock -> Element Msg
+viewPagination gotoPageValue pagination =
+    let
+        pageValue =
+            Maybe.withDefault "" gotoPageValue
+    in
+    row
+        [ width fill
+        , spacing 10
+        ]
+        [ column
+            [ width (fillPortion 1) ]
+            [ row
+                [ width fill ]
+                [ Input.text
+                    [ Events.onLoseFocus (UserSubmittedPageGoto pagination.numPages)
+                    , onEnter (UserSubmittedPageGoto pagination.numPages)
+                    ]
+                    { label = Input.labelLeft [] (text "Go to page:")
+                    , onChange = UserEnteredTextIntoPageGotoBox pagination.numPages
+                    , placeholder = Nothing
+                    , text = pageValue
+                    }
+                , el [] (text (" of " ++ String.fromInt pagination.numPages ++ " pages"))
+                ]
+            ]
+        , column
+            [ width (fillPortion 7) ]
+            [ row
+                [ spacing 10 ]
+                [ text "First"
+                , text "Previous"
+                , text "Next"
+                , text "Last"
+                ]
             ]
         ]

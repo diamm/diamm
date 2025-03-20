@@ -81,9 +81,11 @@ viewCheckboxFacet title facetModel =
                     (text "Clear all")
                 ]
             , row
-                [ width fill ]
+                [ width fill
+                , padding 10
+                ]
                 [ column
-                    [ width (fill |> maximum 400)
+                    [ width fill
                     , clipY
                     , scrollbarY
                     , height (px 300)

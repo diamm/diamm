@@ -2,10 +2,11 @@ module Facets exposing (..)
 
 import Element exposing (Element, column, fill, row, spacing, width)
 import Facets.CheckboxFacet exposing (CheckBoxFacetModel, initialCheckboxModel, viewCheckboxFacet)
+import Facets.OneChoiceFacet exposing (OneChoiceFacetModel, initialOneChoiceModel, viewOneChoiceFacet)
 import Facets.SelectFacet exposing (SelectFacetModel, initialSelectModel, viewSelectFacet)
 import Helpers exposing (viewMaybe)
 import Msg exposing (Msg(..))
-import RecordTypes exposing (CheckboxFacetTypes(..), FacetBlock, FacetItem, SearchBody, SelectFacetTypes(..))
+import RecordTypes exposing (CheckboxFacetTypes(..), FacetBlock, FacetItem, OneChoiceFacetTypes(..), SearchBody, SelectFacetTypes(..))
 
 
 type alias FacetModel =
@@ -14,7 +15,7 @@ type alias FacetModel =
     , notations : Maybe SelectFacetModel
     , composers : Maybe SelectFacetModel
     , sourceTypes : Maybe SelectFacetModel
-    , hasInventory : Maybe Never
+    , hasInventory : Maybe OneChoiceFacetModel
     , organizationType : Maybe Never
     , location : Maybe Never
     , archive : Maybe Never
@@ -72,13 +73,25 @@ createFacetConfigurations facetBlock =
 
             else
                 Nothing
+
+        hasInventoryFacet =
+            if not (List.isEmpty facetBlock.hasInventory) then
+                Just
+                    (initialOneChoiceModel
+                        { identifier = "has-inventory"
+                        , available = facetBlock.hasInventory
+                        }
+                    )
+
+            else
+                Nothing
     in
     { city = Nothing
     , genres = genreFacet
     , notations = notationsFacet
     , composers = composersFacet
     , sourceTypes = sourceTypesFacet
-    , hasInventory = Nothing
+    , hasInventory = hasInventoryFacet
     , organizationType = Nothing
     , location = Nothing
     , archive = Nothing
@@ -104,6 +117,10 @@ viewFacets facetModel =
         notationsFacet =
             viewMaybe (viewSelectFacet "Notation") facetModel.notations
                 |> Element.map (UserInteractedWithSelectFacet Notations)
+
+        hasInventory =
+            viewMaybe (viewOneChoiceFacet "Has Inventory") facetModel.hasInventory
+                |> Element.map (UserInteractedWithOneChoiceFacet HasInventory)
     in
     row
         [ width fill
@@ -116,6 +133,7 @@ viewFacets facetModel =
             , composersFacet
             , sourceTypesFacet
             , notationsFacet
+            , hasInventory
             ]
         ]
 
@@ -138,3 +156,8 @@ setNotations newValue oldRecord =
 setGenres : Maybe CheckBoxFacetModel -> { a | genres : Maybe CheckBoxFacetModel } -> { a | genres : Maybe CheckBoxFacetModel }
 setGenres newValue oldRecord =
     { oldRecord | genres = newValue }
+
+
+setHasInventory : Maybe OneChoiceFacetModel -> { a | hasInventory : Maybe OneChoiceFacetModel } -> { a | hasInventory : Maybe OneChoiceFacetModel }
+setHasInventory newValue oldRecord =
+    { oldRecord | hasInventory = newValue }

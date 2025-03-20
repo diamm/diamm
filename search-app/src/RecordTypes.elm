@@ -1,4 +1,4 @@
-module RecordTypes exposing (ArchiveResultBody, CheckboxFacetTypes(..), CompositionResultBody, FacetBlock, FacetItem, OrganizationResultBody, PersonResultBody, RecordTypeFilters(..), SearchBody, SearchResult(..), SearchTypesBlock, SelectFacetTypes(..), SetResultBody, SourceResultBody, facetItemToLabel, resultTypeOptions, searchBodyDecoder)
+module RecordTypes exposing (ArchiveResultBody, CheckboxFacetTypes(..), CompositionResultBody, FacetBlock, FacetItem, OneChoiceFacetTypes(..), OrganizationResultBody, PaginationBlock, PersonResultBody, RecordTypeFilters(..), SearchBody, SearchResult(..), SearchTypesBlock, SelectFacetTypes(..), SetResultBody, SourceResultBody, facetItemToLabel, resultTypeOptions, searchBodyDecoder)
 
 import Json.Decode as Decode exposing (Decoder, bool, int, list, maybe, string)
 import Json.Decode.Pipeline exposing (optional, required)
@@ -12,6 +12,10 @@ type SelectFacetTypes
 
 type CheckboxFacetTypes
     = Genres
+
+
+type OneChoiceFacetTypes
+    = HasInventory
 
 
 type alias PaginationBlock =
@@ -69,7 +73,7 @@ type alias OrganizationResultBody =
     { pk : String
     , url : String
     , heading : String
-    , location : String
+    , location : Maybe String
     }
 
 
@@ -270,7 +274,7 @@ organizationResultBodyDecoder =
         |> required "pk" string
         |> required "url" string
         |> required "heading" string
-        |> required "location" string
+        |> optional "location" (maybe string) Nothing
 
 
 setResultBodyDecoder : Decoder SetResultBody

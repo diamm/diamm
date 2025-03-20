@@ -1,14 +1,15 @@
 module Update exposing (..)
 
-import Facets exposing (FacetModel, createFacetConfigurations, setComposers, setGenres, setNotations, setSourceTypes)
+import Facets exposing (FacetModel, createFacetConfigurations, setComposers, setGenres, setHasInventory, setNotations, setSourceTypes)
 import Facets.CheckboxFacet as CheckboxFacet exposing (CheckBoxFacetModel, CheckBoxFacetMsg)
+import Facets.OneChoiceFacet as OneChoice exposing (OneChoiceFacetModel, OneChoiceFacetMsg)
 import Facets.SelectFacet as SelectFacet exposing (SelectFacetModel, SelectFacetMsg)
 import Maybe.Extra as ME
 import Model exposing (Model, toNextQuery)
 import Msg exposing (Msg(..))
-import RecordTypes exposing (CheckboxFacetTypes(..), SelectFacetTypes(..), searchBodyDecoder)
+import RecordTypes exposing (CheckboxFacetTypes(..), OneChoiceFacetTypes(..), SelectFacetTypes(..), searchBodyDecoder)
 import Request exposing (Response(..), createRequest, serverUrl)
-import Route exposing (buildQueryParameters, setKeywordQuery, setType)
+import Route exposing (buildQueryParameters, setCurrentPage, setKeywordQuery, setType)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -107,6 +108,31 @@ update msg model =
                 updatedFacet
                 |> Maybe.withDefault ( model, Cmd.none )
 
+        UserInteractedWithOneChoiceFacet facet subMsg ->
+            let
+                updatedFacet =
+                    Maybe.map
+                        (\facetBlock ->
+                            let
+                                -- partially apply the update helper with the common
+                                -- parameters then call it with the actual field selectors.
+                                helperPartial =
+                                    oneChoiceFacetUpdateHelper subMsg facetBlock
+                            in
+                            case facet of
+                                HasInventory ->
+                                    helperPartial setHasInventory .hasInventory
+                        )
+                        model.facets
+                        |> ME.join
+            in
+            Maybe.map
+                (\( newFacetBlock, newSubCmd ) ->
+                    ( { model | facets = Just newFacetBlock }, Cmd.map (UserInteractedWithOneChoiceFacet facet) newSubCmd )
+                )
+                updatedFacet
+                |> Maybe.withDefault ( model, Cmd.none )
+
         UserEnteredTextIntoQueryBox queryText ->
             let
                 newText =
@@ -134,6 +160,57 @@ update msg model =
             in
             ( model, updateResultsCmd )
 
+        UserEnteredTextIntoPageGotoBox totalPages pageNumber ->
+            let
+                parsedPageNumber =
+                    String.toInt pageNumber
+                        |> Maybe.withDefault 1
+
+                guardedPageNumber =
+                    if String.isEmpty pageNumber then
+                        Nothing
+
+                    else if parsedPageNumber > totalPages then
+                        Just (String.fromInt totalPages)
+
+                    else if parsedPageNumber < 1 then
+                        Nothing
+
+                    else
+                        Just (String.fromInt parsedPageNumber)
+            in
+            ( { model | gotoPageValue = guardedPageNumber }, Cmd.none )
+
+        UserSubmittedPageGoto totalPages ->
+            let
+                parsedPageNumber =
+                    Maybe.map String.toInt model.gotoPageValue
+                        |> ME.join
+                        |> Maybe.withDefault 1
+
+                guardedPageNumber =
+                    if parsedPageNumber > totalPages then
+                        totalPages
+
+                    else if parsedPageNumber < 1 then
+                        1
+
+                    else
+                        parsedPageNumber
+
+                -- we don't update the model with this new value since it will be updated
+                -- when the response comes in.
+                newQueryArgs =
+                    model.currentQueryArgs
+                        |> setCurrentPage guardedPageNumber
+
+                updatePageCmd =
+                    buildQueryParameters newQueryArgs
+                        |> serverUrl [ "search" ]
+                        |> createRequest ServerRespondedWithSearchData searchBodyDecoder
+            in
+            ( model, updatePageCmd )
+
 
 selectFacetUpdateHelper :
     SelectFacetMsg
@@ -153,6 +230,16 @@ checkboxFacetUpdateHelper :
     -> Maybe ( FacetModel, Cmd CheckBoxFacetMsg )
 checkboxFacetUpdateHelper subMsg model facetModelUpdateFn selector =
     facetUpdateHelper subMsg CheckboxFacet.update model facetModelUpdateFn selector
+
+
+oneChoiceFacetUpdateHelper :
+    OneChoiceFacetMsg
+    -> FacetModel
+    -> (Maybe OneChoiceFacetModel -> FacetModel -> FacetModel)
+    -> (FacetModel -> Maybe OneChoiceFacetModel)
+    -> Maybe ( FacetModel, Cmd OneChoiceFacetMsg )
+oneChoiceFacetUpdateHelper subMsg model facetModelUpdateFn selector =
+    facetUpdateHelper subMsg OneChoice.update model facetModelUpdateFn selector
 
 
 facetUpdateHelper :
