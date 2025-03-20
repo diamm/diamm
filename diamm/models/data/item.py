@@ -8,7 +8,7 @@ class Item(models.Model):
                          supplying a name to otherwise untitled things (e.g., "blank page") or
                          for non-musical titles ("A Poem").
 
-                         Use the Source Attribution field to record variant titles for compositions.
+                         Use the Source Incipit field to record variant titles for compositions.
                  """
 
     class Meta:
@@ -52,7 +52,9 @@ class Item(models.Model):
     )
 
     source_incipit = models.TextField(
-        blank=True, null=True, help_text="The incipit in the source"
+        blank=True,
+        null=True,
+        help_text="The incipit or title of the piece given in the source",
     )
     layout = models.IntegerField(
         choices=LAYOUT_OPTIONS,

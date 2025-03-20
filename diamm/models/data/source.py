@@ -56,8 +56,7 @@ class Source(models.Model):
         max_length=255,
         blank=True,
         null=True,
-        help_text="""A brief description of the source,
-                                                                             e.g, 'chant book with added polyphony'""",
+        help_text="""A brief description of the source, e.g, 'chant book with added polyphony'""",
     )
     surface = models.IntegerField(choices=SURFACE_OPTIONS, blank=True, null=True)
     inventory_provided = models.BooleanField(default=False, help_text=HELP_INVENTORY)
@@ -66,17 +65,16 @@ class Source(models.Model):
         blank=True,
         null=True,
         help_text="""Enter the start year as a four digit integer. If
-                                     the precise year is not known, enter it rounding DOWN to the closest
-                                     known decade, and then century. Examples: 1456, 1450, 1400.
-                                     """,
+                    the precise year is not known, enter it rounding DOWN to the closest
+                    known decade, and then century. Examples: 1456, 1450, 1400.""",
     )
     end_date = models.IntegerField(
         blank=True,
         null=True,
         help_text="""Enter the end year as a four digit integer. If the
-                                   precise year is not known, enter it rounding UP to the
-                                   closest known decade, and then century. Examples: 1456, 1460, 1500.
-                                   """,
+                     precise year is not known, enter it rounding UP to the
+                     closest known decade, and then century. Examples: 1456, 1460, 1500.
+                     """,
     )
     date_statement = models.CharField(max_length=512, blank=True, null=True)
     cover_image = models.ForeignKey(
