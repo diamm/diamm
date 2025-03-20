@@ -47,7 +47,7 @@ def preflight_checks(csvdata):
         source = row["source_id"]
         print(term.blue(f"Checking {folder}..."))
         # check that the folder exists
-        foldername = os.path.join("/data", "images", folder)
+        foldername = os.path.join("/images", "images", folder)
         if not os.path.exists(foldername):
             passed = False
             print(term.red(f"Folder {foldername} does not exist"))
@@ -122,7 +122,7 @@ class Command(BaseCommand):
         for row in datareader:
             folder = row["folder"]
             source_id = row["source_id"]
-            foldername = os.path.join("/data", "images", folder)
+            foldername = os.path.join("/images", "images", folder)
             source = Source.objects.get(pk=source_id)
 
             # get filenames in directory
@@ -182,16 +182,16 @@ class Command(BaseCommand):
             pages = source.pages.all()
             for page in pages:
                 for image in page.images.all():
-                    location = f"https://{settings.HOSTNAME}/iiif/image/{folder}/{image.legacy_filename}.jpx"
+                    location = f"{folder}/{image.legacy_filename}.jpx"
                     print(
                         term.green(
-                            f"\tSetting URL for image pk {image.pk} as {location}"
+                            f"\tSetting location for image pk {image.pk} as {location}"
                         )
                     )
                     image.location = location
                     image.save()
 
-                    url = urljoin(location + "/", "info.json")
+                    url: str = f"{settings.DIAMM_IMAGE_SERVER}{location}/info.json"
 
                     r = requests.get(
                         url,
@@ -204,7 +204,8 @@ class Command(BaseCommand):
 
                     if 200 <= r.status_code < 300:
                         j = r.json()
-                        image.iiif_response_cache = ujson.dumps(j)
+                        image.width = j.get("width")
+                        image.height = j.get("height")
                         image.save()
                     elif r.status_code == 404:
                         print(term.red(f"LOG: \t404 not found for {location}."))
