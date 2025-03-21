@@ -141,7 +141,7 @@ make_selected_images_private.short_description = "Make selected images private"
 class ImageAdmin(VersionAdmin):
     save_on_top = True
     form = ImageAdminForm
-    list_display = ("pk", "public", "legacy_filename", "location", "get_type")
+    list_display = ("pk", "public", "location", "get_type")
     list_filter = (
         SourceKeyFilter,
         "type__name",
@@ -151,7 +151,7 @@ class ImageAdmin(VersionAdmin):
         "external",
     )
 
-    list_editable = ("legacy_filename", "location")
+    list_editable = ("public", "location")
 
     search_fields = (
         "legacy_filename",
