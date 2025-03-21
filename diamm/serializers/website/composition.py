@@ -2,11 +2,12 @@ import re
 
 import serpy
 from django.conf import settings
+from django.db.models.expressions import Exists, OuterRef
 from django.template.loader import get_template
 from rest_framework.reverse import reverse
 
 from diamm.helpers.solr_helpers import SolrManager
-from diamm.models import SourceURL
+from diamm.models import Page, SourceURL
 from diamm.serializers.serializers import ContextDictSerializer, ContextSerializer
 
 
@@ -77,14 +78,11 @@ class CompositionSourceSerializer(ContextSerializer):
             request=self.context["request"],
         )
 
-    def get_has_images(self, obj):
-        return obj.source.pages.filter(images__public=True).exists()
+    def get_has_images(self, obj) -> bool:
+        return obj.images_are_public
 
-    def get_has_external_manifest(self, obj):
-        return (
-            self.get_has_images(obj) is False
-            and obj.source.links.filter(type=SourceURL.IIIF_MANIFEST).exists() is True
-        )
+    def get_has_external_manifest(self, obj) -> bool:
+        return obj.images_are_public is False and obj.has_manifest_link is True
 
     def get_voices(self, obj):
         if obj.voices:
@@ -140,8 +138,18 @@ class CompositionDetailSerializer(ContextSerializer):
         if obj.sources:
             return CompositionSourceSerializer(
                 obj.sources.select_related("source__archive__city")
-                .prefetch_related("voices__type", "pages")
+                .prefetch_related("voices__type", "pages", "voices__clef")
                 .filter(**public_filter)
+                .annotate(
+                    images_are_public=Exists(
+                        Page.objects.filter(source=OuterRef("pk"), images__public=True)
+                    ),
+                    has_manifest_link=Exists(
+                        SourceURL.objects.filter(
+                            source=OuterRef("pk"), type=SourceURL.IIIF_MANIFEST
+                        )
+                    ),
+                )
                 .order_by("source__sort_order"),
                 context={"request": self.context["request"]},
                 many=True,
