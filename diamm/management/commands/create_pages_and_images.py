@@ -110,6 +110,8 @@ NON_FOLIATED_NAMES = {
     "Cv": "Cv",
     "D": "D",
     "Dv": "Dv",
+    "flyleaf_r": "flyleaf r",
+    "flyleaf_v": "flyleaf v",
 }
 
 TYPE_MAP = {
