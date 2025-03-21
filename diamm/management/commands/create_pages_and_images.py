@@ -226,7 +226,7 @@ class Command(BaseCommand):
                 j = r.json()
                 width = j.get("width")
                 height = j.get("height")
-                log.info(term.green("Width: %s, Height: %s", width, height))
+                log.info(term.green("Width: %s, Height: %s", (width, height)))
             elif r.status_code == 404:
                 log.warning(term.yellow(f"404 not found for {url}"))
                 log.warning(term.yellow("Skipping."))
