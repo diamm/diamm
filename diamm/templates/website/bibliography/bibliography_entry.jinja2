@@ -180,7 +180,7 @@
     {% set uu = content["url"]|first -%}
     {% set ua = content["url_accessed"]|first -%}
     {% if content["url"] %}
-    <a href="{{ uu['entry'] }}">{{ uu["entry"] }}</a> {% if ua %}(Accessed: {{ ua["entry"] }}){% endif %}.
+    <a href="{{ uu['entry'] }}">{{ uu["entry"] }}</a> {%- if ua -%}(Accessed: {{ ua["entry"] }}){%- endif -%}.
     {% endif %}
 {%- endmacro -%}
 
