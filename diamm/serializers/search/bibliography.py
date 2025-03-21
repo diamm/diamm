@@ -21,8 +21,9 @@ def _get_bibliography(cfg: dict):
     sql_query = """SELECT b.id AS pk, 'bibliography' AS record_type, b.title AS title, b.year AS year,
                    b.abbreviation AS abbreviation,
                    (SELECT t.name
-                    FROM diamm_data_bibliographytype AS t
-                    WHERE b.type_id = t.id) AS type_name,
+                        FROM diamm_data_bibliographytype AS t
+                        WHERE b.type_id = t.id
+                   ) AS type_name,
                    (SELECT (jsonb_agg(jsonb_build_object(
                                     'position', bar.position,
                                     'last_name', ba.last_name,
@@ -30,9 +31,9 @@ def _get_bibliography(cfg: dict):
                                     ) ORDER BY bar.position, ba.last_name))
                         FROM diamm_data_bibliographyauthorrole AS bar
                         LEFT JOIN diamm_data_bibliographyauthor ba on bar.bibliography_author_id = ba.id
-                        WHERE bar.bibliography_entry_id = b.id)
-                    AS authors,
-                    (SELECT jsonb_build_object(
+                        WHERE bar.bibliography_entry_id = b.id
+                   ) AS authors,
+                   (SELECT jsonb_build_object(
                        'title', bib.title,
                        'type', bib.type_id,
                        'year', bib.year,
@@ -43,53 +44,53 @@ def _get_bibliography(cfg: dict):
                                                'role', bar1.role,
                                                'position', bar1.position
                                        ))
-                                    FROM diamm_data_bibliographyauthorrole AS bar1
-                                    LEFT JOIN diamm_data_bibliographyauthor AS bau1 ON bar1.bibliography_author_id = bau1.id
-                                    WHERE bib.id = bar1.bibliography_entry_id),
+                                       FROM diamm_data_bibliographyauthorrole AS bar1
+                                       LEFT JOIN diamm_data_bibliographyauthor AS bau1 ON bar1.bibliography_author_id = bau1.id
+                                       WHERE bib.id = bar1.bibliography_entry_id),
                        'publication', (SELECT jsonb_agg(jsonb_build_object(
                                                 'id', bpu1.id,
                                                 'type', bpu1.type,
                                                 'entry', bpu1.entry
                                         ))
-                                     FROM diamm_data_bibliographypublication AS bpu1
-                                     WHERE bpu1.bibliography_id = bib.id)
-               ) FROM diamm_data_bibliography AS bib
-                 WHERE b.id = bib.id
-                 GROUP BY bib.id)
-                AS publication_info,
-                (SELECT jsonb_agg(jsonb_strip_nulls(jsonb_build_object(
+                                        FROM diamm_data_bibliographypublication AS bpu1
+                                        WHERE bpu1.bibliography_id = bib.id)
+                       ) FROM diamm_data_bibliography AS bib
+                       WHERE b.id = bib.id
+                       GROUP BY bib.id
+                   ) AS publication_info,
+                   (SELECT jsonb_agg(jsonb_strip_nulls(jsonb_build_object(
                         'source_id', s.source_id,
                         'primary_study', s.primary_study,
                         'pages', s.pages,
                         'notes', s.notes
-                    )))
-                    FROM diamm_data_sourcebibliography AS s
-                    WHERE s.bibliography_id = b.id)
-                AS sources,
-                (SELECT jsonb_agg(jsonb_strip_nulls(jsonb_build_object(
-                    'set_id', s.set_id,
-                    'pages', s.pages,
-                    'notes', s.notes
-                    )))
-                    FROM diamm_data_setbibliography AS s
-                    WHERE s.bibliography_id = b.id)
-                AS sets,
-                (SELECT jsonb_agg(jsonb_strip_nulls(jsonb_build_object(
-                        'item_id', i.item_id,
-                        'pages', i.pages,
-                        'notes', i.notes
-                    )))
-                    FROM diamm_data_itembibliography AS i
-                    WHERE i.bibliography_id = b.id)
-                AS items,
-                (SELECT jsonb_agg(jsonb_strip_nulls(jsonb_build_object(
-                        'composition_id', c.composition_id,
-                        'pages', c.pages,
-                        'notes', c.notes
-                    )))
-                    FROM diamm_data_compositionbibliography AS c
-                    WHERE c.bibliography_id = b.id)
-                AS compositions
+                        )))
+                        FROM diamm_data_sourcebibliography AS s
+                        WHERE s.bibliography_id = b.id
+                   ) AS sources,
+                   (SELECT jsonb_agg(jsonb_strip_nulls(jsonb_build_object(
+                        'set_id', s.set_id,
+                        'pages', s.pages,
+                        'notes', s.notes
+                        )))
+                        FROM diamm_data_setbibliography AS s
+                        WHERE s.bibliography_id = b.id
+                   ) AS sets,
+                   (SELECT jsonb_agg(jsonb_strip_nulls(jsonb_build_object(
+                            'item_id', i.item_id,
+                            'pages', i.pages,
+                            'notes', i.notes
+                        )))
+                        FROM diamm_data_itembibliography AS i
+                        WHERE i.bibliography_id = b.id
+                   ) AS items,
+                   (SELECT jsonb_agg(jsonb_strip_nulls(jsonb_build_object(
+                            'composition_id', c.composition_id,
+                            'pages', c.pages,
+                            'notes', c.notes
+                        )))
+                        FROM diamm_data_compositionbibliography AS c
+                        WHERE c.bibliography_id = b.id
+                   ) AS compositions
             FROM diamm_data_bibliography AS b
             ORDER BY b.id;"""
 
