@@ -76,7 +76,6 @@ class ArchiveDetailSerializer(ContextSerializer):
         return SourceArchiveSerializer(
             obj.sources.filter(**public_filter)
             .order_by(Collate("shelfmark", collation="natsort"))
-            .prefetch_related("pages__images")
             .annotate(
                 images_are_public=Exists(
                     Page.objects.filter(source=OuterRef("pk"), images__public=True)
