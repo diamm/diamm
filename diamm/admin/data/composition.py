@@ -1,5 +1,5 @@
-
 from django.contrib import admin, messages
+from django.db.models.query import Prefetch
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
 from reversion.admin import VersionAdmin
@@ -65,7 +65,13 @@ class CompositionAdmin(VersionAdmin):
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         return qs.prefetch_related(
-            "sources__source__archive__city", "composers__composer", "sources__source"
+            Prefetch(
+                "sources",
+                queryset=Item.objects.select_related("source__archive").order_by(
+                    "source__archive__siglum", "source__shelfmark"
+                ),
+            ),
+            "composers__composer",
         )
 
     def get_composers(self, obj):
@@ -84,6 +90,7 @@ class CompositionAdmin(VersionAdmin):
     def appears_in(self, obj) -> str | None:
         if not obj.sources.exists():
             return None
+
         sources = [
             f"<a href='/admin/diamm_data/source/{x.source.pk}/change'>{x.source.display_name}</a><br />"
             for x in obj.sources.all()

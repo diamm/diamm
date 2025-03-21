@@ -1,8 +1,10 @@
 import serpy
 from django.contrib.contenttypes.prefetch import GenericPrefetch
+from django.db.models.expressions import Exists, OuterRef
+from django.db.models.query import Prefetch
 from rest_framework.reverse import reverse
 
-from diamm.models import Organization, Person
+from diamm.models import Item, Organization, Page, Person, SourceURL
 from diamm.models.data.person_note import PersonNote
 from diamm.serializers.serializers import ContextSerializer
 
@@ -47,7 +49,7 @@ class PersonSourceRelationshipSerializer(ContextSerializer):
     relationship = serpy.StrField(attr="relationship_type")
     uncertain = serpy.BoolField(attr="uncertain")
     source = serpy.StrField(attr="source.display_name")
-    has_images = serpy.BoolField(attr="source.pages.exists", call=True, required=False)
+    has_images = serpy.BoolField(attr="images_are_public", required=False)
     public_images = serpy.BoolField(attr="source.public_images", required=False)
 
     def get_url(self, obj) -> str:
@@ -56,6 +58,9 @@ class PersonSourceRelationshipSerializer(ContextSerializer):
             kwargs={"pk": obj.source_id},
             request=self.context["request"],
         )
+
+    def get_has_external_manifest(self, obj) -> bool:
+        return obj.images_are_public is False and obj.has_manifest_link is True
 
 
 class PersonCompositionSerializer(ContextSerializer):
@@ -145,8 +150,12 @@ class PersonDetailSerializer(ContextSerializer):
         return PersonCompositionSerializer(
             obj.compositions.select_related("composition", "composer")
             .prefetch_related(
-                "composition__sources__source__archive__city",
-                "composition__sources",
+                Prefetch(
+                    "composition__sources",
+                    queryset=Item.objects.select_related("source__archive").order_by(
+                        "source__archive__siglum", "source__shelfmark"
+                    ),
+                ),
                 "composition__composers__composer",
             )
             .all(),
@@ -163,10 +172,21 @@ class PersonDetailSerializer(ContextSerializer):
                 GenericPrefetch(
                     "related_entity", [Person.objects.all(), Organization.objects.all()]
                 ),
-                "source__pages__images",
                 "source__inventory",
             )
-            .all(),
+            .annotate(
+                images_are_public=Exists(
+                    Page.objects.filter(
+                        source=OuterRef("source_id"), images__public=True
+                    )
+                ),
+                has_manifest_link=Exists(
+                    SourceURL.objects.filter(
+                        source=OuterRef("source_id"), type=SourceURL.IIIF_MANIFEST
+                    )
+                ),
+            )
+            .order_by("source__archive__siglum", "source__shelfmark"),
             context={"request": self.context["request"]},
             many=True,
         ).data
