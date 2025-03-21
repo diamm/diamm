@@ -95,6 +95,7 @@ class SolrPaginator:
         self.query = query
         self.request = request
         self.result = None
+        self.absolute_uri = request.build_absolute_uri()
 
         # qopts are the query options passed to solr.
         self.qopts = {
@@ -268,6 +269,8 @@ class SolrPage:
             [
                 ("next", self.next_url),
                 ("previous", self.previous_url),
+                ("first", self.first_url),
+                ("last", self.last_url),
                 ("current_page", self.number),
                 ("num_pages", self.paginator.num_pages),
                 # ('pages', pages)
@@ -278,7 +281,7 @@ class SolrPage:
     def next_url(self) -> str | None:
         if not self.has_next:
             return None
-        url: str = self.paginator.request.build_absolute_uri()
+        url: str = self.paginator.absolute_uri
         page_number = self.next_page_number
         return replace_query_param(url, "page", page_number)
 
@@ -286,9 +289,19 @@ class SolrPage:
     def previous_url(self) -> str | None:
         if not self.has_previous:
             return None
-        url: str = self.paginator.request.build_absolute_uri()
+        url: str = self.paginator.absolute_uri
         page_number = self.previous_page_number
         return replace_query_param(url, "page", page_number)
+
+    @property
+    def first_url(self) -> str:
+        url: str = self.paginator.absolute_uri
+        return replace_query_param(url, "page", 1)
+
+    @property
+    def last_url(self) -> str | None:
+        url: str = self.paginator.absolute_uri
+        return replace_query_param(url, "page", self.paginator.num_pages)
 
     @property
     def has_next(self) -> int:
