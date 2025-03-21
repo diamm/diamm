@@ -254,6 +254,7 @@ class Command(BaseCommand):
                 )
             )
 
+            pg: Optional[Page] = None
             # Try to get the special page names; if None, use the name from the filename.
             page_name = NON_FOLIATED_NAMES.get(pname)
             if not page_name:
@@ -262,13 +263,13 @@ class Command(BaseCommand):
             if not special_type:
                 log.info(term.green(f"Creating a regular page with label {page_name}"))
                 # Create a page record.
-                p = {
-                    "source": src,
-                    "numeration": page_name,
-                    "sort_order": order,
-                    "page_type": Page.PAGE,
-                }
                 if not dryrun:
+                    p = {
+                        "source": src,
+                        "numeration": page_name,
+                        "sort_order": order,
+                        "page_type": Page.PAGE,
+                    }
                     pg = Page(**p)
                     pg.save()
             else:
@@ -296,10 +297,13 @@ class Command(BaseCommand):
             # Create an image record
             imtype = TYPE_MAP.get(special_type)
             log.info(term.green("Creating an image record."))
-            pg: Optional[Page] = None
 
             if dryrun:
-                pg = None
+                continue
+
+            if pg is None:
+                log.info(term.red("Page is None when it shouldn't be!"))
+                continue
 
             im = {
                 "page": pg,
@@ -310,8 +314,7 @@ class Command(BaseCommand):
                 "height": height,
             }
 
-            if not dryrun:
-                img = Image(**im)
-                img.save()
+            img = Image(**im)
+            img.save()
 
         log.info("Done adding pages and images.")
