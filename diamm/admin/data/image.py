@@ -141,7 +141,7 @@ make_selected_images_private.short_description = "Make selected images private"
 class ImageAdmin(VersionAdmin):
     save_on_top = True
     form = ImageAdminForm
-    list_display = ("pk", "public", "legacy_filename", "location", "get_type")
+    list_display = ("pk", "public", "location", "get_type")
     list_filter = (
         SourceKeyFilter,
         "type__name",
@@ -151,7 +151,7 @@ class ImageAdmin(VersionAdmin):
         "external",
     )
 
-    list_editable = ("legacy_filename", "location")
+    list_editable = ("public", "location")
 
     search_fields = (
         "legacy_filename",
@@ -174,7 +174,9 @@ class ImageAdmin(VersionAdmin):
         models.URLField: {"widget": TextInput(attrs={"size": "160"})},
     }
 
-    def get_type(self, obj):
+    def get_type(self, obj) -> str:
+        if not obj.type:
+            return "[Unattached]"
         return f"{obj.type.name}"
 
     get_type.short_description = "type"

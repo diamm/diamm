@@ -8,11 +8,9 @@ import os
 import re
 import sys
 from typing import Optional
-from urllib.parse import urljoin
 
 import blessings
 import requests
-import ujson
 from django.conf import settings
 from django.core.management import BaseCommand
 
@@ -110,6 +108,8 @@ NON_FOLIATED_NAMES = {
     "Cv": "Cv",
     "D": "D",
     "Dv": "Dv",
+    "flyleaf_r": "flyleaf r",
+    "flyleaf_v": "flyleaf v",
 }
 
 TYPE_MAP = {
@@ -195,7 +195,7 @@ class Command(BaseCommand):
         #   E-MOsb_MS1085_115br.jpx
         # As well as those with the non-foliated names in them (see the keys for NON_FOLIATED_NAMES
         page_name_regex = re.compile(
-            r"(?P<sig>.*)_(?P<pname>(\d{3}b?[r|v])|("
+            r"(?P<sig>.*)_(?P<pname>(\d{3}b?a?[r|v])|("
             + "|".join(NON_FOLIATED_NAMES.keys())
             + r"))(?P<spctype>_w|_a)?(?P<ext>.jpx)"
         )
@@ -226,7 +226,7 @@ class Command(BaseCommand):
                 j = r.json()
                 width = j.get("width")
                 height = j.get("height")
-
+                log.info(term.green(f"Width: {width}, Height: {height}"))
             elif r.status_code == 404:
                 log.warning(term.yellow(f"404 not found for {url}"))
                 log.warning(term.yellow("Skipping."))
@@ -254,6 +254,7 @@ class Command(BaseCommand):
                 )
             )
 
+            pg: Optional[Page] = None
             # Try to get the special page names; if None, use the name from the filename.
             page_name = NON_FOLIATED_NAMES.get(pname)
             if not page_name:
@@ -262,13 +263,13 @@ class Command(BaseCommand):
             if not special_type:
                 log.info(term.green(f"Creating a regular page with label {page_name}"))
                 # Create a page record.
-                p = {
-                    "source": src,
-                    "numeration": page_name,
-                    "sort_order": order,
-                    "page_type": Page.PAGE,
-                }
                 if not dryrun:
+                    p = {
+                        "source": src,
+                        "numeration": page_name,
+                        "sort_order": order,
+                        "page_type": Page.PAGE,
+                    }
                     pg = Page(**p)
                     pg.save()
             else:
@@ -296,10 +297,13 @@ class Command(BaseCommand):
             # Create an image record
             imtype = TYPE_MAP.get(special_type)
             log.info(term.green("Creating an image record."))
-            pg: Optional[Page] = None
 
             if dryrun:
-                pg = None
+                continue
+
+            if pg is None:
+                log.info(term.red("Page is None when it shouldn't be!"))
+                continue
 
             im = {
                 "page": pg,
@@ -310,8 +314,7 @@ class Command(BaseCommand):
                 "height": height,
             }
 
-            if not dryrun:
-                img = Image(**im)
-                img.save()
+            img = Image(**im)
+            img.save()
 
         log.info("Done adding pages and images.")
