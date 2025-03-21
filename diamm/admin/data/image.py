@@ -174,7 +174,9 @@ class ImageAdmin(VersionAdmin):
         models.URLField: {"widget": TextInput(attrs={"size": "160"})},
     }
 
-    def get_type(self, obj):
+    def get_type(self, obj) -> str:
+        if not obj.type:
+            return "[Unattached]"
         return f"{obj.type.name}"
 
     get_type.short_description = "type"
