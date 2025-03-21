@@ -8,11 +8,9 @@ import os
 import re
 import sys
 from typing import Optional
-from urllib.parse import urljoin
 
 import blessings
 import requests
-import ujson
 from django.conf import settings
 from django.core.management import BaseCommand
 
@@ -197,7 +195,7 @@ class Command(BaseCommand):
         #   E-MOsb_MS1085_115br.jpx
         # As well as those with the non-foliated names in them (see the keys for NON_FOLIATED_NAMES
         page_name_regex = re.compile(
-            r"(?P<sig>.*)_(?P<pname>(\d{3}b?[r|v])|("
+            r"(?P<sig>.*)_(?P<pname>(\d{3}b?a?[r|v])|("
             + "|".join(NON_FOLIATED_NAMES.keys())
             + r"))(?P<spctype>_w|_a)?(?P<ext>.jpx)"
         )
