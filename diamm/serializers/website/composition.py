@@ -138,7 +138,7 @@ class CompositionDetailSerializer(ContextSerializer):
         if obj.sources:
             return CompositionSourceSerializer(
                 obj.sources.select_related("source__archive__city")
-                .prefetch_related("voices__type", "pages", "voices__clef")
+                .prefetch_related("voices__type", "voices__clef")
                 .filter(**public_filter)
                 .annotate(
                     images_are_public=Exists(

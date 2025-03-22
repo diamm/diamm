@@ -5,11 +5,6 @@ class Image(models.Model):
     class Meta:
         app_label = "diamm_data"
 
-    # item = models.ForeignKey("diamm_data.Item", blank=True, null=True)
-    # items = models.ManyToManyField("diamm_data.Item",
-    #                                related_name="images")
-    #
-
     page = models.ForeignKey(
         "diamm_data.Page",
         blank=True,
@@ -25,10 +20,6 @@ class Image(models.Model):
         on_delete=models.CASCADE,
     )
     location = models.CharField(max_length=1024, blank=True, null=True)
-
-    # folio = models.CharField(max_length=256, blank=True, null=True)
-    # caption = models.TextField(blank=True, null=True)
-    # serial = models.IntegerField(blank=True, null=True)
     legacy_id = models.CharField(max_length=256, blank=True, null=True)
     legacy_filename = models.CharField(max_length=1024, blank=True, null=True)
 

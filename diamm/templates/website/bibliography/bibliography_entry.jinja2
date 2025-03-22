@@ -170,9 +170,18 @@
         {% set deg = degree(content) -%}
         {% if deg -%}{{ deg }}{{ "." if not deg.endswith(".") else "" }}{%- endif %}
     {%- elif content["type"] == 7 -%}
+        {# conference #}
         {% set cnf = conference(content) %}
         {%- if cnf -%}{{ cnf }}{{ "." if not cnf.endswith(".") else "" }}{%- endif -%}
     {%- endif -%}
 {% endmacro -%}
 
-{{ authors(content) }} {{ year(content["year"]) }} {{ first_title(content) }} {{ other_titles(content) }} {{ publication_info(content) }}
+{%- macro bibliography_url(content) -%}
+    {% set uu = content["url"]|first -%}
+    {% set ua = content["url_accessed"]|first -%}
+    {% if content["url"] %}
+    <a href="{{ uu['entry'] }}">{{ uu["entry"] }}</a> {%- if ua -%}(Accessed: {{ ua["entry"] }}){%- endif -%}.
+    {% endif %}
+{%- endmacro -%}
+
+{{ authors(content) }} {{ year(content["year"]) }} {{ first_title(content) }} {{ other_titles(content) }} {{ publication_info(content) }} {{ bibliography_url(content) }}
