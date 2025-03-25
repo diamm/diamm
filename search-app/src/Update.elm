@@ -7,9 +7,10 @@ import Facets.SelectFacet as SelectFacet exposing (SelectFacetModel, SelectFacet
 import Maybe.Extra as ME
 import Model exposing (Model, toNextQuery)
 import Msg exposing (Msg(..))
+import Ports exposing (pushUrl)
 import RecordTypes exposing (CheckboxFacetTypes(..), OneChoiceFacetTypes(..), SelectFacetTypes(..), searchBodyDecoder)
 import Request exposing (Response(..), createRequest, serverUrl)
-import Route exposing (buildQueryParameters, setCurrentPage, setKeywordQuery, setType)
+import Route exposing (buildQueryParameters, defaultQueryArgs, removeGenreValue, setCurrentPage, setKeywordQuery, setType, updateGenreValues)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -18,11 +19,12 @@ update msg model =
         ServerRespondedWithSearchData (Ok ( _, response )) ->
             let
                 facets =
-                    Just (createFacetConfigurations response.facets)
+                    Just (createFacetConfigurations model.facets response.facets)
             in
             ( { model
                 | response = Response response
                 , facets = facets
+                , gotoPageValue = ""
               }
             , Cmd.none
             )
@@ -33,7 +35,7 @@ update msg model =
         NothingHappened ->
             ( model, Cmd.none )
 
-        UrlChanged route ->
+        ClientChangedUrl route ->
             ( model, Cmd.none )
 
         UserClickedRecordTypeFilter typeFilter ->
@@ -41,17 +43,19 @@ update msg model =
                 newQueryArgs =
                     model.currentQueryArgs
                         |> setType typeFilter
+                        |> setCurrentPage 1
 
-                updateResultsCmd =
+                newUrl =
                     buildQueryParameters newQueryArgs
                         |> serverUrl [ "search" ]
-                        |> createRequest ServerRespondedWithSearchData searchBodyDecoder
+
+                updateResultsCmd =
+                    createRequest ServerRespondedWithSearchData searchBodyDecoder newUrl
             in
             ( { model
-                | activeRecordType = typeFilter
-                , currentQueryArgs = newQueryArgs
+                | currentQueryArgs = newQueryArgs
               }
-            , updateResultsCmd
+            , Cmd.batch [ updateResultsCmd, pushUrl newUrl ]
             )
 
         UserInteractedWithCheckboxFacet facet subMsg ->
@@ -69,10 +73,49 @@ update msg model =
                         )
                         model.facets
                         |> ME.join
+
+                updatedQueryArgs =
+                    let
+                        queryArgs =
+                            model.currentQueryArgs
+
+                        facetBlock : Maybe FacetModel
+                        facetBlock =
+                            Maybe.map Tuple.first updatedFacet
+                    in
+                    case facet of
+                        Genres ->
+                            Maybe.map
+                                (\fm ->
+                                    let
+                                        fvalues =
+                                            Maybe.map (\g -> List.map .value g.selected) fm.genres
+                                                |> Maybe.withDefault []
+                                    in
+                                    { queryArgs | genres = fvalues }
+                                )
+                                facetBlock
+                                |> Maybe.withDefault queryArgs
+
+                updatedUrl =
+                    buildQueryParameters updatedQueryArgs
+                        |> serverUrl [ "search" ]
+
+                updateResultsCmd =
+                    createRequest ServerRespondedWithSearchData searchBodyDecoder updatedUrl
             in
             Maybe.map
                 (\( newFacetBlock, newSubCmd ) ->
-                    ( { model | facets = Just newFacetBlock }, Cmd.map (UserInteractedWithCheckboxFacet facet) newSubCmd )
+                    ( { model
+                        | facets = Just newFacetBlock
+                        , currentQueryArgs = updatedQueryArgs
+                      }
+                    , Cmd.batch
+                        [ updateResultsCmd
+                        , Cmd.map (UserInteractedWithCheckboxFacet facet) newSubCmd
+                        , pushUrl updatedUrl
+                        ]
+                    )
                 )
                 updatedFacet
                 |> Maybe.withDefault ( model, Cmd.none )
@@ -103,7 +146,9 @@ update msg model =
             in
             Maybe.map
                 (\( newFacetBlock, newSubCmd ) ->
-                    ( { model | facets = Just newFacetBlock }, Cmd.map (UserInteractedWithSelectFacet facet) newSubCmd )
+                    ( { model | facets = Just newFacetBlock }
+                    , Cmd.map (UserInteractedWithSelectFacet facet) newSubCmd
+                    )
                 )
                 updatedFacet
                 |> Maybe.withDefault ( model, Cmd.none )
@@ -128,7 +173,11 @@ update msg model =
             in
             Maybe.map
                 (\( newFacetBlock, newSubCmd ) ->
-                    ( { model | facets = Just newFacetBlock }, Cmd.map (UserInteractedWithOneChoiceFacet facet) newSubCmd )
+                    ( { model
+                        | facets = Just newFacetBlock
+                      }
+                    , Cmd.map (UserInteractedWithOneChoiceFacet facet) newSubCmd
+                    )
                 )
                 updatedFacet
                 |> Maybe.withDefault ( model, Cmd.none )
@@ -184,28 +233,66 @@ update msg model =
                     String.toInt model.gotoPageValue
                         |> Maybe.withDefault 1
 
-                guardedPageNumber =
-                    if parsedPageNumber > totalPages then
-                        totalPages
+                currentPage =
+                    .currentPage model.currentQueryArgs
 
-                    else if parsedPageNumber < 1 then
-                        1
+                newCmd =
+                    if currentPage == parsedPageNumber then
+                        Cmd.none
 
                     else
-                        parsedPageNumber
+                        let
+                            guardedPageNumber =
+                                if parsedPageNumber > totalPages then
+                                    totalPages
 
-                -- we don't update the model with this new value since it will be updated
-                -- when the response comes in.
+                                else if parsedPageNumber < 1 then
+                                    1
+
+                                else
+                                    parsedPageNumber
+
+                            -- we don't update the model with this new value since it will be updated
+                            -- when the response comes in.
+                            newQueryArgs =
+                                model.currentQueryArgs
+                                    |> setCurrentPage guardedPageNumber
+                        in
+                        buildQueryParameters newQueryArgs
+                            |> serverUrl [ "search" ]
+                            |> createRequest ServerRespondedWithSearchData searchBodyDecoder
+            in
+            ( model, newCmd )
+
+        UserClickedPaginationLink pageNumber ->
+            let
                 newQueryArgs =
                     model.currentQueryArgs
-                        |> setCurrentPage guardedPageNumber
+                        |> setCurrentPage pageNumber
 
-                updatePageCmd =
+                newUrl =
                     buildQueryParameters newQueryArgs
                         |> serverUrl [ "search" ]
-                        |> createRequest ServerRespondedWithSearchData searchBodyDecoder
             in
-            ( model, updatePageCmd )
+            ( { model | currentQueryArgs = newQueryArgs }
+            , Cmd.batch
+                [ createRequest ServerRespondedWithSearchData searchBodyDecoder newUrl
+                , pushUrl newUrl
+                ]
+            )
+
+        UserClickedClearSearch ->
+            let
+                newUrl =
+                    buildQueryParameters defaultQueryArgs
+                        |> serverUrl [ "search" ]
+
+                clearCmd =
+                    createRequest ServerRespondedWithSearchData searchBodyDecoder newUrl
+            in
+            ( { model | currentQueryArgs = defaultQueryArgs }
+            , Cmd.batch [ clearCmd, pushUrl newUrl ]
+            )
 
 
 selectFacetUpdateHelper :

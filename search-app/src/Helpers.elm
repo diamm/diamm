@@ -1,9 +1,12 @@
 module Helpers exposing (..)
 
-import Element exposing (Element, none)
-import Html.Events
+import Dict exposing (Dict)
+import Element exposing (Attribute, Element, html, htmlAttribute, link, none)
+import Html as HT exposing (Html, a)
+import Html.Events as HE exposing (preventDefaultOn)
 import Json.Decode as Decode
 import Maybe.Extra as ME
+import Url
 
 
 choose : Bool -> (() -> a) -> (() -> a) -> a
@@ -39,7 +42,7 @@ viewMaybe viewFunc maybeBody =
 onEnter : msg -> Element.Attribute msg
 onEnter msg =
     Element.htmlAttribute
-        (Html.Events.on "keyup"
+        (HE.on "keyup"
             (Decode.field "key" Decode.string
                 |> Decode.andThen
                     (\key ->
@@ -51,3 +54,43 @@ onEnter msg =
                     )
             )
         )
+
+
+prepareQuery : Maybe String -> Dict String (List String)
+prepareQuery maybeQuery =
+    case maybeQuery of
+        Nothing ->
+            Dict.empty
+
+        Just qry ->
+            List.foldr addParam Dict.empty (String.split "&" qry)
+
+
+addParam : String -> Dict String (List String) -> Dict String (List String)
+addParam segment dict =
+    case String.split "=" segment of
+        [ rawKey, rawValue ] ->
+            case Url.percentDecode rawKey of
+                Nothing ->
+                    dict
+
+                Just key ->
+                    case Url.percentDecode rawValue of
+                        Nothing ->
+                            dict
+
+                        Just value ->
+                            Dict.update key (addToParametersHelp value) dict
+
+        _ ->
+            dict
+
+
+addToParametersHelp : a -> Maybe (List a) -> Maybe (List a)
+addToParametersHelp value maybeList =
+    case maybeList of
+        Nothing ->
+            Just [ value ]
+
+        Just list ->
+            Just (value :: list)

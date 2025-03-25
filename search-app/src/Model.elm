@@ -10,7 +10,6 @@ type alias Model =
     { currentQueryArgs : QueryArgs
     , response : Response
     , facets : Maybe FacetModel
-    , activeRecordType : RecordTypeFilters
     , gotoPageValue : String
     }
 
@@ -20,7 +19,6 @@ init initalQueryArgs =
     { currentQueryArgs = initalQueryArgs
     , response = NoResponseToShow
     , facets = Nothing
-    , activeRecordType = initalQueryArgs.resultType
     , gotoPageValue = ""
     }
 

@@ -12,7 +12,7 @@ import Route exposing (Route)
 type Msg
     = NothingHappened
     | ServerRespondedWithSearchData (Result (Http.Detailed.Error String) ( Http.Metadata, SearchBody ))
-    | UrlChanged (Maybe Route)
+    | ClientChangedUrl (Maybe Route)
     | UserInteractedWithSelectFacet SelectFacetTypes SelectFacetMsg
     | UserInteractedWithCheckboxFacet CheckboxFacetTypes CheckBoxFacetMsg
     | UserInteractedWithOneChoiceFacet OneChoiceFacetTypes OneChoiceFacetMsg
@@ -20,4 +20,6 @@ type Msg
     | UserEnteredTextIntoQueryBox String
     | UserEnteredTextIntoPageGotoBox Int String
     | UserSubmittedPageGoto Int
+    | UserClickedPaginationLink Int
     | UserPressedEnterOnQueryBox
+    | UserClickedClearSearch

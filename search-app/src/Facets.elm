@@ -5,6 +5,7 @@ import Facets.CheckboxFacet exposing (CheckBoxFacetModel, initialCheckboxModel, 
 import Facets.OneChoiceFacet exposing (OneChoiceFacetModel, initialOneChoiceModel, viewOneChoiceFacet)
 import Facets.SelectFacet exposing (SelectFacetModel, initialSelectModel, viewSelectFacet)
 import Helpers exposing (viewMaybe)
+import Maybe.Extra as ME
 import Msg exposing (Msg(..))
 import RecordTypes exposing (CheckboxFacetTypes(..), FacetBlock, FacetItem, OneChoiceFacetTypes(..), SearchBody, SelectFacetTypes(..))
 
@@ -23,11 +24,15 @@ type alias FacetModel =
     }
 
 
-createFacetConfigurations : FacetBlock -> FacetModel
-createFacetConfigurations facetBlock =
+createFacetConfigurations : Maybe FacetModel -> FacetBlock -> FacetModel
+createFacetConfigurations currentModel facetBlock =
     let
         genreFacet =
-            if not (List.isEmpty facetBlock.genres) then
+            if ME.isJust currentModel then
+                Maybe.map .genres currentModel
+                    |> ME.join
+
+            else if not (List.isEmpty facetBlock.genres) then
                 Just
                     (initialCheckboxModel
                         { identifier = "genres"

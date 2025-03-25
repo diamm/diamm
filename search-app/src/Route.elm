@@ -1,6 +1,7 @@
 module Route exposing (..)
 
 import Dict
+import Helpers exposing (prepareQuery)
 import Maybe.Extra as ME
 import RecordTypes exposing (RecordTypeFilters(..), resultTypeOptions)
 import Url exposing (Url)
@@ -19,6 +20,7 @@ type alias QueryArgs =
     , resultType : RecordTypeFilters
     , composers : List String
     , notations : List String
+    , genres : List String
     , currentPage : Int
     }
 
@@ -38,6 +40,14 @@ parseUrl url =
     P.parse routeParser url
 
 
+extractPageNumberFromUrl : Url -> Maybe Int
+extractPageNumberFromUrl url =
+    prepareQuery url.query
+        |> Dict.get "page"
+        |> Maybe.andThen (\ll -> List.head ll)
+        |> Maybe.andThen String.toInt
+
+
 routeParser : P.Parser (Route -> a) a
 routeParser =
     P.map SearchPageRoute (s "search" <?> queryParamsParser)
@@ -49,6 +59,7 @@ queryParamsParser =
         |> apply resultTypeParamParser
         |> apply composerParamParser
         |> apply notationParamParser
+        |> apply genreParamParser
         |> apply pageParamParser
 
 
@@ -69,16 +80,12 @@ notationParamParser =
 
 pageParamParser : Q.Parser Int
 pageParamParser =
-    -- returns 1 if the page parameter cannot be parsed to an int.
-    Q.custom "page"
-        (\stringList ->
-            case stringList of
-                [ str ] ->
-                    Maybe.withDefault 1 (String.toInt str)
+    Q.map (Maybe.withDefault 1) (Q.int "page")
 
-                _ ->
-                    1
-        )
+
+genreParamParser : Q.Parser (List String)
+genreParamParser =
+    Q.custom "genre" identity
 
 
 typeQueryStringToResultType : List String -> RecordTypeFilters
@@ -101,6 +108,7 @@ defaultQueryArgs =
     , resultType = ShowAllRecords
     , composers = []
     , notations = []
+    , genres = []
     , currentPage = 1
     }
 
@@ -157,3 +165,13 @@ setKeywordQuery newQuery oldRecord =
 setCurrentPage : Int -> { a | currentPage : Int } -> { a | currentPage : Int }
 setCurrentPage newPage oldRecord =
     { oldRecord | currentPage = newPage }
+
+
+updateGenreValues : String -> { a | genres : List String } -> { a | genres : List String }
+updateGenreValues addValue qargs =
+    { qargs | genres = addValue :: qargs.genres }
+
+
+removeGenreValue : String -> { a | genres : List String } -> { a | genres : List String }
+removeGenreValue remValue qargs =
+    { qargs | genres = List.filter ((/=) remValue) qargs.genres }

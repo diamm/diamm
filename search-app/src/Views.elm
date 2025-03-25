@@ -1,6 +1,7 @@
 module Views exposing (..)
 
-import Element exposing (Element, alignBottom, alignRight, centerX, column, el, fill, fillPortion, height, layout, link, none, padding, pointer, px, row, spacing, text, width)
+import Config as C
+import Element exposing (Element, alignBottom, alignRight, centerX, column, el, fill, fillPortion, height, layout, link, none, padding, paddingXY, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events as Events exposing (onClick)
@@ -9,13 +10,15 @@ import Element.Input as Input exposing (placeholder)
 import Facets exposing (FacetModel, viewFacets)
 import Helpers exposing (onEnter, viewIf, viewMaybe)
 import Html exposing (Html)
+import Maybe.Extra as ME
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import RecordTypes exposing (FacetBlock, FacetItem, PaginationBlock, RecordTypeFilters(..), SearchBody, SearchTypesBlock)
 import Request exposing (Response(..))
 import Results exposing (resultView)
-import Route exposing (QueryArgs)
+import Route exposing (QueryArgs, extractPageNumberFromUrl)
 import Style exposing (colourScheme)
+import Url
 
 
 view : Model -> Html Msg
@@ -77,7 +80,7 @@ searchView model body =
                 , Font.size 16
                 , spacing 15
                 ]
-                (mainFilterList model.activeRecordType body.types)
+                (mainFilterList (.resultType model.currentQueryArgs) body.types)
             , row
                 [ width fill
                 , height fill
@@ -165,7 +168,7 @@ viewFilter cfg =
         (text (cfg.label ++ countLabel))
 
 
-viewResultsControls : SearchBody -> Element msg
+viewResultsControls : SearchBody -> Element Msg
 viewResultsControls body =
     row
         [ width fill ]
@@ -182,7 +185,7 @@ viewResultsControls body =
                 , alignRight
                 ]
                 { label = text "Clear Search"
-                , onPress = Nothing
+                , onPress = Just UserClickedClearSearch
                 }
             ]
         ]
@@ -190,41 +193,90 @@ viewResultsControls body =
 
 viewPagination : String -> PaginationBlock -> Element Msg
 viewPagination gotoPageValue pagination =
+    let
+        nextEl =
+            case pagination.next of
+                Just nextLink ->
+                    let
+                        pageNum =
+                            Url.fromString nextLink
+                                |> Maybe.andThen extractPageNumberFromUrl
+                                |> Maybe.withDefault 1
+                    in
+                    el
+                        [ Font.color colourScheme.lightBlue
+                        , onClick (UserClickedPaginationLink pageNum)
+                        , pointer
+                        ]
+                        (text "Next ›")
+
+                Nothing ->
+                    el [ Font.color colourScheme.midGrey ] (text "Next ›")
+
+        previousEl =
+            case pagination.previous of
+                Just prevLink ->
+                    let
+                        pageNum =
+                            Url.fromString prevLink
+                                |> Maybe.andThen extractPageNumberFromUrl
+                                |> Maybe.withDefault 1
+                    in
+                    el
+                        [ Font.color colourScheme.lightBlue
+                        , onClick (UserClickedPaginationLink pageNum)
+                        , pointer
+                        ]
+                        (text "‹ Previous")
+
+                Nothing ->
+                    el [ Font.color colourScheme.midGrey ] (text "‹ Previous")
+    in
     row
         [ width fill
         , spacing 10
+        , paddingXY 0 20
+        , Font.size 18
         ]
         [ column
-            [ width (fillPortion 1) ]
+            []
+            [ row
+                [ spacing 18 ]
+                [ el
+                    []
+                    (text ("Page " ++ String.fromInt pagination.currentPage ++ " of " ++ String.fromInt pagination.numPages ++ " pages"))
+                , text " | "
+                , el
+                    [ Font.color colourScheme.lightBlue
+                    , onClick (UserClickedPaginationLink 1)
+                    , pointer
+                    ]
+                    (text "« First")
+                , previousEl
+                , nextEl
+                , el
+                    [ Font.color colourScheme.lightBlue
+                    , onClick (UserClickedPaginationLink pagination.numPages)
+                    , pointer
+                    ]
+                    (text "Last »")
+                , text " | "
+                ]
+            ]
+        , column
+            []
             [ row
                 [ width fill ]
                 [ Input.text
                     [ Events.onLoseFocus (UserSubmittedPageGoto pagination.numPages)
                     , onEnter (UserSubmittedPageGoto pagination.numPages)
+                    , spacing 10
+                    , width (px 80)
                     ]
                     { label = Input.labelLeft [] (text "Go to page:")
                     , onChange = UserEnteredTextIntoPageGotoBox pagination.numPages
                     , placeholder = Nothing
                     , text = gotoPageValue
-                    }
-                , el [] (text (" of " ++ String.fromInt pagination.numPages ++ " pages"))
-                ]
-            ]
-        , column
-            [ width (fillPortion 4) ]
-            [ row
-                [ spacing 10 ]
-                [ link
-                    []
-                    { url = pagination.first
-                    , label = text "First"
-                    }
-                , text "Previous"
-                , text "Next"
-                , link
-                    []
-                    { url = pagination.last
-                    , label = text "Last"
                     }
                 ]
             ]
