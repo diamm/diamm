@@ -539,28 +539,22 @@ class SourceDetailSerializer(ContextSerializer):
         }
         return obj
 
-    def get_has_images(self, obj):
-        return obj.pages.filter(images__public=True).exists()
+    def get_has_images(self, obj) -> bool:
+        return obj.images_are_public
 
     def get_has_external_images(self, obj):
         return obj.links.filter(type=4).exists()
 
     def get_has_external_manifest(self, obj) -> bool:
-        return (
-            self.get_has_images(obj) is False
-            and obj.links.filter(type=SourceURL.IIIF_MANIFEST).exists() is True
-        )
+        return obj.images_are_public is False and obj.has_manifest_link is True
 
     def get_manifest_url(self, obj):
         # The assumption here is that if we have an external manifest,
         # it is public.
-        if not self.get_has_images(obj):
+        # Return None if the document has no public images
+        if not obj.images_are_public:
             if iiif_link := obj.links.filter(type=SourceURL.IIIF_MANIFEST).first():
                 return iiif_link.link
-            return None
-
-        # Return None if the document has no public images
-        if not self.context["request"].user.is_authenticated:
             return None
 
         return reverse(
