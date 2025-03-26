@@ -1,8 +1,7 @@
 const path = require('path');
 const buildMode = (process.env.NODE_ENV === "production") ? 'production' : 'development';
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CopyPlugin = require("copy-webpack-plugin");
 
 
 module.exports = [{
@@ -16,15 +15,11 @@ module.exports = [{
         rules: [
             {
                 test: /\.scss$/,
-                use: ['style-loader', MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader']
+                use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader']
             }
         ]
     },
     plugins: [
-        new CleanWebpackPlugin({
-            cleanOnceBeforeBuildPatterns: ['*.js', '*.css', '*.map'],
-        }),
-        new CopyWebpackPlugin(),
         new MiniCssExtractPlugin({
             filename: path.join('diva.css')
         })
@@ -32,12 +27,13 @@ module.exports = [{
     output: {
         publicPath: '/build/',
         path: path.join(__dirname, 'build'),
-        filename: 'diva.js'
+        filename: 'diva.js',
+        clean: true
     },
     mode: buildMode,
-    devtool: (buildMode === "production") ? 'cheap-source-map' : 'cheap-module-eval-source-map',
+    devtool: (buildMode === "production") ? 'cheap-source-map' : 'cheap-module-source-map',
     devServer: {
-        contentBase: __dirname,
+        static: __dirname,
         compress: true,
         port: 9001
     }
@@ -46,16 +42,16 @@ module.exports = [{
         'download': './source/js/plugins/download.js',
         'manipulation': './source/js/plugins/manipulation.js',
         'metadata': './source/js/plugins/metadata.js',
-        'simple-auth': './source/js/plugins/simple-auth.js'
+        'simple-auth': './source/js/plugins/simple-auth.js',
+        'service-worker': "./source/js/plugins/service-worker.js"
     },
-    plugins: [
-        new CleanWebpackPlugin(),
-    ],
     output: {
         publicPath: '/build/plugins/',
         path: path.join(__dirname, 'build', 'plugins'),
-        filename: '[name].js'
+        filename: '[name].js',
+        clean: true
     },
+    plugins: [],
     mode: buildMode,
-    devtool: (buildMode === "production") ? 'cheap-source-map' : 'cheap-module-eval-source-map'
+    devtool: (buildMode === "production") ? 'cheap-source-map' : 'cheap-module-source-map'
 }];

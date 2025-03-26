@@ -1,5 +1,5 @@
-@import "variables";
-@import "mixins";
+@use "variables";
+@use "mixins";
 
 .diva-wrapper {
     min-height: 95vh;
@@ -39,49 +39,49 @@
 .diva-button {
     display: inline-block;
     cursor: pointer;
-    height: $buttonSize;
-    width: $buttonSize;
+    height: variables.$buttonSize;
+    width: variables.$buttonSize;
 
-    line-height: $buttonSize;
+    line-height: variables.$buttonSize;
     -webkit-appearance: none;
     padding: 3px;
 
-    background-color: $buttonBg;
+    background-color: variables.$buttonBg;
     background-repeat: no-repeat;
     background-position: center;
-    @include frame($buttonFrame);
+    @include mixins.frame(variables.$buttonFrame);
 
     &:hover, &:focus {
-        background-color: $buttonHover;
+        background-color: variables.$buttonHover;
     }
 
     &.diva-button-text {
         width: auto;
-        padding: 0 $buttonPadding;
+        padding: 0 variables.$buttonPadding;
     }
 }
 
 .diva-input {
-    height: $inputSize;
-    @include frame($inputFrame);
+    height: variables.$inputSize;
+    @include mixins.frame(variables.$inputFrame);
 
-    padding: 0 $inputPadding;
+    padding: 0 variables.$inputPadding;
 
     &:focus {
-        border-color: $inputHoverFrame;
+        border-color: variables.$inputHoverFrame;
     }
 }
 
 .diva-label {
-    margin: 0 $toolbarGroupMargin;
-    line-height: $buttonSize;
+    margin: 0 variables.$toolbarGroupMargin;
+    line-height: variables.$buttonSize;
     vertical-align: top;
     white-space: nowrap;
     text-overflow: ellipsis;
 }
 
 .diva-tools-left, .diva-tools-right {
-    margin-bottom: $toolbarGroupMargin;
+    margin-bottom: variables.$toolbarGroupMargin;
 }
 
 .diva-tools-left {
@@ -104,7 +104,7 @@
 
     .diva-page-nav {
         white-space: nowrap;
-        margin-right: $toolbarGroupMargin;
+        margin-right: variables.$toolbarGroupMargin;
     }
 
         .diva-goto-form {
@@ -140,7 +140,7 @@
                 }
 
                 .diva-input-suggestion.active, .diva-input-suggestion:hover {
-                    background-color: $highlightBlue;
+                    background-color: variables.$highlightBlue;
                 }
 
     .diva-fullscreen-icon {
@@ -159,7 +159,7 @@
 
         .diva-view-options {
             position: absolute;
-            top: $buttonSize;
+            top: variables.$buttonSize;
             z-index: 1;
             display: none;
             box-shadow: 1px 1px 4px 0 rgba(0,0,0,0.1);
@@ -190,13 +190,13 @@
     position: fixed;
     top: 15px;
     right: 30px;
-    z-index: $fullscreenZIndex + 1;
+    z-index: variables.$fullscreenZIndex + 1;
     padding: 15px;
-    @include frame($toolsFrame);
-    background: $toolsBg;
+    @include mixins.frame(variables.$toolsFrame);
+    background: variables.$toolsBg;
     transition: opacity 0.5s;
 
-    @include pretty-shadow();
+    @include mixins.pretty-shadow();
 
     .diva-tools-left, .diva-tools-right {
         margin-bottom: 0;
@@ -224,8 +224,8 @@
 .diva-outer {
     display: flex;
     clear: both;
-    background: $viewerBg;
-    @include frame($viewerFrame);
+    background: variables.$viewerBg;
+    @include mixins.frame(variables.$viewerFrame);
     position: relative;
     overflow: hidden;
     min-height: 100px;
@@ -267,7 +267,7 @@
 .diva-page {
     box-shadow: 7px 7px 6px -6px rgba(0,0,0,0.3);
     position: absolute;
-    background-color: $pageBg;
+    background-color: variables.$pageBg;
 }
 
 .diva-page-tools-wrapper {
@@ -277,18 +277,18 @@
 
 .diva-page-tools {
     position: relative;
-    top: -$pluginIconSize - 7;
-    height: $pluginIconSize;
+    top: -(variables.$pluginIconSize) - 7;
+    height: variables.$pluginIconSize;
 
     div {
         display: inline-block;
-        height: $pluginIconSize;
-        width: $pluginIconSize;
+        height: variables.$pluginIconSize;
+        width: variables.$pluginIconSize;
         cursor: pointer;
         padding: 3px;
 
         svg:hover .diva-pagetool-icon {
-          fill: $regularBlue;
+          fill: variables.$regularBlue;
         }
     }
 }
@@ -300,15 +300,15 @@
 
 .diva-page-labels {
     position: relative;
-    top: -$pluginIconSize;
-    height: $pluginIconSize;
+    top: -(variables.$pluginIconSize);
+    height: variables.$pluginIconSize;
     font-size: 0.8em;
 }
 
 .diva-fullscreen {
-    @include full-width();
-    @include full-height();
-    z-index: $fullscreenZIndex;
+    @include mixins.full-width();
+    @include mixins.full-height();
+    z-index: variables.$fullscreenZIndex;
     position: fixed !important;
     top: 0;
     left: 0;
@@ -317,12 +317,12 @@
 }
 
 .diva-popup {
-    background: $linkBg;
-    @include frame($buttonFrame);
+    background: variables.$linkBg;
+    @include mixins.frame(variables.$buttonFrame);
     padding: .6em;
-    z-index: $fullscreenZIndex + 1;
+    z-index: variables.$fullscreenZIndex + 1;
     position: absolute;
-    @include pretty-shadow();
+    @include mixins.pretty-shadow();
 }
 
 .diva-link-popup {
@@ -373,20 +373,20 @@
 
 // https://github.com/tobiasahlin/SpinKit/blob/master/scss/spinners/9-cube-grid.scss
 .diva-throbber {
-  @include pretty-shadow();
+  @include mixins.pretty-shadow();
 
   $delayRange: 0.4s;
 
-  width: $spinkit-size;
-  height: $spinkit-size;
-  margin: $spinkit-spinner-margin;
+  width: variables.$spinkit-size;
+  height: variables.$spinkit-size;
+  margin: variables.$spinkit-spinner-margin;
   padding: 20px;
   background-color: #fff;
 
   .cube {
     width: 33.33%;
     height: 33.33%;
-    background-color: $spinkit-spinner-color;
+    background-color: variables.$spinkit-spinner-color;
     float: left;
     animation: sk-cubeGridScaleDelay 1.3s infinite ease-in-out;
   }

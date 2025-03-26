@@ -20,7 +20,7 @@
  * Toolbar plugins must have a toolbarIcon and toolbarSide attribute, with toolbarSide being either 'left' or 'right'
  **/
 
-import parseLabelValue from '../utils/parse-label-value';
+import parseLabelValue from '../utils/parse-label-value.js';
 
 export default class MetadataPlugin
 {

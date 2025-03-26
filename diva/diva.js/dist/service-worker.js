@@ -1,0 +1,1 @@
+self.addEventListener("fetch",e=>{let s=new Headers(e.request.headers);s.append("API-Key","000000000000000000001");let t=new Request(e.request,{headers:s,mode:"cors"});console.log(t.headers),e.respondWith((async()=>fetch(t))())});

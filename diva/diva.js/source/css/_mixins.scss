@@ -1,4 +1,4 @@
-@import "variables";
+@use "variables";
 
 @mixin hidden()
 {
@@ -8,7 +8,7 @@
 // Shortcut for a 1px solid border
 @mixin frame($colour)
 {
-    border: $borderSize solid $colour;
+    border: variables.$borderSize solid $colour;
 }
 
 @mixin plugin-icon($plugin-name)

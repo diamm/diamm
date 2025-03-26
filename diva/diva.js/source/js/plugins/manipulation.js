@@ -13,8 +13,8 @@ import {
     threshold,
     sharpen,
     resetFilters
-} from "./_filters";
-import gestureEvents from '../gesture-events';
+} from "./_filters.js";
+import gestureEvents from '../gesture-events.js';
 
 /**
  * Returns a function, that, as long as it continues to be invoked, will not
