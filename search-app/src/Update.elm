@@ -8,9 +8,9 @@ import Maybe.Extra as ME
 import Model exposing (Model, toNextQuery)
 import Msg exposing (Msg(..))
 import Ports exposing (pushUrl)
-import RecordTypes exposing (CheckboxFacetTypes(..), OneChoiceFacetTypes(..), SelectFacetTypes(..), searchBodyDecoder)
+import RecordTypes exposing (CheckboxFacetTypes(..), FacetItem, OneChoiceFacetTypes(..), SelectFacetTypes(..), searchBodyDecoder)
 import Request exposing (Response(..), createRequest, serverUrl)
-import Route exposing (buildQueryParameters, defaultQueryArgs, removeGenreValue, setCurrentPage, setKeywordQuery, setType, updateGenreValues)
+import Route exposing (QueryArgs, buildQueryParameters, defaultQueryArgs, removeGenreValue, setCurrentPage, setKeywordQuery, setQueryGenres, setQueryNotations, setQuerySourceTypes, setQueryType, setType, updateGenreValues)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -55,7 +55,10 @@ update msg model =
             ( { model
                 | currentQueryArgs = newQueryArgs
               }
-            , Cmd.batch [ updateResultsCmd, pushUrl newUrl ]
+            , Cmd.batch
+                [ updateResultsCmd
+                , pushUrl newUrl
+                ]
             )
 
         UserInteractedWithCheckboxFacet facet subMsg ->
@@ -79,23 +82,15 @@ update msg model =
                         queryArgs =
                             model.currentQueryArgs
 
-                        facetBlock : Maybe FacetModel
                         facetBlock =
                             Maybe.map Tuple.first updatedFacet
+
+                        partialHelper =
+                            queryArgsUpdateHelper queryArgs facetBlock
                     in
                     case facet of
                         Genres ->
-                            Maybe.map
-                                (\fm ->
-                                    let
-                                        fvalues =
-                                            Maybe.map (\g -> List.map .value g.selected) fm.genres
-                                                |> Maybe.withDefault []
-                                    in
-                                    { queryArgs | genres = fvalues }
-                                )
-                                facetBlock
-                                |> Maybe.withDefault queryArgs
+                            partialHelper setQueryGenres .genres
 
                 updatedUrl =
                     buildQueryParameters updatedQueryArgs
@@ -143,11 +138,43 @@ update msg model =
                         )
                         model.facets
                         |> ME.join
+
+                updatedQueryArgs =
+                    let
+                        queryArgs =
+                            model.currentQueryArgs
+
+                        facetBlock =
+                            Maybe.map Tuple.first updatedFacet
+
+                        partialHelper =
+                            queryArgsUpdateHelper queryArgs facetBlock
+                    in
+                    case facet of
+                        Composers ->
+                            partialHelper setQueryGenres .genres
+
+                        SourceTypes ->
+                            partialHelper setQuerySourceTypes .sourceTypes
+
+                        Notations ->
+                            partialHelper setQueryNotations .notations
+
+                updatedUrl =
+                    buildQueryParameters updatedQueryArgs
+                        |> serverUrl [ "search" ]
+
+                updateResultsCmd =
+                    createRequest ServerRespondedWithSearchData searchBodyDecoder updatedUrl
             in
             Maybe.map
                 (\( newFacetBlock, newSubCmd ) ->
                     ( { model | facets = Just newFacetBlock }
-                    , Cmd.map (UserInteractedWithSelectFacet facet) newSubCmd
+                    , Cmd.batch
+                        [ updateResultsCmd
+                        , Cmd.map (UserInteractedWithSelectFacet facet) newSubCmd
+                        , pushUrl updatedUrl
+                        ]
                     )
                 )
                 updatedFacet
@@ -345,3 +372,23 @@ facetUpdateHelper subMsg updateFn model facetModelUpdateFn selector =
                 in
                 ( newFacetBlock, subCmd )
             )
+
+
+queryArgsUpdateHelper :
+    QueryArgs
+    -> Maybe FacetModel
+    -> (List String -> QueryArgs -> QueryArgs)
+    -> (FacetModel -> Maybe { a | selected : List FacetItem })
+    -> QueryArgs
+queryArgsUpdateHelper queryArgs facetBlock queryArgsUpdateFn selector =
+    Maybe.map
+        (\fm ->
+            let
+                fvalues =
+                    Maybe.map (\g -> List.map .value g.selected) (selector fm)
+                        |> Maybe.withDefault []
+            in
+            queryArgsUpdateFn fvalues queryArgs
+        )
+        facetBlock
+        |> Maybe.withDefault queryArgs

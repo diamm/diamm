@@ -21,6 +21,7 @@ type alias QueryArgs =
     , composers : List String
     , notations : List String
     , genres : List String
+    , sourceTypes : List String
     , currentPage : Int
     }
 
@@ -109,6 +110,7 @@ defaultQueryArgs =
     , composers = []
     , notations = []
     , genres = []
+    , sourceTypes = []
     , currentPage = 1
     }
 
@@ -134,14 +136,17 @@ buildQueryParameters queryArgs =
                 |> ME.unwrap [] (\q -> [ Url.Builder.string "q" q ])
 
         composerParam =
-            List.map (\c -> Url.Builder.string "composer" c) queryArgs.composers
+            List.map (Url.Builder.string "composer") queryArgs.composers
 
         pageParam =
             [ String.fromInt queryArgs.currentPage
                 |> Url.Builder.string "page"
             ]
+
+        genresParam =
+            List.map (Url.Builder.string "genre") queryArgs.genres
     in
-    List.concat [ qParam, typeParam, composerParam, pageParam ]
+    List.concat [ qParam, typeParam, composerParam, genresParam, pageParam ]
 
 
 parseResultTypeToString : RecordTypeFilters -> String
@@ -152,8 +157,8 @@ parseResultTypeToString typeFilter =
         |> Tuple.first
 
 
-setType : RecordTypeFilters -> { a | resultType : RecordTypeFilters } -> { a | resultType : RecordTypeFilters }
-setType newType oldRecord =
+setQueryType : RecordTypeFilters -> { a | resultType : RecordTypeFilters } -> { a | resultType : RecordTypeFilters }
+setQueryType newType oldRecord =
     { oldRecord | resultType = newType }
 
 
@@ -167,11 +172,28 @@ setCurrentPage newPage oldRecord =
     { oldRecord | currentPage = newPage }
 
 
-updateGenreValues : String -> { a | genres : List String } -> { a | genres : List String }
-updateGenreValues addValue qargs =
-    { qargs | genres = addValue :: qargs.genres }
+
+--updateGenreValues : String -> { a | genres : List String } -> { a | genres : List String }
+--updateGenreValues addValue qargs =
+--    { qargs | genres = addValue :: qargs.genres }
 
 
-removeGenreValue : String -> { a | genres : List String } -> { a | genres : List String }
-removeGenreValue remValue qargs =
-    { qargs | genres = List.filter ((/=) remValue) qargs.genres }
+setQueryGenres : List String -> { a | genres : List String } -> { a | genres : List String }
+setQueryGenres newValues oldRecord =
+    { oldRecord | genres = newValues }
+
+
+setQueryNotations : List String -> { a | notations : List String } -> { a | notations : List String }
+setQueryNotations newValues oldRecord =
+    { oldRecord | notations = newValues }
+
+
+setQuerySourceTypes : List String -> { a | sourceTypes : List String } -> { a | sourceTypes : List String }
+setQuerySourceTypes newValues oldRecord =
+    { oldRecord | sourceTypes = newValues }
+
+
+
+--removeGenreValue : String -> { a | genres : List String } -> { a | genres : List String }
+--removeGenreValue remValue qargs =
+--    { qargs | genres = List.filter ((/=) remValue) qargs.genres }
