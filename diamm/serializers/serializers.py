@@ -1,5 +1,4 @@
-
-import serpy
+import serpy  # type: ignore
 
 
 class ContextSerializer(serpy.Serializer):

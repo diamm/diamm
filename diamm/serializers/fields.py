@@ -1,6 +1,6 @@
 from datetime import date, datetime, time
 
-import serpy
+import serpy  # type: ignore
 
 
 class StaticField(serpy.Field):
@@ -21,13 +21,14 @@ class DateField(serpy.Field):
 
     date_format = "%Y-%m-%d"
 
-    def __init__(self, date_format: str = None, **kwargs):
+    def __init__(self, date_format: str | None = None, **kwargs):
         super().__init__(**kwargs)
         self.date_format = date_format or self.date_format
 
-    def to_value(self, value: datetime | time | date) -> str:
+    def to_value(self, value: datetime | time | date) -> str | None:
         if value:
             return value.strftime(self.date_format)
+        return None
 
 
 class DateTimeField(DateField):
