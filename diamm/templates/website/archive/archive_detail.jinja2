@@ -31,7 +31,7 @@
     {% if content.notes %}
         {% for note in content.notes %}
             <h4 class="title is-5">{{ note.note_type }}</h4>
-            <p>{{ note.note }}</p>
+            <p>{{ note.note|markdown|safe }}</p>
         {% endfor %}
     {% endif %}
     {% if content.website %}
