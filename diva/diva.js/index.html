@@ -19,7 +19,7 @@
         const registerServiceWorker = async () => {
             if ("serviceWorker" in navigator) {
                 try {
-                    const registration = await navigator.serviceWorker.register("/service-worker.js");
+                    const registration = await navigator.serviceWorker.register("/service-worker.js?key=123&secret=456&domain=dev.diamm.ac.uk");
                     if (registration.installing) {
                         console.log("Service worker installing");
                     } else if (registration.waiting) {
