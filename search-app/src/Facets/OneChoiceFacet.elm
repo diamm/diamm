@@ -1,4 +1,4 @@
-module Facets.OneChoiceFacet exposing (..)
+module Facets.OneChoiceFacet exposing (OneChoiceFacetModel, OneChoiceFacetMsg(..), initialOneChoiceModel, update, viewOneChoiceFacet)
 
 import Element exposing (Element, none)
 import RecordTypes exposing (FacetItem)

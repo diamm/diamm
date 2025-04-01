@@ -1,4 +1,4 @@
-module Facets exposing (..)
+module Facets exposing (FacetModel, createFacetConfigurations, setComposers, setGenres, setHasInventory, setNotations, setSourceTypes, viewFacets)
 
 import Element exposing (Element, column, fill, row, spacing, width)
 import Facets.CheckboxFacet exposing (CheckBoxFacetModel, initialCheckboxModel, viewCheckboxFacet)
@@ -7,7 +7,7 @@ import Facets.SelectFacet exposing (SelectFacetModel, initialSelectModel, viewSe
 import Helpers exposing (viewMaybe)
 import Maybe.Extra as ME
 import Msg exposing (Msg(..))
-import RecordTypes exposing (CheckboxFacetTypes(..), FacetBlock, FacetItem, OneChoiceFacetTypes(..), SearchBody, SelectFacetTypes(..))
+import RecordTypes exposing (CheckboxFacetTypes(..), FacetBlock, OneChoiceFacetTypes(..), SelectFacetTypes(..))
 
 
 type alias FacetModel =

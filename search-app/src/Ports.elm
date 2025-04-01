@@ -1,4 +1,4 @@
-port module Ports exposing (..)
+port module Ports exposing (onUrlChange, pushUrl)
 
 
 port onUrlChange : (String -> msg) -> Sub msg

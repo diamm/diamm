@@ -1,6 +1,6 @@
-module Results exposing (..)
+module Results exposing (resultView)
 
-import Element exposing (Element, column, el, fill, link, none, row, spacing, text, width)
+import Element exposing (Element, column, el, fill, link, row, spacing, text, width)
 import Element.Font as Font
 import Helpers exposing (viewMaybe)
 import RecordTypes exposing (ArchiveResultBody, CompositionResultBody, OrganizationResultBody, PersonResultBody, SearchResult(..), SetResultBody, SourceResultBody)

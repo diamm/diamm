@@ -1,4 +1,4 @@
-module Style exposing (..)
+module Style exposing (colourScheme)
 
 import Element
 

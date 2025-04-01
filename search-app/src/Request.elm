@@ -1,4 +1,4 @@
-module Request exposing (..)
+module Request exposing (Response(..), createRequest, serverUrl)
 
 import Config as C
 import Http exposing (Expect)

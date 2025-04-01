@@ -1,9 +1,8 @@
-module Model exposing (..)
+module Model exposing (Model, init)
 
 import Facets exposing (FacetModel)
-import RecordTypes exposing (RecordTypeFilters(..))
 import Request exposing (Response(..))
-import Route exposing (QueryArgs, Route)
+import Route exposing (QueryArgs)
 
 
 type alias Model =

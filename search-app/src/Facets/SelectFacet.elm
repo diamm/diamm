@@ -1,4 +1,4 @@
-module Facets.SelectFacet exposing (..)
+module Facets.SelectFacet exposing (SelectFacetModel, SelectFacetMsg(..), initialSelectModel, update, viewSelectFacet)
 
 import Element exposing (Element, alignRight, column, el, fill, html, padding, pointer, row, spacing, text, width)
 import Element.Background as Background

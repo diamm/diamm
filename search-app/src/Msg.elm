@@ -1,4 +1,4 @@
-module Msg exposing (..)
+module Msg exposing (Msg(..))
 
 import Facets.CheckboxFacet exposing (CheckBoxFacetMsg)
 import Facets.OneChoiceFacet exposing (OneChoiceFacetMsg)

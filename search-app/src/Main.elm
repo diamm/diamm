@@ -1,7 +1,7 @@
-module Main exposing (main)
+module Main exposing (Flags, main)
 
 import Browser
-import Config as C exposing (defaultSearchUrl)
+import Config as C
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Ports exposing (onUrlChange)
@@ -9,7 +9,7 @@ import RecordTypes exposing (searchBodyDecoder)
 import Request exposing (createRequest, serverUrl)
 import Route exposing (Route(..), buildQueryParameters, defaultQueryArgs, locationHrefToRoute, parseUrl)
 import Update
-import Url exposing (Protocol(..), Url)
+import Url
 import Views
 
 

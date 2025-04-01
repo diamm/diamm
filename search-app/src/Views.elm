@@ -1,22 +1,20 @@
-module Views exposing (..)
+module Views exposing (view)
 
-import Config as C
-import Element exposing (Element, alignBottom, alignRight, centerX, column, el, fill, fillPortion, height, layout, link, none, padding, paddingXY, pointer, px, row, spacing, text, width)
+import Element exposing (Element, alignRight, centerX, column, el, fill, fillPortion, height, layout, none, padding, paddingXY, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events as Events exposing (onClick)
 import Element.Font as Font
 import Element.Input as Input exposing (placeholder)
-import Facets exposing (FacetModel, viewFacets)
-import Helpers exposing (onEnter, viewIf, viewMaybe)
+import Facets exposing (viewFacets)
+import Helpers exposing (onEnter, viewMaybe)
 import Html exposing (Html)
-import Maybe.Extra as ME
 import Model exposing (Model)
 import Msg exposing (Msg(..))
-import RecordTypes exposing (FacetBlock, FacetItem, PaginationBlock, RecordTypeFilters(..), SearchBody, SearchTypesBlock)
+import RecordTypes exposing (PaginationBlock, RecordTypeFilters(..), SearchBody, SearchTypesBlock)
 import Request exposing (Response(..))
 import Results exposing (resultView)
-import Route exposing (QueryArgs, extractPageNumberFromUrl)
+import Route exposing (extractPageNumberFromUrl)
 import Style exposing (colourScheme)
 import Url
 

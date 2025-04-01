@@ -1,4 +1,4 @@
-module Route exposing (..)
+module Route exposing (QueryArgs, Route(..), buildQueryParameters, defaultQueryArgs, extractPageNumberFromUrl, locationHrefToRoute, parseUrl, setCurrentPage, setKeywordQuery, setQueryGenres, setQueryNotations, setQuerySourceTypes, setQueryType)
 
 import Dict
 import Helpers exposing (prepareQuery)
@@ -61,6 +61,7 @@ queryParamsParser =
         |> apply composerParamParser
         |> apply notationParamParser
         |> apply genreParamParser
+        |> apply sourceTypesParser
         |> apply pageParamParser
 
 
@@ -87,6 +88,11 @@ pageParamParser =
 genreParamParser : Q.Parser (List String)
 genreParamParser =
     Q.custom "genre" identity
+
+
+sourceTypesParser : Q.Parser (List String)
+sourceTypesParser =
+    Q.custom "sourcetype" identity
 
 
 typeQueryStringToResultType : List String -> RecordTypeFilters

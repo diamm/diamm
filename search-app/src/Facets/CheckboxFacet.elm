@@ -1,6 +1,6 @@
-module Facets.CheckboxFacet exposing (..)
+module Facets.CheckboxFacet exposing (CheckBoxFacetModel, CheckBoxFacetMsg(..), initialCheckboxModel, update, viewCheckboxFacet)
 
-import Element exposing (Element, alignRight, clipY, column, el, fill, height, maximum, none, padding, pointer, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignRight, clipY, column, el, fill, height, padding, pointer, px, row, scrollbarY, spacing, text, width)
 import Element.Border as Border
 import Element.Events as Events
 import Element.Font as Font

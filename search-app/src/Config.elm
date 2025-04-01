@@ -1,4 +1,4 @@
-module Config exposing (..)
+module Config exposing (defaultSearchUrl, serverUrl)
 
 import Url exposing (Protocol(..), Url)
 

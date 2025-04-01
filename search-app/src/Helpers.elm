@@ -1,9 +1,8 @@
-module Helpers exposing (..)
+module Helpers exposing (onEnter, prepareQuery, viewMaybe)
 
 import Dict exposing (Dict)
-import Element exposing (Attribute, Element, html, htmlAttribute, link, none)
-import Html as HT exposing (Html, a)
-import Html.Events as HE exposing (preventDefaultOn)
+import Element exposing (Element, none)
+import Html.Events as HE
 import Json.Decode as Decode
 import Maybe.Extra as ME
 import Url
