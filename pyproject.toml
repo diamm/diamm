@@ -3,39 +3,49 @@ name = "diamm"
 version = "1.11.1"
 description = ""
 authors = [{ name = "Andrew Hankinson", email = "andrew.hankinson@gmail.com" }]
-package-mode = false
-requires-python = '>=3.10,<4.0'
+requires-python = ">=3.11,<4.0"
 dependencies = [
-    'django (>=5.0,<6.0)',
-    'wagtail (>=6.0,<7.0)',
-    'djangorestframework (>=3.11.0,<4.0.0)',
-    'django-extensions (>=3.0,<4.0)',
-    'django-registration (>=5.0,<6.0)',
-    'jinja2 (>=3.0,<4.0)',
-    'django-jinja (>=2.6.0,<3.0.0)',
-    'pysolr @ git+https://github.com/django-haystack/pysolr/@master',
-    'django-pagedown (>=2.0.3,<3.0.0)', 'django-reversion (>=5.0,<6.0)',
-    'ujson (>=5.0,<6.0)', 'serpy (>=0.3.1,<0.4.0)',
-    'markdown2 (>=2.3.8,<3.0.0)', 'gunicorn (>=23.0.0,<24.0.0)',
-    'blessings (>=1.7,<2.0)', 'ipython (>=8.24.0,<9.0.0)',
-    'tablib (>=3.5.0,<4.0.0)', 'requests (==2.32.3)',
-    'traitlets (>=5.14.3,<6.0.0)', 'Pillow (>=10.0,<11.0)',
-    'markupsafe (>=3.0.1,<4.0.0)',
-    'werkzeug (>=3.0.3,<4.0.0)',
-    'httpx (>=0.28.1,<0.29.0)',
-    "psycopg[pool] (>=3.2.6,<4.0.0)"]
+    "django (>=5.0,<6.0)",
+    "wagtail (>=6.0,<7.0)",
+    "djangorestframework (>=3.11.0,<4.0.0)",
+    "django-extensions (>=3.0,<4.0)",
+    "django-registration (>=5.0,<6.0)",
+    "jinja2 (>=3.0,<4.0)",
+    "django-jinja (>=2.6.0,<3.0.0)",
+    "pysolr @ git+https://github.com/django-haystack/pysolr/@master",
+    "django-pagedown (>=2.0.3,<3.0.0)",
+    "django-reversion (>=5.0,<6.0)",
+    "ujson (>=5.0,<6.0)",
+    "serpy (>=0.3.1,<0.4.0)",
+    "markdown2 (>=2.3.8,<3.0.0)",
+    "gunicorn (>=23.0.0,<24.0.0)",
+    "blessings (>=1.7,<2.0)",
+    "ipython (>=9,<10)",
+    "tablib (>=3.5.0,<4.0.0)",
+    "requests (==2.32.3)",
+    "traitlets (>=5.14.3,<6.0.0)",
+    "Pillow (>=11.0,<12.0)",
+    "markupsafe (>=3.0.1,<4.0.0)",
+    "werkzeug (>=3.0.3,<4.0.0)",
+    "httpx (>=0.28.1,<0.29.0)",
+    "psycopg[pool] (>=3.2.6,<4.0.0)",
+]
+package-mode = false
 
-[tool.poetry]
-requires-poetry = '>=2.0,<3.0'
-[tool.poetry.group.dev.dependencies]
-django-debug-toolbar = "^4.1.0"
-django-stubs = "^5.1.2"
-pydot = "^3.0.4"
-mypy = "^1.15.0"
+[dependency-groups]
+dev = [
+    "django-debug-toolbar>=5.1.0,<6",
+    "django-stubs>=5.1.2,<6",
+    "pydot>=3.0.4,<4",
+    "mypy>=1.15.0,<2",
+]
+
+[tool.uv]
+package = false
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [tool.ruff.lint]
 select = [
