@@ -1,5 +1,6 @@
 module Update exposing (update)
 
+import Cmd.Extra as CE
 import Facets exposing (FacetModel, createFacetConfigurations, setComposers, setGenres, setHasInventory, setNotations, setSourceTypes)
 import Facets.CheckboxFacet as CheckboxFacet exposing (CheckBoxFacetModel, CheckBoxFacetMsg)
 import Facets.OneChoiceFacet as OneChoice exposing (OneChoiceFacetModel, OneChoiceFacetMsg)
@@ -10,7 +11,7 @@ import Msg exposing (Msg(..))
 import Ports exposing (pushUrl)
 import RecordTypes exposing (CheckboxFacetTypes(..), FacetItem, OneChoiceFacetTypes(..), SelectFacetTypes(..), searchBodyDecoder)
 import Request exposing (Response(..), createRequest, serverUrl)
-import Route exposing (QueryArgs, buildQueryParameters, defaultQueryArgs, setCurrentPage, setKeywordQuery, setQueryGenres, setQueryNotations, setQuerySourceTypes, setQueryType)
+import Route exposing (QueryArgs, Route(..), buildQueryParameters, defaultQueryArgs, setCurrentPage, setKeywordQuery, setQueryGenres, setQueryNotations, setQuerySourceTypes, setQueryType)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -36,7 +37,21 @@ update msg model =
             ( model, Cmd.none )
 
         ClientChangedUrl route ->
-            ( model, Cmd.none )
+            let
+                newModel =
+                    Maybe.map
+                        (\r ->
+                            case r of
+                                SearchPageRoute newQargs ->
+                                    { model | currentQueryArgs = newQargs }
+
+                                UnknownRoute ->
+                                    model
+                        )
+                        route
+                        |> Maybe.withDefault model
+            in
+            ( newModel, Cmd.none )
 
         UserClickedRecordTypeFilter typeFilter ->
             let
@@ -52,9 +67,7 @@ update msg model =
                 updateResultsCmd =
                     createRequest ServerRespondedWithSearchData searchBodyDecoder newUrl
             in
-            ( { model
-                | currentQueryArgs = newQueryArgs
-              }
+            ( model
             , Cmd.batch
                 [ updateResultsCmd
                 , pushUrl newUrl
@@ -104,7 +117,6 @@ update msg model =
                     in
                     ( { model
                         | facets = Just newFacetBlock
-                        , currentQueryArgs = updatedQueryArgs
                       }
                     , Cmd.batch
                         [ updateResultsCmd
@@ -273,6 +285,10 @@ update msg model =
 
                 newCmd =
                     if currentPage == parsedPageNumber then
+                        let
+                            _ =
+                                Debug.log "no command" ( currentPage, parsedPageNumber )
+                        in
                         Cmd.none
 
                     else
@@ -314,7 +330,7 @@ update msg model =
                     buildQueryParameters newQueryArgs
                         |> serverUrl [ "search" ]
             in
-            ( { model | currentQueryArgs = newQueryArgs }
+            ( model
             , Cmd.batch
                 [ createRequest ServerRespondedWithSearchData searchBodyDecoder newUrl
                 , pushUrl newUrl
@@ -330,8 +346,14 @@ update msg model =
                 clearCmd =
                     createRequest ServerRespondedWithSearchData searchBodyDecoder newUrl
             in
-            ( { model | currentQueryArgs = defaultQueryArgs }
-            , Cmd.batch [ clearCmd, pushUrl newUrl ]
+            ( model
+            , Cmd.batch
+                [ clearCmd
+                , pushUrl newUrl
+                , clearAllCheckboxFacetsHelper
+                , clearAllSelectFacetsHelper
+                , clearAllOneChoiceFacetsHelper
+                ]
             )
 
 
@@ -405,3 +427,21 @@ queryArgsUpdateHelper queryArgs facetBlock queryArgsUpdateFn selector =
         )
         facetBlock
         |> Maybe.withDefault queryArgs
+
+
+clearAllCheckboxFacetsHelper : Cmd Msg
+clearAllCheckboxFacetsHelper =
+    List.map (\f -> CE.perform (UserInteractedWithCheckboxFacet f CheckboxFacet.OnClear)) [ Genres ]
+        |> Cmd.batch
+
+
+clearAllSelectFacetsHelper : Cmd Msg
+clearAllSelectFacetsHelper =
+    List.map (\f -> CE.perform (UserInteractedWithSelectFacet f SelectFacet.OnClear)) [ Composers, SourceTypes, Notations ]
+        |> Cmd.batch
+
+
+clearAllOneChoiceFacetsHelper : Cmd Msg
+clearAllOneChoiceFacetsHelper =
+    List.map (\f -> CE.perform (UserInteractedWithOneChoiceFacet f OneChoice.OnClear)) [ HasInventory ]
+        |> Cmd.batch
