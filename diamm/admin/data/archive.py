@@ -1,7 +1,9 @@
 from django.contrib import admin
+from django.db import models
 from django.db.models import Q
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
+from pagedown.widgets import AdminPagedownWidget
 from reversion.admin import VersionAdmin
 
 from diamm.models.data.archive import Archive
@@ -13,6 +15,8 @@ from diamm.models.data.geographic_area import GeographicArea
 class ArchiveNoteInline(admin.TabularInline):
     model = ArchiveNote
     extra = 0
+
+    formfield_overrides = {models.TextField: {"widget": AdminPagedownWidget}}
 
 
 class CountryListFilter(admin.SimpleListFilter):

@@ -33,15 +33,15 @@ def image_serve_redirect(request: HttpRequest, pk) -> HttpResponse:
     )
 
 
-@api_view(["GET"])
+@api_view(["GET", "OPTIONS"])
 @authentication_classes([DiammTokenAuthentication, SessionAuthentication])
 @permission_classes([IsAuthenticated])
 def image_serve(
     request,
     pk,
-    region: str = None,
-    size: str = None,
-    rotation: str = None,
+    region: str | None = None,
+    size: str | None = None,
+    rotation: str | None = None,
     *args,
     **kwargs,
 ) -> HttpResponse:

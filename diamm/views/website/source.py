@@ -1,9 +1,10 @@
 # import pysolr
+from django.db.models.expressions import Exists, OuterRef
 from django.shortcuts import get_object_or_404, redirect
 from rest_framework import generics, permissions, response, status
 
 from diamm.helpers.solr_helpers import SolrConnection
-from diamm.models import Source
+from diamm.models import Page, Source, SourceURL
 from diamm.models.data.item import Item
 from diamm.renderers.ujson_renderer import UJSONRenderer
 from diamm.serializers.iiif.canvas import CanvasSerializer
@@ -22,7 +23,6 @@ class SourceDetail(generics.RetrieveAPIView):
             Source.objects.filter(**public_filter)
             .select_related("archive__city__parent", "cover_image")
             .prefetch_related(
-                "pages",
                 "copyists",
                 "notations",
                 "links",
@@ -36,6 +36,16 @@ class SourceDetail(generics.RetrieveAPIView):
                 "provenance__region",
                 "contributions",
                 "commentary",
+            )
+            .annotate(
+                images_are_public=Exists(
+                    Page.objects.filter(source=OuterRef("pk"), images__public=True)
+                ),
+                has_manifest_link=Exists(
+                    SourceURL.objects.filter(
+                        source=OuterRef("pk"), type=SourceURL.IIIF_MANIFEST
+                    )
+                ),
             )
         )
 
