@@ -1,8 +1,18 @@
-# import pysolr
+
+
 from django.db.models.expressions import Exists, OuterRef
 from django.shortcuts import get_object_or_404, redirect
-from rest_framework import generics, permissions, response, status
+from rest_framework import generics, response, status
+from rest_framework.authentication import SessionAuthentication
+from rest_framework.decorators import (
+    api_view,
+    authentication_classes,
+    permission_classes,
+    renderer_classes,
+)
+from rest_framework.permissions import IsAuthenticated
 
+from diamm.authentication import DiammTokenAuthentication
 from diamm.helpers.solr_helpers import SolrConnection
 from diamm.models import Page, Source, SourceURL
 from diamm.models.data.item import Item
@@ -49,27 +59,26 @@ class SourceDetail(generics.RetrieveAPIView):
             )
         )
 
+@api_view(["GET", "OPTIONS"])
+@authentication_classes([DiammTokenAuthentication, SessionAuthentication])
+@permission_classes([IsAuthenticated])
+@renderer_classes([UJSONRenderer])
+def manifest_serve(request, pk, *args, **kwargs) -> response.Response:
+    fq = ["type:source", f"pk:{pk}"]
+    if not request.user.is_staff:
+        fq.append("public_b:true")
 
-class SourceManifest(generics.GenericAPIView):
-    renderer_classes = (UJSONRenderer,)
-    permission_classes = (permissions.IsAuthenticated,)
+    res = SolrConnection.search("*:*", fq=fq, rows=1)
 
-    def get(self, request, pk, *args, **kwargs) -> response.Response:
-        fq = ["type:source", f"pk:{pk}"]
-        if not request.user.is_staff:
-            fq.append("public_b:true")
+    if res.hits == 0:
+        return response.Response(
+            status=status.HTTP_404_NOT_FOUND,
+            content_type="text/html",
+            data="404 Not Found",
+        )
 
-        res = SolrConnection.search("*:*", fq=fq, rows=1)
-
-        if res.hits == 0:
-            return response.Response(
-                status=status.HTTP_404_NOT_FOUND,
-                content_type="text/html",
-                data="404 Not Found",
-            )
-
-        manifest = SourceManifestSerializer(res.docs[0], context={"request": request})
-        return response.Response(manifest.data)
+    manifest = SourceManifestSerializer(res.docs[0], context={"request": request})
+    return response.Response(manifest.data)
 
 
 class SourceCanvasDetail(generics.GenericAPIView):

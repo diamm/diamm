@@ -42,7 +42,7 @@ class DiammTokenAuthentication(TokenAuthentication):
         return self.authenticate_enhanced_credentials(token, domain, secret)
 
     def authenticate_enhanced_credentials(
-        self, key: str | None, domain: str | None, secret: str | None
+        self, key: str, domain: str, secret: str
     ):
         model = self.get_model()
         try:
