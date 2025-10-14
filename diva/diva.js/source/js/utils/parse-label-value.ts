@@ -6,7 +6,7 @@
  * @returns {object} - The label/value pair as strings.
  * */
 
-export default function parseLabelValue (key)
+export default function parseLabelValue (key: {label: string, value: any}): object
 {
     let l = key.label; 
     let label = (typeof l === 'object') ? l[Object.keys(l)[0]][0] : l;

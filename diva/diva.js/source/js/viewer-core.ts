@@ -1,104 +1,195 @@
 import { elt } from './utils/elt';
 import getScrollbarWidth from './utils/get-scrollbar-width';
 import gestureEvents from './gesture-events';
-import diva from './diva-global';
+import globalDiva from './diva-global';
 import DocumentHandler from './document-handler';
 import GridHandler from './grid-handler';
 import PageOverlayManager from './page-overlay-manager';
 import Renderer from './renderer';
 import getPageLayouts from './page-layouts';
-import createSettingsView from './settings-view';
 import ValidationRunner from './validation-runner';
 import Viewport from './viewport';
+import {
+    ViewerSettings,
+    Options,
+    MergedConfiguration,
+    RendererSettings,
+    RendererLoadConfig,
+    RendererViewportPosition, OptionsValidator, PageRegionOptions, ActiveViewOptions
+} from "./options-settings";
+import {
+    Dimension,
+    DivaTiledPage,
+    Offset,
+    PaddingDefinitions,
+    PageInfo,
+    PagePosition, Region,
+    SourceProvider, ViewportSize
+} from "./viewer-type-definitions";
+import PageToolsOverlay from "./page-tools-overlay";
+import ImageManifest from "./image-manifest";
+import divaGlobal from "./diva-global";
+
+
 
 const debug = require('debug')('diva:ViewerCore');
 
-function generateId() {
+function generateId(): number {
     return generateId.counter++;
 }
 generateId.counter = 1;
 
+function createSettingsView(sources: Array<object>): MergedConfiguration
+{
+    const obj = {};
+
+    sources.forEach( (source) =>
+    {
+        registerMixin(obj, source);
+    });
+
+    // @ts-ignore
+    return obj;
+}
+
+function registerMixin(obj: {}, mixin: Record<string, any>)
+{
+    Object.keys(mixin).forEach( (key: string) =>
+    {
+        Object.defineProperty(obj, key, {
+            get: () =>
+            {
+                return mixin[key];
+            },
+            set: () =>
+            {
+                // TODO: Make everything strict mode so this isn't needed
+                throw new TypeError('Cannot set settings.' + key);
+            }
+        });
+    });
+}
+
+function arraysEqual (a: Array<any>, b:Array<any>): boolean
+{
+    if (a.length !== b.length)
+    {
+        return false;
+    }
+
+    for (let i = 0, len = a.length; i < len; i++)
+    {
+        if (a[i] !== b[i])
+        {
+            return false;
+        }
+    }
+    return true;
+}
 
 // Define validations
-const optionsValidations = [
+const optionsValidations: OptionsValidator[] = [
     {
         key: 'goDirectlyTo',
-        validate: (value, settings) =>
+        validate: (value: number, settings: MergedConfiguration) =>
         {
-            if (value < 0 || value >= settings.manifest.pages.length)
+            if (value < 0 || value >= settings.manifest!.pages.length)
+            {
                 return 0;
+            }
+            return value;
         }
     },
     {
         key: 'minPagesPerRow',
-        validate: (value) =>
+        validate: (value: number) =>
         {
             return Math.max(2, value);
         }
     },
     {
         key: 'maxPagesPerRow',
-        validate: (value, settings) =>
+        validate: (value: number, settings: MergedConfiguration) =>
         {
             return Math.max(value, settings.minPagesPerRow);
         }
     },
     {
         key: 'pagesPerRow',
-        validate: (value, settings) =>
+        validate: (value: number, settings: MergedConfiguration) =>
         {
             // Default to the maximum
             if (value < settings.minPagesPerRow || value > settings.maxPagesPerRow)
+            {
                 return settings.maxPagesPerRow;
+            }
+            return value
         }
     },
     {
         key: 'maxZoomLevel',
-        validate: (value, settings, config) =>
+        validate: (value: number, settings: MergedConfiguration, config: any) =>
         {
             // Changing this value isn't really an error, it just depends on the
             // source manifest
             config.suppressWarning();
 
-            if (value < 0 || value > settings.manifest.maxZoom)
-                return settings.manifest.maxZoom;
+            if (value < 0 || value > settings.manifest!.maxZoom)
+            {
+                return settings.manifest!.maxZoom;
+            }
+            return value;
         }
     },
     {
         key: 'minZoomLevel',
-        validate: (value, settings, config) =>
+        validate: (value: number, settings: MergedConfiguration, config: any) =>
         {
             // Changes based on the manifest value shouldn't trigger a
             // warning
-            if (value > settings.manifest.maxZoom)
+            if (value > settings.manifest!.maxZoom)
             {
                 config.suppressWarning();
                 return 0;
             }
 
             if (value < 0 || value > settings.maxZoomLevel)
+            {
                 return 0;
+            }
+            return value;
         }
     },
     {
         key: 'zoomLevel',
-        validate: (value, settings, config) =>
+        validate: (value: number, settings: MergedConfiguration, config: any) =>
         {
-            if (value > settings.manifest.maxZoom)
+            if (value > settings.manifest!.maxZoom)
             {
                 config.suppressWarning();
                 return 0;
             }
 
             if (value < settings.minZoomLevel || value > settings.maxZoomLevel)
+            {
                 return settings.minZoomLevel;
+            }
+            return value;
         }
     }
 ];
 
 export default class ViewerCore
 {
-    constructor (element, options, publicInstance)
+    parentObject: HTMLElement;
+    publicInstance: any;
+    viewerState: ViewerSettings;
+    settings: MergedConfiguration;
+    optionsValidator: ValidationRunner;
+    boundScrollFunction: any;
+    boundEscapeListener: any;
+
+    constructor (element: HTMLElement, options: Options, publicInstance: any)
     {
         this.parentObject = element;
         this.publicInstance = publicInstance;
@@ -106,7 +197,7 @@ export default class ViewerCore
         // Things that cannot be changed because of the way they are used by the script
         // Many of these are declared with arbitrary values that are changed later on
         this.viewerState = {
-            currentPageIndices: [0],    // The visible pages in the viewport
+            currentPageIndices: [],    // The visible pages in the viewport
             activePageIndex: 0,         // The current 'active' page in the viewport
             horizontalOffset: 0,        // Distance from the center of the diva element to the top of the current page
             horizontalPadding: 0,       // Either the fixed padding or adaptive padding
@@ -114,7 +205,7 @@ export default class ViewerCore
             initialKeyScroll: false,    // Holds the initial state of enableKeyScroll
             initialSpaceScroll: false,  // Holds the initial state of enableSpaceScroll
             innerElement: null,         // The native .diva-outer DOM object
-            innerObject: {},            // document.getElementById(settings.ID + 'inner'), for selecting the .diva-inner element
+            innerObject: null,            // document.getElementById(settings.ID + 'inner'), for selecting the .diva-inner element
             isActiveDiva: true,         // In the case that multiple diva panes exist on the same page, this should have events funneled to it.
             isScrollable: true,         // Used in enable/disableScrollable public methods
             isZooming: false,           // Flag to keep track of whether zooming is still in progress, for handleZoom
@@ -125,17 +216,17 @@ export default class ViewerCore
             oldZoomLevel: -1,           // Holds the previous zoom level after zooming in or out
             options: options,
             outerElement: null,         // The native .diva-outer DOM object
-            outerObject: {},            // document.getElementById(settings.ID + 'outer'), for selecting the .diva-outer element
+            outerObject: null,            // document.getElementById(settings.ID + 'outer'), for selecting the .diva-outer element
             pageOverlays: new PageOverlayManager(),
             pageTools: [],              // The plugins which are enabled as page tools
             parentObject: this.parentObject, // JQuery object referencing the parent element
             pendingManifestRequest: null, // Reference to the xhr request retrieving the manifest. Used to cancel the request on destroy()
             pluginInstances: [],                // Filled with the enabled plugins from the registry
             renderer: null,
-            resizeTimer: -1,            // Holds the ID of the timeout used when resizing the window (for clearing)
+            resizeTimer: null,            // Holds the ID of the timeout used when resizing the window (for clearing)
             scrollbarWidth: 0,          // Set to the actual scrollbar width in init()
             selector: '',               // Uses the generated ID prefix to easily select elements
-            throbberTimeoutID: -1,      // Holds the ID of the throbber loading timeout
+            throbberTimeoutID: null,      // Holds the ID of the throbber loading timeout
             toolbar: null,              // Holds an object with some toolbar-related functions
             verticalOffset: 0,          // Distance from the center of the diva element to the left side of the current page
             verticalPadding: 0,         // Either the fixed padding or adaptive padding
@@ -157,14 +248,14 @@ export default class ViewerCore
         Object.defineProperties(this.settings, {
             // Height of the document viewer pane
             panelHeight: {
-                get: () =>
+                get: (): number =>
                 {
                     return this.viewerState.viewport.height;
                 }
             },
             // Width of the document viewer pane
             panelWidth: {
-                get: () =>
+                get: (): number =>
                 {
                     return this.viewerState.viewport.width;
                 }
@@ -188,15 +279,19 @@ export default class ViewerCore
         this.viewerState.scrollbarWidth = getScrollbarWidth();
 
         // If window.orientation is defined, then it's probably mobileWebkit
-        this.viewerState.mobileWebkit = window.orientation !== undefined;
+        this.viewerState.mobileWebkit = window.screen.orientation !== undefined;
 
         if (options.hashParamSuffix === null)
         {
             // Omit the suffix from the first instance
             if (idNumber === 1)
+            {
                 options.hashParamSuffix = '';
+            }
             else
+            {
                 options.hashParamSuffix = idNumber + '';
+            }
         }
 
         // Create the inner and outer panels
@@ -243,12 +338,12 @@ export default class ViewerCore
         this.showThrobber();
     }
 
-    isValidOption (key, value)
+    isValidOption (key: string, value: number)
     {
         return this.optionsValidator.isValid(key, value, this.viewerState.options);
     }
 
-    elemAttrs (ident, base)
+    elemAttrs (ident: string, base?: any)
     {
         const attrs = {
             id: this.settings.ID + ident,
@@ -256,14 +351,18 @@ export default class ViewerCore
         };
 
         if (base)
+        {
             return Object.assign(attrs, base);
+        }
         else
+        {
             return attrs;
+        }
     }
 
-    getPageData (pageIndex, attribute)
+    getPageData (pageIndex: number, attribute: string)
     {
-        return this.settings.manifest.pages[pageIndex].d[this.settings.zoomLevel][attribute];
+        return this.settings.manifest!.pages[pageIndex].d[this.settings.zoomLevel][attribute];
     }
 
     // Reset some settings and empty the viewport
@@ -275,15 +374,15 @@ export default class ViewerCore
         clearTimeout(this.viewerState.resizeTimer);
     }
 
-    hasChangedOption (options, key)
+    hasChangedOption (options: Record<string, any>, key: string): boolean
     {
         return key in options && options[key] !== this.settings[key];
     }
 
     //Shortcut for closing fullscreen with the escape key
-    escapeListener (e)
+    escapeListener (e: KeyboardEvent)
     {
-        if (e.keyCode === 27)
+        if (e.code === 'Escape')
         {
             this.publicInstance.leaveFullscreenMode();
         }
@@ -293,7 +392,7 @@ export default class ViewerCore
      * Update settings to match the specified options. Load the viewer,
      * fire appropriate events for changed options.
      */
-    reloadViewer (newOptions)
+    reloadViewer (newOptions: ActiveViewOptions): boolean
     {
         const queuedEvents = [];
 
@@ -330,10 +429,14 @@ export default class ViewerCore
             this.viewerState.options.goDirectlyTo = newOptions.goDirectlyTo;
 
             if ('verticalOffset' in newOptions)
+            {
                 this.viewerState.verticalOffset = newOptions.verticalOffset;
+            }
 
             if ('horizontalOffset' in newOptions)
+            {
                 this.viewerState.horizontalOffset = newOptions.horizontalOffset;
+            }
         }
         else
         {
@@ -344,10 +447,14 @@ export default class ViewerCore
         if (this.hasChangedOption(newOptions, 'inGrid') || this.hasChangedOption(newOptions, 'inBookLayout'))
         {
             if ('inGrid' in newOptions)
-                this.viewerState.options.inGrid = newOptions.inGrid;
+            {
+                this.viewerState.options.inGrid = newOptions.inGrid!;
+            }
 
             if ('inBookLayout' in newOptions)
-                this.viewerState.options.inBookLayout = newOptions.inBookLayout;
+            {
+                this.viewerState.options.inBookLayout = newOptions.inBookLayout!;
+            }
 
             queuedEvents.push(["ViewDidSwitch", this.settings.inGrid]);
         }
@@ -355,7 +462,7 @@ export default class ViewerCore
         // Note: prepareModeChange() depends on inGrid and the vertical/horizontalOffset (for now)
         if (this.hasChangedOption(newOptions, 'inFullscreen'))
         {
-            this.viewerState.options.inFullscreen = newOptions.inFullscreen;
+            this.viewerState.options.inFullscreen = newOptions.inFullscreen!;
             this.prepareModeChange(newOptions);
             queuedEvents.push(["ModeDidSwitch", this.settings.inFullscreen]);
         }
@@ -367,10 +474,10 @@ export default class ViewerCore
         {
             // TODO: The usage of padding variables is still really
             // messy and inconsistent
-            const rendererConfig = {
+            const rendererConfig: RendererLoadConfig = {
                 pageLayouts: getPageLayouts(this.settings),
                 padding: this.getPadding(),
-                maxZoomLevel: this.settings.inGrid ? null : this.viewerState.manifest.maxZoom,
+                maxZoomLevel: this.settings.inGrid ? null : this.viewerState.manifest!.maxZoom,
                 verticallyOriented: this.settings.verticallyOriented || this.settings.inGrid,
             };
 
@@ -416,8 +523,8 @@ export default class ViewerCore
     prepareModeChange (options)
     {
         // Toggle the classes
-        const changeClass = options.inFullscreen ? 'add' : 'remove';
-        this.viewerState.outerObject.classList[changeClass]('diva-fullscreen');
+        const changeClass: 'add' | 'remove' = options.inFullscreen ? 'add' : 'remove';
+        this.viewerState.outerObject!.classList[changeClass]('diva-fullscreen');
         document.body.classList[changeClass]('diva-hide-scrollbar');
         this.settings.parentObject.classList[changeClass]('diva-full-width');
 
@@ -457,10 +564,14 @@ export default class ViewerCore
         }
 
         if (!this.viewerState.viewHandler)
+        {
             this.viewerState.viewHandler = new Handler(this);
+        }
 
         if (!this.viewerState.renderer)
+        {
             this.initializeRenderer();
+        }
     }
 
     // TODO: This could probably be done upon ViewerCore initialization
@@ -474,10 +585,10 @@ export default class ViewerCore
         }
         else
         {
-            const options = {
+            const options: RendererSettings = {
                 viewport: this.viewerState.viewport,
-                outerElement: this.viewerState.outerElement,
-                innerElement: this.viewerState.innerElement,
+                outerElement: this.viewerState.outerElement!,
+                innerElement: this.viewerState.innerElement!,
                 settings: this.settings
             };
 
@@ -500,11 +611,11 @@ export default class ViewerCore
                 {
                     this.updatePageOverlays();
                 },
-                onPageWillLoad: (pageIndex) =>
+                onPageWillLoad: (pageIndex: number) =>
                 {
                     this.publish('PageWillLoad', pageIndex);
                 },
-                onZoomLevelWillChange: (zoomLevel) =>
+                onZoomLevelWillChange: (zoomLevel: number) =>
                 {
                     this.publish('ZoomLevelWillChange', zoomLevel);
                 }
@@ -514,16 +625,16 @@ export default class ViewerCore
         }
     }
 
-    getCurrentSourceProvider ()
+    getCurrentSourceProvider (): SourceProvider
     {
         if (this.settings.inGrid)
         {
-            const gridSourceProvider = {
-                getAllZoomLevelsForPage: (page) =>
+            const gridSourceProvider: SourceProvider = {
+                getAllZoomLevelsForPage: (page: PageInfo): DivaTiledPage[] =>
                 {
                     return [gridSourceProvider.getBestZoomLevelForPage(page)];
                 },
-                getBestZoomLevelForPage: (page) =>
+                getBestZoomLevelForPage: (page: PageInfo): DivaTiledPage =>
                 {
                     const url = this.settings.manifest.getPageImageURL(page.index, {
                         width: page.dimensions.width
@@ -551,17 +662,17 @@ export default class ViewerCore
             return gridSourceProvider;
         }
 
-        const tileDimensions = {
+        const tileDimensions: Dimension = {
             width: this.settings.tileWidth,
             height: this.settings.tileHeight
         };
 
         return {
-            getBestZoomLevelForPage: (page) =>
+            getBestZoomLevelForPage: (page: PageInfo): DivaTiledPage =>
             {
                 return this.settings.manifest.getPageImageTiles(page.index, Math.ceil(this.settings.zoomLevel), tileDimensions);
             },
-            getAllZoomLevelsForPage: (page) =>
+            getAllZoomLevelsForPage: (page: PageInfo): DivaTiledPage[] =>
             {
                 const levels = [];
                 const levelCount = this.viewerState.manifest.maxZoom;
@@ -578,7 +689,7 @@ export default class ViewerCore
         };
     }
 
-    getPadding ()
+    getPadding (): PaddingDefinitions
     {
         let topPadding, leftPadding;
         let docVPadding, docHPadding;
@@ -621,11 +732,13 @@ export default class ViewerCore
     }
 
     // Called to handle any zoom level
-    handleZoom (newZoomLevel, focalPoint)
+    handleZoom (newZoomLevel: number, focalPoint?: PagePosition): boolean
     {
         // If the zoom level provided is invalid, return false
         if (!this.isValidOption('zoomLevel', newZoomLevel))
+        {
             return false;
+        }
 
         // While zooming, don't update scroll offsets based on the scaled version of diva-inner
         this.viewerState.viewportObject.removeEventListener('scroll', this.boundScrollFunction);
@@ -653,7 +766,7 @@ export default class ViewerCore
         const focalYToCenter = (pageRegion.top + focalPoint.offset.top) -
             (this.settings.viewport.top + (this.settings.viewport.height / 2));
 
-        const getPositionForZoomLevel =  (zoomLevel, initZoom) =>
+        const getPositionForZoomLevel =  (zoomLevel: number, initZoom: number): RendererViewportPosition =>
         {
             const zoomRatio = Math.pow(2, zoomLevel - initZoom);
 
@@ -686,22 +799,24 @@ export default class ViewerCore
                     to: newZoomLevel
                 }
             },
-            getPosition: (parameters) =>
+            getPosition: (parameters: any): RendererViewportPosition =>
             {
                 return getPositionForZoomLevel(parameters.zoomLevel, initialZoomLevel);
             },
-            onEnd: (info) =>
+            onEnd: (info: any): void =>
             {
                 this.viewerState.viewportObject.addEventListener('scroll', this.boundScrollFunction);
 
                 if (info.interrupted)
+                {
                     this.viewerState.oldZoomLevel = newZoomLevel;
+                }
             }
         });
 
         // Deactivate zoom buttons while zooming
-        let zoomInButton = document.getElementById(this.settings.selector + 'zoom-in-button');
-        let zoomOutButton = document.getElementById(this.settings.selector + 'zoom-out-button');
+        let zoomInButton: HTMLButtonElement = document.getElementById(this.settings.selector + 'zoom-in-button')! as HTMLButtonElement;
+        let zoomOutButton: HTMLButtonElement = document.getElementById(this.settings.selector + 'zoom-out-button')! as HTMLButtonElement;
         zoomInButton.disabled = true;
         zoomOutButton.disabled = true;
         setTimeout(() =>
@@ -724,40 +839,40 @@ export default class ViewerCore
      "center" - will center the page on the diva element
      Returned value will be the distance from the center of the diva-outer element to the top of the current page for the specified anchor
      */
-    getYOffset (pageIndex, anchor)
+    getYOffset (pageIndex?: number, anchor?: string): number
     {
         let pidx = (typeof(pageIndex) === "undefined" ? this.settings.activePageIndex : pageIndex);
 
         if (anchor === "center" || anchor === "centre") //how you can tell an American coded this
         {
-            return parseInt(this.getPageData(pidx, "h") / 2, 10);
+            return Math.floor(this.getPageData(pidx, "h") / 2);
         }
         else if (anchor === "bottom")
         {
-            return parseInt(this.getPageData(pidx, "h") - this.settings.panelHeight / 2, 10);
+            return Math.floor(this.getPageData(pidx, "h") - this.settings.panelHeight / 2);
         }
         else
         {
-            return parseInt(this.settings.panelHeight / 2, 10);
+            return Math.floor(this.settings.panelHeight / 2);
         }
     }
 
     //Same as getYOffset with "left" and "right" as acceptable values instead of "top" and "bottom"
-    getXOffset (pageIndex, anchor)
+    getXOffset (pageIndex?: number, anchor?: string): number
     {
         let pidx = (typeof(pageIndex) === "undefined" ? this.settings.activePageIndex : pageIndex);
 
         if (anchor === "left")
         {
-            return parseInt(this.settings.panelWidth / 2, 10);
+            return Math.floor(this.settings.panelWidth / 2);
         }
         else if (anchor === "right")
         {
-            return parseInt(this.getPageData(pidx, "w") - this.settings.panelWidth / 2, 10);
+            return Math.floor(this.getPageData(pidx, "w") - this.settings.panelWidth / 2);
         }
         else
         {
-            return parseInt(this.getPageData(pidx, "w") / 2, 10);
+            return Math.floor(this.getPageData(pidx, "w") / 2);
         }
     }
 
@@ -835,9 +950,7 @@ export default class ViewerCore
         {
             document.body.addEventListener('touchmove', (event) =>
             {
-                const e = event.originalEvent;
-                e.preventDefault();
-
+                event.preventDefault();
                 return false;
             });
         }
@@ -845,13 +958,13 @@ export default class ViewerCore
         // Touch events for swiping in the viewport to scroll pages
         // this.viewerState.viewportObject.addEventListener('scroll', this.scrollFunction.bind(this));
 
-        gestureEvents.onPinch(this.viewerState.viewportObject, function (event, coords, start, end)
+        gestureEvents.onPinch(this.viewerState.viewportObject,  (event, coords, start, end) =>
         {
             debug('Pinch %s at %s, %s', end - start, coords.left, coords.top);
             this.viewerState.viewHandler.onPinch(event, coords, start, end);
         });
 
-        gestureEvents.onDoubleTap(this.viewerState.viewportObject, function (event, coords)
+        gestureEvents.onDoubleTap(this.viewerState.viewportObject,  (event, coords) =>
         {
             debug('Double tap at %s, %s', coords.left, coords.top);
             this.viewerState.viewHandler.onDoubleClick(event, coords);
@@ -872,9 +985,13 @@ export default class ViewerCore
         const newScrollLeft = this.viewerState.viewport.left;
 
         if (this.settings.verticallyOriented || this.settings.inGrid)
+        {
             direction = newScrollTop - previousTopScroll;
+        }
         else
+        {
             direction = newScrollLeft - previousLeftScroll;
+        }
 
         this.viewerState.renderer.adjust();
 
@@ -911,13 +1028,23 @@ export default class ViewerCore
         this.bindMouseEvents();
         this.viewerState.viewportObject.addEventListener('scroll', this.boundScrollFunction);
 
-        const upArrowKey = 38, downArrowKey = 40, leftArrowKey = 37, rightArrowKey = 39, spaceKey = 32, pageUpKey = 33, pageDownKey = 34, homeKey = 36, endKey = 35;
+        const upArrowKey = 38,
+            downArrowKey = 40,
+            leftArrowKey = 37,
+            rightArrowKey = 39,
+            spaceKey = 32,
+            pageUpKey = 33,
+            pageDownKey = 34,
+            homeKey = 36,
+            endKey = 35;
 
         // Catch the key presses in document
-        document.addEventListener('keydown.diva', (event) =>
+        document.addEventListener('keydown.diva', (event: KeyboardEvent): boolean =>
         {
             if (!this.viewerState.isActiveDiva)
+            {
                 return true;
+            }
 
             // Space or page down - go to the next page
             if ((this.settings.enableSpaceScroll && !event.shiftKey && event.keyCode === spaceKey) || (this.settings.enableKeyScroll && event.keyCode === pageDownKey))
@@ -934,7 +1061,9 @@ export default class ViewerCore
             {
                 // Don't steal keyboard shortcuts (metaKey = command [OS X], super [Win/Linux])
                 if (event.shiftKey || event.ctrlKey || event.metaKey)
+                {
                     return true;
+                }
 
                 switch (event.keyCode)
                 {
@@ -972,9 +1101,13 @@ export default class ViewerCore
                         // End key - go to the end of the document
                         // Count on the viewport coordinate value being normalized
                         if (this.settings.verticallyOriented)
+                        {
                             this.viewerState.viewport.top = Infinity;
+                        }
                         else
+                        {
                             this.viewerState.viewport.left = Infinity;
+                        }
 
                         return false;
 
@@ -985,7 +1118,7 @@ export default class ViewerCore
             return true;
         });
 
-        diva.Events.subscribe('ViewerDidTerminate', function()
+        divaGlobal.Events.subscribe('ViewerDidTerminate', () =>
         {
             document.removeEventListener('keydown.diva');
         }, this.settings.ID);
@@ -995,7 +1128,7 @@ export default class ViewerCore
         // Handle window resizing events
         window.addEventListener('resize', this.onResize.bind(this), false);
 
-        diva.Events.subscribe('ViewerDidTerminate', function()
+        divaGlobal.Events.subscribe('ViewerDidTerminate', function()
         {
             window.removeEventListener('resize', this.onResize, false);
         }, this.settings.ID);
@@ -1005,19 +1138,21 @@ export default class ViewerCore
         {
             window.addEventListener('orientationchange', this.onResize, false);
 
-            diva.Events.subscribe('ViewerDidTerminate', function()
+            divaGlobal.Events.subscribe('ViewerDidTerminate', function()
             {
                 window.removeEventListener('orientationchange', this.onResize, false);
             }, this.settings.ID);
         }
 
-        diva.Events.subscribe('PanelSizeDidChange', this.updatePanelSize, this.settings.ID);
+        divaGlobal.Events.subscribe('PanelSizeDidChange', this.updatePanelSize, this.settings.ID);
 
         // Clear page and resize timeouts when the viewer is destroyed
-        diva.Events.subscribe('ViewerDidTerminate', () =>
+        divaGlobal.Events.subscribe('ViewerDidTerminate', () =>
         {
             if (this.viewerState.renderer)
+            {
                 this.viewerState.renderer.destroy();
+            }
 
             clearTimeout(this.viewerState.resizeTimer);
         }, this.settings.ID);
@@ -1026,14 +1161,18 @@ export default class ViewerCore
     initPlugins ()
     {
         if (!this.settings.hasOwnProperty('plugins'))
+        {
             return null;
+        }
 
         this.viewerState.pluginInstances = this.settings.plugins.map( (plugin) =>
         {
             const p = new plugin(this);
 
             if (p.isPageTool)
+            {
                 this.viewerState.pageTools.push(p);
+            }
 
             return p;
         });
@@ -1057,7 +1196,10 @@ export default class ViewerCore
 
         let thb = document.getElementById(this.settings.selector + 'throbber');
         // Hide the throbber if it has already executed
-        if (thb) thb.style.display = 'none';
+        if (thb)
+        {
+            thb.style.display = 'none';
+        }
     }
 
     showError (message)
@@ -1079,7 +1221,7 @@ export default class ViewerCore
         });
     }
 
-    setManifest (manifest, loadOptions)
+    setManifest (manifest: ImageManifest, loadOptions: any)
     {
         this.viewerState.manifest = manifest;
 
@@ -1095,9 +1237,9 @@ export default class ViewerCore
         // Calculate the horizontal and vertical inter-page padding based on the dimensions of the average zoom level
         if (this.settings.adaptivePadding > 0)
         {
-            const z = Math.floor((this.settings.minZoomLevel + this.settings.maxZoomLevel) / 2);
-            this.viewerState.horizontalPadding = parseInt(this.settings.manifest.getAverageWidth(z) * this.settings.adaptivePadding, 10);
-            this.viewerState.verticalPadding = parseInt(this.settings.manifest.getAverageHeight(z) * this.settings.adaptivePadding, 10);
+            const z: number = Math.floor((this.settings.minZoomLevel + this.settings.maxZoomLevel) / 2);
+            this.viewerState.horizontalPadding = Math.floor(this.settings.manifest.getAverageWidth(z) * this.settings.adaptivePadding);
+            this.viewerState.verticalPadding = Math.floor(this.settings.manifest.getAverageHeight(z) * this.settings.adaptivePadding);
         }
         else
         {
@@ -1187,19 +1329,27 @@ export default class ViewerCore
 
         // FIXME: This is a hack to ensure that the outerElement scrollbars are taken into account
         if (this.settings.verticallyOriented)
+        {
             this.viewerState.innerElement.style.minWidth = this.settings.panelWidth + 'px';
+        }
         else
+        {
             this.viewerState.innerElement.style.minHeight = this.settings.panelHeight + 'px';
+        }
 
         // FIXME: If the page was supposed to be positioned relative to the viewport we need to
         // recalculate it to take into account the scrollbars
         if (anchoredVertically || anchoredHorizontally)
         {
             if (anchoredVertically)
+            {
                 this.viewerState.verticalOffset = this.getYOffset(this.settings.activePageIndex, "top");
+            }
 
             if (anchoredHorizontally)
+            {
                 this.viewerState.horizontalOffset = this.getXOffset(this.settings.activePageIndex, "center");
+            }
 
             this.viewerState.renderer.goto(this.settings.activePageIndex, this.viewerState.verticalOffset, this.viewerState.horizontalOffset);
         }
@@ -1210,10 +1360,10 @@ export default class ViewerCore
         this.publish("ViewerDidLoad", this.settings);
     }
 
-    publish (event)
+    publish (event: string, ...args: any[])
     {
-        const args = Array.prototype.slice.call(arguments, 1);
-        diva.Events.publish(event, args, this.publicInstance);
+        // const args = Array.prototype.slice.call(arguments, 1);
+        globalDiva.Events.publish(event, args, this.publicInstance);
     }
 
     getSettings ()
@@ -1245,7 +1395,7 @@ export default class ViewerCore
     }
 
     /** Get a copy of the current viewport dimensions */
-    getViewport ()
+    getViewport (): ViewportSize
     {
         const viewport = this.viewerState.viewport;
 
@@ -1260,20 +1410,20 @@ export default class ViewerCore
         };
     }
 
-    addPageOverlay (overlay)
+    addPageOverlay (overlay: PageToolsOverlay): void
     {
         this.viewerState.pageOverlays.addOverlay(overlay);
     }
 
-    removePageOverlay (overlay)
+    removePageOverlay (overlay: PageToolsOverlay): void
     {
         this.viewerState.pageOverlays.removeOverlay(overlay);
     }
 
-    getPageRegion (pageIndex, options)
+    getPageRegion (pageIndex: number, options: PageRegionOptions): Region | null
     {
-        const layout = this.viewerState.renderer.layout;
-        const region = layout.getPageRegion(pageIndex, options);
+        const layout = this.viewerState.renderer!.layout!;
+        const region = layout.getPageRegion(pageIndex, options)!;
 
         if (options && options.incorporateViewport)
         {
@@ -1309,21 +1459,22 @@ export default class ViewerCore
         return region;
     }
 
-    getPagePositionAtViewportOffset (coords)
+    getPagePositionAtViewportOffset (coords: Offset): PagePosition
     {
         const docCoords = {
             left: coords.left + this.viewerState.viewport.left,
             top: coords.top + this.viewerState.viewport.top
         };
+        const renderer = this.viewerState.renderer!;
 
-        const renderedPages = this.viewerState.renderer.getRenderedPages();
+        const renderedPages: number[] = renderer.getRenderedPages();
         const pageCount = renderedPages.length;
 
         // Find the page on which the coords occur
         for (let i=0; i < pageCount; i++)
         {
-            const pageIndex = renderedPages[i];
-            const region = this.viewerState.renderer.layout.getPageRegion(pageIndex);
+            const pageIndex: number = renderedPages[i];
+            const region = renderer.layout!.getPageRegion(pageIndex)!;
 
             if (region.left <= docCoords.left && region.right >= docCoords.left &&
                 region.top <= docCoords.top && region.bottom >= docCoords.top)
@@ -1340,7 +1491,7 @@ export default class ViewerCore
 
         // Fall back to current page
         // FIXME: Would be better to use the closest page or something
-        const currentRegion = this.viewerState.renderer.layout.getPageRegion(this.settings.activePageIndex);
+        const currentRegion = renderer.layout!.getPageRegion(this.settings.activePageIndex)!;
 
         return {
             anchorPage: this.settings.activePageIndex,
@@ -1359,9 +1510,10 @@ export default class ViewerCore
     /**
      * Set the current page to the given index, firing VisiblePageDidChange
      *
-     * @param pageIndex
+     * @param activePage
+     * @param visiblePages
      */
-    setCurrentPages (activePage, visiblePages)
+    setCurrentPages (activePage: number, visiblePages: number[])
     {
         if (!arraysEqual(this.viewerState.currentPageIndices, visiblePages))
         {
@@ -1375,39 +1527,28 @@ export default class ViewerCore
 
             // Publish an event if the page we're switching to has other images.
             if (this.viewerState.manifest.pages[activePage].otherImages.length > 0)
+            {
                 this.publish('VisiblePageHasAlternateViews', activePage);
+            }
         }
         else if (this.viewerState.activePageIndex !== activePage)
         {
             this.viewerState.activePageIndex = activePage;
             this.publish("ActivePageDidChange", activePage);
         }
-
-        function arraysEqual (a, b)
-        {
-            if (a.length !== b.length)
-                return false;
-
-            for (let i = 0, len = a.length; i < len; i++)
-            {
-                if (a[i] !== b[i])
-                    return false;
-            }
-            return true;
-        }
     }
 
-    getPageName (pageIndex)
+    getPageName (pageIndex: number)
     {
-        return this.viewerState.manifest.pages[pageIndex].f;
+        return this.viewerState.manifest!.pages[pageIndex].f;
     }
 
-    reload (newOptions)
+    reload (newOptions: ActiveViewOptions): boolean
     {
-        this.reloadViewer(newOptions);
+        return this.reloadViewer(newOptions);
     }
 
-    zoom (zoomLevel, focalPoint)
+    zoom (zoomLevel: number, focalPoint?: PagePosition): boolean
     {
         return this.handleZoom(zoomLevel, focalPoint);
     }
@@ -1420,15 +1561,17 @@ export default class ViewerCore
             this.enableDragScrollable();
             this.viewerState.options.enableKeyScroll = this.viewerState.initialKeyScroll;
             this.viewerState.options.enableSpaceScroll = this.viewerState.initialSpaceScroll;
-            this.viewerState.viewportElement.style.overflow = 'auto';
+            this.viewerState.viewportElement!.style.overflow = 'auto';
             this.viewerState.isScrollable = true;
         }
     }
 
     enableDragScrollable ()
     {
-        if (this.viewerState.viewportObject.hasAttribute('nochilddrag'))
-            this.viewerState.viewportObject.removeAttribute('nochilddrag');
+        if (this.viewerState.viewportObject!.hasAttribute('nochilddrag'))
+        {
+            this.viewerState.viewportObject!.removeAttribute('nochilddrag');
+        }
     }
 
     disableScrollable ()
@@ -1439,11 +1582,11 @@ export default class ViewerCore
             this.disableDragScrollable();
 
             // block double-click zooming
-            this.viewerState.outerObject.dblclick = null;
-            this.viewerState.outerObject.contextmenu = null;
+            this.viewerState.outerObject!.ondblclick = null;
+            this.viewerState.outerObject!.oncontextmenu = null;
 
             // disable all other scrolling actions
-            this.viewerState.viewportElement.style.overflow = 'hidden';
+            this.viewerState.viewportElement!.style.overflow = 'hidden';
 
             // block scrolling keys behavior, respecting initial scroll settings
             this.viewerState.initialKeyScroll = this.settings.enableKeyScroll;
@@ -1458,7 +1601,9 @@ export default class ViewerCore
     disableDragScrollable ()
     {
         if (!this.viewerState.viewportObject.hasAttribute('nochilddrag'))
+        {
             this.viewerState.viewportObject.setAttribute('nochilddrag', "");
+        }
     }
 
     // isValidOption (key, value)
@@ -1483,7 +1628,7 @@ export default class ViewerCore
         this.clearViewer();
     }
 
-    setPendingManifestRequest (pendingManifestRequest)
+    setPendingManifestRequest (pendingManifestRequest: Promise<void>)
     {
         this.viewerState.pendingManifestRequest = pendingManifestRequest;
     }
@@ -1495,20 +1640,23 @@ export default class ViewerCore
 
         // Cancel any pending request retrieving a manifest
         if (this.settings.pendingManifestRequest)
+        {
             this.settings.pendingManifestRequest.abort();
+        }
 
         // Removes the hide-scrollbar class from the body
-        document.body.removeClass('diva-hide-scrollbar');
+        document.body.classList.remove('diva-hide-scrollbar');
 
         // Empty the parent container and remove any diva-related data
-        this.settings.parentObject.parent().empty().removeData('diva');
+        this.settings.parentObject.parentElement.replaceChildren();
 
         // Remove any additional styling on the parent element
-        this.settings.parentObject.parent().removeAttr('style').removeAttr('class');
+        this.settings.parentObject.parentElement.removeAttribute('style');
+        this.settings.parentObject.parentElement.removeAttribute('class');
 
         this.publish('ViewerDidTerminate', this.settings);
 
         // Clear the Events cache
-        diva.Events.unsubscribeAll(this.settings.ID);
+        globalDiva.Events.unsubscribeAll(this.settings.ID);
     }
 }

@@ -7,34 +7,12 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="./static/css/diva.css" />
     <title>Document</title>
-<script defer src="/static/js/274.js"></script><script defer src="/static/js/diva.js"></script><link href="/static/css/diva.css" rel="stylesheet"></head>
+<script defer src="/static/js/vendors-node_modules_rspack_core_dist_cssExtractHmr_js-node_modules_debug_src_browser_js-node-db2334.js"></script><script defer src="/static/js/diva.js"></script><link href="/static/css/diva.css" rel="stylesheet"></head>
 <body>
     <div id="diva-wrapper"></div>
     <!-- <div id="diva-wrapper2" style="width:40%; float: left;"></div> -->
     <script src="./static/js/diva.js"></script>
-    <script src="./static/js/plugins/download.js" type="module"></script>
-    <script src="./static/js/plugins/manipulation.js" type="module"></script>
-    <script src="./static/js/plugins/metadata.js" type="module"></script>
     <script>
-        const registerServiceWorker = async () => {
-            if ("serviceWorker" in navigator) {
-                try {
-                    const registration = await navigator.serviceWorker.register("/service-worker.js?key=123&secret=456&domain=dev.diamm.ac.uk");
-                    if (registration.installing) {
-                        console.log("Service worker installing");
-                    } else if (registration.waiting) {
-                        console.log("Service worker installed");
-                    } else if (registration.active) {
-                        console.log("Service worker active");
-                    }
-                } catch (error) {
-                    console.error(`Registration failed with ${error}`);
-                }
-            }
-        };
-
-        registerServiceWorker();
-
         document.addEventListener('DOMContentLoaded', function ()
         {
             diva = new Diva('diva-wrapper', {

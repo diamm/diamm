@@ -1,15 +1,18 @@
-import diva from './diva-global';
+import globalDiva from './diva-global';
 import { elt } from './utils/elt';
 
 export default class Toolbar
 {
-    constructor (viewer)
+    settings: any;
+    viewer: any;
+
+    constructor (viewer: any)
     {
         this.viewer = viewer;
         this.settings = viewer.settings;
     }
 
-    _elemAttrs (ident, base)
+    _elemAttrs (ident: string, base?: any)
     {
         const attrs = {
             id: this.settings.ID + ident,
@@ -17,20 +20,24 @@ export default class Toolbar
         };
 
         if (base)
+        {
             return Object.assign(attrs, base);
+        }
         else
+        {
             return attrs;
+        }
     }
 
 
     /** Convenience function to subscribe to a Diva event */
-    _subscribe (event, callback)
+    _subscribe (event: string, callback: any)
     {
-        diva.Events.subscribe(event, callback, this.settings.ID);
+        globalDiva.Events.subscribe(event, callback, this.settings.ID);
     }
 
 
-    createButton (name, label, callback, icon)
+    createButton (name: string, label: string, callback: any, icon?: SVGSVGElement): HTMLElement
     {
         const button = elt('button', {
             type: 'button',
@@ -41,15 +48,19 @@ export default class Toolbar
         });
 
         if (icon)
+        {
             button.appendChild(icon);
+        }
 
         if (callback)
+        {
             button.addEventListener('click', callback);
+        }
 
         return button;
     }
 
-    createLabel (name, id, label, innerName, innerValue)
+    createLabel (name: string, id: string, label: string, innerName: string, innerValue: any)
     {
         return elt('div', { id: this.settings.ID + id, class: name + ' diva-label'},
                     [ label, elt('span', { id: this.settings.ID + innerName }, innerValue)
@@ -71,9 +82,9 @@ export default class Toolbar
             this.createLabel('diva-zoom-label', 'zoom-label', 'Zoom level: ', 'zoom-level', this.settings.zoomLevel + 1)
         ];
 
-        let zoomHandler = function ()
+        let zoomHandler = () =>
         {
-            let labelEl = document.getElementById(this.settings.ID + 'zoom-level');
+            let labelEl: HTMLElement | null = document.getElementById(this.settings.ID + 'zoom-level')!;
             labelEl.textContent = this.settings.zoomLevel + 1;
         };
 
@@ -89,18 +100,20 @@ export default class Toolbar
         let gridFewerIcon = this._createGridFewerIcon();
 
         let gridButtons = [
-            this.createButton('grid-out-button', 'Fewer', () => {
+            this.createButton('grid-out-button', 'Fewer', () =>
+            {
                 this.viewer.setGridPagesPerRow(this.settings.pagesPerRow - 1);
             }, gridFewerIcon),
-            this.createButton('grid-in-button', 'More', () => {
+            this.createButton('grid-in-button', 'More', () =>
+            {
                 this.viewer.setGridPagesPerRow(this.settings.pagesPerRow + 1);
             }, gridMoreIcon),
             this.createLabel('diva-grid-label', 'grid-label', 'Pages per row: ', 'pages-per-row', this.settings.pagesPerRow)
         ];
 
-        let gridChangeHandler = function ()
+        let gridChangeHandler = () =>
         {
-            let labelEl = document.getElementById(this.settings.ID + 'pages-per-row');
+            let labelEl: HTMLElement | null = document.getElementById(this.settings.ID + 'pages-per-row')!;
             labelEl.textContent = this.settings.pagesPerRow;
         };
 
@@ -127,18 +140,26 @@ export default class Toolbar
 
             if (startIndex !== endIndex)
             {
-            	if (this.settings.enableIndexAsLabel)
-                	currentPage.textContent = startIndex + " - " + endIndex;
-            	else
-            		currentPage.textContent = startLabel + " - " + endLabel;
+                if (this.settings.enableIndexAsLabel)
+                {
+                    currentPage.textContent = startIndex + " - " + endIndex;
+                }
+                else
+                {
+                    currentPage.textContent = startLabel + " - " + endLabel;
+                }
             }
             else
-        	{
-            	if (this.settings.enableIndexAsLabel)
-            		currentPage.textContent = startIndex;
-            	else
-            		currentPage.textContent = startLabel;
-        	}
+            {
+                if (this.settings.enableIndexAsLabel)
+                {
+                    currentPage.textContent = startIndex;
+                }
+                else
+                {
+                    currentPage.textContent = startLabel;
+                }
+            }
         };
 
         this._subscribe('VisiblePageDidChange', updateCurrentPage);
@@ -154,13 +175,13 @@ export default class Toolbar
 
     createGotoPageForm ()
     {
-        const gotoPageInput = elt('input', {
+        const gotoPageInput: HTMLInputElement = elt('input', {
             id: this.settings.ID + 'goto-page-input',
             class: 'diva-input diva-goto-page-input',
             autocomplete: 'off',
             type: 'text',
             'aria-label': 'Page Input'
-        });
+        }) as HTMLInputElement;
 
         const gotoPageSubmit = elt('input', {
             id: this.settings.ID + 'goto-page-submit',
@@ -247,21 +268,25 @@ export default class Toolbar
 
         gotoPageInput.addEventListener('keydown', e => {
             let el;
-            if (e.keyCode === 13) // 'Enter' key
+            if (e.code === 'Enter') // 'Enter' key
             {
-                const active = document.getElementsByClassName('active')[0];
+                const active: HTMLElement = document.getElementsByClassName('active')[0] as HTMLElement;
                 if (typeof active !== 'undefined')
+                {
                     gotoPageInput.value = active.innerText;
+                }
             }
-            if (e.keyCode === 38) // Up arrow key
+            if (e.code === 'ArrowUp') // Up arrow key
             {
                 el = document.getElementsByClassName('active')[0];
-                const prevEl = el ? el.previousSibling : undefined;
+                const prevEl: HTMLElement | undefined = el ? el.previousSibling as HTMLElement : undefined;
                 if (typeof prevEl !== 'undefined')
                 {
                     el.classList.remove('active');
                     if (prevEl !== null)
+                    {
                         prevEl.classList.add('active');
+                    }
                 }
                 else
                 {
@@ -269,15 +294,17 @@ export default class Toolbar
                     document.getElementsByClassName('diva-input-suggestion')[last].classList.add('active');
                 }
             }
-            else if (e.keyCode === 40) // Down arrow key
+            else if (e.code === 'ArrowDown') // Down arrow key
             {
-                el = document.getElementsByClassName('active')[0];
-                const nextEl = el ? el.nextSibling : undefined;
+                el = document.getElementsByClassName('active')[0] as HTMLElement;
+                const nextEl: HTMLElement | undefined = el ? el.nextSibling as HTMLElement : undefined;
                 if (typeof nextEl !== 'undefined')
                 {
                     el.classList.remove('active');
                     if (nextEl !== null)
+                    {
                         nextEl.classList.add('active');
+                    }
                 }
                 else
                 {
@@ -286,7 +313,7 @@ export default class Toolbar
             }
         });
 
-        onEvent(inputSuggestions, 'mousedown', '.diva-input-suggestion', function ()
+        onEvent(inputSuggestions, 'mousedown', '.diva-input-suggestion',  () =>
         {
             gotoPageInput.value = this.textContent;
             inputSuggestions.style.display = 'none';
@@ -297,15 +324,17 @@ export default class Toolbar
         });
 
         // javascript equivalent to jquery .on(event, selector, function)
-        function onEvent (elem, evt, sel, handler)
+        function onEvent (elem: HTMLElement, evt: string, sel: string, handler: { (): void; call?: any; })
         {
-            elem.addEventListener(evt, function (event)
+            elem.addEventListener(evt,  (event) =>
             {
-                var t = event.target;
+                let t = event.target;
                 while (t && t !== this)
                 {
                     if (t.matches(sel))
+                    {
                         handler.call(t, event);
+                    }
                     t = t.parentNode;
                 }
             });
@@ -321,7 +350,7 @@ export default class Toolbar
 
     createViewMenu ()
     {
-        const viewOptionsList = elt('div', this._elemAttrs('view-options'));
+        const viewOptionsList = elt('div', this._elemAttrs('view-options')) as HTMLElement;
         const gridViewIcon = this._createGridViewIcon();
         const bookViewIcon = this._createBookViewIcon();
         const pageViewIcon = this._createPageViewIcon();
@@ -333,7 +362,7 @@ export default class Toolbar
 
         const changeViewButton = this.createButton('view-icon', 'Change view', viewOptionsToggle);
 
-        const selectView = (view) =>
+        const selectView = (view: string) =>
         {
             this.viewer.changeView(view);
 
@@ -367,13 +396,19 @@ export default class Toolbar
 
             // then display document, book, and grid buttons in that order, excluding the current view
             if (this.settings.inGrid || this.settings.inBookLayout)
+            {
                 viewOptions.appendChild(this.createButton('document-icon', 'Document View', selectView.bind(null, 'document'), pageViewIcon));
+            }
 
             if (this.settings.inGrid || !this.settings.inBookLayout)
+            {
                 viewOptions.appendChild(this.createButton('book-icon', 'Book View', selectView.bind(null, 'book'), bookViewIcon));
+            }
 
             if (!this.settings.inGrid)
+            {
                 viewOptions.appendChild(this.createButton('grid-icon', 'Grid View', selectView.bind(null, 'grid'), gridViewIcon));
+            }
 
             // remove old menu
             while (viewOptionsList.firstChild)
@@ -415,13 +450,13 @@ export default class Toolbar
     {
         if (!this.settings.inGrid)
         {
-            document.getElementById(this.settings.ID + "zoom-controls").style.display = "block";
-            document.getElementById(this.settings.ID + "grid-controls").style.display = "none";
+            document.getElementById(this.settings.ID + "zoom-controls")!.style.display = "block";
+            document.getElementById(this.settings.ID + "grid-controls")!.style.display = "none";
         }
         else
         {
-            document.getElementById(this.settings.ID + "zoom-controls").style.display = "none";
-            document.getElementById(this.settings.ID + "grid-controls").style.display = "block";
+            document.getElementById(this.settings.ID + "zoom-controls")!.style.display = "none";
+            document.getElementById(this.settings.ID + "grid-controls")!.style.display = "block";
         }
 
     }
@@ -440,9 +475,13 @@ export default class Toolbar
             this.createViewMenu()
         ];
         if (this.settings.enableFullscreen)
+        {
             rightTools.push(this.createFullscreenButton());
+        }
         if (this.settings.enableGotoPage)
+        {
             rightTools.splice(1, 0, this.createGotoPageForm());
+        }
 
         // assign toolbar plugins to proper side
         let plugins = this.viewer.viewerState.pluginInstances;
@@ -451,22 +490,30 @@ export default class Toolbar
             let plugin = plugins[i];
 
             if (!plugin.toolbarSide) // not a toolbar tool
+            {
                 continue;
+            }
 
             plugin.toolbarIcon = plugin.createIcon();
             if (!plugin.toolbarIcon) // icon couldn't be created
+            {
                 continue;
+            }
 
             // add plugin tools after the go-to-page and page-label tools
             if (plugin.toolbarSide === 'right')
+            {
                 rightTools.splice(2, 0, plugin.toolbarIcon);
+            }
             else if (plugin.toolbarSide === 'left')
+            {
                 leftTools.splice(2, 0, plugin.toolbarIcon);
+            }
 
             plugin.toolbarIcon.addEventListener('click', handlePluginClick.bind(this, plugin));
         }
 
-        function handlePluginClick (plugin)
+        function handlePluginClick (plugin: { handleClick: (arg0: any) => void; })
         {
             plugin.handleClick(this.viewer);
         }
@@ -482,7 +529,7 @@ export default class Toolbar
         );
     }
 
-    _createToolbarIcon (paths)
+    _createToolbarIcon (paths: any[])
     {
         let icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         icon.setAttributeNS(null, 'viewBox', "0 0 25 25");

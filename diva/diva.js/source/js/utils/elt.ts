@@ -10,10 +10,9 @@ export { setDOMAttributes as setAttributes };
  *
  * Inspired by the ProseMirror helper of the same name.
  */
-export function elt (tag)
+export function elt (tag: string, ...args: any[])
 {
-    const el = document.createElement(tag);
-    const args = Array.prototype.slice.call(arguments, 1);
+    const el: HTMLElement = document.createElement(tag);
 
     while (args.length)
     {
@@ -24,10 +23,12 @@ export function elt (tag)
     return el;
 }
 
-function handleEltConstructorArg (el, arg)
+function handleEltConstructorArg (el: HTMLElement, arg)
 {
-    if (arg == null)  // NB: == is correct;
+    if (arg == null) // NB: == is correct;
+    {
         return;
+    }
 
     if (typeof arg !== 'object' && typeof arg !== 'function')
     {
@@ -42,7 +43,9 @@ function handleEltConstructorArg (el, arg)
     {
         const childCount = arg.length;
         for (let i = 0; i < childCount; i++)
+        {
             handleEltConstructorArg(el, arg[i]);
+        }
     }
     else
     {
@@ -60,7 +63,9 @@ function setDOMAttributes (el, attributes)
     for (const prop in attributes)
     {
         if (!attributes.hasOwnProperty(prop))
+        {
             continue;
+        }
 
         if (prop === 'style')
         {
@@ -76,7 +81,9 @@ function setDOMAttributes (el, attributes)
 function setStyle (el, style)
 {
     if (!style)
+    {
         return;
+    }
 
     if (typeof style !== 'object')
     {
@@ -87,7 +94,9 @@ function setStyle (el, style)
     for (const cssProp in style)
     {
         if (!style.hasOwnProperty(cssProp))
+        {
             continue;
+        }
 
         el.style[cssProp] = style[cssProp];
     }

@@ -1,11 +1,13 @@
+import {LayoutGroupSettings} from "../options-settings";
+import {Dimension, DivaPage, LayoutGroupPage, LayoutGroupPages} from "../viewer-type-definitions";
 
-export default function getGridLayoutGroups (viewerConfig)
+export default function getGridLayoutGroups (viewerConfig: LayoutGroupSettings): LayoutGroupPages[]
 {
     const viewportWidth = viewerConfig.viewport.width;
     const manifest = viewerConfig.manifest;
-    const pagesPerRow = viewerConfig.pagesPerRow;
+    const pagesPerRow = viewerConfig.pagesPerRow!;
     const fixedHeightGrid = viewerConfig.fixedHeightGrid;
-    const fixedPadding = viewerConfig.fixedPadding;
+    const fixedPadding = viewerConfig.fixedPadding!;
     const showNonPagedPages = viewerConfig.showNonPagedPages;
 
     const horizontalPadding = fixedPadding * (pagesPerRow + 1);
@@ -16,13 +18,13 @@ export default function getGridLayoutGroups (viewerConfig)
     const rowHeight = (fixedHeightGrid) ? fixedPadding + manifest.minRatio * pageWidth : fixedPadding + manifest.maxRatio * pageWidth;
 
     const groups = [];
-    let currentPages = [];
+    let currentPages: LayoutGroupPage[] = [];
 
-    const getGridPageDimensions = pageData =>
+    const getGridPageDimensions: ((pageData: DivaPage) => Dimension) = (pageData: DivaPage): Dimension =>
     {
         // Calculate the width, height and horizontal placement of this page
         // Get dimensions at max zoom level, although any level should be fine
-        const pageDimenData = pageData.d[pageData.d.length - 1];
+        const pageDimenData = pageData.d[pageData.d.length - 1]!;
         const heightToWidthRatio = pageDimenData.h / pageDimenData.w;
 
         let pageWidth, pageHeight;
@@ -49,10 +51,12 @@ export default function getGridLayoutGroups (viewerConfig)
         width: viewportWidth
     };
 
-    manifest.pages.forEach( (page, pageIndex) =>
+    manifest.pages.forEach( (page: DivaPage, pageIndex: number) =>
     {
         if (!showNonPagedPages && manifest.paged && !page.paged)
+        {
             return;
+        }
 
         // Calculate the width, height and horizontal placement of this page
         const pageDimens = getGridPageDimensions(page);

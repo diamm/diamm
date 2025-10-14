@@ -1,19 +1,21 @@
 import getPageDimensions from './page-dimensions';
+import {LayoutGroupSettings} from "../options-settings";
+import {BookLayoutPage, DivaPage, LayoutGroupPages} from "../viewer-type-definitions";
 
-export default function getBookLayoutGroups (viewerConfig)
+export default function getBookLayoutGroups (viewerConfig: LayoutGroupSettings): LayoutGroupPages[]
 {
     const groupings = getGroupings(viewerConfig);
 
     return groupings.map(grouping => getGroupLayoutsFromPageGrouping(viewerConfig, grouping));
 }
 
-function getGroupings(viewerConfig)
+function getGroupings(viewerConfig: LayoutGroupSettings)
 {
     const manifest = viewerConfig.manifest;
 
-    const pagesByGroup = [];
-    let leftPage = null;
-    let nonPagedPages = []; // Pages to display below the current group
+    const pagesByGroup: any[] = [];
+    let leftPage: BookLayoutPage | null = null;
+    let nonPagedPages: BookLayoutPage[] = []; // Pages to display below the current group
 
     const _addNonPagedPages = () =>
     {
@@ -24,9 +26,9 @@ function getGroupings(viewerConfig)
         nonPagedPages = [];
     };
 
-    manifest.pages.forEach( (page, index) =>
+    manifest.pages.forEach( (page: DivaPage, index: number) =>
     {
-        const pageRecord = {
+        const pageRecord: BookLayoutPage = {
             index: index,
             dimensions: getPageDimensions(index, manifest),
             paged: (!manifest.paged || page.paged)
@@ -34,7 +36,9 @@ function getGroupings(viewerConfig)
 
         // Only display non-paged pages if specified in the settings
         if (!viewerConfig.showNonPagedPages && !pageRecord.paged)
+        {
             return;
+        }
 
         if (!pageRecord.paged)
         {
@@ -68,12 +72,14 @@ function getGroupings(viewerConfig)
     return pagesByGroup;
 }
 
-function getGroupLayoutsFromPageGrouping(viewerConfig, grouping)
+function getGroupLayoutsFromPageGrouping(viewerConfig: LayoutGroupSettings, grouping: string | any[]): LayoutGroupPages
 {
     const verticallyOriented = viewerConfig.verticallyOriented;
 
     if (grouping.length === 2)
+    {
         return getFacingPageGroup(grouping[0], grouping[1], verticallyOriented);
+    }
 
     const page = grouping[0];
     const pageDims = page.dimensions;
@@ -84,9 +90,13 @@ function getGroupLayoutsFromPageGrouping(viewerConfig, grouping)
     // If the page is tagged as 'non-paged', center it horizontally
     let leftOffset;
     if (page.paged)
+    {
         leftOffset = (page.index === 0 && verticallyOriented) ? pageDims.width : 0;
+    }
     else
+    {
         leftOffset = (verticallyOriented) ? pageDims.width / 2 : 0;
+    }
 
     const shouldBeHorizontallyAdjusted =
         verticallyOriented && !viewerConfig.manifest.pages[page.index].facingPages;
@@ -109,7 +119,10 @@ function getGroupLayoutsFromPageGrouping(viewerConfig, grouping)
     };
 }
 
-function getFacingPageGroup(leftPage, rightPage, verticallyOriented)
+function getFacingPageGroup(leftPage: { dimensions: any; index: any; }, rightPage: {
+    dimensions: any;
+    index: any;
+}, verticallyOriented: any): LayoutGroupPages
 {
     const leftDims = leftPage.dimensions;
     const rightDims = rightPage.dimensions;

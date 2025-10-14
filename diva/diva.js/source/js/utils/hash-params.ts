@@ -9,7 +9,7 @@ export default HashParams;
 // For getting the #key values from the URL. For specifying a page and zoom level
 // Look into caching, because we only need to get this during the initial load
 // Although for the tests I guess we would need to override caching somehow
-function getHashParam (key)
+function getHashParam (key: string): string | false
 {
     const hash = window.location.hash;
 
@@ -51,7 +51,7 @@ function getHashParam (key)
     }
 }
 
-function updateHashParam (key, value)
+function updateHashParam (key: string, value: string)
 {
     // First make sure that we have to do any work at all
     const originalValue = getHashParam(key);

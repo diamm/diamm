@@ -12,29 +12,7 @@
     <div id="diva-wrapper"></div>
     <!-- <div id="diva-wrapper2" style="width:40%; float: left;"></div> -->
     <script src="./static/js/diva.js"></script>
-    <script src="./static/js/plugins/download.js" type="module"></script>
-    <script src="./static/js/plugins/manipulation.js" type="module"></script>
-    <script src="./static/js/plugins/metadata.js" type="module"></script>
     <script>
-        const registerServiceWorker = async () => {
-            if ("serviceWorker" in navigator) {
-                try {
-                    const registration = await navigator.serviceWorker.register("/service-worker.js?key=123&secret=456&domain=dev.diamm.ac.uk");
-                    if (registration.installing) {
-                        console.log("Service worker installing");
-                    } else if (registration.waiting) {
-                        console.log("Service worker installed");
-                    } else if (registration.active) {
-                        console.log("Service worker active");
-                    }
-                } catch (error) {
-                    console.error(`Registration failed with ${error}`);
-                }
-            }
-        };
-
-        registerServiceWorker();
-
         document.addEventListener('DOMContentLoaded', function ()
         {
             diva = new Diva('diva-wrapper', {

@@ -6,12 +6,13 @@ import {
     NotAnIIIFManifestException,
     ObjectDataNotSuppliedException
 } from "./exceptions";
-import diva from "./diva-global";
+import globalDiva from "./diva-global";
 import ViewerCore from "./viewer-core";
 import ImageManifest from "./image-manifest";
 import Toolbar from "./toolbar";
 import HashParams from "./utils/hash-params";
-
+import {ActiveViewOptions, DivaState, Options, HashParameters, PageRegionOptions} from "./options-settings";
+import {Dimension, DivaPage, Offset, OptionalDimension} from "./viewer-type-definitions";
 
 /**
  * The top-level class for Diva objects. This is instantiated by passing in an HTML element
@@ -32,7 +33,15 @@ import HashParams from "./utils/hash-params";
  **/
 class Diva
 {
-    constructor (element, options)
+    element: HTMLElement | null;
+    options: Options;
+    viewerState: any;
+    settings: any;
+    toolbar: any;
+    hashState: any;
+    divaState: DivaState;
+
+    constructor (element: HTMLElement, options: Options)
     {
         /*
          * If a string is passed in, convert that to an element.
@@ -43,7 +52,7 @@ class Diva
 
             if (this.element === null)
             {
-                throw new DivaParentElementNotFoundException();
+                throw new DivaParentElementNotFoundException("The parent element was not found.");
             }
         }
 
@@ -124,14 +133,14 @@ class Diva
         };
 
         // only render the toolbar after the object has been loaded
-        let handle = diva.Events.subscribe('ObjectDidLoad', () =>
+        let handle = globalDiva.Events.subscribe('ObjectDidLoad', () =>
         {
             if (this.toolbar !== null)
             {
                 this.toolbar.render();
             }
 
-            diva.Events.unsubscribe(handle);
+            globalDiva.Events.unsubscribe(handle);
         });
 
         this.hashState = this._getHashParamState();
@@ -154,14 +163,14 @@ class Diva
         }
         else
         {
-            const pendingManifestRequest = fetch(this.settings.objectData, {
+            const pendingManifestRequest: Promise<void> = fetch(this.settings.objectData, {
                 headers: this.settings.requestHeaders
             }).then( (response) =>
             {
                 if (!response.ok)
                 {
                     // trigger manifest load error event
-                    diva.Events.publish('ManifestFetchError', [response], this);
+                    globalDiva.Events.publish('ManifestFetchError', [response], this);
 
                     this._ajaxError(response);
 
@@ -225,9 +234,9 @@ class Diva
     /**
      * @private
      **/
-    _loadObjectData (responseData, hashState)
+    _loadObjectData (responseData: Record<string, any>, hashState: HashParameters)
     {
-        let manifest;
+        let manifest: ImageManifest;
 
         // TODO improve IIIF detection method
         if (!responseData.hasOwnProperty('@context') && (responseData['@context'].indexOf('iiif') === -1 || responseData['@context'].indexOf('shared-canvas') === -1))
@@ -236,7 +245,7 @@ class Diva
         }
 
         // trigger ManifestDidLoad event
-        diva.Events.publish('ManifestDidLoad', [responseData], this);
+        globalDiva.Events.publish('ManifestDidLoad', [responseData], this);
         manifest = ImageManifest.fromIIIF(responseData);
         const loadOptions = hashState ? this._getLoadOptionsForState(hashState, manifest) : {};
 
@@ -250,7 +259,7 @@ class Diva
      **/
     _getHashParamState ()
     {
-        const state = {};
+        const state: HashParameters = {};
 
         ['f', 'v', 'z', 'n', 'i', 'p', 'y', 'x'].forEach( (param) =>
         {
@@ -258,7 +267,9 @@ class Diva
 
             // `false` is returned if the value is missing
             if (value !== false)
+            {
                 state[param] = value;
+            }
         });
 
         // Do some awkward special-casing, since this format is kind of weird.
@@ -266,15 +277,22 @@ class Diva
         // For inFullscreen (f), true and false strings should be interpreted
         // as booleans.
         if (state.f === 'true')
+        {
             state.f = true;
+        }
         else if (state.f === 'false')
+        {
             state.f = false;
+        }
 
         // Convert numerical values to integers, if provided
         ['z', 'n', 'p', 'x', 'y'].forEach( (param) =>
         {
             if (param in state)
+            {
                 state[param] = parseInt(state[param], 10);
+            }
+
         });
 
         return state;
@@ -283,37 +301,45 @@ class Diva
     /**
      * @private
      **/
-    _getLoadOptionsForState (state, manifest)
+    _getLoadOptionsForState (state: HashParameters, manifest?: ImageManifest): ActiveViewOptions
     {
         manifest = manifest || this.settings.manifest;
 
-        const options = ('v' in state) ? this._getViewState(state.v) : {};
+        const options: ActiveViewOptions = ('v' in state) ? this._getViewState(state.v as string) : {};
 
         if ('f' in state)
-            options.inFullscreen = state.f;
+        {
+            options.inFullscreen = state.f as boolean;
+        }
 
         if ('z' in state)
-            options.zoomLevel = state.z;
+        {
+            options.zoomLevel = state.z as number;
+        }
 
         if ('n' in state)
-            options.pagesPerRow = state.n;
+        {
+            options.pagesPerRow = state.n as number;
+        }
 
         // Only change specify the page if state.i or state.p is valid
-        let pageIndex = this._getPageIndexForManifest(manifest, state.i);
+        let pageIndex: number = this._getPageIndexForManifest(manifest, state.i);
 
         if (!(pageIndex >= 0 && pageIndex < manifest.pages.length))
         {
-            pageIndex = state.p - 1;
+            pageIndex = (state.p as number) - 1;
 
             // Possibly NaN
             if (!(pageIndex >= 0 && pageIndex < manifest.pages.length))
-                pageIndex = null;
+            {
+                pageIndex = -1;
+            }
         }
 
-        if (pageIndex !== null)
+        if (pageIndex >= 0)
         {
-            const horizontalOffset = parseInt(state.x, 10);
-            const verticalOffset = parseInt(state.y, 10);
+            const horizontalOffset = parseInt((state.x as string), 10);
+            const verticalOffset = parseInt((state.y as string), 10);
 
             options.goDirectlyTo = pageIndex;
             options.horizontalOffset = horizontalOffset;
@@ -326,7 +352,7 @@ class Diva
     /**
      * @private
      * */
-    _getViewState (view)
+    _getViewState (view: string): ActiveViewOptions
     {
         switch (view)
         {
@@ -356,12 +382,11 @@ class Diva
     /**
      * @private
      * */
-    _getPageIndexForManifest (manifest, filename)
+    _getPageIndexForManifest (manifest: ImageManifest, filename: string): number
     {
-        let i;
-        const np = manifest.pages.length;
+        const np: number = manifest.pages.length;
 
-        for (i = 0; i < np; i++)
+        for (let i: number = 0; i < np; i++)
         {
             if (manifest.pages[i].f === filename)
             {
@@ -375,9 +400,9 @@ class Diva
     /**
      * @private
      * */
-    _getState ()
+    _getState (): HashParameters
     {
-        let view;
+        let view: string;
 
         if (this.settings.inGrid)
         {
@@ -402,24 +427,25 @@ class Diva
             'n': this.settings.pagesPerRow,
             'i': this.settings.enableFilename ? this.settings.manifest.pages[this.settings.activePageIndex].f : false,
             'p': this.settings.enableFilename ? false : this.settings.activePageIndex + 1,
-            'y': pageOffset ? pageOffset.y : false,
-            'x': pageOffset ? pageOffset.x : false
+            'y': pageOffset ? pageOffset.y : 0,
+            'x': pageOffset ? pageOffset.x : 0
         };
     }
 
     /**
      * @private
      **/
-    _getURLHash ()
+    _getURLHash (): string
     {
-        const hashParams = this._getState();
+        const hashParams: HashParameters = this._getState();
         const hashStringBuilder = [];
-        let param;
 
-        for (param in hashParams)
+        for (const param in hashParams)
         {
             if (hashParams[param] !== false)
+            {
                 hashStringBuilder.push(param + this.settings.hashParamSuffix + '=' + encodeURIComponent(hashParams[param]));
+            }
         }
 
         return hashStringBuilder.join('&');
@@ -430,7 +456,7 @@ class Diva
      *
      * @private
      **/
-    _getPageIndex (filename)
+    _getPageIndex (filename: string): number
     {
         return this._getPageIndexForManifest(this.settings.manifest, filename);
     }
@@ -438,7 +464,7 @@ class Diva
     /**
      * @private
      * */
-    _checkLoaded ()
+    _checkLoaded (): boolean
     {
         if (!this.viewerState.loaded)
         {
@@ -459,11 +485,14 @@ class Diva
             inFullscreen: !this.settings.inFullscreen
         });
 
-        // handle toolbar opacity in fullscreen
-        let t;
-        let hover = false;
-        let tools = document.getElementById(this.settings.selector + 'tools');
-        const TIMEOUT = 2000;
+        let hover: boolean = false;
+        let tools: HTMLElement | null = document.getElementById(this.settings.selector + 'tools');
+        if (!tools)
+        {
+            return;
+        }
+
+        const TIMEOUT: number = 2000;
 
         if (this.settings.inFullscreen)
         {
@@ -483,14 +512,15 @@ class Diva
             tools.classList.remove("diva-fullscreen-tools");
         }
 
+        let t: number;
         function toggleOpacity ()
         {
-            tools.style.opacity = 1;
+            tools.style.opacity = "1";
             clearTimeout(t);
             if (!hover && this.settings.inFullscreen) {
                 t = setTimeout(function ()
                 {
-                    tools.style.opacity = 0;
+                    tools.style.opacity = "0";
                 }, TIMEOUT);
             }
         }
@@ -501,7 +531,7 @@ class Diva
      *
      * @private
      * */
-    _togglePageLayoutOrientation ()
+    _togglePageLayoutOrientation (): boolean
     {
         const verticallyOriented = !this.settings.verticallyOriented;
 
@@ -522,7 +552,7 @@ class Diva
      *
      * @private
      **/
-    _changeView (destinationView)
+    _changeView (destinationView: string): boolean
     {
         switch (destinationView)
         {
@@ -556,16 +586,14 @@ class Diva
      * @param {Number} yAnchor - y coordinate to jump to on resulting page.
      * @returns {Boolean} - Whether the jump was successful.
      **/
-    _gotoPageByIndex (pageIndex, xAnchor, yAnchor)
+    _gotoPageByIndex (pageIndex: number, xAnchor?: string, yAnchor?: string): boolean
     {
-        let pidx = parseInt(pageIndex, 10);
-
-        if (this._isPageIndexValid(pidx))
+        if (this._isPageIndexValid(pageIndex))
         {
-            const xOffset = this.divaState.viewerCore.getXOffset(pidx, xAnchor);
-            const yOffset = this.divaState.viewerCore.getYOffset(pidx, yAnchor);
+            const xOffset = this.divaState.viewerCore.getXOffset(pageIndex, xAnchor);
+            const yOffset = this.divaState.viewerCore.getYOffset(pageIndex, yAnchor);
 
-            this.viewerState.renderer.goto(pidx, yOffset, xOffset);
+            this.viewerState.renderer.goto(pageIndex, yOffset, xOffset);
             return true;
         }
 
@@ -579,7 +607,7 @@ class Diva
      * @param {Number} pageIndex - Numeric (0-based) page index
      * @return {Boolean} whether the page index is valid or not.
      */
-    _isPageIndexValid (pageIndex)
+    _isPageIndexValid (pageIndex: number): boolean
     {
         return this.settings.manifest.isPageValid(pageIndex, this.settings.showNonPagedPages);
     }
@@ -590,7 +618,7 @@ class Diva
      *
      * @private
      */
-    _getPageIndexForPageXYValues (pageX, pageY)
+    _getPageIndexForPageXYValues (pageX: number, pageY: number): number
     {
         //get the four edges of the outer element
         const outerOffset = this.viewerState.outerElement.getBoundingClientRect();
@@ -601,10 +629,14 @@ class Diva
 
         //if the clicked position was outside the diva-outer object, it was not on a visible portion of a page
         if (pageX < outerLeft || pageX > outerRight)
+        {
             return -1;
+        }
 
         if (pageY < outerTop || pageY > outerBottom)
+        {
             return -1;
+        }
 
         //navigate through all diva page objects
         const pages = document.getElementsByClassName('diva-page');
@@ -617,14 +649,18 @@ class Diva
 
             //if this point is outside the horizontal boundaries of the page, continue
             if (pageX < curOffset.left || pageX > curOffset.right)
+            {
                 continue;
+            }
 
             //same with vertical boundaries
             if (pageY < curOffset.top || pageY > curOffset.bottom)
+            {
                 continue;
+            }
 
             //if we made it through the above two, we found the page we're looking for
-            return curPage.getAttribute('data-index');
+            return parseInt(curPage.getAttribute('data-index'), 10);
         }
 
         //if we made it through that entire while loop, we didn't click on a page
@@ -634,7 +670,7 @@ class Diva
     /**
      * @private
      **/
-    _reloadViewer (newOptions)
+    _reloadViewer (newOptions: ActiveViewOptions): boolean
     {
         return this.divaState.viewerCore.reload(newOptions);
     }
@@ -642,7 +678,7 @@ class Diva
     /**
      * @private
      */
-    _getCurrentURL ()
+    _getCurrentURL (): string
     {
         return location.protocol + '//' + location.host + location.pathname + location.search + '#' + this._getURLHash();
     }
@@ -658,7 +694,7 @@ class Diva
      *
      *  @public
      */
-    activate ()
+    activate (): void
     {
         this.viewerState.isActiveDiva = true;
     }
@@ -675,7 +711,9 @@ class Diva
         this.divaState.viewerCore.clear();
 
         if (this.viewerState.renderer)
+        {
             this.viewerState.renderer.destroy();
+        }
 
         this.viewerState.options.objectData = objectData;
 
@@ -688,9 +726,9 @@ class Diva
      * @public
      * @params {string} destinationView - the destination view to change to.
      */
-    changeView (destinationView)
+    changeView (destinationView: string): boolean
     {
-        this._changeView(destinationView);
+        return this._changeView(destinationView);
     }
 
     /**
@@ -698,7 +736,7 @@ class Diva
      *
      *  @public
      **/
-    deactivate ()
+    deactivate (): void
     {
         this.viewerState.isActiveDiva = false;
     }
@@ -708,7 +746,7 @@ class Diva
      *
      * @public
      **/
-    destroy ()
+    destroy (): void
     {
         this.divaState.viewerCore.destroy();
     }
@@ -718,7 +756,7 @@ class Diva
      *
      * @public
      **/
-    disableScrollable ()
+    disableScrollable (): void
     {
         this.divaState.viewerCore.disableScrollable();
     }
@@ -728,7 +766,7 @@ class Diva
      *
      * @public
      **/
-    enableScrollable ()
+    enableScrollable (): void
     {
         this.divaState.viewerCore.enableScrollable();
     }
@@ -738,7 +776,7 @@ class Diva
      *
      * @public
      */
-    disableDragScrollable ()
+    disableDragScrollable (): void
     {
         this.divaState.viewerCore.disableDragScrollable();
     }
@@ -748,7 +786,7 @@ class Diva
      *
      * @public
      */
-    enableDragScrollable ()
+    enableDragScrollable (): void
     {
         this.divaState.viewerCore.enableDragScrollable();
     }
@@ -762,7 +800,7 @@ class Diva
      * @public
      * @returns {boolean} - Whether the switch to fullscreen was successful or not.
      **/
-    enterFullscreenMode ()
+    enterFullscreenMode (): boolean
     {
         if (!this.settings.inFullscreen)
         {
@@ -780,7 +818,7 @@ class Diva
      * @public
      * @returns {boolean} - Whether the switch to grid view was successful or not.
      **/
-    enterGridView ()
+    enterGridView (): boolean
     {
         if (!this.settings.inGrid)
         {
@@ -797,9 +835,9 @@ class Diva
      * @public
      * @returns {Array} - An array of all the URIs in the document.
      * */
-    getAllPageURIs ()
+    getAllPageURIs (): string[]
     {
-        return this.settings.manifest.pages.map( (pg) =>
+        return this.settings.manifest.pages.map( (pg: DivaPage) =>
         {
             return pg.f;
         });
@@ -811,7 +849,7 @@ class Diva
      * @public
      * @returns {string} - The URI of the currently visible canvas.
      **/
-    getCurrentCanvas ()
+    getCurrentCanvas (): string
     {
         return this.settings.manifest.pages[this.settings.activePageIndex].canvas;
     }
@@ -822,7 +860,7 @@ class Diva
      * @public
      * @returns {string} - The label of the currently visible canvas.
      **/
-    getCurrentCanvasLabel ()
+    getCurrentCanvasLabel (): string
     {
         return this.settings.manifest.pages[this.settings.activePageIndex].l;
     }
@@ -834,22 +872,9 @@ class Diva
      * @public
      * @returns {object} - An object containing the current page dimensions at the current zoom level.
      **/
-    getCurrentPageDimensionsAtCurrentZoomLevel ()
+    getCurrentPageDimensionsAtCurrentZoomLevel (): Dimension | null
     {
         return this.getPageDimensionsAtCurrentZoomLevel(this.settings.activePageIndex);
-    }
-
-    /**
-     * Returns the current filename (deprecated). Returns the URI for current page.
-     *
-     * @public
-     * @deprecated
-     * @returns {string} - The URI for the current page image.
-     **/
-    getCurrentPageFilename ()
-    {
-        console.warn('This method will be deprecated in the next version of Diva. Please use getCurrentPageURI instead.');
-        return this.settings.manifest.pages[this.settings.activePageIndex].f;
     }
 
     /**
@@ -858,7 +883,7 @@ class Diva
      * @public
      * @returns {array} - The 0-based indices array for the currently visible pages.
      **/
-    getCurrentPageIndices ()
+    getCurrentPageIndices (): number[]
     {
         return this.settings.currentPageIndices;
     }
@@ -869,7 +894,7 @@ class Diva
      * @public
      * @returns {number} - The 0-based index for the currently visible page.
      **/
-     getActivePageIndex ()
+     getActivePageIndex (): number
      {
         return this.settings.activePageIndex;
      }
@@ -880,7 +905,7 @@ class Diva
      * @public
      * @returns {object} - The offset between the upper left corner and the page.
      * */
-    getCurrentPageOffset ()
+    getCurrentPageOffset (): object
     {
         return this.getPageOffset(this.settings.activePageIndex);
     }
@@ -891,7 +916,7 @@ class Diva
      * @public
      * @returns {string} - The URI for the current page image.
      **/
-    getCurrentPageURI ()
+    getCurrentPageURI (): string
     {
         return this.settings.manifest.pages[this.settings.activePageIndex].f;
     }
@@ -903,26 +928,9 @@ class Diva
      * @public
      * @returns {string} - The URL for the current view state.
      * */
-    getCurrentURL ()
+    getCurrentURL (): string
     {
         return this._getCurrentURL();
-    }
-
-    /**
-     * Returns an array of all filenames in the document. Deprecated.
-     *
-     * @public
-     * @deprecated
-     * @returns {Array} - An array of all the URIs in the document.
-     * */
-    getFilenames ()
-    {
-        console.warn('This will be removed in the next version of Diva. Use getAllPageURIs instead.');
-
-        return this.settings.manifest.pages.map( (pg) =>
-        {
-            return pg.f;
-        });
     }
 
     /**
@@ -931,7 +939,7 @@ class Diva
      * @public
      * @returns {number} - The number of grid pages per row.
      **/
-    getGridPagesPerRow ()
+    getGridPagesPerRow (): number
     {
         // TODO(wabain): Add test case
         return this.settings.pagesPerRow;
@@ -944,7 +952,7 @@ class Diva
      * @returns {number} - The instance ID.
      * */
     //
-    getInstanceId ()
+    getInstanceId (): number
     {
         return this.settings.ID;
     }
@@ -956,9 +964,9 @@ class Diva
      * @public
      * @returns {string} - The viewport selector.
      * */
-    getInstanceSelector ()
+    getInstanceSelector (): string | null
     {
-        return this.divaState.viewerCore.selector;
+        return this.divaState.viewerCore.viewerState.selector;
     }
 
     /**
@@ -967,7 +975,7 @@ class Diva
      * @public
      * @returns {string} - The current title of the object from the label key in the IIIF Manifest.
      **/
-    getItemTitle ()
+    getItemTitle (): string
     {
         return this.settings.manifest.itemTitle;
     }
@@ -978,7 +986,7 @@ class Diva
      * @public
      * @returns {number} - The maximum zoom level for the document
      * */
-    getMaxZoomLevel ()
+    getMaxZoomLevel (): number
     {
         return this.settings.maxZoomLevel;
     }
@@ -990,10 +998,12 @@ class Diva
      * @param {number} pageIdx - The 0-based index number for the page.
      * @returns {number} - The maximum zoom level for that page.
      * */
-    getMaxZoomLevelForPage (pageIdx)
+    getMaxZoomLevelForPage (pageIdx: number): number | null
     {
         if (!this._checkLoaded())
-            return false;
+        {
+            return null;
+        }
 
         return this.settings.manifest.pages[pageIdx].m;
     }
@@ -1004,7 +1014,7 @@ class Diva
      * @public
      * @returns {number} - The minimum zoom level for the document
      * */
-    getMinZoomLevel ()
+    getMinZoomLevel (): number
     {
         return this.settings.minZoomLevel;
     }
@@ -1015,10 +1025,12 @@ class Diva
      * @public
      * @returns {number} - The number of pages in the document.
      * */
-    getNumberOfPages ()
+    getNumberOfPages (): number | boolean
     {
         if (!this._checkLoaded())
+        {
             return false;
+        }
 
         return this.settings.numPages;
     }
@@ -1030,7 +1042,7 @@ class Diva
      * @params {number} pageIndex - The page index for which to return the other images.
      * @returns {object} An object containing the other images.
      **/
-    getOtherImages (pageIndex)
+    getOtherImages (pageIndex: number): object
     {
         return this.settings.manifest.pages[pageIndex].otherImages;
     }
@@ -1042,10 +1054,12 @@ class Diva
      * @params {number} pageIndex - A valid 0-based page index
      * @returns {object} - An object containing the dimensions of the page
      * */
-    getPageDimensions (pageIndex)
+    getPageDimensions (pageIndex: number): Dimension | null
     {
         if (!this._checkLoaded())
+        {
             return null;
+        }
 
         return this.divaState.viewerCore.getCurrentLayout().getPageDimensions(pageIndex);
     }
@@ -1058,14 +1072,14 @@ class Diva
      * @param {number} pageIndex - The 0-based page index
      * @returns {object} - An object containing the page dimensions at the current zoom level.
      * */
-    getPageDimensionsAtCurrentZoomLevel (pageIndex)
+    getPageDimensionsAtCurrentZoomLevel (pageIndex: number): Dimension | null
     {
-        let pidx = parseInt(pageIndex, 10);
-
-        if (!this._isPageIndexValid(pidx))
+        if (!this._isPageIndexValid(pageIndex))
+        {
             throw new Error('Invalid Page Index');
+        }
 
-        return this.divaState.viewerCore.getCurrentLayout().getPageDimensions(pidx);
+        return this.divaState.viewerCore.getCurrentLayout().getPageDimensions(pageIndex);
     }
 
     /**
@@ -1076,16 +1090,20 @@ class Diva
      * @params {number} zoomLevel - A candidate zoom level.
      * @returns {object} - An object containing the dimensions of the page at the given zoom level.
      **/
-    getPageDimensionsAtZoomLevel (pageIdx, zoomLevel)
+    getPageDimensionsAtZoomLevel (pageIdx: number, zoomLevel: number): Dimension | null
     {
         if (!this._checkLoaded())
-            return false;
+        {
+            return null;
+        }
 
         if (zoomLevel > this.settings.maxZoomLevel)
+        {
             zoomLevel = this.settings.maxZoomLevel;
+        }
 
-        const pg = this.settings.manifest.pages[parseInt(pageIdx, 10)];
-        const pgAtZoom = pg.d[parseInt(zoomLevel, 10)];
+        const pg = this.settings.manifest.pages[pageIdx];
+        const pgAtZoom = pg.d[zoomLevel];
 
         return {
             width: pgAtZoom.w,
@@ -1103,7 +1121,7 @@ class Diva
      * @params {?object} size - an object containing width and height information
      * @returns {string} - The IIIF URL for a given page at an optional size
      */
-    getPageImageURL (pageIndex, size)
+    getPageImageURL (pageIndex: number, size: OptionalDimension): string
     {
         return this.settings.manifest.getPageImageURL(pageIndex, size);
     }
@@ -1117,7 +1135,7 @@ class Diva
      * @params {number} pageY - The y co-ordinate
      * @returns {number} - The page index matching the co-ordinates.
      * */
-    getPageIndexForPageXYValues (pageX, pageY)
+    getPageIndexForPageXYValues (pageX: number, pageY: number): number
     {
         return this._getPageIndexForPageXYValues(pageX, pageY);
     }
@@ -1131,9 +1149,9 @@ class Diva
      * @returns {object} - The offset between the upper left corner and the page.
      *
      * */
-    getPageOffset (pageIndex, options)
+    getPageOffset (pageIndex: number, options?: PageRegionOptions): Offset
     {
-        const region = this.divaState.viewerCore.getPageRegion(pageIndex, options);
+        const region = this.divaState.viewerCore.getPageRegion(pageIndex, options)!;
 
         return {
             top: region.top,
@@ -1147,7 +1165,7 @@ class Diva
      * @public
      * @returns {object} - The current instance settings.
      * */
-    getSettings ()
+    getSettings (): object
     {
         return this.settings;
     }
@@ -1158,7 +1176,7 @@ class Diva
      * @public
      * @returns {object} - The current instance state.
      * */
-    getState ()
+    getState (): HashParameters
     {
         return this._getState();
     }
@@ -1169,7 +1187,7 @@ class Diva
      * @public
      * @returns {number} - The current zoom level.
      * */
-    getZoomLevel ()
+    getZoomLevel (): number
     {
         return this.settings.zoomLevel;
     }
@@ -1184,7 +1202,7 @@ class Diva
      *  @params {?string} yAnchor - may either be "top", "bottom", or default "center"; same process as xAnchor.
      *  @returns {boolean} - True if the page index is valid; false if it is not.
      * */
-    gotoPageByIndex (pageIndex, xAnchor, yAnchor)
+    gotoPageByIndex (pageIndex: number, xAnchor: string, yAnchor: string): boolean
     {
         return this._gotoPageByIndex(pageIndex, xAnchor, yAnchor);
     }
@@ -1199,7 +1217,7 @@ class Diva
      * @params {?string} yAnchor - may either be "top", "bottom", or default "center"
      * @returns {boolean} - True if the page index is valid; false if it is not.
      * */
-    gotoPageByLabel (label, xAnchor, yAnchor)
+    gotoPageByLabel (label: string, xAnchor?: string, yAnchor?: string): boolean
     {
         const pages = this.settings.manifest.pages;
         let llc = label.toLowerCase();
@@ -1207,26 +1225,12 @@ class Diva
         for (let i = 0, len = pages.length; i < len; i++)
         {
             if (pages[i].l.toLowerCase().indexOf(llc) > -1)
+            {
                 return this._gotoPageByIndex(i, xAnchor, yAnchor);
+            }
         }
 
         const pageIndex = parseInt(label, 10) - 1;
-        return this._gotoPageByIndex(pageIndex, xAnchor, yAnchor);
-    }
-
-    /**
-     * Jump to a page based on its filename. Deprecated. Use gotoPageByURI instead.
-     *
-     * @public
-     * @params {string} filename - The filename of the image to jump to.
-     * @params {?string} xAnchor - may either be "left", "right", or default "center"
-     * @params {?string} yAnchor - may either be "top", "bottom", or default "center"
-     * @returns {boolean} true if successful and false if the filename is not found.
-    */
-    gotoPageByName (filename, xAnchor, yAnchor)
-    {
-        console.warn('This method will be removed in the next version of Diva.js. Use gotoPageByURI instead.');
-        const pageIndex = this._getPageIndex(filename);
         return this._gotoPageByIndex(pageIndex, xAnchor, yAnchor);
     }
 
@@ -1239,7 +1243,7 @@ class Diva
      * @params {?string} yAnchor - may either be "top", "bottom", or default "center"
      * @returns {boolean} true if successful and false if the URI is not found.
      */
-    gotoPageByURI (uri, xAnchor, yAnchor)
+    gotoPageByURI (uri: string, xAnchor?: string, yAnchor?: string): boolean
     {
         const pageIndex = this._getPageIndex(uri);
         return this._gotoPageByIndex(pageIndex, xAnchor, yAnchor);
@@ -1252,7 +1256,7 @@ class Diva
      * @params {number} pageIndex - The 0-based page index
      * @returns {boolean} Whether the page has other images to display.
      **/
-    hasOtherImages (pageIndex)
+    hasOtherImages (pageIndex: number): boolean
     {
         return this.settings.manifest.pages[pageIndex].otherImages === true;
     }
@@ -1273,7 +1277,7 @@ class Diva
      * @public
      * @returns {boolean} - Whether the viewer is in fullscreen mode.
      **/
-    isInFullscreen ()
+    isInFullscreen (): boolean
     {
         return this.settings.inFullscreen;
     }
@@ -1284,7 +1288,7 @@ class Diva
      * @public
      * @returns {boolean} - Whether the page index is valid.
      **/
-    isPageIndexValid (pageIndex)
+    isPageIndexValid (pageIndex: number): boolean
     {
         return this._isPageIndexValid(pageIndex);
     }
@@ -1296,7 +1300,7 @@ class Diva
      * @params {number} pageIndex - The 0-based page index
      * @returns {boolean} - Whether the page is currently in the viewport.
      **/
-    isPageInViewport (pageIndex)
+    isPageInViewport (pageIndex: number): boolean
     {
         return this.viewerState.renderer.isPageVisible(pageIndex);
     }
@@ -1307,7 +1311,7 @@ class Diva
      * @public
      * @returns {boolean} - True if the viewer is initialized; false otherwise.
      **/
-    isReady ()
+    isReady (): boolean
     {
         return this.viewerState.loaded;
     }
@@ -1323,14 +1327,16 @@ class Diva
      * @params {number} height - The height of the region
      * @returns {boolean} - Whether the region is in the viewport.
      **/
-    isRegionInViewport (pageIndex, leftOffset, topOffset, width, height)
+    isRegionInViewport (pageIndex: number, leftOffset: number, topOffset: number, width: number, height: number): boolean
     {
         const layout = this.divaState.viewerCore.getCurrentLayout();
 
         if (!layout)
+        {
             return false;
+        }
 
-        const offset = layout.getPageOffset(pageIndex);
+        const offset: Offset = layout.getPageOffset(pageIndex)!;
 
         const top = offset.top + topOffset;
         const left = offset.left + leftOffset;
@@ -1349,7 +1355,7 @@ class Diva
      * @public
      * @returns {boolean} - True if vertical; false if horizontal.
      **/
-    isVerticallyOriented ()
+    isVerticallyOriented (): boolean
     {
         return this.settings.verticallyOriented;
     }
@@ -1360,7 +1366,7 @@ class Diva
      * @public
      * @returns {boolean} - true if in fullscreen mode intitially, false otherwise
      **/
-    leaveFullscreenMode ()
+    leaveFullscreenMode (): boolean
     {
         if (this.settings.inFullscreen)
         {
@@ -1377,7 +1383,7 @@ class Diva
      * @public
      * @returns {boolean} - true if in grid view initially, false otherwise
      **/
-    leaveGridView ()
+    leaveGridView (): boolean
     {
         if (this.settings.inGrid)
         {
@@ -1395,11 +1401,13 @@ class Diva
      * @params {number} pagesPerRow - The number of pages per row
      * @returns {boolean} - True if the operation was successful.
      **/
-    setGridPagesPerRow (pagesPerRow)
+    setGridPagesPerRow (pagesPerRow: number): boolean
     {
         // TODO(wabain): Add test case
         if (!this.divaState.viewerCore.isValidOption('pagesPerRow', pagesPerRow))
+        {
             return false;
+        }
 
         return this._reloadViewer({
             inGrid: true,
@@ -1414,9 +1422,9 @@ class Diva
      * @params {object} state - A Diva state object.
      * @returns {boolean} - True if the operation was successful.
      **/
-    setState (state)
+    setState (state: HashParameters): boolean
     {
-        this._reloadViewer(this._getLoadOptionsForState(state));
+        return this._reloadViewer(this._getLoadOptionsForState(state));
     }
 
     /**
@@ -1425,7 +1433,7 @@ class Diva
      * @public
      * @returns {boolean} - True if the operation was successful.
      **/
-    setZoomLevel (zoomLevel)
+    setZoomLevel (zoomLevel: number): boolean
     {
         if (this.settings.inGrid)
         {
@@ -1443,9 +1451,9 @@ class Diva
      * @public
      * @returns {boolean} - True if the operation was successful.
      **/
-    showNonPagedPages ()
+    showNonPagedPages (): boolean
     {
-        this._reloadViewer({ showNonPagedPages: true });
+        return this._reloadViewer({ showNonPagedPages: true });
     }
 
     /**
@@ -1454,7 +1462,7 @@ class Diva
      * @public
      * @returns {boolean} - True if the operation was successful.
      **/
-    toggleFullscreenMode ()
+    toggleFullscreenMode (): void
     {
         this._toggleFullscreen();
     }
@@ -1465,15 +1473,15 @@ class Diva
      * @public
      * @returns {boolean} - True if the operation was successful.
      **/
-    toggleNonPagedPagesVisibility ()
+    toggleNonPagedPagesVisibility (): boolean
     {
-        this._reloadViewer({
+        return this._reloadViewer({
             showNonPagedPages: !this.settings.showNonPagedPages
         });
     }
 
     //Changes between horizontal layout and vertical layout. Returns true if document is now vertically oriented, false otherwise.
-    toggleOrientation ()
+    toggleOrientation (): boolean
     {
         return this._togglePageLayoutOrientation();
     }
@@ -1493,7 +1501,7 @@ class Diva
      * @params {number} position - A point on the max zoom level
      * @returns {number} - The same point on the current zoom level.
     */
-    translateFromMaxZoomLevel (position)
+    translateFromMaxZoomLevel (position: number): number
     {
         const zoomDifference = this.settings.maxZoomLevel - this.settings.zoomLevel;
         return position / Math.pow(2, zoomDifference);
@@ -1511,14 +1519,16 @@ class Diva
      * @params {number} position - A point on the current zoom level
      * @returns {number} - The same point on the max zoom level.
     */
-    translateToMaxZoomLevel (position)
+    translateToMaxZoomLevel (position: number): number
     {
-        const zoomDifference = this.settings.maxZoomLevel - this.settings.zoomLevel;
+        const zoomDifference: number = this.settings.maxZoomLevel - this.settings.zoomLevel;
 
         // if there is no difference, it's a box on the max zoom level and
         // we can just return the position.
         if (zoomDifference === 0)
+        {
             return position;
+        }
 
         return position * Math.pow(2, zoomDifference);
     }
@@ -1529,7 +1539,7 @@ class Diva
      * @public
      * @returns {boolean} - false if it's at the maximum zoom
      **/
-    zoomIn ()
+    zoomIn (): boolean
     {
         return this.setZoomLevel(this.settings.zoomLevel + 1);
     }
@@ -1538,13 +1548,13 @@ class Diva
      * Zoom out.
      * @returns {boolean} - false if it's at the minimum zoom
      **/
-    zoomOut ()
+    zoomOut (): boolean
     {
         return this.setZoomLevel(this.settings.zoomLevel - 1);
     }
 }
 
-Diva.Events = diva.Events;
+Diva.Events = globalDiva.Events;
 
 export default Diva;
 

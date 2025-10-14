@@ -1,18 +1,24 @@
+import {ActiveViewOptions, MergedConfiguration, Options, OptionsValidator, ValidationOptions} from "./options-settings";
+
 export default class ValidationRunner
 {
-    constructor (options)
+    whitelistedKeys: Array<any>;
+    additionalProperties: Array<any>;
+    validations: OptionsValidator[];
+
+    constructor(options: ValidationOptions)
     {
         this.whitelistedKeys = options.whitelistedKeys || [];
         this.additionalProperties = options.additionalProperties || [];
         this.validations = options.validations;
     }
 
-    isValid (key, value, settings)
+    isValid(key: string, value: any, settings: Options): boolean
     {
         // Get the validation index
         let validationIndex = null;
 
-        this.validations.some((validation, index) =>
+        this.validations.some((validation: { key: string; }, index: any): boolean =>
         {
             if (validation.key !== key)
             {
@@ -29,34 +35,34 @@ export default class ValidationRunner
         }
 
         // Run the validation
-        const dummyChanges = {};
+        const dummyChanges: Record<string, any> = {};
         dummyChanges[key] = value;
         const proxier = createSettingsProxier(settings, dummyChanges, this);
 
         return !this._runValidation(validationIndex, value, proxier);
     }
 
-    validate (settings)
+    validate(settings: Options)
     {
         this._validateOptions({}, settings);
     }
 
-    getValidatedOptions (settings, options)
+    getValidatedOptions(settings: MergedConfiguration, options: ActiveViewOptions): ActiveViewOptions
     {
         const cloned = Object.assign({}, options);
         this._validateOptions(settings, cloned);
         return cloned;
     }
 
-    _validateOptions (settings, options)
+    _validateOptions (settings: any, options: ActiveViewOptions)
     {
         const settingsProxier = createSettingsProxier(settings, options, this);
         this._applyValidations(options, settingsProxier);
     }
 
-    _applyValidations (options, proxier)
+    _applyValidations (options: ActiveViewOptions, proxier: { proxy: {}; index: null; })
     {
-        this.validations.forEach((validation, index) =>
+        this.validations.forEach((validation: { key: PropertyKey; }, index: any) =>
         {
             if (!options.hasOwnProperty(validation.key))
             {
@@ -78,7 +84,7 @@ export default class ValidationRunner
         }, this);
     }
 
-    _runValidation (index, input, proxier)
+    _runValidation (index: string | number, input: any, proxier: { proxy: any; index: any; })
     {
         const validation = this.validations[index];
 
@@ -106,6 +112,8 @@ export default class ValidationRunner
     }
 }
 
+// @ts-ignore
+// @ts-ignore
 /**
  * The settings proxy wraps the settings object and ensures that
  * only values which have previously been validated are accessed,
@@ -115,7 +123,7 @@ export default class ValidationRunner
  * multiple validation stages and it was a lot harder to keep track
  * of everything, so this was more valuable.
  */
-function createSettingsProxier (settings, options, runner)
+function createSettingsProxier (settings: any, options: ActiveViewOptions | Record<string, any>, runner: ValidationRunner)
 {
     const proxier = {
         proxy: {},
@@ -126,21 +134,21 @@ function createSettingsProxier (settings, options, runner)
 
     const properties = {};
 
-    runner.whitelistedKeys.forEach((whitelisted) =>
+    runner.whitelistedKeys.forEach((whitelisted: string | number) =>
     {
         properties[whitelisted] = {
             get: lookup.bind(null, whitelisted)
         };
     });
 
-    runner.additionalProperties.forEach((additional) =>
+    runner.additionalProperties.forEach((additional: { key: string | number; get: any; }) =>
     {
         properties[additional.key] = {
             get: additional.get
         };
     });
 
-    runner.validations.forEach( (validation, validationIndex) =>
+    runner.validations.forEach( (validation: { key: string; }, validationIndex: number) =>
     {
         properties[validation.key] = {
             get: () =>
@@ -161,12 +169,12 @@ function createSettingsProxier (settings, options, runner)
     return proxier;
 }
 
-function emitWarning (key, original, corrected)
+function emitWarning (key: PropertyKey, original: string, corrected: string)
 {
-    console.warn('Invalid value for ' + key + ': ' + original + '. Using ' + corrected + ' instead.');
+    console.warn('Invalid value for ' + (key as string) + ': ' + original + '. Using ' + corrected + ' instead.');
 }
 
-function lookupValue (base, extension, key)
+function lookupValue (base: { [x: string]: any; }, extension: { [x: string]: any; }, key: string)
 {
     if (key in extension)
     {

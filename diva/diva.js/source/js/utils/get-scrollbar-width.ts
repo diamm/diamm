@@ -1,11 +1,11 @@
 // From http://www.alexandre-gomes.com/?p=115, modified slightly
 export default function getScrollbarWidth()
 {
-    let inner = document.createElement('p');
+    let inner: HTMLParagraphElement = document.createElement('p');
     inner.style.width = '100%';
     inner.style.height = '200px';
 
-    let outer = document.createElement('div');
+    let outer: HTMLDivElement = document.createElement('div');
     outer.style.position = 'absolute';
     outer.style.top = '0px';
     outer.style.left = '0px';
@@ -20,7 +20,8 @@ export default function getScrollbarWidth()
     let w1 = inner.offsetWidth;
     outer.style.overflow = 'scroll';
     let w2 = inner.offsetWidth;
-    if (w1 === w2) {
+    if (w1 === w2)
+    {
         w2 = outer.clientWidth; // for IE i think
     }
 

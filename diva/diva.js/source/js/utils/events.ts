@@ -10,6 +10,8 @@
 
 class DivaEvents
 {
+    _cache: Record<string, any>;
+
     constructor()
     {
         this._cache = {};
@@ -28,7 +30,7 @@ class DivaEvents
      *     The scope argument is matched with the instance ID of subscribers to determine whether they
      *         should be executed. (See instanceID argument of subscribe.)
      */
-    publish(topic, args, scope)
+    publish(topic: string, args: any[], scope: any)
     {
         if (this._cache[topic])
         {
@@ -76,7 +78,7 @@ class DivaEvents
      *                                       callback only fires for events published from that instance.
      * @return Event handler {Array}
      */
-    subscribe(topic, callback, instanceID)
+    subscribe(topic: string, callback: any, instanceID?: string | null): [string, any, string?]
     {
         if (!this._cache[topic])
         {
@@ -116,7 +118,7 @@ class DivaEvents
      * @param {boolean=} completely - Unsubscribe all events for a given topic.
      * @return {boolean} success
      */
-    unsubscribe(handle, completely)
+    unsubscribe(handle: Array<any>, completely?: boolean): boolean
     {
         const t = handle[0];
 
@@ -162,7 +164,7 @@ class DivaEvents
      *                              subscribers in all scopes removed)
      * @method unsubscribeAll
      */
-    unsubscribeAll(instanceID)
+    unsubscribeAll(instanceID: string): void
     {
         if (instanceID)
         {
@@ -172,7 +174,7 @@ class DivaEvents
 
             while (i--)
             {
-                topic = topics[i];
+                topic = topics[i]!;
 
                 if (typeof this._cache[topic][instanceID] !== 'undefined')
                 {

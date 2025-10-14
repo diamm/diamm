@@ -6,7 +6,7 @@ export default defineConfig({
     plugins: [pluginSass()],
     source: {
         entry: {
-            diva: ["./source/js/diva.js", "./source/css/diva.scss"],
+            diva: ["./source/js/diva.ts", "./source/css/diva.scss"],
         }
     },
     server: {
@@ -15,7 +15,6 @@ export default defineConfig({
     output: {
         copy: [
             {from: './source/js/plugins', to: 'static/js/plugins'},
-            {from: './source/js/service-worker.js', to: './'}
         ],
         filenameHash: false
     },

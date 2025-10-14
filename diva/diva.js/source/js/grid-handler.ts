@@ -1,20 +1,32 @@
-import { maxBy } from 'lodash';
+import { maxBy } from './utils/maxby';
+import ViewerCore from './viewer-core';
+import {
+    Dimension,
+    LayoutGroupPage,
+    Offset,
+    PageGroup,
+    Region,
+    ViewportSize
+} from "./viewer-type-definitions";
+import DocumentLayout from "./document-layout";
 
 export default class GridHandler
 {
-    constructor (viewerCore)
+    _viewerCore: ViewerCore;
+
+    constructor (viewerCore: ViewerCore)
     {
         this._viewerCore = viewerCore;
     }
 
     // USER EVENTS
-    onDoubleClick (event, coords)
+    onDoubleClick (_event: MouseEvent, coords: Offset)
     {
         const position = this._viewerCore.getPagePositionAtViewportOffset(coords);
 
-        const layout = this._viewerCore.getCurrentLayout();
-        const viewport = this._viewerCore.getViewport();
-        const pageToViewportCenterOffset = layout.getPageToViewportCenterOffset(position.anchorPage, viewport);
+        const layout = this._viewerCore.getCurrentLayout()!;
+        const viewport: ViewportSize = this._viewerCore.getViewport();
+        const pageToViewportCenterOffset = layout.getPageToViewportCenterOffset(position.anchorPage, viewport)!;
 
         this._viewerCore.reload({
             inGrid: false,
@@ -42,16 +54,19 @@ export default class GridHandler
         /* No-op */
     }
 
-    onViewDidUpdate (renderedPages, targetPage)
+    onViewDidUpdate (renderedPages: number[], targetPage: number | null)
     {
         // return early if there are no rendered pages in view.
-        if (renderedPages.length === 0) return;
+        if (renderedPages.length === 0)
+        {
+            return;
+        }
 
         // calculate the visible pages from the rendered pages
         let temp = this._viewerCore.viewerState.viewport.intersectionTolerance;
         // without setting to 0, isPageVisible returns true for pages out of viewport by intersectionTolerance
         this._viewerCore.viewerState.viewport.intersectionTolerance = 0;
-        let visiblePages = renderedPages.filter(index => this._viewerCore.viewerState.renderer.isPageVisible(index));
+        let visiblePages = renderedPages.filter((index: number) => this._viewerCore.viewerState.renderer!.isPageVisible(index));
         // reset back to original value after getting true visible pages
         this._viewerCore.viewerState.viewport.intersectionTolerance = temp;
 
@@ -66,12 +81,12 @@ export default class GridHandler
         // If the current page is in that group then don't change it. Otherwise, set
         // the current page to the group's first page.
 
-        const layout = this._viewerCore.getCurrentLayout();
-        const groups = [];
+        const layout: DocumentLayout = this._viewerCore.getCurrentLayout()!;
+        const groups: PageGroup[] = [];
 
-        renderedPages.forEach(pageIndex =>
+        renderedPages.forEach((pageIndex: number) =>
         {
-            const group = layout.getPageInfo(pageIndex).group;
+            const group: PageGroup = layout.getPageInfo(pageIndex)!.group;
             if (groups.length === 0 || group !== groups[groups.length - 1])
             {
                 groups.push(group);
@@ -96,7 +111,7 @@ export default class GridHandler
 
         const currentPage = this._viewerCore.getSettings().activePageIndex;
 
-        const hasCurrentPage = chosenGroup.pages.some(page => page.index === currentPage);
+        const hasCurrentPage = chosenGroup.pages.some((page: LayoutGroupPage) => page.index === currentPage);
 
         if (!hasCurrentPage)
         {
@@ -110,7 +125,7 @@ export default class GridHandler
     }
 }
 
-function getCentermostGroup (groups, viewport)
+function getCentermostGroup (groups: any[] | null, viewport: Region & Dimension)
 {
     const viewportMiddle = viewport.top + viewport.height / 2;
 

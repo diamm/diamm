@@ -1,10 +1,19 @@
-import { maxBy } from 'lodash';
+import { maxBy } from './utils/maxby';
 import PageToolsOverlay from './page-tools-overlay';
+import ViewerCore from "./viewer-core";
+import {ViewerSettings} from "./options-settings";
+import {Offset} from "./viewer-type-definitions";
+import type Viewport from "./viewport";
+import DocumentLayout from './document-layout';
 
 
 export default class DocumentHandler
 {
-    constructor (viewerCore)
+    _viewerCore: ViewerCore
+    _viewerState: ViewerSettings;
+    _overlays: PageToolsOverlay[]
+
+    constructor(viewerCore: ViewerCore)
     {
         this._viewerCore = viewerCore;
         this._viewerState = viewerCore.getInternalState();
@@ -38,7 +47,7 @@ export default class DocumentHandler
     }
 
     // USER EVENTS
-    onDoubleClick (event, coords)
+    onDoubleClick(event: KeyboardEvent, coords: Offset)
     {
         const settings = this._viewerCore.getSettings();
         const newZoomLevel = event.ctrlKey ? settings.zoomLevel - 1 : settings.zoomLevel + 1;
@@ -47,7 +56,7 @@ export default class DocumentHandler
         this._viewerCore.zoom(newZoomLevel, position);
     }
 
-    onPinch (event, coords, startDistance, endDistance)
+    onPinch(_event: TouchEvent, coords: Offset, startDistance: number, endDistance: number)
     {
         // FIXME: Do this check in a way which is less spaghetti code-y
         const viewerState = this._viewerCore.getInternalState();
@@ -77,12 +86,12 @@ export default class DocumentHandler
     }
 
     // VIEW EVENTS
-    onViewWillLoad ()
+    onViewWillLoad()
     {
         this._viewerCore.publish('DocumentWillLoad', this._viewerCore.getSettings());
     }
 
-    onViewDidLoad ()
+    onViewDidLoad()
     {
         // TODO: Should only be necessary to handle changes on view update, not
         // initial load
@@ -93,7 +102,7 @@ export default class DocumentHandler
         this._viewerCore.publish("DocumentDidLoad", currentPageIndex, fileName);
     }
 
-    onViewDidUpdate (renderedPages, targetPage)
+    onViewDidUpdate(renderedPages: any, targetPage: any)
     {
         const currentPage = (targetPage !== null) ?
             targetPage :
@@ -103,7 +112,7 @@ export default class DocumentHandler
         let temp = this._viewerState.viewport.intersectionTolerance;
         // without setting to 0, isPageVisible returns true for pages out of viewport by intersectionTolerance
         this._viewerState.viewport.intersectionTolerance = 0;
-        let visiblePages = renderedPages.filter(index => this._viewerState.renderer.isPageVisible(index));
+        let visiblePages = renderedPages.filter((index: number) => this._viewerState.renderer.isPageVisible(index));
         // reset back to original value after getting true visible pages
         this._viewerState.viewport.intersectionTolerance = temp;
 
@@ -122,7 +131,7 @@ export default class DocumentHandler
         this._handleZoomLevelChange();
     }
 
-    _handleZoomLevelChange ()
+    _handleZoomLevelChange()
     {
         const viewerState = this._viewerState;
         const zoomLevel = viewerState.options.zoomLevel;
@@ -145,7 +154,7 @@ export default class DocumentHandler
         viewerState.oldZoomLevel = zoomLevel;
     }
 
-    destroy ()
+    destroy()
     {
         this._overlays.forEach((overlay) =>
         {
@@ -154,7 +163,7 @@ export default class DocumentHandler
     }
 }
 
-function getCentermostPage (renderedPages, layout, viewport)
+function getCentermostPage(renderedPages: number[], layout: DocumentLayout, viewport: Viewport)
 {
     const centerY = viewport.top + (viewport.height / 2);
     const centerX = viewport.left + (viewport.width / 2);
@@ -164,8 +173,8 @@ function getCentermostPage (renderedPages, layout, viewport)
     // http://gamedev.stackexchange.com/questions/44483/how-do-i-calculate-distance-between-a-point-and-an-axis-aligned-rectangle
     const centerPage = maxBy(renderedPages, pageIndex =>
     {
-        const dims = layout.getPageDimensions(pageIndex);
-        const imageOffset = layout.getPageOffset(pageIndex, {includePadding: true});
+        const dims = layout.getPageDimensions(pageIndex)!;
+        const imageOffset = layout.getPageOffset(pageIndex, {includePadding: true})!;
 
         const midX = imageOffset.left + (dims.width / 2);
         const midY = imageOffset.top + (dims.height / 2);
