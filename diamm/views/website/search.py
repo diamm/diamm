@@ -61,7 +61,7 @@ class SearchView(generics.GenericAPIView):
             )
 
         if "composer" in request.GET:
-            exclusive_filters.update(
+            filters.update(
                 {"composers_ss": list(request.GET.getlist("composer"))}
             )
 
