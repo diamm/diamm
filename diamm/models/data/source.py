@@ -74,9 +74,14 @@ class Source(models.Model):
     numbering_system = models.IntegerField(
         choices=NumberingSystemChoices.choices, blank=True, null=True
     )
+    has_medieval_foliation = models.BooleanField(
+        default=False, help_text="Is the foliation in use from the medieval period?"
+    )
+
     public = models.BooleanField(
         default=False, help_text="Source Description is Public"
     )
+
     public_images = models.BooleanField(
         default=False, help_text="Source Images are Public (with login)"
     )
