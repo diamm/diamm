@@ -3,13 +3,14 @@ from rest_framework import exceptions
 from rest_framework.authentication import TokenAuthentication, get_authorization_header
 
 from diamm.auth_local import check_auth
+from diamm.models import CustomUserModel
 from diamm.models.diamm_token import DiammToken
 
 
 class DiammTokenAuthentication(TokenAuthentication):
     model = DiammToken
 
-    def authenticate(self, request):
+    def authenticate(self, request) -> tuple[CustomUserModel, str] | None:
         auth = get_authorization_header(request).split()
         if not auth or auth[0].lower() != self.keyword.lower().encode():
             return None
@@ -43,7 +44,7 @@ class DiammTokenAuthentication(TokenAuthentication):
 
     def authenticate_enhanced_credentials(
         self, key: str, domain: str, secret: str
-    ):
+    ) -> tuple[CustomUserModel , str]:
         model = self.get_model()
         try:
             token = model.objects.select_related("user").get(key=key)
