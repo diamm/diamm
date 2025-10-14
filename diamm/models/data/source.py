@@ -108,18 +108,30 @@ class Source(models.Model):
     original_format = models.IntegerField(
         choices=OriginalFormatChoices.choices, blank=True, null=True
     )
-    original_format_uncertain = models.BooleanField(default=False)
+    original_format_uncertain = models.BooleanField(
+        default=False,
+        help_text="Used in conjunction with the original format field; indicates that the format declared there is not certain.",
+    )
 
     current_state = models.IntegerField(
-        choices=CurrentStateChoices.choices, blank=True, null=True
+        choices=CurrentStateChoices.choices,
+        blank=True,
+        null=True,
+        help_text="The current state of the manuscript",
     )
 
     current_host = models.IntegerField(
-        choices=CurrentHostChoices.choices, blank=True, null=True
+        choices=CurrentHostChoices.choices,
+        blank=True,
+        null=True,
+        help_text="The present host of the manuscript",
     )
 
-    original_main_contents = models.IntegerField(
-        choices=OriginalMainContents.choices, blank=True, null=True
+    host_main_contents = models.IntegerField(
+        choices=OriginalMainContents.choices,
+        blank=True,
+        null=True,
+        help_text="Indicate the main contents of the host manuscript, particularly if only a few pages of the whole volume contain music.",
     )
 
     public = models.BooleanField(
