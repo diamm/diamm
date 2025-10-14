@@ -21,6 +21,7 @@ from diamm.admin.data.mensuration import MensurationAdmin
 from diamm.admin.data.notation import NotationAdmin
 from diamm.admin.data.organization import OrganizationAdmin
 from diamm.admin.data.organization_identifier import OrganizationIdentifierAdmin
+from diamm.admin.data.organization_subtype import OrganizationSubtypeAdmin
 from diamm.admin.data.organization_type import OrganizationTypeAdmin
 from diamm.admin.data.page import PageAdmin
 from diamm.admin.data.page_note import PageNoteAdmin
