@@ -184,11 +184,7 @@ update msg model =
                             createRequest ServerRespondedWithSearchData searchBodyDecoder updatedUrl
                     in
                     ( { model | facets = Just newFacetBlock }
-                    , Cmd.batch
-                        [ updateResultsCmd
-                        , Cmd.map (UserInteractedWithSelectFacet facet) newSubCmd
-                        , pushUrl updatedUrl
-                        ]
+                    , Cmd.map (UserInteractedWithSelectFacet facet) newSubCmd
                     )
                 )
                 updatedFacet
@@ -431,8 +427,7 @@ queryArgsUpdateHelper queryArgs facetBlock queryArgsUpdateFn selector =
 
 clearAllCheckboxFacetsHelper : Cmd Msg
 clearAllCheckboxFacetsHelper =
-    List.map (\f -> CE.perform (UserInteractedWithCheckboxFacet f CheckboxFacet.OnClear)) [ Genres ]
-        |> Cmd.batch
+    (\f -> CE.perform (UserInteractedWithCheckboxFacet f CheckboxFacet.OnClear)) Genres
 
 
 clearAllSelectFacetsHelper : Cmd Msg
@@ -443,5 +438,4 @@ clearAllSelectFacetsHelper =
 
 clearAllOneChoiceFacetsHelper : Cmd Msg
 clearAllOneChoiceFacetsHelper =
-    List.map (\f -> CE.perform (UserInteractedWithOneChoiceFacet f OneChoice.OnClear)) [ HasInventory ]
-        |> Cmd.batch
+    (\f -> CE.perform (UserInteractedWithOneChoiceFacet f OneChoice.OnClear)) HasInventory
