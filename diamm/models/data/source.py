@@ -31,6 +31,12 @@ class OriginalFormatChoices(models.IntegerChoices):
     UNKNOWN = 4, "Unknown"
 
 
+class CurrentStateChoices(models.IntegerChoices):
+    FRAGMENT = 1, "Fragment"
+    COMPLETE = 2, "Complete"
+    LOST = 3, "Lost"
+
+
 class Source(models.Model):
     class Meta:
         app_label = "diamm_data"
@@ -84,8 +90,14 @@ class Source(models.Model):
     has_medieval_foliation = models.BooleanField(
         default=False, help_text="Is the foliation in use from the medieval period?"
     )
-    original_format = models.IntegerField(choices=OriginalFormatChoices.choices, blank=True, null=True)
+    original_format = models.IntegerField(
+        choices=OriginalFormatChoices.choices, blank=True, null=True
+    )
     original_format_uncertain = models.BooleanField(default=False)
+
+    current_state = models.IntegerField(
+        choices=CurrentStateChoices.choices, blank=True, null=True
+    )
 
     public = models.BooleanField(
         default=False, help_text="Source Description is Public"
