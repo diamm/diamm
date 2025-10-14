@@ -43,6 +43,15 @@ class CurrentHostChoices(models.IntegerChoices):
     FRAGMENT_COLLECTION = 3, "Within fragment collection"
 
 
+class OriginalMainContents(models.IntegerChoices):
+    LITURGICAL = 1, "Liturgical book"
+    MISCELLANY = 2, "Miscellany"
+    ACCOUNTS = 3, "Accounts"
+    POLYPHONY = 4, "Polyphony"
+    SONGBOOK = 5, "Songbook"
+    OTHER = 6, "Other"
+
+
 class Source(models.Model):
     class Meta:
         app_label = "diamm_data"
@@ -107,6 +116,10 @@ class Source(models.Model):
 
     current_host = models.IntegerField(
         choices=CurrentHostChoices.choices, blank=True, null=True
+    )
+
+    original_main_contents = models.IntegerField(
+        choices=OriginalMainContents.choices, blank=True, null=True
     )
 
     public = models.BooleanField(
