@@ -24,6 +24,13 @@ class SurfaceOptionChoices(models.IntegerChoices):
     OTHER = 7, "Other"
 
 
+class OriginalFormatChoices(models.IntegerChoices):
+    ROTULUS = 1, "Rotulus"
+    CODEX = 2, "Codex"
+    LIBELLUS = 3, "Libellus"
+    UNKNOWN = 4, "Unknown"
+
+
 class Source(models.Model):
     class Meta:
         app_label = "diamm_data"
@@ -77,6 +84,8 @@ class Source(models.Model):
     has_medieval_foliation = models.BooleanField(
         default=False, help_text="Is the foliation in use from the medieval period?"
     )
+    original_format = models.IntegerField(choices=OriginalFormatChoices.choices, blank=True, null=True)
+    original_format_uncertain = models.BooleanField(default=False)
 
     public = models.BooleanField(
         default=False, help_text="Source Description is Public"
