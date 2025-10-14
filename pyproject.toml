@@ -3,7 +3,7 @@ name = "diamm"
 version = "1.11.1"
 description = ""
 authors = [{ name = "Andrew Hankinson", email = "andrew.hankinson@gmail.com" }]
-requires-python = ">=3.11,<4.0"
+requires-python = ">=3.13,<4.0"
 dependencies = [
     "django (>=5.0,<6.0)",
     "wagtail (>=6.0,<7.0)",
@@ -86,6 +86,7 @@ ignore = [
 ]
 
 [tool.ruff]
+target-version = "py313"
 exclude = [
     "diamm/tests",
     "resources",
