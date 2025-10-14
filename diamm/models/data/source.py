@@ -37,6 +37,12 @@ class CurrentStateChoices(models.IntegerChoices):
     LOST = 3, "Lost"
 
 
+class CurrentHostChoices(models.IntegerChoices):
+    REMOVED_FROM_HOST = 1, "Removed from host manuscript"
+    STILL_WITH_HOST = 2, "Still within host manuscript"
+    FRAGMENT_COLLECTION = 3, "Within fragment collection"
+
+
 class Source(models.Model):
     class Meta:
         app_label = "diamm_data"
@@ -97,6 +103,10 @@ class Source(models.Model):
 
     current_state = models.IntegerField(
         choices=CurrentStateChoices.choices, blank=True, null=True
+    )
+
+    current_host = models.IntegerField(
+        choices=CurrentHostChoices.choices, blank=True, null=True
     )
 
     public = models.BooleanField(
