@@ -33,16 +33,16 @@ def _get_archives(cfg: dict):
                (SELECT c.name AS name
                     FROM diamm_data_geographicarea AS c
                     WHERE a.city_id = c.id)
-                AS "city.name",
+                AS city_name,
                (SELECT c.variant_names
                     FROM diamm_data_geographicarea AS c
                     WHERE a.city_id = c.id)
-                AS "city.variant_names",
+                AS city_variant_names,
                (SELECT c2.name
                     FROM diamm_data_geographicarea AS c
                     LEFT JOIN diamm_data_geographicarea AS c2 ON c.parent_id = c2.id
                     WHERE a.city_id = c.id
-               ) AS "city.parent.name",
+               ) AS city_parent_name,
                string_to_array(a.former_sigla, ',') AS former_sigla
         FROM diamm_data_archive AS a
         ORDER BY a.id"""
@@ -55,10 +55,10 @@ class ArchiveSearchSerializer(serpy.DictSerializer):
     type = serpy.StrField(attr="record_type")
     public_b = StaticField(True)
     sources_ss = serpy.Field(attr="sources")
-    city_s = serpy.StrField(attr="city.name")
-    city_variants_ss = serpy.Field(attr="city.variant_names")
+    city_s = serpy.StrField(attr="city_name")
+    city_variants_ss = serpy.Field(attr="city_variant_names")
     name_s = serpy.StrField(attr="name")
     display_name_ans = serpy.StrField(attr="name")
-    country_s = serpy.StrField(attr="city.parent.name", required=False)
+    country_s = serpy.StrField(attr="city_parent_name", required=False)
     siglum_s = serpy.StrField(attr="siglum")
     former_sigla_ss = serpy.Field(attr="former_sigla")

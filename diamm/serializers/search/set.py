@@ -93,10 +93,10 @@ class SetSearchSerializer(serpy.DictSerializer):
 
     # add archive cities so that people can search for e.g., 'london partbooks' or 'cambridge partbooks'
     def get_archives_cities_ss(self, obj) -> list | None:
-        archives = process_archives(obj["archives"]) if obj.get("archives") else []
+        archives: list = process_archives(obj["archives"]) if obj.get("archives") else []
         return list({f"{a['city']}" for a in archives})
 
 
 @functools.lru_cache
-def process_archives(archive_str: str | None) -> list | None:
-    return ujson.loads(archive_str) if archive_str else None
+def process_archives(archive_str: str | None) -> list:
+    return ujson.loads(archive_str) if archive_str else []

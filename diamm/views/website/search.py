@@ -55,27 +55,27 @@ class SearchView(generics.GenericAPIView):
             filters.update({"country_s": f'"{request.GET.get("country_s")}"'})
         if "cities" in request.GET:
             filters.update(
-                {
-                    "city_s": f'"{request.GET.get("cities")}"',
-                }
+                {"city_s": [f'"{g}"' for g in request.GET.getlist("cities")]}
             )
 
         if "composer" in request.GET:
             filters.update(
-                {"composers_ss": list(request.GET.getlist("composer"))}
+                {"composers_ss": [f'"{g}"' for g in request.GET.getlist("composer")]}
             )
 
         if "genre" in request.GET:
-            exclusive_filters.update({"genres_ss": list(request.GET.getlist("genre"))})
+            exclusive_filters.update(
+                {"genres_ss": [f'"{g}"' for g in request.GET.getlist("genre")]}
+            )
 
         if "notation" in request.GET:
             exclusive_filters.update(
-                {"notations_ss": list(request.GET.getlist("notation"))}
+                {"notations_ss": [f'"{g}"' for g in request.GET.getlist("notation")]}
             )
 
         if "sourcetype" in request.GET:
             exclusive_filters.update(
-                {"source_type_s": list(request.GET.getlist("sourcetype"))}
+                {"source_type_s": [f'"{g}"' for g in request.GET.getlist("sourcetype")]}
             )
 
         if "has_inventory" in request.GET:

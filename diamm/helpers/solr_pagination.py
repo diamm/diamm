@@ -7,6 +7,7 @@ from django.conf import settings
 from rest_framework.reverse import reverse
 from rest_framework.utils.urls import replace_query_param
 
+from diamm.helpers.formatters import format_person_name
 from diamm.helpers.solr_helpers import SolrConnection
 from diamm.serializers.serializers import ContextDictSerializer
 
@@ -24,7 +25,7 @@ class SolrResultSerializer(ContextDictSerializer):
     display_name = serpy.StrField(attr="display_name_s", required=False)
     shelfmark = serpy.StrField(attr="shelfmark_s", required=False)
     archive_name = serpy.StrField(attr="archive_s", required=False)
-    archive_city = serpy.StrField(attr="archive_city_s", required=False)
+    archive_city = serpy.MethodField()
     surface = serpy.StrField(attr="surface_type_s", required=False)
     source_type = serpy.StrField(attr="source_type_s", required=False)
     date_statement = serpy.StrField(attr="date_statement_s", required=False)
@@ -41,7 +42,7 @@ class SolrResultSerializer(ContextDictSerializer):
     name = serpy.StrField(attr="name_s", required=False)
     location = serpy.StrField(attr="location_s", required=False)
     title = serpy.StrField(attr="title_s", required=False)
-    composers = serpy.Field(attr="composers_ss", required=False)
+    composers = serpy.MethodField()
     siglum = serpy.StrField(attr="siglum_s", required=False)
     city = serpy.StrField(attr="city_s", required=False)
     country = serpy.StrField(attr="country_s", required=False)
@@ -57,21 +58,43 @@ class SolrResultSerializer(ContextDictSerializer):
         )
 
     def get_heading(self, obj: dict) -> str:
-        if obj.get("display_name_s"):
-            return obj.get("display_name_s")
-        elif obj.get("name_s"):
-            return obj.get("name_s")
-        elif obj.get("title_s"):
-            return obj.get("title_s")
-        elif obj.get("cluster_shelfmark_s"):
-            return obj.get("cluster_shelfmark_s")
+        if "display_name_s" in obj:
+            return obj["display_name_s"]
+        elif "name_s" in obj:
+            return obj["name_s"]
+        elif "title_s" in obj:
+            return obj["title_s"]
+        elif "cluster_shelfmark_s" in obj:
+            return obj["cluster_shelfmark_s"]
         else:
             return "[Unknown Heading]"
 
     def get_sources(self, obj: dict) -> int | None:
-        if obj.get("sources_ii"):
-            return len(obj.get("sources_ii"))
+        if "sources_ii" in obj:
+            return len(obj["sources_ii"])
         return None
+
+    def get_composers(self, obj: dict) -> list[str] | None:
+        ret: list[str] = []
+        if obj.get("anonymous_b", False):
+            ret.append("Anonymous")
+
+        if "composers_json" not in obj:
+            return ret
+
+        composers: list = obj["composers_json"]
+        ss = [format_person_name(composer) for composer in composers]
+
+        return ret + ss
+
+    def get_archive_city(self, obj) -> str | None:
+        if "archive_city_s" not in obj:
+            return None
+        city_name = obj["archive_city_s"]
+
+        if "country_s" in obj:
+            return f"{city_name}, {obj['country_s']}"
+        return city_name
 
 
 class SolrResultException(BaseException):
@@ -139,7 +162,6 @@ class SolrPaginator:
 
         # update our fq query opts with the values from our filters.
         self.qopts.update({"fq": fqlist})
-
         # self.solr = pysolr.Solr(settings.SOLR['SERVER'])
 
         # Fetch the requested page.
@@ -188,6 +210,7 @@ class SolrPaginator:
 
         start = (page_num - 1) * self.page_size
         self._fetch_page(start=start)
+
         return SolrPage(self.result, page_num, self)
 
 

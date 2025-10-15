@@ -1,6 +1,6 @@
 module Views exposing (view)
 
-import Element exposing (Element, alignRight, centerX, column, el, fill, fillPortion, height, layout, none, padding, paddingXY, pointer, px, row, spacing, text, width)
+import Element exposing (Element, alignRight, centerX, column, el, fill, fillPortion, height, layout, maximum, none, padding, paddingXY, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events as Events exposing (onClick)
@@ -84,7 +84,7 @@ searchView model body =
                 , height fill
                 ]
                 [ column
-                    [ width (fillPortion 1)
+                    [ width (fill |> maximum 500)
                     , height fill
                     , Border.widthEach { top = 0, bottom = 0, left = 0, right = 2 }
                     , Border.color colourScheme.lightGrey
@@ -95,7 +95,7 @@ searchView model body =
                     , viewMaybe viewFacets model.facets
                     ]
                 , column
-                    [ width (fillPortion 3)
+                    [ width fill
                     , height fill
                     , padding 20
                     , spacing 20
@@ -229,6 +229,13 @@ viewPagination gotoPageValue pagination =
 
                 Nothing ->
                     el [ Font.color colourScheme.midGrey ] (text "‹ Previous")
+
+        lastPageNum =
+            if pagination.numPages > 0 then
+                pagination.numPages
+
+            else
+                1
     in
     row
         [ width fill
@@ -242,7 +249,7 @@ viewPagination gotoPageValue pagination =
                 [ spacing 18 ]
                 [ el
                     []
-                    (text ("Page " ++ String.fromInt pagination.currentPage ++ " of " ++ String.fromInt pagination.numPages ++ " pages"))
+                    (text ("Page " ++ String.fromInt pagination.currentPage ++ " of " ++ String.fromInt lastPageNum ++ " pages"))
                 , text " | "
                 , el
                     [ Font.color colourScheme.lightBlue
@@ -254,7 +261,7 @@ viewPagination gotoPageValue pagination =
                 , nextEl
                 , el
                     [ Font.color colourScheme.lightBlue
-                    , onClick (UserClickedPaginationLink pagination.numPages)
+                    , onClick (UserClickedPaginationLink lastPageNum)
                     , pointer
                     ]
                     (text "Last »")

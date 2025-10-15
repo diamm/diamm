@@ -1,6 +1,6 @@
 module Results exposing (resultView)
 
-import Element exposing (Element, column, el, fill, link, row, spacing, text, width)
+import Element exposing (Element, column, el, fill, link, none, row, spacing, text, width)
 import Element.Font as Font
 import Helpers exposing (viewMaybe)
 import RecordTypes exposing (ArchiveResultBody, CompositionResultBody, OrganizationResultBody, PersonResultBody, SearchResult(..), SetResultBody, SourceResultBody)
@@ -50,8 +50,9 @@ resultTemplate { url, heading, resultType } body =
                             (text heading)
                     }
                 , el
-                    [ Font.size 21
-                    , Font.color colourScheme.midGrey
+                    [ Font.size 16
+                    , Font.medium
+                    , Font.color colourScheme.grey
                     ]
                     (text resultType)
                 ]
@@ -134,12 +135,20 @@ viewPersonResult person =
 
 viewCompositionResult : CompositionResultBody -> Element msg
 viewCompositionResult composition =
+    let
+        composers =
+            Maybe.map (\s -> el [] (text (String.join ", " s))) composition.composers
+                |> Maybe.withDefault none
+    in
     resultTemplate
         { url = composition.url
         , heading = composition.heading
         , resultType = "Composition"
         }
-        []
+        [ row
+            [ width fill ]
+            [ composers ]
+        ]
 
 
 viewOrganizationResult : OrganizationResultBody -> Element msg

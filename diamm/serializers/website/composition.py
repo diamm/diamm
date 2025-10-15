@@ -153,7 +153,7 @@ class CompositionDetailSerializer(ContextSerializer):
                 .order_by("source__sort_order"),
                 context={"request": self.context["request"]},
                 many=True,
-            ).data
+            ).data  # type: ignore
         else:
             return []
 
@@ -163,7 +163,7 @@ class CompositionDetailSerializer(ContextSerializer):
                 obj.composers.all(),
                 context={"request": self.context["request"]},
                 many=True,
-            ).data
+            ).data  # type: ignore
         else:
             return []
 

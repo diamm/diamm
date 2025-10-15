@@ -1,21 +1,21 @@
-module Facets exposing (FacetModel, createFacetConfigurations, setComposers, setGenres, setHasInventory, setNotations, setSourceTypes, viewFacets)
+module Facets exposing (FacetModel, createFacetConfigurations, setCities, setComposers, setGenres, setHasInventory, setNotations, setSourceTypes, viewFacets)
 
-import Element exposing (Element, column, fill, row, spacing, width)
+import Element exposing (Element, column, fill, maximum, row, spacing, width)
 import Facets.CheckboxFacet exposing (CheckBoxFacetModel, initialCheckboxModel, viewCheckboxFacet)
 import Facets.OneChoiceFacet exposing (OneChoiceFacetModel, initialOneChoiceModel, viewOneChoiceFacet)
-import Facets.SelectFacet exposing (SelectFacetModel, initialSelectModel, viewSelectFacet)
 import Helpers exposing (viewMaybe)
 import Maybe.Extra as ME
 import Msg exposing (Msg(..))
-import RecordTypes exposing (CheckboxFacetTypes(..), FacetBlock, OneChoiceFacetTypes(..), SelectFacetTypes(..))
+import RecordTypes exposing (CheckboxFacetTypes(..), FacetBlock, OneChoiceFacetTypes(..))
+import Route exposing (QueryArgs)
 
 
 type alias FacetModel =
-    { city : Maybe Never
+    { cities : Maybe CheckBoxFacetModel
     , genres : Maybe CheckBoxFacetModel
-    , notations : Maybe SelectFacetModel
-    , composers : Maybe SelectFacetModel
-    , sourceTypes : Maybe SelectFacetModel
+    , notations : Maybe CheckBoxFacetModel
+    , composers : Maybe CheckBoxFacetModel
+    , sourceTypes : Maybe CheckBoxFacetModel
     , hasInventory : Maybe OneChoiceFacetModel
     , organizationType : Maybe Never
     , location : Maybe Never
@@ -24,19 +24,16 @@ type alias FacetModel =
     }
 
 
-createFacetConfigurations : Maybe FacetModel -> FacetBlock -> FacetModel
-createFacetConfigurations currentModel facetBlock =
+createFacetConfigurations : Maybe FacetModel -> QueryArgs -> FacetBlock -> FacetModel
+createFacetConfigurations currentModel queryArgs facetBlock =
     let
         genreFacet =
-            if ME.isJust currentModel then
-                Maybe.map .genres currentModel
-                    |> ME.join
-
-            else if not (List.isEmpty facetBlock.genres) then
+            if not (List.isEmpty facetBlock.genres) then
                 Just
                     (initialCheckboxModel
                         { identifier = "genres"
                         , available = facetBlock.genres
+                        , selected = List.map (\s -> { value = s, count = 0 }) queryArgs.genres
                         }
                     )
 
@@ -46,9 +43,10 @@ createFacetConfigurations currentModel facetBlock =
         composersFacet =
             if not (List.isEmpty facetBlock.composers) then
                 Just
-                    (initialSelectModel
+                    (initialCheckboxModel
                         { identifier = "composers"
                         , available = facetBlock.composers
+                        , selected = List.map (\s -> { value = s, count = 0 }) queryArgs.composers
                         }
                     )
 
@@ -58,9 +56,10 @@ createFacetConfigurations currentModel facetBlock =
         notationsFacet =
             if not (List.isEmpty facetBlock.notations) then
                 Just
-                    (initialSelectModel
+                    (initialCheckboxModel
                         { identifier = "notations"
                         , available = facetBlock.notations
+                        , selected = List.map (\s -> { value = s, count = 0 }) queryArgs.notations
                         }
                     )
 
@@ -70,9 +69,10 @@ createFacetConfigurations currentModel facetBlock =
         sourceTypesFacet =
             if not (List.isEmpty facetBlock.sourceType) then
                 Just
-                    (initialSelectModel
+                    (initialCheckboxModel
                         { identifier = "sourceType"
                         , available = facetBlock.sourceType
+                        , selected = List.map (\s -> { value = s, count = 0 }) queryArgs.sourceTypes
                         }
                     )
 
@@ -90,8 +90,21 @@ createFacetConfigurations currentModel facetBlock =
 
             else
                 Nothing
+
+        citiesFacet =
+            if not (List.isEmpty facetBlock.cities) then
+                Just
+                    (initialCheckboxModel
+                        { identifier = "cities"
+                        , available = facetBlock.cities
+                        , selected = List.map (\s -> { value = s, count = 0 }) queryArgs.cities
+                        }
+                    )
+
+            else
+                Nothing
     in
-    { city = Nothing
+    { cities = citiesFacet
     , genres = genreFacet
     , notations = notationsFacet
     , composers = composersFacet
@@ -112,26 +125,30 @@ viewFacets facetModel =
                 |> Element.map (UserInteractedWithCheckboxFacet Genres)
 
         composersFacet =
-            viewMaybe (viewSelectFacet "Composers") facetModel.composers
-                |> Element.map (UserInteractedWithSelectFacet Composers)
+            viewMaybe (viewCheckboxFacet "Composers") facetModel.composers
+                |> Element.map (UserInteractedWithCheckboxFacet Composers)
 
         sourceTypesFacet =
-            viewMaybe (viewSelectFacet "Source Types") facetModel.sourceTypes
-                |> Element.map (UserInteractedWithSelectFacet SourceTypes)
+            viewMaybe (viewCheckboxFacet "Source Types") facetModel.sourceTypes
+                |> Element.map (UserInteractedWithCheckboxFacet SourceTypes)
 
         notationsFacet =
-            viewMaybe (viewSelectFacet "Notation") facetModel.notations
-                |> Element.map (UserInteractedWithSelectFacet Notations)
+            viewMaybe (viewCheckboxFacet "Notation") facetModel.notations
+                |> Element.map (UserInteractedWithCheckboxFacet Notations)
 
         hasInventory =
             viewMaybe (viewOneChoiceFacet "Has Inventory") facetModel.hasInventory
                 |> Element.map (UserInteractedWithOneChoiceFacet HasInventory)
+
+        citiesFacet =
+            viewMaybe (viewCheckboxFacet "Archive Cities") facetModel.cities
+                |> Element.map (UserInteractedWithCheckboxFacet Cities)
     in
     row
         [ width fill
         ]
         [ column
-            [ width fill
+            [ width (fill |> maximum 500)
             , spacing 10
             ]
             [ genresFacet
@@ -139,21 +156,22 @@ viewFacets facetModel =
             , sourceTypesFacet
             , notationsFacet
             , hasInventory
+            , citiesFacet
             ]
         ]
 
 
-setSourceTypes : Maybe SelectFacetModel -> { a | sourceTypes : Maybe SelectFacetModel } -> { a | sourceTypes : Maybe SelectFacetModel }
+setSourceTypes : Maybe CheckBoxFacetModel -> { a | sourceTypes : Maybe CheckBoxFacetModel } -> { a | sourceTypes : Maybe CheckBoxFacetModel }
 setSourceTypes newValue oldRecord =
     { oldRecord | sourceTypes = newValue }
 
 
-setComposers : Maybe SelectFacetModel -> { a | composers : Maybe SelectFacetModel } -> { a | composers : Maybe SelectFacetModel }
+setComposers : Maybe CheckBoxFacetModel -> { a | composers : Maybe CheckBoxFacetModel } -> { a | composers : Maybe CheckBoxFacetModel }
 setComposers newValue oldRecord =
     { oldRecord | composers = newValue }
 
 
-setNotations : Maybe SelectFacetModel -> { a | notations : Maybe SelectFacetModel } -> { a | notations : Maybe SelectFacetModel }
+setNotations : Maybe CheckBoxFacetModel -> { a | notations : Maybe CheckBoxFacetModel } -> { a | notations : Maybe CheckBoxFacetModel }
 setNotations newValue oldRecord =
     { oldRecord | notations = newValue }
 
@@ -166,3 +184,8 @@ setGenres newValue oldRecord =
 setHasInventory : Maybe OneChoiceFacetModel -> { a | hasInventory : Maybe OneChoiceFacetModel } -> { a | hasInventory : Maybe OneChoiceFacetModel }
 setHasInventory newValue oldRecord =
     { oldRecord | hasInventory = newValue }
+
+
+setCities : Maybe CheckBoxFacetModel -> { a | cities : Maybe CheckBoxFacetModel } -> { a | cities : Maybe CheckBoxFacetModel }
+setCities newValue oldRecord =
+    { oldRecord | cities = newValue }

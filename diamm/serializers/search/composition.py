@@ -34,7 +34,7 @@ def _get_compositions(cfg: dict):
                         LEFT JOIN diamm_data_genre AS ddg ON ddcg.genre_id = ddg.id
                         WHERE ddcg.composition_id = c.id)
                    AS genres,
-                   (SELECT jsonb_agg(DISTINCT jsonb_build_object(
+                   (SELECT jsonb_agg(DISTINCT jsonb_strip_nulls(jsonb_build_object(
                            'id', p2.id,
                            'last_name', p2.last_name,
                            'first_name', p2.first_name,
@@ -44,7 +44,7 @@ def _get_compositions(cfg: dict):
                            'latest_year_approximate', p2.latest_year_approximate,
                            'floruit', p2.floruit,
                            'uncertain', cc2.uncertain
-                            ))
+                            )))
                             FROM diamm_data_compositioncomposer AS cc2
                             LEFT JOIN diamm_data_person AS p2 ON cc2.composer_id = p2.id
                         WHERE c.id = cc2.composition_id)
@@ -84,6 +84,7 @@ class CompositionSearchSerializer(serpy.DictSerializer):
     sources_ss = serpy.MethodField()
     sources_ssni = serpy.MethodField()
     sources_ii = serpy.MethodField()
+    composers_json = serpy.Field(attr="composition_composers")
 
     def get_composers_ss(self, obj):
         """

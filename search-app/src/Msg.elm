@@ -2,10 +2,9 @@ module Msg exposing (Msg(..))
 
 import Facets.CheckboxFacet exposing (CheckBoxFacetMsg)
 import Facets.OneChoiceFacet exposing (OneChoiceFacetMsg)
-import Facets.SelectFacet exposing (SelectFacetMsg)
 import Http
 import Http.Detailed
-import RecordTypes exposing (CheckboxFacetTypes, OneChoiceFacetTypes, RecordTypeFilters, SearchBody, SelectFacetTypes)
+import RecordTypes exposing (CheckboxFacetTypes, OneChoiceFacetTypes, RecordTypeFilters, SearchBody)
 import Route exposing (Route)
 
 
@@ -13,7 +12,6 @@ type Msg
     = NothingHappened
     | ServerRespondedWithSearchData (Result (Http.Detailed.Error String) ( Http.Metadata, SearchBody ))
     | ClientChangedUrl (Maybe Route)
-    | UserInteractedWithSelectFacet SelectFacetTypes SelectFacetMsg
     | UserInteractedWithCheckboxFacet CheckboxFacetTypes CheckBoxFacetMsg
     | UserInteractedWithOneChoiceFacet OneChoiceFacetTypes OneChoiceFacetMsg
     | UserClickedRecordTypeFilter RecordTypeFilters

@@ -1,17 +1,15 @@
-module RecordTypes exposing (ArchiveResultBody, CheckboxFacetTypes(..), CompositionResultBody, FacetBlock, FacetItem, OneChoiceFacetTypes(..), OrganizationResultBody, PaginationBlock, PersonResultBody, RecordTypeFilters(..), SearchBody, SearchResult(..), SearchTypesBlock, SelectFacetTypes(..), SetResultBody, SourceResultBody, facetItemToLabel, resultTypeOptions, searchBodyDecoder)
+module RecordTypes exposing (ArchiveResultBody, CheckboxFacetTypes(..), CompositionResultBody, FacetBlock, FacetItem, OneChoiceFacetTypes(..), OrganizationResultBody, PaginationBlock, PersonResultBody, RecordTypeFilters(..), SearchBody, SearchResult(..), SearchTypesBlock, SetResultBody, SourceResultBody, facetItemToLabel, resultTypeOptions, searchBodyDecoder)
 
 import Json.Decode as Decode exposing (Decoder, bool, int, list, maybe, string)
 import Json.Decode.Pipeline exposing (optional, required)
 
 
-type SelectFacetTypes
-    = Composers
-    | SourceTypes
-    | Notations
-
-
 type CheckboxFacetTypes
     = Genres
+    | Composers
+    | SourceTypes
+    | Notations
+    | Cities
 
 
 type OneChoiceFacetTypes
@@ -68,6 +66,8 @@ type alias CompositionResultBody =
     { pk : String
     , url : String
     , heading : String
+    , composers : Maybe (List String)
+    , numSources : Maybe Int
     }
 
 
@@ -136,7 +136,7 @@ facetItemToLabel item =
 
 
 type alias FacetBlock =
-    { city : List FacetItem
+    { cities : List FacetItem
     , genres : List FacetItem
     , notations : List FacetItem
     , composers : List FacetItem
@@ -295,6 +295,8 @@ compositionResultBodyDecoder =
         |> required "pk" string
         |> required "url" string
         |> required "heading" string
+        |> optional "composers" (maybe (list string)) Nothing
+        |> optional "sources" (maybe int) Nothing
 
 
 archiveResultBodyDecoder : Decoder ArchiveResultBody

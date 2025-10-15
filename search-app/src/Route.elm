@@ -1,4 +1,4 @@
-module Route exposing (QueryArgs, Route(..), buildQueryParameters, defaultQueryArgs, extractPageNumberFromUrl, locationHrefToRoute, parseUrl, setCurrentPage, setKeywordQuery, setQueryGenres, setQueryNotations, setQuerySourceTypes, setQueryType)
+module Route exposing (QueryArgs, Route(..), buildQueryParameters, defaultQueryArgs, extractPageNumberFromUrl, locationHrefToRoute, parseUrl, setCurrentPage, setKeywordQuery, setQueryCities, setQueryComposers, setQueryGenres, setQueryNotations, setQuerySourceTypes, setQueryType)
 
 import Dict
 import Helpers exposing (prepareQuery)
@@ -22,6 +22,7 @@ type alias QueryArgs =
     , notations : List String
     , genres : List String
     , sourceTypes : List String
+    , cities : List String
     , currentPage : Int
     }
 
@@ -62,6 +63,7 @@ queryParamsParser =
         |> apply notationParamParser
         |> apply genreParamParser
         |> apply sourceTypesParser
+        |> apply cityParamParser
         |> apply pageParamParser
 
 
@@ -73,6 +75,11 @@ resultTypeParamParser =
 composerParamParser : Q.Parser (List String)
 composerParamParser =
     Q.custom "composer" identity
+
+
+cityParamParser : Q.Parser (List String)
+cityParamParser =
+    Q.custom "cities" identity
 
 
 notationParamParser : Q.Parser (List String)
@@ -117,6 +124,7 @@ defaultQueryArgs =
     , notations = []
     , genres = []
     , sourceTypes = []
+    , cities = []
     , currentPage = 1
     }
 
@@ -151,8 +159,17 @@ buildQueryParameters queryArgs =
 
         genresParam =
             List.map (Url.Builder.string "genre") queryArgs.genres
+
+        citiesParam =
+            List.map (Url.Builder.string "cities") queryArgs.cities
+
+        notationsParam =
+            List.map (Url.Builder.string "notation") queryArgs.notations
+
+        sourceTypeParam =
+            List.map (Url.Builder.string "sourcetype") queryArgs.sourceTypes
     in
-    List.concat [ qParam, typeParam, composerParam, genresParam, pageParam ]
+    List.concat [ qParam, typeParam, composerParam, genresParam, pageParam, citiesParam, notationsParam, sourceTypeParam ]
 
 
 parseResultTypeToString : RecordTypeFilters -> String
@@ -189,6 +206,11 @@ setQueryGenres newValues oldRecord =
     { oldRecord | genres = newValues }
 
 
+setQueryComposers : List String -> { a | composers : List String } -> { a | composers : List String }
+setQueryComposers newValues oldRecord =
+    { oldRecord | composers = newValues }
+
+
 setQueryNotations : List String -> { a | notations : List String } -> { a | notations : List String }
 setQueryNotations newValues oldRecord =
     { oldRecord | notations = newValues }
@@ -197,6 +219,11 @@ setQueryNotations newValues oldRecord =
 setQuerySourceTypes : List String -> { a | sourceTypes : List String } -> { a | sourceTypes : List String }
 setQuerySourceTypes newValues oldRecord =
     { oldRecord | sourceTypes = newValues }
+
+
+setQueryCities : List String -> { a | cities : List String } -> { a | cities : List String }
+setQueryCities newValues oldRecord =
+    { oldRecord | cities = newValues }
 
 
 

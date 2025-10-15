@@ -8,6 +8,8 @@ import httpx
 import ujson
 from django.db import connection
 
+from diamm.helpers.formatters import format_person_name
+
 log = logging.getLogger("diamm")
 
 
@@ -109,33 +111,6 @@ def _empty_solr_core(cfg: dict, core: str) -> bool:
         log.debug("Deletion was successful")
         return True
     return False
-
-
-def format_person_name(p: dict) -> str:
-    early_pfx = ""
-    late_pfx = ""
-    if p.get("earliest_year_approximate"):
-        early_pfx = "ca. "
-    if p.get("latest_year_approximate"):
-        late_pfx = "ca. "
-    early_year = f"{p['earliest_year']}" if p.get("earliest_year") else ""
-    late_year = f"{p['latest_year']}" if p.get("latest_year") else ""
-
-    date_str = ""
-    if early_year or late_year:
-        date_str = f"{early_pfx}{early_year}–{late_pfx}{late_year}"
-    elif p.get("floruit"):
-        date_str = f"fl. {p['floruit']}"
-
-    if p.get("first_name"):
-        name_str = f"{p['last_name']}, {p['first_name']}"
-    else:
-        name_str = f"{p['last_name']}"
-
-    if date_str:
-        return f"{name_str} ({date_str})"
-    else:
-        return name_str
 
 
 def commit_changes(cfg: dict) -> bool:
