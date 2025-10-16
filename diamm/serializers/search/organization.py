@@ -49,7 +49,7 @@ class OrganizationSearchSerializer(serpy.DictSerializer):
 
     name_s = serpy.StrField(attr="name")
     display_name_ans = serpy.StrField(attr="name")
-    organization_type_s = serpy.StrField(attr="type", required=False)
+    organization_type_s = serpy.StrField(attr="organization_type", required=False)
     variant_names_ss = serpy.MethodField()
 
     def get_variant_names_ss(self, obj):
