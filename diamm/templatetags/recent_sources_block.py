@@ -6,7 +6,7 @@ from diamm.models.data.source import Source
 @library.global_function
 @library.render_with("website/blocks/recent_sources.jinja2")
 def recently_added_sources():
-    return {"sources": Source.objects.order_by("-id")[:5]}
+    return {"sources": Source.objects.filter(public=True).order_by("-id")[:5]}
 
 
 @library.global_function
@@ -16,7 +16,7 @@ def recently_updated_sources():
     # exclude the recently added sources from the recently updated sources.
     recent_sources = Source.objects.order_by("-id")[:5]
     return {
-        "sources": Source.objects.exclude(
+        "sources": Source.objects.filter(public=True).exclude(
             id__in=recent_sources.values_list("id")
         ).order_by("-updated")[:5]
     }
