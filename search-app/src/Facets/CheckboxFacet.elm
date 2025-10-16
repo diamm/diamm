@@ -1,6 +1,6 @@
 module Facets.CheckboxFacet exposing (CheckBoxFacetModel, CheckBoxFacetMsg(..), update, updateCheckboxModel, viewCheckboxFacet)
 
-import Element exposing (Element, alignRight, clip, clipY, column, el, fill, height, maximum, none, padding, paddingXY, pointer, px, row, scrollbarX, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignRight, clip, column, el, fill, height, maximum, none, padding, paddingXY, pointer, px, row, scrollbarX, scrollbarY, spacing, text, width)
 import Element.Border as Border
 import Element.Events as Events
 import Element.Font as Font
@@ -33,11 +33,7 @@ updateCheckboxModel : { identifier : String, available : List FacetItem, selecte
 updateCheckboxModel cfg =
     let
         viewBody =
-            if cfg.bodyHidden && List.isEmpty cfg.selected then
-                True
-
-            else
-                False
+            cfg.bodyHidden && List.isEmpty cfg.selected
     in
     { id = cfg.identifier
     , available = cfg.available
@@ -146,7 +142,7 @@ viewCheckboxFacet title facetModel =
             , spacing 10
             , padding 10
             ]
-            ([ row
+            (row
                 [ width fill
                 , paddingXY 0 5
                 , spacing 5
@@ -166,8 +162,7 @@ viewCheckboxFacet title facetModel =
                     ]
                     (text "Clear all")
                 ]
-             ]
-                ++ facetBody
+                :: facetBody
             )
         ]
 

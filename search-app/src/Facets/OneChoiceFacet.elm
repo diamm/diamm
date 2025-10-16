@@ -101,7 +101,7 @@ viewOneChoiceFacet title facetModel =
             , spacing 10
             , padding 10
             ]
-            ([ row
+            (row
                 [ width fill
                 , paddingXY 0 5
                 , spacing 5
@@ -121,8 +121,7 @@ viewOneChoiceFacet title facetModel =
                     ]
                     (text "Clear all")
                 ]
-             ]
-                ++ facetBody
+                :: facetBody
             )
         ]
 
