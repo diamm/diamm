@@ -1,9 +1,10 @@
 module Results exposing (resultView)
 
-import Element exposing (Element, column, el, fill, link, none, row, spacing, text, width)
+import Element exposing (Element, column, el, fill, link, maximum, none, paragraph, row, spacing, text, width)
 import Element.Font as Font
 import Helpers exposing (viewMaybe)
 import RecordTypes exposing (ArchiveResultBody, CompositionResultBody, OrganizationResultBody, PersonResultBody, SearchResult(..), SetResultBody, SourceResultBody)
+import String.Extra as SE
 import Style exposing (colourScheme)
 
 
@@ -34,28 +35,26 @@ resultTemplate { url, heading, resultType } body =
     row
         [ width fill ]
         [ column
-            [ width fill
+            [ width (fill |> maximum 900)
             , spacing 8
             ]
             [ row
                 [ width fill
                 , spacing 10
                 ]
-                [ link
-                    [ Font.color colourScheme.lightBlue ]
-                    { url = url
-                    , label =
-                        el
-                            [ Font.size 21, Font.medium ]
-                            (text heading)
-                    }
-                , el
-                    [ Font.size 16
-                    , Font.medium
-                    , Font.color colourScheme.grey
+                [ paragraph
+                    [ Font.size 21 ]
+                    [ link
+                        [ Font.color colourScheme.lightBlue, Font.medium ]
+                        { url = url
+                        , label =
+                            text (heading |> SE.ellipsis 140)
+                        }
                     ]
-                    (text resultType)
                 ]
+            , row
+                [ width fill, Font.size 18, Font.color colourScheme.midGrey ]
+                [ text resultType ]
             , row
                 [ width fill ]
                 [ column

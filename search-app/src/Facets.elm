@@ -1,10 +1,9 @@
-module Facets exposing (FacetModel, createFacetConfigurations, setCities, setComposers, setGenres, setHasInventory, setNotations, setSourceTypes, viewFacets)
+module Facets exposing (FacetModel, setCities, setComposers, setGenres, setHasInventory, setNotations, setSourceTypes, updateFacetConfigurations, viewFacets)
 
 import Element exposing (Element, column, fill, maximum, row, spacing, width)
-import Facets.CheckboxFacet exposing (CheckBoxFacetModel, initialCheckboxModel, viewCheckboxFacet)
-import Facets.OneChoiceFacet exposing (OneChoiceFacetModel, initialOneChoiceModel, viewOneChoiceFacet)
-import Helpers exposing (viewMaybe)
-import Maybe.Extra as ME
+import Facets.CheckboxFacet exposing (CheckBoxFacetModel, updateCheckboxModel, viewCheckboxFacet)
+import Facets.OneChoiceFacet exposing (OneChoiceFacetModel, updateOneChoiceModel, viewOneChoiceFacet)
+import Helpers exposing (strToBool, viewMaybe)
 import Msg exposing (Msg(..))
 import RecordTypes exposing (CheckboxFacetTypes(..), FacetBlock, OneChoiceFacetTypes(..))
 import Route exposing (QueryArgs)
@@ -19,21 +18,21 @@ type alias FacetModel =
     , hasInventory : Maybe OneChoiceFacetModel
     , organizationType : Maybe Never
     , location : Maybe Never
-    , archive : Maybe Never
     , anonymous : Maybe Never
     }
 
 
-createFacetConfigurations : Maybe FacetModel -> QueryArgs -> FacetBlock -> FacetModel
-createFacetConfigurations currentModel queryArgs facetBlock =
+updateFacetConfigurations : FacetModel -> QueryArgs -> FacetBlock -> FacetModel
+updateFacetConfigurations currentModel queryArgs facetBlock =
     let
         genreFacet =
             if not (List.isEmpty facetBlock.genres) then
                 Just
-                    (initialCheckboxModel
+                    (updateCheckboxModel
                         { identifier = "genres"
                         , available = facetBlock.genres
                         , selected = List.map (\s -> { value = s, count = 0 }) queryArgs.genres
+                        , bodyHidden = Maybe.map .bodyHidden currentModel.genres |> Maybe.withDefault True
                         }
                     )
 
@@ -43,10 +42,11 @@ createFacetConfigurations currentModel queryArgs facetBlock =
         composersFacet =
             if not (List.isEmpty facetBlock.composers) then
                 Just
-                    (initialCheckboxModel
+                    (updateCheckboxModel
                         { identifier = "composers"
                         , available = facetBlock.composers
                         , selected = List.map (\s -> { value = s, count = 0 }) queryArgs.composers
+                        , bodyHidden = Maybe.map .bodyHidden currentModel.composers |> Maybe.withDefault True
                         }
                     )
 
@@ -56,10 +56,11 @@ createFacetConfigurations currentModel queryArgs facetBlock =
         notationsFacet =
             if not (List.isEmpty facetBlock.notations) then
                 Just
-                    (initialCheckboxModel
+                    (updateCheckboxModel
                         { identifier = "notations"
                         , available = facetBlock.notations
                         , selected = List.map (\s -> { value = s, count = 0 }) queryArgs.notations
+                        , bodyHidden = Maybe.map .bodyHidden currentModel.notations |> Maybe.withDefault True
                         }
                     )
 
@@ -69,10 +70,11 @@ createFacetConfigurations currentModel queryArgs facetBlock =
         sourceTypesFacet =
             if not (List.isEmpty facetBlock.sourceType) then
                 Just
-                    (initialCheckboxModel
+                    (updateCheckboxModel
                         { identifier = "sourceType"
                         , available = facetBlock.sourceType
                         , selected = List.map (\s -> { value = s, count = 0 }) queryArgs.sourceTypes
+                        , bodyHidden = Maybe.map .bodyHidden currentModel.sourceTypes |> Maybe.withDefault True
                         }
                     )
 
@@ -82,9 +84,13 @@ createFacetConfigurations currentModel queryArgs facetBlock =
         hasInventoryFacet =
             if not (List.isEmpty facetBlock.hasInventory) then
                 Just
-                    (initialOneChoiceModel
+                    (updateOneChoiceModel
                         { identifier = "has-inventory"
                         , available = facetBlock.hasInventory
+                        , selected =
+                            List.map (\s -> { value = strToBool s, count = 0 }) queryArgs.hasInventory
+                                |> List.head
+                        , bodyHidden = Maybe.map .bodyHidden currentModel.hasInventory |> Maybe.withDefault True
                         }
                     )
 
@@ -94,10 +100,11 @@ createFacetConfigurations currentModel queryArgs facetBlock =
         citiesFacet =
             if not (List.isEmpty facetBlock.cities) then
                 Just
-                    (initialCheckboxModel
+                    (updateCheckboxModel
                         { identifier = "cities"
                         , available = facetBlock.cities
                         , selected = List.map (\s -> { value = s, count = 0 }) queryArgs.cities
+                        , bodyHidden = Maybe.map .bodyHidden currentModel.cities |> Maybe.withDefault True
                         }
                     )
 
@@ -112,7 +119,6 @@ createFacetConfigurations currentModel queryArgs facetBlock =
     , hasInventory = hasInventoryFacet
     , organizationType = Nothing
     , location = Nothing
-    , archive = Nothing
     , anonymous = Nothing
     }
 

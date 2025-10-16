@@ -8,7 +8,7 @@ import Route exposing (QueryArgs)
 type alias Model =
     { currentQueryArgs : QueryArgs
     , response : Response
-    , facets : Maybe FacetModel
+    , facets : FacetModel
     , gotoPageValue : String
     }
 
@@ -17,7 +17,17 @@ init : QueryArgs -> Model
 init initalQueryArgs =
     { currentQueryArgs = initalQueryArgs
     , response = NoResponseToShow
-    , facets = Nothing
+    , facets =
+        { cities = Nothing
+        , genres = Nothing
+        , notations = Nothing
+        , composers = Nothing
+        , sourceTypes = Nothing
+        , hasInventory = Nothing
+        , organizationType = Nothing
+        , location = Nothing
+        , anonymous = Nothing
+        }
     , gotoPageValue = ""
     }
 

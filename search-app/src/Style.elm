@@ -38,9 +38,9 @@ colourScheme =
     , midGrey =
         Element.fromRgb255
             { alpha = 1
-            , red = 169
-            , green = 172
-            , blue = 171
+            , red = 100
+            , green = 120
+            , blue = 120
             }
     , lightGrey =
         Element.fromRgb255

@@ -1,4 +1,4 @@
-module Facets.CheckboxFacet exposing (CheckBoxFacetModel, CheckBoxFacetMsg(..), initialCheckboxModel, update, viewCheckboxFacet)
+module Facets.CheckboxFacet exposing (CheckBoxFacetModel, CheckBoxFacetMsg(..), update, updateCheckboxModel, viewCheckboxFacet)
 
 import Element exposing (Element, alignRight, clip, clipY, column, el, fill, height, maximum, none, padding, paddingXY, pointer, px, row, scrollbarX, scrollbarY, spacing, text, width)
 import Element.Border as Border
@@ -29,11 +29,11 @@ type alias CheckBoxFacetModel =
     }
 
 
-initialCheckboxModel : { identifier : String, available : List FacetItem, selected : List FacetItem } -> CheckBoxFacetModel
-initialCheckboxModel cfg =
+updateCheckboxModel : { identifier : String, available : List FacetItem, selected : List FacetItem, bodyHidden : Bool } -> CheckBoxFacetModel
+updateCheckboxModel cfg =
     let
-        bodyHidden =
-            if List.isEmpty cfg.selected then
+        viewBody =
+            if cfg.bodyHidden && List.isEmpty cfg.selected then
                 True
 
             else
@@ -44,7 +44,7 @@ initialCheckboxModel cfg =
     , allOptions = cfg.available -- holds a list of all the options so that we can reset the available ones from the whole list.
     , selected = cfg.selected
     , filterText = Nothing
-    , bodyHidden = bodyHidden
+    , bodyHidden = viewBody
     }
 
 

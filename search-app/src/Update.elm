@@ -1,16 +1,17 @@
 module Update exposing (update)
 
 import Cmd.Extra as CE
-import Facets exposing (FacetModel, createFacetConfigurations, setCities, setComposers, setGenres, setHasInventory, setNotations, setSourceTypes)
+import Facets exposing (FacetModel, setCities, setComposers, setGenres, setHasInventory, setNotations, setSourceTypes, updateFacetConfigurations)
 import Facets.CheckboxFacet as CheckboxFacet exposing (CheckBoxFacetModel, CheckBoxFacetMsg)
 import Facets.OneChoiceFacet as OneChoice exposing (OneChoiceFacetModel, OneChoiceFacetMsg)
+import Helpers exposing (boolToStr)
 import Maybe.Extra as ME
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Ports exposing (pushUrl)
-import RecordTypes exposing (CheckboxFacetTypes(..), FacetItem, OneChoiceFacetTypes(..), searchBodyDecoder)
+import RecordTypes exposing (BooleanFacetItem, CheckboxFacetTypes(..), FacetItem, OneChoiceFacetTypes(..), searchBodyDecoder)
 import Request exposing (Response(..), createRequest, serverUrl)
-import Route exposing (QueryArgs, Route(..), buildQueryParameters, defaultQueryArgs, setCurrentPage, setKeywordQuery, setQueryCities, setQueryComposers, setQueryGenres, setQueryNotations, setQuerySourceTypes, setQueryType)
+import Route exposing (QueryArgs, Route(..), buildQueryParameters, defaultQueryArgs, setCurrentPage, setKeywordQuery, setQueryCities, setQueryComposers, setQueryGenres, setQueryHasInventory, setQueryNotations, setQuerySourceTypes, setQueryType)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -19,7 +20,7 @@ update msg model =
         ServerRespondedWithSearchData (Ok ( _, response )) ->
             let
                 facets =
-                    Just (createFacetConfigurations model.facets model.currentQueryArgs response.facets)
+                    updateFacetConfigurations model.facets model.currentQueryArgs response.facets
             in
             ( { model
                 | response = Response response
@@ -61,7 +62,7 @@ update msg model =
 
                 newUrl =
                     buildQueryParameters newQueryArgs
-                        |> serverUrl [ "search" ]
+                        |> serverUrl [ "search/" ]
 
                 updateResultsCmd =
                     createRequest ServerRespondedWithSearchData searchBodyDecoder newUrl
@@ -83,30 +84,25 @@ update msg model =
         UserInteractedWithCheckboxFacet facet subMsg ->
             let
                 updatedFacet =
-                    Maybe.map
-                        (\facetBlock ->
-                            let
-                                helperPartial =
-                                    checkboxFacetUpdateHelper subMsg facetBlock
-                            in
-                            case facet of
-                                Genres ->
-                                    helperPartial setGenres .genres
+                    let
+                        helperPartial =
+                            checkboxFacetUpdateHelper subMsg model.facets
+                    in
+                    case facet of
+                        Genres ->
+                            helperPartial setGenres .genres
 
-                                Composers ->
-                                    helperPartial setComposers .composers
+                        Composers ->
+                            helperPartial setComposers .composers
 
-                                SourceTypes ->
-                                    helperPartial setSourceTypes .sourceTypes
+                        SourceTypes ->
+                            helperPartial setSourceTypes .sourceTypes
 
-                                Notations ->
-                                    helperPartial setNotations .notations
+                        Notations ->
+                            helperPartial setNotations .notations
 
-                                Cities ->
-                                    helperPartial setCities .cities
-                        )
-                        model.facets
-                        |> ME.join
+                        Cities ->
+                            helperPartial setCities .cities
 
                 updatedQueryArgs =
                     let
@@ -140,13 +136,13 @@ update msg model =
                     let
                         updatedUrl =
                             buildQueryParameters updatedQueryArgs
-                                |> serverUrl [ "search" ]
+                                |> serverUrl [ "search/" ]
 
                         updateResultsCmd =
                             createRequest ServerRespondedWithSearchData searchBodyDecoder updatedUrl
                     in
                     ( { model
-                        | facets = Just newFacetBlock
+                        | facets = newFacetBlock
                       }
                     , Cmd.batch
                         [ updateResultsCmd
@@ -158,28 +154,53 @@ update msg model =
                 updatedFacet
                 |> Maybe.withDefault ( model, Cmd.none )
 
+        UserInteractedWithOneChoiceFacet facet OneChoice.OnToggleHide ->
+            oneChoiceFacetHelperNoQuery model facet OneChoice.OnToggleHide
+
         UserInteractedWithOneChoiceFacet facet subMsg ->
             let
                 updatedFacet =
-                    Maybe.map
-                        (\facetBlock ->
-                            case facet of
-                                HasInventory ->
-                                    let
-                                        helperPartial =
-                                            oneChoiceFacetUpdateHelper subMsg facetBlock
-                                    in
-                                    helperPartial setHasInventory .hasInventory
-                        )
-                        model.facets
-                        |> ME.join
+                    let
+                        helperPartial =
+                            oneChoiceFacetUpdateHelper subMsg model.facets
+                    in
+                    case facet of
+                        HasInventory ->
+                            helperPartial setHasInventory .hasInventory
+
+                updatedQueryArgs =
+                    let
+                        queryArgs =
+                            model.currentQueryArgs
+
+                        facetBlock =
+                            Maybe.map Tuple.first updatedFacet
+
+                        partialHelper =
+                            oneChoiceQueryArgsUpdateHelper queryArgs facetBlock
+                    in
+                    case facet of
+                        HasInventory ->
+                            partialHelper setQueryHasInventory .hasInventory
             in
             Maybe.map
                 (\( newFacetBlock, newSubCmd ) ->
+                    let
+                        updatedUrl =
+                            buildQueryParameters updatedQueryArgs
+                                |> serverUrl [ "search/" ]
+
+                        updateResultsCmd =
+                            createRequest ServerRespondedWithSearchData searchBodyDecoder updatedUrl
+                    in
                     ( { model
-                        | facets = Just newFacetBlock
+                        | facets = newFacetBlock
                       }
-                    , Cmd.map (UserInteractedWithOneChoiceFacet facet) newSubCmd
+                    , Cmd.batch
+                        [ Cmd.map (UserInteractedWithOneChoiceFacet facet) newSubCmd
+                        , pushUrl updatedUrl
+                        , updateResultsCmd
+                        ]
                     )
                 )
                 updatedFacet
@@ -207,7 +228,7 @@ update msg model =
             let
                 newUrl =
                     buildQueryParameters model.currentQueryArgs
-                        |> serverUrl [ "search" ]
+                        |> serverUrl [ "search/" ]
 
                 updateResultsCmd =
                     createRequest ServerRespondedWithSearchData searchBodyDecoder newUrl
@@ -271,7 +292,7 @@ update msg model =
 
                             newUrl =
                                 buildQueryParameters newQueryArgs
-                                    |> serverUrl [ "search" ]
+                                    |> serverUrl [ "search/" ]
                         in
                         Cmd.batch
                             [ createRequest ServerRespondedWithSearchData searchBodyDecoder newUrl
@@ -288,7 +309,7 @@ update msg model =
 
                 newUrl =
                     buildQueryParameters newQueryArgs
-                        |> serverUrl [ "search" ]
+                        |> serverUrl [ "search/" ]
             in
             ( model
             , Cmd.batch
@@ -301,7 +322,7 @@ update msg model =
             let
                 newUrl =
                     buildQueryParameters defaultQueryArgs
-                        |> serverUrl [ "search" ]
+                        |> serverUrl [ "search/" ]
 
                 clearCmd =
                     createRequest ServerRespondedWithSearchData searchBodyDecoder newUrl
@@ -378,6 +399,31 @@ queryArgsUpdateHelper queryArgs facetBlock queryArgsUpdateFn selector =
         |> Maybe.withDefault queryArgs
 
 
+oneChoiceQueryArgsUpdateHelper :
+    QueryArgs
+    -> Maybe FacetModel
+    -> (List String -> QueryArgs -> QueryArgs)
+    -> (FacetModel -> Maybe { a | selected : Maybe BooleanFacetItem })
+    -> QueryArgs
+oneChoiceQueryArgsUpdateHelper queryArgs facetBlock queryArgsUpdateFn selector =
+    Maybe.map
+        (\fm ->
+            let
+                fvalues =
+                    Maybe.map
+                        (\f ->
+                            Maybe.map (\g -> g.value |> boolToStr |> List.singleton) f.selected
+                        )
+                        (selector fm)
+                        |> ME.join
+                        |> Maybe.withDefault []
+            in
+            queryArgsUpdateFn fvalues queryArgs
+        )
+        facetBlock
+        |> Maybe.withDefault queryArgs
+
+
 clearAllCheckboxFacetsHelper : Cmd Msg
 clearAllCheckboxFacetsHelper =
     List.map (\f -> CE.perform (UserInteractedWithCheckboxFacet f CheckboxFacet.OnClear)) [ Genres, Composers, SourceTypes, Notations, Cities ]
@@ -392,38 +438,53 @@ clearAllOneChoiceFacetsHelper =
 facetUpdateHelperNoQuery : Model -> CheckboxFacetTypes -> CheckBoxFacetMsg -> ( Model, Cmd Msg )
 facetUpdateHelperNoQuery model facet subMsg =
     let
+        helperPartial =
+            checkboxFacetUpdateHelper subMsg model.facets
+
         updatedFacets =
-            Maybe.map
-                (\fb ->
-                    let
-                        helperPartial =
-                            checkboxFacetUpdateHelper subMsg fb
-                    in
-                    case facet of
-                        Genres ->
-                            helperPartial setGenres .genres
+            case facet of
+                Genres ->
+                    helperPartial setGenres .genres
 
-                        Composers ->
-                            helperPartial setComposers .composers
+                Composers ->
+                    helperPartial setComposers .composers
 
-                        SourceTypes ->
-                            helperPartial setSourceTypes .sourceTypes
+                SourceTypes ->
+                    helperPartial setSourceTypes .sourceTypes
 
-                        Notations ->
-                            helperPartial setNotations .notations
+                Notations ->
+                    helperPartial setNotations .notations
 
-                        Cities ->
-                            helperPartial setCities .cities
-                )
-                model.facets
-                |> ME.join
+                Cities ->
+                    helperPartial setCities .cities
     in
     Maybe.map
         (\( newFacetModel, newFacetCmd ) ->
             ( { model
-                | facets = Just newFacetModel
+                | facets = newFacetModel
               }
             , Cmd.map (UserInteractedWithCheckboxFacet facet) newFacetCmd
+            )
+        )
+        updatedFacets
+        |> Maybe.withDefault ( model, Cmd.none )
+
+
+oneChoiceFacetHelperNoQuery : Model -> OneChoiceFacetTypes -> OneChoiceFacetMsg -> ( Model, Cmd Msg )
+oneChoiceFacetHelperNoQuery model facet subMsg =
+    let
+        helperPartial =
+            oneChoiceFacetUpdateHelper subMsg model.facets
+
+        updatedFacets =
+            case facet of
+                HasInventory ->
+                    helperPartial setHasInventory .hasInventory
+    in
+    Maybe.map
+        (\( newFacetModel, newFacetCmd ) ->
+            ( { model | facets = newFacetModel }
+            , Cmd.map (UserInteractedWithOneChoiceFacet facet) newFacetCmd
             )
         )
         updatedFacets

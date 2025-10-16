@@ -1,4 +1,4 @@
-module Helpers exposing (onEnter, prepareQuery, viewMaybe)
+module Helpers exposing (boolToStr, onEnter, prepareQuery, strToBool, viewMaybe)
 
 import Dict exposing (Dict)
 import Element exposing (Element, none)
@@ -93,3 +93,32 @@ addToParametersHelp value maybeList =
 
         Just list ->
             Just (value :: list)
+
+
+boolToStr : Bool -> String
+boolToStr inp =
+    if inp then
+        "True"
+
+    else
+        "False"
+
+
+strToBool : String -> Bool
+strToBool inp =
+    case inp of
+        "true" ->
+            True
+
+        "True" ->
+            True
+
+        "false" ->
+            False
+
+        "False" ->
+            False
+
+        -- Treat any other string as false too.
+        _ ->
+            False

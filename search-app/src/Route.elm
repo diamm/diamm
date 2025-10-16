@@ -1,4 +1,4 @@
-module Route exposing (QueryArgs, Route(..), buildQueryParameters, defaultQueryArgs, extractPageNumberFromUrl, locationHrefToRoute, parseUrl, setCurrentPage, setKeywordQuery, setQueryCities, setQueryComposers, setQueryGenres, setQueryNotations, setQuerySourceTypes, setQueryType)
+module Route exposing (QueryArgs, Route(..), buildQueryParameters, defaultQueryArgs, extractPageNumberFromUrl, locationHrefToRoute, parseUrl, setCurrentPage, setKeywordQuery, setQueryCities, setQueryComposers, setQueryGenres, setQueryHasInventory, setQueryNotations, setQuerySourceTypes, setQueryType)
 
 import Dict
 import Helpers exposing (prepareQuery)
@@ -23,6 +23,7 @@ type alias QueryArgs =
     , genres : List String
     , sourceTypes : List String
     , cities : List String
+    , hasInventory : List String
     , currentPage : Int
     }
 
@@ -64,6 +65,7 @@ queryParamsParser =
         |> apply genreParamParser
         |> apply sourceTypesParser
         |> apply cityParamParser
+        |> apply hasInventoryParamParser
         |> apply pageParamParser
 
 
@@ -102,6 +104,11 @@ sourceTypesParser =
     Q.custom "sourcetype" identity
 
 
+hasInventoryParamParser : Q.Parser (List String)
+hasInventoryParamParser =
+    Q.custom "has_inventory" identity
+
+
 typeQueryStringToResultType : List String -> RecordTypeFilters
 typeQueryStringToResultType typeList =
     List.map parseStringToResultMode typeList
@@ -125,6 +132,7 @@ defaultQueryArgs =
     , genres = []
     , sourceTypes = []
     , cities = []
+    , hasInventory = []
     , currentPage = 1
     }
 
@@ -224,6 +232,11 @@ setQuerySourceTypes newValues oldRecord =
 setQueryCities : List String -> { a | cities : List String } -> { a | cities : List String }
 setQueryCities newValues oldRecord =
     { oldRecord | cities = newValues }
+
+
+setQueryHasInventory : List String -> { a | hasInventory : List String } -> { a | hasInventory : List String }
+setQueryHasInventory newValues oldRecord =
+    { oldRecord | hasInventory = newValues }
 
 
 

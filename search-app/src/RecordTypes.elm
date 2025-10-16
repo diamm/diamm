@@ -1,6 +1,6 @@
-module RecordTypes exposing (ArchiveResultBody, CheckboxFacetTypes(..), CompositionResultBody, FacetBlock, FacetItem, OneChoiceFacetTypes(..), OrganizationResultBody, PaginationBlock, PersonResultBody, RecordTypeFilters(..), SearchBody, SearchResult(..), SearchTypesBlock, SetResultBody, SourceResultBody, facetItemToLabel, resultTypeOptions, searchBodyDecoder)
+module RecordTypes exposing (ArchiveResultBody, BooleanFacetItem, CheckboxFacetTypes(..), CompositionResultBody, FacetBlock, FacetItem, OneChoiceFacetTypes(..), OrganizationResultBody, PaginationBlock, PersonResultBody, RecordTypeFilters(..), SearchBody, SearchResult(..), SearchTypesBlock, SetResultBody, SourceResultBody, facetItemToLabel, resultTypeOptions, searchBodyDecoder)
 
-import Json.Decode as Decode exposing (Decoder, bool, int, list, maybe, string)
+import Json.Decode as Decode exposing (Decoder, andThen, bool, fail, int, list, maybe, string, succeed)
 import Json.Decode.Pipeline exposing (optional, required)
 
 
@@ -130,6 +130,10 @@ type alias FacetItem =
     { value : String, count : Int }
 
 
+type alias BooleanFacetItem =
+    { value : Bool, count : Int }
+
+
 facetItemToLabel : FacetItem -> String
 facetItemToLabel item =
     item.value ++ " (" ++ String.fromInt item.count ++ ")"
@@ -141,11 +145,10 @@ type alias FacetBlock =
     , notations : List FacetItem
     , composers : List FacetItem
     , sourceType : List FacetItem
-    , hasInventory : List FacetItem
+    , hasInventory : List BooleanFacetItem
     , organizationType : List FacetItem
     , location : List FacetItem
-    , archive : List FacetItem
-    , anonymous : List FacetItem
+    , anonymous : List BooleanFacetItem
 
     --, archiveLocations : Maybe Never
     }
@@ -159,11 +162,10 @@ facetBlockDecoder =
         |> required "notations" (list facetItemDecoder)
         |> required "composers" (list facetItemDecoder)
         |> required "source_type" (list facetItemDecoder)
-        |> required "has_inventory" (list facetItemDecoder)
+        |> required "has_inventory" (list booleanFacetItemDecoder)
         |> required "organization_type" (list facetItemDecoder)
         |> required "location" (list facetItemDecoder)
-        |> required "archive" (list facetItemDecoder)
-        |> required "anonymous" (list facetItemDecoder)
+        |> required "anonymous" (list booleanFacetItemDecoder)
 
 
 facetItemDecoder : Decoder FacetItem
@@ -171,6 +173,26 @@ facetItemDecoder =
     Decode.succeed FacetItem
         |> required "value" string
         |> required "count" int
+
+
+booleanFacetItemDecoder : Decoder BooleanFacetItem
+booleanFacetItemDecoder =
+    Decode.succeed BooleanFacetItem
+        |> required "value" (string |> andThen boolFromStringDecoder)
+        |> required "count" int
+
+
+boolFromStringDecoder : String -> Decoder Bool
+boolFromStringDecoder inp =
+    case inp of
+        "true" ->
+            succeed True
+
+        "false" ->
+            succeed False
+
+        _ ->
+            fail ("Unknown boolean value: " ++ inp)
 
 
 type alias SearchBody =

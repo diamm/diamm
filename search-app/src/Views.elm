@@ -1,6 +1,6 @@
 module Views exposing (view)
 
-import Element exposing (Element, alignRight, centerX, column, el, fill, fillPortion, height, layout, maximum, none, padding, paddingXY, pointer, px, row, spacing, text, width)
+import Element exposing (Element, alignRight, centerX, column, el, fill, height, layout, maximum, none, padding, paddingXY, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events as Events exposing (onClick)
@@ -92,7 +92,7 @@ searchView model body =
                     , spacing 10
                     ]
                     [ viewResultsControls body
-                    , viewMaybe viewFacets model.facets
+                    , viewFacets model.facets
                     ]
                 , column
                     [ width fill
@@ -104,7 +104,7 @@ searchView model body =
                         [ width fill ]
                         [ column
                             [ width fill
-                            , spacing 16
+                            , spacing 20
                             ]
                             (List.map resultView body.results)
                         ]
