@@ -32,6 +32,38 @@ def _get_sources(cfg: dict):
                ) AS surface_type,
             s.date_statement AS date_statement, s.measurements AS measurements, s.inventory_provided AS inventory_provided,
             s.start_date AS start_date, s.end_date AS end_date, s.public AS public,
+            COALESCE(
+               (jsonb_build_object(
+                        1, 'Rotulus',
+                        2, 'Codex',
+                        3, 'Libellus',
+                        4, 'Unknown'
+                )->>(original_format::integer)::text)::text, ''
+            ) AS original_format,
+            COALESCE(
+               (jsonb_build_object(
+                        1, 'Fragment',
+                        2, 'Complete',
+                        3, 'Lost'
+                )->>(current_state::integer)::text)::text, ''
+            ) AS current_state,
+            COALESCE(
+               (jsonb_build_object(
+                        1, 'Removed from host manuscript',
+                        2, 'Still within host manuscript',
+                        3, 'Within fragment collection'
+                )->>(current_host::integer)::text)::text, ''
+            ) AS current_host,
+            COALESCE(
+               (jsonb_build_object(
+                        1, 'Liturgical book',
+                        2, 'Miscellany',
+                        3, 'Accounts',
+                        4, 'Polyphony',
+                        5, 'Songbook',
+                        6, 'Other'
+                )->>(host_main_contents::integer)::text)::text, ''
+            ) AS host_main_contents,
             (SELECT count(itc.id)
                 FROM diamm_data_item AS it
                 LEFT JOIN diamm_data_composition AS itc ON it.composition_id = itc.id
@@ -168,6 +200,11 @@ class SourceSearchSerializer(serpy.DictSerializer):
     external_manifest_b = serpy.BoolField(attr="has_external_manifest", required=False)
     bibliography_json = serpy.Field(attr="bibliography")
     source_with_images_b = serpy.MethodField()
+
+    original_format_s = serpy.StrField(attr="original_format", required=False)
+    current_state_s = serpy.StrField(attr="current_state", required=False)
+    current_host_s = serpy.StrField(attr="current_host", required=False)
+    host_main_contents_s = serpy.StrField(attr="host_main_contents", required=False)
 
     def get_composers_ss(self, obj) -> list | None:
         if not obj.get("composers"):
