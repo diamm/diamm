@@ -236,6 +236,9 @@ INTERFACE_FACETS = {
     "composers": "composers_ss",
     "archive_locations": ["country_s", "city_s"],  # an array creates a pivot facet
     "source_type": "source_type_s",
+    "original_format": "original_format_s",
+    "current_state": "current_state_s",
+    "host_main_contents": "host_main_contents_s",
     "has_inventory": "inventory_provided_b",
     "organization_type": "organization_type_s",
     "location": "location_s",
