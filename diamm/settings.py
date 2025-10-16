@@ -239,7 +239,7 @@ INTERFACE_FACETS = {
     "has_inventory": "inventory_provided_b",
     "organization_type": "organization_type_s",
     "location": "location_s",
-    "archive": "archive_s",
+    # "archive": "archive_s",
     "anonymous": "anonymous_b",
     # "source_date_range": "facet_date_range_ii"
 }
@@ -276,7 +276,7 @@ SOLR = {
         "f.city_s.facet.sort": "index",
         "f.name_s.facet.sort": "index",
         "f.genres_ss.facet.sort": "index",
-        "f.archive_s.facet.sort": "index",
+        # "f.archive_s.facet.sort": "index",
     },
     "FULLTEXT_QUERYFIELDS": [  # Boosting these fields allows more common methods of referring to a MSS to bubble up in the search results.
         "text",
