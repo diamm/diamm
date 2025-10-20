@@ -1,7 +1,7 @@
 import logging
 
-import ypres
 import ujson
+import ypres
 
 from diamm.serializers.search.helpers import (
     format_person_name,
@@ -37,7 +37,7 @@ def _get_people(cfg: dict):
                            'latest_year_approximate', p.latest_year_approximate,
                            'floruit', p.floruit) AS full_name_info,
                     p.last_name AS last_name, p.first_name AS first_name,
-                    p.title AS title, p.earliest_year AS earlist_year, p.latest_year AS latest_year,
+                    p.title AS title, p.earliest_year AS earliest_year, p.latest_year AS latest_year,
                     (SELECT array_agg(DISTINCT r.name)
                      FROM diamm_data_personrole AS pr
                      LEFT JOIN diamm_data_role AS r ON pr.role_id = r.id
