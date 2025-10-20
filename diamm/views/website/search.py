@@ -99,6 +99,26 @@ class SearchView(generics.GenericAPIView):
                 {"organization_type_s": f'"{request.GET.get("orgtype", None)}"'}
             )
 
+        if "source_composers" in request.GET:
+            filters.update(
+                {"source_composers_ss": [f'"{g}"' for g in request.GET.getlist("source_composers")]}
+            )
+
+        if "current_state" in request.GET:
+            filters.update(
+                {"current_state_s": [f'"{g}"' for g in request.GET.getlist("current_state")]}
+            )
+
+        if "original_format" in request.GET:
+            filters.update(
+                {"original_format_s": [f'"{g}"' for g in request.GET.getlist("original_format")]}
+            )
+
+        if "current_host" in request.GET:
+            filters.update(
+                {"current_host_s": [f'"{g}"' for g in request.GET.getlist("current_host")]}
+            )
+
         try:
             page_num = int(request.GET.get("page", 1))
         except ValueError:

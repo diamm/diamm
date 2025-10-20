@@ -3,6 +3,7 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.urls import reverse
 from django.utils.functional import cached_property
+from django_stubs_ext import StrOrPromise
 
 from diamm.helpers.solr_helpers import SolrManager
 
@@ -180,7 +181,7 @@ class Source(models.Model):
         return summary
 
     @property
-    def surface_type(self) -> str | None:
+    def surface_type(self) -> StrOrPromise | None:
         if not self.surface:
             return None
 
@@ -188,7 +189,7 @@ class Source(models.Model):
         return d[self.surface]
 
     @property
-    def numbering_system_type(self) -> str | None:
+    def numbering_system_type(self) -> StrOrPromise | None:
         if not self.numbering_system:
             return None
         d = dict(NumberingSystemChoices.choices)
@@ -222,7 +223,7 @@ class Source(models.Model):
         return None
 
     @property
-    def compositions(self):
+    def compositions(self) -> list[str]:
         composition_names = (
             self.inventory.filter(composition__isnull=False)
             .select_related("composition")
@@ -235,7 +236,7 @@ class Source(models.Model):
         return self.inventory.filter(composition__isnull=False).count()
 
     @property
-    def solr_bibliography(self) -> list:
+    def solr_bibliography(self) -> list[str]:
         # Grab a list of the ids for this record
         connection = SolrManager(settings.SOLR["SERVER"])
         fq = ["type:bibliography", f"sources_ii:{self.pk}"]

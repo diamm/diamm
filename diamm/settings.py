@@ -230,21 +230,20 @@ REST_FRAMEWORK = {
 # presence here is a prerequisite to there being a facet block in the
 # React search application.
 INTERFACE_FACETS = {
-    "cities": "facet_cities_ss",
     "genres": "genres_ss",
     "notations": "notations_ss",
-    "composers": "composers_ss",
-    "archive_locations": ["country_s", "city_s"],  # an array creates a pivot facet
+    "source_composers": "source_composers_ss",
     "source_type": "source_type_s",
     "original_format": "original_format_s",
     "current_state": "current_state_s",
+    "source_archive_city": "source_archive_city_s",
     "host_main_contents": "host_main_contents_s",
     "has_inventory": "inventory_provided_b",
+    "composers": "composers_ss",
     "organization_type": "organization_type_s",
     "location": "location_s",
-    # "archive": "archive_s",
     "anonymous": "anonymous_b",
-    # "source_date_range": "facet_date_range_ii"
+    "cities": "city_s",
 }
 
 SOLR = {

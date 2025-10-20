@@ -44,7 +44,7 @@ class DiammTokenAuthentication(TokenAuthentication):
 
     def authenticate_enhanced_credentials(
         self, key: str, domain: str, secret: str
-    ) -> tuple[CustomUserModel , str]:
+    ) -> tuple[CustomUserModel, str]:
         model = self.get_model()
         try:
             token = model.objects.select_related("user").get(key=key)
