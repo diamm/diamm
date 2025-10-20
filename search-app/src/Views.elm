@@ -137,7 +137,7 @@ mainFilterList currentSelection searchTypes =
         [ alignLeft
         , Font.bold
         ]
-        (text "Filter:")
+        (text "Result type:")
     , viewFilter { currentSelection = currentSelection, thisMenu = ShowAllRecords, count = 0, label = "Show All" }
     , viewMaybe (\f -> viewFilter { currentSelection = currentSelection, thisMenu = ArchiveRecords, count = f, label = "Archive" }) searchTypes.archive
     , viewMaybe (\f -> viewFilter { currentSelection = currentSelection, thisMenu = CompositionRecords, count = f, label = "Composition" }) searchTypes.composition
@@ -249,6 +249,9 @@ viewSelectedResults model =
         currentState =
             selectedResultsTemplate "Current state" cqa.currentState
 
+        hostMainContents =
+            selectedResultsTemplate "Host main contents" cqa.hostMainContents
+
         compGenres =
             selectedResultsTemplate "Genres" cqa.genres
 
@@ -286,6 +289,7 @@ viewSelectedResults model =
             , hasInventory
             , originalFormat
             , currentState
+            , hostMainContents
             , compGenres
             , compComposers
             , compAnon

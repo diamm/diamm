@@ -1,17 +1,16 @@
 module Update exposing (update)
 
 import Cmd.Extra as CE
-import Facets exposing (FacetModel, setAnonymous, setCities, setComposers, setCurrentState, setGenres, setHasInventory, setNotations, setOriginalFormat, setSourceComposers, setSourceTypes, updateFacetConfigurations)
+import Facets exposing (FacetModel, setAnonymous, setCities, setComposers, setCurrentState, setGenres, setHasInventory, setHostMainContents, setNotations, setOrganizationType, setOriginalFormat, setSourceComposers, setSourceTypes, updateFacetConfigurations)
 import Facets.CheckboxFacet as CheckboxFacet exposing (CheckBoxFacetModel, CheckBoxFacetMsg)
 import Facets.OneChoiceFacet as OneChoice exposing (OneChoiceFacetModel, OneChoiceFacetMsg)
-import Helpers exposing (boolToStr)
 import Maybe.Extra as ME
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Ports exposing (pushUrl)
 import RecordTypes exposing (CheckboxFacetTypes(..), FacetItem, OneChoiceFacetTypes(..), searchBodyDecoder)
 import Request exposing (Response(..), createRequest, serverUrl)
-import Route exposing (QueryArgs, Route(..), buildQueryParameters, defaultQueryArgs, setCurrentPage, setKeywordQuery, setQueryAnonymous, setQueryCities, setQueryComposers, setQueryCurrentState, setQueryGenres, setQueryHasInventory, setQueryNotations, setQueryOriginalFormat, setQuerySourceComposers, setQuerySourceTypes, setQueryType)
+import Route exposing (QueryArgs, Route(..), buildQueryParameters, defaultQueryArgs, setCurrentPage, setKeywordQuery, setQueryAnonymous, setQueryCities, setQueryComposers, setQueryCurrentState, setQueryGenres, setQueryHasInventory, setQueryHostMainContents, setQueryNotations, setQueryOrganizationType, setQueryOriginalFormat, setQuerySourceComposers, setQuerySourceTypes, setQueryType)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -313,13 +312,29 @@ oneChoiceQueryArgsUpdateHelper queryArgs facetBlock queryArgsUpdateFn selector =
 
 clearAllCheckboxFacetsHelper : Cmd Msg
 clearAllCheckboxFacetsHelper =
-    List.map (\f -> CE.perform (UserInteractedWithCheckboxFacet f CheckboxFacet.OnClear)) [ Genres, Composers, Notations ]
+    List.map
+        (\f ->
+            CE.perform (UserInteractedWithCheckboxFacet f CheckboxFacet.OnClear)
+        )
+        [ Genres, Composers, Notations, SourceComposers ]
         |> Cmd.batch
 
 
 clearAllOneChoiceFacetsHelper : Cmd Msg
 clearAllOneChoiceFacetsHelper =
-    List.map (\f -> CE.perform (UserInteractedWithOneChoiceFacet f OneChoice.OnClear)) [ HasInventory, AnonymousComposer, Cities, SourceTypes ]
+    List.map
+        (\f ->
+            CE.perform (UserInteractedWithOneChoiceFacet f OneChoice.OnClear)
+        )
+        [ HasInventory
+        , AnonymousComposer
+        , Cities
+        , SourceTypes
+        , OriginalFormat
+        , CurrentState
+        , HostMainContents
+        , OrganizationType
+        ]
         |> Cmd.batch
 
 
@@ -490,6 +505,28 @@ oneChoiceFacetHelper emitRequest model facet subMsg =
                             Maybe.map Tuple.first upd
                     in
                     { facet = upd, queryArgs = updateQueryHelper fb setQueryCurrentState .currentState }
+
+                HostMainContents ->
+                    let
+                        upd =
+                            updatePartialHelper setHostMainContents .hostMainContents
+
+                        fb =
+                            Maybe.map Tuple.first upd
+                    in
+                    { facet = upd, queryArgs = updateQueryHelper fb setQueryHostMainContents .hostMainContents }
+
+                OrganizationType ->
+                    let
+                        upd =
+                            updatePartialHelper setOrganizationType .organizationType
+
+                        fb =
+                            Maybe.map Tuple.first upd
+                    in
+                    { facet = upd
+                    , queryArgs = updateQueryHelper fb setQueryOrganizationType .organizationType
+                    }
     in
     Maybe.map
         (\( newFacetBlock, newSubCmd ) ->

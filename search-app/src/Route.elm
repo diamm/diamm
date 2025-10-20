@@ -1,4 +1,4 @@
-module Route exposing (QueryArgs, Route(..), buildQueryParameters, defaultQueryArgs, extractPageNumberFromUrl, locationHrefToRoute, parseUrl, setCurrentPage, setKeywordQuery, setQueryAnonymous, setQueryCities, setQueryComposers, setQueryCurrentState, setQueryGenres, setQueryHasInventory, setQueryNotations, setQueryOriginalFormat, setQuerySourceComposers, setQuerySourceTypes, setQueryType)
+module Route exposing (QueryArgs, Route(..), buildQueryParameters, defaultQueryArgs, extractPageNumberFromUrl, locationHrefToRoute, parseUrl, setCurrentPage, setKeywordQuery, setQueryAnonymous, setQueryCities, setQueryComposers, setQueryCurrentState, setQueryGenres, setQueryHasInventory, setQueryHostMainContents, setQueryNotations, setQueryOrganizationType, setQueryOriginalFormat, setQuerySourceComposers, setQuerySourceTypes, setQueryType)
 
 import Dict
 import Helpers exposing (prepareQuery)
@@ -28,6 +28,8 @@ type alias QueryArgs =
     , anonymous : List String
     , originalFormat : List String
     , currentState : List String
+    , hostMainContents : List String
+    , organizationType : List String
     , currentPage : Int
     }
 
@@ -74,6 +76,8 @@ queryParamsParser =
         |> apply anonymousParamParser
         |> apply (Q.custom "original_format" identity)
         |> apply (Q.custom "current_state" identity)
+        |> apply (Q.custom "host_contents" identity)
+        |> apply (Q.custom "orgtype" identity)
         |> apply pageParamParser
 
 
@@ -155,6 +159,8 @@ defaultQueryArgs =
     , anonymous = []
     , originalFormat = []
     , currentState = []
+    , hostMainContents = []
+    , organizationType = []
     , currentPage = 1
     }
 
@@ -215,6 +221,12 @@ buildQueryParameters queryArgs =
 
         currentState =
             List.map (Url.Builder.string "current_state") queryArgs.currentState
+
+        hostContents =
+            List.map (Url.Builder.string "host_contents") queryArgs.hostMainContents
+
+        organizationType =
+            List.map (Url.Builder.string "orgtype") queryArgs.organizationType
     in
     List.concat
         [ qParam
@@ -230,6 +242,8 @@ buildQueryParameters queryArgs =
         , sourceComposers
         , originalFormat
         , currentState
+        , hostContents
+        , organizationType
         ]
 
 
@@ -302,6 +316,16 @@ setQuerySourceComposers newValues oldRecord =
 setQueryCurrentState : List String -> { a | currentState : List String } -> { a | currentState : List String }
 setQueryCurrentState newValues oldRecord =
     { oldRecord | currentState = newValues }
+
+
+setQueryHostMainContents : List String -> { a | hostMainContents : List String } -> { a | hostMainContents : List String }
+setQueryHostMainContents newValues oldRecord =
+    { oldRecord | hostMainContents = newValues }
+
+
+setQueryOrganizationType : List String -> { a | organizationType : List String } -> { a | organizationType : List String }
+setQueryOrganizationType newValues oldRecord =
+    { oldRecord | organizationType = newValues }
 
 
 

@@ -30,6 +30,7 @@ init initalQueryArgs =
         , sourceComposers = Nothing
         , originalFormat = Nothing
         , currentState = Nothing
+        , hostMainContents = Nothing
         }
     , gotoPageValue = ""
     }

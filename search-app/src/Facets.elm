@@ -1,4 +1,4 @@
-module Facets exposing (FacetModel, setAnonymous, setCities, setComposers, setCurrentState, setGenres, setHasInventory, setNotations, setOriginalFormat, setSourceComposers, setSourceTypes, updateFacetConfigurations, viewFacets)
+module Facets exposing (FacetModel, setAnonymous, setCities, setComposers, setCurrentState, setGenres, setHasInventory, setHostMainContents, setNotations, setOrganizationType, setOriginalFormat, setSourceComposers, setSourceTypes, updateFacetConfigurations, viewFacets)
 
 import Element exposing (Element, column, fill, maximum, none, padding, paddingXY, row, spacing, text, width)
 import Element.Border as Border
@@ -21,11 +21,12 @@ type alias FacetModel =
     , sourceComposers : Maybe CheckBoxFacetModel
     , sourceTypes : Maybe OneChoiceFacetModel
     , hasInventory : Maybe OneChoiceFacetModel
-    , organizationType : Maybe Never
+    , organizationType : Maybe OneChoiceFacetModel
     , location : Maybe Never
     , anonymous : Maybe OneChoiceFacetModel
     , originalFormat : Maybe OneChoiceFacetModel
     , currentState : Maybe OneChoiceFacetModel
+    , hostMainContents : Maybe OneChoiceFacetModel
     }
 
 
@@ -183,6 +184,38 @@ updateFacetConfigurations currentModel queryArgs facetBlock =
 
             else
                 Nothing
+
+        hostMainContentsFacet =
+            if not (List.isEmpty facetBlock.hostMainContents) then
+                Just
+                    (updateOneChoiceModel
+                        { identifier = "host-contents"
+                        , available = facetBlock.hostMainContents
+                        , selected =
+                            List.map (\s -> { value = s, count = 0 }) queryArgs.hostMainContents
+                                |> List.head
+                        , bodyHidden = Maybe.map .bodyHidden currentModel.hostMainContents |> Maybe.withDefault True
+                        }
+                    )
+
+            else
+                Nothing
+
+        organizationTypeFacet =
+            if not (List.isEmpty facetBlock.organizationType) then
+                Just
+                    (updateOneChoiceModel
+                        { identifier = "organization-type"
+                        , available = facetBlock.organizationType
+                        , selected =
+                            List.map (\s -> { value = s, count = 0 }) queryArgs.organizationType
+                                |> List.head
+                        , bodyHidden = Maybe.map .bodyHidden currentModel.organizationType |> Maybe.withDefault True
+                        }
+                    )
+
+            else
+                Nothing
     in
     { cities = citiesFacet
     , genres = genreFacet
@@ -191,11 +224,12 @@ updateFacetConfigurations currentModel queryArgs facetBlock =
     , sourceComposers = sourceComposersFacet
     , sourceTypes = sourceTypesFacet
     , hasInventory = hasInventoryFacet
-    , organizationType = Nothing
+    , organizationType = organizationTypeFacet
     , location = Nothing
     , anonymous = isAnonymous
     , originalFormat = originalFormatFacet
     , currentState = currentStateFacet
+    , hostMainContents = hostMainContentsFacet
     }
 
 
@@ -254,9 +288,6 @@ viewFacets facetModel =
             viewMaybe (viewOneChoiceFacet { title = "Archive Cities", optionTitleMap = [] }) facetModel.cities
                 |> Element.map (UserInteractedWithOneChoiceFacet Cities)
 
-        citiesHasValues =
-            ME.isJust facetModel.cities
-
         sourceComposers =
             viewMaybe (viewCheckboxFacet "Source Composers") facetModel.sourceComposers
                 |> Element.map (UserInteractedWithCheckboxFacet SourceComposers)
@@ -269,9 +300,30 @@ viewFacets facetModel =
             viewMaybe (viewOneChoiceFacet { title = "Current state", optionTitleMap = [] }) facetModel.currentState
                 |> Element.map (UserInteractedWithOneChoiceFacet CurrentState)
 
+        hostMainContentsFacet =
+            viewMaybe (viewOneChoiceFacet { title = "Host main contents", optionTitleMap = [] }) facetModel.hostMainContents
+                |> Element.map (UserInteractedWithOneChoiceFacet HostMainContents)
+
+        organizationTypeFacet =
+            viewMaybe (viewOneChoiceFacet { title = "Organization type", optionTitleMap = [] }) facetModel.organizationType
+                |> Element.map (UserInteractedWithOneChoiceFacet OrganizationType)
+
         sourceSectionIsVisible =
             List.map ME.isJust [ facetModel.sourceTypes, facetModel.hasInventory, facetModel.originalFormat, facetModel.currentState ]
                 |> List.append (List.map ME.isJust [ facetModel.sourceComposers, facetModel.notations ])
+                |> List.any identity
+
+        compositionSectionIsVisible =
+            List.map ME.isJust [ facetModel.genres, facetModel.composers ]
+                |> List.append (List.map ME.isJust [ facetModel.anonymous ])
+                |> List.any identity
+
+        archivesSectionIsVisible =
+            List.map ME.isJust [ facetModel.cities ]
+                |> List.any identity
+
+        organizationsSectionIsVisible =
+            List.map ME.isJust [ facetModel.organizationType ]
                 |> List.any identity
     in
     row
@@ -296,10 +348,11 @@ viewFacets facetModel =
                     , hasInventory
                     , originalFormatFacet
                     , currentStateFacet
+                    , hostMainContentsFacet
                     ]
                 }
             , viewFacetSection
-                { isVisible = True
+                { isVisible = compositionSectionIsVisible
                 , title = "Compositions"
                 , facetBlocks =
                     [ genresFacet
@@ -308,10 +361,15 @@ viewFacets facetModel =
                     ]
                 }
             , viewFacetSection
-                { isVisible = citiesHasValues
+                { isVisible = archivesSectionIsVisible
                 , title = "Archives"
                 , facetBlocks =
                     [ citiesFacet ]
+                }
+            , viewFacetSection
+                { isVisible = organizationsSectionIsVisible
+                , title = "Organizations"
+                , facetBlocks = [ organizationTypeFacet ]
                 }
             ]
         ]
@@ -391,6 +449,16 @@ setOriginalFormat newValue oldRecord =
 setCurrentState : Maybe OneChoiceFacetModel -> { a | currentState : Maybe OneChoiceFacetModel } -> { a | currentState : Maybe OneChoiceFacetModel }
 setCurrentState newValue oldRecord =
     { oldRecord | currentState = newValue }
+
+
+setHostMainContents : Maybe OneChoiceFacetModel -> { a | hostMainContents : Maybe OneChoiceFacetModel } -> { a | hostMainContents : Maybe OneChoiceFacetModel }
+setHostMainContents newValue oldRecord =
+    { oldRecord | hostMainContents = newValue }
+
+
+setOrganizationType : Maybe OneChoiceFacetModel -> { a | organizationType : Maybe OneChoiceFacetModel } -> { a | organizationType : Maybe OneChoiceFacetModel }
+setOrganizationType newValue oldRecord =
+    { oldRecord | organizationType = newValue }
 
 
 setSourceComposers : Maybe CheckBoxFacetModel -> { a | sourceComposers : Maybe CheckBoxFacetModel } -> { a | sourceComposers : Maybe CheckBoxFacetModel }

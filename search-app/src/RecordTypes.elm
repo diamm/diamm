@@ -18,6 +18,8 @@ type OneChoiceFacetTypes
     | SourceTypes
     | OriginalFormat
     | CurrentState
+    | HostMainContents
+    | OrganizationType
 
 
 type alias PaginationBlock =
@@ -160,6 +162,7 @@ type alias FacetBlock =
     , sourceComposers : List FacetItem
     , originalFormat : List FacetItem
     , currentState : List FacetItem
+    , hostMainContents : List FacetItem
 
     --, archiveLocations : Maybe Never
     }
@@ -180,6 +183,7 @@ facetBlockDecoder =
         |> required "source_composers" (list facetItemDecoder)
         |> required "original_format" (list facetItemDecoder)
         |> required "current_state" (list facetItemDecoder)
+        |> required "host_main_contents" (list facetItemDecoder)
 
 
 facetItemDecoder : Decoder FacetItem
