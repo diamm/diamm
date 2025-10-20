@@ -1,9 +1,9 @@
-module Route exposing (QueryArgs, Route(..), buildQueryParameters, defaultQueryArgs, extractPageNumberFromUrl, locationHrefToRoute, parseUrl, setCurrentPage, setKeywordQuery, setQueryCities, setQueryComposers, setQueryGenres, setQueryHasInventory, setQueryNotations, setQuerySourceTypes, setQueryType)
+module Route exposing (QueryArgs, Route(..), buildQueryParameters, defaultQueryArgs, extractPageNumberFromUrl, locationHrefToRoute, parseUrl, setCurrentPage, setKeywordQuery, setQueryAnonymous, setQueryCities, setQueryComposers, setQueryCurrentState, setQueryGenres, setQueryHasInventory, setQueryNotations, setQueryOriginalFormat, setQuerySourceComposers, setQuerySourceTypes, setQueryType)
 
 import Dict
 import Helpers exposing (prepareQuery)
 import Maybe.Extra as ME
-import RecordTypes exposing (RecordTypeFilters(..), resultTypeOptions)
+import RecordTypes exposing (RecordTypeFilters(..), parseResultTypeToString, resultTypeOptions)
 import Url exposing (Url)
 import Url.Builder exposing (QueryParameter)
 import Url.Parser as P exposing ((<?>), s)
@@ -19,11 +19,15 @@ type alias QueryArgs =
     { keywordQuery : Maybe String
     , resultType : RecordTypeFilters
     , composers : List String
+    , sourceComposers : List String
     , notations : List String
     , genres : List String
     , sourceTypes : List String
     , cities : List String
     , hasInventory : List String
+    , anonymous : List String
+    , originalFormat : List String
+    , currentState : List String
     , currentPage : Int
     }
 
@@ -61,11 +65,15 @@ queryParamsParser =
     Q.map QueryArgs (Q.string "q")
         |> apply resultTypeParamParser
         |> apply composerParamParser
+        |> apply sourceComposersParamParser
         |> apply notationParamParser
         |> apply genreParamParser
         |> apply sourceTypesParser
         |> apply cityParamParser
         |> apply hasInventoryParamParser
+        |> apply anonymousParamParser
+        |> apply (Q.custom "original_format" identity)
+        |> apply (Q.custom "current_state" identity)
         |> apply pageParamParser
 
 
@@ -77,6 +85,11 @@ resultTypeParamParser =
 composerParamParser : Q.Parser (List String)
 composerParamParser =
     Q.custom "composer" identity
+
+
+sourceComposersParamParser : Q.Parser (List String)
+sourceComposersParamParser =
+    Q.custom "source_composers" identity
 
 
 cityParamParser : Q.Parser (List String)
@@ -109,6 +122,11 @@ hasInventoryParamParser =
     Q.custom "has_inventory" identity
 
 
+anonymousParamParser : Q.Parser (List String)
+anonymousParamParser =
+    Q.custom "anonymous" identity
+
+
 typeQueryStringToResultType : List String -> RecordTypeFilters
 typeQueryStringToResultType typeList =
     List.map parseStringToResultMode typeList
@@ -128,11 +146,15 @@ defaultQueryArgs =
     { keywordQuery = Nothing
     , resultType = ShowAllRecords
     , composers = []
+    , sourceComposers = []
     , notations = []
     , genres = []
     , sourceTypes = []
     , cities = []
     , hasInventory = []
+    , anonymous = []
+    , originalFormat = []
+    , currentState = []
     , currentPage = 1
     }
 
@@ -151,7 +173,9 @@ buildQueryParameters : QueryArgs -> List QueryParameter
 buildQueryParameters queryArgs =
     let
         typeParam =
-            [ Url.Builder.string "type" (parseResultTypeToString queryArgs.resultType) ]
+            [ parseResultTypeToString queryArgs.resultType
+                |> Url.Builder.string "type"
+            ]
 
         qParam =
             queryArgs.keywordQuery
@@ -176,16 +200,37 @@ buildQueryParameters queryArgs =
 
         sourceTypeParam =
             List.map (Url.Builder.string "sourcetype") queryArgs.sourceTypes
+
+        hasInventoryParam =
+            List.map (Url.Builder.string "has_inventory") queryArgs.hasInventory
+
+        anonymousParam =
+            List.map (Url.Builder.string "anonymous") queryArgs.anonymous
+
+        sourceComposers =
+            List.map (Url.Builder.string "source_composers") queryArgs.sourceComposers
+
+        originalFormat =
+            List.map (Url.Builder.string "original_format") queryArgs.originalFormat
+
+        currentState =
+            List.map (Url.Builder.string "current_state") queryArgs.currentState
     in
-    List.concat [ qParam, typeParam, composerParam, genresParam, pageParam, citiesParam, notationsParam, sourceTypeParam ]
-
-
-parseResultTypeToString : RecordTypeFilters -> String
-parseResultTypeToString typeFilter =
-    List.filter (\( _, m ) -> m == typeFilter) resultTypeOptions
-        |> List.head
-        |> Maybe.withDefault ( "all", ShowAllRecords )
-        |> Tuple.first
+    List.concat
+        [ qParam
+        , typeParam
+        , composerParam
+        , genresParam
+        , pageParam
+        , citiesParam
+        , notationsParam
+        , sourceTypeParam
+        , hasInventoryParam
+        , anonymousParam
+        , sourceComposers
+        , originalFormat
+        , currentState
+        ]
 
 
 setQueryType : RecordTypeFilters -> { a | resultType : RecordTypeFilters } -> { a | resultType : RecordTypeFilters }
@@ -229,6 +274,11 @@ setQuerySourceTypes newValues oldRecord =
     { oldRecord | sourceTypes = newValues }
 
 
+setQueryOriginalFormat : List String -> { a | originalFormat : List String } -> { a | originalFormat : List String }
+setQueryOriginalFormat newValues oldRecord =
+    { oldRecord | originalFormat = newValues }
+
+
 setQueryCities : List String -> { a | cities : List String } -> { a | cities : List String }
 setQueryCities newValues oldRecord =
     { oldRecord | cities = newValues }
@@ -237,6 +287,21 @@ setQueryCities newValues oldRecord =
 setQueryHasInventory : List String -> { a | hasInventory : List String } -> { a | hasInventory : List String }
 setQueryHasInventory newValues oldRecord =
     { oldRecord | hasInventory = newValues }
+
+
+setQueryAnonymous : List String -> { a | anonymous : List String } -> { a | anonymous : List String }
+setQueryAnonymous newValues oldRecord =
+    { oldRecord | anonymous = newValues }
+
+
+setQuerySourceComposers : List String -> { a | sourceComposers : List String } -> { a | sourceComposers : List String }
+setQuerySourceComposers newValues oldRecord =
+    { oldRecord | sourceComposers = newValues }
+
+
+setQueryCurrentState : List String -> { a | currentState : List String } -> { a | currentState : List String }
+setQueryCurrentState newValues oldRecord =
+    { oldRecord | currentState = newValues }
 
 
 

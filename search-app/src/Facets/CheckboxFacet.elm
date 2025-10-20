@@ -1,6 +1,6 @@
 module Facets.CheckboxFacet exposing (CheckBoxFacetModel, CheckBoxFacetMsg(..), update, updateCheckboxModel, viewCheckboxFacet)
 
-import Element exposing (Element, alignRight, clip, column, el, fill, height, maximum, none, padding, paddingXY, pointer, px, row, scrollbarX, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignRight, clip, column, el, fill, height, maximum, none, padding, paddingXY, paragraph, pointer, px, row, scrollbarX, scrollbarY, spacing, text, width)
 import Element.Border as Border
 import Element.Events as Events
 import Element.Font as Font
@@ -29,7 +29,13 @@ type alias CheckBoxFacetModel =
     }
 
 
-updateCheckboxModel : { identifier : String, available : List FacetItem, selected : List FacetItem, bodyHidden : Bool } -> CheckBoxFacetModel
+updateCheckboxModel :
+    { identifier : String
+    , available : List FacetItem
+    , selected : List FacetItem
+    , bodyHidden : Bool
+    }
+    -> CheckBoxFacetModel
 updateCheckboxModel cfg =
     let
         viewBody =
@@ -98,9 +104,9 @@ viewCheckboxFacet title facetModel =
             else
                 "Hide"
 
-        facetBody =
-            if facetModel.bodyHidden == False then
-                [ row
+        filterControl =
+            if List.length facetModel.allOptions > 20 then
+                row
                     [ width fill
                     ]
                     [ Input.text
@@ -111,12 +117,18 @@ viewCheckboxFacet title facetModel =
                         , placeholder = Just (Input.placeholder [] (el [] (text "Filter options")))
                         }
                     ]
+
+            else
+                none
+
+        facetBody =
+            if facetModel.bodyHidden == False then
+                [ filterControl
                 , row
                     [ width fill
-                    , padding 10
                     ]
                     [ column
-                        [ width (fill |> maximum 440)
+                        [ width (fill |> maximum 340)
                         , clip
                         , scrollbarX
                         , scrollbarY
@@ -134,20 +146,17 @@ viewCheckboxFacet title facetModel =
     in
     row
         [ width fill
-        , Border.widthEach { top = 1, left = 0, right = 0, bottom = 0 }
-        , Border.color colourScheme.lightGrey
         ]
         [ column
             [ width fill
             , spacing 10
-            , padding 10
             ]
             (row
                 [ width fill
                 , paddingXY 0 5
                 , spacing 5
                 ]
-                [ el [ Font.semiBold ] (text title)
+                [ el [ Font.medium ] (text title)
                 , el
                     [ Events.onClick OnToggleHide
                     , Font.color colourScheme.red
@@ -160,7 +169,7 @@ viewCheckboxFacet title facetModel =
                     , Font.color colourScheme.red
                     , pointer
                     ]
-                    (text "Clear all")
+                    (text "Clear selection")
                 ]
                 :: facetBody
             )
@@ -181,7 +190,7 @@ viewFacetItemCheckbox selected facetItem =
                 OnRemoveItem item
     in
     row
-        []
+        [ width fill ]
         [ Input.checkbox
             [ spacing 12 ]
             { onChange = checkedMsg facetItem

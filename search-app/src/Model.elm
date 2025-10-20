@@ -27,6 +27,9 @@ init initalQueryArgs =
         , organizationType = Nothing
         , location = Nothing
         , anonymous = Nothing
+        , sourceComposers = Nothing
+        , originalFormat = Nothing
+        , currentState = Nothing
         }
     , gotoPageValue = ""
     }

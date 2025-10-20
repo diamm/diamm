@@ -1,4 +1,4 @@
-module Helpers exposing (boolToStr, onEnter, prepareQuery, strToBool, viewMaybe)
+module Helpers exposing (boolToStr, onEnter, prepareQuery, strToBool, viewIf, viewMaybe)
 
 import Dict exposing (Dict)
 import Element exposing (Element, none)
@@ -106,6 +106,10 @@ boolToStr inp =
 
 strToBool : String -> Bool
 strToBool inp =
+    let
+        _ =
+            Debug.log "inp" inp
+    in
     case inp of
         "true" ->
             True

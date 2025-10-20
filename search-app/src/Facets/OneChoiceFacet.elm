@@ -1,36 +1,62 @@
 module Facets.OneChoiceFacet exposing (OneChoiceFacetModel, OneChoiceFacetMsg(..), update, updateOneChoiceModel, viewOneChoiceFacet)
 
-import Element exposing (Element, alignRight, clip, column, el, fill, height, maximum, none, padding, paddingXY, pointer, px, row, spacing, text, width)
+import Element exposing (Element, alignRight, clip, column, el, fill, height, maximum, none, padding, paddingXY, pointer, px, row, scrollbarX, scrollbarY, shrink, spacing, text, width)
 import Element.Border as Border
 import Element.Events as Events
 import Element.Font as Font
-import Element.Input as Input exposing (Option)
-import RecordTypes exposing (BooleanFacetItem)
+import Element.Input as Input exposing (Option, labelHidden)
+import List.Extra as LE
+import Maybe.Extra as ME
+import RecordTypes exposing (FacetItem)
 import Style exposing (colourScheme)
 
 
 type OneChoiceFacetMsg
     = NoOp
-    | OnSelect BooleanFacetItem
-    | OnRemoveItem BooleanFacetItem
+    | OnSelect FacetItem
+    | OnRemoveItem FacetItem
+    | OnTextInput String
     | OnToggleHide
     | OnClear
 
 
 type alias OneChoiceFacetModel =
     { id : String
-    , available : List BooleanFacetItem
-    , selected : Maybe BooleanFacetItem
+    , available : List FacetItem
+    , allOptions : List FacetItem
+    , selected : Maybe FacetItem
     , bodyHidden : Bool
+    , filterText : Maybe String
     }
 
 
-updateOneChoiceModel : { identifier : String, available : List BooleanFacetItem, selected : Maybe BooleanFacetItem, bodyHidden : Bool } -> OneChoiceFacetModel
+updateOneChoiceModel :
+    { identifier : String
+    , available : List FacetItem
+    , selected : Maybe FacetItem
+    , bodyHidden : Bool
+    }
+    -> OneChoiceFacetModel
 updateOneChoiceModel cfg =
+    let
+        matchSelectedWithAvailable =
+            Maybe.map
+                (\s ->
+                    List.filter (\v -> s.value == v.value) cfg.available
+                        |> List.head
+                )
+                cfg.selected
+                |> ME.join
+
+        viewBody =
+            cfg.bodyHidden && ME.isNothing cfg.selected
+    in
     { id = cfg.identifier
     , available = cfg.available
-    , selected = cfg.selected
-    , bodyHidden = cfg.bodyHidden
+    , allOptions = cfg.available
+    , selected = matchSelectedWithAvailable
+    , bodyHidden = viewBody
+    , filterText = Nothing
     }
 
 
@@ -46,15 +72,35 @@ update msg model =
         OnRemoveItem item ->
             ( model, Cmd.none )
 
+        OnTextInput filterText ->
+            let
+                ( ft, av ) =
+                    if String.isEmpty filterText then
+                        ( Nothing, model.allOptions )
+
+                    else
+                        ( Just filterText, List.filter (\it -> String.contains (String.toLower filterText) (String.toLower it.value)) model.available )
+            in
+            ( { model | filterText = ft, available = av }, Cmd.none )
+
         OnToggleHide ->
-            ( { model | bodyHidden = not model.bodyHidden }, Cmd.none )
+            ( { model
+                | bodyHidden = not model.bodyHidden
+              }
+            , Cmd.none
+            )
 
         OnClear ->
             ( { model | selected = Nothing }, Cmd.none )
 
 
-viewOneChoiceFacet : String -> OneChoiceFacetModel -> Element OneChoiceFacetMsg
-viewOneChoiceFacet title facetModel =
+viewOneChoiceFacet :
+    { title : String
+    , optionTitleMap : List ( String, String )
+    }
+    -> OneChoiceFacetModel
+    -> Element OneChoiceFacetMsg
+viewOneChoiceFacet { title, optionTitleMap } facetModel =
     let
         showHideLabel =
             if facetModel.bodyHidden then
@@ -63,24 +109,42 @@ viewOneChoiceFacet title facetModel =
             else
                 "Hide"
 
+        filterControl =
+            if List.length facetModel.allOptions > 20 then
+                row
+                    [ width fill
+                    ]
+                    [ Input.text
+                        []
+                        { label = labelHidden "filter"
+                        , onChange = OnTextInput
+                        , text = Maybe.withDefault "" facetModel.filterText
+                        , placeholder = Just (Input.placeholder [] (el [] (text "Filter options")))
+                        }
+                    ]
+
+            else
+                none
+
         facetBody =
             if facetModel.bodyHidden == False then
-                [ row
+                [ filterControl
+                , row
                     [ width fill
-                    , padding 10
                     ]
                     [ column
-                        [ width (fill |> maximum 440)
+                        [ width (fill |> maximum 340)
                         , clip
-                        , height (px 100)
-                        , Border.innerShadow { offset = ( 1, 1 ), size = 0, blur = 6, color = colourScheme.lightGrey }
-                        , spacing 10
+                        , scrollbarX
+                        , scrollbarY
+                        , height (shrink |> maximum 300)
                         , padding 10
+                        , Border.innerShadow { offset = ( 1, 1 ), size = 0, blur = 6, color = colourScheme.lightGrey }
                         ]
                         [ Input.radio
-                            []
+                            [ spacing 10 ]
                             { onChange = OnSelect
-                            , options = List.map createOption facetModel.available
+                            , options = List.map (createOption optionTitleMap) facetModel.available
                             , selected = facetModel.selected
                             , label = Input.labelHidden "select"
                             }
@@ -93,20 +157,17 @@ viewOneChoiceFacet title facetModel =
     in
     row
         [ width fill
-        , Border.widthEach { top = 1, left = 0, right = 0, bottom = 0 }
-        , Border.color colourScheme.lightGrey
         ]
         [ column
             [ width fill
             , spacing 10
-            , padding 10
             ]
             (row
                 [ width fill
                 , paddingXY 0 5
                 , spacing 5
                 ]
-                [ el [ Font.semiBold ] (text title)
+                [ el [ Font.medium ] (text title)
                 , el
                     [ Events.onClick OnToggleHide
                     , Font.color colourScheme.red
@@ -119,22 +180,27 @@ viewOneChoiceFacet title facetModel =
                     , Font.color colourScheme.red
                     , pointer
                     ]
-                    (text "Clear all")
+                    (text "Clear selection")
                 ]
                 :: facetBody
             )
         ]
 
 
-createOption : BooleanFacetItem -> Option BooleanFacetItem msg
-createOption inp =
+createOption : List ( String, String ) -> FacetItem -> Option FacetItem msg
+createOption optionTitleMap inp =
     let
         label =
-            if inp.value then
-                "True"
+            LE.findMap
+                (\( v, t ) ->
+                    if v == inp.value then
+                        Just t
 
-            else
-                "False"
+                    else
+                        Nothing
+                )
+                optionTitleMap
+                |> Maybe.withDefault inp.value
 
         count =
             String.fromInt inp.count

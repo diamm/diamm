@@ -88,10 +88,11 @@ viewSourceResult source =
         }
         [ row
             [ width fill ]
-            [ text (source.archiveCity ++ ", " ++ source.archiveName) ]
+            [ paragraph [] [ text (source.archiveCity ++ ", " ++ source.archiveName) ] ]
         , row
             [ width fill ]
-            [ text (sourceType ++ sourceDate ++ sourceSurface) ]
+            [ paragraph [] [ text (sourceType ++ sourceDate ++ sourceSurface) ]
+            ]
         ]
 
 
@@ -108,7 +109,7 @@ viewArchiveResult archive =
         }
         [ row
             [ width fill ]
-            [ text (archive.city ++ ", " ++ archive.country) ]
+            [ paragraph [] [ text (archive.city ++ ", " ++ archive.country) ] ]
         ]
 
 

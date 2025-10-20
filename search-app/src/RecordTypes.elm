@@ -1,4 +1,4 @@
-module RecordTypes exposing (ArchiveResultBody, BooleanFacetItem, CheckboxFacetTypes(..), CompositionResultBody, FacetBlock, FacetItem, OneChoiceFacetTypes(..), OrganizationResultBody, PaginationBlock, PersonResultBody, RecordTypeFilters(..), SearchBody, SearchResult(..), SearchTypesBlock, SetResultBody, SourceResultBody, facetItemToLabel, resultTypeOptions, searchBodyDecoder)
+module RecordTypes exposing (ArchiveResultBody, CheckboxFacetTypes(..), CompositionResultBody, FacetBlock, FacetItem, OneChoiceFacetTypes(..), OrganizationResultBody, PaginationBlock, PersonResultBody, RecordTypeFilters(..), SearchBody, SearchResult(..), SearchTypesBlock, SetResultBody, SourceResultBody, facetItemToLabel, parseResultTypeToString, resultTypeOptions, searchBodyDecoder)
 
 import Json.Decode as Decode exposing (Decoder, andThen, bool, fail, int, list, maybe, string, succeed)
 import Json.Decode.Pipeline exposing (optional, required)
@@ -7,13 +7,17 @@ import Json.Decode.Pipeline exposing (optional, required)
 type CheckboxFacetTypes
     = Genres
     | Composers
-    | SourceTypes
     | Notations
-    | Cities
+    | SourceComposers
 
 
 type OneChoiceFacetTypes
     = HasInventory
+    | AnonymousComposer
+    | Cities
+    | SourceTypes
+    | OriginalFormat
+    | CurrentState
 
 
 type alias PaginationBlock =
@@ -126,12 +130,16 @@ resultTypeOptions =
     ]
 
 
+parseResultTypeToString : RecordTypeFilters -> String
+parseResultTypeToString typeFilter =
+    List.filter (\( _, m ) -> m == typeFilter) resultTypeOptions
+        |> List.head
+        |> Maybe.withDefault ( "all", ShowAllRecords )
+        |> Tuple.first
+
+
 type alias FacetItem =
     { value : String, count : Int }
-
-
-type alias BooleanFacetItem =
-    { value : Bool, count : Int }
 
 
 facetItemToLabel : FacetItem -> String
@@ -145,10 +153,13 @@ type alias FacetBlock =
     , notations : List FacetItem
     , composers : List FacetItem
     , sourceType : List FacetItem
-    , hasInventory : List BooleanFacetItem
+    , hasInventory : List FacetItem
     , organizationType : List FacetItem
     , location : List FacetItem
-    , anonymous : List BooleanFacetItem
+    , anonymous : List FacetItem
+    , sourceComposers : List FacetItem
+    , originalFormat : List FacetItem
+    , currentState : List FacetItem
 
     --, archiveLocations : Maybe Never
     }
@@ -162,10 +173,13 @@ facetBlockDecoder =
         |> required "notations" (list facetItemDecoder)
         |> required "composers" (list facetItemDecoder)
         |> required "source_type" (list facetItemDecoder)
-        |> required "has_inventory" (list booleanFacetItemDecoder)
+        |> required "has_inventory" (list facetItemDecoder)
         |> required "organization_type" (list facetItemDecoder)
         |> required "location" (list facetItemDecoder)
-        |> required "anonymous" (list booleanFacetItemDecoder)
+        |> required "anonymous" (list facetItemDecoder)
+        |> required "source_composers" (list facetItemDecoder)
+        |> required "original_format" (list facetItemDecoder)
+        |> required "current_state" (list facetItemDecoder)
 
 
 facetItemDecoder : Decoder FacetItem
@@ -173,26 +187,6 @@ facetItemDecoder =
     Decode.succeed FacetItem
         |> required "value" string
         |> required "count" int
-
-
-booleanFacetItemDecoder : Decoder BooleanFacetItem
-booleanFacetItemDecoder =
-    Decode.succeed BooleanFacetItem
-        |> required "value" (string |> andThen boolFromStringDecoder)
-        |> required "count" int
-
-
-boolFromStringDecoder : String -> Decoder Bool
-boolFromStringDecoder inp =
-    case inp of
-        "true" ->
-            succeed True
-
-        "false" ->
-            succeed False
-
-        _ ->
-            fail ("Unknown boolean value: " ++ inp)
 
 
 type alias SearchBody =
@@ -277,7 +271,7 @@ sourceResultBodyDecoder =
         |> required "url" string
         |> required "heading" string
         |> required "archive_name" string
-        |> required "archive_city" string
+        |> required "source_archive_city" string
         |> optional "source_type" (maybe string) Nothing
         |> optional "date_statement" (maybe string) Nothing
         |> optional "surface" (maybe string) Nothing
