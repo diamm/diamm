@@ -32,6 +32,7 @@ from diamm.models.data.source_url import SourceURL
 class SourceCopyistInline(admin.StackedInline):
     model = SourceCopyist
     extra = 0
+    classes = ("collapse",)
 
     def get_queryset(self, request):
         return (
@@ -44,6 +45,7 @@ class SourceCopyistInline(admin.StackedInline):
 class SourceRelationshipInline(admin.StackedInline):
     model = SourceRelationship
     extra = 0
+    classes = ("collapse",)
     # raw_id_fields = ('relationship_type',)
 
     def get_queryset(self, request):
@@ -63,6 +65,7 @@ class SourceProvenanceInline(RawIdWidgetAdminMixin, admin.StackedInline):
     verbose_name = "Provenance"
     verbose_name_plural = "Provenance"
     raw_id_fields = ("city", "country", "region", "protectorate")
+    classes = ("collapse",)
 
     def get_queryset(self, request):
         return (
@@ -83,6 +86,7 @@ class BibliographyInline(RawIdWidgetAdminMixin, admin.TabularInline):
     verbose_name = "Bibliography Entry"
     extra = 0
     raw_id_fields = ("bibliography",)
+    classes = ("collapse",)
 
     formfield_overrides = {
         models.CharField: {"widget": TextInput(attrs={"size": "160"})},
@@ -109,6 +113,7 @@ class BibliographyInline(RawIdWidgetAdminMixin, admin.TabularInline):
 class IdentifiersInline(admin.TabularInline):
     model = SourceIdentifier
     extra = 0
+    classes = ("collapse",)
 
     def get_queryset(self, request):
         return (
@@ -121,10 +126,12 @@ class IdentifiersInline(admin.TabularInline):
 class AuthoritiesInline(admin.TabularInline):
     model = SourceAuthority
     extra = 0
+    classes = ("collapse",)
 
 
 class NotesInline(admin.TabularInline):
     model = SourceNote
+    classes = ("collapse",)
     extra = 0
 
     formfield_overrides = {models.TextField: {"widget": AdminPagedownWidget}}
@@ -152,6 +159,7 @@ class PagesInline(admin.TabularInline):
 class URLsInline(admin.TabularInline):
     model = SourceURL
     extra = 0
+    classes = ("collapse",)
 
 
 # Uses a custom raw id mixin because of a bug in the built-in mixin
