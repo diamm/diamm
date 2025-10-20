@@ -1,6 +1,6 @@
 import re
 
-import serpy
+import ypres
 from django.db.models.expressions import F, Value
 from django.db.models.functions.text import Concat
 from django.template.loader import get_template
@@ -8,14 +8,13 @@ from rest_framework.reverse import reverse
 
 from diamm import settings
 from diamm.helpers.solr_helpers import SolrManager
-from diamm.serializers.serializers import ContextDictSerializer, ContextSerializer
 
 
-class SetBibliographySerializer(ContextDictSerializer):
-    pk = serpy.IntField()
-    prerendered = serpy.MethodField()
-    pages = serpy.StrField(required=False)
-    notes = serpy.StrField(required=False)
+class SetBibliographySerializer(ypres.DictSerializer):
+    pk = ypres.IntField()
+    prerendered = ypres.MethodField()
+    pages = ypres.StrField(required=False)
+    notes = ypres.StrField(required=False)
 
     def get_prerendered(self, obj):
         template = get_template("website/bibliography/bibliography_entry.jinja2")
@@ -28,15 +27,15 @@ class SetBibliographySerializer(ContextDictSerializer):
         return citation
 
 
-class SetDetailSerializer(ContextSerializer):
-    pk = serpy.IntField()
-    url = serpy.MethodField()
-    type = serpy.StrField(attr="set_type")
-    cluster_shelfmark = serpy.StrField()
-    holding_archives = serpy.MethodField()
-    sources = serpy.MethodField()
-    description = serpy.StrField(required=False)
-    bibliography = serpy.MethodField()
+class SetDetailSerializer(ypres.Serializer):
+    pk = ypres.IntField()
+    url = ypres.MethodField()
+    type = ypres.StrField(attr="set_type")
+    cluster_shelfmark = ypres.StrField()
+    holding_archives = ypres.MethodField()
+    sources = ypres.MethodField()
+    description = ypres.StrField(required=False)
+    bibliography = ypres.MethodField()
 
     def get_url(self, obj) -> str:
         return reverse(
@@ -65,7 +64,7 @@ class SetDetailSerializer(ContextSerializer):
                 if n := entry.get("notes"):
                     res["notes"] = n
 
-                reslist.append(SetBibliographySerializer(res).data)
+                reslist.append(SetBibliographySerializer(res).serialized)
 
         return reslist
 

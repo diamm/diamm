@@ -1,6 +1,6 @@
 import logging
 
-import serpy
+import ypres
 
 from diamm.serializers.search.helpers import (
     get_db_records,
@@ -80,43 +80,43 @@ def _get_images(cfg):
 
 
 def create_page_index_documents(record, cfg):
-    return [PageSearchSerializer(record).data]
+    return [PageSearchSerializer(record).serialized]
 
 
 def create_image_index_documents(record, cfg):
-    return [ImageSearchSerializer(record).data]
+    return [ImageSearchSerializer(record).serialized]
 
 
-class ImageSearchSerializer(serpy.DictSerializer):
-    type = serpy.StrField(attr="record_type")
-    pk = serpy.IntField()
-    page_i = serpy.IntField(attr="page_id")
+class ImageSearchSerializer(ypres.DictSerializer):
+    type = ypres.StrField(attr="record_type")
+    pk = ypres.IntField()
+    page_i = ypres.IntField(attr="page_id")
 
-    source_i = serpy.IntField(attr="source_id")
-    location_s = serpy.StrField(attr="location", required=False)
-    image_type_i = serpy.IntField(attr="type_id", required=False)
-    image_type_s = serpy.StrField(attr="image_type", required=False)
-    numeration_s = serpy.StrField(attr="numeration", required=False)
-    numeration_ans = serpy.StrField(attr="numeration", required=False)
-    sort_order_f = serpy.FloatField(attr="sort_order", required=False)
-    alt_images_ii = serpy.Field(attr="alt_images", required=False)
+    source_i = ypres.IntField(attr="source_id")
+    location_s = ypres.StrField(attr="location", required=False)
+    image_type_i = ypres.IntField(attr="type_id", required=False)
+    image_type_s = ypres.StrField(attr="image_type", required=False)
+    numeration_s = ypres.StrField(attr="numeration", required=False)
+    numeration_ans = ypres.StrField(attr="numeration", required=False)
+    sort_order_f = ypres.FloatField(attr="sort_order", required=False)
+    alt_images_ii = ypres.Field(attr="alt_images", required=False)
 
-    width_i = serpy.IntField(attr="width")
-    height_i = serpy.IntField(attr="height")
-    external_b = serpy.BoolField(attr="external")
+    width_i = ypres.IntField(attr="width")
+    height_i = ypres.IntField(attr="height")
+    external_b = ypres.BoolField(attr="external")
 
 
-class PageSearchSerializer(serpy.DictSerializer):
-    type = serpy.StrField(attr="record_type")
-    pk = serpy.IntField()
-    page_type_i = serpy.IntField(attr="page_type", required=False)
-    page_type_s = serpy.StrField(attr="page_kind", required=False)
+class PageSearchSerializer(ypres.DictSerializer):
+    type = ypres.StrField(attr="record_type")
+    pk = ypres.IntField()
+    page_type_i = ypres.IntField(attr="page_type", required=False)
+    page_type_s = ypres.StrField(attr="page_kind", required=False)
 
-    numeration_s = serpy.StrField(attr="numeration")
-    numeration_ans = serpy.StrField(attr="numeration")
-    sort_order_f = serpy.FloatField(attr="sort_order")
-    source_i = serpy.IntField(attr="source_id")
-    items_ii = serpy.Field(attr="items")
-    images_ss = serpy.Field(attr="images")
-    iiif_canvas_uri_s = serpy.StrField(attr="iiif_canvas_uri")
-    external_b = serpy.BoolField(attr="external")
+    numeration_s = ypres.StrField(attr="numeration")
+    numeration_ans = ypres.StrField(attr="numeration")
+    sort_order_f = ypres.FloatField(attr="sort_order")
+    source_i = ypres.IntField(attr="source_id")
+    items_ii = ypres.Field(attr="items")
+    images_ss = ypres.Field(attr="images")
+    iiif_canvas_uri_s = ypres.StrField(attr="iiif_canvas_uri")
+    external_b = ypres.BoolField(attr="external")

@@ -1,6 +1,6 @@
 import re
 
-import serpy
+import ypres
 from django.conf import settings
 from django.db.models.expressions import Exists, OuterRef
 from django.template.loader import get_template
@@ -8,14 +8,13 @@ from rest_framework.reverse import reverse
 
 from diamm.helpers.solr_helpers import SolrManager
 from diamm.models import Page, SourceURL
-from diamm.serializers.serializers import ContextDictSerializer, ContextSerializer
 
 
-class CompositionBibliographySerializer(ContextDictSerializer):
-    pk = serpy.IntField()
-    citation = serpy.MethodField()
-    pages = serpy.StrField(required=False)
-    notes = serpy.StrField(required=False)
+class CompositionBibliographySerializer(ypres.DictSerializer):
+    pk = ypres.IntField()
+    citation = ypres.MethodField()
+    pages = ypres.StrField(required=False)
+    notes = ypres.StrField(required=False)
 
     def get_citation(self, obj):
         template = get_template("website/bibliography/bibliography_entry.jinja2")
@@ -28,9 +27,9 @@ class CompositionBibliographySerializer(ContextDictSerializer):
         return citation
 
 
-class CompositionCycleCompositionSerializer(ContextSerializer):
-    title = serpy.StrField(attr="composition.title")
-    url = serpy.MethodField()
+class CompositionCycleCompositionSerializer(ypres.Serializer):
+    title = ypres.StrField(attr="composition.title")
+    url = ypres.MethodField()
 
     def get_url(self, obj):
         return reverse(
@@ -40,36 +39,36 @@ class CompositionCycleCompositionSerializer(ContextSerializer):
         )
 
 
-class CompositionCycleSerializer(ContextSerializer):
-    title = serpy.StrField(attr="cycle.title")
-    type = serpy.StrField(attr="cycle.type.name")
-    compositions = serpy.MethodField()
+class CompositionCycleSerializer(ypres.Serializer):
+    title = ypres.StrField(attr="cycle.title")
+    type = ypres.StrField(attr="cycle.type.name")
+    compositions = ypres.MethodField()
 
     def get_compositions(self, obj):
         return CompositionCycleCompositionSerializer(
             obj.cycle.compositions.all(),
             many=True,
             context={"request": self.context["request"]},
-        ).data
+        ).serialized_many
 
 
-class CompositionContributionSerializer(ContextSerializer):
-    contributor = serpy.StrField(attr="contributor.username")
+class CompositionContributionSerializer(ypres.Serializer):
+    contributor = ypres.StrField(attr="contributor.username")
 
-    summary = serpy.StrField()
-    updated = serpy.StrField()
+    summary = ypres.StrField()
+    updated = ypres.StrField()
 
 
-class CompositionSourceSerializer(ContextSerializer):
-    url = serpy.MethodField()
-    display_name = serpy.StrField(attr="source.display_name")
+class CompositionSourceSerializer(ypres.Serializer):
+    url = ypres.MethodField()
+    display_name = ypres.StrField(attr="source.display_name")
 
-    has_images = serpy.MethodField()
-    has_external_manifest = serpy.MethodField()
-    public_images = serpy.BoolField(attr="source.public_images")
-    folio_start = serpy.StrField(required=False)
-    folio_end = serpy.StrField(required=False)
-    voices = serpy.MethodField()
+    has_images = ypres.MethodField()
+    has_external_manifest = ypres.MethodField()
+    public_images = ypres.BoolField(attr="source.public_images")
+    folio_start = ypres.StrField(required=False)
+    folio_end = ypres.StrField(required=False)
+    voices = ypres.MethodField()
 
     def get_url(self, obj):
         return reverse(
@@ -86,23 +85,23 @@ class CompositionSourceSerializer(ContextSerializer):
 
     def get_voices(self, obj):
         if obj.voices:
-            return CompositionSourceVoiceSerializer(obj.voices.all(), many=True).data
+            return CompositionSourceVoiceSerializer(obj.voices.all(), many=True).serialized_many
         return None
 
 
-class CompositionSourceVoiceSerializer(ContextSerializer):
-    voice_text = serpy.StrField(required=False)
-    clef = serpy.StrField(required=False)
-    mensuration = serpy.StrField(required=False)
-    voice_type = serpy.StrField(required=False, attr="type")
-    position = serpy.StrField(required=False)
+class CompositionSourceVoiceSerializer(ypres.Serializer):
+    voice_text = ypres.StrField(required=False)
+    clef = ypres.StrField(required=False)
+    mensuration = ypres.StrField(required=False)
+    voice_type = ypres.StrField(required=False, attr="type")
+    position = ypres.StrField(required=False)
 
 
-class CompositionComposerSerializer(ContextSerializer):
-    url = serpy.MethodField()
-    full_name = serpy.StrField(attr="composer.full_name")
-    uncertain = serpy.BoolField()
-    notes = serpy.StrField()
+class CompositionComposerSerializer(ypres.Serializer):
+    url = ypres.MethodField()
+    full_name = ypres.StrField(attr="composer.full_name")
+    uncertain = ypres.BoolField()
+    notes = ypres.StrField()
 
     def get_url(self, obj):
         return reverse(
@@ -112,17 +111,17 @@ class CompositionComposerSerializer(ContextSerializer):
         )
 
 
-class CompositionDetailSerializer(ContextSerializer):
-    anonymous = serpy.BoolField(attr="anonymous", required=False)
-    composers = serpy.MethodField()
-    sources = serpy.MethodField()
-    type = serpy.MethodField()
-    pk = serpy.IntField()
-    url = serpy.MethodField()
-    title = serpy.StrField()
-    cycles = serpy.MethodField()
-    genres = serpy.MethodField()
-    bibliography = serpy.MethodField()
+class CompositionDetailSerializer(ypres.Serializer):
+    anonymous = ypres.BoolField(attr="anonymous", required=False)
+    composers = ypres.MethodField()
+    sources = ypres.MethodField()
+    type = ypres.MethodField()
+    pk = ypres.IntField()
+    url = ypres.MethodField()
+    title = ypres.StrField()
+    cycles = ypres.MethodField()
+    genres = ypres.MethodField()
+    bibliography = ypres.MethodField()
 
     def get_url(self, obj):
         return reverse(
@@ -153,7 +152,7 @@ class CompositionDetailSerializer(ContextSerializer):
                 .order_by("source__sort_order"),
                 context={"request": self.context["request"]},
                 many=True,
-            ).data  # type: ignore
+            ).serialized_many  # type: ignore
         else:
             return []
 
@@ -163,7 +162,7 @@ class CompositionDetailSerializer(ContextSerializer):
                 obj.composers.all(),
                 context={"request": self.context["request"]},
                 many=True,
-            ).data  # type: ignore
+            ).serialized_many  # type: ignore
         else:
             return []
 
@@ -173,7 +172,7 @@ class CompositionDetailSerializer(ContextSerializer):
                 obj.cycles.all(),
                 context={"request": self.context["request"]},
                 many=True,
-            ).data
+            ).serialized_many
         return []
 
     def get_genres(self, obj):
@@ -203,5 +202,5 @@ class CompositionDetailSerializer(ContextSerializer):
                 if n := entry.get("notes"):
                     res["notes"] = n
 
-                reslist.append(CompositionBibliographySerializer(res).data)
+                reslist.append(CompositionBibliographySerializer(res).serialized)
         return reslist

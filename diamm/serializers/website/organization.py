@@ -1,17 +1,16 @@
 
-import serpy
+import ypres
 from django.contrib.contenttypes.prefetch import GenericPrefetch
 from rest_framework.reverse import reverse
 
 from diamm.models import Organization, Person
 from diamm.models.data.geographic_area import GeographicArea
-from diamm.serializers.serializers import ContextSerializer
 
 
-class OrganizationLocationSerializer(ContextSerializer):
-    url = serpy.MethodField()
-    name = serpy.StrField(attr="name")
-    parent = serpy.StrField(attr="parent")
+class OrganizationLocationSerializer(ypres.Serializer):
+    url = ypres.MethodField()
+    name = ypres.StrField(attr="name")
+    parent = ypres.StrField(attr="parent")
 
     def get_url(self, obj) -> str | None:
         view_type: str
@@ -27,17 +26,17 @@ class OrganizationLocationSerializer(ContextSerializer):
         )
 
 
-class OrganizationSourceProvenanceSerializer(ContextSerializer):
-    url = serpy.MethodField()
-    source = serpy.StrField(attr="source.display_name")
-    entity_uncertain = serpy.BoolField(attr="entity_uncertain")
-    city = serpy.StrField(attr="city.name", required=False)
-    country = serpy.StrField(attr="country.name", required=False)
-    region = serpy.StrField(attr="region.name", required=False)
-    protectorate = serpy.StrField(attr="protectorate.name", required=False)
-    country_uncertain = serpy.BoolField(attr="country_uncertain")
-    city_uncertain = serpy.BoolField(attr="city_uncertain")
-    region_uncertain = serpy.BoolField(attr="region_uncertain")
+class OrganizationSourceProvenanceSerializer(ypres.Serializer):
+    url = ypres.MethodField()
+    source = ypres.StrField(attr="source.display_name")
+    entity_uncertain = ypres.BoolField(attr="entity_uncertain")
+    city = ypres.StrField(attr="city.name", required=False)
+    country = ypres.StrField(attr="country.name", required=False)
+    region = ypres.StrField(attr="region.name", required=False)
+    protectorate = ypres.StrField(attr="protectorate.name", required=False)
+    country_uncertain = ypres.BoolField(attr="country_uncertain")
+    city_uncertain = ypres.BoolField(attr="city_uncertain")
+    region_uncertain = ypres.BoolField(attr="region_uncertain")
 
     def get_url(self, obj) -> str:
         return reverse(
@@ -47,13 +46,13 @@ class OrganizationSourceProvenanceSerializer(ContextSerializer):
         )
 
 
-class OrganizationSourceCopyistSerializer(ContextSerializer):
-    url = serpy.MethodField()
-    has_images = serpy.BoolField(attr="source.pages.exists", call=True, required=False)
-    copyist_type = serpy.StrField(attr="copyist_type")
-    uncertain = serpy.BoolField(attr="uncertain")
-    source = serpy.StrField(attr="source.display_name")
-    public_images = serpy.BoolField(attr="source.public_images", required=False)
+class OrganizationSourceCopyistSerializer(ypres.Serializer):
+    url = ypres.MethodField()
+    has_images = ypres.BoolField(attr="source.pages.exists", call=True, required=False)
+    copyist_type = ypres.StrField(attr="copyist_type")
+    uncertain = ypres.BoolField(attr="uncertain")
+    source = ypres.StrField(attr="source.display_name")
+    public_images = ypres.BoolField(attr="source.public_images", required=False)
 
     def get_url(self, obj) -> str:
         return reverse(
@@ -63,13 +62,13 @@ class OrganizationSourceCopyistSerializer(ContextSerializer):
         )
 
 
-class OrganizationSourceRelationshipSerializer(ContextSerializer):
-    url = serpy.MethodField()
-    relationship = serpy.StrField(attr="relationship_type")
-    uncertain = serpy.BoolField(attr="uncertain")
-    source = serpy.StrField(attr="source.display_name")
-    has_images = serpy.BoolField(attr="source.pages.exists", call=True, required=False)
-    public_images = serpy.BoolField(attr="source.public_images", required=False)
+class OrganizationSourceRelationshipSerializer(ypres.Serializer):
+    url = ypres.MethodField()
+    relationship = ypres.StrField(attr="relationship_type")
+    uncertain = ypres.BoolField(attr="uncertain")
+    source = ypres.StrField(attr="source.display_name")
+    has_images = ypres.BoolField(attr="source.pages.exists", call=True, required=False)
+    public_images = ypres.BoolField(attr="source.public_images", required=False)
 
     def get_url(self, obj) -> str:
         return reverse(
@@ -79,16 +78,16 @@ class OrganizationSourceRelationshipSerializer(ContextSerializer):
         )
 
 
-class OrganizationDetailSerializer(ContextSerializer):
-    pk = serpy.IntField()
-    url = serpy.MethodField()
-    name = serpy.StrField()
-    organization_type = serpy.StrField(attr="type.name")
-    type = serpy.MethodField()
-    related_sources = serpy.MethodField()
-    copied_sources = serpy.MethodField()
-    source_provenance = serpy.MethodField()
-    location = serpy.MethodField()
+class OrganizationDetailSerializer(ypres.Serializer):
+    pk = ypres.IntField()
+    url = ypres.MethodField()
+    name = ypres.StrField()
+    organization_type = ypres.StrField(attr="type.name")
+    type = ypres.MethodField()
+    related_sources = ypres.MethodField()
+    copied_sources = ypres.MethodField()
+    source_provenance = ypres.MethodField()
+    location = ypres.MethodField()
 
     def get_url(self, obj) -> str:
         return reverse(
@@ -101,7 +100,7 @@ class OrganizationDetailSerializer(ContextSerializer):
         if obj.location:
             return OrganizationLocationSerializer(
                 obj.location, context={"request": self.context["request"]}
-            ).data
+            ).serialized
         return None
 
     def get_type(self, obj):
@@ -122,7 +121,7 @@ class OrganizationDetailSerializer(ContextSerializer):
             .all(),
             context={"request": self.context["request"]},
             many=True,
-        ).data
+        ).serialized_many
 
     def get_copied_sources(self, obj) -> list:
         return OrganizationSourceCopyistSerializer(
@@ -141,7 +140,7 @@ class OrganizationDetailSerializer(ContextSerializer):
             .all(),
             context={"request": self.context["request"]},
             many=True,
-        ).data
+        ).serialized_many
 
     def get_source_provenance(self, obj) -> list:
         return OrganizationSourceProvenanceSerializer(
@@ -150,4 +149,4 @@ class OrganizationDetailSerializer(ContextSerializer):
             ).all(),
             many=True,
             context={"request": self.context["request"]},
-        ).data
+        ).serialized_many

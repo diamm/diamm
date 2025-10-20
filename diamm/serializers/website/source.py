@@ -1,6 +1,6 @@
 import re
 
-import serpy
+import ypres
 from django.conf import settings
 from django.contrib.contenttypes.prefetch import GenericPrefetch
 from django.db.models.functions.comparison import Collate
@@ -9,13 +9,14 @@ from rest_framework.reverse import reverse
 
 from diamm.helpers.solr_helpers import SolrManager
 from diamm.models import Organization, Person, SourceURL
-from diamm.serializers.fields import DateTimeField
-from diamm.serializers.serializers import ContextDictSerializer, ContextSerializer
+
+# from diamm.serializers.fields import DateTimeField
+# from diamm.serializers.serializers import ContextDictSerializer, ypres.Serializer
 
 
-class SourceCatalogueEntrySerializer(ContextSerializer):
-    entry = serpy.MethodField()
-    order = serpy.IntField()
+class SourceCatalogueEntrySerializer(ypres.Serializer):
+    entry = ypres.MethodField()
+    order = ypres.IntField()
 
     def get_entry(self, obj) -> str:
         request = self.context["request"]
@@ -24,11 +25,11 @@ class SourceCatalogueEntrySerializer(ContextSerializer):
         )
 
 
-class SourceCopyistSerializer(ContextSerializer):
-    copyist = serpy.MethodField()
-    uncertain = serpy.BoolField(attr="uncertain", required=False)
-    type = serpy.StrField(attr="get_type_display", call=True)
-    type_s = serpy.StrField(attr="get_type_display", call=True)
+class SourceCopyistSerializer(ypres.Serializer):
+    copyist = ypres.MethodField()
+    uncertain = ypres.BoolField(attr="uncertain", required=False)
+    type = ypres.StrField(attr="get_type_display", call=True)
+    type_s = ypres.StrField(attr="get_type_display", call=True)
 
     def get_copyist(self, obj) -> dict:
         content_type = None
@@ -48,10 +49,10 @@ class SourceCopyistSerializer(ContextSerializer):
             return {"name": str(obj.copyist)}
 
 
-class SourceRelationshipSerializer(ContextSerializer):
-    related_entity = serpy.MethodField()
-    uncertain = serpy.BoolField(attr="uncertain", required=False)
-    relationship_type = serpy.StrField(attr="relationship_type")
+class SourceRelationshipSerializer(ypres.Serializer):
+    related_entity = ypres.MethodField()
+    uncertain = ypres.BoolField(attr="uncertain", required=False)
+    relationship_type = ypres.StrField(attr="relationship_type")
 
     def get_related_entity(self, obj):
         content_type = None
@@ -71,16 +72,16 @@ class SourceRelationshipSerializer(ContextSerializer):
             return {"name": str(obj.related_entity)}
 
 
-class SourceProvenanceSerializer(ContextSerializer):
-    city = serpy.StrField(attr="city.name", required=False)
-    country = serpy.StrField(attr="country.name", required=False)
-    region = serpy.StrField(attr="region.name", required=False)
-    protectorate = serpy.StrField(attr="protectorate.name", required=False)
-    entity = serpy.MethodField()
-    country_uncertain = serpy.BoolField(attr="country_uncertain")
-    city_uncertain = serpy.BoolField(attr="city_uncertain")
-    entity_uncertain = serpy.BoolField(attr="entity_uncertain")
-    region_uncertain = serpy.BoolField(attr="region_uncertain")
+class SourceProvenanceSerializer(ypres.Serializer):
+    city = ypres.StrField(attr="city.name", required=False)
+    country = ypres.StrField(attr="country.name", required=False)
+    region = ypres.StrField(attr="region.name", required=False)
+    protectorate = ypres.StrField(attr="protectorate.name", required=False)
+    entity = ypres.MethodField()
+    country_uncertain = ypres.BoolField(attr="country_uncertain")
+    city_uncertain = ypres.BoolField(attr="city_uncertain")
+    entity_uncertain = ypres.BoolField(attr="entity_uncertain")
+    region_uncertain = ypres.BoolField(attr="region_uncertain")
 
     def get_entity(self, obj):
         if not obj.entity:
@@ -102,12 +103,12 @@ class SourceProvenanceSerializer(ContextSerializer):
         return {"name": str(obj.entity)}
 
 
-class SourceSetSerializer(ContextDictSerializer):
-    pk = serpy.IntField()
-    url = serpy.MethodField()
-    cluster_shelfmark = serpy.StrField(attr="cluster_shelfmark_s")
-    set_type = serpy.StrField(attr="set_type_s")
-    sources = serpy.MethodField()
+class SourceSetSerializer(ypres.DictSerializer):
+    pk = ypres.IntField()
+    url = ypres.MethodField()
+    cluster_shelfmark = ypres.StrField(attr="cluster_shelfmark_s")
+    set_type = ypres.StrField(attr="set_type_s")
+    sources = ypres.MethodField()
 
     def get_url(self, obj):
         return reverse(
@@ -145,12 +146,12 @@ class SourceSetSerializer(ContextDictSerializer):
         return ret
 
 
-class SourceBibliographySerializer(ContextDictSerializer):
-    pk = serpy.IntField()
-    prerendered = serpy.MethodField()
-    primary_study = serpy.BoolField()
-    pages = serpy.StrField(required=False)
-    notes = serpy.StrField(required=False)
+class SourceBibliographySerializer(ypres.DictSerializer):
+    pk = ypres.IntField()
+    prerendered = ypres.MethodField()
+    primary_study = ypres.BoolField()
+    pages = ypres.StrField(required=False)
+    notes = ypres.StrField(required=False)
 
     def get_prerendered(self, obj):
         template = get_template("website/bibliography/bibliography_entry.jinja2")
@@ -163,14 +164,14 @@ class SourceBibliographySerializer(ContextDictSerializer):
         return citation
 
 
-class SourceComposerInventoryCompositionSerializer(ContextDictSerializer):
-    folio_start = serpy.StrField(required=False)
-    folio_end = serpy.StrField(required=False)
-    uncertain = serpy.BoolField(required=False)
-    source_attribution = serpy.StrField(attr="attribution", required=False)
+class SourceComposerInventoryCompositionSerializer(ypres.DictSerializer):
+    folio_start = ypres.StrField(required=False)
+    folio_end = ypres.StrField(required=False)
+    uncertain = ypres.BoolField(required=False)
+    source_attribution = ypres.StrField(attr="attribution", required=False)
 
-    composition = serpy.StrField(attr="title", required=False)
-    url = serpy.MethodField()
+    composition = ypres.StrField(attr="title", required=False)
+    url = ypres.MethodField()
 
     def get_url(self, obj) -> str | None:
         if "id" not in obj or obj["id"] is None:
@@ -183,17 +184,17 @@ class SourceComposerInventoryCompositionSerializer(ContextDictSerializer):
         )
 
 
-class SourceComposerInventorySerializer(ContextDictSerializer):
-    url = serpy.MethodField(required=False)
-    name = serpy.StrField(attr="composer_s")
-    inventory = serpy.MethodField(required=False)
+class SourceComposerInventorySerializer(ypres.DictSerializer):
+    url = ypres.MethodField(required=False)
+    name = ypres.StrField(attr="composer_s")
+    inventory = ypres.MethodField(required=False)
 
     def get_inventory(self, obj):
         inventory = SourceComposerInventoryCompositionSerializer(
             obj["compositions_json"],
             many=True,
             context={"request": self.context["request"]},
-        ).data
+        ).serialized_many
 
         return [f for f in inventory if f]
 
@@ -208,16 +209,16 @@ class SourceComposerInventorySerializer(ContextDictSerializer):
         )
 
 
-class SourceInventoryNoteSerializer(serpy.Serializer):
-    note = serpy.StrField(attr="note", required=False)
-    note_type = serpy.StrField(attr="note_type", required=False)
+class SourceInventoryNoteSerializer(ypres.Serializer):
+    note = ypres.StrField(attr="note", required=False)
+    note_type = ypres.StrField(attr="note_type", required=False)
 
 
-class SourceInventoryBibliographySerializer(ContextDictSerializer):
-    pk = serpy.IntField()
-    prerendered = serpy.MethodField()
-    pages = serpy.StrField(required=False)
-    notes = serpy.StrField(required=False)
+class SourceInventoryBibliographySerializer(ypres.DictSerializer):
+    pk = ypres.IntField()
+    prerendered = ypres.MethodField()
+    pages = ypres.StrField(required=False)
+    notes = ypres.StrField(required=False)
 
     def get_prerendered(self, obj):
         template = get_template("website/bibliography/bibliography_entry.jinja2")
@@ -230,9 +231,9 @@ class SourceInventoryBibliographySerializer(ContextDictSerializer):
         return citation
 
 
-class SourceUninventoriedSerializer(ContextSerializer):
-    pk = serpy.IntField()
-    composers = serpy.MethodField()
+class SourceUninventoriedSerializer(ypres.Serializer):
+    pk = ypres.IntField()
+    composers = ypres.MethodField()
 
     def get_composers(self, obj) -> list | None:
         if obj.unattributed_composers.exists():
@@ -253,21 +254,21 @@ class SourceUninventoriedSerializer(ContextSerializer):
             return out
 
 
-class SourceInventorySerializer(ContextSerializer):
-    pk = serpy.IntField()
-    url = serpy.MethodField()
-    num_voices = serpy.StrField(required=False)
-    genres = serpy.MethodField(required=False)
-    folio_start = serpy.StrField(required=False)
-    folio_end = serpy.StrField(required=False)
-    composition = serpy.StrField(required=False)
-    composers = serpy.MethodField()
-    item_title = serpy.StrField(required=False)
-    bibliography = serpy.MethodField(required=False)
-    voices = serpy.MethodField()
-    pages = serpy.MethodField(required=False)
-    source_attribution = serpy.StrField(required=False)
-    notes = serpy.MethodField()
+class SourceInventorySerializer(ypres.Serializer):
+    pk = ypres.IntField()
+    url = ypres.MethodField()
+    num_voices = ypres.StrField(required=False)
+    genres = ypres.MethodField(required=False)
+    folio_start = ypres.StrField(required=False)
+    folio_end = ypres.StrField(required=False)
+    composition = ypres.StrField(required=False)
+    composers = ypres.MethodField()
+    item_title = ypres.StrField(required=False)
+    bibliography = ypres.MethodField(required=False)
+    voices = ypres.MethodField()
+    pages = ypres.MethodField(required=False)
+    source_attribution = ypres.StrField(required=False)
+    notes = ypres.MethodField()
 
     def get_pages(self, obj):
         return [p.pk for p in obj.pages.all()]
@@ -280,7 +281,7 @@ class SourceInventorySerializer(ContextSerializer):
     def get_notes(self, obj):
         if not obj.notes:
             return None
-        return SourceInventoryNoteSerializer(obj.notes.all(), many=True).data
+        return SourceInventoryNoteSerializer(obj.notes.all(), many=True).serialized_many
 
     def get_bibliography(self, obj):
         connection = SolrManager(settings.SOLR["SERVER"])
@@ -302,7 +303,7 @@ class SourceInventorySerializer(ContextSerializer):
                 if n := entry.get("notes"):
                     res["notes"] = n
 
-                reslist.append(SourceInventoryBibliographySerializer(res).data)
+                reslist.append(SourceInventoryBibliographySerializer(res).serialized)
 
         return reslist
 
@@ -352,14 +353,14 @@ class SourceInventorySerializer(ContextSerializer):
         return out or None
 
 
-class SourceArchiveSerializer(ContextSerializer):
-    url = serpy.MethodField()
-    name = serpy.StrField()
-    siglum = serpy.StrField()
-    city = serpy.StrField(attr="city.name")
-    country = serpy.StrField(attr="city.parent.name", required=False)
-    logo = serpy.MethodField()
-    copyright = serpy.StrField(attr="copyright_statement", required=False)
+class SourceArchiveSerializer(ypres.Serializer):
+    url = ypres.MethodField()
+    name = ypres.StrField()
+    siglum = ypres.StrField()
+    city = ypres.StrField(attr="city.name")
+    country = ypres.StrField(attr="city.parent.name", required=False)
+    logo = ypres.MethodField()
+    copyright = ypres.StrField(attr="copyright_statement", required=False)
 
     def get_url(self, obj):
         return reverse(
@@ -371,43 +372,43 @@ class SourceArchiveSerializer(ContextSerializer):
             return obj.logo.url
 
 
-class SourceNoteSerializer(ContextSerializer):
-    note = serpy.StrField()
-    author = serpy.StrField()
-    type = serpy.IntField()
-    pk = serpy.IntField()
-    note_type = serpy.StrField()
+class SourceNoteSerializer(ypres.Serializer):
+    note = ypres.StrField()
+    author = ypres.StrField()
+    type = ypres.IntField()
+    pk = ypres.IntField()
+    note_type = ypres.StrField()
 
 
-class SourceURLSerializer(ContextSerializer):
-    type = serpy.IntField()
-    url_type = serpy.StrField(attr="url_type")
-    link = serpy.StrField()
-    link_text = serpy.StrField()
+class SourceURLSerializer(ypres.Serializer):
+    type = ypres.IntField()
+    url_type = ypres.StrField(attr="url_type")
+    link = ypres.StrField()
+    link_text = ypres.StrField()
 
 
-class SourceNotationsSerializer(ContextSerializer):
-    name = serpy.StrField()
+class SourceNotationsSerializer(ypres.Serializer):
+    name = ypres.StrField()
 
 
-class SourceIdentifierSerializer(ContextSerializer):
-    identifier = serpy.StrField()
-    type = serpy.IntField()
-    identifier_type = serpy.StrField()
-    note = serpy.StrField(required=False)
+class SourceIdentifierSerializer(ypres.Serializer):
+    identifier = ypres.StrField()
+    type = ypres.IntField()
+    identifier_type = ypres.StrField()
+    note = ypres.StrField(required=False)
 
 
-class SourceAuthoritiesSerializer(ContextSerializer):
-    url = serpy.StrField(attr="identifier_url")
-    label = serpy.StrField(attr="identifier_label")
-    identifier = serpy.StrField()
+class SourceAuthoritiesSerializer(ypres.Serializer):
+    url = ypres.StrField(attr="identifier_url")
+    alabel = ypres.StrField(label="label", attr="identifier_label")
+    identifier = ypres.StrField()
 
 
-class SourceListSerializer(ContextSerializer):
-    pk = serpy.IntField()
-    url = serpy.MethodField()
-    display_name = serpy.StrField()
-    shelfmark = serpy.StrField()
+class SourceListSerializer(ypres.Serializer):
+    pk = ypres.IntField()
+    url = ypres.MethodField()
+    display_name = ypres.StrField()
+    shelfmark = ypres.StrField()
 
     def get_url(self, obj):
         return reverse(
@@ -415,57 +416,57 @@ class SourceListSerializer(ContextSerializer):
         )
 
 
-class SourceContributionSerializer(ContextSerializer):
-    pk = serpy.IntField()
-    summary = serpy.StrField()
-    contributor = serpy.StrField(attr="contributor.full_name", required=False)
-    credit = serpy.StrField(required=False)
-    updated = DateTimeField(date_format="%A, %-d %B, %Y")
+class SourceContributionSerializer(ypres.Serializer):
+    pk = ypres.IntField()
+    summary = ypres.StrField()
+    contributor = ypres.StrField(attr="contributor.full_name", required=False)
+    credit = ypres.StrField(required=False)
+    updated = ypres.DateTimeField(date_format="%A, %-d %B, %Y")
 
 
-class SourceCommentarySerializer(ContextSerializer):
-    pk = serpy.IntField()
-    comment = serpy.StrField()
-    author = serpy.StrField(attr="author.full_name", required=False)
-    updated = DateTimeField(date_format="%A, %-d %B, %Y")
+class SourceCommentarySerializer(ypres.Serializer):
+    pk = ypres.IntField()
+    comment = ypres.StrField()
+    author = ypres.StrField(attr="author.full_name", required=False)
+    updated = ypres.DateTimeField(date_format="%A, %-d %B, %Y")
 
 
-class SourceDetailSerializer(ContextSerializer):
-    pk = serpy.IntField()
-    url = serpy.MethodField()
-    name = serpy.StrField(required=False)
-    display_name = serpy.StrField(required=False)
-    shelfmark = serpy.StrField()
-    surface_type = serpy.StrField(required=False)
-    date_statement = serpy.StrField(required=False)
-    source_type = serpy.StrField(attr="type", required=False)
-    format = serpy.StrField(required=False)
-    measurements = serpy.StrField(required=False)
-    type = serpy.MethodField()
-    cover_image_info = serpy.MethodField(required=False)
-    manifest_url = serpy.MethodField(required=False)
-    inventory_provided = serpy.BoolField()
-    public_images = serpy.BoolField()
-    open_images = serpy.BoolField()
-    has_external_images = serpy.MethodField()
-    has_external_manifest = serpy.MethodField()
-    numbering_system_type = serpy.StrField(attr="numbering_system_type")
+class SourceDetailSerializer(ypres.Serializer):
+    pk = ypres.IntField()
+    url = ypres.MethodField()
+    name = ypres.StrField(required=False)
+    display_name = ypres.StrField(required=False)
+    shelfmark = ypres.StrField()
+    surface_type = ypres.StrField(required=False)
+    date_statement = ypres.StrField(required=False)
+    source_type = ypres.StrField(attr="type", required=False)
+    format = ypres.StrField(required=False)
+    measurements = ypres.StrField(required=False)
+    type = ypres.MethodField()
+    cover_image_info = ypres.MethodField(required=False)
+    manifest_url = ypres.MethodField(required=False)
+    inventory_provided = ypres.BoolField()
+    public_images = ypres.BoolField()
+    open_images = ypres.BoolField()
+    has_external_images = ypres.MethodField()
+    has_external_manifest = ypres.MethodField()
+    numbering_system_type = ypres.StrField(attr="numbering_system_type")
 
-    has_images = serpy.MethodField(required=False)
-    inventory = serpy.MethodField(required=False)
-    composer_inventory = serpy.MethodField(required=False)
-    uninventoried = serpy.MethodField(required=False)
-    archive = serpy.MethodField(required=False)
-    sets = serpy.MethodField(required=False)
-    provenance = serpy.MethodField(required=False)
-    relationships = serpy.MethodField(required=False)
-    copyists = serpy.MethodField(required=False)
-    catalogue_entries = serpy.MethodField(required=False)
-    # iiif_manifest = serpy.MethodField()
+    has_images = ypres.MethodField(required=False)
+    inventory = ypres.MethodField(required=False)
+    composer_inventory = ypres.MethodField(required=False)
+    uninventoried = ypres.MethodField(required=False)
+    archive = ypres.MethodField(required=False)
+    sets = ypres.MethodField(required=False)
+    provenance = ypres.MethodField(required=False)
+    relationships = ypres.MethodField(required=False)
+    copyists = ypres.MethodField(required=False)
+    catalogue_entries = ypres.MethodField(required=False)
+    # iiif_manifest = ypres.MethodField()
 
     links = SourceURLSerializer(attr="links.all", call=True, many=True)
 
-    bibliography = serpy.MethodField(required=False)
+    bibliography = ypres.MethodField(required=False)
     identifiers = SourceIdentifierSerializer(
         attr="identifiers.all", call=True, many=True
     )
@@ -473,9 +474,9 @@ class SourceDetailSerializer(ContextSerializer):
     authorities = SourceAuthoritiesSerializer(
         attr="authorities.all", call=True, many=True
     )
-    notes = serpy.MethodField(required=False)
-    contributions = serpy.MethodField()
-    commentary = serpy.MethodField()
+    notes = ypres.MethodField(required=False)
+    contributions = ypres.MethodField()
+    commentary = ypres.MethodField()
 
     def get_type(self, obj):
         return obj.__class__.__name__.lower()
@@ -508,7 +509,7 @@ class SourceDetailSerializer(ContextSerializer):
                 if n := entry.get("notes"):
                     res["notes"] = n
 
-                reslist.append(SourceBibliographySerializer(res).data)
+                reslist.append(SourceBibliographySerializer(res).serialized)
 
         return reslist
 
@@ -518,7 +519,7 @@ class SourceDetailSerializer(ContextSerializer):
             obj.notes.exclude(type=99).order_by("type", "sort"),
             many=True,
             context={"request": self.context["request"]},
-        ).data
+        ).serialized_many
 
     def get_cover_image_info(self, obj):
         try:
@@ -580,7 +581,7 @@ class SourceDetailSerializer(ContextSerializer):
             .order_by("source_order", Collate("folio_start", "natsort")),
             many=True,
             context={"request": self.context["request"]},
-        ).data
+        ).serialized_many
 
     def get_composer_inventory(self, obj):
         connection = SolrManager(settings.SOLR["SERVER"])
@@ -593,7 +594,7 @@ class SourceDetailSerializer(ContextSerializer):
             connection.results,
             many=True,
             context={"request": self.context["request"]},
-        ).data
+        ).serialized_many
 
         return [c for c in composer_inventory if c.get("inventory")]
 
@@ -604,12 +605,12 @@ class SourceDetailSerializer(ContextSerializer):
             .order_by("pk"),
             many=True,
             context={"request": self.context["request"]},
-        ).data
+        ).serialized_many
 
     def get_archive(self, obj):
         return SourceArchiveSerializer(
             obj.archive, context={"request": self.context["request"]}
-        ).data
+        ).serialized
 
     def get_sets(self, obj):
         connection = SolrManager(settings.SOLR["SERVER"])
@@ -621,7 +622,7 @@ class SourceDetailSerializer(ContextSerializer):
             connection.results,
             many=True,
             context={"request": self.context["request"], "source_id": obj.pk},
-        ).data
+        ).serialized_many
 
     def get_provenance(self, obj):
         return SourceProvenanceSerializer(
@@ -630,7 +631,7 @@ class SourceDetailSerializer(ContextSerializer):
             ).all(),
             many=True,
             context={"request": self.context["request"]},
-        ).data
+        ).serialized_many
 
     def get_relationships(self, obj):
         return SourceRelationshipSerializer(
@@ -643,12 +644,12 @@ class SourceDetailSerializer(ContextSerializer):
             .all(),
             many=True,
             context={"request": self.context["request"]},
-        ).data
+        ).serialized_many
 
     def get_copyists(self, obj):
         return SourceCopyistSerializer(
             obj.copyists.all(), many=True, context={"request": self.context["request"]}
-        ).data
+        ).serialized_many
 
     def get_catalogue_entries(self, obj):
         if not obj.catalogue_entries.count() > 0:
@@ -658,7 +659,7 @@ class SourceDetailSerializer(ContextSerializer):
             obj.catalogue_entries.all(),
             context={"request": self.context["request"]},
             many=True,
-        ).data
+        ).serialized_many
 
     def get_contributions(self, obj):
         if not obj.contributions.count() > 0:
@@ -668,7 +669,7 @@ class SourceDetailSerializer(ContextSerializer):
             obj.contributions.filter(accepted=True).order_by("-updated"),
             context={"request": self.context["request"]},
             many=True,
-        ).data
+        ).serialized_many
 
     def get_commentary(self, obj):
         if not obj.commentary.count() > 0:
@@ -691,7 +692,7 @@ class SourceDetailSerializer(ContextSerializer):
                 obj.commentary.filter(comment_type=1).order_by("-updated"),
                 context={"request": self.context["request"]},
                 many=True,
-            ).data,
+            ).serialized_many,
         }
 
         if private_comments:
@@ -699,6 +700,6 @@ class SourceDetailSerializer(ContextSerializer):
                 private_comments,
                 context={"request": self.context["request"]},
                 many=True,
-            ).data
+            ).serialized_many
 
         return all_comments

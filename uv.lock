@@ -177,12 +177,12 @@ dependencies = [
     { name = "pysolr" },
     { name = "requests" },
     { name = "sentry-sdk", extra = ["django"] },
-    { name = "serpy" },
     { name = "tablib" },
     { name = "traitlets" },
     { name = "ujson" },
     { name = "wagtail" },
     { name = "werkzeug" },
+    { name = "ypres" },
 ]
 
 [package.dev-dependencies]
@@ -214,12 +214,12 @@ requires-dist = [
     { name = "pysolr", git = "https://github.com/django-haystack/pysolr/?rev=master" },
     { name = "requests", specifier = "==2.32.3" },
     { name = "sentry-sdk", extras = ["django"], specifier = ">=2.41.0" },
-    { name = "serpy", specifier = ">=0.3.1,<0.4.0" },
     { name = "tablib", specifier = ">=3.5.0,<4.0.0" },
     { name = "traitlets", specifier = ">=5.14.3,<6.0.0" },
     { name = "ujson", specifier = ">=5.0,<6.0" },
     { name = "wagtail", specifier = ">=6.0,<7.0" },
     { name = "werkzeug", specifier = ">=3.0.3,<4.0.0" },
+    { name = "ypres", git = "https://github.com/rism-digital/ypres.git" },
 ]
 
 [package.metadata.requires-dev]
@@ -968,18 +968,6 @@ django = [
 ]
 
 [[package]]
-name = "serpy"
-version = "0.3.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "six" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/66/25/4cbf8f523989adbbaa6b8e560867789f0bdf493882402d8fc0a4bf4209ba/serpy-0.3.1.tar.gz", hash = "sha256:3772b2a9923fbf674000ff51abebf6ea8f0fca0a2cfcbfa0d63ff118193d1ec5", size = 7160, upload-time = "2017-11-28T05:23:03.757Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/62/81/8e9efbb206bb6cd79e515ea54365c8cac0cdfffefb073b51b2b7f9da46fa/serpy-0.3.1-py2.py3-none-any.whl", hash = "sha256:750ded3df0671918b81d6efcab2b85cac12f9fcc2bce496c24a0ffa65d84b5da", size = 9223, upload-time = "2017-11-28T05:23:02.737Z" },
-]
-
-[[package]]
 name = "setuptools"
 version = "80.9.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1208,3 +1196,8 @@ wheels = [
 heif = [
     { name = "pillow-heif" },
 ]
+
+[[package]]
+name = "ypres"
+version = "1.1.2"
+source = { git = "https://github.com/rism-digital/ypres.git#3e26a1266b1f0056dbf49cb06a12947cec775d5c" }

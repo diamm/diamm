@@ -1,6 +1,6 @@
 import logging
 
-import serpy
+import ypres
 
 from diamm.serializers.search.helpers import (
     get_db_records,
@@ -132,20 +132,20 @@ def index_items(cfg: dict) -> bool:
 
 
 def create_item_index_documents(record, cfg: dict) -> list[dict]:
-    return [ItemSearchSerializer(record).data]
+    return [ItemSearchSerializer(record).serialized]
 
 
 def create_item_note_documents(record, cfg: dict) -> list[dict]:
-    return [ItemNotesSearchSerializer(record).data]
+    return [ItemNotesSearchSerializer(record).serialized]
 
 
-class ItemNotesSearchSerializer(serpy.DictSerializer):
-    pk = serpy.IntField(attr="pk")
-    type = serpy.MethodField()
+class ItemNotesSearchSerializer(ypres.DictSerializer):
+    pk = ypres.IntField(attr="pk")
+    type = ypres.MethodField()
 
-    note_type_i = serpy.IntField(attr="type")
-    note_type_s = serpy.MethodField()
-    note_sni = serpy.StrField(attr="note")
+    note_type_i = ypres.IntField(attr="type")
+    note_type_s = ypres.MethodField()
+    note_sni = ypres.StrField(attr="note")
 
     def get_note_type_s(self, obj):
         return obj["note_type"]
@@ -154,33 +154,33 @@ class ItemNotesSearchSerializer(serpy.DictSerializer):
         return obj["record_type"]
 
 
-class ItemSearchSerializer(serpy.DictSerializer):
-    type = serpy.StrField(attr="type", required=False)
-    pk = serpy.IntField(attr="pk", required=False)
+class ItemSearchSerializer(ypres.DictSerializer):
+    type = ypres.StrField(attr="type", required=False)
+    pk = ypres.IntField(attr="pk", required=False)
 
-    source_i = serpy.IntField(attr="source.pk", required=False)
-    source_s = serpy.StrField(attr="source.display_name", required=False)
-    pages_ii = serpy.Field(attr="page_ids")
-    pages_ssni = serpy.Field(attr="page_numeration")
-    composition_s = serpy.StrField(attr="composition_title", required=False)
-    composition_i = serpy.IntField(attr="composition", required=False)
+    source_i = ypres.IntField(attr="source.pk", required=False)
+    source_s = ypres.StrField(attr="source.display_name", required=False)
+    pages_ii = ypres.Field(attr="page_ids")
+    pages_ssni = ypres.Field(attr="page_numeration")
+    composition_s = ypres.StrField(attr="composition_title", required=False)
+    composition_i = ypres.IntField(attr="composition", required=False)
 
-    num_voices_s = serpy.StrField(attr="num_voices", required=False)
-    item_title_s = serpy.StrField(attr="item_title", required=False)
-    source_attribution_s = serpy.StrField(attr="source_attribution", required=False)
-    source_incipit_s = serpy.StrField(attr="source_incipit", required=False)
-    source_order_f = serpy.FloatField(attr="source_order", required=False)
+    num_voices_s = ypres.StrField(attr="num_voices", required=False)
+    item_title_s = ypres.StrField(attr="item_title", required=False)
+    source_attribution_s = ypres.StrField(attr="source_attribution", required=False)
+    source_incipit_s = ypres.StrField(attr="source_incipit", required=False)
+    source_order_f = ypres.FloatField(attr="source_order", required=False)
 
-    folio_start_s = serpy.StrField(attr="folio_start", required=False)
-    folio_end_s = serpy.StrField(attr="folio_end", required=False)
-    folio_start_ans = serpy.StrField(attr="folio_start", required=False)
-    folio_end_ans = serpy.StrField(attr="folio_end", required=False)
-    composers_ssni = serpy.MethodField()
-    composers_ss = serpy.MethodField()
-    composer_ans = serpy.MethodField()
-    bibliography_ii = serpy.Field(attr="bibliography")
-    voices_json = serpy.MethodField()
-    genres_ss = serpy.Field(attr="genres")
+    folio_start_s = ypres.StrField(attr="folio_start", required=False)
+    folio_end_s = ypres.StrField(attr="folio_end", required=False)
+    folio_start_ans = ypres.StrField(attr="folio_start", required=False)
+    folio_end_ans = ypres.StrField(attr="folio_end", required=False)
+    composers_ssni = ypres.MethodField()
+    composers_ss = ypres.MethodField()
+    composer_ans = ypres.MethodField()
+    bibliography_ii = ypres.Field(attr="bibliography")
+    voices_json = ypres.MethodField()
+    genres_ss = ypres.Field(attr="genres")
 
     def get_composers_ssni(self, obj) -> list[str]:
         """

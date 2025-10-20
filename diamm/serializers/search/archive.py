@@ -1,8 +1,7 @@
 import logging
 
-import serpy
+import ypres
 
-from diamm.serializers.fields import StaticField
 from diamm.serializers.search.helpers import (
     get_db_records,
     parallelise,
@@ -21,7 +20,7 @@ def index_archives(cfg: dict) -> bool:
 
 
 def create_archive_index_documents(record, cfg: dict) -> list[dict]:
-    return [ArchiveSearchSerializer(record).data]
+    return [ArchiveSearchSerializer(record).serialized]
 
 
 def _get_archives(cfg: dict):
@@ -50,15 +49,15 @@ def _get_archives(cfg: dict):
     return get_db_records(sql_query, cfg)
 
 
-class ArchiveSearchSerializer(serpy.DictSerializer):
-    pk = serpy.IntField()
-    type = serpy.StrField(attr="record_type")
-    public_b = StaticField(True)
-    sources_ss = serpy.Field(attr="sources")
-    city_s = serpy.StrField(attr="city_name")
-    city_variants_ss = serpy.Field(attr="city_variant_names")
-    name_s = serpy.StrField(attr="name")
-    display_name_ans = serpy.StrField(attr="name")
-    country_s = serpy.StrField(attr="city_parent_name", required=False)
-    siglum_s = serpy.StrField(attr="siglum")
-    former_sigla_ss = serpy.Field(attr="former_sigla")
+class ArchiveSearchSerializer(ypres.DictSerializer):
+    pk = ypres.IntField()
+    type = ypres.StrField(attr="record_type")
+    public_b = ypres.StaticField(True)
+    sources_ss = ypres.Field(attr="sources")
+    city_s = ypres.StrField(attr="city_name")
+    city_variants_ss = ypres.Field(attr="city_variant_names")
+    name_s = ypres.StrField(attr="name")
+    display_name_ans = ypres.StrField(attr="name")
+    country_s = ypres.StrField(attr="city_parent_name", required=False)
+    siglum_s = ypres.StrField(attr="siglum")
+    former_sigla_ss = ypres.Field(attr="former_sigla")

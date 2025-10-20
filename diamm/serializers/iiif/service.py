@@ -1,23 +1,20 @@
 
 import pysolr
-import serpy
+import ypres
 from django.conf import settings
 from rest_framework.reverse import reverse
 
-from diamm.serializers.fields import StaticField
-from diamm.serializers.serializers import ContextDictSerializer
 
-
-class StructureServiceSerializer(ContextDictSerializer):
+class StructureServiceSerializer(ypres.DictSerializer):
     """
     A minimal serializer that returns the context and a resolvable
     @id for retrieving expanded service information.
     """
 
-    service = StaticField(
+    service = ypres.StaticField(
         label="@context", value=f"https://{settings.HOSTNAME}/services/item"
     )
-    id = serpy.MethodField(label="@id")
+    id = ypres.MethodField(label="@id")
 
     def get_id(self, obj: dict) -> str:
         return reverse(
@@ -27,20 +24,20 @@ class StructureServiceSerializer(ContextDictSerializer):
         )
 
 
-class ServiceSerializer(ContextDictSerializer):
-    service = StaticField(
+class ServiceSerializer(ypres.DictSerializer):
+    service = ypres.StaticField(
         label="@context",
         value=f"https://{settings.HOSTNAME}/services/item",  # custom DIAMM service namespace
     )
-    id = serpy.MethodField(label="@id")
-    type = StaticField(value="Item")
-    source_attribution = serpy.StrField(attr="source_attribution_s", required=False)
-    item_title = serpy.StrField(attr="item_title_s", required=False)
-    composers = serpy.MethodField()
-    voices = serpy.MethodField()
-    folios = serpy.MethodField()
-    composition = serpy.MethodField()
-    pages = serpy.MethodField()
+    id = ypres.MethodField(label="@id")
+    type = ypres.StaticField(value="Item")
+    source_attribution = ypres.StrField(attr="source_attribution_s", required=False)
+    item_title = ypres.StrField(attr="item_title_s", required=False)
+    composers = ypres.MethodField()
+    voices = ypres.MethodField()
+    folios = ypres.MethodField()
+    composition = ypres.MethodField()
+    pages = ypres.MethodField()
 
     def get_id(self, obj: dict) -> str:
         return reverse(

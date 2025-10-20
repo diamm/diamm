@@ -1,15 +1,13 @@
 import re
 
-import serpy
+import ypres
 from django.template.loader import get_template
 from rest_framework.reverse import reverse
 
-from diamm.serializers.serializers import ContextDictSerializer, ContextSerializer
 
-
-class BibliographySerializer(ContextDictSerializer):
-    entry = serpy.MethodField()
-    pk = serpy.IntField()
+class BibliographySerializer(ypres.DictSerializer):
+    entry = ypres.MethodField()
+    pk = ypres.IntField()
 
     def get_entry(self, obj):
         template = get_template("website/bibliography/bibliography_entry.jinja2")
@@ -22,11 +20,11 @@ class BibliographySerializer(ContextDictSerializer):
         return citation
 
 
-class BibliographyAuthorSerializer(ContextSerializer):
-    url = serpy.MethodField()
-    last_name = serpy.StrField()
-    first_name = serpy.StrField()
-    bibliography = serpy.MethodField()
+class BibliographyAuthorSerializer(ypres.Serializer):
+    url = ypres.MethodField()
+    last_name = ypres.StrField()
+    first_name = ypres.StrField()
+    bibliography = ypres.MethodField()
 
     def get_url(self, obj):
         return reverse(
@@ -38,4 +36,4 @@ class BibliographyAuthorSerializer(ContextSerializer):
             obj.solr_bibliography,
             many=True,
             context={"request": self.context["request"]},
-        ).data
+        ).serialized_many

@@ -1,7 +1,7 @@
 import functools
 import logging
 
-import serpy
+import ypres
 import ujson
 
 from diamm.serializers.search.helpers import get_db_records, parallelise, record_indexer
@@ -98,31 +98,31 @@ def _get_bibliography(cfg: dict):
 
 
 def create_bibliography_index_documents(record, cfg: dict):
-    return [BibliographySearchSerializer(record).data]
+    return [BibliographySearchSerializer(record).serialized]
 
 
-class BibliographySearchSerializer(serpy.DictSerializer):
-    type = serpy.StrField(attr="record_type")
-    pk = serpy.IntField()
+class BibliographySearchSerializer(ypres.DictSerializer):
+    type = ypres.StrField(attr="record_type")
+    pk = ypres.IntField()
 
-    authors_ss = serpy.MethodField()
-    authors_ii = serpy.MethodField()
+    authors_ss = ypres.MethodField()
+    authors_ii = ypres.MethodField()
 
-    title_s = serpy.StrField(attr="title")
-    year_s = serpy.StrField(attr="year")
-    year_ans = serpy.StrField(attr="year")
-    type_s = serpy.StrField(attr="type_name")
-    abbreviation_s = serpy.StrField(attr="abbreviation")
-    citation_json = serpy.MethodField()
-    sort_ans = serpy.MethodField()
-    sources_ii = serpy.MethodField()
-    sets_ii = serpy.MethodField()
-    sources_json = serpy.MethodField()
-    sets_json = serpy.MethodField()
-    items_ii = serpy.MethodField()
-    items_json = serpy.MethodField()
-    compositions_ii = serpy.MethodField()
-    compositions_json = serpy.MethodField()
+    title_s = ypres.StrField(attr="title")
+    year_s = ypres.StrField(attr="year")
+    year_ans = ypres.StrField(attr="year")
+    type_s = ypres.StrField(attr="type_name")
+    abbreviation_s = ypres.StrField(attr="abbreviation")
+    citation_json = ypres.MethodField()
+    sort_ans = ypres.MethodField()
+    sources_ii = ypres.MethodField()
+    sets_ii = ypres.MethodField()
+    sources_json = ypres.MethodField()
+    sets_json = ypres.MethodField()
+    items_ii = ypres.MethodField()
+    items_json = ypres.MethodField()
+    compositions_ii = ypres.MethodField()
+    compositions_json = ypres.MethodField()
 
     def get_authors_ss(self, obj):
         """
@@ -140,7 +140,7 @@ class BibliographySearchSerializer(serpy.DictSerializer):
         return [n[2] for n in authors] if authors else None
 
     def get_sort_ans(self, obj) -> str | None:
-        authors = process_authors(obj["authors"])
+        authors = process_authors(obj["authors"]) or []
         last_names = [n[1] for n in authors]
         return " ".join(last_names) if authors else None
 

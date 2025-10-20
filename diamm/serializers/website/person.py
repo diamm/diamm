@@ -1,4 +1,4 @@
-import serpy
+import ypres
 from django.contrib.contenttypes.prefetch import GenericPrefetch
 from django.db.models.expressions import Exists, OuterRef
 from django.db.models.query import Prefetch
@@ -6,35 +6,34 @@ from rest_framework.reverse import reverse
 
 from diamm.models import Item, Organization, Page, Person, SourceURL
 from diamm.models.data.person_note import PersonNote
-from diamm.serializers.serializers import ContextSerializer
 
 
-class PersonRoleSerializer(ContextSerializer):
-    earliest_year = serpy.StrField(required=False)
-    earliest_year_approximate = serpy.BoolField()
-    latest_year_approximate = serpy.BoolField()
-    latest_year = serpy.StrField(required=False)
-    role = serpy.StrField(attr="role_description")
-    note = serpy.StrField(required=False)
+class PersonRoleSerializer(ypres.Serializer):
+    earliest_year = ypres.StrField(required=False)
+    earliest_year_approximate = ypres.BoolField()
+    latest_year_approximate = ypres.BoolField()
+    latest_year = ypres.StrField(required=False)
+    role = ypres.StrField(attr="role_description")
+    note = ypres.StrField(required=False)
 
 
-class PersonNoteSerializer(ContextSerializer):
-    note = serpy.StrField()
+class PersonNoteSerializer(ypres.Serializer):
+    note = ypres.StrField()
 
 
-class PersonContributionSerializer(ContextSerializer):
-    contributor = serpy.StrField(attr="contributor.username")
-    summary = serpy.StrField()
-    updated = serpy.StrField()
+class PersonContributionSerializer(ypres.Serializer):
+    contributor = ypres.StrField(attr="contributor.username")
+    summary = ypres.StrField()
+    updated = ypres.StrField()
 
 
-class PersonSourceCopyistSerializer(ContextSerializer):
-    url = serpy.MethodField()
-    has_images = serpy.BoolField(attr="source.pages.exists", call=True, required=False)
-    copyist_type = serpy.StrField(attr="copyist_type")
-    uncertain = serpy.BoolField(attr="uncertain")
-    source = serpy.StrField(attr="source.display_name")
-    public_images = serpy.BoolField(attr="source.public_images", required=False)
+class PersonSourceCopyistSerializer(ypres.Serializer):
+    url = ypres.MethodField()
+    has_images = ypres.BoolField(attr="source.pages.exists", call=True, required=False)
+    copyist_type = ypres.StrField(attr="copyist_type")
+    uncertain = ypres.BoolField(attr="uncertain")
+    source = ypres.StrField(attr="source.display_name")
+    public_images = ypres.BoolField(attr="source.public_images", required=False)
 
     def get_url(self, obj) -> str:
         return reverse(
@@ -44,13 +43,13 @@ class PersonSourceCopyistSerializer(ContextSerializer):
         )
 
 
-class PersonSourceRelationshipSerializer(ContextSerializer):
-    url = serpy.MethodField()
-    relationship = serpy.StrField(attr="relationship_type")
-    uncertain = serpy.BoolField(attr="uncertain")
-    source = serpy.StrField(attr="source.display_name")
-    has_images = serpy.BoolField(attr="images_are_public", required=False)
-    public_images = serpy.BoolField(attr="source.public_images", required=False)
+class PersonSourceRelationshipSerializer(ypres.Serializer):
+    url = ypres.MethodField()
+    relationship = ypres.StrField(attr="relationship_type")
+    uncertain = ypres.BoolField(attr="uncertain")
+    source = ypres.StrField(attr="source.display_name")
+    has_images = ypres.BoolField(attr="images_are_public", required=False)
+    public_images = ypres.BoolField(attr="source.public_images", required=False)
 
     def get_url(self, obj) -> str:
         return reverse(
@@ -63,11 +62,11 @@ class PersonSourceRelationshipSerializer(ContextSerializer):
         return obj.images_are_public is False and obj.has_manifest_link is True
 
 
-class PersonCompositionSerializer(ContextSerializer):
-    url = serpy.MethodField()
-    title = serpy.StrField(attr="composition.title")
-    uncertain = serpy.BoolField()
-    sources = serpy.MethodField()
+class PersonCompositionSerializer(ypres.Serializer):
+    url = ypres.MethodField()
+    title = ypres.StrField(attr="composition.title")
+    uncertain = ypres.BoolField()
+    sources = ypres.MethodField()
 
     def get_url(self, obj) -> str:
         return reverse(
@@ -95,16 +94,16 @@ class PersonCompositionSerializer(ContextSerializer):
         return ret
 
 
-class PersonIdentifierSerializer(ContextSerializer):
-    url = serpy.StrField(attr="identifier_url")
-    label = serpy.StrField(attr="identifier_label")
-    identifier = serpy.StrField()
+class PersonIdentifierSerializer(ypres.Serializer):
+    url = ypres.StrField(attr="identifier_url")
+    alabel = ypres.StrField(label="label", attr="identifier_label")
+    identifier = ypres.StrField()
 
 
-class PersonUninventoriedItemsSerializer(ContextSerializer):
-    title = serpy.StrField("item.title", required=False)
-    source = serpy.StrField("item.source.display_name")
-    source_url = serpy.MethodField()
+class PersonUninventoriedItemsSerializer(ypres.Serializer):
+    title = ypres.StrField("item.title", required=False)
+    source = ypres.StrField("item.source.display_name")
+    source_url = ypres.MethodField()
 
     def get_source_url(self, obj):
         return reverse(
@@ -114,23 +113,23 @@ class PersonUninventoriedItemsSerializer(ContextSerializer):
         )
 
 
-class PersonDetailSerializer(ContextSerializer):
-    url = serpy.MethodField()
-    pk = serpy.IntField()
-    compositions = serpy.MethodField()
-    related_sources = serpy.MethodField()
-    copied_sources = serpy.MethodField()
-    full_name = serpy.StrField()
-    type = serpy.MethodField()
-    earliest_year = serpy.IntField(required=False)
-    earliest_year_approximate = serpy.BoolField(required=False)
-    latest_year = serpy.IntField(required=False)
-    latest_year_approximate = serpy.BoolField(required=False)
-    # biography = serpy.MethodField()
-    variant_names = serpy.MethodField()
-    roles = serpy.MethodField()
-    identifiers = serpy.MethodField(required=False)
-    uninventoried_items = serpy.MethodField()
+class PersonDetailSerializer(ypres.Serializer):
+    url = ypres.MethodField()
+    pk = ypres.IntField()
+    compositions = ypres.MethodField()
+    related_sources = ypres.MethodField()
+    copied_sources = ypres.MethodField()
+    full_name = ypres.StrField()
+    type = ypres.MethodField()
+    earliest_year = ypres.IntField(required=False)
+    earliest_year_approximate = ypres.BoolField(required=False)
+    latest_year = ypres.IntField(required=False)
+    latest_year_approximate = ypres.BoolField(required=False)
+    # biography = ypres.MethodField()
+    variant_names = ypres.MethodField()
+    roles = ypres.MethodField()
+    identifiers = ypres.MethodField(required=False)
+    uninventoried_items = ypres.MethodField()
 
     def get_url(self, obj) -> str:
         return reverse(
@@ -144,7 +143,7 @@ class PersonDetailSerializer(ContextSerializer):
             ),
             context={"request": self.context["request"]},
             many=True,
-        ).data
+        ).serialized_many
 
     def get_compositions(self, obj) -> list:
         return PersonCompositionSerializer(
@@ -161,7 +160,7 @@ class PersonDetailSerializer(ContextSerializer):
             .all(),
             context={"request": self.context["request"]},
             many=True,
-        ).data
+        ).serialized_many
 
     def get_related_sources(self, obj) -> list:
         return PersonSourceRelationshipSerializer(
@@ -189,7 +188,7 @@ class PersonDetailSerializer(ContextSerializer):
             .order_by("source__archive__siglum", "source__shelfmark"),
             context={"request": self.context["request"]},
             many=True,
-        ).data
+        ).serialized_many
 
     def get_copied_sources(self, obj) -> list:
         return PersonSourceCopyistSerializer(
@@ -208,7 +207,7 @@ class PersonDetailSerializer(ContextSerializer):
             .all(),
             context={"request": self.context["request"]},
             many=True,
-        ).data
+        ).serialized_many
 
     def get_type(self, obj) -> str:
         return obj.__class__.__name__.lower()
@@ -224,11 +223,11 @@ class PersonDetailSerializer(ContextSerializer):
         )
 
     def get_roles(self, obj) -> list:
-        return PersonRoleSerializer(obj.roles.all(), many=True).data
+        return PersonRoleSerializer(obj.roles.all(), many=True).serialized_many
 
     def get_identifiers(self, obj) -> list:
         return PersonIdentifierSerializer(
             obj.identifiers.all(),
             many=True,
             context={"request": self.context["request"]},
-        ).data
+        ).serialized_many

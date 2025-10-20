@@ -1,9 +1,8 @@
 import logging
 
-import serpy
+import ypres
 import ujson
 
-from diamm.serializers.fields import StaticField
 from diamm.serializers.search.helpers import (
     format_person_name,
     get_db_records,
@@ -23,7 +22,7 @@ def index_people(cfg: dict) -> bool:
 
 
 def create_person_index_documents(record, cfg: dict) -> list[dict]:
-    return [PersonSearchSerializer(record).data]
+    return [PersonSearchSerializer(record).serialized]
 
 
 def _get_people(cfg: dict):
@@ -56,21 +55,21 @@ def _get_people(cfg: dict):
     return get_db_records(sql_query, cfg)
 
 
-class PersonSearchSerializer(serpy.DictSerializer):
-    pk = serpy.IntField()
-    type = serpy.StrField(attr="record_type")
-    name_s = serpy.MethodField(method="names")
-    public_b = StaticField(True)
+class PersonSearchSerializer(ypres.DictSerializer):
+    pk = ypres.IntField()
+    type = ypres.StrField(attr="record_type")
+    name_s = ypres.MethodField(method="names")
+    public_b = ypres.StaticField(True)
     # Copy the full name to a sorting field
-    display_name_ans = serpy.MethodField(method="names")
-    last_name_s = serpy.StrField(attr="last_name")
-    first_name_s = serpy.StrField(attr="first_name", required=False)
-    title_s = serpy.StrField(attr="title", required=False)
-    role_ss = serpy.Field(attr="roles")
-    start_date_i = serpy.IntField(attr="earliest_year", required=False)
-    end_date_i = serpy.IntField(attr="latest_year", required=False)
-    variant_names_ss = serpy.MethodField()
-    compositions_ss = serpy.Field(attr="compositions")
+    display_name_ans = ypres.MethodField(method="names")
+    last_name_s = ypres.StrField(attr="last_name")
+    first_name_s = ypres.StrField(attr="first_name", required=False)
+    title_s = ypres.StrField(attr="title", required=False)
+    role_ss = ypres.Field(attr="roles")
+    start_date_i = ypres.IntField(attr="earliest_year", required=False)
+    end_date_i = ypres.IntField(attr="latest_year", required=False)
+    variant_names_ss = ypres.MethodField()
+    compositions_ss = ypres.Field(attr="compositions")
 
     def get_variant_names_ss(self, obj) -> list | None:
         if variant_names := obj.get("variant_names"):
