@@ -662,17 +662,17 @@ class SourceDetailSerializer(ypres.Serializer):
         ).serialized_many
 
     def get_contributions(self, obj):
-        if not obj.contributions.count() > 0:
+        if not obj.contributions.exists():
             return None
 
         return SourceContributionSerializer(
-            obj.contributions.filter(accepted=True).order_by("-updated"),
+            obj.contributions.select_related("contributor").filter(accepted=True).order_by("-updated"),
             context={"request": self.context["request"]},
             many=True,
         ).serialized_many
 
     def get_commentary(self, obj):
-        if not obj.commentary.count() > 0:
+        if not obj.commentary.exists():
             return None
 
         public_comments = obj.commentary.filter(comment_type=1).exists()
@@ -689,7 +689,7 @@ class SourceDetailSerializer(ypres.Serializer):
 
         all_comments = {
             "public": SourceCommentarySerializer(
-                obj.commentary.filter(comment_type=1).order_by("-updated"),
+                obj.commentary.select_related("author").filter(comment_type=1).order_by("-updated"),
                 context={"request": self.context["request"]},
                 many=True,
             ).serialized_many,

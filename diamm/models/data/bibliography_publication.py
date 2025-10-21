@@ -37,7 +37,7 @@ class BibliographyPublication(models.Model):
     B_NOTE = 99
 
     PUBLICATION_INFO_TYPE = (
-        (B_VOLUME_NO, "Volume Number"),
+        (B_VOLUME_NO, "Volume (and Issue) Number"),
         (B_PARENT_TITLE, "Title of Parent Entry (i.e., Book title, Journal title)"),
         (B_PUBLISHER, "Publisher"),
         (B_PAGES, "Pages"),

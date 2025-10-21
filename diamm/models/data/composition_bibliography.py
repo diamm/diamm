@@ -4,6 +4,7 @@ from django.db import models
 class CompositionBibliography(models.Model):
     class Meta:
         app_label = "diamm_data"
+        verbose_name_plural = "Composition Bibliographies"
 
     composition = models.ForeignKey(
         "diamm_data.Composition", related_name="bibliography", on_delete=models.CASCADE
