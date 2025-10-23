@@ -1,4 +1,4 @@
-module Route exposing (QueryArgs, Route(..), buildQueryParameters, defaultQueryArgs, extractPageNumberFromUrl, locationHrefToRoute, parseUrl, setCurrentPage, setKeywordQuery, setQueryAnonymous, setQueryCities, setQueryComposers, setQueryCurrentState, setQueryGenres, setQueryHasInventory, setQueryHostMainContents, setQueryNotations, setQueryOrganizationType, setQueryOriginalFormat, setQuerySourceComposers, setQuerySourceTypes, setQueryType)
+module Route exposing (QueryArgs, Route(..), buildQueryParameters, defaultQueryArgs, extractPageNumberFromUrl, locationHrefToRoute, parseUrl, setCurrentPage, setKeywordQuery, setQueryAnonymous, setQueryCities, setQueryComposers, setQueryCurrentState, setQueryDateRange, setQueryGenres, setQueryHasInventory, setQueryHostMainContents, setQueryNotations, setQueryOrganizationType, setQueryOriginalFormat, setQuerySourceComposers, setQuerySourceTypes, setQueryType)
 
 import Dict
 import Helpers exposing (prepareQuery)
@@ -30,6 +30,7 @@ type alias QueryArgs =
     , currentState : List String
     , hostMainContents : List String
     , organizationType : List String
+    , dateRange : Maybe ( String, String )
     , currentPage : Int
     }
 
@@ -78,6 +79,7 @@ queryParamsParser =
         |> apply (Q.custom "current_state" identity)
         |> apply (Q.custom "host_contents" identity)
         |> apply (Q.custom "orgtype" identity)
+        |> apply dateRangeParamParser
         |> apply pageParamParser
 
 
@@ -131,6 +133,34 @@ anonymousParamParser =
     Q.custom "anonymous" identity
 
 
+dateRangeParamParser : Q.Parser (Maybe ( String, String ))
+dateRangeParamParser =
+    Q.custom "date_range" dateRangeQueryStringToDateRange
+
+
+dateRangeQueryStringToDateRange : List String -> Maybe ( String, String )
+dateRangeQueryStringToDateRange incoming =
+    List.map convertRangeString incoming
+        |> List.head
+
+
+convertRangeString : String -> ( String, String )
+convertRangeString inc =
+    let
+        vals =
+            String.split "to" inc
+    in
+    case vals of
+        [] ->
+            ( "*", "*" )
+
+        [ _ ] ->
+            ( "*", "*" )
+
+        x :: y :: _ ->
+            ( x, y )
+
+
 typeQueryStringToResultType : List String -> RecordTypeFilters
 typeQueryStringToResultType typeList =
     List.map parseStringToResultMode typeList
@@ -161,6 +191,7 @@ defaultQueryArgs =
     , currentState = []
     , hostMainContents = []
     , organizationType = []
+    , dateRange = Nothing
     , currentPage = 1
     }
 
@@ -227,6 +258,17 @@ buildQueryParameters queryArgs =
 
         organizationType =
             List.map (Url.Builder.string "orgtype") queryArgs.organizationType
+
+        dateRange =
+            case queryArgs.dateRange of
+                Just ( early, late ) ->
+                    [ early, late ]
+                        |> String.join "to"
+                        |> Url.Builder.string "date_range"
+                        |> List.singleton
+
+                Nothing ->
+                    []
     in
     List.concat
         [ qParam
@@ -244,6 +286,7 @@ buildQueryParameters queryArgs =
         , currentState
         , hostContents
         , organizationType
+        , dateRange
         ]
 
 
@@ -326,6 +369,11 @@ setQueryHostMainContents newValues oldRecord =
 setQueryOrganizationType : List String -> { a | organizationType : List String } -> { a | organizationType : List String }
 setQueryOrganizationType newValues oldRecord =
     { oldRecord | organizationType = newValues }
+
+
+setQueryDateRange : Maybe ( String, String ) -> { a | dateRange : Maybe ( String, String ) } -> { a | dateRange : Maybe ( String, String ) }
+setQueryDateRange newValues oldRecord =
+    { oldRecord | dateRange = newValues }
 
 
 

@@ -1,25 +1,13 @@
-module Helpers exposing (boolToStr, onEnter, prepareQuery, strToBool, viewIf, viewMaybe)
+module Helpers exposing (onEnter, prepareQuery, resetViewportOf, viewMaybe)
 
+import Browser.Dom as Dom
 import Dict exposing (Dict)
 import Element exposing (Element, none)
 import Html.Events as HE
 import Json.Decode as Decode
 import Maybe.Extra as ME
+import Task
 import Url
-
-
-choose : Bool -> (() -> a) -> (() -> a) -> a
-choose predicate isTrue isFalse =
-    if predicate then
-        isTrue ()
-
-    else
-        isFalse ()
-
-
-viewIf : Element msg -> Bool -> Element msg
-viewIf viewFunc condition =
-    choose condition (\() -> viewFunc) (\() -> none)
 
 
 {-|
@@ -95,34 +83,8 @@ addToParametersHelp value maybeList =
             Just (value :: list)
 
 
-boolToStr : Bool -> String
-boolToStr inp =
-    if inp then
-        "True"
-
-    else
-        "False"
-
-
-strToBool : String -> Bool
-strToBool inp =
-    let
-        _ =
-            Debug.log "inp" inp
-    in
-    case inp of
-        "true" ->
-            True
-
-        "True" ->
-            True
-
-        "false" ->
-            False
-
-        "False" ->
-            False
-
-        -- Treat any other string as false too.
-        _ ->
-            False
+resetViewportOf : msg -> String -> Cmd msg
+resetViewportOf sendMsg id =
+    Dom.setViewportOf id 0 0
+        |> Task.attempt
+            (\_ -> sendMsg)

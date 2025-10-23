@@ -1,14 +1,15 @@
 module Views exposing (view)
 
-import Element exposing (Element, alignLeft, alignRight, alignTop, centerX, column, el, fill, height, layout, maximum, none, padding, paddingXY, paragraph, pointer, px, row, spacing, text, width)
+import Element exposing (Element, alignBottom, alignLeft, alignRight, alignTop, centerX, column, el, fill, height, htmlAttribute, layout, maximum, none, padding, paddingXY, paragraph, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events as Events exposing (onClick)
 import Element.Font as Font
 import Element.Input as Input exposing (placeholder)
 import Facets exposing (viewFacets)
-import Helpers exposing (onEnter, viewIf, viewMaybe)
+import Helpers exposing (onEnter, viewMaybe)
 import Html exposing (Html)
+import Html.Attributes as HA
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import RecordTypes exposing (PaginationBlock, RecordTypeFilters(..), SearchBody, SearchTypesBlock, parseResultTypeToString)
@@ -95,7 +96,7 @@ searchView model body =
                     , padding 20
                     , alignTop
                     ]
-                    [ viewFacets model.facets
+                    [ viewFacets model
                     ]
                 , column
                     [ width (fill |> maximum 900)
@@ -103,6 +104,7 @@ searchView model body =
                     , alignTop
                     , padding 20
                     , spacing 20
+                    , htmlAttribute (HA.id "search-results-list")
                     ]
                     [ row
                         [ width fill ]
@@ -374,50 +376,55 @@ viewPagination gotoPageValue pagination =
     in
     row
         [ width fill
+        , height fill
         , spacing 10
         , paddingXY 0 20
         , Font.size 18
         ]
         [ column
-            []
+            [ width fill
+            , alignBottom
+            ]
             [ row
-                [ spacing 18 ]
+                [ spacing 18
+                , width fill
+                ]
                 [ el
                     []
                     (text ("Page " ++ String.fromInt pagination.currentPage ++ " of " ++ String.fromInt lastPageNum ++ " pages"))
-                , text " | "
+                , row
+                    [ spacing 10
+                    , centerX
+                    ]
+                    [ el
+                        [ Font.color colourScheme.lightBlue
+                        , onClick (UserClickedPaginationLink 1)
+                        , pointer
+                        ]
+                        (text "« First")
+                    , previousEl
+                    , nextEl
+                    , el
+                        [ Font.color colourScheme.lightBlue
+                        , onClick (UserClickedPaginationLink lastPageNum)
+                        , pointer
+                        ]
+                        (text "Last »")
+                    ]
                 , el
-                    [ Font.color colourScheme.lightBlue
-                    , onClick (UserClickedPaginationLink 1)
-                    , pointer
-                    ]
-                    (text "« First")
-                , previousEl
-                , nextEl
-                , el
-                    [ Font.color colourScheme.lightBlue
-                    , onClick (UserClickedPaginationLink lastPageNum)
-                    , pointer
-                    ]
-                    (text "Last »")
-                , text " | "
-                ]
-            ]
-        , column
-            []
-            [ row
-                [ width fill ]
-                [ Input.text
-                    [ Events.onLoseFocus (UserSubmittedPageGoto pagination.numPages)
-                    , onEnter (UserSubmittedPageGoto pagination.numPages)
-                    , spacing 10
-                    , width (px 80)
-                    ]
-                    { label = Input.labelLeft [] (text "Go to page:")
-                    , onChange = UserEnteredTextIntoPageGotoBox pagination.numPages
-                    , placeholder = Nothing
-                    , text = gotoPageValue
-                    }
+                    [ alignRight ]
+                    (Input.text
+                        [ Events.onLoseFocus (UserSubmittedPageGoto pagination.numPages)
+                        , onEnter (UserSubmittedPageGoto pagination.numPages)
+                        , spacing 10
+                        , width (px 80)
+                        ]
+                        { label = Input.labelLeft [] (text "Go to page:")
+                        , onChange = UserEnteredTextIntoPageGotoBox pagination.numPages
+                        , placeholder = Nothing
+                        , text = gotoPageValue
+                        }
+                    )
                 ]
             ]
         ]

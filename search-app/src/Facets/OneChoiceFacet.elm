@@ -1,6 +1,6 @@
 module Facets.OneChoiceFacet exposing (OneChoiceFacetModel, OneChoiceFacetMsg(..), update, updateOneChoiceModel, viewOneChoiceFacet)
 
-import Element exposing (Element, alignRight, clip, column, el, fill, height, maximum, none, padding, paddingXY, pointer, px, row, scrollbarX, scrollbarY, shrink, spacing, text, width)
+import Element exposing (Element, alignRight, clip, column, el, fill, height, maximum, none, padding, paddingXY, pointer, row, scrollbarX, scrollbarY, shrink, spacing, text, width)
 import Element.Border as Border
 import Element.Events as Events
 import Element.Font as Font
@@ -67,9 +67,13 @@ update msg model =
             ( model, Cmd.none )
 
         OnSelect item ->
-            ( { model | selected = Just item }, Cmd.none )
+            ( { model
+                | selected = Just item
+              }
+            , Cmd.none
+            )
 
-        OnRemoveItem item ->
+        OnRemoveItem _ ->
             ( model, Cmd.none )
 
         OnTextInput filterText ->
@@ -109,25 +113,26 @@ viewOneChoiceFacet { title, optionTitleMap } facetModel =
             else
                 "Hide"
 
-        filterControl =
-            if List.length facetModel.allOptions > 20 then
-                row
-                    [ width fill
-                    ]
-                    [ Input.text
-                        []
-                        { label = labelHidden "filter"
-                        , onChange = OnTextInput
-                        , text = Maybe.withDefault "" facetModel.filterText
-                        , placeholder = Just (Input.placeholder [] (el [] (text "Filter options")))
-                        }
-                    ]
-
-            else
-                none
-
         facetBody =
             if facetModel.bodyHidden == False then
+                let
+                    filterControl =
+                        if List.length facetModel.allOptions > 20 then
+                            row
+                                [ width fill
+                                ]
+                                [ Input.text
+                                    []
+                                    { label = labelHidden "filter"
+                                    , onChange = OnTextInput
+                                    , text = Maybe.withDefault "" facetModel.filterText
+                                    , placeholder = Just (Input.placeholder [] (el [] (text "Filter options")))
+                                    }
+                                ]
+
+                        else
+                            none
+                in
                 [ filterControl
                 , row
                     [ width fill

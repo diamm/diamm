@@ -30,6 +30,7 @@ dependencies = [
     "psycopg[pool] (>=3.2.6,<4.0.0)",
     "sentry-sdk[django]>=2.41.0",
     "ypres",
+    "djangorestframework-stubs>=3.16.4",
 ]
 package-mode = false
 

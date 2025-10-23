@@ -7,6 +7,7 @@ import Route exposing (QueryArgs)
 
 type alias Model =
     { currentQueryArgs : QueryArgs
+    , needsUpdating : Bool
     , response : Response
     , facets : FacetModel
     , gotoPageValue : String
@@ -16,6 +17,7 @@ type alias Model =
 init : QueryArgs -> Model
 init initalQueryArgs =
     { currentQueryArgs = initalQueryArgs
+    , needsUpdating = False
     , response = NoResponseToShow
     , facets =
         { cities = Nothing
@@ -31,11 +33,7 @@ init initalQueryArgs =
         , originalFormat = Nothing
         , currentState = Nothing
         , hostMainContents = Nothing
+        , dateRange = Nothing
         }
     , gotoPageValue = ""
     }
-
-
-toNextQuery : Model -> QueryArgs
-toNextQuery model =
-    model.currentQueryArgs

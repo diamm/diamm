@@ -137,7 +137,7 @@ viewCompositionResult : CompositionResultBody -> Element msg
 viewCompositionResult composition =
     let
         composers =
-            Maybe.map (\s -> el [] (text (String.join ", " s))) composition.composers
+            Maybe.map (\s -> el [] (text (String.join "; " s))) composition.composers
                 |> Maybe.withDefault none
     in
     resultTemplate

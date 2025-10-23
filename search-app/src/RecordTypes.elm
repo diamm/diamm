@@ -1,6 +1,6 @@
-module RecordTypes exposing (ArchiveResultBody, CheckboxFacetTypes(..), CompositionResultBody, FacetBlock, FacetItem, OneChoiceFacetTypes(..), OrganizationResultBody, PaginationBlock, PersonResultBody, RecordTypeFilters(..), SearchBody, SearchResult(..), SearchTypesBlock, SetResultBody, SourceResultBody, facetItemToLabel, parseResultTypeToString, resultTypeOptions, searchBodyDecoder)
+module RecordTypes exposing (ArchiveResultBody, CheckboxFacetTypes(..), CompositionResultBody, FacetBlock, FacetItem, OneChoiceFacetTypes(..), OrganizationResultBody, PaginationBlock, PersonResultBody, RangeFacetItem, RangeFacetTypes(..), RecordTypeFilters(..), SearchBody, SearchResult(..), SearchTypesBlock, SetResultBody, SourceResultBody, parseResultTypeToString, resultTypeOptions, searchBodyDecoder)
 
-import Json.Decode as Decode exposing (Decoder, andThen, bool, fail, int, list, maybe, string, succeed)
+import Json.Decode as Decode exposing (Decoder, bool, int, list, maybe, string)
 import Json.Decode.Pipeline exposing (optional, required)
 
 
@@ -20,6 +20,10 @@ type OneChoiceFacetTypes
     | CurrentState
     | HostMainContents
     | OrganizationType
+
+
+type RangeFacetTypes
+    = DateRange
 
 
 type alias PaginationBlock =
@@ -144,9 +148,11 @@ type alias FacetItem =
     { value : String, count : Int }
 
 
-facetItemToLabel : FacetItem -> String
-facetItemToLabel item =
-    item.value ++ " (" ++ String.fromInt item.count ++ ")"
+type alias RangeFacetItem =
+    { min : Int
+    , max : Int
+    , buckets : List FacetItem
+    }
 
 
 type alias FacetBlock =
@@ -163,6 +169,7 @@ type alias FacetBlock =
     , originalFormat : List FacetItem
     , currentState : List FacetItem
     , hostMainContents : List FacetItem
+    , dateRange : Maybe RangeFacetItem
 
     --, archiveLocations : Maybe Never
     }
@@ -171,19 +178,20 @@ type alias FacetBlock =
 facetBlockDecoder : Decoder FacetBlock
 facetBlockDecoder =
     Decode.succeed FacetBlock
-        |> required "cities" (list facetItemDecoder)
-        |> required "genres" (list facetItemDecoder)
-        |> required "notations" (list facetItemDecoder)
-        |> required "composers" (list facetItemDecoder)
-        |> required "source_type" (list facetItemDecoder)
-        |> required "has_inventory" (list facetItemDecoder)
-        |> required "organization_type" (list facetItemDecoder)
-        |> required "location" (list facetItemDecoder)
-        |> required "anonymous" (list facetItemDecoder)
-        |> required "source_composers" (list facetItemDecoder)
-        |> required "original_format" (list facetItemDecoder)
-        |> required "current_state" (list facetItemDecoder)
-        |> required "host_main_contents" (list facetItemDecoder)
+        |> optional "cities" (list facetItemDecoder) []
+        |> optional "genres" (list facetItemDecoder) []
+        |> optional "notations" (list facetItemDecoder) []
+        |> optional "composers" (list facetItemDecoder) []
+        |> optional "source_type" (list facetItemDecoder) []
+        |> optional "has_inventory" (list facetItemDecoder) []
+        |> optional "organization_type" (list facetItemDecoder) []
+        |> optional "location" (list facetItemDecoder) []
+        |> optional "anonymous" (list facetItemDecoder) []
+        |> optional "source_composers" (list facetItemDecoder) []
+        |> optional "original_format" (list facetItemDecoder) []
+        |> optional "current_state" (list facetItemDecoder) []
+        |> optional "host_main_contents" (list facetItemDecoder) []
+        |> optional "date_range" (maybe rangeFacetItemDecoder) Nothing
 
 
 facetItemDecoder : Decoder FacetItem
@@ -191,6 +199,14 @@ facetItemDecoder =
     Decode.succeed FacetItem
         |> required "value" string
         |> required "count" int
+
+
+rangeFacetItemDecoder : Decoder RangeFacetItem
+rangeFacetItemDecoder =
+    Decode.succeed RangeFacetItem
+        |> required "min" int
+        |> required "max" int
+        |> required "buckets" (list facetItemDecoder)
 
 
 type alias SearchBody =

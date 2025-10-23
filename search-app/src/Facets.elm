@@ -1,14 +1,18 @@
-module Facets exposing (FacetModel, setAnonymous, setCities, setComposers, setCurrentState, setGenres, setHasInventory, setHostMainContents, setNotations, setOrganizationType, setOriginalFormat, setSourceComposers, setSourceTypes, updateFacetConfigurations, viewFacets)
+module Facets exposing (FacetModel, setAnonymous, setCities, setComposers, setCurrentState, setDateRange, setGenres, setHasInventory, setHostMainContents, setNotations, setOrganizationType, setOriginalFormat, setSourceComposers, setSourceTypes, updateFacetConfigurations, viewFacets)
 
-import Element exposing (Element, column, fill, maximum, none, padding, paddingXY, row, spacing, text, width)
+import Element exposing (Element, alignLeft, alignRight, column, el, fill, htmlAttribute, maximum, none, padding, paddingXY, pointer, row, spacing, text, width)
+import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
+import Element.Input as Input
 import Facets.CheckboxFacet exposing (CheckBoxFacetModel, updateCheckboxModel, viewCheckboxFacet)
 import Facets.OneChoiceFacet exposing (OneChoiceFacetModel, updateOneChoiceModel, viewOneChoiceFacet)
+import Facets.RangeFacet exposing (RangeFacetModel, initRangeModel, viewRangeFacet)
 import Helpers exposing (viewMaybe)
+import Html.Attributes as HA
 import Maybe.Extra as ME
 import Msg exposing (Msg(..))
-import RecordTypes exposing (CheckboxFacetTypes(..), FacetBlock, OneChoiceFacetTypes(..))
+import RecordTypes exposing (CheckboxFacetTypes(..), FacetBlock, OneChoiceFacetTypes(..), RangeFacetTypes(..))
 import Route exposing (QueryArgs)
 import Style exposing (colourScheme)
 
@@ -27,6 +31,7 @@ type alias FacetModel =
     , originalFormat : Maybe OneChoiceFacetModel
     , currentState : Maybe OneChoiceFacetModel
     , hostMainContents : Maybe OneChoiceFacetModel
+    , dateRange : Maybe RangeFacetModel
     }
 
 
@@ -35,11 +40,17 @@ updateFacetConfigurations currentModel queryArgs facetBlock =
     let
         genreFacet =
             if not (List.isEmpty facetBlock.genres) then
+                let
+                    incoming =
+                        List.map (\s -> { value = s, count = 0 }) queryArgs.genres
+                in
                 Just
                     (updateCheckboxModel
                         { identifier = "genres"
                         , available = facetBlock.genres
-                        , selected = List.map (\s -> { value = s, count = 0 }) queryArgs.genres
+                        , selected =
+                            Maybe.map (\f -> f.selected) currentModel.genres
+                                |> Maybe.withDefault incoming
                         , bodyHidden = Maybe.map .bodyHidden currentModel.genres |> Maybe.withDefault True
                         }
                     )
@@ -216,6 +227,17 @@ updateFacetConfigurations currentModel queryArgs facetBlock =
 
             else
                 Nothing
+
+        dateRangeFacet =
+            Maybe.map
+                (\drFacet ->
+                    initRangeModel
+                        { identifier = "date-range"
+                        , facetData = drFacet
+                        , selected = Maybe.map .selected currentModel.dateRange |> ME.join
+                        }
+                )
+                facetBlock.dateRange
     in
     { cities = citiesFacet
     , genres = genreFacet
@@ -230,18 +252,19 @@ updateFacetConfigurations currentModel queryArgs facetBlock =
     , originalFormat = originalFormatFacet
     , currentState = currentStateFacet
     , hostMainContents = hostMainContentsFacet
+    , dateRange = dateRangeFacet
     }
 
 
-viewFacets : FacetModel -> Element Msg
-viewFacets facetModel =
+viewFacets : { a | needsUpdating : Bool, facets : FacetModel } -> Element Msg
+viewFacets { needsUpdating, facets } =
     let
         genresFacet =
-            viewMaybe (viewCheckboxFacet "Genres") facetModel.genres
+            viewMaybe (viewCheckboxFacet "Genres") facets.genres
                 |> Element.map (UserInteractedWithCheckboxFacet Genres)
 
         composersFacet =
-            viewMaybe (viewCheckboxFacet "Composers") facetModel.composers
+            viewMaybe (viewCheckboxFacet "Composers") facets.composers
                 |> Element.map (UserInteractedWithCheckboxFacet Composers)
 
         sourceTypesFacet =
@@ -251,11 +274,11 @@ viewFacets facetModel =
                     , optionTitleMap = []
                     }
                 )
-                facetModel.sourceTypes
+                facets.sourceTypes
                 |> Element.map (UserInteractedWithOneChoiceFacet SourceTypes)
 
         notationsFacet =
-            viewMaybe (viewCheckboxFacet "Notation") facetModel.notations
+            viewMaybe (viewCheckboxFacet "Notation") facets.notations
                 |> Element.map (UserInteractedWithCheckboxFacet Notations)
 
         hasInventory =
@@ -268,7 +291,7 @@ viewFacets facetModel =
                         ]
                     }
                 )
-                facetModel.hasInventory
+                facets.hasInventory
                 |> Element.map (UserInteractedWithOneChoiceFacet HasInventory)
 
         anonymous =
@@ -281,50 +304,67 @@ viewFacets facetModel =
                         ]
                     }
                 )
-                facetModel.anonymous
+                facets.anonymous
                 |> Element.map (UserInteractedWithOneChoiceFacet AnonymousComposer)
 
         citiesFacet =
-            viewMaybe (viewOneChoiceFacet { title = "Archive Cities", optionTitleMap = [] }) facetModel.cities
+            viewMaybe (viewOneChoiceFacet { title = "Archive Cities", optionTitleMap = [] }) facets.cities
                 |> Element.map (UserInteractedWithOneChoiceFacet Cities)
 
         sourceComposers =
-            viewMaybe (viewCheckboxFacet "Source Composers") facetModel.sourceComposers
+            viewMaybe (viewCheckboxFacet "Source Composers") facets.sourceComposers
                 |> Element.map (UserInteractedWithCheckboxFacet SourceComposers)
 
         originalFormatFacet =
-            viewMaybe (viewOneChoiceFacet { title = "Original Format", optionTitleMap = [] }) facetModel.originalFormat
+            viewMaybe (viewOneChoiceFacet { title = "Original Format", optionTitleMap = [] }) facets.originalFormat
                 |> Element.map (UserInteractedWithOneChoiceFacet OriginalFormat)
 
         currentStateFacet =
-            viewMaybe (viewOneChoiceFacet { title = "Current state", optionTitleMap = [] }) facetModel.currentState
+            viewMaybe (viewOneChoiceFacet { title = "Current state", optionTitleMap = [] }) facets.currentState
                 |> Element.map (UserInteractedWithOneChoiceFacet CurrentState)
 
         hostMainContentsFacet =
-            viewMaybe (viewOneChoiceFacet { title = "Host main contents", optionTitleMap = [] }) facetModel.hostMainContents
+            viewMaybe (viewOneChoiceFacet { title = "Host main contents", optionTitleMap = [] }) facets.hostMainContents
                 |> Element.map (UserInteractedWithOneChoiceFacet HostMainContents)
 
         organizationTypeFacet =
-            viewMaybe (viewOneChoiceFacet { title = "Organization type", optionTitleMap = [] }) facetModel.organizationType
+            viewMaybe (viewOneChoiceFacet { title = "Organization type", optionTitleMap = [] }) facets.organizationType
                 |> Element.map (UserInteractedWithOneChoiceFacet OrganizationType)
 
         sourceSectionIsVisible =
-            List.map ME.isJust [ facetModel.sourceTypes, facetModel.hasInventory, facetModel.originalFormat, facetModel.currentState ]
-                |> List.append (List.map ME.isJust [ facetModel.sourceComposers, facetModel.notations ])
+            List.map ME.isJust [ facets.sourceTypes, facets.hasInventory, facets.originalFormat, facets.currentState ]
+                |> List.append (List.map ME.isJust [ facets.sourceComposers, facets.notations ])
                 |> List.any identity
 
         compositionSectionIsVisible =
-            List.map ME.isJust [ facetModel.genres, facetModel.composers ]
-                |> List.append (List.map ME.isJust [ facetModel.anonymous ])
+            List.map ME.isJust [ facets.genres, facets.composers ]
+                |> List.append [ ME.isJust facets.anonymous ]
                 |> List.any identity
 
         archivesSectionIsVisible =
-            List.map ME.isJust [ facetModel.cities ]
+            [ ME.isJust facets.cities ]
                 |> List.any identity
 
         organizationsSectionIsVisible =
-            List.map ME.isJust [ facetModel.organizationType ]
+            [ ME.isJust facets.organizationType ]
                 |> List.any identity
+
+        dateRangeFacet =
+            viewMaybe (viewRangeFacet { title = "Year range" }) facets.dateRange
+                |> Element.map (UserInteractedWithRangeFacet DateRange)
+
+        updateBtnCfg =
+            if needsUpdating then
+                { colour = colourScheme.red
+                , submitMsg = Just UserClickedUpdateResults
+                , pointer = pointer
+                }
+
+            else
+                { colour = colourScheme.lightGrey
+                , submitMsg = Nothing
+                , pointer = htmlAttribute (HA.style "cursor" "not-allowed")
+                }
     in
     row
         [ width fill
@@ -334,10 +374,32 @@ viewFacets facetModel =
             , spacing 10
             ]
             [ row
-                [ Font.semiBold
-                , Font.size 18
+                [ width fill
                 ]
-                [ text "Result Filters" ]
+                [ el
+                    [ alignLeft
+                    , Font.semiBold
+                    , Font.size 18
+                    ]
+                    (text "Result Filters")
+                , Input.button
+                    [ Background.color updateBtnCfg.colour
+                    , Font.color colourScheme.white
+                    , Border.rounded 3
+                    , padding 10
+                    , alignRight
+                    , updateBtnCfg.pointer
+                    ]
+                    { label = text "Update results"
+                    , onPress = updateBtnCfg.submitMsg
+                    }
+                ]
+            , viewFacetSection
+                { isVisible = True
+                , title = "Date ranges"
+                , facetBlocks =
+                    [ dateRangeFacet ]
+                }
             , viewFacetSection
                 { isVisible = sourceSectionIsVisible
                 , title = "Sources"
@@ -464,3 +526,8 @@ setOrganizationType newValue oldRecord =
 setSourceComposers : Maybe CheckBoxFacetModel -> { a | sourceComposers : Maybe CheckBoxFacetModel } -> { a | sourceComposers : Maybe CheckBoxFacetModel }
 setSourceComposers newValue oldRecord =
     { oldRecord | sourceComposers = newValue }
+
+
+setDateRange : Maybe RangeFacetModel -> { a | dateRange : Maybe RangeFacetModel } -> { a | dateRange : Maybe RangeFacetModel }
+setDateRange newValue oldRecord =
+    { oldRecord | dateRange = newValue }
