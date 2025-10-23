@@ -42,6 +42,9 @@ class PersonNoteInline(admin.TabularInline):
 
     formfield_overrides = {models.TextField: {"widget": AdminPagedownWidget}}
 
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("person")
+
 
 class PersonIdentifierInline(admin.TabularInline):
     verbose_name = "Identifier"
@@ -65,6 +68,10 @@ class PersonRoleInline(admin.TabularInline):
     extra = 0
     raw_id_fields = ("role",)
 
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("person", "role")
+
+
 
 class CopiedSourcesInline(GenericTabularInline):
     verbose_name = "Source Copied"
@@ -73,17 +80,27 @@ class CopiedSourcesInline(GenericTabularInline):
     extra = 0
     raw_id_fields = ("source",)
 
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("source__archive", "content_type")
+
 
 class RelatedSourcesInline(GenericTabularInline):
     model = SourceRelationship
     extra = 0
     raw_id_fields = ("source",)
 
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("source__archive", "content_type")
+
 
 class ProvenanceSourcesInline(GenericTabularInline):
     model = SourceProvenance
     extra = 0
     raw_id_fields = ("source", "city", "country", "region", "protectorate")
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("source__archive", "content_type")
+
 
 
 def migrate_to_organization(modeladmin, request, queryset):

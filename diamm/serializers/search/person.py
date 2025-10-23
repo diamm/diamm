@@ -70,6 +70,7 @@ class PersonSearchSerializer(ypres.DictSerializer):
     end_date_i = ypres.IntField(attr="latest_year", required=False)
     variant_names_ss = ypres.MethodField()
     compositions_ss = ypres.Field(attr="compositions")
+    num_compositions_i = ypres.MethodField()
 
     def get_variant_names_ss(self, obj) -> list | None:
         if variant_names := obj.get("variant_names"):
@@ -81,3 +82,7 @@ class PersonSearchSerializer(ypres.DictSerializer):
     def names(self, obj):
         ndata = ujson.loads(obj["full_name_info"])
         return format_person_name(ndata)
+
+    def get_num_compositions_i(self, obj):
+        comps: list = obj.get("compositions", [])
+        return len(comps)

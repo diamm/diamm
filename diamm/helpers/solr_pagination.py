@@ -2,6 +2,7 @@ import math
 from collections import OrderedDict
 
 import pysolr
+import ujson
 import ypres
 from django.conf import settings
 from rest_framework.reverse import reverse
@@ -27,7 +28,7 @@ class SolrResultSerializer(ypres.DictSerializer):
     source_archive_city = ypres.MethodField()
     surface = ypres.StrField(attr="surface_type_s", required=False)
     source_type = ypres.StrField(attr="source_type_s", required=False)
-    date_statement = ypres.StrField(attr="date_statement_s", required=False)
+    date_statement = ypres.MethodField()
     measurements = ypres.StrField(attr="measurements_s", required=False)
     inventory_provided = ypres.BoolField(attr="inventory_provided_b", required=False)
     number_of_compositions = ypres.IntField(
@@ -67,6 +68,36 @@ class SolrResultSerializer(ypres.DictSerializer):
             return obj["cluster_shelfmark_s"]
         else:
             return "[Unknown Heading]"
+
+    def get_date_statement(self, obj) -> str | None:
+        if {"date_statement_s", "start_date_i", "end_date_i"}.isdisjoint(obj.keys()):
+            return None
+
+        dstmt: str | None = obj.get("date_statement_s")
+        strt: int | None = obj.get("start_date_i")
+        end: int | None = obj.get("end_date_i")
+        out = []
+        range: str | None
+        if strt and end:
+            range = f"{strt}–{end}"
+        elif strt and not end:
+            range = f"{strt}-"
+        elif not strt and end:
+            range = f"—{end}"
+        else:
+            range = None
+
+        if dstmt:
+            out.append(f"{dstmt}")
+            if range:
+                out.append(f" ({range})")
+            return "".join(out)
+        elif range:
+            return range
+        else:
+            return None
+
+
 
     def get_sources(self, obj: dict) -> int | None:
         if "sources_ii" in obj:
@@ -127,6 +158,7 @@ class SolrPaginator:
             "facet.mincount": 1,
             "facet.limit": -1,
             "json.nl": "arrmap",
+            "json.facet": ujson.dumps(settings.SOLR["JSON_FACETS"]),
             "facet.pivot": settings.SOLR["FACET_PIVOTS"],
             "hl": "true",
             "defType": "edismax",
@@ -260,21 +292,26 @@ class SolrPage:
     @property
     def facet_list(self) -> dict:
         solr_facets = self.result.facets.get("facet_fields", None)
-        pivot_facets = self.result.facets.get("facet_pivot", None)
-        # facets: dict = {
-        #     key: value
-        #     for (key, value) in solr_facets.items()
-        #     if key in settings.INTERFACE_FACETS
-        # }
-        # facets.update(pivot_facets)
         facets = {}
         for f, f_values in solr_facets.items():
             if f not in settings.INTERFACE_FACETS:
                 continue
 
+            if not f_values:
+                continue
+
             facets[f] = [
                 {"value": v, "count": c} for n in f_values for v, c in n.items()
             ]
+
+        json_facets: dict | None = self.result.raw_response.get("facets")
+        if "full_date_range" in json_facets and "date_range" in json_facets:
+            if json_facets["date_range"].get("buckets"):
+                facets["date_range"] = {
+                    "min": json_facets["full_date_range"]["min_year"],
+                    "max": json_facets["full_date_range"]["max_year"],
+                    "buckets": [{"value": v, "count": c} for n in json_facets["date_range"]["buckets"] for v, c in n.items()]
+                }
 
         return facets
 

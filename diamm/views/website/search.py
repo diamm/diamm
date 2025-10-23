@@ -84,8 +84,9 @@ class SearchView(generics.GenericAPIView):
             )
 
         if "date_range" in request.GET:
-            start, end = request.GET.get("date_range").split(",")
-            filters.update({"facet_date_range_ii": f"[{start} TO {end}]"})
+            res = request.GET.get("date_range", "").split("to")
+            if len(res) == 2:
+                filters.update({"facet_date_range_ii": f"[{res[0]} TO {res[1]}]"})
 
         # Filter search by Anonymous Compositions
         if "anonymous" in request.GET:

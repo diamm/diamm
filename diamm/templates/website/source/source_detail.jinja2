@@ -127,7 +127,7 @@
                 <span>{{ content.archive.city }}, {{ content.archive.country }}</span>
             </h3>
             <h4 class="subtitle is-6">
-                {% if content.source_type %}{{ content.source_type }}:{% endif %} {{ content.date_statement }}</h4>
+                {% if content.source_type %}{{ content.source_type }}:{% endif %} {{ content.date_statement or '' }}</h4>
         </div>
         <div class="column source-archive-logo">
             <a href="{{ content.archive.url }}">

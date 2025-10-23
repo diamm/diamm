@@ -272,6 +272,24 @@ SOLR = {
         "{!ex=type}source_with_images_b",
     ],
     "FACET_PIVOTS": [],
+    "JSON_FACETS": {
+        "full_date_range":{
+            "type": "query",
+            "domain": {"query": "*:*"},
+            "facet":{
+                "min_year":"min(start_date_i)",
+                "max_year":"max(end_date_i)"
+            }
+        },
+        "date_range": {
+            "type": "range",
+            "field": "facet_date_range_ii",
+            "start": 0,
+            "end": 2025,
+            "gap": 10,
+            "mincount": 1
+        }
+    },
     "FACET_SORT": {  # custom sorting for certain facets (default is by count; index is alphanumeric)
         "f.composers_ss.facet.sort": "index",
         "f.country_s.facet.sort": "index",
@@ -301,12 +319,8 @@ SOLR = {
 # consistent reference, and so we can more easily work with it in the search response
 # handler.
 for k, v in INTERFACE_FACETS.items():
-    if isinstance(v, list):
-        pfacet = f"{{!key={k}}}{','.join(v)}"
-        SOLR["FACET_PIVOTS"].append(pfacet)
-    else:
-        facet = f"{{!key={k}}}{v}"
-        SOLR["FACET_FIELDS"].append(facet)
+    facet = f"{{!key={k}}}{v}"
+    SOLR["FACET_FIELDS"].append(facet)
 
 IIIF = {
     "THUMBNAIL_WIDTH": "250,"  # The constrained width of thumbnail images
