@@ -110,6 +110,12 @@ class CompositionComposerSerializer(ypres.Serializer):
             request=self.context["request"],
         )
 
+class CompositionNoteSerializer(ypres.Serializer):
+    note_type = ypres.StrField()
+    note = ypres.StrField()
+    atype = ypres.IntField(label="type", attr="type")
+
+
 
 class CompositionDetailSerializer(ypres.Serializer):
     anonymous = ypres.BoolField(attr="anonymous", required=False)
@@ -122,6 +128,7 @@ class CompositionDetailSerializer(ypres.Serializer):
     cycles = ypres.MethodField()
     genres = ypres.MethodField()
     bibliography = ypres.MethodField()
+    notes = ypres.MethodField()
 
     def get_url(self, obj):
         return reverse(
@@ -175,7 +182,7 @@ class CompositionDetailSerializer(ypres.Serializer):
             ).serialized_many
         return []
 
-    def get_genres(self, obj):
+    def get_genres(self, obj) -> list:
         if obj.genres.exists():
             return [g.name for g in obj.genres.all()]
         return []
@@ -204,3 +211,9 @@ class CompositionDetailSerializer(ypres.Serializer):
 
                 reslist.append(CompositionBibliographySerializer(res).serialized)
         return reslist
+
+    def get_notes(self, obj) -> list:
+        if not obj.notes.exists():
+            return []
+
+        return CompositionNoteSerializer(obj.notes.all(), many=True).serialized_many

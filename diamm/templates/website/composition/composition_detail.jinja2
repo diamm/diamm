@@ -52,6 +52,16 @@
             </table>
         </div>
     </div>
+    {% if content.notes %}
+        <div class="columns">
+            <div class="column is-half">
+            {% for note in content.notes %}
+                <h4 class="title is-5">{{ note.note_type }}</h4>
+                <p>{{ note.note|markdown|safe }}</p>
+            {% endfor %}
+            </div>
+        </div>
+    {% endif %}
     <div class="columns">
         <div class="column">
             <h3 class="title is-4">Appears in</h3>
