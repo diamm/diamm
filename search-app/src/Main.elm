@@ -1,13 +1,12 @@
 module Main exposing (Flags, main)
 
 import Browser
-import Config as C
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Ports exposing (onUrlChange)
 import RecordTypes exposing (searchBodyDecoder)
 import Request exposing (createRequest, serverUrl)
-import Route exposing (Route(..), buildQueryParameters, defaultQueryArgs, locationHrefToRoute, parseUrl)
+import Route exposing (Route(..), buildQueryParameters, defaultQueryArgs, defaultSearchUrl, locationHrefToRoute, parseUrl)
 import Update
 import Url
 import Views
@@ -32,7 +31,7 @@ init flags =
     let
         initialRoute =
             Url.fromString flags.initialUrl
-                |> Maybe.withDefault C.defaultSearchUrl
+                |> Maybe.withDefault defaultSearchUrl
                 |> parseUrl
                 |> Maybe.withDefault UnknownRoute
 

@@ -1,6 +1,4 @@
-module Config exposing (defaultSearchUrl, serverUrl)
-
-import Url exposing (Protocol(..), Url)
+module Config exposing (serverHost, serverUrl)
 
 
 serverHost : String
@@ -11,14 +9,3 @@ serverHost =
 serverUrl : String
 serverUrl =
     "http://" ++ serverHost
-
-
-defaultSearchUrl : Url
-defaultSearchUrl =
-    { protocol = Https
-    , host = serverHost
-    , port_ = Nothing
-    , path = "search"
-    , query = Nothing
-    , fragment = Nothing
-    }

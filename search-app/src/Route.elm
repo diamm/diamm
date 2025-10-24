@@ -1,10 +1,11 @@
-module Route exposing (QueryArgs, Route(..), buildQueryParameters, defaultQueryArgs, extractPageNumberFromUrl, locationHrefToRoute, parseUrl, setCurrentPage, setKeywordQuery, setQueryAnonymous, setQueryCities, setQueryComposers, setQueryCurrentState, setQueryDateRange, setQueryGenres, setQueryHasInventory, setQueryHostMainContents, setQueryNotations, setQueryOrganizationType, setQueryOriginalFormat, setQuerySourceComposers, setQuerySourceTypes, setQueryType)
+module Route exposing (QueryArgs, Route(..), buildQueryParameters, defaultQueryArgs, defaultSearchUrl, extractPageNumberFromUrl, locationHrefToRoute, parseUrl, setCurrentPage, setKeywordQuery, setQueryAnonymous, setQueryCities, setQueryComposers, setQueryCurrentState, setQueryDateRange, setQueryGenres, setQueryHasInventory, setQueryHostMainContents, setQueryNotations, setQueryOrganizationType, setQueryOriginalFormat, setQuerySourceComposers, setQuerySourceTypes, setQueryType)
 
+import Config as C
 import Dict
 import Helpers exposing (prepareQuery)
 import Maybe.Extra as ME
 import RecordTypes exposing (RecordTypeFilters(..), parseResultTypeToString, resultTypeOptions)
-import Url exposing (Url)
+import Url exposing (Protocol(..), Url)
 import Url.Builder exposing (QueryParameter)
 import Url.Parser as P exposing ((<?>), s)
 import Url.Parser.Query as Q
@@ -32,6 +33,17 @@ type alias QueryArgs =
     , organizationType : List String
     , dateRange : Maybe ( String, String )
     , currentPage : Int
+    }
+
+
+defaultSearchUrl : Url
+defaultSearchUrl =
+    { protocol = Https
+    , host = C.serverHost
+    , port_ = Nothing
+    , path = "search"
+    , query = Nothing
+    , fragment = Nothing
     }
 
 
