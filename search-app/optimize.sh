@@ -5,7 +5,7 @@ set -e
 js=$2
 min=$3
 
-lamdera make --optimize --no-wire --output="$js" "$1"
+elm-optimize-level-2 --optimize-speed --output="$js" "$1"
 INITIAL_SIZE=$(wc -c < "$js")
 
 swc "$js" --out-file "$min"
