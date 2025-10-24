@@ -340,7 +340,7 @@ class SourceInventorySerializer(ypres.Serializer):
 
     def get_voices(self, obj) -> list | None:
         out = []
-        for voice in obj.voices.all():
+        for voice in obj.voices.all().order_by("sort_order"):
             d = {
                 "voice_type": voice.type.name,
                 "languages": [lang.name for lang in voice.languages.all()],
