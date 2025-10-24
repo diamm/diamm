@@ -45,8 +45,11 @@
         {
             if (ranges.length === 0)
             {
+                let parent = document.getElementById("diva-page-details");
+                parent.innerHTML = "";
                 return null;
             }
+
             let template = document.getElementById("diva-page-details-template");
             const clone = template.content.cloneNode(true);
 
