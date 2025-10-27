@@ -300,9 +300,12 @@ class SolrPage:
             if not f_values:
                 continue
 
-            facets[f] = [
+            out_facets = [
                 {"value": v, "count": c} for n in f_values for v, c in n.items()
             ]
+
+            facets[f] = sorted(out_facets, key=lambda d: d["value"].casefold())
+
 
         json_facets: dict | None = self.result.raw_response.get("facets")
         if "full_date_range" in json_facets and "date_range" in json_facets:
