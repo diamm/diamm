@@ -353,6 +353,9 @@ viewFacets { needsUpdating, facets } =
             viewMaybe (viewRangeFacet { title = "Year range" }) facets.dateRange
                 |> Element.map (UserInteractedWithRangeFacet DateRange)
 
+        dateRangeIsVisible =
+            ME.isJust facets.dateRange
+
         updateBtnCfg =
             if needsUpdating then
                 { colour = colourScheme.red
@@ -395,7 +398,7 @@ viewFacets { needsUpdating, facets } =
                     }
                 ]
             , viewFacetSection
-                { isVisible = True
+                { isVisible = dateRangeIsVisible
                 , title = "Date ranges"
                 , facetBlocks =
                     [ dateRangeFacet ]
