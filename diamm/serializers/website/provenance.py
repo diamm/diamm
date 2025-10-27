@@ -1,7 +1,5 @@
-import serpy
-
-from diamm.serializers.serializers import ContextSerializer
+import ypres
 
 
-class ProvenanceSerializer(ContextSerializer):
-    name = serpy.StrField()
+class ProvenanceSerializer(ypres.Serializer):
+    name = ypres.StrField()

@@ -8,6 +8,8 @@ import httpx
 import ujson
 from django.db import connection
 
+from diamm.helpers.formatters import format_person_name
+
 log = logging.getLogger("diamm")
 
 
@@ -19,6 +21,10 @@ def get_db_records(sql_query: str, cfg: dict):
 
         while rows := cursor.fetchmany(size=cfg["resultsize"]):
             yield [dict(zip(columns, row, strict=False)) for row in rows]
+
+def update_db_records(sql_query: str, params, cfg: dict):
+    with connection.cursor() as cursor:
+        cursor.execute(sql_query, params)
 
 
 def parallelise(records: Iterable, func: Callable, *args, **kwargs) -> None:
@@ -109,33 +115,6 @@ def _empty_solr_core(cfg: dict, core: str) -> bool:
         log.debug("Deletion was successful")
         return True
     return False
-
-
-def format_person_name(p: dict) -> str:
-    early_pfx = ""
-    late_pfx = ""
-    if p.get("earliest_year_approximate"):
-        early_pfx = "ca. "
-    if p.get("latest_year_approximate"):
-        late_pfx = "ca. "
-    early_year = f"{p['earliest_year']}" if p.get("earliest_year") else ""
-    late_year = f"{p['latest_year']}" if p.get("latest_year") else ""
-
-    date_str = ""
-    if early_year or late_year:
-        date_str = f"{early_pfx}{early_year}–{late_pfx}{late_year}"
-    elif p.get("floruit"):
-        date_str = f"fl. {p['floruit']}"
-
-    if p.get("first_name"):
-        name_str = f"{p['last_name']}, {p['first_name']}"
-    else:
-        name_str = f"{p['last_name']}"
-
-    if date_str:
-        return f"{name_str} ({date_str})"
-    else:
-        return name_str
 
 
 def commit_changes(cfg: dict) -> bool:
@@ -236,3 +215,119 @@ def reload_core(server_address: str, core_name: str) -> bool:
         "Core reload for %s was not successful. Status: %s", core_name, admconn.text
     )
     return False
+
+
+def process_bibliography_entries(entries: dict | None):
+    if not entries:
+        return None
+
+    authors = []
+    editors = []
+    compilers = []
+    if ep := entries["people"]:
+        for entry in ep:
+            match entry["role"]:
+                case 1:
+                    authors.append(entry)
+                case 2:
+                    editors.append(entry)
+                case 3:
+                    compilers.append(entry)
+
+    volume_nos = []
+    parent_titles = []
+    publishers = []
+    pages = []
+    university = []
+    degree = []
+    chapter = []
+    series = []
+    url = []
+    url_accessed = []
+    translator = []
+    festschrift_for = []
+    place_publication = []
+    num_volumes = []
+    intl_num = []
+    conference_name = []
+    conference_location = []
+    conference_date = []
+    note = []
+
+    if epub := entries["publication"]:
+        for entry in epub:
+            match entry["type"]:
+                case 1:
+                    volume_nos.append(entry)
+                case 2:
+                    parent_titles.append(entry)
+                case 3:
+                    publishers.append(entry)
+                case 4:
+                    pages.append(entry)
+                case 5:
+                    university.append(entry)
+                case 6:
+                    degree.append(entry)
+                case 7:
+                    chapter.append(entry)
+                case 8:
+                    series.append(entry)
+                case 9:
+                    url.append(entry)
+                case 10:
+                    url_accessed.append(entry)
+                case 11:
+                    translator.append(entry)
+                case 12:
+                    festschrift_for.append(entry)
+                case 13:
+                    place_publication.append(entry)
+                case 14:
+                    num_volumes.append(entry)
+                case 15:
+                    intl_num.append(entry)
+                case 16:
+                    conference_name.append(entry)
+                case 17:
+                    conference_location.append(entry)
+                case 18:
+                    conference_date.append(entry)
+                case 99:
+                    note.append(entry)
+
+    out: dict = {
+        "title": entries["title"],
+        "type": entries["type"],
+        "year": entries["year"],
+        "authors": authors,
+        "editors": editors,
+        "compilers": compilers,
+        "volumes": volume_nos,
+        "parent_titles": parent_titles,
+        "publishers": publishers,
+        "pages": pages,
+        "university": university,
+        "degree": degree,
+        "chapter": chapter,
+        "series": series,
+        "url": url,
+        "url_accessed": url_accessed,
+        "translator": translator,
+        "festschrift_for": festschrift_for,
+        "place_publication": place_publication,
+        "num_volumes": num_volumes,
+        "intl_num": intl_num,
+        "conference_name": conference_name,
+        "conference_location": conference_location,
+        "conference_date": conference_date,
+        "note": note,
+    }
+
+    if p := entries.get("pages"):
+        out["citation_pages"] = p
+
+    if n := entries.get("notes"):
+        out["citation_notes"] = n
+
+    return out

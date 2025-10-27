@@ -8,7 +8,7 @@ Our development process has all 'in-progress' code committed to the 'develop' br
 
 ## Components and Technologies
 
-The site is built using the Django web framework. It uses a PostgreSQL database and an instance of the Solr search engine for its data storage and search capabilities. The front-end for the 'Source' view and the 'Search' view are built using ReactJS with Redux. (Other page views are rendered using Jinja2 templates.)
+The site is built using the Django web framework. It uses a PostgreSQL database and an instance of the Solr search engine for its data storage and search capabilities.
 
 The [Django REST Framework](http://www.django-rest-framework.org) forms a crucial part of the site's functionality. It provides a machine-readable representation for every entity in the database, content negotiation capabilities, and HTTP method-based security.
 

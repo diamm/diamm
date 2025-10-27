@@ -1,11 +1,11 @@
-@import "../mixins";
-@import "../variables";
+@use "../mixins";
+@use "../variables";
 
 .manipulation-fullscreen {
-  @include full-width();
-  @include full-height();
+  @include mixins.full-width();
+  @include mixins.full-height();
 
-  z-index: $fullscreenZIndex;
+  z-index: variables.$fullscreenZIndex;
   position: fixed !important;
   top: 0;
   left: 0;

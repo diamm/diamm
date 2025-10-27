@@ -41,10 +41,13 @@ class ProfileEditView(FormView):
 
     def get_initial(self) -> dict:
         user = self.request.user
+        if user.is_anonymous:
+            return {}
+
         initial_data = {
-            "email": user.email,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "affiliation": user.affiliation,
+            "email": user.email,  # type: ignore
+            "first_name": user.first_name,  # type: ignore
+            "last_name": user.last_name,  # type: ignore
+            "affiliation": user.affiliation,  # type: ignore
         }
         return initial_data

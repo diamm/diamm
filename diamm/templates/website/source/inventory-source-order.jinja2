@@ -91,6 +91,12 @@
                                     {{ entry.source_attribution }}
                                 </div>
                             {% endif %}
+                            {% if entry.num_voices %}
+                                <div>
+                                    <strong>Number of voices: </strong>
+                                    {{ entry.num_voices }}
+                                </div>
+                            {% endif %}
                             {% if entry.voices %}
                                 {{ voices(entry) }}
                             {% endif %}

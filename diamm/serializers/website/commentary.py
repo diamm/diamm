@@ -1,9 +1,9 @@
-import serpy
+import ypres
 
 
-class CommentarySerializer(serpy.Serializer):
-    comment = serpy.StrField()
-    author = serpy.StrField(attr="author.full_name")
-    author_is_staff = serpy.BoolField(attr="author.is_staff")
-    created = serpy.StrField()
-    comment_type = serpy.IntField()
+class CommentarySerializer(ypres.Serializer):
+    comment = ypres.StrField()
+    author = ypres.StrField(attr="author.full_name")
+    author_is_staff = ypres.BoolField(attr="author.is_staff")
+    created = ypres.StrField()
+    comment_type = ypres.IntField()

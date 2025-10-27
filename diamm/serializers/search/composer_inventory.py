@@ -1,6 +1,6 @@
 import logging
 
-import serpy
+import ypres
 
 from diamm.serializers.search.helpers import (
     get_db_records,
@@ -53,17 +53,17 @@ def _get_inventory(cfg: dict):
 
 
 def create_composer_inventory_index_documents(record, cfg: dict):
-    return [ComposerInventorySearchSerializer(record).data]
+    return [ComposerInventorySearchSerializer(record).serialized]
 
 
-class ComposerInventorySearchSerializer(serpy.DictSerializer):
-    type = serpy.StrField(attr="record_type")
-    pk = serpy.IntField()
-    composer_s = serpy.MethodField()
-    composer_i = serpy.IntField(attr="person_id", required=False)
-    source_i = serpy.IntField(attr="source_id", required=False)
-    compositions_json = serpy.MethodField()
-    items_ii = serpy.Field(attr="items", required=False)
+class ComposerInventorySearchSerializer(ypres.DictSerializer):
+    type = ypres.StrField(attr="record_type")
+    pk = ypres.IntField()
+    composer_s = ypres.MethodField()
+    composer_i = ypres.IntField(attr="person_id", required=False)
+    source_i = ypres.IntField(attr="source_id", required=False)
+    compositions_json = ypres.MethodField()
+    items_ii = ypres.Field(attr="items", required=False)
 
     def get_composer_s(self, obj) -> str | None:
         if obj.get("person_id") is None:

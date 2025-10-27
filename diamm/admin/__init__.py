@@ -8,6 +8,7 @@ from diamm.admin.data.bibliography_author import BibliographyAuthorAdmin
 from diamm.admin.data.bibliography_type import BibliographyTypeAdmin
 from diamm.admin.data.clef import ClefAdmin
 from diamm.admin.data.composition import CompositionAdmin
+from diamm.admin.data.composition_bibliography import CompositionBibliographyAdmin
 from diamm.admin.data.cycle import CycleAdmin
 from diamm.admin.data.cycle_type import CycleTypeAdmin
 from diamm.admin.data.genre import GenreAdmin
@@ -15,12 +16,14 @@ from diamm.admin.data.geographic_area import GeographicAreaAdmin
 from diamm.admin.data.image import ImageAdmin
 from diamm.admin.data.image_type import ImageTypeAdmin
 from diamm.admin.data.item import ItemAdmin
+from diamm.admin.data.item_bibliography import ItemBibliographyAdmin
 from diamm.admin.data.item_note import ItemNoteAdmin
 from diamm.admin.data.language import LanguageAdmin
 from diamm.admin.data.mensuration import MensurationAdmin
 from diamm.admin.data.notation import NotationAdmin
 from diamm.admin.data.organization import OrganizationAdmin
 from diamm.admin.data.organization_identifier import OrganizationIdentifierAdmin
+from diamm.admin.data.organization_subtype import OrganizationSubtypeAdmin
 from diamm.admin.data.organization_type import OrganizationTypeAdmin
 from diamm.admin.data.page import PageAdmin
 from diamm.admin.data.page_note import PageNoteAdmin

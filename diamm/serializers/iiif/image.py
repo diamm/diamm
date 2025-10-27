@@ -1,20 +1,18 @@
-import serpy
+import ypres
 from django.conf import settings
 from rest_framework.reverse import reverse
 
 from diamm.helpers.solr_helpers import SolrManager
-from diamm.serializers.fields import StaticField
-from diamm.serializers.serializers import ContextDictSerializer
 
 
-class ImageResourceSerializer(ContextDictSerializer):
-    id = serpy.MethodField(label="@id")
-    type = StaticField(label="@type", value="dctypes:Image")
-    format = StaticField(value="image/jpeg")
-    width = serpy.IntField(attr="width_i")
-    height = serpy.IntField(attr="height_i")
-    label = serpy.StrField(attr="image_type_s")
-    service = serpy.MethodField()
+class ImageResourceSerializer(ypres.DictSerializer):
+    id = ypres.MethodField(label="@id")
+    type = ypres.StaticField(label="@type", value="dctypes:Image")
+    format = ypres.StaticField(value="image/jpeg")
+    width = ypres.IntField(attr="width_i")
+    height = ypres.IntField(attr="height_i")
+    alabel = ypres.StrField(label="label", attr="image_type_s")
+    service = ypres.MethodField()
 
     def get_id(self, obj: dict) -> str:
         return reverse(
@@ -36,11 +34,11 @@ class ImageResourceSerializer(ContextDictSerializer):
         }
 
 
-class ImageSerializer(ContextDictSerializer):
-    type = StaticField(label="@type", value="oa:Annotation")
-    motivation = StaticField(value="sc:painting")
-    on = serpy.MethodField()
-    resource = serpy.MethodField()
+class ImageSerializer(ypres.DictSerializer):
+    type = ypres.StaticField(label="@type", value="oa:Annotation")
+    motivation = ypres.StaticField(value="sc:painting")
+    on = ypres.MethodField()
+    resource = ypres.MethodField()
 
     def get_on(self, obj: dict) -> str:
         page_id = self.context["page_id"]
@@ -73,17 +71,17 @@ class ImageSerializer(ContextDictSerializer):
                 "@type": "oa:Choice",
                 "default": ImageResourceSerializer(
                     obj, context={"request": self.context["request"]}
-                ).data,
+                ).serialized,
                 "item": ImageResourceSerializer(
                     conn.results,
                     many=True,
                     context={"request": self.context["request"]},
-                ).data,
+                ).serialized_many,
             }
 
         return ImageResourceSerializer(
             obj, context={"request": self.context["request"]}
-        ).data
+        ).serialized
         # else:
         #     imgs = obj["_childDocuments_"]
         #

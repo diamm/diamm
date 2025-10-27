@@ -66,9 +66,9 @@ from diamm.views.website.source import (
     SourceCanvasDetail,
     SourceDetail,
     SourceItemDetail,
-    SourceManifest,
     SourceRangeDetail,
     legacy_item_redirect,
+    manifest_serve,
 )
 
 handler404 = jinja_views.PageNotFound.as_view()
@@ -183,7 +183,7 @@ urlpatterns = [
     path("search/", SearchView.as_view(), name="search"),
     path("sources/<int:pk>/", SourceDetail.as_view(), name="source-detail"),
     path(
-        "sources/<int:pk>/manifest/", SourceManifest.as_view(), name="source-manifest"
+        "sources/<int:pk>/manifest/", manifest_serve, name="source-manifest"
     ),
     # IIIF URIs. These do not necessarily always resolve, but are configured in the URLs so that they can reflect
     #  the host and protocol of the request.
@@ -245,3 +245,4 @@ urlpatterns = [
 if settings.DEBUG:
     urlpatterns += static("/static/", document_root=settings.STATIC_ROOT)
     urlpatterns += static("/media/", document_root=settings.MEDIA_ROOT)
+    urlpatterns += static("/search-app/", document_root=settings.SEARCH_APP_ROOT)

@@ -1,19 +1,18 @@
-import serpy
+import ypres
 from django.db.models.expressions import Exists, OuterRef
 from django.db.models.functions.comparison import Collate
 from rest_framework.reverse import reverse
 
 from diamm.models import Page, SourceURL
-from diamm.serializers.serializers import ContextSerializer
 
 
-class SourceArchiveSerializer(ContextSerializer):
-    url = serpy.MethodField()
-    display_name = serpy.StrField(attr="display_name")
-    public_images = serpy.BoolField(attr="public_images")
-    source_type = serpy.StrField(attr="type", required=False)
-    date_statement = serpy.StrField(attr="date_statement", required=False)
-    has_external_manifest = serpy.MethodField()
+class SourceArchiveSerializer(ypres.Serializer):
+    url = ypres.MethodField()
+    display_name = ypres.StrField(attr="display_name")
+    public_images = ypres.BoolField(attr="public_images")
+    source_type = ypres.StrField(attr="type", required=False)
+    date_statement = ypres.StrField(attr="date_statement", required=False)
+    has_external_manifest = ypres.MethodField()
 
     def get_url(self, obj):
         return reverse(
@@ -24,16 +23,16 @@ class SourceArchiveSerializer(ContextSerializer):
         return obj.images_are_public is False and obj.has_manifest_link is True
 
 
-class ArchiveIdentifierSerializer(ContextSerializer):
-    url = serpy.StrField(attr="identifier_url")
-    label = serpy.StrField(attr="identifier_label")
-    identifier = serpy.StrField()
+class ArchiveIdentifierSerializer(ypres.Serializer):
+    url = ypres.StrField(attr="identifier_url")
+    alabel = ypres.StrField(label="label", attr="identifier_label")
+    identifier = ypres.StrField()
 
 
-class CityArchiveSerializer(ContextSerializer):
-    url = serpy.MethodField()
-    name = serpy.StrField()
-    country = serpy.StrField(attr="parent.name")
+class CityArchiveSerializer(ypres.Serializer):
+    url = ypres.MethodField()
+    name = ypres.StrField()
+    country = ypres.StrField(attr="parent.name")
 
     def get_url(self, obj):
         return reverse(
@@ -41,24 +40,24 @@ class CityArchiveSerializer(ContextSerializer):
         )
 
 
-class ArchiveNoteSerializer(ContextSerializer):
-    note = serpy.StrField()
-    note_type = serpy.StrField()
-    type_ = serpy.IntField(attr="type")
+class ArchiveNoteSerializer(ypres.Serializer):
+    note = ypres.StrField()
+    note_type = ypres.StrField()
+    type_ = ypres.IntField(attr="type")
 
 
-class ArchiveDetailSerializer(ContextSerializer):
-    url = serpy.MethodField()
-    pk = serpy.IntField()
-    sources = serpy.MethodField()
-    city = serpy.MethodField()
-    former_name = serpy.StrField(required=False)
-    name = serpy.StrField()
-    siglum = serpy.StrField()
-    website = serpy.StrField(required=False)
-    logo = serpy.MethodField()
-    notes = serpy.MethodField()
-    identifiers = serpy.MethodField(required=False)
+class ArchiveDetailSerializer(ypres.Serializer):
+    url = ypres.MethodField()
+    pk = ypres.IntField()
+    sources = ypres.MethodField()
+    city = ypres.MethodField()
+    former_name = ypres.StrField(required=False)
+    name = ypres.StrField()
+    siglum = ypres.StrField()
+    website = ypres.StrField(required=False)
+    logo = ypres.MethodField()
+    notes = ypres.MethodField()
+    identifiers = ypres.MethodField(required=False)
 
     def get_url(self, obj):
         return reverse(
@@ -68,7 +67,7 @@ class ArchiveDetailSerializer(ContextSerializer):
     def get_city(self, obj):
         return CityArchiveSerializer(
             obj.city, context={"request": self.context["request"]}
-        ).data
+        ).serialized
 
     def get_sources(self, obj):
         req = self.context["request"]
@@ -88,10 +87,12 @@ class ArchiveDetailSerializer(ContextSerializer):
             ),
             many=True,
             context={"request": self.context["request"]},
-        ).data
+        ).serialized_many
 
     def get_notes(self, obj) -> list:
-        return ArchiveNoteSerializer(obj.notes.exclude(type=1), many=True).data
+        return ArchiveNoteSerializer(
+            obj.notes.exclude(type=1), many=True
+        ).serialized_many
 
     def get_logo(self, obj):
         if obj.logo:
@@ -102,4 +103,4 @@ class ArchiveDetailSerializer(ContextSerializer):
             obj.identifiers.all(),
             many=True,
             context={"request": self.context["request"]},
-        ).data
+        ).serialized_many

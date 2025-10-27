@@ -4,7 +4,7 @@ from django.db import models
 class Voice(models.Model):
     class Meta:
         app_label = "diamm_data"
-        ordering = ("item__composition__title",)
+        ordering = ("sort_order", "item__composition__title",)
 
     label = models.CharField(
         max_length=256, blank=True, null=True, help_text="Former Text voicepart field"

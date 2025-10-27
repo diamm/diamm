@@ -1,13 +1,13 @@
 // Preboot stuff
-@import "variables";
-@import "mixins";
+@use "variables";
+@use "mixins";
 
 // Stuff for the document viewer
-@import "viewer";
+@use "viewer";
 
 // Plugins
-@import "plugins/manipulation";
-@import "plugins/metadata";
+@use "plugins/manipulation";
+@use "plugins/metadata";
 //@import "plugins/canvas.less";
 //@import "plugins/download.less";
 //@import "plugins/autoscroll.less";

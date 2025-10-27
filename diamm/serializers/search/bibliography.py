@@ -1,10 +1,10 @@
 import functools
 import logging
 
-import serpy
+import ypres
 import ujson
 
-from diamm.serializers.search.helpers import get_db_records, parallelise, record_indexer
+from diamm.serializers.search.helpers import get_db_records, parallelise, record_indexer, process_bibliography_entries
 
 log = logging.getLogger("diamm")
 
@@ -98,31 +98,31 @@ def _get_bibliography(cfg: dict):
 
 
 def create_bibliography_index_documents(record, cfg: dict):
-    return [BibliographySearchSerializer(record).data]
+    return [BibliographySearchSerializer(record).serialized]
 
 
-class BibliographySearchSerializer(serpy.DictSerializer):
-    type = serpy.StrField(attr="record_type")
-    pk = serpy.IntField()
+class BibliographySearchSerializer(ypres.DictSerializer):
+    type = ypres.StrField(attr="record_type")
+    pk = ypres.IntField()
 
-    authors_ss = serpy.MethodField()
-    authors_ii = serpy.MethodField()
+    authors_ss = ypres.MethodField()
+    authors_ii = ypres.MethodField()
 
-    title_s = serpy.StrField(attr="title")
-    year_s = serpy.StrField(attr="year")
-    year_ans = serpy.StrField(attr="year")
-    type_s = serpy.StrField(attr="type_name")
-    abbreviation_s = serpy.StrField(attr="abbreviation")
-    citation_json = serpy.MethodField()
-    sort_ans = serpy.MethodField()
-    sources_ii = serpy.MethodField()
-    sets_ii = serpy.MethodField()
-    sources_json = serpy.MethodField()
-    sets_json = serpy.MethodField()
-    items_ii = serpy.MethodField()
-    items_json = serpy.MethodField()
-    compositions_ii = serpy.MethodField()
-    compositions_json = serpy.MethodField()
+    title_s = ypres.StrField(attr="title")
+    year_s = ypres.StrField(attr="year")
+    year_ans = ypres.StrField(attr="year")
+    type_s = ypres.StrField(attr="type_name")
+    abbreviation_s = ypres.StrField(attr="abbreviation")
+    citation_json = ypres.MethodField()
+    sort_ans = ypres.MethodField()
+    sources_ii = ypres.MethodField()
+    sets_ii = ypres.MethodField()
+    sources_json = ypres.MethodField()
+    sets_json = ypres.MethodField()
+    items_ii = ypres.MethodField()
+    items_json = ypres.MethodField()
+    compositions_ii = ypres.MethodField()
+    compositions_json = ypres.MethodField()
 
     def get_authors_ss(self, obj):
         """
@@ -140,7 +140,7 @@ class BibliographySearchSerializer(serpy.DictSerializer):
         return [n[2] for n in authors] if authors else None
 
     def get_sort_ans(self, obj) -> str | None:
-        authors = process_authors(obj["authors"])
+        authors = process_authors(obj["authors"]) or []
         last_names = [n[1] for n in authors]
         return " ".join(last_names) if authors else None
 
@@ -194,7 +194,8 @@ class BibliographySearchSerializer(serpy.DictSerializer):
         engine. This is an optimization to help reduce the amount of time
         needed to render the citation on request.
         """
-        return ujson.dumps(process_bibliography_entries(obj["publication_info"]))
+        entries: dict = ujson.loads(obj["publication_info"])
+        return ujson.dumps(process_bibliography_entries(entries))
         # template = get_template("website/bibliography/bibliography_entry.jinja2")
         # citation = template.template.render(content=obj)
         # # strip out any newlines from the templating process
@@ -229,112 +230,3 @@ def process_compositions(compositions_str: str | None):
 def process_authors(author_str: str | None) -> list | None:
     authors = ujson.loads(author_str) if author_str else []
     return [(a["position"], a["last_name"], a["id"]) for a in authors]
-
-
-def process_bibliography_entries(bibliography_str: str | None):
-    if not bibliography_str:
-        return None
-    entries = ujson.loads(bibliography_str)
-
-    authors = []
-    editors = []
-    compilers = []
-    if ep := entries["people"]:
-        for entry in ep:
-            match entry["role"]:
-                case 1:
-                    authors.append(entry)
-                case 2:
-                    editors.append(entry)
-                case 3:
-                    compilers.append(entry)
-
-    volume_nos = []
-    parent_titles = []
-    publishers = []
-    pages = []
-    university = []
-    degree = []
-    chapter = []
-    series = []
-    url = []
-    url_accessed = []
-    translator = []
-    festschrift_for = []
-    place_publication = []
-    num_volumes = []
-    intl_num = []
-    conference_name = []
-    conference_location = []
-    conference_date = []
-    note = []
-
-    if epub := entries["publication"]:
-        for entry in epub:
-            match entry["type"]:
-                case 1:
-                    volume_nos.append(entry)
-                case 2:
-                    parent_titles.append(entry)
-                case 3:
-                    publishers.append(entry)
-                case 4:
-                    pages.append(entry)
-                case 5:
-                    university.append(entry)
-                case 6:
-                    degree.append(entry)
-                case 7:
-                    chapter.append(entry)
-                case 8:
-                    series.append(entry)
-                case 9:
-                    url.append(entry)
-                case 10:
-                    url_accessed.append(entry)
-                case 11:
-                    translator.append(entry)
-                case 12:
-                    festschrift_for.append(entry)
-                case 13:
-                    place_publication.append(entry)
-                case 14:
-                    num_volumes.append(entry)
-                case 15:
-                    intl_num.append(entry)
-                case 16:
-                    conference_name.append(entry)
-                case 17:
-                    conference_location.append(entry)
-                case 18:
-                    conference_date.append(entry)
-                case 99:
-                    note.append(entry)
-
-    return {
-        "title": entries["title"],
-        "type": entries["type"],
-        "year": entries["year"],
-        "authors": authors,
-        "editors": editors,
-        "compilers": compilers,
-        "volumes": volume_nos,
-        "parent_titles": parent_titles,
-        "publishers": publishers,
-        "pages": pages,
-        "university": university,
-        "degree": degree,
-        "chapter": chapter,
-        "series": series,
-        "url": url,
-        "url_accessed": url_accessed,
-        "translator": translator,
-        "festschrift_for": festschrift_for,
-        "place_publication": place_publication,
-        "num_volumes": num_volumes,
-        "intl_num": intl_num,
-        "conference_name": conference_name,
-        "conference_location": conference_location,
-        "conference_date": conference_date,
-        "note": note,
-    }

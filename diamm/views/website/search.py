@@ -55,27 +55,27 @@ class SearchView(generics.GenericAPIView):
             filters.update({"country_s": f'"{request.GET.get("country_s")}"'})
         if "cities" in request.GET:
             filters.update(
-                {
-                    "city_s": f'"{request.GET.get("cities")}"',
-                }
+                {"city_s": [f'"{g}"' for g in request.GET.getlist("cities")]}
             )
 
         if "composer" in request.GET:
-            exclusive_filters.update(
-                {"composers_ss": list(request.GET.getlist("composer"))}
+            filters.update(
+                {"composers_ss": [f'"{g}"' for g in request.GET.getlist("composer")]}
             )
 
         if "genre" in request.GET:
-            exclusive_filters.update({"genres_ss": list(request.GET.getlist("genre"))})
+            exclusive_filters.update(
+                {"genres_ss": [f'"{g}"' for g in request.GET.getlist("genre")]}
+            )
 
         if "notation" in request.GET:
             exclusive_filters.update(
-                {"notations_ss": list(request.GET.getlist("notation"))}
+                {"notations_ss": [f'"{g}"' for g in request.GET.getlist("notation")]}
             )
 
         if "sourcetype" in request.GET:
             exclusive_filters.update(
-                {"source_type_s": list(request.GET.getlist("sourcetype"))}
+                {"source_type_s": [f'"{g}"' for g in request.GET.getlist("sourcetype")]}
             )
 
         if "has_inventory" in request.GET:
@@ -84,8 +84,9 @@ class SearchView(generics.GenericAPIView):
             )
 
         if "date_range" in request.GET:
-            start, end = request.GET.get("date_range").split(",")
-            filters.update({"facet_date_range_ii": f"[{start} TO {end}]"})
+            res = request.GET.get("date_range", "").split("to")
+            if len(res) == 2:
+                filters.update({"facet_date_range_ii": f"[{res[0]} TO {res[1]}]"})
 
         # Filter search by Anonymous Compositions
         if "anonymous" in request.GET:
@@ -97,6 +98,51 @@ class SearchView(generics.GenericAPIView):
         if "orgtype" in request.GET:
             filters.update(
                 {"organization_type_s": f'"{request.GET.get("orgtype", None)}"'}
+            )
+
+        if "source_composers" in request.GET:
+            filters.update(
+                {
+                    "source_composers_ss": [
+                        f'"{g}"' for g in request.GET.getlist("source_composers")
+                    ]
+                }
+            )
+
+        if "current_state" in request.GET:
+            filters.update(
+                {
+                    "current_state_s": [
+                        f'"{g}"' for g in request.GET.getlist("current_state")
+                    ]
+                }
+            )
+
+        if "original_format" in request.GET:
+            filters.update(
+                {
+                    "original_format_s": [
+                        f'"{g}"' for g in request.GET.getlist("original_format")
+                    ]
+                }
+            )
+
+        if "current_host" in request.GET:
+            filters.update(
+                {
+                    "current_host_s": [
+                        f'"{g}"' for g in request.GET.getlist("current_host")
+                    ]
+                }
+            )
+
+        if "host_contents" in request.GET:
+            filters.update(
+                {
+                    "host_main_contents_s": [
+                        f'"{g}"' for g in request.GET.getlist("host_contents")
+                    ]
+                }
             )
 
         try:

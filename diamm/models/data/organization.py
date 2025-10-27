@@ -17,6 +17,8 @@ class Organization(models.Model):
     type = models.ForeignKey(
         "diamm_data.OrganizationType", default=1, on_delete=models.CASCADE
     )
+    subtypes = models.ManyToManyField("diamm_data.OrganizationSubtype", blank=True)
+
     legacy_id = models.CharField(max_length=64, blank=True, null=True)
     location = models.ForeignKey(
         "diamm_data.GeographicArea",

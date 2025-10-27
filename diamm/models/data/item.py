@@ -84,6 +84,10 @@ class Item(models.Model):
         null=True,
         help_text="Used only to record a composition that has been converted to an item-only record",
     )
+    notation = models.ForeignKey("diamm_data.Notation",
+                                 blank=True, null=True, on_delete=models.CASCADE)
+
+    bibliography_json = models.JSONField(blank=True, null=True)
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

@@ -1,6 +1,6 @@
 import logging
 
-import serpy
+import ypres
 
 from diamm.serializers.search.helpers import (
     format_person_name,
@@ -15,8 +15,8 @@ log = logging.getLogger("diamm")
 def _get_sources(cfg: dict):
     sql_query = """SELECT 'source' AS type, s.id AS pk, s.shelfmark AS shelfmark, s.name AS name,
               concat(a.siglum, ' ', s.shelfmark, coalesce(' (' || s.name || ')', ''))  AS display_name,
-              a.name AS "archive.name", a.id AS "archive.pk", ag.name AS "archive.city.name", s.type AS source_type,
-              ag2.name AS "archive.city.parent.name",
+              a.name AS archive_name, a.id AS archive_pk, ag.name AS archive_city_name, s.type AS source_type,
+              ag2.name AS archive_city_parent_name,
                 COALESCE(
                        (
                            (json_build_object(
@@ -32,6 +32,38 @@ def _get_sources(cfg: dict):
                ) AS surface_type,
             s.date_statement AS date_statement, s.measurements AS measurements, s.inventory_provided AS inventory_provided,
             s.start_date AS start_date, s.end_date AS end_date, s.public AS public,
+            COALESCE(
+               (jsonb_build_object(
+                        1, 'Rotulus',
+                        2, 'Codex',
+                        3, 'Libellus',
+                        4, 'Unknown'
+                )->>(original_format::integer)::text)::text, ''
+            ) AS original_format,
+            COALESCE(
+               (jsonb_build_object(
+                        1, 'Fragment',
+                        2, 'Complete',
+                        3, 'Lost'
+                )->>(current_state::integer)::text)::text, ''
+            ) AS current_state,
+            COALESCE(
+               (jsonb_build_object(
+                        1, 'Removed from host manuscript',
+                        2, 'Still within host manuscript',
+                        3, 'Within fragment collection'
+                )->>(current_host::integer)::text)::text, ''
+            ) AS current_host,
+            COALESCE(
+               (jsonb_build_object(
+                        1, 'Liturgical book',
+                        2, 'Miscellany',
+                        3, 'Accounts',
+                        4, 'Polyphony',
+                        5, 'Songbook',
+                        6, 'Other'
+                )->>(host_main_contents::integer)::text)::text, ''
+            ) AS host_main_contents,
             (SELECT count(itc.id)
                 FROM diamm_data_item AS it
                 LEFT JOIN diamm_data_composition AS itc ON it.composition_id = itc.id
@@ -111,10 +143,10 @@ def index_sources(cfg: dict) -> bool:
 
 
 def create_source_index_documents(record, cfg: dict) -> list[dict]:
-    return [SourceSearchSerializer(record).data]
+    return [SourceSearchSerializer(record).serialized]
 
 
-class SourceSearchSerializer(serpy.DictSerializer):
+class SourceSearchSerializer(ypres.DictSerializer):
     """
     For these search serializers, it is important to note that
     the field name in the serializer corresponds to the Solr field
@@ -132,44 +164,49 @@ class SourceSearchSerializer(serpy.DictSerializer):
 
     """
 
-    type = serpy.StrField(attr="type")
-    pk = serpy.IntField()
+    type = ypres.StrField(attr="type")
+    pk = ypres.IntField()
 
-    shelfmark_s = serpy.StrField(attr="shelfmark", required=False)
-    name_s = serpy.StrField(attr="name", required=False)
-    display_name_s = serpy.StrField(attr="display_name", required=False)
-    archive_s = serpy.StrField(attr="archive.name", required=False)
-    archive_i = serpy.IntField(attr="archive.pk", required=False)
-    archive_city_s = serpy.StrField(attr="archive.city.name", required=False)
-    archive_country_s = serpy.StrField(attr="archive.city.parent.name", required=False)
-    surface_type_s = serpy.StrField(attr="surface_type", required=False)
-    source_type_s = serpy.StrField(attr="source_type", required=False)
-    date_statement_s = serpy.StrField(attr="date_statement", required=False)
-    measurements_s = serpy.StrField(attr="measurements", required=False)
-    inventory_provided_b = serpy.BoolField(attr="inventory_provided", required=False)
-    number_of_compositions_i = serpy.IntField(attr="num_compositions", required=False)
-    number_of_composers_i = serpy.IntField(attr="num_composers", required=False)
-    composers_ss = serpy.MethodField()
+    shelfmark_s = ypres.StrField(attr="shelfmark", required=False)
+    name_s = ypres.StrField(attr="name", required=False)
+    display_name_s = ypres.StrField(attr="display_name", required=False)
+    archive_s = ypres.StrField(attr="archive_name", required=False)
+    archive_i = ypres.IntField(attr="archive_pk", required=False)
+    source_archive_city_s = ypres.StrField(attr="archive_city_name", required=False)
+    source_archive_country_s = ypres.StrField(attr="archive_city_parent_name", required=False)
+    surface_type_s = ypres.StrField(attr="surface_type", required=False)
+    source_type_s = ypres.StrField(attr="source_type", required=False)
+    date_statement_s = ypres.StrField(attr="date_statement", required=False)
+    measurements_s = ypres.StrField(attr="measurements", required=False)
+    inventory_provided_b = ypres.BoolField(attr="inventory_provided", required=False)
+    number_of_compositions_i = ypres.IntField(attr="num_compositions", required=False)
+    number_of_composers_i = ypres.IntField(attr="num_composers", required=False)
+    source_composers_ss = ypres.MethodField()
 
-    identifiers_ss = serpy.Field(attr="identifiers")
-    notations_ss = serpy.Field(attr="notations")
+    identifiers_ss = ypres.Field(attr="identifiers")
+    notations_ss = ypres.Field(attr="notations")
 
-    sets_ii = serpy.Field(attr="set_identifiers")
-    sets_ssni = serpy.Field(attr="set_cluster_shelfmarks")
-    notes_txt = serpy.Field(attr="notes")
+    sets_ii = ypres.Field(attr="set_identifiers")
+    sets_ssni = ypres.Field(attr="set_cluster_shelfmarks")
+    notes_txt = ypres.Field(attr="notes")
 
-    start_date_i = serpy.IntField(attr="start_date", required=False)
-    end_date_i = serpy.IntField(attr="end_date", required=False)
-    cover_image_i = serpy.IntField(attr="cover_image", required=False)
-    public_images_b = serpy.BoolField(attr="public_images", required=False)
-    public_b = serpy.BoolField(attr="public", required=False)
-    open_images_b = serpy.BoolField(attr="open_images", required=False)
-    external_images_b = serpy.BoolField(attr="has_external_images", required=False)
-    external_manifest_b = serpy.BoolField(attr="has_external_manifest", required=False)
-    bibliography_json = serpy.Field(attr="bibliography")
-    source_with_images_b = serpy.MethodField()
+    start_date_i = ypres.IntField(attr="start_date", required=False)
+    end_date_i = ypres.IntField(attr="end_date", required=False)
+    cover_image_i = ypres.IntField(attr="cover_image", required=False)
+    public_images_b = ypres.BoolField(attr="public_images", required=False)
+    public_b = ypres.BoolField(attr="public", required=False)
+    open_images_b = ypres.BoolField(attr="open_images", required=False)
+    external_images_b = ypres.BoolField(attr="has_external_images", required=False)
+    external_manifest_b = ypres.BoolField(attr="has_external_manifest", required=False)
+    bibliography_json = ypres.Field(attr="bibliography")
+    source_with_images_b = ypres.MethodField()
 
-    def get_composers_ss(self, obj) -> list | None:
+    original_format_s = ypres.StrField(attr="original_format", required=False)
+    current_state_s = ypres.StrField(attr="current_state", required=False)
+    current_host_s = ypres.StrField(attr="current_host", required=False)
+    host_main_contents_s = ypres.StrField(attr="host_main_contents", required=False)
+
+    def get_source_composers_ss(self, obj) -> list | None:
         if not obj.get("composers"):
             return None
         return [format_person_name(p) for p in obj["composers"]]

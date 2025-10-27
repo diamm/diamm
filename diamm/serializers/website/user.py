@@ -1,19 +1,17 @@
-
-import serpy
+import ypres
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from rest_framework.reverse import reverse
 
 from diamm.models.data.source import Source
-from diamm.serializers import serializers
 
 
-class UserContributionsSerializer(serializers.ContextSerializer):
-    summary = serpy.StrField(required=False)
-    created = serpy.StrField()
-    note = serpy.StrField(required=False)
-    status = serpy.BoolField(attr="accepted")
-    record = serpy.MethodField()
+class UserContributionsSerializer(ypres.Serializer):
+    summary = ypres.StrField(required=False)
+    created = ypres.StrField()
+    note = ypres.StrField(required=False)
+    status = ypres.BoolField(attr="accepted")
+    record = ypres.MethodField()
 
     def get_record(self, obj) -> dict:
         return {
@@ -26,13 +24,13 @@ class UserContributionsSerializer(serializers.ContextSerializer):
         }
 
 
-class UserCommentSerializer(serializers.ContextSerializer):
-    comment = serpy.StrField()
-    type_of_comment = serpy.StrField()
-    attachment_type = serpy.MethodField()
-    attachment_url = serpy.MethodField()
-    created = serpy.MethodField()
-    attachment = serpy.MethodField()
+class UserCommentSerializer(ypres.Serializer):
+    comment = ypres.StrField()
+    type_of_comment = ypres.StrField()
+    attachment_type = ypres.MethodField()
+    attachment_url = ypres.MethodField()
+    created = ypres.MethodField()
+    attachment = ypres.MethodField()
 
     def get_attachment(self, obj) -> str | None:
         if isinstance(obj.attachment, Source):
@@ -54,18 +52,18 @@ class UserCommentSerializer(serializers.ContextSerializer):
         return naturaltime(obj.created)
 
 
-class UserSerializer(serializers.ContextSerializer):
-    url = serpy.MethodField()
-    last_name = serpy.StrField(required=False)
-    first_name = serpy.StrField(required=False)
-    full_name = serpy.StrField()
-    date_joined = serpy.StrField()
-    affiliation = serpy.StrField(required=False)
-    superuser = serpy.BoolField(attr="is_superuser")
-    staff = serpy.BoolField(attr="is_staff")
-    comments = serpy.MethodField()
-    contributions = serpy.MethodField()
-    pending_contributions = serpy.MethodField()
+class UserSerializer(ypres.Serializer):
+    url = ypres.MethodField()
+    last_name = ypres.StrField(required=False)
+    first_name = ypres.StrField(required=False)
+    full_name = ypres.StrField()
+    date_joined = ypres.StrField()
+    affiliation = ypres.StrField(required=False)
+    superuser = ypres.BoolField(attr="is_superuser")
+    staff = ypres.BoolField(attr="is_staff")
+    comments = ypres.MethodField()
+    contributions = ypres.MethodField()
+    pending_contributions = ypres.MethodField()
 
     def get_url(self, obj) -> str:
         return reverse("user-account", request=self.context["request"])
@@ -78,18 +76,18 @@ class UserSerializer(serializers.ContextSerializer):
             ],
             many=True,
             context={"request": self.context["request"]},
-        ).data
+        ).serialized_many
 
     def get_contributions(self, obj) -> list:
         return UserContributionsSerializer(
             obj.problem_reports.filter(accepted=True),
             many=True,
             context={"request": self.context["request"]},
-        ).data
+        ).serialized_many
 
     def get_pending_contributions(self, obj) -> list:
         return UserContributionsSerializer(
             obj.problem_reports.filter(accepted=False),
             many=True,
             context={"request": self.context["request"]},
-        ).data
+        ).serialized_many

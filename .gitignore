@@ -19,3 +19,7 @@ env
 /solr/core.properties
 .venv
 diamm.egg-info
+search-app/dist
+search-app/elm-stuff
+search-app/node_modules
+diamm/static/apps/search/search.js

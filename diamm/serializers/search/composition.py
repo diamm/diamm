@@ -1,8 +1,7 @@
 import logging
 
-import serpy
+import ypres
 
-from diamm.serializers.fields import StaticField
 from diamm.serializers.search.helpers import (
     get_db_records,
     parallelise,
@@ -23,7 +22,7 @@ def index_compositions(cfg: dict) -> bool:
 
 
 def create_composition_index_documents(record, cfg) -> list[dict]:
-    return [CompositionSearchSerializer(record).data]
+    return [CompositionSearchSerializer(record).serialized]
 
 
 def _get_compositions(cfg: dict):
@@ -34,7 +33,7 @@ def _get_compositions(cfg: dict):
                         LEFT JOIN diamm_data_genre AS ddg ON ddcg.genre_id = ddg.id
                         WHERE ddcg.composition_id = c.id)
                    AS genres,
-                   (SELECT jsonb_agg(DISTINCT jsonb_build_object(
+                   (SELECT jsonb_agg(DISTINCT jsonb_strip_nulls(jsonb_build_object(
                            'id', p2.id,
                            'last_name', p2.last_name,
                            'first_name', p2.first_name,
@@ -44,7 +43,7 @@ def _get_compositions(cfg: dict):
                            'latest_year_approximate', p2.latest_year_approximate,
                            'floruit', p2.floruit,
                            'uncertain', cc2.uncertain
-                            ))
+                            )))
                             FROM diamm_data_compositioncomposer AS cc2
                             LEFT JOIN diamm_data_person AS p2 ON cc2.composer_id = p2.id
                         WHERE c.id = cc2.composition_id)
@@ -69,21 +68,22 @@ def _get_compositions(cfg: dict):
     return get_db_records(sql_query, cfg)
 
 
-class CompositionSearchSerializer(serpy.DictSerializer):
-    type = serpy.StrField(attr="record_type")
-    pk = serpy.IntField(attr="pk")
-    public_b = StaticField(True)
-    title_s = serpy.StrField(attr="title")
-    display_name_ans = serpy.StrField(attr="title")
-    anonymous_b = serpy.BoolField(attr="anonymous")
-    genres_ss = serpy.Field(attr="genres")
-    voice_text_txt = serpy.Field(attr="voice_texts")
-    composers_ssni = serpy.MethodField()
-    composers_ss = serpy.MethodField()
-    composers_ii = serpy.MethodField()
-    sources_ss = serpy.MethodField()
-    sources_ssni = serpy.MethodField()
-    sources_ii = serpy.MethodField()
+class CompositionSearchSerializer(ypres.DictSerializer):
+    type = ypres.StrField(attr="record_type")
+    pk = ypres.IntField(attr="pk")
+    public_b = ypres.StaticField(True)
+    title_s = ypres.StrField(attr="title")
+    display_name_ans = ypres.StrField(attr="title")
+    anonymous_b = ypres.BoolField(attr="anonymous")
+    genres_ss = ypres.Field(attr="genres")
+    voice_text_txt = ypres.Field(attr="voice_texts")
+    composers_ssni = ypres.MethodField()
+    composers_ss = ypres.MethodField()
+    composers_ii = ypres.MethodField()
+    sources_ss = ypres.MethodField()
+    sources_ssni = ypres.MethodField()
+    sources_ii = ypres.MethodField()
+    composers_json = ypres.Field(attr="composition_composers")
 
     def get_composers_ss(self, obj):
         """

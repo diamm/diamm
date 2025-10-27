@@ -230,18 +230,20 @@ REST_FRAMEWORK = {
 # presence here is a prerequisite to there being a facet block in the
 # React search application.
 INTERFACE_FACETS = {
-    "cities": "facet_cities_ss",
     "genres": "genres_ss",
     "notations": "notations_ss",
-    "composers": "composers_ss",
-    "archive_locations": ["country_s", "city_s"],  # an array creates a pivot facet
+    "source_composers": "source_composers_ss",
     "source_type": "source_type_s",
+    "original_format": "original_format_s",
+    "current_state": "current_state_s",
+    "source_archive_city": "source_archive_city_s",
+    "host_main_contents": "host_main_contents_s",
     "has_inventory": "inventory_provided_b",
+    "composers": "composers_ss",
     "organization_type": "organization_type_s",
     "location": "location_s",
-    "archive": "archive_s",
     "anonymous": "anonymous_b",
-    # "source_date_range": "facet_date_range_ii"
+    "cities": "city_s",
 }
 
 SOLR = {
@@ -270,13 +272,31 @@ SOLR = {
         "{!ex=type}source_with_images_b",
     ],
     "FACET_PIVOTS": [],
+    "JSON_FACETS": {
+        "full_date_range":{
+            "type": "query",
+            "domain": {"query": "*:*"},
+            "facet":{
+                "min_year":"min(start_date_i)",
+                "max_year":"max(end_date_i)"
+            }
+        },
+        "date_range": {
+            "type": "range",
+            "field": "facet_date_range_ii",
+            "start": 0,
+            "end": 2025,
+            "gap": 10,
+            "mincount": 1
+        }
+    },
     "FACET_SORT": {  # custom sorting for certain facets (default is by count; index is alphanumeric)
         "f.composers_ss.facet.sort": "index",
         "f.country_s.facet.sort": "index",
         "f.city_s.facet.sort": "index",
         "f.name_s.facet.sort": "index",
         "f.genres_ss.facet.sort": "index",
-        "f.archive_s.facet.sort": "index",
+        # "f.archive_s.facet.sort": "index",
     },
     "FULLTEXT_QUERYFIELDS": [  # Boosting these fields allows more common methods of referring to a MSS to bubble up in the search results.
         "text",
@@ -299,12 +319,8 @@ SOLR = {
 # consistent reference, and so we can more easily work with it in the search response
 # handler.
 for k, v in INTERFACE_FACETS.items():
-    if isinstance(v, list):
-        pfacet = f"{{!key={k}}}{','.join(v)}"
-        SOLR["FACET_PIVOTS"].append(pfacet)
-    else:
-        facet = f"{{!key={k}}}{v}"
-        SOLR["FACET_FIELDS"].append(facet)
+    facet = f"{{!key={k}}}{v}"
+    SOLR["FACET_FIELDS"].append(facet)
 
 IIIF = {
     "THUMBNAIL_WIDTH": "250,"  # The constrained width of thumbnail images

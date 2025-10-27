@@ -1,18 +1,16 @@
-import serpy
+import ypres
 from rest_framework.reverse import reverse
 
-from diamm.serializers.fields import StaticField
 from diamm.serializers.iiif.helpers import create_metadata_block
-from diamm.serializers.serializers import ContextDictSerializer
 
 
-class StructureSerializer(ContextDictSerializer):
-    id = serpy.MethodField(label="@id")
-    type = StaticField(label="@type", value="sc:Range")
-    label = serpy.StrField(attr="composition_s", required=False)
-    rendering = serpy.MethodField()
-    canvases = serpy.MethodField()
-    metadata = serpy.MethodField()
+class StructureSerializer(ypres.DictSerializer):
+    id = ypres.MethodField(label="@id")
+    type = ypres.StaticField(label="@type", value="sc:Range")
+    label_ = ypres.StrField(label="label", attr="composition_s", required=False)
+    rendering = ypres.MethodField()
+    canvases = ypres.MethodField()
+    metadata = ypres.MethodField()
 
     def get_canvases(self, obj: dict) -> list | None:
         if not obj.get("pages_ii"):

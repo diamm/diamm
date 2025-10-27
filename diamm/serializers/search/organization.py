@@ -1,8 +1,7 @@
 import logging
 
-import serpy
+import ypres
 
-from diamm.serializers.fields import StaticField
 from diamm.serializers.search.helpers import (
     get_db_records,
     parallelise,
@@ -21,7 +20,7 @@ def index_organizations(cfg: dict) -> bool:
 
 
 def create_organization_index_documents(record, cfg: dict):
-    return [OrganizationSearchSerializer(record).data]
+    return [OrganizationSearchSerializer(record).serialized]
 
 
 def _get_organizations(cfg: dict):
@@ -34,6 +33,11 @@ def _get_organizations(cfg: dict):
                     FROM diamm_data_organizationtype AS ot
                     WHERE o.type_id = ot.id)
                 AS organization_type,
+               (SELECT json_agg(otsn.name)
+                    FROM diamm_data_organization_subtypes AS ots
+                    LEFT JOIN diamm_data_organizationsubtype otsn ON ots.organizationsubtype_id = otsn.id
+                    WHERE o.id = ots.organization_id)
+               AS organization_subtype,
               string_to_array(o.variant_names, ',') AS variant_names
         FROM diamm_data_organization AS o
         ORDER BY o.id"""
@@ -41,16 +45,17 @@ def _get_organizations(cfg: dict):
     return get_db_records(sql_query, cfg)
 
 
-class OrganizationSearchSerializer(serpy.DictSerializer):
-    type = serpy.StrField(attr="record_type")
-    pk = serpy.IntField()
-    public_b = StaticField(True)
-    location_s = serpy.Field(attr="location")
+class OrganizationSearchSerializer(ypres.DictSerializer):
+    type = ypres.StrField(attr="record_type")
+    pk = ypres.IntField()
+    public_b = ypres.StaticField(True)
+    location_s = ypres.Field(attr="location")
 
-    name_s = serpy.StrField(attr="name")
-    display_name_ans = serpy.StrField(attr="name")
-    organization_type_s = serpy.StrField(attr="type", required=False)
-    variant_names_ss = serpy.MethodField()
+    name_s = ypres.StrField(attr="name")
+    display_name_ans = ypres.StrField(attr="name")
+    organization_type_s = ypres.StrField(attr="organization_type", required=False)
+    organization_subtype_ss = ypres.Field(attr="organization_subtype", required=False)
+    variant_names_ss = ypres.MethodField()
 
     def get_variant_names_ss(self, obj):
         if variants := obj.get("variant_names"):

@@ -1,0 +1,17 @@
+{
+  "name": "search-app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "develop": "chokidar 'src/**/*.elm' -c 'clear && lamdera make --no-wire src/Main.elm --debug --output=dist/search.js'",
+    "production": "./optimize.sh src/Main.elm dist/search.js dist/search.js",
+    "deploy": "cp dist/search.js ../diamm/static/apps/search/"
+  },
+  "dependencies": {
+    "chokidar": "^4.0.3",
+    "chokidar-cli": "^3.0.0",
+    "elm-optimize-level-2": "^0.3.5",
+    "swc": "^1.0.11"
+  }
+}

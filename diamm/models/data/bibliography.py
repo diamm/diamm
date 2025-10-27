@@ -18,4 +18,14 @@ class Bibliography(models.Model):
     updated = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.title}"
+        authors = self.authors.all()
+        if not authors:
+            aut = "[No Author]"
+        elif len(authors) > 2:
+            authlist = "; ".join([str(a) for a in authors[:2]])
+            aut = f"{authlist} et al: "
+        else:
+            authlist = ", ".join([a.bibliography_author.full_name for a in authors])
+            aut = f"{authlist}: "
+
+        return f"{aut}{self.title}"

@@ -1,23 +1,12 @@
-import serpy
+import ypres
 from rest_framework.reverse import reverse
 
 from diamm.models.data.geographic_area import GeographicArea
-from diamm.serializers.serializers import ContextSerializer
 
 
-class CountryStateSerializer(ContextSerializer):
-    url = serpy.MethodField()
-    name = serpy.StrField()
-
-    def get_url(self, obj):
-        return reverse(
-            "region-detail", kwargs={"pk": obj.id}, request=self.context["request"]
-        )
-
-
-class CountryRegionSerializer(ContextSerializer):
-    url = serpy.MethodField()
-    name = serpy.StrField()
+class CountryStateSerializer(ypres.Serializer):
+    url = ypres.MethodField()
+    name = ypres.StrField()
 
     def get_url(self, obj):
         return reverse(
@@ -25,9 +14,19 @@ class CountryRegionSerializer(ContextSerializer):
         )
 
 
-class CountryCitySerializer(ContextSerializer):
-    url = serpy.MethodField()
-    name = serpy.StrField()
+class CountryRegionSerializer(ypres.Serializer):
+    url = ypres.MethodField()
+    name = ypres.StrField()
+
+    def get_url(self, obj):
+        return reverse(
+            "region-detail", kwargs={"pk": obj.id}, request=self.context["request"]
+        )
+
+
+class CountryCitySerializer(ypres.Serializer):
+    url = ypres.MethodField()
+    name = ypres.StrField()
 
     def get_url(self, obj):
         return reverse(
@@ -35,33 +34,33 @@ class CountryCitySerializer(ContextSerializer):
         )
 
 
-class CountryListSerializer(ContextSerializer):
-    url = serpy.MethodField()
-    name = serpy.StrField()
-    cities = serpy.MethodField()
-    regions = serpy.MethodField()
-    states = serpy.MethodField()
+class CountryListSerializer(ypres.Serializer):
+    url = ypres.MethodField()
+    name = ypres.StrField()
+    cities = ypres.MethodField()
+    regions = ypres.MethodField()
+    states = ypres.MethodField()
 
     def get_cities(self, obj):
         return CountryCitySerializer(
             obj.cities.select_related("parent").order_by("name"),
             many=True,
             context=self.context,
-        ).data
+        ).serialized_many
 
     def get_regions(self, obj):
         return CountryRegionSerializer(
             obj.regions.select_related("parent").order_by("name"),
             many=True,
             context=self.context,
-        ).data
+        ).serialized_many
 
     def get_states(self, obj):
         return CountryStateSerializer(
             obj.states.select_related("parent").order_by("name"),
             many=True,
             context=self.context,
-        ).data
+        ).serialized_many
 
     def get_url(self, obj):
         return reverse(
@@ -69,35 +68,35 @@ class CountryListSerializer(ContextSerializer):
         )
 
 
-class CountryDetailSerializer(ContextSerializer):
-    url = serpy.MethodField()
-    pk = serpy.IntField()
-    name = serpy.StrField()
-    cities = serpy.MethodField()
-    regions = serpy.MethodField()
-    states = serpy.MethodField()
-    provenance_relationships = serpy.MethodField()
+class CountryDetailSerializer(ypres.Serializer):
+    url = ypres.MethodField()
+    pk = ypres.IntField()
+    name = ypres.StrField()
+    cities = ypres.MethodField()
+    regions = ypres.MethodField()
+    states = ypres.MethodField()
+    provenance_relationships = ypres.MethodField()
 
     def get_cities(self, obj):
         return CountryCitySerializer(
             obj.cities.select_related("parent").order_by("name"),
             many=True,
             context=self.context,
-        ).data
+        ).serialized_many
 
     def get_regions(self, obj):
         return CountryRegionSerializer(
             obj.regions.select_related("parent").order_by("name"),
             many=True,
             context=self.context,
-        ).data
+        ).serialized_many
 
     def get_states(self, obj):
         return CountryStateSerializer(
             obj.states.select_related("parent").order_by("name"),
             many=True,
             context=self.context,
-        ).data
+        ).serialized_many
 
     def get_url(self, obj):
         if obj.type in (GeographicArea.STATE, GeographicArea.REGION):

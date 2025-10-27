@@ -7,38 +7,38 @@
 #    most browsers will refuse to cross-load secure and insecure content). This also
 #    simplifies loading images into a canvas.
 
-import serpy
+import ypres
 from django.conf import settings
 from django.template.defaultfilters import truncatewords
 from rest_framework.reverse import reverse
 
 from diamm.helpers.solr_helpers import SolrManager
-from diamm.serializers.fields import StaticField
 from diamm.serializers.iiif.canvas import CanvasSerializer
 from diamm.serializers.iiif.helpers import create_metadata_block
 from diamm.serializers.iiif.structure import StructureSerializer
-from diamm.serializers.serializers import ContextDictSerializer
 
 
-class SourceManifestSerializer(ContextDictSerializer):
-    ctx = StaticField(
+class SourceManifestSerializer(ypres.DictSerializer):
+    ctx = ypres.StaticField(
         value="http://iiif.io/api/presentation/2/context.json", label="@context"
     )
-    id = serpy.MethodField(label="@id")
-    type = StaticField(value="sc:Manifest", label="@type")
-    label = serpy.StrField(attr="display_name_s")
-    metadata = serpy.MethodField()
-    see_also = serpy.MethodField(label="seeAlso")
-    description = serpy.MethodField()
+    id = ypres.MethodField(label="@id")
+    type = ypres.StaticField(value="sc:Manifest", label="@type")
+    label_ = ypres.StrField(label="label", attr="display_name_s")
+    metadata = ypres.MethodField()
+    see_also = ypres.MethodField(label="seeAlso")
+    description = ypres.MethodField()
 
-    related = serpy.MethodField()
-    sequences = serpy.MethodField()
-    structures = serpy.MethodField()
-    attribution = StaticField(value="Digital Image Archive of Medieval Music")
+    related = ypres.MethodField()
+    sequences = ypres.MethodField()
+    structures = ypres.MethodField()
+    attribution = ypres.StaticField(value="Digital Image Archive of Medieval Music")
 
-    logo = StaticField(value=f"https://{settings.HOSTNAME}/static/images/diammlogo.png")
+    logo = ypres.StaticField(
+        value=f"https://{settings.HOSTNAME}/static/images/diammlogo.png"
+    )
 
-    thumbnail = serpy.MethodField(required=False)
+    thumbnail = ypres.MethodField(required=False)
 
     def get_id(self, obj: dict) -> str:
         return reverse(
@@ -82,7 +82,7 @@ class SourceManifestSerializer(ContextDictSerializer):
 
         canvases = CanvasSerializer(
             conn.results, many=True, context={"request": self.context["request"]}
-        ).data
+        ).serialized_many
 
         label = "Default"
         source_id = obj["pk"]
@@ -130,8 +130,6 @@ class SourceManifestSerializer(ContextDictSerializer):
         }
         conn.search("*:*", **structure_query)
 
-        structures = StructureSerializer(
+        return StructureSerializer(
             conn.results, context={"request": self.context["request"]}, many=True
-        ).data
-
-        return structures
+        ).serialized_many

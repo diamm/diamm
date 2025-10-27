@@ -1,8 +1,8 @@
-import serpy
+import ypres
 
 
-class CorrectionSerializer(serpy.Serializer):
-    summary = serpy.StrField()
-    contributor = serpy.StrField(attr="contributor.full_name", required=False)
-    credit = serpy.StrField()
-    updated = serpy.StrField()
+class CorrectionSerializer(ypres.Serializer):
+    summary = ypres.StrField()
+    contributor = ypres.StrField(attr="contributor.full_name", required=False)
+    credit = ypres.StrField()
+    updated = ypres.StrField()

@@ -3,8 +3,54 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.urls import reverse
 from django.utils.functional import cached_property
+from django_stubs_ext import StrOrPromise
 
 from diamm.helpers.solr_helpers import SolrManager
+
+
+class NumberingSystemChoices(models.IntegerChoices):
+    MIXED = 1, "Mixed Foliation and Pagination"
+    FOLIATION = 2, "Foliation"
+    PAGINATION = 3, "Pagination"
+    NO_NUMBERING_SYSTEM = 4, "None / Unknown"
+
+
+class SurfaceOptionChoices(models.IntegerChoices):
+    PARCHMENT = 1, "Parchment"
+    PAPER = 2, "Paper"
+    VELLUM = 3, "Vellum"
+    WOOD = 4, "Wood"
+    SLATE = 5, "Slate"
+    MIXED = 6, "Mixed Paper and Parchment"
+    OTHER = 7, "Other"
+
+
+class OriginalFormatChoices(models.IntegerChoices):
+    ROTULUS = 1, "Rotulus"
+    CODEX = 2, "Codex"
+    LIBELLUS = 3, "Libellus"
+    UNKNOWN = 4, "Unknown"
+
+
+class CurrentStateChoices(models.IntegerChoices):
+    FRAGMENT = 1, "Fragment"
+    COMPLETE = 2, "Complete"
+    LOST = 3, "Lost"
+
+
+class CurrentHostChoices(models.IntegerChoices):
+    REMOVED_FROM_HOST = 1, "Removed from host manuscript"
+    STILL_WITH_HOST = 2, "Still within host manuscript"
+    FRAGMENT_COLLECTION = 3, "Within fragment collection"
+
+
+class OriginalMainContents(models.IntegerChoices):
+    LITURGICAL = 1, "Liturgical book"
+    MISCELLANY = 2, "Miscellany"
+    ACCOUNTS = 3, "Accounts"
+    POLYPHONY = 4, "Polyphony"
+    SONGBOOK = 5, "Songbook"
+    OTHER = 6, "Other"
 
 
 class Source(models.Model):
@@ -16,36 +62,6 @@ class Source(models.Model):
     source. Note that if there are items attached to this source they will still appear, but there will be a note on
     the source record stating that DIAMM has not provided an inventory."""
 
-    # enumerate surface types
-    PARCHMENT = 1
-    PAPER = 2
-    VELLUM = 3
-    WOOD = 4
-    SLATE = 5
-    MIXED = 6
-    OTHER = 7
-
-    SURFACE_OPTIONS = (
-        (PARCHMENT, "Parchment"),
-        (PAPER, "Paper"),
-        (VELLUM, "Vellum"),
-        (WOOD, "Wood"),
-        (SLATE, "Slate"),
-        (MIXED, "Mixed Paper and Parchment"),
-        (OTHER, "Other"),
-    )
-
-    MIXED_NUMBERING_SYSTEM = 1
-    FOLIATION_NUMBERING_SYSTEM = 2
-    PAGINATION_NUMBERING_SYSTEM = 3
-    NO_NUMBERING_SYSTEM = 4
-
-    NUMBERING_SYSTEM = (
-        (MIXED_NUMBERING_SYSTEM, "Mixed Foliation and Pagination"),
-        (FOLIATION_NUMBERING_SYSTEM, "Foliation"),
-        (PAGINATION_NUMBERING_SYSTEM, "Pagination"),
-        (NO_NUMBERING_SYSTEM, "None / Unknown"),
-    )
     id = models.AutoField(primary_key=True)  # migrate old ID
     archive = models.ForeignKey(
         "diamm_data.Archive", related_name="sources", on_delete=models.CASCADE
@@ -58,7 +74,9 @@ class Source(models.Model):
         null=True,
         help_text="""A brief description of the source, e.g, 'chant book with added polyphony'""",
     )
-    surface = models.IntegerField(choices=SURFACE_OPTIONS, blank=True, null=True)
+    surface = models.IntegerField(
+        choices=SurfaceOptionChoices.choices, blank=True, null=True
+    )
     inventory_provided = models.BooleanField(default=False, help_text=HELP_INVENTORY)
 
     start_date = models.IntegerField(
@@ -83,11 +101,44 @@ class Source(models.Model):
     format = models.CharField(max_length=255, blank=True, null=True)
     measurements = models.CharField(max_length=512, blank=True, null=True)
     numbering_system = models.IntegerField(
-        choices=NUMBERING_SYSTEM, blank=True, null=True
+        choices=NumberingSystemChoices.choices, blank=True, null=True
     )
+    has_medieval_foliation = models.BooleanField(
+        default=False, help_text="Is the foliation in use from the medieval period?"
+    )
+    original_format = models.IntegerField(
+        choices=OriginalFormatChoices.choices, blank=True, null=True
+    )
+    original_format_uncertain = models.BooleanField(
+        default=False,
+        help_text="Used in conjunction with the original format field; indicates that the format declared there is not certain.",
+    )
+
+    current_state = models.IntegerField(
+        choices=CurrentStateChoices.choices,
+        blank=True,
+        null=True,
+        help_text="The current state of the manuscript",
+    )
+
+    current_host = models.IntegerField(
+        choices=CurrentHostChoices.choices,
+        blank=True,
+        null=True,
+        help_text="The present host of the manuscript",
+    )
+
+    host_main_contents = models.IntegerField(
+        choices=OriginalMainContents.choices,
+        blank=True,
+        null=True,
+        help_text="Indicate the main contents of the host manuscript, particularly if only a few pages of the whole volume contain music.",
+    )
+
     public = models.BooleanField(
         default=False, help_text="Source Description is Public"
     )
+
     public_images = models.BooleanField(
         default=False, help_text="Source Images are Public (with login)"
     )
@@ -130,18 +181,18 @@ class Source(models.Model):
         return summary
 
     @property
-    def surface_type(self):
+    def surface_type(self) -> StrOrPromise | None:
         if not self.surface:
             return None
 
-        d = dict(self.SURFACE_OPTIONS)
+        d = dict(SurfaceOptionChoices.choices)
         return d[self.surface]
 
     @property
-    def numbering_system_type(self):
+    def numbering_system_type(self) -> StrOrPromise | None:
         if not self.numbering_system:
             return None
-        d = dict(self.NUMBERING_SYSTEM)
+        d = dict(NumberingSystemChoices.choices)
         return d[self.numbering_system]
 
     @cached_property
@@ -172,7 +223,7 @@ class Source(models.Model):
         return None
 
     @property
-    def compositions(self):
+    def compositions(self) -> list[str]:
         composition_names = (
             self.inventory.filter(composition__isnull=False)
             .select_related("composition")
@@ -185,7 +236,7 @@ class Source(models.Model):
         return self.inventory.filter(composition__isnull=False).count()
 
     @property
-    def solr_bibliography(self) -> list:
+    def solr_bibliography(self) -> list[str]:
         # Grab a list of the ids for this record
         connection = SolrManager(settings.SOLR["SERVER"])
         fq = ["type:bibliography", f"sources_ii:{self.pk}"]

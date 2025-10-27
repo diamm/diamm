@@ -1,10 +1,9 @@
 import functools
 import logging
 
-import serpy
+import ypres
 import ujson
 
-from diamm.serializers.fields import StaticField
 from diamm.serializers.search.helpers import get_db_records, parallelise, record_indexer
 
 log = logging.getLogger("diamm")
@@ -67,24 +66,24 @@ def _get_sets(cfg):
 
 
 def create_set_index_documents(record, cfg: dict):
-    return [SetSearchSerializer(record).data]
+    return [SetSearchSerializer(record).serialized]
 
 
-class SetSearchSerializer(serpy.DictSerializer):
-    type = serpy.StrField(attr="record_type")
-    pk = serpy.IntField()
-    cluster_shelfmark_s = serpy.StrField(attr="cluster_shelfmark")
-    public_b = StaticField(True)
+class SetSearchSerializer(ypres.DictSerializer):
+    type = ypres.StrField(attr="record_type")
+    pk = ypres.IntField()
+    cluster_shelfmark_s = ypres.StrField(attr="cluster_shelfmark")
+    public_b = ypres.StaticField(True)
 
     # allow sorting by alpha-numeric shelfmark.
-    cluster_shelfmark_ans = serpy.StrField(attr="cluster_shelfmark")
-    display_name_ans = serpy.StrField(attr="cluster_shelfmark")
+    cluster_shelfmark_ans = ypres.StrField(attr="cluster_shelfmark")
+    display_name_ans = ypres.StrField(attr="cluster_shelfmark")
 
-    sources_ii = serpy.Field(attr="sources")
-    set_type_s = serpy.StrField(attr="set_type")
-    archives_ss = serpy.MethodField()
-    archives_cities_ss = serpy.MethodField()
-    sources_json = serpy.Field()
+    sources_ii = ypres.Field(attr="sources")
+    set_type_s = ypres.StrField(attr="set_type")
+    archives_ss = ypres.MethodField()
+    archives_cities_ss = ypres.MethodField()
+    sources_json = ypres.Field()
 
     # add archive names to sets so that people can search for "partbooks oxford" or "trinity college partbooks"
     def get_archives_ss(self, obj) -> list | None:
@@ -93,10 +92,10 @@ class SetSearchSerializer(serpy.DictSerializer):
 
     # add archive cities so that people can search for e.g., 'london partbooks' or 'cambridge partbooks'
     def get_archives_cities_ss(self, obj) -> list | None:
-        archives = process_archives(obj["archives"]) if obj.get("archives") else []
+        archives: list = process_archives(obj["archives"]) if obj.get("archives") else []
         return list({f"{a['city']}" for a in archives})
 
 
 @functools.lru_cache
-def process_archives(archive_str: str | None) -> list | None:
-    return ujson.loads(archive_str) if archive_str else None
+def process_archives(archive_str: str | None) -> list:
+    return ujson.loads(archive_str) if archive_str else []

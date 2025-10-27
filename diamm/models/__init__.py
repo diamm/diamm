@@ -35,6 +35,7 @@ from diamm.models.data.mensuration import Mensuration
 from diamm.models.data.notation import Notation
 from diamm.models.data.organization import Organization
 from diamm.models.data.organization_identifier import OrganizationIdentifier
+from diamm.models.data.organization_subtype import OrganizationSubtype
 from diamm.models.data.organization_type import OrganizationType
 from diamm.models.data.page import Page
 from diamm.models.data.page_note import PageNote

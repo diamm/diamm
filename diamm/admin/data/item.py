@@ -130,6 +130,7 @@ class ItemAdmin(VersionAdmin):
         SourceKeyFilter,
         CompositionKeyFilter,
         AttachedToPagesListFilter,
+        "notation"
     )
     search_fields = (
         "source__name",

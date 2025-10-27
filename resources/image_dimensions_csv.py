@@ -1,17 +1,13 @@
 import argparse
-import copy
 import csv
-import json
 import logging
-import os
 import sys
 from pathlib import Path
-from typing import Optional
 
 log = logging.getLogger(__name__)
 
 
-def get_dimensions(img_path: str) -> tuple[int, int] | None:
+def get_dimensions(img_path: Path) -> tuple[int, int] | None:
     """
     Returns a tuple (w, h) of an image with a given ID. This image must be in a
     pairwise tree in the same silo as the master record. Reads the w/h data directly
@@ -63,7 +59,10 @@ def compile_images(image_root) -> list[dict]:
     all_images = []
     image_files = Path(image_root).glob("**/*.jpx")
     for ifile in image_files:
-        width, height = get_dimensions(ifile)
+        dims: tuple[int, int] | None = get_dimensions(ifile)
+        if not dims:
+            continue
+        width, height = dims
         all_images.append({"width": width, "height": height, "filename": str(ifile)})
     return all_images
 
