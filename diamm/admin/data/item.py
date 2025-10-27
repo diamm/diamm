@@ -148,6 +148,7 @@ class ItemAdmin(VersionAdmin):
     filter_horizontal = ["pages"]
     # exclude = ("pages",)
     raw_id_fields = ("source", "composition")
+    exclude = ("bibliography_json",)
 
     def pages_attached(self, obj):
         return obj.pages.exists()
