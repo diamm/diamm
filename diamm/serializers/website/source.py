@@ -215,14 +215,14 @@ class SourceInventoryNoteSerializer(ypres.Serializer):
 
 
 class SourceInventoryBibliographySerializer(ypres.DictSerializer):
-    pk = ypres.IntField()
+    # pk = ypres.IntField(required=False)
     prerendered = ypres.MethodField()
-    pages = ypres.StrField(required=False)
-    notes = ypres.StrField(required=False)
+    pages = ypres.StrField(required=False, attr="citation_pages")
+    notes = ypres.StrField(required=False, attr="citation_notes")
 
     def get_prerendered(self, obj):
         template = get_template("website/bibliography/bibliography_entry.jinja2")
-        citation = template.template.render(content=obj["citation_json"])
+        citation = template.template.render(content=obj)
         # strip out any newlines from the templating process
         citation = re.sub(r"\n", "", citation)
         # strip out multiple spaces
@@ -264,9 +264,9 @@ class SourceInventorySerializer(ypres.Serializer):
     composition = ypres.StrField(required=False)
     composers = ypres.MethodField()
     item_title = ypres.StrField(required=False)
-    bibliography = ypres.MethodField(required=False)
+    bibliography = ypres.MethodField()
     voices = ypres.MethodField()
-    pages = ypres.MethodField(required=False)
+    pages = ypres.MethodField()
     source_attribution = ypres.StrField(required=False)
     notes = ypres.MethodField()
 
@@ -274,6 +274,7 @@ class SourceInventorySerializer(ypres.Serializer):
         return [p.pk for p in obj.pages.all()]
 
     def get_genres(self, obj):
+        print("genres")
         if not obj.composition:
             return None
         return [g.name for g in obj.composition.genres.all()]
@@ -283,29 +284,12 @@ class SourceInventorySerializer(ypres.Serializer):
             return None
         return SourceInventoryNoteSerializer(obj.notes.all(), many=True).serialized_many
 
-    def get_bibliography(self, obj):
-        connection = SolrManager(settings.SOLR["SERVER"])
-        fq = ["type:bibliography", f"items_ii:{obj.pk}"]
-        sort = "year_ans desc, sort_ans asc"
+    def get_bibliography(self, obj) -> list | None:
+        bibl = obj.bibliography_json
+        if not bibl:
+            return None
+        return SourceInventoryBibliographySerializer(bibl, many=True).serialized_many
 
-        connection.search("*:*", fq=fq, sort=sort)
-        reslist = []
-        for res in connection.results:
-            if "items_json" in res:
-                entry_list = [
-                    s for s in res["items_json"] if s and s["item_id"] == obj.pk
-                ]
-                if not entry_list:
-                    continue
-                entry = entry_list[0]
-                if p := entry.get("pages"):
-                    res["pages"] = p
-                if n := entry.get("notes"):
-                    res["notes"] = n
-
-                reslist.append(SourceInventoryBibliographySerializer(res).serialized)
-
-        return reslist
 
     def get_url(self, obj):
         if not obj.composition:

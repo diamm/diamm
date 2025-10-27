@@ -84,5 +84,5 @@ class PersonSearchSerializer(ypres.DictSerializer):
         return format_person_name(ndata)
 
     def get_num_compositions_i(self, obj):
-        comps: list = obj.get("compositions", [])
-        return len(comps)
+        comps: list | None = obj.get("compositions")
+        return len(comps) if comps else 0

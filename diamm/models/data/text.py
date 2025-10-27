@@ -5,6 +5,7 @@ from django.utils.text import Truncator
 class Text(models.Model):
     class Meta:
         app_label = "diamm_data"
+        ordering = ("incipit", "id")
 
     text = models.TextField()
     incipit = models.CharField(max_length=256, blank=True, null=True)

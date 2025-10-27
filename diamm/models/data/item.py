@@ -87,6 +87,8 @@ class Item(models.Model):
     notation = models.ForeignKey("diamm_data.Notation",
                                  blank=True, null=True, on_delete=models.CASCADE)
 
+    bibliography_json = models.JSONField(blank=True, null=True)
+
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
