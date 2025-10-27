@@ -237,12 +237,12 @@ urlpatterns = [
     # url(r'^catalogue/(.*)$', CatalogueView.as_view(), name="catalogue-view"),
     # Any routes that are not matched by the previous are routed to the Wagtail module
     #  which acts as a CMS for the non-database content.
-    path("__debug__/", include("debug_toolbar.urls")),
     path("cms/", include(wagtailadmin_urls)),
     path("documents/", include(wagtaildocs_urls)),
     path("", include(wagtail_urls)),
 ]
 if settings.DEBUG:
+    urlpatterns += path("__debug__/", include("debug_toolbar.urls")),
     urlpatterns += static("/static/", document_root=settings.STATIC_ROOT)
     urlpatterns += static("/media/", document_root=settings.MEDIA_ROOT)
     urlpatterns += static("/search-app/", document_root=settings.SEARCH_APP_ROOT)
