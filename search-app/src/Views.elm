@@ -59,9 +59,10 @@ searchView model body =
                 , height (px 82)
                 , Background.color colourScheme.lightGrey
                 , paddingXY 20 0
+                , spacing 10
                 ]
                 [ Input.text
-                    [ width (px 1000)
+                    [ width (px 900)
                     , alignLeft
                     , Font.size 21
                     , Font.medium
@@ -71,6 +72,17 @@ searchView model body =
                     , text = Maybe.withDefault "" (.keywordQuery model.currentQueryArgs)
                     , placeholder = Just (placeholder [] (text "Keyword search"))
                     , label = Input.labelHidden "Search input"
+                    }
+                , Input.button
+                    [ Background.color colourScheme.red
+                    , Font.color colourScheme.white
+                    , Font.size 21
+                    , Border.rounded 3
+                    , padding 10
+                    , alignLeft
+                    ]
+                    { label = text "Search"
+                    , onPress = Just UserPressedEnterOnQueryBox
                     }
                 ]
             , row
