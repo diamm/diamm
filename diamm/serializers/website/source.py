@@ -3,12 +3,15 @@ import re
 import ypres
 from django.conf import settings
 from django.contrib.contenttypes.prefetch import GenericPrefetch
-from django.db.models.functions.comparison import Collate
+from django.db.models import Count, Prefetch
+from django.db.models.functions import Collate
+
 from django.template.loader import get_template
 from rest_framework.reverse import reverse
 
 from diamm.helpers.solr_helpers import SolrManager
-from diamm.models import Organization, Person, SourceURL
+from diamm.models import Organization, Person, SourceURL, CompositionComposer, Voice, ItemNote
+
 
 # from diamm.serializers.fields import DateTimeField
 # from diamm.serializers.serializers import ContextDictSerializer, ypres.Serializer
@@ -274,7 +277,6 @@ class SourceInventorySerializer(ypres.Serializer):
         return [p.pk for p in obj.pages.all()]
 
     def get_genres(self, obj):
-        print("genres")
         if not obj.composition:
             return None
         return [g.name for g in obj.composition.genres.all()]
@@ -324,7 +326,7 @@ class SourceInventorySerializer(ypres.Serializer):
 
     def get_voices(self, obj) -> list | None:
         out = []
-        for voice in obj.voices.all().order_by("sort_order"):
+        for voice in obj.voices.all():
             d = {
                 "voice_type": voice.type.name,
                 "languages": [lang.name for lang in voice.languages.all()],
@@ -548,21 +550,48 @@ class SourceDetailSerializer(ypres.Serializer):
 
     def get_inventory(self, obj):
         # source_order_f asc, folio_start_ans asc
+        # Pull Voice subtree in one go
+        voices_qs = (
+            Voice.objects
+            .select_related('type', 'clef', 'mensuration')  # FKs: 0 extra queries
+            .prefetch_related('languages')                  # M2M: 1 query for all languages across all voices
+            .order_by('sort_order', 'id')        # stable order per item
+        )
+
+        notes_qs = (
+            ItemNote.objects
+            .only('id','item_id','type','note')
+            .order_by('type','id')
+        )
+
         return SourceInventorySerializer(
-            obj.inventory.select_related("composition", "source__archive__city")
-            .prefetch_related(
-                "composition__composers__composer",
-                "composition__genres",
-                "notes",
-                "voices__languages",
-                "voices__clef",
-                "voices__type",
-                "voices__mensuration",
-                "pages",
-                "unattributed_composers",
+            obj.inventory.select_related(
+                'composition',
+                'source',
+                'source__archive',
+                'source__archive__city',
             )
-            .filter(unattributed_composers__isnull=True)
-            .order_by("source_order", Collate("folio_start", "natsort")),
+            .prefetch_related(
+                # Composition composers in two hops, but as two queries total:
+                Prefetch(
+                    'composition__composers',
+                    queryset=(CompositionComposer.objects
+                              .select_related('composer')  # pulls the Person in same query
+                              )
+                ),
+                Prefetch('notes', queryset=notes_qs),
+                'composition__genres',  # single query
+                Prefetch('voices', queryset=voices_qs),  # replaces all voices__* prefetches
+                'pages',                                  # single query
+                'unattributed_composers',                 # single query (for display)
+                # If notes is heavy, constrain it:
+                # Prefetch('notes', queryset=Note.objects.select_related('created_by').only('id','item_id','text','created_by_id'))
+            )
+            # Safer “no unattributed composers” filter that won’t be confused by other M2M joins:
+            .annotate(_ua_count=Count('unattributed_composers', distinct=True))
+            .filter(_ua_count=0)
+            # If you stick with .filter(unattributed_composers__isnull=True), add .distinct() below.
+            .order_by('source_order', Collate('folio_start', 'natsort')),
             many=True,
             context={"request": self.context["request"]},
         ).serialized_many
