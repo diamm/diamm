@@ -56,7 +56,7 @@
             </tr>
             <tr class="item-detail-box"
                 x-show="itemSelected('inventory-order-{{ loop.index }}')">
-                <td colspan="3">
+                <td colspan="4">
                     <div class="columns">
                         <header class="column">
                             {% if entry.composition %}
@@ -70,6 +70,11 @@
                                 <h4 class="title is-4">{{ entry.item_title }}</h4>
                             {% else %}
                                 <h4 class="title is-4">[Unknown Title]</h4>
+                            {% endif %}
+                            {% if request.user.is_staff %}
+                                <a class="button" href="/admin/diamm_data/item/{{ entry.pk }}">
+                                    Edit
+                                </a>
                             {% endif %}
                         </header>
                     </div>
@@ -128,15 +133,6 @@
                             {% endif %}
                         </div>
                     </div>
-                {% if request.user.is_staff %}
-                    <div class="columns">
-                        <div class="column">
-                            <a class="button" href="/admin/diamm_data/item/{{ entry.pk }}">
-                                Edit
-                            </a>
-                        </div>
-                    </div>
-                {% endif %}
                 </td>
             </tr>
         {% endfor %}
