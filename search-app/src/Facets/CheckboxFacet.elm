@@ -200,6 +200,6 @@ viewFacetItemCheckbox selected facetItem =
             , label =
                 Input.labelRight
                     []
-                    (text facetItem.value)
+                    (text (facetItem.value ++ " (" ++ String.fromInt facetItem.count ++ ")"))
             }
         ]
