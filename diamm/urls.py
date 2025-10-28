@@ -241,8 +241,9 @@ urlpatterns = [
     path("documents/", include(wagtaildocs_urls)),
     path("", include(wagtail_urls)),
 ]
+
 if settings.DEBUG:
-    urlpatterns += path("__debug__/", include("debug_toolbar.urls")),
+    urlpatterns.insert(0, path("__debug__/", include("debug_toolbar.urls")))
     urlpatterns += static("/static/", document_root=settings.STATIC_ROOT)
     urlpatterns += static("/media/", document_root=settings.MEDIA_ROOT)
     urlpatterns += static("/search-app/", document_root=settings.SEARCH_APP_ROOT)
