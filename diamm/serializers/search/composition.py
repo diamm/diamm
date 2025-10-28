@@ -26,44 +26,86 @@ def create_composition_index_documents(record, cfg) -> list[dict]:
 
 
 def _get_compositions(cfg: dict):
-    sql_query = r"""SELECT c.id AS pk, 'composition' AS record_type, c.title AS title,
-                   c.anonymous AS anonymous,
-                   (SELECT array_agg(ddg.name)
-                        FROM diamm_data_composition_genres AS ddcg
-                        LEFT JOIN diamm_data_genre AS ddg ON ddcg.genre_id = ddg.id
-                        WHERE ddcg.composition_id = c.id)
-                   AS genres,
-                   (SELECT jsonb_agg(DISTINCT jsonb_strip_nulls(jsonb_build_object(
-                           'id', p2.id,
-                           'last_name', p2.last_name,
-                           'first_name', p2.first_name,
-                           'earliest_year', p2.earliest_year,
-                           'latest_year', p2.latest_year,
-                           'earliest_year_approximate', p2.earliest_year_approximate,
-                           'latest_year_approximate', p2.latest_year_approximate,
-                           'floruit', p2.floruit,
-                           'uncertain', cc2.uncertain
-                            )))
-                            FROM diamm_data_compositioncomposer AS cc2
-                            LEFT JOIN diamm_data_person AS p2 ON cc2.composer_id = p2.id
-                        WHERE c.id = cc2.composition_id)
-                    AS composition_composers,
-                   (SELECT jsonb_agg(DISTINCT jsonb_build_object(
-                            'id', s.id,
-                            'display_name', concat(a.siglum, ' ', s.shelfmark, coalesce(' (' || s.name || ')', ''))
-                            ))
-                        FROM diamm_data_item AS i
-                        LEFT JOIN diamm_data_source AS s ON i.source_id = s.id
-                        LEFT JOIN diamm_data_archive AS a ON s.archive_id = a.id
-                        WHERE i.composition_id = c.id)
-                   AS sources,
-                  ( SELECT array_agg(regexp_replace(TRIM(v.voice_text), '\W+| {2,}', ' ', 'g'))
-                    FROM diamm_data_item AS i
-                    LEFT JOIN diamm_data_voice AS v ON v.item_id = i.id
-                    WHERE i.composition_id = c.id AND LENGTH(v.voice_text) > 3 AND v.voice_text IS NOT NULL)
-                  AS voice_texts
-                FROM diamm_data_composition AS c
-                ORDER BY c.id"""
+    sql_query = r"""WITH comp AS (
+        SELECT c.*
+        FROM diamm_data_composition c
+    ),
+
+                         agg_genres AS (
+        SELECT
+            ddcg.composition_id,
+            ARRAY_AGG(ddg.name) AS genres
+        FROM diamm_data_composition_genres ddcg
+            LEFT JOIN diamm_data_genre ddg ON ddg.id = ddcg.genre_id
+        GROUP BY ddcg.composition_id
+                         ),
+
+                         agg_comp_composers AS (
+        SELECT
+            cc2.composition_id,
+            JSONB_AGG(DISTINCT JSONB_STRIP_NULLS(JSONB_BUILD_OBJECT(
+      'id', p2.id,
+      'last_name', p2.last_name,
+      'first_name', p2.first_name,
+      'earliest_year', p2.earliest_year,
+      'latest_year', p2.latest_year,
+      'earliest_year_approximate', p2.earliest_year_approximate,
+      'latest_year_approximate', p2.latest_year_approximate,
+      'floruit', p2.floruit,
+      'uncertain', cc2.uncertain
+    ))) AS composition_composers
+        FROM diamm_data_compositioncomposer cc2
+            LEFT JOIN diamm_data_person p2 ON p2.id = cc2.composer_id
+        GROUP BY cc2.composition_id
+                         ),
+
+                         agg_sources AS (
+        SELECT
+            i.composition_id,
+            JSONB_AGG(DISTINCT JSONB_BUILD_OBJECT(
+      'id', s.id,
+      'display_name',
+        CONCAT_WS(
+          ' ',
+          a.siglum,
+          s.shelfmark,
+          NULLIF('(' || s.name || ')', '()')
+        )
+    )) AS sources
+        FROM diamm_data_item i
+            LEFT JOIN diamm_data_source  s ON s.id = i.source_id
+            LEFT JOIN diamm_data_archive a ON a.id = s.archive_id
+        GROUP BY i.composition_id
+                         ),
+
+                         agg_voice_texts AS (
+        SELECT
+            i.composition_id,
+            ARRAY_AGG(
+                    REGEXP_REPLACE(TRIM(v.voice_text), '\W+| {2,}', ' ', 'g')
+            ) FILTER (
+      WHERE v.voice_text IS NOT NULL AND LENGTH(v.voice_text) > 3
+    ) AS voice_texts
+        FROM diamm_data_item i
+            LEFT JOIN diamm_data_voice v ON v.item_id = i.id
+        GROUP BY i.composition_id
+                         )
+
+                    SELECT
+                        c.id AS pk,
+                        'composition' AS record_type,
+                        c.title,
+                        c.anonymous,
+                        g.genres,
+                        cc.composition_composers,
+                        s.sources,
+                        vt.voice_texts
+                    FROM comp c
+                        LEFT JOIN agg_genres         g  ON g.composition_id  = c.id
+                        LEFT JOIN agg_comp_composers cc ON cc.composition_id = c.id
+                        LEFT JOIN agg_sources        s  ON s.composition_id  = c.id
+                        LEFT JOIN agg_voice_texts    vt ON vt.composition_id = c.id
+                    ORDER BY c.id;"""
 
     return get_db_records(sql_query, cfg)
 
