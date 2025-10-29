@@ -13,6 +13,9 @@ class NumberingSystemChoices(models.IntegerChoices):
     FOLIATION = 2, "Foliation"
     PAGINATION = 3, "Pagination"
     NO_NUMBERING_SYSTEM = 4, "None / Unknown"
+    SIGNATURES = 5, "Signatures"
+    MIXED_FOLIATION_SIG = 6, "Mixed Foliation and Signatures"
+    MIXED_PAGINATION_SIG = 7, "Mixed Pagination and Signatures"
 
 
 class SurfaceOptionChoices(models.IntegerChoices):
