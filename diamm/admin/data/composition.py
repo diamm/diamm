@@ -1,7 +1,10 @@
 from django.contrib import admin, messages
 from django.db.models.query import Prefetch
 from django.shortcuts import render
+from django.db import models
+from django.forms import TextInput
 from django.utils.safestring import mark_safe
+from django import forms
 from reversion.admin import VersionAdmin
 
 from diamm.admin.forms.assign_genre import AssignGenreForm
@@ -50,9 +53,20 @@ class CycleInline(admin.StackedInline):
     extra = 0
     raw_id_fields = ("cycle",)
 
+class CompositionForm(forms.ModelForm):
+    class Meta:
+        model = Composition
+        fields = "__all__"
+        widgets = {
+            'title': forms.TextInput(attrs={'size': '100'}),  # wider input
+        }
+
+
 
 @admin.register(Composition)
 class CompositionAdmin(VersionAdmin):
+    form = CompositionForm
+
     save_on_top = True
     list_display = ("id", "title", "get_composers", "appears_in", "updated")
     search_fields = ("=id", "title", "composers__composer__last_name")
