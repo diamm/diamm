@@ -121,6 +121,13 @@
     {% if vol_iss -%}{{ vol_iss["entry"] }}{%- endif %}
 {% endmacro -%}
 
+{%- macro isbn_issn_number(content)  %}
+    {% set numb = content["intl_num"]|first -%}
+    {% if numb -%}{{ numb["entry"] }}{%- endif %}
+{% endmacro -%}
+
+
+
 {%- macro number_of_volumes_in_series(content)  %}
     {% set no_volumes = content["num_volumes"]|first -%}
     {% if no_volumes -%}{{ no_volumes["entry"] }} vols.{%- endif %}
@@ -156,7 +163,9 @@
         {# journal #}
         {% set volume_no = volume_issue_number(content) -%}
         {% set pg = pages(content) -%}
+        {% set int_num = isbn_issn_number(content) -%}
         {% if volume_no -%}{{ volume_no }}:&nbsp;{% endif -%}{{ pg }}{{ "." if not pg.endswith(".") else "" }}
+        {% if int_num -%}{{ int_num }}{{ "." if not int_num.endswith(".") else "" }}{% endif %}
     {% elif content["type"] in (2, 3, 5, 6, 9) -%}
         {# book #}
         {% set pg = pages(content) -%}
@@ -165,12 +174,14 @@
         {% set vols = number_of_volumes_in_series(content) -%}
         {% set ser = series(content) -%}
         {% set volume_no = volume_issue_number(content) -%}
+        {% set int_num = isbn_issn_number(content) -%}
 
         {% if ser -%}{{ ser }}{% if volume_no %}, vol. {{ volume_no }}{% endif %}{{ "." if not ser.endswith(".") else "" }}&nbsp;{%- endif  %}
         {% if eds -%}{{ eds }},&nbsp;{%- endif %}
         {% if vols -%}{{ vols }}{%- endif %}
         {% if pg -%}{{ pg }}{{ "." if not pg.endswith(".") else "" }}{%- endif %}
         {% if pub -%}&nbsp;{{ pub }}{{ "." if not pub.endswith(".") else "" }}{%- endif %}
+        {% if int_num -%}&nbsp;{{ int_num }}{{ "." if not int_num.endswith(".") else "" }}{% endif %}
     {% elif content["type"] == 4 -%}
         {# dissertation #}
         {% set deg = degree(content) -%}
@@ -190,4 +201,9 @@
     {% endif %}
 {%- endmacro -%}
 
-{{ authors(content) }} {{ year(content["year"]) }} {{ first_title(content) }} {{ other_titles(content) }} {{ publication_info(content) }} {{ bibliography_url(content) }}
+{%- macro general_note(content) -%}
+    {% set note = content["note"]|first -%}
+    {% if note %}{{ note["entry"] }}{{ "." if not note["entry"].endswith(".") else "" }}{% endif %}
+{%- endmacro -%}
+
+{{ authors(content) }} {{ year(content["year"]) }} {{ first_title(content) }} {{ other_titles(content) }} {{ publication_info(content) }} {{ bibliography_url(content) }} {{ general_note(content) }}
