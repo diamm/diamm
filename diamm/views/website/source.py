@@ -90,17 +90,9 @@ class SourceCanvasDetail(generics.GenericAPIView):
     renderer_classes = (UJSONRenderer,)
 
     def get(self, request, source_id, page_id) -> response.Response:
-        page_fields = [
-            "id",
-            "pk",
-            "source_i",
-            "numeration_s",
-            "[child parentFilter=type:page childFilter=type:image]",
-        ]
-
         # conn = pysolr.Solr(settings.SOLR['SERVER'])
         res = SolrConnection.search(
-            "*:*", fq=["type:page", f"pk:{page_id}"], fl=page_fields
+            "*:*", fq=["type:image", f"page_i:{page_id}"]
         )
         canvas = CanvasSerializer(res.docs[0], context={"request": request})
 

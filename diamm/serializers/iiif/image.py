@@ -51,7 +51,7 @@ class ImageSerializer(ypres.DictSerializer):
         )
 
     def get_resource(self, obj: dict) -> dict:
-        if alt_ids := obj.get("alt_images_ii"):
+        if alt_ids := obj.get("alt_images_ii", []):
             conn = SolrManager(settings.SOLR["SERVER"])
 
             # image_type_i:1 in the field list transformer childFilter ensures that

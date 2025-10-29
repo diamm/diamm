@@ -15,7 +15,7 @@ class CanvasSerializer(ypres.DictSerializer):
     def get_id(self, obj: dict) -> str:
         return reverse(
             "source-canvas-detail",
-            kwargs={"source_id": obj["source_i"], "page_id": obj["page_i"]},
+            kwargs={"source_id": obj["source_i"], "page_id": obj["pk"]},
             request=self.context["request"],
         )
 
