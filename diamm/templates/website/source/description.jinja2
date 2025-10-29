@@ -138,7 +138,7 @@
                         <ul class="no-style">
                             {% for link in content.links %}
                                 <li>
-                                    <a href="{{ link.link }}">
+                                    <a href="{{ link.link }}" target="_blank">
                                         {% if link.type == 1 %}<img src="{{ static("images/iiif.png") }}" style="width: 20px;" alt="IIIF logo" />{% endif %}
                                         {{ link.link_text }}
                                     </a>
