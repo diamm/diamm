@@ -66,9 +66,9 @@ class Item(models.Model):
     folio_end = models.CharField(max_length=256, blank=True, null=True)
     num_voices = models.CharField(max_length=32, blank=True, null=True)
 
-    legacy_position_ms = models.CharField(
-        max_length=256, blank=True, null=True
-    )  # transfer for ordering, but we should be able to find a better way to do this.
+    position_ms = models.FloatField(
+        blank=True, null=True
+    )
     source_order = models.DecimalField(
         blank=True, null=True, decimal_places=3, max_digits=100
     )
