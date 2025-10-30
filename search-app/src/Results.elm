@@ -80,6 +80,9 @@ viewSourceResult source =
 
         sourceSurface =
             Maybe.withDefault "" source.surface
+
+        contentsStatement =
+            viewMaybe (\t -> row [ width fill ] [ paragraph [] [ text t ] ]) source.contentsStatement
     in
     resultTemplate
         { url = source.url
@@ -93,6 +96,7 @@ viewSourceResult source =
             [ width fill ]
             [ paragraph [] [ text (sourceType ++ sourceDate ++ sourceSurface) ]
             ]
+        , contentsStatement
         ]
 
 

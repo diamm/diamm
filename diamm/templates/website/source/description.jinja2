@@ -202,18 +202,11 @@
                     </td>
                 </tr>
             {% endif %}
-            {% if content.inventory or content.composer_inventory or content.uninventoried %}
+            {% if content.contents_statement %}
                 <tr>
                     <th>Contents</th>
                     <td>
-                        {% if content.inventory and content.composer_inventory %}
-                            {{ content.inventory|length }} pieces from {{ content.composer_inventory|length }}
-                            composers
-                        {% endif %}
-                        {% if content.uninventoried %}
-                            Contains {{ content.uninventoried|length }} uninventoried works or miscellaneous
-                            sections.
-                        {% endif %}
+                        {{ content.contents_statement }}
                     </td>
                 </tr>
             {% endif %}

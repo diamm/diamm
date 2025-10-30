@@ -59,6 +59,7 @@ type alias SourceResultBody =
     , measurements : Maybe String
     , numberOfCompositions : Maybe Int
     , publicImages : Bool
+    , contentsStatement : Maybe String
     }
 
 
@@ -298,6 +299,7 @@ sourceResultBodyDecoder =
         |> optional "measurements" (maybe string) Nothing
         |> optional "number_of_compositions" (maybe int) Nothing
         |> required "public_images" bool
+        |> optional "contents_statement" (maybe string) Nothing
 
 
 personResultBodyDecoder : Decoder PersonResultBody

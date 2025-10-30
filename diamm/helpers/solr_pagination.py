@@ -8,7 +8,7 @@ from django.conf import settings
 from rest_framework.reverse import reverse
 from rest_framework.utils.urls import replace_query_param
 
-from diamm.helpers.formatters import format_person_name
+from diamm.helpers.formatters import format_person_name, contents_statement
 from diamm.helpers.solr_helpers import SolrConnection
 
 
@@ -49,6 +49,7 @@ class SolrResultSerializer(ypres.DictSerializer):
     cluster_shelfmark = ypres.StrField(attr="cluster_shelfmark_s", required=False)
     archives = ypres.Field(attr="archives_ss", required=False)
     sources = ypres.MethodField()
+    contents_statement = ypres.MethodField()
 
     def get_url(self, obj: dict) -> str:
         return reverse(
@@ -97,8 +98,6 @@ class SolrResultSerializer(ypres.DictSerializer):
         else:
             return None
 
-
-
     def get_sources(self, obj: dict) -> int | None:
         if "sources_ii" in obj:
             return len(obj["sources_ii"])
@@ -125,6 +124,12 @@ class SolrResultSerializer(ypres.DictSerializer):
         if "source_archive_country_s" in obj:
             return f"{city_name}, {obj['source_archive_country_s']}"
         return city_name
+
+    def get_contents_statement(self, obj) -> str | None:
+        if obj["type"] != "source":
+            return None
+
+        return contents_statement(obj)
 
 
 class SolrResultException(BaseException):
@@ -306,14 +311,17 @@ class SolrPage:
 
             facets[f] = sorted(out_facets, key=lambda d: d["value"].casefold())
 
-
         json_facets: dict | None = self.result.raw_response.get("facets")
         if "full_date_range" in json_facets and "date_range" in json_facets:
             if json_facets["date_range"].get("buckets"):
                 facets["date_range"] = {
                     "min": json_facets["full_date_range"]["min_year"],
                     "max": json_facets["full_date_range"]["max_year"],
-                    "buckets": [{"value": v, "count": c} for n in json_facets["date_range"]["buckets"] for v, c in n.items()]
+                    "buckets": [
+                        {"value": v, "count": c}
+                        for n in json_facets["date_range"]["buckets"]
+                        for v, c in n.items()
+                    ],
                 }
 
         return facets

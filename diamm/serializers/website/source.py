@@ -1,4 +1,5 @@
 import re
+from functools import cached_property
 
 import ypres
 from django.conf import settings
@@ -8,6 +9,7 @@ from django.db.models.functions import Collate
 from django.template.loader import get_template
 from rest_framework.reverse import reverse
 
+from diamm.helpers.formatters import contents_statement
 from diamm.helpers.solr_helpers import SolrManager
 from diamm.models import (
     CompositionComposer,
@@ -18,7 +20,6 @@ from diamm.models import (
     Voice,
 )
 from diamm.models.data.item import CompletenessOptionsChoices
-
 
 # from diamm.serializers.fields import DateTimeField
 # from diamm.serializers.serializers import ContextDictSerializer, ypres.Serializer
@@ -466,6 +467,7 @@ class SourceDetailSerializer(ypres.Serializer):
     relationships = ypres.MethodField(required=False)
     copyists = ypres.MethodField(required=False)
     catalogue_entries = ypres.MethodField(required=False)
+    contents_statement = ypres.MethodField()
     # iiif_manifest = ypres.MethodField()
 
     links = SourceURLSerializer(attr="links.all", call=True, many=True)
@@ -743,3 +745,25 @@ class SourceDetailSerializer(ypres.Serializer):
             ).serialized_many
 
         return all_comments
+
+    def get_contents_statement(self, obj) -> str | None:
+        connection = SolrManager(settings.SOLR["SERVER"])
+        fq: list = ["type:source", f"pk:{obj.pk}"]
+
+        connection.search(
+            "*:*",
+            fq=fq,
+            fl=[
+                "pk",
+                "number_of_anonymous_compositions_i",
+                "number_of_compositions_i",
+                "number_of_composers_i",
+                "number_of_uninventoried_composers_i",
+            ],
+        )
+
+        if connection.hits == 0:
+            return None
+        doc: dict = connection.docs[0]
+
+        return contents_statement(doc)
