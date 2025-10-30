@@ -1,12 +1,13 @@
 import concurrent.futures
 import functools
 import logging
+import multiprocessing
 from collections.abc import Callable, Iterable
 from operator import itemgetter
 
 import httpx
 import ujson
-from django.db import connection
+from django.db import connection, close_old_connections
 
 from diamm.helpers.formatters import format_person_name
 
@@ -22,9 +23,25 @@ def get_db_records(sql_query: str, cfg: dict):
         while rows := cursor.fetchmany(size=cfg["resultsize"]):
             yield [dict(zip(columns, row, strict=False)) for row in rows]
 
+
 def update_db_records(sql_query: str, params, cfg: dict):
+    close_old_connections()
+
     with connection.cursor() as cursor:
         cursor.execute(sql_query, params)
+
+    close_old_connections()
+
+
+def init_worker():
+    import os
+
+    import django
+    from django.db import close_old_connections
+
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "diamm.settings")
+    django.setup()
+    close_old_connections()
 
 
 def parallelise(records: Iterable, func: Callable, *args, **kwargs) -> None:
@@ -37,7 +54,10 @@ def parallelise(records: Iterable, func: Callable, *args, **kwargs) -> None:
     :param func: A shared Solr connection object
     :return: None
     """
-    with concurrent.futures.ProcessPoolExecutor() as executor:
+    ctx = multiprocessing.get_context("spawn")
+    with concurrent.futures.ProcessPoolExecutor(
+        mp_context=ctx, initializer=init_worker
+    ) as executor:
         futures_list = [
             executor.submit(func, record, *args, **kwargs) for record in records
         ]
