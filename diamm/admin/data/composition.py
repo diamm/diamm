@@ -1,10 +1,8 @@
+from django import forms
 from django.contrib import admin, messages
 from django.db.models.query import Prefetch
 from django.shortcuts import render
-from django.db import models
-from django.forms import TextInput
 from django.utils.safestring import mark_safe
-from django import forms
 from reversion.admin import VersionAdmin
 
 from diamm.admin.forms.assign_genre import AssignGenreForm
@@ -39,6 +37,7 @@ class ItemInline(admin.StackedInline):
     extra = 0
     raw_id_fields = ("source", "pages")
     classes = ["collapse"]
+    exclude = ("bibliography_json",)
 
 
 class NoteInline(admin.TabularInline):
@@ -53,14 +52,14 @@ class CycleInline(admin.StackedInline):
     extra = 0
     raw_id_fields = ("cycle",)
 
+
 class CompositionForm(forms.ModelForm):
     class Meta:
         model = Composition
         fields = "__all__"
         widgets = {
-            'title': forms.TextInput(attrs={'size': '100'}),  # wider input
+            "title": forms.TextInput(attrs={"size": "100"}),  # wider input
         }
-
 
 
 @admin.register(Composition)
