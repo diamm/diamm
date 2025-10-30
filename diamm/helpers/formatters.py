@@ -39,6 +39,7 @@ def format_person_name(name_blk: dict) -> str:
 
 def contents_statement(doc: dict) -> str | None:
     num_anon: int = doc.get("number_of_anonymous_compositions_i", 0)
+    num_attrib: int = doc.get("number_of_attributed_compositions_i", 0)
     num_comptn: int = doc.get("number_of_compositions_i", 0)
     num_comprs: int = doc.get("number_of_composers_i", 0)
     num_uninv_cmp: int = doc.get("number_of_uninventoried_composers_i", 0)
@@ -47,10 +48,12 @@ def contents_statement(doc: dict) -> str | None:
     if num_comptn > 0:
         out_stmt.append(f"Contains {num_comptn} composition{'s'[: num_comptn ^ 1]}")
     if num_comprs > 0:
+        if num_attrib != num_comptn:
+            out_stmt.append(f", {num_attrib} ")
         out_stmt.append(f" from {num_comprs} composer{'s'[: num_comprs ^ 1]}")
 
     if num_anon > 0:
-        out_stmt.append(f", {num_anon} anonymous")
+        out_stmt.append(f", {num_anon} {'is' if num_anon == 1 else 'are'} anonymous")
 
     if len(out_stmt) > 0:
         out_stmt.append(".")

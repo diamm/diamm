@@ -756,6 +756,7 @@ class SourceDetailSerializer(ypres.Serializer):
             fl=[
                 "pk",
                 "number_of_anonymous_compositions_i",
+                "number_of_attributed_compositions_i",
                 "number_of_compositions_i",
                 "number_of_composers_i",
                 "number_of_uninventoried_composers_i",

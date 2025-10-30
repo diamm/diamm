@@ -33,6 +33,7 @@ agg_items AS (
         SELECT
             it.source_id,
             COUNT(itc.id) FILTER (WHERE it.composition_id IS NOT NULL) AS num_compositions,
+            COUNT(itc.id) FILTER (WHERE itc.anonymous IS FALSE) AS num_attributed_compositions,
             COUNT(DISTINCT itcc.composer_id) AS num_composers,
             COUNT(itc.id) FILTER (WHERE itc.anonymous IS TRUE) as num_anonymous_compositions,
             JSONB_AGG(DISTINCT JSONB_BUILD_OBJECT(
@@ -207,6 +208,7 @@ SELECT
    ai.num_composers,
    ai.composers,
    ai.num_anonymous_compositions,
+   ai.num_attributed_compositions,
    auc.uninventoried_composers,
    auc.num_uninventoried_composers,
    idt.identifiers,
@@ -289,6 +291,9 @@ class SourceSearchSerializer(ypres.DictSerializer):
     measurements_s = ypres.StrField(attr="measurements", required=False)
     inventory_provided_b = ypres.BoolField(attr="inventory_provided", required=False)
     number_of_compositions_i = ypres.IntField(attr="num_compositions", required=False)
+    number_of_attributed_compositions_i = ypres.IntField(
+        attr="num_attributed_compositions", required=False
+    )
     number_of_composers_i = ypres.IntField(attr="num_composers", required=False)
     number_of_anonymous_compositions_i = ypres.IntField(
         attr="num_anonymous_compositions", required=False
