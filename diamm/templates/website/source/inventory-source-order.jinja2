@@ -46,6 +46,8 @@
                     {% else %}
                     -
                     {% endif %}
+                    {% if entry.fragment %}<em>(frag.)</em>{% endif %}
+                    {% if entry.completeness %}<br /><em>{{ entry.completeness }}</em>{% endif %}
                 </td>
                 <td>
                     {{ entry.source_attribution|default("-") }}

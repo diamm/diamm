@@ -5,12 +5,19 @@ from django.conf import settings
 from django.contrib.contenttypes.prefetch import GenericPrefetch
 from django.db.models import Count, Prefetch
 from django.db.models.functions import Collate
-
 from django.template.loader import get_template
 from rest_framework.reverse import reverse
 
 from diamm.helpers.solr_helpers import SolrManager
-from diamm.models import Organization, Person, SourceURL, CompositionComposer, Voice, ItemNote
+from diamm.models import (
+    CompositionComposer,
+    ItemNote,
+    Organization,
+    Person,
+    SourceURL,
+    Voice,
+)
+from diamm.models.data.item import CompletenessOptionsChoices
 
 
 # from diamm.serializers.fields import DateTimeField
@@ -174,6 +181,8 @@ class SourceComposerInventoryCompositionSerializer(ypres.DictSerializer):
     source_attribution = ypres.StrField(attr="attribution", required=False)
 
     composition = ypres.StrField(attr="title", required=False)
+    fragment = ypres.BoolField(required=False)
+    completeness = ypres.MethodField()
     url = ypres.MethodField()
 
     def get_url(self, obj) -> str | None:
@@ -185,6 +194,12 @@ class SourceComposerInventoryCompositionSerializer(ypres.DictSerializer):
             kwargs={"pk": obj["id"]},
             request=self.context["request"],
         )
+
+    def get_completeness(self, obj) -> str | None:
+        if "completeness" not in obj:
+            return None
+        d = dict(CompletenessOptionsChoices.choices)
+        return d[obj["completeness"]]
 
 
 class SourceComposerInventorySerializer(ypres.DictSerializer):
@@ -239,22 +254,24 @@ class SourceUninventoriedSerializer(ypres.Serializer):
     composers = ypres.MethodField()
 
     def get_composers(self, obj) -> list | None:
-        if obj.unattributed_composers.exists():
-            out = []
-            for comp in obj.unattributed_composers.all():
-                out.append(
-                    {
-                        "full_name": str(comp.composer),
-                        "url": reverse(
-                            "person-detail",
-                            kwargs={"pk": comp.composer.pk},
-                            request=self.context["request"],
-                        ),
-                        "uncertain": comp.uncertain,
-                        "note": comp.note,
-                    }
-                )
-            return out
+        if not obj.unattributed_composers.exists():
+            return None
+
+        out = []
+        for comp in obj.unattributed_composers.all():
+            out.append(
+                {
+                    "full_name": str(comp.composer),
+                    "url": reverse(
+                        "person-detail",
+                        kwargs={"pk": comp.composer.pk},
+                        request=self.context["request"],
+                    ),
+                    "uncertain": comp.uncertain,
+                    "note": comp.note,
+                }
+            )
+        return out
 
 
 class SourceInventorySerializer(ypres.Serializer):
@@ -272,6 +289,8 @@ class SourceInventorySerializer(ypres.Serializer):
     pages = ypres.MethodField()
     source_attribution = ypres.StrField(required=False)
     notes = ypres.MethodField()
+    fragment = ypres.BoolField()
+    completeness = ypres.StrField(attr="item_completeness")
 
     def get_pages(self, obj):
         return [p.pk for p in obj.pages.all()]
@@ -291,7 +310,6 @@ class SourceInventorySerializer(ypres.Serializer):
         if not bibl:
             return None
         return SourceInventoryBibliographySerializer(bibl, many=True).serialized_many
-
 
     def get_url(self, obj):
         if not obj.composition:
@@ -552,46 +570,51 @@ class SourceDetailSerializer(ypres.Serializer):
         # source_order_f asc, folio_start_ans asc
         # Pull Voice subtree in one go
         voices_qs = (
-            Voice.objects
-            .select_related('type', 'clef', 'mensuration')  # FKs: 0 extra queries
-            .prefetch_related('languages')                  # M2M: 1 query for all languages across all voices
-            .order_by('sort_order', 'id')        # stable order per item
+            Voice.objects.select_related(
+                "type", "clef", "mensuration"
+            )  # FKs: 0 extra queries
+            .prefetch_related(
+                "languages"
+            )  # M2M: 1 query for all languages across all voices
+            .order_by("sort_order", "id")  # stable order per item
         )
 
-        notes_qs = (
-            ItemNote.objects
-            .only('id','item_id','type','note')
-            .order_by('type','id')
+        notes_qs = ItemNote.objects.only("id", "item_id", "type", "note").order_by(
+            "type", "id"
         )
 
         return SourceInventorySerializer(
             obj.inventory.select_related(
-                'composition',
-                'source',
-                'source__archive',
-                'source__archive__city',
+                "composition",
+                "source",
+                "source__archive",
+                "source__archive__city",
             )
             .prefetch_related(
                 # Composition composers in two hops, but as two queries total:
                 Prefetch(
-                    'composition__composers',
-                    queryset=(CompositionComposer.objects
-                              .select_related('composer')  # pulls the Person in same query
-                              )
+                    "composition__composers",
+                    queryset=(
+                        CompositionComposer.objects.select_related(
+                            "composer"
+                        )  # pulls the Person in same query
+                    ),
                 ),
-                Prefetch('notes', queryset=notes_qs),
-                'composition__genres',  # single query
-                Prefetch('voices', queryset=voices_qs),  # replaces all voices__* prefetches
-                'pages',                                  # single query
-                'unattributed_composers',                 # single query (for display)
+                Prefetch("notes", queryset=notes_qs),
+                "composition__genres",  # single query
+                Prefetch(
+                    "voices", queryset=voices_qs
+                ),  # replaces all voices__* prefetches
+                "pages",  # single query
+                "unattributed_composers",  # single query (for display)
                 # If notes is heavy, constrain it:
                 # Prefetch('notes', queryset=Note.objects.select_related('created_by').only('id','item_id','text','created_by_id'))
             )
             # Safer “no unattributed composers” filter that won’t be confused by other M2M joins:
-            .annotate(_ua_count=Count('unattributed_composers', distinct=True))
+            .annotate(_ua_count=Count("unattributed_composers", distinct=True))
             .filter(_ua_count=0)
             # If you stick with .filter(unattributed_composers__isnull=True), add .distinct() below.
-            .order_by('source_order', Collate('folio_start', 'natsort')),
+            .order_by("source_order", Collate("folio_start", "natsort")),
             many=True,
             context={"request": self.context["request"]},
         ).serialized_many
@@ -679,7 +702,9 @@ class SourceDetailSerializer(ypres.Serializer):
             return None
 
         return SourceContributionSerializer(
-            obj.contributions.select_related("contributor").filter(accepted=True).order_by("-updated"),
+            obj.contributions.select_related("contributor")
+            .filter(accepted=True)
+            .order_by("-updated"),
             context={"request": self.context["request"]},
             many=True,
         ).serialized_many
@@ -702,7 +727,9 @@ class SourceDetailSerializer(ypres.Serializer):
 
         all_comments = {
             "public": SourceCommentarySerializer(
-                obj.commentary.select_related("author").filter(comment_type=1).order_by("-updated"),
+                obj.commentary.select_related("author")
+                .filter(comment_type=1)
+                .order_by("-updated"),
                 context={"request": self.context["request"]},
                 many=True,
             ).serialized_many,

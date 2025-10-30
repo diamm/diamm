@@ -25,14 +25,16 @@ def index_composer_inventory(cfg: dict) -> bool:
 def _get_inventory(cfg: dict):
     sql_query = """SELECT p.id AS person_id, floor(random() * 100000000 + 1)::int AS pk,
                         'composerinventory' AS record_type, array_agg(it.id) AS items, it.source_id AS source_id,
-                       jsonb_agg(jsonb_build_object(
+                       jsonb_agg(jsonb_strip_nulls(jsonb_build_object(
                                  'id', it.composition_id,
                                  'title', c.title,
                                  'folio_start', it.folio_start,
                                  'folio_end', it.folio_end,
                                  'attribution', it.source_attribution,
-                                 'uncertain', cc.uncertain
-                                 ) ORDER BY c.title) AS compositions,
+                                 'uncertain', cc.uncertain,
+                                 'fragment', it.fragment,
+                                 'completeness', it.completeness
+                                 )) ORDER BY c.title) AS compositions,
                        jsonb_agg(DISTINCT jsonb_strip_nulls(jsonb_build_object(
                                         'id', p.id,
                                         'last_name', p.last_name,

@@ -27,7 +27,9 @@
                     <li>
                         {{ "(?) " if cmp.uncertain else "" }}
                         <a href="{{ cmp.url }}">{{ cmp.composition|default("[No description]") }}</a>
+                        {% if cmp.fragment %}<em>(frag.)</em>{% endif %}
                         &ndash;{{ foliation(cmp, show_imagelinks and entry.pages and request.user.is_authenticated) }}
+                        {% if cmp.completeness %}<em>{{ cmp.completeness }}</em>{% endif %}
                     </li>
                     {% endfor %}
                 </ul>
