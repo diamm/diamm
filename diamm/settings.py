@@ -273,13 +273,10 @@ SOLR = {
     ],
     "FACET_PIVOTS": [],
     "JSON_FACETS": {
-        "full_date_range":{
+        "full_date_range": {
             "type": "query",
             "domain": {"query": "*:*"},
-            "facet":{
-                "min_year":"min(start_date_i)",
-                "max_year":"max(end_date_i)"
-            }
+            "facet": {"min_year": "min(start_date_i)", "max_year": "max(end_date_i)"},
         },
         "date_range": {
             "type": "range",
@@ -287,8 +284,8 @@ SOLR = {
             "start": 0,
             "end": 2025,
             "gap": 10,
-            "mincount": 1
-        }
+            "mincount": 1,
+        },
     },
     "FACET_SORT": {  # custom sorting for certain facets (default is by count; index is alphanumeric)
         "f.composers_ss.facet.sort": "index",
@@ -421,7 +418,7 @@ LOGGING = {
             "class": "django.utils.log.AdminEmailHandler",
         },
         "console": {
-            "level": "INFO",
+            "level": "WARNING",
             "class": "logging.StreamHandler",
             "formatter": "verbose",
         },
