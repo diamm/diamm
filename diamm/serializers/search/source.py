@@ -32,10 +32,10 @@ def _get_sources(cfg: dict):
 agg_items AS (
         SELECT
             it.source_id,
-            COUNT(itc.id) FILTER (WHERE it.composition_id IS NOT NULL) AS num_compositions,
-            COUNT(itc.id) FILTER (WHERE itc.anonymous IS FALSE) AS num_attributed_compositions,
+            COUNT(DISTINCT itc.id) FILTER (WHERE it.composition_id IS NOT NULL) AS num_compositions,
+            COUNT(DISTINCT itc.id) FILTER (WHERE itc.anonymous IS FALSE) AS num_attributed_compositions,
             COUNT(DISTINCT itcc.composer_id) AS num_composers,
-            COUNT(itc.id) FILTER (WHERE itc.anonymous IS TRUE) as num_anonymous_compositions,
+            COUNT(DISTINCT itc.id) FILTER (WHERE itc.anonymous IS TRUE) as num_anonymous_compositions,
             JSONB_AGG(DISTINCT JSONB_BUILD_OBJECT(
                     'last_name', ddp.last_name,
                     'first_name', ddp.first_name,
