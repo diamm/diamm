@@ -1,4 +1,4 @@
-def format_person_name(name_blk: dict) -> str:
+def format_person_name(name_blk: dict, include_uncertain: bool = True) -> str:
     last_name: str | None = name_blk.get("last_name")
     first_name: str | None = name_blk.get("first_name")
     floruit: str | None = name_blk.get("floruit", "")
@@ -31,7 +31,7 @@ def format_person_name(name_blk: dict) -> str:
         name_str.append(f"{', ' if last_name else ''}{first_name}")
     if year_stmt:
         name_str.append(f" {year_stmt}")
-    if uncertain:
+    if uncertain and include_uncertain:
         name_str.append(" (?)")
 
     return "".join(name_str)

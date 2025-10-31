@@ -156,7 +156,9 @@ def _commit_changes(cfg: dict, core: str) -> bool:
 
 @functools.lru_cache
 def process_composers(
-    composers_str: str | None, unatt_composers_str: str | None
+    composers_str: str | None,
+    unatt_composers_str: str | None,
+    include_uncertain: bool = True,
 ) -> list[tuple[str, int | None, bool | None]]:
     """
     Returns an array of composer names, PK, and certainty.
@@ -167,7 +169,7 @@ def process_composers(
 
     res = []
     for composer in all_composers:
-        formatted_name = format_person_name(composer)
+        formatted_name = format_person_name(composer, include_uncertain)
         res.append((formatted_name, composer["id"], composer.get("uncertain", False)))
 
     return res

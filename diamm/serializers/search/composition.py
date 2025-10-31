@@ -31,16 +31,16 @@ def _get_compositions(cfg: dict):
         FROM diamm_data_composition c
     ),
 
-                         agg_genres AS (
+agg_genres AS (
         SELECT
             ddcg.composition_id,
             ARRAY_AGG(ddg.name) AS genres
         FROM diamm_data_composition_genres ddcg
             LEFT JOIN diamm_data_genre ddg ON ddg.id = ddcg.genre_id
         GROUP BY ddcg.composition_id
-                         ),
+),
 
-                         agg_comp_composers AS (
+agg_comp_composers AS (
         SELECT
             cc2.composition_id,
             JSONB_AGG(DISTINCT JSONB_STRIP_NULLS(JSONB_BUILD_OBJECT(
@@ -57,9 +57,9 @@ def _get_compositions(cfg: dict):
         FROM diamm_data_compositioncomposer cc2
             LEFT JOIN diamm_data_person p2 ON p2.id = cc2.composer_id
         GROUP BY cc2.composition_id
-                         ),
+),
 
-                         agg_sources AS (
+agg_sources AS (
         SELECT
             i.composition_id,
             JSONB_AGG(DISTINCT JSONB_BUILD_OBJECT(
@@ -89,23 +89,23 @@ def _get_compositions(cfg: dict):
         FROM diamm_data_item i
             LEFT JOIN diamm_data_voice v ON v.item_id = i.id
         GROUP BY i.composition_id
-                         )
+)
 
-                    SELECT
-                        c.id AS pk,
-                        'composition' AS record_type,
-                        c.title,
-                        c.anonymous,
-                        g.genres,
-                        cc.composition_composers,
-                        s.sources,
-                        vt.voice_texts
-                    FROM comp c
-                        LEFT JOIN agg_genres         g  ON g.composition_id  = c.id
-                        LEFT JOIN agg_comp_composers cc ON cc.composition_id = c.id
-                        LEFT JOIN agg_sources        s  ON s.composition_id  = c.id
-                        LEFT JOIN agg_voice_texts    vt ON vt.composition_id = c.id
-                    ORDER BY c.id;"""
+SELECT
+    c.id AS pk,
+    'composition' AS record_type,
+    c.title,
+    c.anonymous,
+    g.genres,
+    cc.composition_composers,
+    s.sources,
+    vt.voice_texts
+FROM comp c
+    LEFT JOIN agg_genres         g  ON g.composition_id  = c.id
+    LEFT JOIN agg_comp_composers cc ON cc.composition_id = c.id
+    LEFT JOIN agg_sources        s  ON s.composition_id  = c.id
+    LEFT JOIN agg_voice_texts    vt ON vt.composition_id = c.id
+ORDER BY c.id;"""
 
     return get_db_records(sql_query, cfg)
 
@@ -136,7 +136,9 @@ class CompositionSearchSerializer(ypres.DictSerializer):
             ret.append("Anonymous")
 
         composers = process_composers(
-            obj.get("composition_composers"), obj.get("unattributed_composers")
+            obj.get("composition_composers"),
+            obj.get("unattributed_composers"),
+            include_uncertain=False,
         )
         return ret + [c[0] for c in composers]
 
