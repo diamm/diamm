@@ -7,8 +7,11 @@ class Cycle(models.Model):
         ordering = ("title",)
 
     title = models.CharField(max_length=256)
-    composer = models.ForeignKey(
-        "diamm_data.Person", blank=True, null=True, on_delete=models.CASCADE
+    # ORM convenience (doesn’t create a table because `through` is explicit)
+    composers = models.ManyToManyField(
+        "diamm_data.Person",
+        through="diamm_data.CycleComposer",
+        related_name="composed_cycles",
     )
     type = models.ForeignKey("diamm_data.CycleType", on_delete=models.CASCADE)
 

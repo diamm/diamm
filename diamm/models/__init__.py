@@ -15,6 +15,7 @@ from diamm.models.data.composition_composer import CompositionComposer
 from diamm.models.data.composition_cycle import CompositionCycle
 from diamm.models.data.composition_note import CompositionNote
 from diamm.models.data.cycle import Cycle
+from diamm.models.data.cycle_composer import CycleComposer
 from diamm.models.data.cycle_type import CycleType
 from diamm.models.data.genre import Genre
 from diamm.models.data.geographic_area import GeographicArea

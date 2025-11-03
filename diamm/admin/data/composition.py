@@ -67,6 +67,7 @@ class CompositionAdmin(VersionAdmin):
     form = CompositionForm
 
     save_on_top = True
+    view_on_site = True
     list_display = ("id", "title", "get_composers", "appears_in", "updated")
     search_fields = ("=id", "title", "composers__composer__last_name")
     inlines = (ComposerInline, NoteInline, CycleInline, BibliographyInline, ItemInline)
