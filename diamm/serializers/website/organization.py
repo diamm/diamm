@@ -1,10 +1,9 @@
-
 import ypres
 from django.contrib.contenttypes.prefetch import GenericPrefetch
 from rest_framework.reverse import reverse
 
 from diamm.models import Organization, Person
-from diamm.models.data.geographic_area import GeographicArea
+from diamm.models.data.geographic_area import GeographicArea, AreaTypeChoices
 
 
 class OrganizationLocationSerializer(ypres.Serializer):
@@ -14,9 +13,9 @@ class OrganizationLocationSerializer(ypres.Serializer):
 
     def get_url(self, obj) -> str | None:
         view_type: str
-        if obj.type == GeographicArea.CITY:
+        if obj.type == AreaTypeChoices.CITY:
             view_type = "city-detail"
-        elif obj.type == GeographicArea.COUNTRY:
+        elif obj.type == AreaTypeChoices.COUNTRY:
             view_type = "country-detail"
         else:
             return None

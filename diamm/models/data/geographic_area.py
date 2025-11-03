@@ -1,27 +1,23 @@
 from django.db import models
 
 
+class AreaTypeChoices(models.IntegerChoices):
+    CITY = 1, "City"
+    COUNTRY = 2, "Country"
+    STATE = 3, "County/Province/State/Canton"
+    REGION = 4, "Region/Cultural area/Protectorate"
+    FICTIONAL = 5, "Fictional/Imaginary"
+
+
 class GeographicArea(models.Model):
     class Meta:
         app_label = "diamm_data"
         ordering = ["name"]
 
-    CITY = 1
-    COUNTRY = 2
-    STATE = 3
-    REGION = 4
-    FICTIONAL = 5
-
-    REGION_TYPES = (
-        (CITY, "City"),
-        (COUNTRY, "Country"),
-        (STATE, "County/Province/State/Canton"),
-        (REGION, "Region/Cultural area/Protectorate"),
-        (FICTIONAL, "Fictional/Imaginary"),
-    )
-
     name = models.CharField(max_length=255)
-    type = models.IntegerField(choices=REGION_TYPES, help_text="""The region type.""")
+    type = models.IntegerField(
+        choices=AreaTypeChoices.choices, help_text="""The region type."""
+    )
     parent = models.ForeignKey(
         "self",
         on_delete=models.CASCADE,
@@ -52,7 +48,7 @@ class GeographicArea(models.Model):
         NB: For non-country objects, this method will return an empty set.
         :return: A queryset containing the cities that are related to a parent country
         """
-        return self.geographicarea_set.filter(type=self.CITY)
+        return self.geographicarea_set.filter(type=AreaTypeChoices.CITY)
 
     @property
     def regions(self):
@@ -60,7 +56,7 @@ class GeographicArea(models.Model):
         NB: For non-country objects, this method will return an empty set.
         :return: A queryset containing the regions that are related to a parent country
         """
-        return self.geographicarea_set.filter(type=self.REGION)
+        return self.geographicarea_set.filter(type=AreaTypeChoices.REGION)
 
     @property
     def states(self):
@@ -68,17 +64,11 @@ class GeographicArea(models.Model):
         NB: For non-country objects, this method will return an empty set.
         :return: A queryset containing the regions that are related to a parent country.
         """
-        return self.geographicarea_set.filter(type=self.STATE)
+        return self.geographicarea_set.filter(type=AreaTypeChoices.STATE)
 
     @property
-    def area_type(self):
-        if self.type == self.CITY:
-            return "City"
-        elif self.type == self.COUNTRY:
-            return "Country"
-        elif self.type == self.STATE:
-            return "County/Province/State/Canton"
-        elif self.type == self.REGION:
-            return "Region/Cultural area"
-        elif self.type == self.FICTIONAL:
-            return "Fictional/Imaginary"
+    def area_type(self) -> str | None:
+        if not self.type:
+            return None
+        d = dict(AreaTypeChoices.choices)
+        return d[self.type]

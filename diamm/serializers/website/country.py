@@ -1,7 +1,7 @@
 import ypres
 from rest_framework.reverse import reverse
 
-from diamm.models.data.geographic_area import GeographicArea
+from diamm.models.data.geographic_area import GeographicArea, AreaTypeChoices
 
 
 class CountryStateSerializer(ypres.Serializer):
@@ -41,25 +41,28 @@ class CountryListSerializer(ypres.Serializer):
     regions = ypres.MethodField()
     states = ypres.MethodField()
 
+    # If the list is prefetched, it's already an in-memory list of instances.
+    # Fall back to properties only if not prefetched (e.g., for tests).
+    def _get_list(self, obj, attr_name, fallback_qs):
+        items = getattr(obj, attr_name, None)
+        return items if items is not None else list(fallback_qs)
+
     def get_cities(self, obj):
+        items = self._get_list(obj, "prefetched_cities", obj.cities.order_by("name"))
         return CountryCitySerializer(
-            obj.cities.select_related("parent").order_by("name"),
-            many=True,
-            context=self.context,
+            items, many=True, context=self.context
         ).serialized_many
 
     def get_regions(self, obj):
+        items = self._get_list(obj, "prefetched_regions", obj.regions.order_by("name"))
         return CountryRegionSerializer(
-            obj.regions.select_related("parent").order_by("name"),
-            many=True,
-            context=self.context,
+            items, many=True, context=self.context
         ).serialized_many
 
     def get_states(self, obj):
+        items = self._get_list(obj, "prefetched_states", obj.states.order_by("name"))
         return CountryStateSerializer(
-            obj.states.select_related("parent").order_by("name"),
-            many=True,
-            context=self.context,
+            items, many=True, context=self.context
         ).serialized_many
 
     def get_url(self, obj):
@@ -99,15 +102,15 @@ class CountryDetailSerializer(ypres.Serializer):
         ).serialized_many
 
     def get_url(self, obj):
-        if obj.type in (GeographicArea.STATE, GeographicArea.REGION):
+        if obj.type in (AreaTypeChoices.STATE, AreaTypeChoices.REGION):
             return reverse(
                 "region-detail", kwargs={"pk": obj.id}, request=self.context["request"]
             )
-        elif obj.type == GeographicArea.CITY:
+        elif obj.type == AreaTypeChoices.CITY:
             return reverse(
                 "city-detail", kwargs={"pk": obj.id}, request=self.context["request"]
             )
-        elif obj.type == GeographicArea.COUNTRY:
+        elif obj.type == AreaTypeChoices.COUNTRY:
             return reverse(
                 "country-detail", kwargs={"pk": obj.id}, request=self.context["request"]
             )

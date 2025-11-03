@@ -9,7 +9,7 @@ from reversion.admin import VersionAdmin
 from diamm.models.data.archive import Archive
 from diamm.models.data.archive_identifier import ArchiveIdentifier
 from diamm.models.data.archive_note import ArchiveNote
-from diamm.models.data.geographic_area import GeographicArea
+from diamm.models.data.geographic_area import AreaTypeChoices, GeographicArea
 
 
 class ArchiveNoteInline(admin.TabularInline):
@@ -25,7 +25,7 @@ class CountryListFilter(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         countries = GeographicArea.objects.filter(
-            Q(type=GeographicArea.COUNTRY) | Q(type=GeographicArea.STATE)
+            Q(type=AreaTypeChoices.COUNTRY) | Q(type=AreaTypeChoices.STATE)
         )
         return [(c.pk, c.name) for c in countries]
 

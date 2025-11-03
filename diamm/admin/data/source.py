@@ -15,7 +15,7 @@ from reversion.admin import VersionAdmin
 from diamm.admin.filters.input_filter import InputFilter
 from diamm.admin.forms.copy_inventory import CopyInventoryForm
 from diamm.admin.helpers.optimized_raw_id import RawIdWidgetAdminMixin
-from diamm.models.data.geographic_area import GeographicArea
+from diamm.models.data.geographic_area import AreaTypeChoices, GeographicArea
 from diamm.models.data.item import Item
 from diamm.models.data.page import Page
 from diamm.models.data.source import Source
@@ -251,9 +251,9 @@ class CountryListFilter(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         countries = GeographicArea.objects.filter(
-            Q(type=GeographicArea.COUNTRY) | Q(type=GeographicArea.STATE)
+            Q(type=AreaTypeChoices.COUNTRY) | Q(type=AreaTypeChoices.STATE)
         )
-        return [(c.id, c.name) for c in countries]
+        return [(c.pk, c.name) for c in countries]
 
     def queryset(self, request, queryset):
         if not self.value():
