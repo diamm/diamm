@@ -4,7 +4,7 @@ from django.db.models.expressions import Exists, OuterRef
 from django.db.models.query import Prefetch
 from rest_framework.reverse import reverse
 
-from diamm.models import Item, Organization, Page, Person, SourceURL
+from diamm.models import Image, Item, Organization, Person, SourceURL
 from diamm.models.data.person_note import PersonNote
 
 
@@ -175,8 +175,8 @@ class PersonDetailSerializer(ypres.Serializer):
             )
             .annotate(
                 images_are_public=Exists(
-                    Page.objects.filter(
-                        source=OuterRef("source_id"), images__public=True
+                    Image.objects.filter(
+                        page__source=OuterRef("source_id"), public=True
                     )
                 ),
                 has_manifest_link=Exists(
