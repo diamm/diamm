@@ -70,6 +70,7 @@
                     <tr>
                         <th>Source</th>
                         <th>Location</th>
+                        <th>Source Attribution</th>
                         <th>Voices</th>
                     </tr>
                 </thead>
@@ -87,6 +88,9 @@
                         </td>
                         <td>
                             {{ foliation(source, False) }}
+                        </td>
+                        <td>
+                            {{ source.attribution|default('-') }}
                         </td>
                         <td>
                             {% if source.voices %}

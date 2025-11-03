@@ -7,7 +7,7 @@ from django.template.loader import get_template
 from rest_framework.reverse import reverse
 
 from diamm.helpers.solr_helpers import SolrManager
-from diamm.models import Page, SourceURL
+from diamm.models import Image, SourceURL
 
 
 class CompositionBibliographySerializer(ypres.DictSerializer):
@@ -69,6 +69,7 @@ class CompositionSourceSerializer(ypres.Serializer):
     folio_start = ypres.StrField(required=False)
     folio_end = ypres.StrField(required=False)
     voices = ypres.MethodField()
+    attribution = ypres.StrField(attr="source_attribution", required=False)
 
     def get_url(self, obj):
         return reverse(
@@ -85,7 +86,9 @@ class CompositionSourceSerializer(ypres.Serializer):
 
     def get_voices(self, obj):
         if obj.voices:
-            return CompositionSourceVoiceSerializer(obj.voices.all(), many=True).serialized_many
+            return CompositionSourceVoiceSerializer(
+                obj.voices.all(), many=True
+            ).serialized_many
         return None
 
 
@@ -110,11 +113,11 @@ class CompositionComposerSerializer(ypres.Serializer):
             request=self.context["request"],
         )
 
+
 class CompositionNoteSerializer(ypres.Serializer):
     note_type = ypres.StrField()
     note = ypres.StrField()
     atype = ypres.IntField(label="type", attr="type")
-
 
 
 class CompositionDetailSerializer(ypres.Serializer):
@@ -148,11 +151,13 @@ class CompositionDetailSerializer(ypres.Serializer):
                 .filter(**public_filter)
                 .annotate(
                     images_are_public=Exists(
-                        Page.objects.filter(source=OuterRef("pk"), images__public=True)
+                        Image.objects.filter(
+                            page__source=OuterRef("source_id"), public=True
+                        )
                     ),
                     has_manifest_link=Exists(
                         SourceURL.objects.filter(
-                            source=OuterRef("pk"), type=SourceURL.IIIF_MANIFEST
+                            source=OuterRef("source_id"), type=SourceURL.IIIF_MANIFEST
                         )
                     ),
                 )
