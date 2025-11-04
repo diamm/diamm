@@ -1,5 +1,9 @@
+from http.client import HTTPResponse
+
 from django import forms
 from django.contrib import admin, messages
+from django.contrib.admin.helpers import ACTION_CHECKBOX_NAME
+from django.db import transaction
 from django.db.models.query import Prefetch
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
@@ -113,6 +117,7 @@ class CompositionAdmin(VersionAdmin):
 
     appears_in.short_description = "Appears in"
 
+    @admin.action(description="Merge Compositions")
     def merge_compositions_action(self, request, queryset):
         if "do_action" in request.POST:
             form = MergeCompositionsForm(request.POST)
@@ -147,25 +152,53 @@ class CompositionAdmin(VersionAdmin):
             {"objects": queryset, "form": form},
         )
 
-    merge_compositions_action.short_description = "Merge Compositions"
-
-    def assign_genre_action(self, request, queryset):
-        if "do_action" in request.POST:
+    @admin.action(description="Assign Genre to Compositions")
+    def assign_genre_action(modeladmin, request, queryset):
+        # If this is the second step (submitted from our intermediate page)…
+        if request.POST.get("do_action"):
             form = AssignGenreForm(request.POST)
-
             if form.is_valid():
                 genre = form.cleaned_data["genre"]
-                updated = queryset.update(genre=genre)
-                messages.success(request, f"{updated} compositions were updated")
+                updated: int = bulk_add_genre_to_queryset(genre, queryset)
+                messages.success(request, f"{updated} compositions were updated.")
+                # Returning None tells the admin “go back to the changelist”
+                return None
             else:
-                messages.error(request, "The submitted form was not valid")
+                messages.error(request, "The submitted form was not valid.")
+                # fall through to re-render the page with errors
         else:
+            # First step: just show the page with the empty form
             form = AssignGenreForm()
 
-        return render(
-            request,
-            "admin/composition/assign_genre.html",
-            {"objects": queryset, "form": form},
-        )
+        context = {
+            "form": form,
+            "objects": queryset,
+            # needed so the template can preserve the selection on POST
+            "action_checkbox_name": ACTION_CHECKBOX_NAME,
+            "action_name": "assign_genre_action",
+        }
+        return render(request, "admin/composition/assign_genre.html", context)
 
-    assign_genre_action.short_description = "Assign Genre to Compositions"
+
+def bulk_add_genre_to_queryset(genre, queryset) -> int:
+    through = queryset.model.genres.through
+    comp_ids = list(queryset.values_list("id", flat=True))
+
+    # Find which pairs already exist
+    existing = set(
+        through.objects.filter(
+            genre_id=genre.id, composition_id__in=comp_ids
+        ).values_list("composition_id", flat=True)
+    )
+
+    to_create = [
+        through(composition_id=cid, genre_id=genre.id)
+        for cid in comp_ids
+        if cid not in existing
+    ]
+
+    with transaction.atomic():
+        # ignore_conflicts requires Django 2.2+
+        created = through.objects.bulk_create(to_create, ignore_conflicts=True)
+
+    return len(created)

@@ -6,6 +6,11 @@
         <input type="hidden" name="action" value="assign_genre_action">
         <input type="hidden" name="do_action" value="yes">
 
+        <!-- CRUCIAL: preserve the selected IDs -->
+        {% for obj in objects %}
+            <input type="hidden" name="{{ action_checkbox_name }}" value="{{ obj.pk }}">
+        {% endfor %}
+
         <div>
             {{ form.genre }}
             <input type="submit" class="default" style="float: none" value="Change">
