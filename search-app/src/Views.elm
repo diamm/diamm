@@ -1,11 +1,12 @@
 module Views exposing (view)
 
-import Element exposing (Element, alignBottom, alignLeft, alignRight, alignTop, centerX, column, el, fill, height, htmlAttribute, layout, maximum, none, padding, paddingXY, paragraph, pointer, px, row, spacing, text, width)
+import Element exposing (Element, alignBottom, alignLeft, alignRight, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, layout, maximum, none, padding, paddingXY, paragraph, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events as Events exposing (onClick)
 import Element.Font as Font
 import Element.Input as Input exposing (placeholder)
+import Error exposing (ErrorResponse, errorMessageString)
 import Facets exposing (viewFacets)
 import Helpers exposing (onEnter, viewMaybe)
 import Html exposing (Html)
@@ -17,7 +18,7 @@ import Request exposing (Response(..))
 import Results exposing (resultView)
 import Route exposing (extractPageNumberFromUrl)
 import String.Extra as SE
-import Style exposing (colourScheme)
+import Style exposing (animatedLoader, colourScheme, spinnerSvg)
 import Url
 
 
@@ -40,8 +41,58 @@ responseRouter model =
         Response searchBody ->
             searchView model searchBody
 
-        _ ->
+        Loading maybeBody ->
+            loadingView model maybeBody
+
+        Error err ->
+            errorView err
+
+        NoResponseToShow ->
             none
+
+
+errorView : ErrorResponse -> Element Msg
+errorView err =
+    row
+        [ width fill
+        , height fill
+        ]
+        [ column
+            [ width fill
+            , height fill
+            ]
+            [ paragraph
+                [ width (fill |> maximum 800)
+                ]
+                [ text (errorMessageString err) ]
+            ]
+        ]
+
+
+loadingView : Model -> Maybe SearchBody -> Element Msg
+loadingView model maybeBody =
+    row
+        [ width fill
+        , height fill
+        ]
+        [ column
+            [ width fill
+            , height fill
+            ]
+            [ el
+                [ width (px 50)
+                , height (px 50)
+                , centerX
+                , centerY
+                ]
+                (animatedLoader
+                    [ width (px 50)
+                    , height (px 50)
+                    ]
+                    (spinnerSvg colourScheme.lightBlue)
+                )
+            ]
+        ]
 
 
 searchView : Model -> SearchBody -> Element Msg

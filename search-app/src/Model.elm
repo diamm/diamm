@@ -18,7 +18,7 @@ init : QueryArgs -> Model
 init initalQueryArgs =
     { currentQueryArgs = initalQueryArgs
     , needsUpdating = False
-    , response = NoResponseToShow
+    , response = Loading Nothing
     , facets =
         { cities = Nothing
         , genres = Nothing

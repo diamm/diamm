@@ -1,6 +1,7 @@
 module Request exposing (Response(..), createRequest, serverUrl)
 
 import Config as C
+import Error exposing (ErrorResponse)
 import Http exposing (Expect)
 import Http.Detailed
 import Json.Decode exposing (Decoder)
@@ -11,7 +12,7 @@ import Url.Builder exposing (QueryParameter)
 type Response
     = Loading (Maybe SearchBody)
     | Response SearchBody
-    | Error (Http.Detailed.Error String)
+    | Error ErrorResponse
     | NoResponseToShow
 
 

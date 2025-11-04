@@ -1,6 +1,7 @@
 module Update exposing (update)
 
 import Cmd.Extra as CE
+import Error exposing (createErrorMessage)
 import Facets exposing (FacetModel, setAnonymous, setCities, setComposers, setCurrentState, setDateRange, setGenres, setHasInventory, setHostMainContents, setNotations, setOrganizationType, setOriginalFormat, setSourceComposers, setSourceTypes, updateFacetConfigurations)
 import Facets.CheckboxFacet as CheckboxFacet exposing (CheckBoxFacetModel, CheckBoxFacetMsg)
 import Facets.OneChoiceFacet as OneChoice exposing (OneChoiceFacetModel, OneChoiceFacetMsg)
@@ -32,8 +33,12 @@ update msg model =
             , Cmd.none
             )
 
-        ServerRespondedWithSearchData (Err _) ->
-            ( model, Cmd.none )
+        ServerRespondedWithSearchData (Err e) ->
+            ( { model
+                | response = Error (createErrorMessage e)
+              }
+            , Cmd.none
+            )
 
         NothingHappened ->
             ( model, Cmd.none )
