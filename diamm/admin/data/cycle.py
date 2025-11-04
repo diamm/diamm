@@ -26,7 +26,7 @@ class CompositionCycleComposersInline(admin.TabularInline):
 class CycleAdmin(VersionAdmin):
     list_display = ("title", "get_composers", "type")
     list_filter = ("type",)
-    search_fields = ("title", "composers__composer__last_name", "type__name")
+    search_fields = ("title", "composers__last_name", "type__name")
     inlines = (CompositionCycleInline, CompositionCycleComposersInline)
 
     def get_queryset(self, request):
@@ -38,7 +38,7 @@ class CycleAdmin(VersionAdmin):
         )
 
     def get_composers(self, obj):
-        c = "; ".join([c.composer.full_name for c in obj.composers.all()])
+        c = "; ".join([c.full_name for c in obj.composers.all()])
         return f"{c}"
 
     get_composers.short_description = "Composers"
