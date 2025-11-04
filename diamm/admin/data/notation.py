@@ -12,6 +12,8 @@ class SourceNotationInline(admin.TabularInline):
     model = Source.notations.through
     extra = 0
     can_delete = 0
+    fields = ("attached_to_source",)
+    readonly_fields = ("attached_to_source",)
 
     def has_add_permission(self, request, obj):
         return False
@@ -34,7 +36,8 @@ class ItemNotationInline(admin.TabularInline):
     model = Item
     extra = 0
     can_delete = False
-    fields = ("source", "composition")
+    fields = ("attached_to_item",)
+    readonly_fields = ("attached_to_item",)
 
     def has_add_permission(self, request, obj):
         return False

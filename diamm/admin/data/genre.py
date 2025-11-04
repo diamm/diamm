@@ -17,6 +17,10 @@ class CompositionInline(admin.TabularInline):
     def has_change_permission(self, request, obj=None):
         return False
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related("composition")
+
 
 @admin.register(Genre)
 class GenreAdmin(VersionAdmin):
