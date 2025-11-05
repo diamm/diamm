@@ -10,7 +10,7 @@ const DOUBLE_CLICK_TIMEOUT = 500;
 const DOUBLE_TAP_DISTANCE_THRESHOLD = 50;
 const DOUBLE_TAP_TIMEOUT = 250;
 
-function onDoubleClick(elem: HTMLElement, callback)
+function onDoubleClick(elem: HTMLElement, callback: (arg0: MouseEvent, arg1: { top: number; left: number; }) => void)
 {
     elem.addEventListener('dblclick', function (event)
     {
@@ -43,7 +43,7 @@ function onDoubleClick(elem: HTMLElement, callback)
     });
 }
 
-function onPinch(elem: HTMLElement, callback)
+function onPinch(elem: HTMLElement, callback: any)
 {
     let startDistance = 0;
 
@@ -94,7 +94,7 @@ function onPinch(elem: HTMLElement, callback)
     });
 }
 
-function onDoubleTap(elem: HTMLElement, callback)
+function onDoubleTap(elem: HTMLElement, callback: any)
 {
     const tracker = createDoubleEventTracker(DOUBLE_TAP_TIMEOUT);
     let firstTap: PageXYPos | null = null;
@@ -115,7 +115,7 @@ function onDoubleTap(elem: HTMLElement, callback)
             };
 
             // If first tap is close to second tap (prevents interference with scale event)
-            const tapDistance = distance(firstTap.pageX, firstTap.pageY, secondTap.pageX, secondTap.pageY);
+            const tapDistance = distance(firstTap!.pageX, firstTap!.pageY, secondTap.pageX, secondTap.pageY);
 
             // TODO: Could give something higher-level than secondTap to callback
             if (tapDistance < DOUBLE_TAP_DISTANCE_THRESHOLD)
@@ -183,7 +183,7 @@ function createDoubleEventTracker(timeoutDuration: number)
     }
 }
 
-function getRelativeOffset(elem: HTMLElement, pageCoords: MouseEvent): Offset
+function getRelativeOffset(elem: HTMLElement, pageCoords: {pageX: number, pageY: number}): Offset
 {
     const bounds = elem.getBoundingClientRect();
 

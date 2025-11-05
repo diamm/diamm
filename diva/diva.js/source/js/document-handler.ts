@@ -2,8 +2,7 @@ import { maxBy } from './utils/maxby';
 import PageToolsOverlay from './page-tools-overlay';
 import ViewerCore from "./viewer-core";
 import {ViewerSettings} from "./options-settings";
-import {Offset} from "./viewer-type-definitions";
-import type Viewport from "./viewport";
+import {Offset, ViewportSize} from "./viewer-type-definitions";
 import DocumentLayout from './document-layout';
 
 
@@ -34,7 +33,7 @@ export default class DocumentHandler
                 // so there's no other way to get its width before the pages are loaded
                 // (which we need to avoid their width temporarily being 0 while loading)
                 let dummyLabel = document.createElement('span');
-                dummyLabel.innerHTML = viewerCore.settings.manifest.pages[i].l;
+                dummyLabel.innerHTML = viewerCore.settings.manifest!.pages[i].l;
                 dummyLabel.classList.add('diva-page-labels');
                 dummyLabel.setAttribute('style', 'display: inline-block;');
                 document.body.appendChild(dummyLabel);
@@ -74,14 +73,14 @@ export default class DocumentHandler
         const position = this._viewerCore.getPagePositionAtViewportOffset(coords);
 
         const layout = this._viewerCore.getCurrentLayout();
-        const centerOffset = layout.getPageToViewportCenterOffset(position.anchorPage, viewerState.viewport);
+        const centerOffset = layout!.getPageToViewportCenterOffset(position.anchorPage, viewerState.viewport);
         const scaleRatio = 1 / Math.pow(2, settings.zoomLevel - newZoomLevel);
 
         this._viewerCore.reload({
             zoomLevel: newZoomLevel,
             goDirectlyTo: position.anchorPage,
-            horizontalOffset: (centerOffset.x - position.offset.left) + position.offset.left * scaleRatio,
-            verticalOffset: (centerOffset.y - position.offset.top) + position.offset.top * scaleRatio
+            horizontalOffset: (centerOffset!.x - position.offset.left) + position.offset.left * scaleRatio,
+            verticalOffset: (centerOffset!.y - position.offset.top) + position.offset.top * scaleRatio
         });
     }
 
@@ -112,7 +111,7 @@ export default class DocumentHandler
         let temp = this._viewerState.viewport.intersectionTolerance;
         // without setting to 0, isPageVisible returns true for pages out of viewport by intersectionTolerance
         this._viewerState.viewport.intersectionTolerance = 0;
-        let visiblePages = renderedPages.filter((index: number) => this._viewerState.renderer.isPageVisible(index));
+        let visiblePages = renderedPages.filter((index: number) => this._viewerState.renderer!.isPageVisible(index));
         // reset back to original value after getting true visible pages
         this._viewerState.viewport.intersectionTolerance = temp;
 
@@ -163,18 +162,18 @@ export default class DocumentHandler
     }
 }
 
-function getCentermostPage(renderedPages: number[], layout: DocumentLayout, viewport: Viewport)
+function getCentermostPage(renderedPages: number[], layout: DocumentLayout | null, viewport: ViewportSize | null)
 {
-    const centerY = viewport.top + (viewport.height / 2);
-    const centerX = viewport.left + (viewport.width / 2);
+    const centerY = viewport!.top + (viewport!.height / 2);
+    const centerX = viewport!.left + (viewport!.width / 2);
 
     // Find the minimum distance from the viewport center to a page.
     // Compute minus the squared distance from viewport center to the page's border.
     // http://gamedev.stackexchange.com/questions/44483/how-do-i-calculate-distance-between-a-point-and-an-axis-aligned-rectangle
     const centerPage = maxBy(renderedPages, pageIndex =>
     {
-        const dims = layout.getPageDimensions(pageIndex)!;
-        const imageOffset = layout.getPageOffset(pageIndex, {includePadding: true})!;
+        const dims = layout!.getPageDimensions(pageIndex)!;
+        const imageOffset = layout!.getPageOffset(pageIndex, {includePadding: true})!;
 
         const midX = imageOffset.left + (dims.width / 2);
         const midY = imageOffset.top + (dims.height / 2);

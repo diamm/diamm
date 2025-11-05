@@ -166,10 +166,10 @@ export type RendererHooks = {
 }
 
 export type RendererViewportPosition = {
-    zoomLevel: number;
+    zoomLevel: number | null;
     anchorPage: number;
-    verticalOffset: any;
-    horizontalOffset: any;
+    verticalOffset: number;
+    horizontalOffset: number;
 }
 
 export interface LayoutGroupSettings

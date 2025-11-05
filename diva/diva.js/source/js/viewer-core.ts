@@ -493,12 +493,12 @@ export default class ViewerCore
             if (debug.enabled)
             {
                 const serialized = Object.keys(rendererConfig)
-                    .filter(function (key)
+                    .filter(function (key: string)
                     {
                         // Too long
                         return key !== 'pageLayouts' && key !== 'padding';
                     })
-                    .map(function (key)
+                    .map(function (key: string)
                     {
                         const value = rendererConfig[key];
                         return key + ': ' + JSON.stringify(value);
@@ -520,7 +520,7 @@ export default class ViewerCore
     }
 
     // Handles switching in and out of fullscreen mode
-    prepareModeChange (options)
+    prepareModeChange (options: ActiveViewOptions)
     {
         // Toggle the classes
         const changeClass: 'add' | 'remove' = options.inFullscreen ? 'add' : 'remove';
@@ -636,7 +636,7 @@ export default class ViewerCore
                 },
                 getBestZoomLevelForPage: (page: PageInfo): DivaTiledPage =>
                 {
-                    const url = this.settings.manifest.getPageImageURL(page.index, {
+                    const url = this.settings.manifest!.getPageImageURL(page.index, {
                         width: page.dimensions.width
                     });
 

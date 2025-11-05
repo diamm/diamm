@@ -1,5 +1,7 @@
 // TODO: requestAnimationFrame fallback
 
+import {AnimationOptions} from "./viewer-type-definitions";
+
 export default {
     animate,
     easing: {
@@ -11,7 +13,7 @@ export default {
 let now: (() => number) = (): number => { return performance.now(); };
 
 
-function animate (options)
+function animate (options: AnimationOptions)
 {
     const durationMs = options.duration;
     const parameters = options.parameters;
@@ -25,15 +27,15 @@ function animate (options)
 
     const tweenFns = {};
     const values = {};
-    const paramKeys = Object.keys(parameters);
+    const paramKeys: string[] = Object.keys(parameters);
 
-    paramKeys.forEach(key => {
+    paramKeys.forEach((key: string) => {
         const config = parameters[key];
         tweenFns[key] = interpolate(config.from, config.to, config.easing || inOutCubicEasing);
     });
 
     // Run it!
-    let requestId = requestAnimationFrame(update);
+    let requestId: number | null = requestAnimationFrame(update);
 
     return {
         cancel()
@@ -50,8 +52,8 @@ function animate (options)
 
     function update()
     {
-        const current = now();
-        const elapsed = Math.min((current - start) / durationMs, 1);
+        const current: number = now();
+        const elapsed: number = Math.min((current - start) / durationMs, 1);
 
         updateValues(elapsed);
         onUpdate(values);
@@ -68,14 +70,14 @@ function animate (options)
         }
     }
 
-    function updateValues(elapsed)
+    function updateValues(elapsed: number)
     {
         paramKeys.forEach(key => {
             values[key] = tweenFns[key](elapsed);
         });
     }
 
-    function handleAnimationCompletion(info)
+    function handleAnimationCompletion(info: { interrupted: boolean; })
     {
         requestId = null;
 
@@ -86,9 +88,9 @@ function animate (options)
     }
 }
 
-function interpolate(start, end, easing)
+function interpolate(start: any, end: any, easing: any)
 {
-    return (elapsed) => { return start + (end - start) * easing(elapsed); };
+    return (elapsed: any) => { return start + (end - start) * easing(elapsed); };
 }
 
 /**
@@ -96,20 +98,20 @@ function interpolate(start, end, easing)
  * others are given for convenience.
  *
  **/
-function linearEasing(e)
+function linearEasing(e: number): number
 {
     return e;
 }
 
 /* jshint ignore:start */
-function inOutQuadEasing (e)
+function inOutQuadEasing (e: number): number
 {
     return e < .5 ? 2 * e * e : -1+(4-2 * e) * e
 }
 /* jshint ignore:end */
 
 
-function inOutCubicEasing (t)
+function inOutCubicEasing (t: number): number
 {
     return t < 0.5 ? 4 * t * t * t : ( t - 1 ) * ( 2 * t - 2 ) * ( 2 * t - 2 ) + 1;
 }

@@ -6,13 +6,13 @@
  * @returns {object} - The label/value pair as strings.
  * */
 
-export default function parseLabelValue (key: {label: string, value: any}): object
+export default function parseLabelValue (key: Record<string, any>): { label: string, value: string | string[] }
 {
     let l = key.label; 
     let label = (typeof l === 'object') ? l[Object.keys(l)[0]][0] : l;
 
     let v = key.value;
-    let value;
+    let value: string | string[];
     if (Array.isArray(v))
     { // is array of objects
         value = v.map(e => e[Object.keys(e)[0]]);

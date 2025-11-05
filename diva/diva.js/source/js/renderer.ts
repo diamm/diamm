@@ -13,12 +13,11 @@ import {
 } from "./options-settings";
 import {
     DivaTileSource,
-    LayoutGroupPage,
-    Offset,
+    LayoutGroupPage, Offset,
     PageGroup,
-    PageInfo,
+    PageInfo, Region,
     ScaledDivaTileSource,
-    SourceProvider
+    SourceProvider, ViewportAnimationOptions
 } from "./viewer-type-definitions";
 
 const REQUEST_DEBOUNCE_INTERVAL = 250;
@@ -36,8 +35,8 @@ export default class Renderer
     _renderedPages: LayoutGroupPage[] | null;
     _config: RendererLoadConfig | null;
     _zoomLevel: number | null;
-    _compositeImages: object | null;
-    _renderedTiles: any[];
+    _compositeImages:  CompositeImage[];
+    _renderedTiles: any[] | null;
     _animation: any;
     _cache: ImageCache;
     _pendingRequests: Record<string, any>;
@@ -64,7 +63,7 @@ export default class Renderer
         this._renderedPages = null;
         this._config = null;
         this._zoomLevel = null;
-        this._compositeImages = null;
+        this._compositeImages = [];
         this._renderedTiles = null;
         this._animation = null;
 
@@ -97,7 +96,7 @@ export default class Renderer
 
         this._sourceResolver = sourceResolver;
         this._config = config;
-        this._compositeImages = {};
+        this._compositeImages = [];
         this._setLayoutToZoomLevel(viewportPosition.zoomLevel);
 
         // FIXME(wabain): Remove this when there's more confidence the check shouldn't be needed
@@ -169,14 +168,14 @@ export default class Renderer
 
         if (this._hooks.onViewDidUpdate)
         {
-            this._hooks.onViewDidUpdate(this._renderedPages.slice(), null);
+            this._hooks.onViewDidUpdate(this._renderedPages!.slice(), null);
         }
     }
 
     _render()
     {
         const newRenderedPages: LayoutGroupPage[] = [];
-        this.layout.pageGroups.forEach((group: PageGroup) =>
+        this.layout!.pageGroups.forEach((group: PageGroup) =>
         {
             if (!this._viewport.intersectsRegion(group.region))
             {
@@ -193,15 +192,15 @@ export default class Renderer
             newRenderedPages.push.apply(newRenderedPages, visiblePages);
         }, this);
 
-        this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
+        this._ctx!.clearRect(0, 0, this._canvas.width, this._canvas.height);
         this._paintOutline(newRenderedPages);
 
-        newRenderedPages.forEach((pageIndex: number) =>
+        newRenderedPages.forEach((_it, pageIndex: number, _ar) =>
         {
             if (!this._compositeImages[pageIndex])
             {
-                const page = this.layout.getPageInfo(pageIndex);
-                const zoomLevels = this._sourceResolver.getAllZoomLevelsForPage(page);
+                const page = this.layout!.getPageInfo(pageIndex);
+                const zoomLevels = this._sourceResolver!.getAllZoomLevelsForPage(page);
                 const composite = new CompositeImage(zoomLevels);
                 composite.updateFromCache(this._cache);
                 this._compositeImages[pageIndex] = composite;
@@ -231,9 +230,9 @@ export default class Renderer
 
     _paint()
     {
-        const renderedTiles = [];
+        const renderedTiles: LayoutGroupPage[] = [];
 
-        this._renderedPages.forEach((pageIndex: number) =>
+        this._renderedPages!.forEach((_it, pageIndex: number, _ar) =>
         {
             this._compositeImages[pageIndex].getTiles(this._zoomLevel).forEach((source) =>
             {
@@ -265,7 +264,7 @@ export default class Renderer
         {
             // FIXME: Should only need to update the composite images
             // for which tiles were removed
-            this._renderedPages.forEach((pageIndex: number) =>
+            this._renderedPages!.forEach((_it, pageIndex: number, _ar) =>
             {
                 this._compositeImages[pageIndex].updateFromCache(this._cache);
             }, this);
@@ -275,19 +274,19 @@ export default class Renderer
     }
 
     // Paint a page outline while the tiles are loading.
-    _paintOutline(pages)
+    _paintOutline(pages: LayoutGroupPage[])
     {
-        pages.forEach((pageIndex) =>
+        pages.forEach((_it, pageIndex: number, _ar) =>
         {
-            let pageInfo = this.layout.getPageInfo(pageIndex);
+            let pageInfo = this.layout!.getPageInfo(pageIndex);
             let pageOffset = this._getImageOffset(pageIndex);
 
             // Ensure the document is drawn to the center of the viewport
-            let viewportPaddingX = Math.max(0, (this._viewport.width - this.layout.dimensions.width) / 2);
-            let viewportPaddingY = Math.max(0, (this._viewport.height - this.layout.dimensions.height) / 2);
+            let viewportPaddingX = Math.max(0, (this._viewport.width - this.layout!.dimensions.width) / 2);
+            let viewportPaddingY = Math.max(0, (this._viewport.height - this.layout!.dimensions.height) / 2);
 
-            let viewportOffsetX = pageOffset.left - this._viewport.left + viewportPaddingX;
-            let viewportOffsetY = pageOffset.top - this._viewport.top + viewportPaddingY;
+            let viewportOffsetX = pageOffset!.left - this._viewport.left + viewportPaddingX;
+            let viewportOffsetY = pageOffset!.top - this._viewport.top + viewportPaddingY;
 
             let destXOffset = viewportOffsetX < 0 ? -viewportOffsetX : 0;
             let destYOffset = viewportOffsetY < 0 ? -viewportOffsetY : 0;
@@ -295,12 +294,12 @@ export default class Renderer
             let canvasX = Math.max(0, viewportOffsetX);
             let canvasY = Math.max(0, viewportOffsetY);
 
-            let destWidth = pageInfo.dimensions.width - destXOffset;
-            let destHeight = pageInfo.dimensions.height - destYOffset;
+            let destWidth = pageInfo!.dimensions.width - destXOffset;
+            let destHeight = pageInfo!.dimensions.height - destYOffset;
 
-            this._ctx.strokeStyle = '#AAA';
+            this._ctx!.strokeStyle = '#AAA';
             // In order to get a 1px wide line using strokes, we need to start at a 'half pixel'
-            this._ctx.strokeRect(canvasX + 0.5, canvasY + 0.5, destWidth, destHeight);
+            this._ctx!.strokeRect(canvasX + 0.5, canvasY + 0.5, destWidth, destHeight);
         });
     }
 
@@ -310,13 +309,13 @@ export default class Renderer
     // is kept active instead of restarting it. The image requests are given a timeout
     // before loading in order to debounce them and have a small reaction time
     // to cancel them and avoid useless requests.
-    _initiateTileRequests(pages)
+    _initiateTileRequests(pages: LayoutGroupPage[])
     {
         // Only requests in this object are kept alive, since all others are not visible in the viewport
         const newPendingRequests: Record<string, any> = {};
 
         // Used later as a closure to initiate the image requests with the right source and pageIndex
-        const initiateRequest = (source, pageIndex) =>
+        const initiateRequest = (source: DivaTileSource, pageIndex: number) =>
         {
             const composite = this._compositeImages[pageIndex];
 
@@ -358,7 +357,7 @@ export default class Renderer
         for (let i = 0; i < pages.length; i++)
         {
             const pageIndex = pages[i];
-            const tiles = this._sourceResolver.getBestZoomLevelForPage(this.layout.getPageInfo(pageIndex)).tiles;
+            const tiles = this._sourceResolver!.getBestZoomLevelForPage(this.layout!.getPageInfo(pageIndex)).tiles;
 
             for (let j = 0; j < tiles.length; j++)
             {
@@ -389,13 +388,13 @@ export default class Renderer
         this._pendingRequests = newPendingRequests;
     }
 
-    _drawTile(pageIndex: number, scaledTile: ScaledDivaTileSource, img: CanvasImageSource)
+    _drawTile(pageIndex: number, scaledTile: ScaledDivaTileSource, img: HTMLCanvasElement)
     {
         let tileOffset = this._getTileToDocumentOffset(pageIndex, scaledTile);
 
         // Ensure the document is drawn to the center of the viewport
-        let viewportPaddingX = Math.max(0, (this._viewport.width - this.layout.dimensions.width) / 2);
-        let viewportPaddingY = Math.max(0, (this._viewport.height - this.layout.dimensions.height) / 2);
+        let viewportPaddingX = Math.max(0, (this._viewport.width - this.layout!.dimensions.width) / 2);
+        let viewportPaddingY = Math.max(0, (this._viewport.height - this.layout!.dimensions.height) / 2);
 
         let viewportOffsetX = tileOffset.left - this._viewport.left + viewportPaddingX;
         let viewportOffsetY = tileOffset.top - this._viewport.top + viewportPaddingY;
@@ -420,7 +419,7 @@ export default class Renderer
         let sourceWidth = destWidth / scaledTile.scaleRatio;
         let sourceHeight = destHeight / scaledTile.scaleRatio;
 
-        this._ctx.drawImage(
+        this._ctx!.drawImage(
             img,
             sourceXOffset, sourceYOffset,
             sourceWidth, sourceHeight,
@@ -428,12 +427,12 @@ export default class Renderer
             destWidth, destHeight);
     }
 
-    _isTileForSourceVisible (pageIndex, tileSource)
+    _isTileForSourceVisible (pageIndex: number, tileSource: DivaTileSource): Region
     {
         return this._isTileVisible(pageIndex, getScaledTileRecord(tileSource, this._zoomLevel));
     }
 
-    _isTileVisible (pageIndex, scaledTile)
+    _isTileVisible (pageIndex: number, scaledTile: ScaledDivaTileSource): Region
     {
         const tileOffset = this._getTileToDocumentOffset(pageIndex, scaledTile);
 
@@ -446,42 +445,42 @@ export default class Renderer
         });
     }
 
-    _getTileToDocumentOffset (pageIndex, scaledTile)
+    _getTileToDocumentOffset (pageIndex: number, scaledTile: ScaledDivaTileSource): Offset
     {
         const imageOffset = this._getImageOffset(pageIndex);
 
         return {
-            top: imageOffset.top + scaledTile.offset.top,
-            left: imageOffset.left + scaledTile.offset.left
+            top: imageOffset!.top + scaledTile.offset.top,
+            left: imageOffset!.left + scaledTile.offset.left
         };
     }
 
-    _getImageOffset (pageIndex)
+    _getImageOffset (pageIndex: number): Offset | null
     {
-        return this.layout.getPageOffset(pageIndex, {includePadding: true});
+        return this.layout!.getPageOffset(pageIndex, {includePadding: true});
     }
 
     // TODO: Update signature
-    goto (pageIndex, verticalOffset, horizontalOffset)
+    goto (pageIndex: number, verticalOffset: number, horizontalOffset: number)
     {
         this._clearAnimation();
         this._goto(pageIndex, verticalOffset, horizontalOffset);
 
         if (this._hooks.onViewDidUpdate)
         {
-            this._hooks.onViewDidUpdate(this._renderedPages.slice(), pageIndex);
+            this._hooks.onViewDidUpdate(this._renderedPages!.slice(), pageIndex);
         }
     }
 
-    _goto (pageIndex, verticalOffset, horizontalOffset)
+    _goto (pageIndex: number, verticalOffset: number, horizontalOffset: number)
     {
         // FIXME(wabain): Move this logic to the viewer
-        const pageOffset = this.layout.getPageOffset(pageIndex);
+        const pageOffset = this.layout!.getPageOffset(pageIndex);
 
-        const desiredVerticalCenter = pageOffset.top + verticalOffset;
+        const desiredVerticalCenter = pageOffset!.top + verticalOffset;
         const top = desiredVerticalCenter - Math.round(this._viewport.height / 2);
 
-        const desiredHorizontalCenter = pageOffset.left + horizontalOffset;
+        const desiredHorizontalCenter = pageOffset!.left + horizontalOffset;
         const left = desiredHorizontalCenter - Math.round(this._viewport.width / 2);
 
         this._viewport.top = top;
@@ -490,7 +489,7 @@ export default class Renderer
         this._render();
     }
 
-    transitionViewportPosition (options)
+    transitionViewportPosition (options: ViewportAnimationOptions)
     {
         this._clearAnimation();
 
@@ -519,7 +518,7 @@ export default class Renderer
 
                 if (this._hooks.onViewDidUpdate && !info.interrupted)
                 {
-                    this._hooks.onViewDidUpdate(this._renderedPages.slice(), null);
+                    this._hooks.onViewDidUpdate(this._renderedPages!.slice(), null);
                 }
             }
         });
@@ -551,7 +550,7 @@ export default class Renderer
         return this._viewport.intersectsRegion(this.layout.getPageRegion(pageIndex));
     }
 
-    getRenderedPages (): number[]
+    getRenderedPages (): LayoutGroupPage[]
     {
         return this._renderedPages!.slice();
     }
@@ -569,7 +568,7 @@ export default class Renderer
             handler.abort();
         }, this);
 
-        this._canvas.parentNode.removeChild(this._canvas);
+        this._canvas.parentNode!.removeChild(this._canvas);
     }
 }
 

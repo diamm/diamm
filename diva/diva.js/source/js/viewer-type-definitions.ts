@@ -61,6 +61,21 @@ export type PageInfo = {
 
 export type PageInfoCollection = { [n: number] : PageInfo }
 
+export type ViewportAnimationOptions = {
+    duration: number;
+    parameters: { zoomLevel: { from: number, to: number }};
+    getPosition: (parameters: {zoomLevel: number}) => {zoomLevel: number, anchorPage: number, verticalOffset: number, horizontalOffset: number};
+    onEnd: (info: {interrupted: boolean}) => void;
+}
+
+
+export type AnimationOptions = {
+    duration: number;
+    parameters: { zoomLevel: { from: number, to: number }};
+    onUpdate: (values: { zoomLevel: number }) => void;
+    onEnd: (values: { interrupted: boolean }) => void;
+}
+
 
 export interface DivaPage
 {
@@ -156,8 +171,8 @@ export interface DivaTiledPage
 
 export interface SourceProvider
 {
-    getAllZoomLevelsForPage: (page: PageInfo) => DivaTiledPage[]
-    getBestZoomLevelForPage: (page: PageInfo) => DivaTiledPage
+    getAllZoomLevelsForPage: (page: PageInfo | null) => DivaTiledPage[]
+    getBestZoomLevelForPage: (page: PageInfo | null) => DivaTiledPage
 }
 
 export interface DivaTiledRequestParams

@@ -115,7 +115,7 @@ class Diva
             class: `diva-wrapper${this.options.fillParentHeight ? " diva-wrapper-flexbox" : ""}`
         });
 
-        this.element.appendChild(wrapperElement);
+        this.element!.appendChild(wrapperElement);
 
         this.options.toolbarParentObject = this.options.toolbarParentObject || wrapperElement;
 
@@ -193,7 +193,7 @@ class Diva
     /**
      * @private
      **/
-    _showError (message)
+    _showError (message: string[])
     {
         this.divaState.viewerCore.showError(message);
     }
@@ -201,7 +201,7 @@ class Diva
     /**
      * @private
      * */
-    _ajaxError (response)
+    _ajaxError (response: Response)
     {
         // Show a basic error message within the document viewer pane
         const errorMessage = ['Invalid objectData setting. Error code: ' + response.status + ' ' + response.statusText];

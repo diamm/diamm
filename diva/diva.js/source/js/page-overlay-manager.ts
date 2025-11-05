@@ -108,7 +108,7 @@ export default class PageOverlayManager
         this._renderedPages = renderedPages;
     }
 
-    _invokeOnOverlays (pageIndex: number, func)
+    _invokeOnOverlays (pageIndex: number, func: (overlay: PageToolsOverlay) => void): void
     {
         const overlays = this._pages[pageIndex];
         if (overlays)
