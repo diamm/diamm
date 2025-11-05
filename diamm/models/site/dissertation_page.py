@@ -7,6 +7,7 @@ from wagtail.models import Page
 class DissertationPage(Page):
     class Meta:
         app_label = "diamm_site"
+        ordering = ("author__last_name", "year")
 
     author = models.ForeignKey(
         "diamm_data.BibliographyAuthor", on_delete=models.PROTECT, related_name="+"
