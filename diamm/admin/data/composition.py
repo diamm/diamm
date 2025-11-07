@@ -42,6 +42,7 @@ class ItemInline(admin.StackedInline):
     raw_id_fields = ("source", "pages")
     classes = ["collapse"]
     exclude = ("bibliography_json",)
+    show_change_link = True
 
 
 class NoteInline(admin.TabularInline):
@@ -128,19 +129,8 @@ class CompositionAdmin(VersionAdmin):
                 remainder = list(queryset[1:])
                 merged = merge(target, remainder, keep_old=keep_old)
 
-                # Trigger saves for solr
-                # for relationship in merged.
-                for relationship in merged.composers.all():
-                    relationship.save()
-
-                for relationship in merged.sources.all():
-                    relationship.save()
-
-                for relationship in merged.bibliography.all():
-                    relationship.save()
-
                 messages.success(request, "Objects successfully merged")
-                return
+                return None
             else:
                 messages.error(request, "There was an error merging these compositions")
         else:
