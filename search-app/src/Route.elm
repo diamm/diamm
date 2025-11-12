@@ -33,6 +33,7 @@ type alias QueryArgs =
     , organizationType : List String
     , dateRange : Maybe ( String, String )
     , currentPage : Int
+    , project : List String
     }
 
 
@@ -93,6 +94,7 @@ queryParamsParser =
         |> apply (Q.custom "orgtype" identity)
         |> apply dateRangeParamParser
         |> apply pageParamParser
+        |> apply (Q.custom "project" identity)
 
 
 resultTypeParamParser : Q.Parser RecordTypeFilters
@@ -205,6 +207,7 @@ defaultQueryArgs =
     , organizationType = []
     , dateRange = Nothing
     , currentPage = 1
+    , project = []
     }
 
 
@@ -271,6 +274,9 @@ buildQueryParameters queryArgs =
         organizationType =
             List.map (Url.Builder.string "orgtype") queryArgs.organizationType
 
+        project =
+            List.map (Url.Builder.string "project") queryArgs.project
+
         dateRange =
             case queryArgs.dateRange of
                 Just ( early, late ) ->
@@ -299,6 +305,7 @@ buildQueryParameters queryArgs =
         , hostContents
         , organizationType
         , dateRange
+        , project
         ]
 
 

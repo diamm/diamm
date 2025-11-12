@@ -49,3 +49,4 @@ from diamm.admin.diamm_token import TokenAdmin
 from diamm.admin.diamm_user import UserAdmin
 from diamm.admin.site.commentary import CommentaryAdmin
 from diamm.admin.site.problem_report import ProblemReportAdmin
+from diamm.admin.site.project_sources import ProjectSourcesAdmin

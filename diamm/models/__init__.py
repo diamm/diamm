@@ -69,4 +69,5 @@ from diamm.models.site.home_page import HomePage
 from diamm.models.site.news_index import NewsIndexPage
 from diamm.models.site.news_page import NewsPage
 from diamm.models.site.problem_report import ProblemReport
+from diamm.models.site.project_sources import ProjectSources
 from diamm.models.site.publication_page import PublicationPage

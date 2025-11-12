@@ -118,6 +118,13 @@ agg_urls AS (
         GROUP BY source_id
 ),
 
+agg_projects AS (
+    SELECT source_id, ARRAY_AGG(ps.slug) AS projects
+    FROM diamm_site_projectsources_sources pss
+    LEFT JOIN diamm_site_projectsources ps ON ps.id = pss.projectsources_id
+    GROUP BY source_id
+),
+
 agg_biblio AS (
         SELECT
             sb.source_id,
@@ -216,6 +223,7 @@ SELECT
    st.set_identifiers,
    st.set_cluster_shelfmarks,
    nt2.notes,
+   prj.projects,
 
    s.cover_image_id AS cover_image,
    s.open_images AS open_images,
@@ -238,6 +246,7 @@ FROM src s
    LEFT JOIN agg_pages            pg  ON pg.source_id  = s.id
    LEFT JOIN agg_urls             u   ON u.source_id   = s.id
    LEFT JOIN agg_biblio           bib ON bib.source_id = s.id
+   LEFT JOIN agg_projects         prj ON prj.source_id = s.id
 ORDER BY s.id;"""
 
     return get_db_records(sql_query, cfg)
@@ -319,6 +328,7 @@ class SourceSearchSerializer(ypres.DictSerializer):
     external_images_b = ypres.BoolField(attr="has_external_images", required=False)
     external_manifest_b = ypres.BoolField(attr="has_external_manifest", required=False)
     bibliography_json = ypres.Field(attr="bibliography")
+    projects_ss = ypres.Field(attr="projects", required=False)
     source_with_images_b = ypres.MethodField()
 
     original_format_s = ypres.StrField(attr="original_format", required=False)

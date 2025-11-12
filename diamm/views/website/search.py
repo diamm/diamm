@@ -88,6 +88,9 @@ class SearchView(generics.GenericAPIView):
             if len(res) == 2:
                 filters.update({"facet_date_range_ii": f"[{res[0]} TO {res[1]}]"})
 
+        if "project" in request.GET:
+            exclusive_filters.update({"projects_ss": request.GET.get("project", None)})
+
         # Filter search by Anonymous Compositions
         if "anonymous" in request.GET:
             filters.update({"anonymous_b": request.GET.get("anonymous", None)})
