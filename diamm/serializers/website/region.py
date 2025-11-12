@@ -2,7 +2,6 @@ import ypres
 from rest_framework.reverse import reverse
 
 
-
 class RegionCitySerializer(ypres.Serializer):
     url = ypres.MethodField()
     name = ypres.StrField()

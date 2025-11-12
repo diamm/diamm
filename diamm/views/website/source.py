@@ -1,5 +1,3 @@
-
-
 from django.db.models.expressions import Exists, OuterRef
 from django.shortcuts import get_object_or_404, redirect
 from rest_framework import generics, response, status
@@ -59,6 +57,7 @@ class SourceDetail(generics.RetrieveAPIView):
             )
         )
 
+
 @api_view(["GET", "OPTIONS"])
 @authentication_classes([DiammTokenAuthentication, SessionAuthentication])
 @permission_classes([IsAuthenticated])
@@ -91,9 +90,7 @@ class SourceCanvasDetail(generics.GenericAPIView):
 
     def get(self, request, source_id, page_id) -> response.Response:
         # conn = pysolr.Solr(settings.SOLR['SERVER'])
-        res = SolrConnection.search(
-            "*:*", fq=["type:image", f"page_i:{page_id}"]
-        )
+        res = SolrConnection.search("*:*", fq=["type:image", f"page_i:{page_id}"])
         canvas = CanvasSerializer(res.docs[0], context={"request": request})
 
         return response.Response(canvas.data)

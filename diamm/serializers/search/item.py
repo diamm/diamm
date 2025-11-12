@@ -8,7 +8,9 @@ from diamm.serializers.search.helpers import (
     get_db_records,
     parallelise,
     process_composers,
-    record_indexer, process_bibliography_entries, update_db_records,
+    record_indexer,
+    process_bibliography_entries,
+    update_db_records,
 )
 
 log = logging.getLogger("diamm")
@@ -263,7 +265,9 @@ def index_bibliography_in_database(record, cfg: dict) -> bool:
     processed_entries = [process_bibliography_entries(u) for u in list_of_entries if u]
     processed_str = ujson.dumps(processed_entries)
 
-    sql_query = f"""UPDATE diamm_data_item AS i SET bibliography_json = %s WHERE i.id = %s"""
+    sql_query = (
+        f"""UPDATE diamm_data_item AS i SET bibliography_json = %s WHERE i.id = %s"""
+    )
     update_db_records(sql_query, (processed_str, item_id), cfg)
 
     return True

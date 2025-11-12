@@ -182,9 +182,7 @@ urlpatterns = [
     # public website
     path("search/", SearchView.as_view(), name="search"),
     path("sources/<int:pk>/", SourceDetail.as_view(), name="source-detail"),
-    path(
-        "sources/<int:pk>/manifest/", manifest_serve, name="source-manifest"
-    ),
+    path("sources/<int:pk>/manifest/", manifest_serve, name="source-manifest"),
     # IIIF URIs. These do not necessarily always resolve, but are configured in the URLs so that they can reflect
     #  the host and protocol of the request.
     path(

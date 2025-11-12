@@ -72,7 +72,6 @@ class PersonRoleInline(admin.TabularInline):
         return super().get_queryset(request).select_related("person", "role")
 
 
-
 class CopiedSourcesInline(GenericTabularInline):
     verbose_name = "Source Copied"
     verbose_name_plural = "Sources Copied"
@@ -81,7 +80,11 @@ class CopiedSourcesInline(GenericTabularInline):
     raw_id_fields = ("source",)
 
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related("source__archive", "content_type")
+        return (
+            super()
+            .get_queryset(request)
+            .select_related("source__archive", "content_type")
+        )
 
 
 class RelatedSourcesInline(GenericTabularInline):
@@ -90,7 +93,11 @@ class RelatedSourcesInline(GenericTabularInline):
     raw_id_fields = ("source",)
 
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related("source__archive", "content_type")
+        return (
+            super()
+            .get_queryset(request)
+            .select_related("source__archive", "content_type")
+        )
 
 
 class ProvenanceSourcesInline(GenericTabularInline):
@@ -99,8 +106,11 @@ class ProvenanceSourcesInline(GenericTabularInline):
     raw_id_fields = ("source", "city", "country", "region", "protectorate")
 
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related("source__archive", "content_type")
-
+        return (
+            super()
+            .get_queryset(request)
+            .select_related("source__archive", "content_type")
+        )
 
 
 def migrate_to_organization(modeladmin, request, queryset):

@@ -4,7 +4,12 @@ import logging
 import ypres
 import ujson
 
-from diamm.serializers.search.helpers import get_db_records, parallelise, record_indexer, process_bibliography_entries
+from diamm.serializers.search.helpers import (
+    get_db_records,
+    parallelise,
+    record_indexer,
+    process_bibliography_entries,
+)
 
 log = logging.getLogger("diamm")
 

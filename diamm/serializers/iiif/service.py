@@ -1,4 +1,3 @@
-
 import pysolr
 import ypres
 from django.conf import settings

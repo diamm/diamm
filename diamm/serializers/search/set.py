@@ -92,7 +92,9 @@ class SetSearchSerializer(ypres.DictSerializer):
 
     # add archive cities so that people can search for e.g., 'london partbooks' or 'cambridge partbooks'
     def get_archives_cities_ss(self, obj) -> list | None:
-        archives: list = process_archives(obj["archives"]) if obj.get("archives") else []
+        archives: list = (
+            process_archives(obj["archives"]) if obj.get("archives") else []
+        )
         return list({f"{a['city']}" for a in archives})
 
 

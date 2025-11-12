@@ -1,5 +1,3 @@
-from http.client import HTTPResponse
-
 from django import forms
 from django.contrib import admin, messages
 from django.contrib.admin.helpers import ACTION_CHECKBOX_NAME
