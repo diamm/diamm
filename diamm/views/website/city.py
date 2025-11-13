@@ -1,7 +1,7 @@
 from rest_framework import generics
 
 from diamm.helpers.object_pagination import ObjectPagination
-from diamm.models.data.geographic_area import GeographicArea, AreaTypeChoices
+from diamm.models.data.geographic_area import AreaTypeChoices, GeographicArea
 from diamm.renderers.html_renderer import HTMLRenderer
 from diamm.renderers.ujson_renderer import UJSONRenderer
 from diamm.serializers.website.city import CityDetailSerializer, CityListSerializer
