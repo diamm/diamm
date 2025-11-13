@@ -27,11 +27,11 @@ class CommentaryAdmin(admin.ModelAdmin):
         "get_entity",
     )
 
+    @admin.display(description="Author Name")
     def get_author_name(self, obj):
         return obj.author.full_name
 
-    get_author_name.short_description = "Author Name"
-
+    @admin.display(description="Commentary On")
     def get_entity(self, obj):
         if isinstance(obj.attachment, Source):
             url: str = reverse("source-detail", kwargs={"pk": obj.attachment.pk})
@@ -42,5 +42,3 @@ class CommentaryAdmin(admin.ModelAdmin):
             return "Page (not implemented)"
         else:
             return "Unknown (error?)"
-
-    get_entity.short_description = "Commentary On"

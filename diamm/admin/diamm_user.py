@@ -44,7 +44,7 @@ class UserCreationForm(forms.ModelForm):
                 self.error_messages["password_mismatch"], code="password_mismatch"
             )
         password_validation.validate_password(
-            self.cleaned_data.get("password2"), self.instance
+            self.cleaned_data.get("password2", ""), self.instance
         )
         return password2
 

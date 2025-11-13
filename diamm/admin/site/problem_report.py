@@ -49,6 +49,7 @@ class ProblemReportAdmin(VersionAdmin):
 
         return reverse("source-detail", kwargs={"pk": obj.record.pk})
 
+    @admin.display(description="Contributor")
     def get_contributor(self, obj):
         if obj.contributor and obj.contributor.last_name and obj.contributor.first_name:
             return f"{obj.contributor.first_name} {obj.contributor.last_name}"
@@ -57,8 +58,7 @@ class ProblemReportAdmin(VersionAdmin):
         else:
             return f"{obj.credit}"
 
-    get_contributor.short_description = "contributor"
-
+    @admin.display(description="Linked Record")
     def get_entity(self, obj):
         if not obj.record:
             return "-"
@@ -76,5 +76,4 @@ class ProblemReportAdmin(VersionAdmin):
         elif isinstance(obj.record, Composition):
             url = reverse("admin:diamm_data_composition_change", args=[obj_pk])
             return mark_safe(f"<a href='{url}'>{obj.record.title} (composition)</a>")  # noqa: S308
-
-    get_entity.short_description = "Linked Record"
+        return None
