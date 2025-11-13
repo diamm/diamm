@@ -124,7 +124,7 @@ composition is nominally "whole" within the source, but presents an incomplete v
     def item_type(self):
         if not self.layout:
             return None
-        d = dict(self.LAYOUT_OPTIONS)
+        d = dict(LayoutOptionsChoices.choices)
         return d[self.layout]
 
     @property

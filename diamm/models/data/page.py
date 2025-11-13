@@ -1,39 +1,26 @@
 from django.db import models
 
 
+class PageTypeChoices(models.IntegerChoices):
+    PAGE = 1, "Page"
+    ENDPAPER_MODERN = 2, "Modern Endpapers"
+    ENDPAPER_CONTEMPORARY = 3, "Contemporary Endpapers"
+    FLYLEAF = 4, "Flyleaf"
+    OPENING = 5, "Opening"
+    BINDINGS = 6, "Bindings"
+    FRAGMENT = 7, "Fragment(s)"
+    SCROLL = 8, "Scroll"
+    ADDITIONAL = 9, "Additional"
+    SECONDARY = 10, "Pastedown"
+    PASTEDOWN = 11, "Offset"
+    OFFSET = 12, "Secondary"
+
+
 class Page(models.Model):
     """
     Represents an object that relates images and items in a source.
     :> Sources have pages, (many) items point to (many) pages, (many) images point to a page.
     """
-
-    PAGE = 1
-    ENDPAPER_MODERN = 2
-    ENDPAPER_CONTEMPORARY = 3
-    FLYLEAF = 4
-    OPENING = 5
-    BINDINGS = 6
-    FRAGMENT = 7
-    SCROLL = 8
-    ADDITIONAL = 9
-    SECONDARY = 10
-    PASTEDOWN = 11
-    OFFSET = 12
-
-    PAGE_TYPE_CHOICES = (
-        (PAGE, "Page"),
-        (ENDPAPER_MODERN, "Modern Endpapers"),
-        (ENDPAPER_CONTEMPORARY, "Contemporary Endpapers"),
-        (FLYLEAF, "Flyleaf"),
-        (OPENING, "Opening"),
-        (BINDINGS, "Bindings"),
-        (FRAGMENT, "Fragment(s)"),
-        (SCROLL, "Scroll"),
-        (ADDITIONAL, "Additional"),
-        (PASTEDOWN, "Pastedown"),
-        (OFFSET, "Offset"),
-        (SECONDARY, "Secondary"),
-    )
 
     class Meta:
         app_label = "diamm_data"
@@ -56,7 +43,10 @@ class Page(models.Model):
         default=0, blank=True, null=True, decimal_places=3, max_digits=100
     )
     page_type = models.IntegerField(
-        choices=PAGE_TYPE_CHOICES, default=PAGE, blank=True, null=True
+        choices=PageTypeChoices.choices,
+        default=PageTypeChoices.PAGE,
+        blank=True,
+        null=True,
     )
     iiif_canvas_uri = models.CharField(max_length=1024, blank=True, null=True)
     external = models.BooleanField(default=False)
@@ -73,5 +63,5 @@ class Page(models.Model):
         if not self.page_type:
             return None
 
-        d = dict(self.PAGE_TYPE_CHOICES)
+        d = dict(PageTypeChoices.choices)
         return d[self.page_type]
