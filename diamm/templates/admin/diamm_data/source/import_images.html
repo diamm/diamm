@@ -1,0 +1,47 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static %}
+
+{% block content %}
+    {% if messages %}
+        {{ messages }}
+    {% endif %}
+    <form action="" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="import_images_form">
+        <input type="hidden" name="do_action" value="yes">
+        <h2>Import Images</h2>
+        <h3>
+            Source: {{ instance.display_name }}
+        </h3>
+        <ul class="messagelist">
+            <li class="warning">
+                <strong>WARNING:</strong> Submitting this form will ERASE all existing page and image records for this source.
+            </li>
+        </ul>
+        <p>
+            Lines MUST be in the order that you want them in and conform to this format:
+        </p>
+        <pre>pagelabel|image/location</pre>
+        <p>
+            Please ensure that neither the label nor the location has a pipe (|) character in them, since this will
+            cause the import to fail. New page records will all have the type "Page". Do not use this for adding
+            secondary images. Uncheck the "public" checkbox if you do not want the images to be public.
+        </p>
+        <p>
+            Once the import succeeds you should go to the image list, filter the list by the source key, and
+            fetch the image width and height using the bulk actions. (The import would be too slow if we tried to
+            do it all in one go.)
+        </p>
+        <fieldset class="module aligned">
+            <div class="form-row">
+                {{ form.public }} {{ form.public.label }}
+            </div>
+            <div class="form-row">
+                {{ form.imports }}
+            </div>
+        </fieldset>
+        <div class="submit-row">
+            <input type="submit" class="default" value="Check and Import">
+        </div>
+    </form>
+{% endblock %}

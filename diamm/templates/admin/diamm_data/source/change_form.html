@@ -3,5 +3,6 @@
 
 {% block object-tools-items %}
     <li><a href="{% url 'admin:copy-inventory' original.pk %}">Copy Inventory</a></li>
+    <li><a href="{% url 'admin:import-images' original.pk %}">Import Images</a></li>
     {{ block.super }}
 {% endblock %}
