@@ -17,6 +17,13 @@
         <h3>
             Source: {{ instance.display_name }}
         </h3>
+        <ul class="messagelist">
+            <li class="warning">
+                <strong>WARNING:</strong> This operation will DELETE the inventory on any target sources selected
+                and replace it with a copy of the inventory from the source. This process is not reversible, so
+                make sure you know what you are doing, and you have selected the right source and targets.
+            </li>
+        </ul>
         <fieldset class="module aligned">
             <div class="form-row">
                 {{ form.targets }}
