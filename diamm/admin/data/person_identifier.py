@@ -26,8 +26,6 @@ class PersonIdentifierAdmin(VersionAdmin):
             f'<a href="{instance.identifier_url}">{instance.identifier_url}</a>'
         )
 
+    @admin.display(description="Name", ordering="person__last_name")
     def get_person_name(self, obj):
         return f"{obj.person}"
-
-    get_person_name.short_description = "Name"
-    get_person_name.admin_order_field = "person__last_name"

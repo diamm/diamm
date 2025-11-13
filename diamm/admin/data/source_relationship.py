@@ -23,17 +23,14 @@ class SourceRelationshipAdmin(VersionAdmin):
     #     'person': ('last_name',)
     # }
 
+    @admin.display(description="Source")
     def get_source(self, obj):
         return f"{obj.source.display_name}"
 
-    get_source.short_description = "source"
-
+    @admin.display(description="Related Entity")
     def get_related_entity(self, obj):
         if isinstance(obj.related_entity, Organization):
             return f"{obj.related_entity.name} (organization)"
         elif isinstance(obj.related_entity, Person):
             return f"{obj.related_entity.full_name} (person)"
-        else:
-            return None
-
-    get_related_entity.short_description = "Related Entity"
+        return None

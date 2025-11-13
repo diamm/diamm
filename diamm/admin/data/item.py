@@ -89,6 +89,7 @@ class AttachedToPagesListFilter(admin.SimpleListFilter):
             return queryset.filter(pages__isnull=False)
         elif val == "False":
             return queryset.filter(pages__isnull=True)
+        return queryset
 
 
 class SourceKeyFilter(InputFilter):
@@ -98,6 +99,7 @@ class SourceKeyFilter(InputFilter):
     def queryset(self, request, queryset):
         if self.value():
             return queryset.filter(source__id__exact=self.value())
+        return queryset
 
 
 class CompositionKeyFilter(InputFilter):
@@ -107,6 +109,7 @@ class CompositionKeyFilter(InputFilter):
     def queryset(self, request, queryset):
         if self.value():
             return queryset.filter(composition__id__exact=self.value())
+        return queryset
 
 
 @admin.register(Item)
@@ -150,18 +153,17 @@ class ItemAdmin(VersionAdmin):
     raw_id_fields = ("source", "composition")
     exclude = ("bibliography_json",)
 
+    @admin.display(description="Pages Linked", boolean=True)
     def pages_attached(self, obj):
         return obj.pages.exists()
 
-    pages_attached.short_description = "Pages Linked"
-    pages_attached.boolean = True
-
+    @admin.display(description="Source", ordering="source__shelfmark")
     def get_source(self, obj):
         return f"{obj.source.display_name}"
 
-    get_source.short_description = "Source"
-    get_source.admin_order_field = "source__shelfmark"
-
+    @admin.display(
+        description="Composers", ordering="composition__composers__composer__last_name"
+    )
     def get_composers(self, obj):
         if not obj.composition:
             return None
@@ -169,16 +171,10 @@ class ItemAdmin(VersionAdmin):
         cnames: list = [c.composer.full_name for c in obj.composition.composers.all()]
         return mark_safe("; <br />".join(cnames))  # noqa: S308
 
-    get_composers.short_description = "Composers"
-    get_composers.short_description = "composers"
-    get_composers.admin_order_field = "composition__composers__composer__last_name"
-
+    @admin.display(description="Composition", ordering="composition__title")
     def get_composition(self, obj):
         if obj.composition:
             return truncatewords(obj.composition.title, 10)
-
-    get_composition.short_description = "composition"
-    get_composition.admin_order_field = "composition__title"
 
     def get_queryset(self, request):
         qset = super().get_queryset(request)

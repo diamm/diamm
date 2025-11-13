@@ -18,7 +18,6 @@ class SourceNoteAdmin(VersionAdmin):
     def get_queryset(self, request):
         return super().get_queryset(request).select_related("source", "source__archive")
 
+    @admin.display(description="Source")
     def get_source(self, obj):
         return f"{obj.source.display_name}"
-
-    get_source.short_description = "Source"

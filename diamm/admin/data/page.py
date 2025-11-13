@@ -12,7 +12,7 @@ class ImageInline(admin.StackedInline):
     model = Image
     extra = 0
     template = "admin/diamm_data/page/edit_inline/stacked_imageview.html"
-
+    show_change_link = True
     formfield_overrides = {
         models.CharField: {"widget": TextInput(attrs={"size": "80"})},
         models.URLField: {"widget": TextInput(attrs={"size": "160"})},
@@ -26,6 +26,7 @@ class SourceKeyFilter(InputFilter):
     def queryset(self, request, queryset):
         if self.value():
             return queryset.filter(source__id__exact=self.value())
+        return queryset
 
 
 @admin.register(Page)

@@ -14,7 +14,6 @@ class PageNoteAdmin(VersionAdmin):
     )
     raw_id_fields = ("page",)
 
+    @admin.display(description="Source")
     def get_source(self, obj):
         return f"{obj.page.source.display_name}"
-
-    get_source.short_description = "source"

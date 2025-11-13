@@ -152,15 +152,15 @@ class PersonBiography(admin.SimpleListFilter):
     parameter_name = "biography"
 
     def lookups(self, request, model_admin):
-        return (("yes", _("Has biography")), ("no", _("Does not have biography")))
+        return ("yes", _("Has biography")), ("no", _("Does not have biography"))
 
     def queryset(self, request, queryset):
         if not self.value():
             return queryset
+
         if self.value() == "yes":
             return queryset.filter(notes__type=1)
-        elif self.value() == "no":
-            return queryset
+        return queryset
 
 
 class PersonUnattributedInline(RawIdWidgetAdminMixin, admin.TabularInline):
@@ -213,6 +213,7 @@ class PersonAdmin(VersionAdmin):
         )
         return qset
 
+    @admin.action(description="Merge People")
     def merge_people_action(self, request, queryset):
         if "do_action" in request.POST:
             form = MergePeopleForm(request.POST)
@@ -248,5 +249,3 @@ class PersonAdmin(VersionAdmin):
             "admin/person/merge_people.html",
             {"objects": queryset, "form": form},
         )
-
-    merge_people_action.short_description = "Merge People"

@@ -66,6 +66,7 @@ class OrganizationAdmin(VersionAdmin):
     readonly_fields = ("created", "updated")
     raw_id_fields = ("location", "archive")
 
+    @admin.action(description="Update organization type")
     def update_organization_action(self, request, queryset):
         if "do_action" in request.POST:
             form = UpdateOrganizationTypeForm(request.POST)
@@ -86,8 +87,7 @@ class OrganizationAdmin(VersionAdmin):
             {"objects": queryset, "form": form},
         )
 
-    update_organization_action.short_description = "Update organization type"
-
+    @admin.action(description="Merge Organizations")
     def merge_organizations_action(self, request, queryset):
         if "do_action" in request.POST:
             form = MergeOrganizationsForm(request.POST)
@@ -109,7 +109,7 @@ class OrganizationAdmin(VersionAdmin):
                     copied.source.save()
 
                 messages.success(request, "Objects successfully merged")
-                return
+                return None
             else:
                 messages.error(
                     request, "There was an error merging these organizations"
@@ -122,5 +122,3 @@ class OrganizationAdmin(VersionAdmin):
             "admin/organization/merge_organization.html",
             {"objects": queryset, "form": form},
         )
-
-    merge_organizations_action.short_description = "Merge Organizations"

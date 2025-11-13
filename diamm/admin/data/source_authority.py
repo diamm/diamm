@@ -21,8 +21,6 @@ class SourceAuthorityAdmin(VersionAdmin):
             f'<a href="{instance.identifier_url}">{instance.identifier_url}</a>'
         )
 
+    @admin.display(description="Name", ordering="source__shelfmark")
     def get_shelfmark(self, obj):
         return f"{obj.source.archive.siglum} {obj.source.shelfmark}"
-
-    get_shelfmark.short_description = "Name"
-    get_shelfmark.admin_order_field = "source__shelfmark"

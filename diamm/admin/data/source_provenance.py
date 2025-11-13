@@ -29,17 +29,14 @@ class SourceProvenanceAdmin(VersionAdmin):
     )
     raw_id_fields = ("source", "city", "country", "region", "protectorate")
 
+    @admin.display(description="City")
     def get_city(self, obj):
         return obj.city
 
-    get_city.short_description = "city"
-
+    @admin.display(description="Country")
     def get_country(self, obj):
         return obj.country
 
-    get_country.short_description = "country"
-
+    @admin.display(description="Region")
     def get_region(self, obj):
         return obj.region
-
-    get_region.short_description = "region"

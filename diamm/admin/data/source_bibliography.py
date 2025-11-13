@@ -17,8 +17,6 @@ class SourceBibliographyAdmin(admin.ModelAdmin):
     list_filter = ("primary_study",)
     raw_id_fields = ("source", "bibliography")
 
+    @admin.display(description="Source", ordering="source__shelfmark")
     def get_source(self, obj):
         return f"{obj.source.display_name}"
-
-    get_source.short_description = "Source"
-    get_source.admin_order_field = "source__shelfmark"

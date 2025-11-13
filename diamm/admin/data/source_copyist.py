@@ -12,18 +12,14 @@ class SourceCopyistAdmin(admin.ModelAdmin):
     list_filter = ("type",)
     raw_id_fields = ("source",)
 
+    @admin.display(description="Source", ordering="source__archive__siglum")
     def get_source(self, obj):
         return f"{obj.source.display_name}"
 
-    get_source.short_description = "source"
-    get_source.admin_order_field = "source__archive__siglum"
-
+    @admin.display(description="Related Copyist")
     def get_copyist(self, obj):
         if isinstance(obj.copyist, Organization):
             return f"{obj.copyist.name} (organization)"
         elif isinstance(obj.copyist, Person):
             return f"{obj.copyist.full_name} (person)"
-        else:
-            return None
-
-    get_copyist.short_description = "Related Copyist"
+        return None
