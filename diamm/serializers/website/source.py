@@ -20,6 +20,8 @@ from diamm.models import (
     Voice,
 )
 from diamm.models.data.item import CompletenessOptionsChoices
+from diamm.models.data.item_note import ItemNoteTypeChoices
+
 
 # from diamm.serializers.fields import DateTimeField
 # from diamm.serializers.serializers import ContextDictSerializer, ypres.Serializer
@@ -304,7 +306,9 @@ class SourceInventorySerializer(ypres.Serializer):
     def get_notes(self, obj):
         if not obj.notes:
             return None
-        return SourceInventoryNoteSerializer(obj.notes.all(), many=True).serialized_many
+        return SourceInventoryNoteSerializer(
+            obj.notes.exclude(type=ItemNoteTypeChoices.INTERNAL), many=True
+        ).serialized_many
 
     def get_bibliography(self, obj) -> list | None:
         bibl = obj.bibliography_json
