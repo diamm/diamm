@@ -305,7 +305,7 @@ class SourceInventorySerializer(ypres.Serializer):
     def get_notes(self, obj):
         if not obj.notes:
             return None
-        return SourceInventoryNoteSerializer(obj.notes, many=True).serialized_many
+        return SourceInventoryNoteSerializer(obj.notes.all(), many=True).serialized_many
 
     def get_bibliography(self, obj) -> list | None:
         bibl = obj.bibliography_json
@@ -583,9 +583,9 @@ class SourceDetailSerializer(ypres.Serializer):
         )
 
         notes_qs = (
-            ItemNote.objects.only("id", "item_id", "type", "note")
+            ItemNote.objects.exclude(type=ItemNoteTypeChoices.INTERNAL)
+            .only("id", "item_id", "type", "note")
             .order_by("type", "id")
-            .exclude(note_type=ItemNoteTypeChoices.INTERNAL)
         )
 
         return SourceInventorySerializer(
