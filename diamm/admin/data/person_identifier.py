@@ -29,3 +29,7 @@ class PersonIdentifierAdmin(VersionAdmin):
     @admin.display(description="Name", ordering="person__last_name")
     def get_person_name(self, obj):
         return f"{obj.person}"
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related("person")

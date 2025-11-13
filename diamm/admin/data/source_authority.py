@@ -24,3 +24,7 @@ class SourceAuthorityAdmin(VersionAdmin):
     @admin.display(description="Name", ordering="source__shelfmark")
     def get_shelfmark(self, obj):
         return f"{obj.source.archive.siglum} {obj.source.shelfmark}"
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related("source__archive")

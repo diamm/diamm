@@ -23,3 +23,9 @@ class SourceCopyistAdmin(admin.ModelAdmin):
         elif isinstance(obj.copyist, Person):
             return f"{obj.copyist.full_name} (person)"
         return None
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related("source__archive", "content_type").prefetch_related(
+            "copyist"
+        )

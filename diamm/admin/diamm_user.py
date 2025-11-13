@@ -120,6 +120,7 @@ class UserAdmin(BaseUserAdmin):
         "is_staff",
         "legacy_username",
         "last_login",
+        "date_joined",
     )
     list_filter = (
         "is_staff",

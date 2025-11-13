@@ -34,3 +34,9 @@ class SourceRelationshipAdmin(VersionAdmin):
         elif isinstance(obj.related_entity, Person):
             return f"{obj.related_entity.full_name} (person)"
         return None
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related(
+            "source__archive", "relationship_type", "content_type"
+        ).prefetch_related("related_entity")

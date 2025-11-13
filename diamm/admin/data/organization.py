@@ -66,6 +66,11 @@ class OrganizationAdmin(VersionAdmin):
     readonly_fields = ("created", "updated")
     raw_id_fields = ("location", "archive")
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+
+        return qs.select_related("location__parent", "type")
+
     @admin.action(description="Update organization type")
     def update_organization_action(self, request, queryset):
         if "do_action" in request.POST:

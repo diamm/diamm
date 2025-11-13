@@ -40,3 +40,7 @@ class SourceProvenanceAdmin(VersionAdmin):
     @admin.display(description="Region")
     def get_region(self, obj):
         return obj.region
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related("source__archive__city", "city", "region", "country")

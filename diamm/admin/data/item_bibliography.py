@@ -18,6 +18,8 @@ class ItemBibliographyAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        qs = qs.select_related("item__source", "item__composition", "bibliography")
+        qs = qs.select_related(
+            "item__source", "item__composition", "bibliography"
+        ).prefetch_related("bibliography__authors__bibliography_author")
 
         return qs

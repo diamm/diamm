@@ -20,3 +20,9 @@ class SourceBibliographyAdmin(admin.ModelAdmin):
     @admin.display(description="Source", ordering="source__shelfmark")
     def get_source(self, obj):
         return f"{obj.source.display_name}"
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related("source__archive").prefetch_related(
+            "bibliography__authors__bibliography_author"
+        )

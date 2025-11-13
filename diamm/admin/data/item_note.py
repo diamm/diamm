@@ -9,7 +9,10 @@ class ItemNoteAdmin(VersionAdmin):
     list_display = ("get_source", "note_type")
     raw_id_fields = ("item",)
 
+    @admin.display(description="Source")
     def get_source(self, obj):
         return f"{obj.item.source.display_name}"
 
-    get_source.short_description = "Source"
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related("item__source__archive")

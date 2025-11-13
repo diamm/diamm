@@ -13,3 +13,7 @@ class PersonNoteAdmin(VersionAdmin):
 
     def get_person(self, obj):
         return f"{obj.person}"
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related("person")
