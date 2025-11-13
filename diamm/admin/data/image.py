@@ -1,7 +1,9 @@
+from gettext import ngettext
+
 import httpx
 from django import forms
 from django.conf import settings
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.db import models
 from django.forms import TextInput
 from django.utils.translation import gettext_lazy as _
@@ -50,6 +52,7 @@ class ImageSourceListFilter(admin.SimpleListFilter):
             return queryset.filter(page__isnull=False)
         elif val == "True":
             return queryset.filter(page__isnull=True)
+        return queryset
 
 
 class IIIFDataListFilter(admin.SimpleListFilter):
@@ -75,6 +78,7 @@ class IIIFDataListFilter(admin.SimpleListFilter):
             return queryset.filter(
                 location__isnull=False, width__isnull=True, height__isnull=True
             )
+        return queryset
 
 
 class ImageNoteInline(admin.TabularInline):
@@ -89,59 +93,25 @@ class SourceKeyFilter(InputFilter):
     def queryset(self, request, queryset):
         if self.value():
             return queryset.filter(page__source__id__exact=self.value())
+        return queryset
 
 
-def refetch_iiif_info(modeladmin, request, queryset):
-    with httpx.Client() as client:
-        for img in queryset:
-            location = img.location
-            if not location:
-                continue
-
-            url: str = f"{settings.DIAMM_IMAGE_SERVER}{location}/info.json"
-
-            r = client.get(
-                url,
-                headers={
-                    "referer": f"https://{settings.HOSTNAME}",
-                    "X-DIAMM": settings.DIAMM_IMAGE_KEY,
-                    "User-Agent": settings.DIAMM_UA,
-                },
-                timeout=10,
-            )
-
-            if 200 <= r.status_code < 300:
-                j = r.json()
-                width = j.get("width")
-                height = j.get("height")
-                img.width = width
-                img.height = height
-
-        Image.objects.bulk_update(queryset, ["width", "height"])
-
-
-refetch_iiif_info.short_description = "Re-Fetch IIIF Image Info"
-
-
+@admin.action(description="Make selected images public")
 def make_selected_images_public(modeladmin, request, queryset):
     queryset.update(public=True)
 
 
-make_selected_images_public.short_description = "Make selected images public"
-
-
+@admin.action(description="Make selected images private")
 def make_selected_images_private(modeladmin, request, queryset):
     queryset.update(public=False)
-
-
-make_selected_images_private.short_description = "Make selected images private"
 
 
 @admin.register(Image)
 class ImageAdmin(VersionAdmin):
     save_on_top = True
     form = ImageAdminForm
-    list_display = ("pk", "public", "location", "get_type")
+    list_display = ("pk", "public", "location", "get_type", "created", "updated")
+    readonly_fields = ("width", "height")
     list_filter = (
         SourceKeyFilter,
         "type__name",
@@ -164,7 +134,7 @@ class ImageAdmin(VersionAdmin):
     inlines = (ImageNoteInline,)
 
     actions = (
-        refetch_iiif_info,
+        "refetch_iiif_info",
         make_selected_images_public,
         make_selected_images_private,
     )
@@ -174,13 +144,87 @@ class ImageAdmin(VersionAdmin):
         models.URLField: {"widget": TextInput(attrs={"size": "160"})},
     }
 
+    @admin.display(description="Type")
     def get_type(self, obj) -> str:
         if not obj.type:
             return "[Unattached]"
         return f"{obj.type.name}"
 
-    get_type.short_description = "type"
-
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         return qs.select_related("type")
+
+    def _fetch_info(self, client, url) -> dict | None:
+        r = client.get(
+            url,
+            headers={
+                "referer": f"https://{settings.HOSTNAME}",
+                "X-DIAMM": settings.DIAMM_IMAGE_KEY,
+                "User-Agent": settings.DIAMM_UA,
+            },
+            timeout=10,
+        )
+
+        if 200 <= r.status_code < 300:
+            j = r.json()
+            width = j.get("width")
+            height = j.get("height")
+            return {"width": width, "height": height}
+
+        return None
+
+    @admin.action(description="Re-Fetch IIIF Image Info")
+    def refetch_iiif_info(self, request, queryset):
+        failed_urls = []
+        with httpx.Client() as client:
+            for img in queryset:
+                location = img.location
+                if not location:
+                    continue
+
+                url: str = f"{settings.DIAMM_IMAGE_SERVER}{location}/info.json"
+                wh = self._fetch_info(client, url)
+                if not wh:
+                    failed_urls.append(url)
+                    continue
+
+                img.width = wh["width"]
+                img.height = wh["height"]
+
+            Image.objects.bulk_update(queryset, ["width", "height"])
+
+        if failed_urls:
+            self.message_user(
+                request,
+                ngettext("%d url failed", "%d urls failed", len(failed_urls))
+                % failed_urls,
+                messages.WARNING,
+            )
+        else:
+            self.message_user(
+                request,
+                "%d sources were updated successfully" % queryset,  # noqa: UP031
+                messages.SUCCESS,
+            )
+
+    def save_model(self, request, obj, form, change):
+        if obj.location:
+            with httpx.Client() as client:
+                url = f"{settings.DIAMM_IMAGE_SERVER}{obj.location}/info.json"
+                wh = self._fetch_info(client, url)
+                if not wh:
+                    self.message_user(
+                        request,
+                        "Fetching the Width and Height failed",
+                        messages.WARNING,
+                    )
+                else:
+                    obj.width = wh["width"]
+                    obj.height = wh["height"]
+                    self.message_user(
+                        request,
+                        "Fetching the Width and Height succeeded",
+                        messages.SUCCESS,
+                    )
+
+        super().save_model(request, obj, form, change)
