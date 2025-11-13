@@ -8,7 +8,7 @@ from diamm.serializers.search.archive import index_archives
 from diamm.serializers.search.bibliography import index_bibliography
 from diamm.serializers.search.composer_inventory import index_composer_inventory
 from diamm.serializers.search.composition import index_compositions
-from diamm.serializers.search.helpers import empty_solr_core, commit_changes, swap_cores
+from diamm.serializers.search.helpers import commit_changes, empty_solr_core, swap_cores
 from diamm.serializers.search.item import index_items
 from diamm.serializers.search.organization import index_organizations
 from diamm.serializers.search.page import index_pages_and_images

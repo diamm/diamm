@@ -3,11 +3,9 @@ import glob
 import os
 import re
 import sys
-from urllib.parse import urljoin
 
 import blessings
 import requests
-import ujson
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
