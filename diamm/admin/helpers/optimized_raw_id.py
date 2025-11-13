@@ -50,7 +50,7 @@ class BoundField(boundfield.BoundField):
         In order for `ForeignKeyRawIdWidget` to access the model instance directly
         we grab if from the form if available."""
 
-        if type(self.field.widget) == ForeignKeyRawIdWidget:
+        if type(self.field.widget) is ForeignKeyRawIdWidget:
             try:
                 return getattr(self.form.instance, self.name)
             except AttributeError:
