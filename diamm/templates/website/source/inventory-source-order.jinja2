@@ -24,6 +24,7 @@
         <tr>
             <th>Folio / Pages</th>
             <th>Composition / Item title</th>
+            <th>Number of voices</th>
             <th>Source attribution</th>
             <th>Composers (? Uncertain)</th>
         </tr>
@@ -48,6 +49,9 @@
                     {% endif %}
                     {% if entry.fragment %}<em>(frag.)</em>{% endif %}
                     {% if entry.completeness %}<br /><em>{{ entry.completeness }}</em>{% endif %}
+                </td>
+                <td>
+                    {{ entry.num_voices|default("-") }}
                 </td>
                 <td>
                     {{ entry.source_attribution|default("-") }}
