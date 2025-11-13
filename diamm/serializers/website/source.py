@@ -22,7 +22,6 @@ from diamm.models import (
 from diamm.models.data.item import CompletenessOptionsChoices
 from diamm.models.data.item_note import ItemNoteTypeChoices
 
-
 # from diamm.serializers.fields import DateTimeField
 # from diamm.serializers.serializers import ContextDictSerializer, ypres.Serializer
 
@@ -306,9 +305,7 @@ class SourceInventorySerializer(ypres.Serializer):
     def get_notes(self, obj):
         if not obj.notes:
             return None
-        return SourceInventoryNoteSerializer(
-            obj.notes.exclude(type=ItemNoteTypeChoices.INTERNAL), many=True
-        ).serialized_many
+        return SourceInventoryNoteSerializer(obj.notes, many=True).serialized_many
 
     def get_bibliography(self, obj) -> list | None:
         bibl = obj.bibliography_json
@@ -585,8 +582,10 @@ class SourceDetailSerializer(ypres.Serializer):
             .order_by("sort_order", "id")  # stable order per item
         )
 
-        notes_qs = ItemNote.objects.only("id", "item_id", "type", "note").order_by(
-            "type", "id"
+        notes_qs = (
+            ItemNote.objects.only("id", "item_id", "type", "note")
+            .order_by("type", "id")
+            .exclude(note_type=ItemNoteTypeChoices.INTERNAL)
         )
 
         return SourceInventorySerializer(
