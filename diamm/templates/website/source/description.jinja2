@@ -27,11 +27,11 @@
 
                     {% if content.has_external_manifest %}
                          The images on this record are linked using <a href="https://iiif.io">IIIF</a>.
-                    {% elif not content.has_images and not content.public_images %}
-                        DIAMM does not have images of this source. {{ extmsg }}
-                    {% elif content.has_images and not content.public_images %}
+                    {% elif content.diamm_has_images %}
                         DIAMM has images of this manuscript but does not yet have permission to put them
                         online. {{ extmsg }}
+                    {% elif not content.diamm_has_images and not content.has_images and not content.public_images %}
+                        DIAMM does not have images of this source. {{ extmsg }}
                     {% endif %}
                 </td>
             </tr>

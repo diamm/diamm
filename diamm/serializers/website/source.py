@@ -458,6 +458,7 @@ class SourceDetailSerializer(ypres.Serializer):
     has_external_manifest = ypres.MethodField()
     numbering_system_type = ypres.StrField(attr="numbering_system_type")
 
+    diamm_has_images = ypres.BoolField()
     has_images = ypres.MethodField(required=False)
     inventory = ypres.MethodField(required=False)
     composer_inventory = ypres.MethodField(required=False)
