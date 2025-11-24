@@ -176,6 +176,7 @@ class ImageAdmin(VersionAdmin):
     @admin.action(description="Re-Fetch IIIF Image Info")
     def refetch_iiif_info(self, request, queryset):
         failed_urls = []
+        success_urls = []
         with httpx.Client() as client:
             for img in queryset:
                 location = img.location
@@ -187,6 +188,7 @@ class ImageAdmin(VersionAdmin):
                 if not wh:
                     failed_urls.append(url)
                     continue
+                success_urls.append(url)
 
                 img.width = wh["width"]
                 img.height = wh["height"]
@@ -203,7 +205,7 @@ class ImageAdmin(VersionAdmin):
         else:
             self.message_user(
                 request,
-                "%d sources were updated successfully" % queryset,  # noqa: UP031
+                "%d sources were updated successfully" % len(success_urls),  # noqa: UP031
                 messages.SUCCESS,
             )
 
