@@ -16,6 +16,9 @@ def send_thank_you_email(sender, instance, created, **kwargs):
     if not created:
         return None
 
+    if not instance.contributor:
+        return None
+
     reported_entity = instance.record
     reporter = instance.contributor
 
@@ -36,6 +39,8 @@ def send_thank_you_email(sender, instance, created, **kwargs):
         fail_silently=False,
     )
 
+    return None
+
 
 # When an issue has been reported, send an e-mail to all people listed as an
 # "Editor".
@@ -47,7 +52,7 @@ def send_admin_notification_email(sender, instance, created, **kwargs):
     reported_entity = instance.record
     reporter = instance.contributor
     report: str = instance.note
-    name = reporter.full_name
+    name: str = reporter.full_name if reporter else "[No contributor set]"
     record: str = reported_entity.display_name
 
     if settings.DEBUG:
@@ -74,12 +79,17 @@ def send_admin_notification_email(sender, instance, created, **kwargs):
         fail_silently=False,
     )
 
+    return None
+
 
 # When an issue has been resolved, send an e-mail to the issue reporter letting them know
 #  that it has been fixed.
 @receiver(post_save, sender=ProblemReport)
 def send_issue_resolved_message(sender, instance, created, **kwargs):
     if not instance.accepted:
+        return None
+
+    if not instance.contributor:
         return None
 
     reported_entity = instance.record
@@ -104,3 +114,5 @@ def send_issue_resolved_message(sender, instance, created, **kwargs):
         recipient,
         fail_silently=False,
     )
+
+    return None
