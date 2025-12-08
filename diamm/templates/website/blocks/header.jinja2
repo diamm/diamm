@@ -52,7 +52,7 @@
                 </div>
 
             {% else %}
-                <a class="nav-item" href="{{ url('login') }}?next={{ request.get_full_path() }}">Login or Register</a>
+                <a rel="nofollow" class="nav-item" href="{{ url('login') }}?next={{ request.get_full_path() }}">Login or Register</a>
             {% endif %}
         </div>
     </nav>

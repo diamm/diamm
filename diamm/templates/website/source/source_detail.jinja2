@@ -169,7 +169,7 @@
                                     {% if request.user.is_authenticated or content.has_external_manifest %}
                                         <a href="#/images">Images</a>
                                     {% else %}
-                                        <a href="/login?next={{ request.path }}%23/images">Images (Log in to view)</a>
+                                        <a rel="nofollow" href="/login?next={{ request.path }}%23/images">Images (Log in to view)</a>
                                     {% endif %}
                                 </li>
                             {% endif %}
