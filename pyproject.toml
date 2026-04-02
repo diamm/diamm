@@ -12,7 +12,6 @@ dependencies = [
     "django-registration (>=5.0,<6.0)",
     "jinja2 (>=3.0,<4.0)",
     "django-jinja (>=2.6.0,<3.0.0)",
-    "pysolr @ git+https://github.com/django-haystack/pysolr/@master",
     "django-pagedown (>=2.0.3,<3.0.0)",
     "django-reversion (>=5.0,<6.0)",
     "ujson (>=5.0,<6.0)",
@@ -31,6 +30,7 @@ dependencies = [
     "sentry-sdk[django]>=2.41.0",
     "ypres",
     "djangorestframework-stubs>=3.16.4",
+    "pysolr>=3.10.0",
 ]
 package-mode = false
 

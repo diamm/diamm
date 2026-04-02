@@ -57,6 +57,13 @@ class Source(models.Model):
     class Meta:
         app_label = "diamm_data"
         ordering = ["archive__siglum", "sort_order"]
+        constraints = [
+            CheckConstraint(
+                condition=~(Q(public_images=True) & Q(diamm_has_images=True)),
+                name="mutually_exclusive_images",
+                violation_error_message="You cannot select both DIAMM has images but no permission, and public images.",
+            )
+        ]
 
     HELP_INVENTORY = """Use this checkbox to mark whether DIAMM has provided an inventory for this
     source. Note that if there are items attached to this source they will still appear, but there will be a note on
