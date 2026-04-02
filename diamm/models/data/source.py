@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
-from django.db.models import CheckConstraint, Q
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django_stubs_ext import StrOrPromise
@@ -14,9 +13,6 @@ class NumberingSystemChoices(models.IntegerChoices):
     FOLIATION = 2, "Foliation"
     PAGINATION = 3, "Pagination"
     NO_NUMBERING_SYSTEM = 4, "None / Unknown"
-    SIGNATURES = 5, "Signatures"
-    MIXED_FOLIATION_SIG = 6, "Mixed Foliation and Signatures"
-    MIXED_PAGINATION_SIG = 7, "Mixed Pagination and Signatures"
 
 
 class SurfaceOptionChoices(models.IntegerChoices):
@@ -63,7 +59,7 @@ class Source(models.Model):
         ordering = ["archive__siglum", "sort_order"]
         constraints = [
             CheckConstraint(
-                check=~(Q(public_images=True) & Q(diamm_has_images=True)),
+                condition=~(Q(public_images=True) & Q(diamm_has_images=True)),
                 name="mutually_exclusive_images",
                 violation_error_message="You cannot select both DIAMM has images but no permission, and public images.",
             )
@@ -155,11 +151,6 @@ class Source(models.Model):
     )
     open_images = models.BooleanField(
         default=False, help_text="Source Images are available without login"
-    )
-    diamm_has_images = models.BooleanField(
-        verbose_name="DIAMM has images",
-        default=False,
-        help_text="DIAMM has images but does not have permission to put them online.",
     )
     notations = models.ManyToManyField(
         "diamm_data.Notation", blank=True, related_name="sources"
