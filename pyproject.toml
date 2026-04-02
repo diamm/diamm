@@ -20,7 +20,7 @@ dependencies = [
     "blessings (>=1.7,<2.0)",
     "ipython (>=9,<10)",
     "tablib (>=3.5.0,<4.0.0)",
-    "requests (==2.32.3)",
+    "requests==2.33.0",
     "traitlets (>=5.14.3,<6.0.0)",
     "Pillow (>=11.0,<13.0)",
     "markupsafe (>=3.0.1,<4.0.0)",
