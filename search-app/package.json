@@ -11,6 +11,7 @@
   "dependencies": {
     "chokidar": "^4.0.3",
     "chokidar-cli": "^3.0.0",
+    "elm": "^0.19.1-6",
     "elm-optimize-level-2": "^0.3.5",
     "swc": "^1.0.11"
   }

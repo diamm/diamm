@@ -2,6 +2,26 @@
 # yarn lockfile v1
 
 
+"@elm_binaries/darwin_arm64@0.19.1-0":
+  version "0.19.1-0"
+  resolved "https://registry.yarnpkg.com/@elm_binaries/darwin_arm64/-/darwin_arm64-0.19.1-0.tgz#ea09fca7cdfedad3fa517267099d78d180f01098"
+  integrity sha512-mjbsH7BNHEAmoE2SCJFcfk5fIHwFIpxtSgnEAqMsVLpBUFoEtAeX+LQ+N0vSFJB3WAh73+QYx/xSluxxLcL6dA==
+
+"@elm_binaries/darwin_x64@0.19.1-0":
+  version "0.19.1-0"
+  resolved "https://registry.yarnpkg.com/@elm_binaries/darwin_x64/-/darwin_x64-0.19.1-0.tgz#8c3254590804c35ee7b97b4d8a21a63318511c44"
+  integrity sha512-QGUtrZTPBzaxgi9al6nr+9313wrnUVHuijzUK39UsPS+pa+n6CmWyV/69sHZeX9qy6UfeugE0PzF3qcUiy2GDQ==
+
+"@elm_binaries/linux_x64@0.19.1-0":
+  version "0.19.1-0"
+  resolved "https://registry.yarnpkg.com/@elm_binaries/linux_x64/-/linux_x64-0.19.1-0.tgz#95440341eee8f6bee2d88859b3bdd99f33ca88f0"
+  integrity sha512-T1ZrWVhg2kKAsi8caOd3vp/1A3e21VuCpSG63x8rDie50fHbCytTway9B8WHEdnBFv4mYWiA68dzGxYCiFmU2w==
+
+"@elm_binaries/win32_x64@0.19.1-0":
+  version "0.19.1-0"
+  resolved "https://registry.yarnpkg.com/@elm_binaries/win32_x64/-/win32_x64-0.19.1-0.tgz#3f8decfd6f5fbc46906f3f5d50561b6e5b33ac3a"
+  integrity sha512-yDleiXqSE9EcqKtd9SkC/4RIW8I71YsXzMPL79ub2bBPHjWTcoyyeBbYjoOB9SxSlArJ74HaoBApzT6hY7Zobg==
+
 "@mole-inc/bin-wrapper@^8.0.1":
   version "8.0.1"
   resolved "https://registry.yarnpkg.com/@mole-inc/bin-wrapper/-/bin-wrapper-8.0.1.tgz#d7fd0ceb1cfa8a855293a3ed9d7d135f4d442f0e"
@@ -510,6 +530,16 @@ elm-optimize-level-2@^0.3.5:
     node-elm-compiler "^5.0.4"
     ts-union "^2.2.1"
     typescript "^4.5.5"
+
+elm@^0.19.1-6:
+  version "0.19.1-6"
+  resolved "https://registry.yarnpkg.com/elm/-/elm-0.19.1-6.tgz#b6f51d0add8877de70592097a8f6efc4588c476a"
+  integrity sha512-mKYyierHICPdMx/vhiIacdPmTPnh889gjHOZ75ZAoCxo3lZmSWbGP8HMw78wyctJH0HwvTmeKhlYSWboQNYPeQ==
+  optionalDependencies:
+    "@elm_binaries/darwin_arm64" "0.19.1-0"
+    "@elm_binaries/darwin_x64" "0.19.1-0"
+    "@elm_binaries/linux_x64" "0.19.1-0"
+    "@elm_binaries/win32_x64" "0.19.1-0"
 
 emoji-regex@^7.0.1:
   version "7.0.3"
