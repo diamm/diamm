@@ -25,9 +25,6 @@ UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTOCOL", "https")
 
-CSRF_TRUSTED_ORIGINS = ["https://www.diamm.ac.uk"]
-ALLOWED_HOSTS = ["www.diamm.ac.uk"]
-
 if DEBUG:  # noqa: F405
     CSRF_TRUSTED_ORIGINS.append("http://dev.diamm.ac.uk")
     ALLOWED_HOSTS.append("dev.diamm.ac.uk")
