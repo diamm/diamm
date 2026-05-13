@@ -216,7 +216,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "blessings", specifier = ">=1.7,<2.0" },
-    { name = "django", specifier = ">=6.0,<7.0" },
+    { name = "django", specifier = ">=6.0.5,<7.0" },
     { name = "django-extensions", specifier = ">=4.0,<5.0" },
     { name = "django-jinja", specifier = ">=2.6.0,<3.0.0" },
     { name = "django-pagedown", specifier = ">=2.0.3,<3.0.0" },
