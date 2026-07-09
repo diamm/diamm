@@ -1,46 +1,38 @@
-from django.db.models import signals
-from model_mommy import mommy
+from model_bakery import baker
 from rest_framework.test import APITestCase
-
-from diamm.models.data.person import Person
-from diamm.models.data.source import Source
-from diamm.signals.person_signals import delete_person, index_person
-from diamm.signals.source_signals import delete_source, index_source
 
 
 class TestSourceRelationship(APITestCase):
     def setUp(self):
-        signals.post_save.disconnect(index_source, sender=Source)
-        signals.post_save.disconnect(index_person, sender=Person)
-        signals.post_delete.disconnect(delete_source, sender=Source)
-        signals.post_delete.disconnect(delete_person, sender=Person)
-
-        self.src = mommy.make("diamm_data.Source", shelfmark="Q.15")
-        self.person = mommy.make("diamm_data.Person", last_name="Smith")
-        self.org = mommy.make("diamm_data.Organization", name="Foo Corp.")
+        self.src = baker.make("diamm_data.Source", shelfmark="Q.15")
+        self.person = baker.make("diamm_data.Person", last_name="Smith")
+        self.org_type = baker.make("diamm_data.OrganizationType")
+        self.org = baker.make(
+            "diamm_data.Organization", name="Foo Corp.", type=self.org_type
+        )
 
     def tearDown(self):
         pass
 
     def test_relationship_to_person(self):
-        sr = mommy.make(
+        sr = baker.make(
             "diamm_data.SourceRelationship", source=self.src, related_entity=self.person
         )
         self.assertIsNotNone(sr)
         self.assertEqual(sr.related_entity, self.person)
 
     def test_relationship_to_organization(self):
-        sr = mommy.make(
+        sr = baker.make(
             "diamm_data.SourceRelationship", source=self.src, related_entity=self.org
         )
         self.assertIsNotNone(sr)
         self.assertEqual(sr.related_entity, self.org)
 
     def test_multiple_relationships(self):
-        sr1 = mommy.make(
+        sr1 = baker.make(
             "diamm_data.SourceRelationship", source=self.src, related_entity=self.person
         )
-        sr2 = mommy.make(
+        sr2 = baker.make(
             "diamm_data.SourceRelationship", source=self.src, related_entity=self.org
         )
 
@@ -52,7 +44,7 @@ class TestSourceRelationship(APITestCase):
         """
         Tests the migration from a person to an organization for copyist.
         """
-        sc = mommy.make(
+        sc = baker.make(
             "diamm_data.SourceCopyist", source=self.src, copyist=self.person
         )
         self.assertEqual(sc.copyist, self.person)
@@ -63,22 +55,22 @@ class TestSourceRelationship(APITestCase):
         self.assertEqual(sc.copyist, self.org)
 
     def test_multiple_types_of_source_relationships(self):
-        sc = mommy.make(
+        sc = baker.make(
             "diamm_data.SourceCopyist", source=self.src, copyist=self.person
         )
-        pers2 = mommy.make("diamm_data.Person", last_name="Jones")
-        org2 = mommy.make("diamm_data.Organization", name="Bar Inc.")
+        pers2 = baker.make("diamm_data.Person", last_name="Jones")
+        org2 = baker.make("diamm_data.Organization", name="Bar Inc.", type=self.org_type)
 
-        sr = mommy.make(
+        sr = baker.make(
             "diamm_data.SourceRelationship", source=self.src, related_entity=self.person
         )
 
-        sr2 = mommy.make(
+        sr2 = baker.make(
             "diamm_data.SourceRelationship", source=self.src, related_entity=self.org
         )
 
-        sc1 = mommy.make("diamm_data.SourceCopyist", source=self.src, copyist=pers2)
-        sp1 = mommy.make("diamm_data.SourceProvenance", source=self.src, entity=org2)
+        sc1 = baker.make("diamm_data.SourceCopyist", source=self.src, copyist=pers2)
+        sp1 = baker.make("diamm_data.SourceProvenance", source=self.src, entity=org2)
 
         src_relationship_ents = [s.related_entity for s in self.src.relationships.all()]
         src_copyists_ents = [s.copyist for s in self.src.copyists.all()]

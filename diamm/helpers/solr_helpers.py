@@ -1,10 +1,38 @@
 import logging
 from collections.abc import Iterator
 
-import pysolr
 from django.conf import settings
 
-SolrConnection: pysolr.Solr = pysolr.Solr(settings.SOLR["SERVER"])
+from diamm.search import SolrClient
+
+DEFAULT_SOLR_CLIENT = SolrClient()
+
+
+class LegacySolrConnection:
+    def __init__(self, client: SolrClient | None = None) -> None:
+        self.client = client or DEFAULT_SOLR_CLIENT
+
+    def search(self, query: str, **kwargs):
+        core = kwargs.pop("core", None)
+        return self.client.raw_search(query, core=core, **kwargs)
+
+    def delete(self, *, id: str | None = None, q: str | None = None):
+        if id is not None:
+            self.client.delete(doc_id=id, core=settings.SOLR["LIVE_CORE"])
+            return
+        if q is not None:
+            self.client.delete(query=q, core=settings.SOLR["LIVE_CORE"])
+            return
+        raise ValueError("Either id or q must be provided.")
+
+    def commit(self):
+        self.client.commit(core=settings.SOLR["LIVE_CORE"])
+
+    def add(self, data: list[dict]):
+        self.client.index(data, core=settings.SOLR["LIVE_CORE"])
+
+
+SolrConnection = LegacySolrConnection()
 
 
 def __solr_prepare(instances) -> None:
@@ -85,8 +113,7 @@ class SolrManager:
     """
 
     def __init__(self, url: str, curs_sort_statement: str = "id asc") -> None:
-        # self._conn: pysolr.Solr = pysolr.Solr(url)
-        self._res: pysolr.Results | None = None
+        self._res = None
         self._curs_sort_statement: str = curs_sort_statement
         self._hits: int = 0
         self.docs: list[dict] = []

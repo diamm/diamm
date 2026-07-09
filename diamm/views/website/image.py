@@ -1,10 +1,14 @@
 import urllib.parse
+from collections.abc import Iterator
+from datetime import timedelta
 
-import httpx
 from django.conf import settings
 from django.http import HttpResponse
 from django.http.request import HttpRequest
 from django.http.response import HttpResponseRedirect
+from pyreqwest.client import SyncClient, SyncClientBuilder
+from pyreqwest.exceptions import ConnectError, PyreqwestError
+from pyreqwest.response import SyncResponse
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.decorators import (
@@ -17,16 +21,18 @@ from rest_framework.permissions import IsAuthenticated
 from diamm.authentication import DiammTokenAuthentication
 from diamm.helpers.solr_helpers import SolrConnection
 
-client = httpx.Client()
+IMAGE_PROXY_CLIENT: SyncClient = (
+    SyncClientBuilder().connect_timeout(timedelta(seconds=2)).build()
+)
 
 
-def cover_image_serve(request: HttpRequest, pk) -> HttpResponse:
+def cover_image_serve(request: HttpRequest, pk: str | int) -> HttpResponse:
     # allow unauthenticated access, but hardcode the image parameters so that
     # the high-res image cannot be downloaded
     return _image_lookup(request, pk, region="full", size="400,", rotation="0")
 
 
-def image_serve_redirect(request: HttpRequest, pk) -> HttpResponse:
+def image_serve_redirect(request: HttpRequest, pk: str | int) -> HttpResponse:
     return HttpResponseRedirect(
         urllib.parse.urljoin(request.path, "info.json"),
         status=status.HTTP_303_SEE_OTHER,
@@ -37,13 +43,13 @@ def image_serve_redirect(request: HttpRequest, pk) -> HttpResponse:
 @authentication_classes([DiammTokenAuthentication, SessionAuthentication])
 @permission_classes([IsAuthenticated])
 def image_serve(
-    request,
-    pk,
+    request: HttpRequest,
+    pk: str | int,
     region: str | None = None,
     size: str | None = None,
     rotation: str | None = None,
-    *args,
-    **kwargs,
+    *args: object,
+    **kwargs: object,
 ) -> HttpResponse:
     """
     This serves as a consistent proxy for all image locations
@@ -63,7 +69,11 @@ def image_serve(
 
 
 def _image_lookup(
-    request: HttpRequest, pk, region=None, size=None, rotation=None
+    request: HttpRequest,
+    pk: str | int,
+    region: str | None = None,
+    size: str | None = None,
+    rotation: str | None = None,
 ) -> HttpResponse:
     field_list = ["location_s"]
     # conn = pysolr.Solr(settings.SOLR['SERVER'])
@@ -87,19 +97,33 @@ def _image_lookup(
 
     full_location = f"{settings.DIAMM_IMAGE_SERVER}{location}"
     iiif_id = request.META.get("HTTP_X_IIIF_ID")
-    headers: dict = {
+    headers: dict[str, str | None] = {
         "referer": referer,
         "X-DIAMM": settings.DIAMM_IMAGE_KEY,
         "X-IIIF-ID": iiif_id,
         "User-Agent": settings.DIAMM_UA,
     }
+    req_headers: dict[str, str] = {k: v for k, v in headers.items() if v is not None}
 
     try:
-        with client.stream("GET", full_location, headers=headers, timeout=10) as r:
-            if r.status_code == 200:
+        request_builder = (
+            IMAGE_PROXY_CLIENT.get(full_location)
+            .headers(req_headers)
+            .timeout(timedelta(seconds=10))
+            .build_streamed()
+        )
+        with request_builder as response:
+            if response.status == 200:
+                content_type = response.get_header("content-type")
                 return HttpResponse(
-                    r.iter_raw(), content_type=r.headers["content-type"]
+                    _stream_response_bytes(response),
+                    content_type=content_type,
                 )
             return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-    except httpx.ConnectError:
+    except (ConnectError, PyreqwestError):
         return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+def _stream_response_bytes(response: SyncResponse) -> Iterator[bytes]:
+    while chunk := response.body_reader.read_chunk():
+        yield bytes(chunk)

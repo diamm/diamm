@@ -1,7 +1,6 @@
 import math
 from collections import OrderedDict
 
-import pysolr
 import ujson
 import ypres
 from django.conf import settings
@@ -9,7 +8,7 @@ from rest_framework.reverse import reverse
 from rest_framework.utils.urls import replace_query_param
 
 from diamm.helpers.formatters import format_person_name, contents_statement
-from diamm.helpers.solr_helpers import SolrConnection
+from diamm.search import SolrClient, SolrSearchResult
 
 
 class SolrResultObject:
@@ -132,11 +131,7 @@ class SolrResultSerializer(ypres.DictSerializer):
         return contents_statement(obj)
 
 
-class SolrResultException(BaseException):
-    pass
-
-
-class PageRangeOutOfBoundsException(BaseException):
+class PageRangeOutOfBoundsException(Exception):
     pass
 
 
@@ -147,16 +142,28 @@ class SolrPaginator:
     """
 
     def __init__(
-        self, query, filters, exclusive_filters, sorts, request, *args, **kwargs
+        self,
+        query,
+        filters,
+        exclusive_filters,
+        sorts,
+        request,
+        *args,
+        request_context=None,
+        client=None,
+        **kwargs,
     ):
         # The query is the value of the fulltext q-field.
         self.query = query
         self.request = request
-        self.result = None
+        self.result: SolrSearchResult | None = None
         self.absolute_uri = request.build_absolute_uri()
+        self.filters = filters or {}
+        self.exclusive_filters = exclusive_filters or {}
+        self.client = client or SolrClient()
 
         # qopts are the query options passed to solr.
-        self.qopts = {
+        self.qopts = request_context or {
             "q.op": settings.SOLR["DEFAULT_OPERATOR"],
             "facet": "true",
             "facet.field": settings.SOLR["FACET_FIELDS"],
@@ -174,31 +181,6 @@ class SolrPaginator:
 
         if sorts:
             self.qopts["sort"] = sorts
-
-        fqlist = []
-
-        if filters:
-            for k, v in filters.items():
-                # If a list is passed in for a field, assume that we want to OR the filters to produce a listing from
-                # all the values; if not, assume it's a restriction.
-                # For example, {type: ['foo', 'bar']} ==> "type:foo OR type:bar"
-                # but {type: 'foo'} ==> 'type:foo'
-                if isinstance(v, list):
-                    fqlist.append(" OR ".join([f"{k}:{field}" for field in v]))
-                else:
-                    fqlist.append(f"{k}:{v}")
-
-        if exclusive_filters:
-            for k, v in exclusive_filters.items():
-                # unlike the previous filters, this will be ANDed and not ORed
-                if isinstance(v, list):
-                    fqlist.append(" AND ".join([f"{k}:{field}" for field in v]))
-                else:
-                    fqlist.append(f"{k}:{v}")
-
-        # update our fq query opts with the values from our filters.
-        self.qopts.update({"fq": fqlist})
-        # self.solr = pysolr.Solr(settings.SOLR['SERVER'])
 
         # Fetch the requested page.
         self._fetch_page()
@@ -228,12 +210,15 @@ class SolrPaginator:
 
     def _fetch_page(self, start=0):
         """Retrieve a new result response from Solr."""
-        self.qopts.update({"start": start, "rows": settings.SOLR["PAGE_SIZE"]})
-
-        try:
-            self.result = SolrConnection.search(self.query, **self.qopts)
-        except pysolr.SolrError as e:
-            raise SolrResultException(repr(e)) from e
+        self.result = self.client.search(
+            self.query,
+            filters=self.filters,
+            exclusive_filters=self.exclusive_filters,
+            sorts=self.qopts.get("sort"),
+            start=start,
+            rows=settings.SOLR["PAGE_SIZE"],
+            request_context=self.qopts,
+        )
 
     def page(self, page_num=1):
         """

@@ -5,11 +5,11 @@ import multiprocessing
 from collections.abc import Callable, Iterable
 from operator import itemgetter
 
-import httpx
 import ujson
 from django.db import connection, close_old_connections
 
 from diamm.helpers.formatters import format_person_name
+from diamm.search import SolrClient, SolrConnectionError, SolrResponseError, SolrTimeoutError
 
 log = logging.getLogger("diamm")
 
@@ -94,24 +94,15 @@ def _submit_to_solr(records: list, cfg: dict, core: str) -> bool:
     :param cfg a config object
     :return: True if successful, false if not.
     """
-    solr_address = cfg["solr"]["server"]
-    solr_idx_server: str = f"{solr_address}/{core}"
     log.debug("Indexing records to Solr")
-    res = httpx.post(
-        f"{solr_idx_server}/update",
-        content=ujson.dumps(records),
-        headers={"Content-Type": "application/json"},
-        timeout=None,  # noqa: S113
-        verify=False,  # noqa: S501
-    )
-
-    if 200 <= res.status_code < 400:
+    client = SolrClient(base_server=cfg["solr"]["server"], live_core=core)
+    try:
+        client.index(records, core=core)
         log.debug("Indexing was successful")
         return True
-
-    log.error("Could not index to Solr. %s: %s", res.status_code, res.text)
-
-    return False
+    except (SolrConnectionError, SolrResponseError, SolrTimeoutError) as exc:
+        log.error("Could not index to Solr. %s", exc)
+        return False
 
 
 def empty_solr_core(cfg: dict) -> bool:
@@ -120,21 +111,14 @@ def empty_solr_core(cfg: dict) -> bool:
 
 
 def _empty_solr_core(cfg: dict, core: str) -> bool:
-    solr_address = cfg["solr"]["server"]
-    solr_idx_server: str = f"{solr_address}/{core}"
-
-    res = httpx.post(
-        f"{solr_idx_server}/update?commit=true",
-        content=ujson.dumps({"delete": {"query": "*:*"}}),
-        headers={"Content-Type": "application/json"},
-        timeout=None,  # noqa: S113
-        verify=False,  # noqa: S501
-    )
-
-    if 200 <= res.status_code < 400:
+    client = SolrClient(base_server=cfg["solr"]["server"], live_core=core)
+    try:
+        client.delete_all(core=core)
+        client.commit(core=core)
         log.debug("Deletion was successful")
         return True
-    return False
+    except (SolrConnectionError, SolrResponseError, SolrTimeoutError):
+        return False
 
 
 def commit_changes(cfg: dict) -> bool:
@@ -143,15 +127,14 @@ def commit_changes(cfg: dict) -> bool:
 
 
 def _commit_changes(cfg: dict, core: str) -> bool:
-    solr_address = cfg["solr"]["server"]
-    solr_idx_server: str = f"{solr_address}/{core}"
-    res = httpx.get(f"{solr_idx_server}/update?commit=true", timeout=None, verify=False)  # noqa: S113, S501
-    if 200 <= res.status_code < 400:
+    client = SolrClient(base_server=cfg["solr"]["server"], live_core=core)
+    try:
+        client.commit(core=core)
         log.debug("Commit was successful")
         return True
-
-    log.error("Could not commit to Solr. %s: %s", res.status_code, res.text)
-    return False
+    except (SolrConnectionError, SolrResponseError, SolrTimeoutError) as exc:
+        log.error("Could not commit to Solr. %s", exc)
+        return False
 
 
 @functools.lru_cache
@@ -190,28 +173,21 @@ def swap_cores(cfg: dict) -> bool:
     :param live_core: The core that is currently running the service
     :return: True if swap was successful; otherwise False
     """
-    server_address = cfg["solr"]["server"]
     indexing_core = cfg["solr"]["indexing_core"]
     live_core = cfg["solr"]["live_core"]
-    admconn = httpx.get(
-        f"{server_address}/admin/cores?action=SWAP&core={indexing_core}&other={live_core}",
-        timeout=None,  # noqa: S113
-        verify=False,  # noqa: S501
-    )
-
-    if 200 <= admconn.status_code < 400:
+    client = SolrClient(base_server=cfg["solr"]["server"], live_core=live_core)
+    try:
+        client.swap_cores(indexing_core=indexing_core, live_core=live_core)
         log.info("Core swap for %s and %s was successful.", indexing_core, live_core)
         return True
-
-    log.error(
-        "Core swap for %s and %s was not successful. Status: %s, Message: %s",
-        indexing_core,
-        live_core,
-        admconn.status_code,
-        admconn.text,
-    )
-
-    return False
+    except (SolrConnectionError, SolrResponseError, SolrTimeoutError) as exc:
+        log.error(
+            "Core swap for %s and %s was not successful. %s",
+            indexing_core,
+            live_core,
+            exc,
+        )
+        return False
 
 
 def reload_core(server_address: str, core_name: str) -> bool:
@@ -223,20 +199,14 @@ def reload_core(server_address: str, core_name: str) -> bool:
     :param core_name: The name of the core to reload.
     :return: True if the reload was successful, otherwise False.
     """
-    admconn = httpx.get(
-        f"{server_address}/admin/cores?action=RELOAD&core={core_name}",
-        timeout=None,  # noqa: S113
-        verify=False,  # noqa: S501
-    )
-
-    if 200 <= admconn.status_code < 400:
+    client = SolrClient(base_server=server_address, live_core=core_name)
+    try:
+        client.reload_core(core=core_name)
         log.info("Core reload for %s was successful.", core_name)
         return True
-
-    log.error(
-        "Core reload for %s was not successful. Status: %s", core_name, admconn.text
-    )
-    return False
+    except (SolrConnectionError, SolrResponseError, SolrTimeoutError) as exc:
+        log.error("Core reload for %s was not successful. %s", core_name, exc)
+        return False
 
 
 def process_bibliography_entries(entries: dict | None):

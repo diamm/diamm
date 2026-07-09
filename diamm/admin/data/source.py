@@ -4,13 +4,13 @@ from django.db.models import Q
 from django.forms import Textarea, TextInput
 from django.shortcuts import redirect, render
 from django.urls import path
-from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from pagedown.widgets import AdminPagedownWidget
 from rest_framework.reverse import reverse
 from reversion.admin import VersionAdmin
 
 from diamm.admin.filters.input_filter import InputFilter
+from diamm.admin.helpers.html import admin_change_link, html_join
 from diamm.admin.forms.copy_inventory import CopyInventoryForm
 from diamm.admin.forms.create_pages_and_images import CreatePagesAndImagesForm
 from diamm.admin.helpers.optimized_raw_id import RawIdWidgetAdminMixin
@@ -150,7 +150,7 @@ class PagesInline(admin.TabularInline):
 
     def link_id_field(self, obj):
         change_url = reverse("admin:diamm_data_page_change", args=(obj.pk,))
-        return mark_safe(f'<a href="{change_url}">{obj.pk}</a>')  # noqa: S308
+        return admin_change_link(change_url, obj.pk)
 
     def get_queryset(self, request):
         return super().get_queryset(request).select_related("source__archive__city")
@@ -202,7 +202,7 @@ class ItemInline(RawIdWidgetAdminMixin, admin.TabularInline):
         change_url = reverse(
             "admin:diamm_data_composition_change", args=(obj.composition_id,)
         )
-        return mark_safe(f'<a href="{change_url}">{obj.composition.title}</a>')  # noqa: S308
+        return admin_change_link(change_url, obj.composition.title)
 
     @admin.display(description="Composers")
     def get_composers(self, obj) -> str:
@@ -210,17 +210,17 @@ class ItemInline(RawIdWidgetAdminMixin, admin.TabularInline):
             cnames: list = [
                 c.composer.full_name for c in obj.composition.composers.all()
             ]
-            return mark_safe("; <br />".join(cnames))  # noqa: S308
+            return html_join(cnames)
         elif obj.unattributed_composers:
             unatt_names: list = [
                 f"[{c.composer.full_name}]" for c in obj.unattributed_composers.all()
             ]
-            return mark_safe("; <br />".join(unatt_names))  # noqa: S308
+            return html_join(unatt_names)
         return "-"
 
     def link_id_field(self, obj):
         change_url = reverse("admin:diamm_data_item_change", args=(obj.pk,))
-        return mark_safe(f'<a href="{change_url}">{obj.pk}</a>')  # noqa: S308
+        return admin_change_link(change_url, obj.pk)
 
 
 class InventoryFilter(admin.SimpleListFilter):
