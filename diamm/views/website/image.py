@@ -20,7 +20,25 @@ log = logging.getLogger("diamm")
 COVER_IMAGE_SUFFIX = "/full/400,/0/default.jpg"
 
 
-def cover_image(_request: HttpRequest, _pk: int) -> HttpResponse:
+# These placeholder views exist only so Django can reverse the canonical public
+# and protected image URLs. In supported environments, Nginx owns those paths.
+def cover_image(_request: HttpRequest, pk: int) -> HttpResponse:
+    del pk
+    return HttpResponse(status=status.HTTP_501_NOT_IMPLEMENTED)
+
+
+def image_serve_redirect(_request: HttpRequest, pk: int) -> HttpResponse:
+    del pk
+    return HttpResponse(status=status.HTTP_501_NOT_IMPLEMENTED)
+
+
+def image_serve_info(_request: HttpRequest, pk: int) -> HttpResponse:
+    del pk
+    return HttpResponse(status=status.HTTP_501_NOT_IMPLEMENTED)
+
+
+def image_serve(_request: HttpRequest, pk: int, suffix: str) -> HttpResponse:
+    del pk, suffix
     return HttpResponse(status=status.HTTP_501_NOT_IMPLEMENTED)
 
 

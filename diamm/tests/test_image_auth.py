@@ -70,6 +70,27 @@ class ImageAuthTests(TestCase):
         self.assertEqual(url, f"/cover/{self.image.pk}/")
         self.assertEqual(response.status_code, 501)
 
+    def test_protected_image_routes_are_named_and_direct_django_hits_are_not_implemented(
+        self,
+    ) -> None:
+        redirect_url = reverse("image-serve-redirect", kwargs={"pk": self.image.pk})
+        info_url = reverse("image-serve-info", kwargs={"pk": self.image.pk})
+        tile_url = reverse(
+            "image-serve",
+            kwargs={"pk": self.image.pk, "suffix": "full/512,/0/default.jpg"},
+        )
+
+        redirect_response = self.client.get(redirect_url)
+        info_response = self.client.get(info_url)
+        tile_response = self.client.get(tile_url)
+
+        self.assertEqual(redirect_url, f"/images/{self.image.pk}/")
+        self.assertEqual(info_url, f"/images/{self.image.pk}/info.json")
+        self.assertEqual(tile_url, f"/images/{self.image.pk}/full/512,/0/default.jpg")
+        self.assertEqual(redirect_response.status_code, 501)
+        self.assertEqual(info_response.status_code, 501)
+        self.assertEqual(tile_response.status_code, 501)
+
     def test_public_cover_backend_rejects_non_cover_paths(self) -> None:
         response = self.client.get(
             reverse("cover-image-backend"),
