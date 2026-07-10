@@ -8,9 +8,7 @@ from rest_framework.decorators import (
     permission_classes,
     renderer_classes,
 )
-from rest_framework.permissions import IsAuthenticated
 
-from diamm.authentication import DiammTokenAuthentication
 from diamm.helpers.solr_helpers import SolrConnection
 from diamm.models import Page, Source, SourceURL
 from diamm.models.data.item import Item
@@ -59,8 +57,8 @@ class SourceDetail(generics.RetrieveAPIView):
 
 
 @api_view(["GET", "OPTIONS"])
-@authentication_classes([DiammTokenAuthentication, SessionAuthentication])
-@permission_classes([IsAuthenticated])
+@authentication_classes([SessionAuthentication])
+@permission_classes([])
 @renderer_classes([UJSONRenderer])
 def manifest_serve(request, pk, *args, **kwargs) -> response.Response:
     fq = ["type:source", f"pk:{pk}"]

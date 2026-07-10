@@ -1,8 +1,18 @@
+import json
 import logging
 import re
 import urllib.parse
-from django.http import HttpResponse
+from typing import Any
+
+import requests
+from django.conf import settings
+from django.contrib.auth import logout
+from django.core import signing
+from django.http import HttpResponse, JsonResponse
 from django.http.request import HttpRequest
+from django.shortcuts import redirect
+from django.urls import reverse
+from django.views.decorators.clickjacking import xframe_options_exempt
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.decorators import (
@@ -11,6 +21,15 @@ from rest_framework.decorators import (
     permission_classes,
 )
 
+from diamm.iiif_auth import (
+    AUTH_CONTEXT,
+    add_auth_service,
+    build_auth_probe_service,
+    get_token_max_age,
+    is_valid_origin,
+    load_access_token,
+    make_access_token,
+)
 from diamm.models import CustomUserModel
 from diamm.models.data.image import Image
 
@@ -30,14 +49,137 @@ def image_serve_redirect(_request: HttpRequest, pk: int) -> HttpResponse:
     return HttpResponse(status=status.HTTP_501_NOT_IMPLEMENTED)
 
 
-def image_serve_info(_request: HttpRequest, pk: int) -> HttpResponse:
-    del pk
-    return HttpResponse(status=status.HTTP_501_NOT_IMPLEMENTED)
+def image_serve_info(request: HttpRequest, pk: int) -> HttpResponse:
+    if request.method == "OPTIONS":
+        return _cors_response(HttpResponse(status=status.HTTP_204_NO_CONTENT), request)
+
+    location = _get_image_location(pk)
+    if not location:
+        return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+
+    info_json = _fetch_iip_info_json(request, pk, location)
+    if info_json is None:
+        return HttpResponse(status=status.HTTP_502_BAD_GATEWAY)
+
+    public_info_uri = request.build_absolute_uri(
+        reverse("image-serve-info", kwargs={"pk": pk})
+    )
+    add_auth_service(info_json, build_auth_probe_service(request, public_info_uri))
+
+    return _cors_response(JsonResponse(info_json), request)
 
 
 def image_serve(_request: HttpRequest, pk: int, suffix: str) -> HttpResponse:
     del pk, suffix
     return HttpResponse(status=status.HTTP_501_NOT_IMPLEMENTED)
+
+
+def iiif_auth_access(request: HttpRequest) -> HttpResponse:
+    if not request.user.is_authenticated:
+        next_query = urllib.parse.urlencode({"next": request.get_full_path()})
+        return redirect(f"{reverse('login')}?{next_query}")
+
+    return HttpResponse(
+        """<!doctype html>
+<html>
+<head><title>DIAMM image access authorized</title></head>
+<body>
+<p>DIAMM image access authorized. You can close this window.</p>
+<script>window.close();</script>
+</body>
+</html>""",
+        content_type="text/html",
+    )
+
+
+@xframe_options_exempt
+def iiif_auth_token(request: HttpRequest) -> HttpResponse:
+    message_id = request.GET.get("messageId", "")
+    origin = request.GET.get("origin")
+
+    if not message_id:
+        message = _auth_token_error("invalidRequest", message_id)
+        target_origin = origin if is_valid_origin(origin) else "*"
+    elif not is_valid_origin(origin):
+        message = _auth_token_error("invalidOrigin", message_id)
+        target_origin = "*"
+    elif not request.user.is_authenticated:
+        message = _auth_token_error("missingAspect", message_id)
+        target_origin = origin
+    elif not isinstance(request.user, CustomUserModel) or not request.user.is_active:
+        message = _auth_token_error("invalidAspect", message_id)
+        target_origin = origin
+    else:
+        message = {
+            "@context": AUTH_CONTEXT,
+            "type": "AuthAccessToken2",
+            "accessToken": make_access_token(request.user.pk),
+            "expiresIn": get_token_max_age(),
+            "messageId": message_id,
+        }
+        target_origin = origin
+
+    return HttpResponse(
+        f"""<!doctype html>
+<html>
+<body>
+<script>
+window.parent.postMessage({json.dumps(message)}, {json.dumps(target_origin)});
+</script>
+</body>
+</html>""",
+        content_type="text/html",
+    )
+
+
+def iiif_auth_probe(request: HttpRequest) -> HttpResponse:
+    if request.method == "OPTIONS":
+        return _cors_response(HttpResponse(status=status.HTTP_204_NO_CONTENT), request)
+
+    auth_header = request.META.get("HTTP_AUTHORIZATION", "")
+    probe_status = status.HTTP_401_UNAUTHORIZED
+
+    if auth_header.startswith("Bearer "):
+        token = auth_header.removeprefix("Bearer ").strip()
+        try:
+            token_data = load_access_token(token)
+            user = CustomUserModel.objects.get(pk=token_data.get("user_id"))
+        except (
+            CustomUserModel.DoesNotExist,
+            signing.BadSignature,
+            signing.SignatureExpired,
+        ):
+            probe_status = status.HTTP_401_UNAUTHORIZED
+        else:
+            probe_status = (
+                status.HTTP_200_OK
+                if user.is_active
+                else status.HTTP_403_FORBIDDEN
+            )
+
+    response = JsonResponse(
+        {
+            "@context": AUTH_CONTEXT,
+            "type": "AuthProbeResult2",
+            "status": probe_status,
+        }
+    )
+    return _cors_response(response, request)
+
+
+def iiif_auth_logout(request: HttpRequest) -> HttpResponse:
+    logout(request)
+    return HttpResponse(
+        """<!doctype html>
+<html>
+<head><title>Logged out of DIAMM</title></head>
+<body>
+<p>You have been logged out of DIAMM. You can close this window.</p>
+<script>window.close();</script>
+</body>
+</html>""",
+        content_type="text/html",
+    )
 
 
 @api_view(["GET"])
@@ -101,6 +243,68 @@ def public_image_auth(request: HttpRequest) -> HttpResponse:
     return response
 
 
+def _auth_token_error(profile: str, message_id: str) -> dict[str, Any]:
+    return {
+        "@context": AUTH_CONTEXT,
+        "type": "AuthAccessTokenError2",
+        "profile": profile,
+        "messageId": message_id,
+        "heading": {"en": ["Unable to authorize image access"]},
+        "note": {"en": ["Log in to DIAMM and try again."]},
+    }
+
+
+def _cors_response(response: HttpResponse, request: HttpRequest) -> HttpResponse:
+    origin = request.META.get("HTTP_ORIGIN")
+    if is_valid_origin(origin):
+        response["Access-Control-Allow-Origin"] = origin
+        response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Authorization,Content-Type,Accept"
+        response["Vary"] = "Origin"
+    return response
+
+
+def _fetch_iip_info_json(
+    request: HttpRequest, pk: int, location: str
+) -> dict[str, Any] | None:
+    del pk
+    info_url = f"{settings.DIAMM_IMAGE_SERVER}{location}/info.json"
+    headers = {
+        "referer": f"https://{settings.HOSTNAME}",
+        "X-IIIF-ID": request.build_absolute_uri(request.path),
+    }
+    if image_key := getattr(settings, "DIAMM_IMAGE_KEY", None):
+        headers["X-DIAMM"] = image_key
+
+    try:
+        response = requests.get(info_url, headers=headers, timeout=10)
+        response.raise_for_status()
+        info_json = response.json()
+    except (requests.RequestException, ValueError):
+        log.exception("Could not fetch IIP info.json for location=%s", location)
+        return None
+
+    if not isinstance(info_json, dict):
+        log.warning("IIP info.json was not a JSON object for location=%s", location)
+        return None
+
+    return info_json
+
+
+def _get_image_location(pk: int | str) -> str | None:
+    try:
+        location = (
+            Image.objects.only("location").values_list("location", flat=True).get(pk=pk)
+        )
+    except Image.DoesNotExist:
+        return None
+
+    if not location or location == "None":
+        return None
+
+    return location
+
+
 def _resolve_backend_query_from_request_path(request_path: str) -> str | None:
     path = urllib.parse.urlsplit(request_path).path
 
@@ -121,16 +325,8 @@ def _resolve_backend_query_from_request_path(request_path: str) -> str | None:
     if not match:
         return None
 
-    try:
-        location = (
-            Image.objects.only("location")
-            .values_list("location", flat=True)
-            .get(pk=match.group("pk"))
-        )
-    except Image.DoesNotExist:
-        return None
-
-    if not location or location == "None":
+    location = _get_image_location(match.group("pk"))
+    if not location:
         return None
 
     return f"IIIF={location}{suffix}"

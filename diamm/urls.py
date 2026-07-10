@@ -54,6 +54,10 @@ from diamm.views.website.correction import correction_submit
 from diamm.views.website.country import CountryDetail, CountryList
 from diamm.views.website.image import (
     cover_image,
+    iiif_auth_access,
+    iiif_auth_logout,
+    iiif_auth_probe,
+    iiif_auth_token,
     image_serve,
     image_serve_info,
     image_serve_redirect,
@@ -135,6 +139,10 @@ urlpatterns = [
     path("images/<int:pk>/<path:suffix>", image_serve, name="image-serve"),
     path("auth/images/", protected_image_auth, name="protected-image-auth"),
     path("auth/covers/", public_image_auth, name="cover-image-backend"),
+    path("iiif/auth/access/", iiif_auth_access, name="iiif-auth-access"),
+    path("iiif/auth/token/", iiif_auth_token, name="iiif-auth-token"),
+    path("iiif/auth/probe/", iiif_auth_probe, name="iiif-auth-probe"),
+    path("iiif/auth/logout/", iiif_auth_logout, name="iiif-auth-logout"),
     path(
         "reset/",
         PasswordResetView.as_view(
