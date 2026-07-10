@@ -53,6 +53,7 @@ from diamm.views.website.composition import CompositionDetail
 from diamm.views.website.correction import correction_submit
 from diamm.views.website.country import CountryDetail, CountryList
 from diamm.views.website.image import (
+    cover_image,
     protected_image_auth,
     public_image_auth,
 )
@@ -125,6 +126,7 @@ urlpatterns = [
     ),
     path("logout/", LogoutView.as_view(next_page="/"), name="logout"),
     path("register/", CreateAccount.as_view(), name="register"),
+    path("cover/<int:pk>/", cover_image, name="cover-image"),
     path("auth/images/", protected_image_auth, name="protected-image-auth"),
     path("auth/covers/", public_image_auth, name="cover-image-backend"),
     path(

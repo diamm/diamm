@@ -20,6 +20,10 @@ log = logging.getLogger("diamm")
 COVER_IMAGE_SUFFIX = "/full/400,/0/default.jpg"
 
 
+def cover_image(_request: HttpRequest, _pk: int) -> HttpResponse:
+    return HttpResponse(status=status.HTTP_501_NOT_IMPLEMENTED)
+
+
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication])
 @permission_classes([])

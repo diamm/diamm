@@ -63,6 +63,13 @@ class ImageAuthTests(TestCase):
             "https://images.example.test/iiif/ms-123/page-1/full/400,/0/default.jpg",
         )
 
+    def test_public_cover_route_is_named_and_direct_django_hit_is_not_implemented(self) -> None:
+        url = reverse("cover-image", kwargs={"pk": self.image.pk})
+        response = self.client.get(url)
+
+        self.assertEqual(url, f"/cover/{self.image.pk}/")
+        self.assertEqual(response.status_code, 501)
+
     def test_public_cover_backend_rejects_non_cover_paths(self) -> None:
         response = self.client.get(
             reverse("cover-image-backend"),
