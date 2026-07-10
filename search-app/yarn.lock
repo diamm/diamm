@@ -22,6 +22,31 @@
   resolved "https://registry.yarnpkg.com/@elm_binaries/win32_x64/-/win32_x64-0.19.1-0.tgz#3f8decfd6f5fbc46906f3f5d50561b6e5b33ac3a"
   integrity sha512-yDleiXqSE9EcqKtd9SkC/4RIW8I71YsXzMPL79ub2bBPHjWTcoyyeBbYjoOB9SxSlArJ74HaoBApzT6hY7Zobg==
 
+"@lamdera/compiler-darwin-arm64@0.19.1-1.4.0":
+  version "0.19.1-1.4.0"
+  resolved "https://registry.yarnpkg.com/@lamdera/compiler-darwin-arm64/-/compiler-darwin-arm64-0.19.1-1.4.0.tgz#f876f3fdc88f25f0d6e0436d41ed09aaf58dd458"
+  integrity sha512-zLqkIm5wMtuWyFnWlpgXgN0/nfEYRqvcSXEg9R/SlDL5yb8cle3sJCkR5S7zcqBc3zknjb24gWgpWzd0BSkkZg==
+
+"@lamdera/compiler-darwin-x64@0.19.1-1.4.0":
+  version "0.19.1-1.4.0"
+  resolved "https://registry.yarnpkg.com/@lamdera/compiler-darwin-x64/-/compiler-darwin-x64-0.19.1-1.4.0.tgz#bd83eb162f55afa662404c938c3684438e6da6dc"
+  integrity sha512-hMG/uKWeL7hp8EeodmSo9Tg9X1P8Xzshai8E/RNtn2LpLCZ6yeRsIjzxpKqV8cEkVCI9yamnT6QTMywexPceYg==
+
+"@lamdera/compiler-linux-arm64@0.19.1-1.4.0":
+  version "0.19.1-1.4.0"
+  resolved "https://registry.yarnpkg.com/@lamdera/compiler-linux-arm64/-/compiler-linux-arm64-0.19.1-1.4.0.tgz#407566bd49d6f1ad44ac6c4ffe98201d5c5b24ea"
+  integrity sha512-ZLO4Z1jCW4O/9Zoa9LXME+DklUGaOOv6JW7ulWYxSdgvu68Lgkfx47HZidM96R9tehX0Q1wZ+fBmZQkU/a7biQ==
+
+"@lamdera/compiler-linux-x64@0.19.1-1.4.0":
+  version "0.19.1-1.4.0"
+  resolved "https://registry.yarnpkg.com/@lamdera/compiler-linux-x64/-/compiler-linux-x64-0.19.1-1.4.0.tgz#5ba0a3919481b33983a511ab253564660ac7c07b"
+  integrity sha512-r7tx1p/+dSw9SLUL3K7dSj1RBb/1Y5kmE27i9jarOlTeEUr1pycUqt3FSomD0EbTp8Rcp7jRCaNWvb5IWFathg==
+
+"@lamdera/compiler-win32-x64@0.19.1-1.4.0":
+  version "0.19.1-1.4.0"
+  resolved "https://registry.yarnpkg.com/@lamdera/compiler-win32-x64/-/compiler-win32-x64-0.19.1-1.4.0.tgz#0804c3eaa93cc4d91042e3eeca23a56a1b222c74"
+  integrity sha512-hLpi1eikdY9BA87ipqhTP8gY0l75yih7kjckD30CrIOMMqEWbgaK/0yr2JxTQJiSt6D2A1VZiUbqjHMiSTbPZg==
+
 "@mole-inc/bin-wrapper@^8.0.1":
   version "8.0.1"
   resolved "https://registry.yarnpkg.com/@mole-inc/bin-wrapper/-/bin-wrapper-8.0.1.tgz#d7fd0ceb1cfa8a855293a3ed9d7d135f4d442f0e"
@@ -887,6 +912,17 @@ keyv@^4.0.0:
   integrity sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==
   dependencies:
     json-buffer "3.0.1"
+
+lamdera@^0.19.1-1.4.0:
+  version "0.19.1-1.4.0"
+  resolved "https://registry.yarnpkg.com/lamdera/-/lamdera-0.19.1-1.4.0.tgz#ca3b0c26456c54dc94a37f3a932de505dcfd8e24"
+  integrity sha512-F5HqnNJPXulkr6/0XCNhaRhESjewG2iTHc+EKg8mJLj76E2PscuUOVhnBEjPqeFrEZF6RT53qSeWtSYG61fhpQ==
+  optionalDependencies:
+    "@lamdera/compiler-darwin-arm64" "0.19.1-1.4.0"
+    "@lamdera/compiler-darwin-x64" "0.19.1-1.4.0"
+    "@lamdera/compiler-linux-arm64" "0.19.1-1.4.0"
+    "@lamdera/compiler-linux-x64" "0.19.1-1.4.0"
+    "@lamdera/compiler-win32-x64" "0.19.1-1.4.0"
 
 locate-path@^3.0.0:
   version "3.0.0"

@@ -13,6 +13,7 @@
     "chokidar-cli": "^3.0.0",
     "elm": "^0.19.1-6",
     "elm-optimize-level-2": "^0.3.5",
+    "lamdera": "^0.19.1-1.4.0",
     "swc": "^1.0.11"
   }
 }
