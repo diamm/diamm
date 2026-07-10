@@ -77,7 +77,7 @@ def manifest_serve(request, pk, *args, **kwargs) -> response.Response:
         )
 
     manifest = SourceManifestSerializer(res.docs[0], context={"request": request})
-    return response.Response(manifest.data)
+    return response.Response(manifest.serialized)
 
 
 class SourceCanvasDetail(generics.GenericAPIView):
@@ -93,7 +93,7 @@ class SourceCanvasDetail(generics.GenericAPIView):
         res = SolrConnection.search("*:*", fq=["type:image", f"page_i:{page_id}"])
         canvas = CanvasSerializer(res.docs[0], context={"request": request})
 
-        return response.Response(canvas.data)
+        return response.Response(canvas.serialized)
 
 
 class SourceRangeDetail(generics.GenericAPIView):
@@ -121,7 +121,7 @@ class SourceItemDetail(generics.GenericAPIView):
         structure_res = SolrConnection.search("*:*", **structure_query)
         structures = ServiceSerializer(
             structure_res.docs[0], context={"request": request}
-        ).data
+        ).serialized
 
         return response.Response(structures)
 

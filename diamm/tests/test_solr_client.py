@@ -4,6 +4,7 @@ from datetime import timedelta
 from typing import Any
 from unittest.mock import MagicMock, patch
 
+from django.conf import settings
 from django.test import SimpleTestCase
 from pyreqwest.exceptions import ConnectError, ConnectTimeoutError, StatusError
 
@@ -98,8 +99,10 @@ class SolrClientTests(SimpleTestCase):
                 request_context=None,
             )
         self.assertEqual(result.hits, 1)
-        self.assertEqual(capture["url"], "http://solr.example/solr/diamm/select")
-        self.assertEqual(capture["query"]["fq"], ["type:source"])
+        self.assertTrue(
+            capture["url"].startswith("http://solr.example/solr/diamm/select?")
+        )
+        self.assertIn("fq=type%3Asource", capture["url"])
 
         capture = {}
         with patch.object(
@@ -107,7 +110,8 @@ class SolrClientTests(SimpleTestCase):
             "_build_http_client",
             return_value=FakeClient(FakeResponse({"responseHeader": {"status": 0}}), capture),
         ):
-            client.index([{"id": 1}], core="diamm_ingest")
+            result = client.index([{"id": 1}], core="diamm_ingest")
+        self.assertTrue(result)
         self.assertEqual(capture["json"], [{"id": 1}])
 
         capture = {}
@@ -116,8 +120,37 @@ class SolrClientTests(SimpleTestCase):
             "_build_http_client",
             return_value=FakeClient(FakeResponse({"responseHeader": {"status": 0}}), capture),
         ):
-            client.commit(core="diamm_ingest")
+            result = client.commit(core="diamm_ingest")
+        self.assertTrue(result)
         self.assertEqual(capture["json"], {"commit": {}})
+
+    def test_non_search_methods_treat_empty_response_as_success(self) -> None:
+        capture: dict[str, Any] = {}
+        client = SolrClient(base_server="http://solr.example/solr", live_core="diamm")
+
+        with patch.object(
+            client,
+            "_build_http_client",
+            return_value=FakeClient(FakeResponse({}), capture),
+        ):
+            result = client.reload_core(core="diamm")
+
+        self.assertTrue(result)
+        self.assertEqual(capture["query"], {"action": "RELOAD", "core": "diamm"})
+
+    def test_delete_all_returns_true_for_successful_response(self) -> None:
+        capture: dict[str, Any] = {}
+        client = SolrClient(base_server="http://solr.example/solr", live_core="diamm")
+
+        with patch.object(
+            client,
+            "_build_http_client",
+            return_value=FakeClient(FakeResponse({"responseHeader": {"status": 0}}), capture),
+        ):
+            result = client.delete_all(core="diamm")
+
+        self.assertTrue(result)
+        self.assertEqual(capture["json"], {"delete": {"query": "*:*"}})
 
     def test_timeout_and_connection_errors_are_mapped(self) -> None:
         client = SolrClient()
@@ -153,6 +186,51 @@ class SolrClientTests(SimpleTestCase):
             with self.assertRaises(SolrResponseError) as exc:
                 client.commit(core="diamm")
         self.assertEqual(exc.exception.status_code, 500)
+
+    def test_empty_query_list_values_are_dropped_before_building_request(self) -> None:
+        capture: dict[str, Any] = {}
+        response = FakeResponse({"response": {"docs": [], "numFound": 0}})
+        client = SolrClient(base_server="http://solr.example/solr", live_core="diamm")
+
+        with patch.object(
+            client, "_build_http_client", return_value=FakeClient(response, capture)
+        ):
+            client.search(
+                "*:*",
+                filters={},
+                exclusive_filters={},
+                sorts=None,
+                start=0,
+                rows=20,
+                request_context={"facet.pivot": [], "facet.field": ["type"]},
+            )
+
+        self.assertNotIn("facet.pivot", capture["url"])
+        self.assertIn("facet.field=type", capture["url"])
+
+    def test_raw_search_uses_settings_page_size_when_rows_omitted(self) -> None:
+        capture: dict[str, Any] = {}
+        response = FakeResponse({"response": {"docs": [], "numFound": 0}})
+        client = SolrClient(base_server="http://solr.example/solr", live_core="diamm")
+
+        with patch.object(
+            client, "_build_http_client", return_value=FakeClient(response, capture)
+        ):
+            client.raw_search("*:*")
+
+        self.assertEqual(capture["query"]["rows"], settings.SOLR["PAGE_SIZE"])
+
+    def test_raw_search_explicit_rows_overrides_settings_page_size(self) -> None:
+        capture: dict[str, Any] = {}
+        response = FakeResponse({"response": {"docs": [], "numFound": 0}})
+        client = SolrClient(base_server="http://solr.example/solr", live_core="diamm")
+
+        with patch.object(
+            client, "_build_http_client", return_value=FakeClient(response, capture)
+        ):
+            client.raw_search("*:*", rows=7)
+
+        self.assertEqual(capture["query"]["rows"], 7)
 
     def test_tls_verification_remains_enabled_by_default(self) -> None:
         builder = MagicMock()

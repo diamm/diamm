@@ -15,3 +15,78 @@ The [Django REST Framework](http://www.django-rest-framework.org) forms a crucia
 The site is served with the NginX web server and the gunicorn FastCGI application server. The images are served using the [IIP Image Server](http://iipimage.sourceforge.net/documentation/server/). 
 
 All of our images are available as [IIIF Image API](http://iiif.io/api/image/2.1/) endpoints, and we deliver [IIIF Presentation API](http://iiif.io/api/presentation/2.1/) manifests for every source with images. The only caveat is that you must be authenticated with a username and password to access these, due to licensing restrictions with our partner libraries.
+
+## Protected IIIF Images
+
+Image delivery is handled by Nginx. Django no longer streams image bytes in supported environments.
+
+- Canonical protected IIIF URLs stay under `/images/<pk>/info.json` and `/images/<pk>/<region>/<size>/<rotation>/default.jpg`.
+- Canonical public cover URLs stay under `/cover/<pk>/`.
+- Nginx should also own the `303` redirect from `/images/<pk>/` to `/images/<pk>/info.json`.
+- Diva tile requests do not send `Authorization` headers, so protected image access depends on the normal same-origin Django session cookie.
+- Nginx sends protected requests to `/auth/images/` with `Cookie` and `X-Original-URI`.
+- Django authenticates the session user, resolves `Image.location` from cache backed by the `Image` model, and returns `204 No Content` plus `X-DIAMM-Backend-URI`.
+- Nginx proxies that backend URI to the remote IIIF server with the required SNI, `Host`, `Referer`, and `X-DIAMM` headers.
+- If the upstream rejects `http://dev...` or other non-canonical referers, use a fixed allowed HTTPS referer such as `https://www.diamm.ac.uk/` instead of `$scheme://$host`.
+- Public `/cover/<pk>/` uses the same backend-resolution pattern, but without authentication, and always resolves to the fixed low-resolution backend shape `/full/400,/0/default.jpg`.
+
+Direct requests that reach Django on `/images/...` or `/cover/...` return `501 Not Implemented`; that indicates Nginx is not configured in front of the application.
+
+Working Nginx shape:
+
+```nginx
+location ~ ^/images/(?<pk>\d+)/$ {
+    return 303 /images/$pk/info.json;
+}
+
+location /images/ {
+    auth_request /auth/images/;
+    auth_request_set $diamm_backend_uri $upstream_http_x_diamm_backend_uri;
+
+    proxy_pass $diamm_backend_uri;
+    proxy_ssl_server_name on;
+    proxy_ssl_name www.diamm.ac.uk;
+    proxy_set_header Host www.diamm.ac.uk;
+    proxy_set_header Referer https://www.diamm.ac.uk/;
+    proxy_set_header X-DIAMM your-diamm-image-key;
+    proxy_buffering on;
+}
+
+location = /auth/images/ {
+    internal;
+    proxy_pass http://diamm/auth/images/;
+    proxy_pass_request_body off;
+    proxy_set_header Content-Length "";
+    proxy_set_header Host $host;
+    proxy_set_header Cookie $http_cookie;
+    proxy_set_header X-Original-URI $request_uri;
+    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+
+location /cover/ {
+    # Public cover images still need an internal lookup so Django can resolve
+    # <pk> to a fixed-size IIIF backend URL; this is not user authentication.
+    auth_request /auth/covers/;
+    auth_request_set $diamm_backend_uri $upstream_http_x_diamm_backend_uri;
+
+    proxy_pass $diamm_backend_uri;
+    proxy_ssl_server_name on;
+    proxy_ssl_name www.diamm.ac.uk;
+    proxy_set_header Host www.diamm.ac.uk;
+    proxy_set_header Referer https://www.diamm.ac.uk/;
+    proxy_set_header X-DIAMM your-diamm-image-key;
+    proxy_buffering on;
+}
+
+location = /auth/covers/ {
+    internal;
+    proxy_pass http://diamm/auth/covers/;
+    proxy_pass_request_body off;
+    proxy_set_header Content-Length "";
+    proxy_set_header Host $host;
+    proxy_set_header X-Original-URI $request_uri;
+    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+```

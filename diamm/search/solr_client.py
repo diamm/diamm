@@ -1,8 +1,7 @@
-from __future__ import annotations
-
 from dataclasses import dataclass
 from datetime import timedelta
 from typing import Any
+from urllib.parse import urlencode
 
 from django.conf import settings
 from pyreqwest.client import SyncClient, SyncClientBuilder
@@ -77,7 +76,9 @@ class SolrClient:
         if sorts:
             params["sort"] = ", ".join(sorts) if isinstance(sorts, list) else sorts
 
-        fq = self._build_filter_queries(filters or {}, exclusive_filters or {})
+        fq: list[str] = self._build_filter_queries(
+            filters or {}, exclusive_filters or {}
+        )
         if fq:
             params["fq"] = fq
 
@@ -95,7 +96,7 @@ class SolrClient:
     def raw_search(
         self, query: str, *, core: str | None = None, **params: Any
     ) -> SolrSearchResult:
-        rows = params.pop("rows", 10)
+        rows = params.pop("rows", settings.SOLR["PAGE_SIZE"])
         start = params.pop("start", 0)
         sorts = params.pop("sort", None)
         filters, exclusive_filters = self._split_filter_queries(params.pop("fq", None))
@@ -109,23 +110,27 @@ class SolrClient:
             request_context={**params, "__core__": core} if core else params,
         )
 
-    def index(self, records: list[dict[str, Any]], *, core: str) -> None:
-        self._request_json(
+    def index(self, records: list[dict[str, Any]], *, core: str) -> bool:
+        result = self._request_json(
             "POST",
             f"{self._core_url(core)}/update",
             json_body=records,
             headers={"Content-Type": "application/json"},
         )
+        return self._request_succeeded(result)
 
-    def delete_all(self, *, core: str) -> None:
-        self._request_json(
+    def delete_all(self, *, core: str) -> bool:
+        result = self._request_json(
             "POST",
             f"{self._core_url(core)}/update",
             json_body={"delete": {"query": "*:*"}},
             headers={"Content-Type": "application/json"},
         )
+        return self._request_succeeded(result)
 
-    def delete(self, *, query: str | None = None, doc_id: str | None = None, core: str) -> None:
+    def delete(
+        self, *, query: str | None = None, doc_id: str | None = None, core: str
+    ) -> bool:
         payload: dict[str, Any]
         if doc_id is not None:
             payload = {"delete": {"id": doc_id}}
@@ -134,34 +139,38 @@ class SolrClient:
         else:
             raise ValueError("Either query or doc_id is required.")
 
-        self._request_json(
+        result = self._request_json(
             "POST",
             f"{self._core_url(core)}/update",
             json_body=payload,
             headers={"Content-Type": "application/json"},
         )
+        return self._request_succeeded(result)
 
-    def commit(self, *, core: str) -> None:
-        self._request_json(
+    def commit(self, *, core: str) -> bool:
+        result = self._request_json(
             "POST",
             f"{self._core_url(core)}/update",
             json_body={"commit": {}},
             headers={"Content-Type": "application/json"},
         )
+        return self._request_succeeded(result)
 
-    def swap_cores(self, *, indexing_core: str, live_core: str) -> None:
-        self._request_json(
+    def swap_cores(self, *, indexing_core: str, live_core: str) -> bool:
+        result = self._request_json(
             "GET",
             f"{self.base_server}/admin/cores",
             query={"action": "SWAP", "core": indexing_core, "other": live_core},
         )
+        return self._request_succeeded(result)
 
-    def reload_core(self, *, core: str) -> None:
-        self._request_json(
+    def reload_core(self, *, core: str) -> bool:
+        result = self._request_json(
             "GET",
             f"{self.base_server}/admin/cores",
             query={"action": "RELOAD", "core": core},
         )
+        return self._request_succeeded(result)
 
     def _request_json(
         self,
@@ -176,9 +185,15 @@ class SolrClient:
         try:
             builder = client.request(method, url)
             if query:
-                query = dict(query)
+                query = self._normalize_query_params(query)
                 query.pop("__core__", None)
-                builder = builder.query(query)
+                if self._query_requires_manual_encoding(query):
+                    builder = client.request(
+                        method,
+                        f"{url}?{urlencode(query, doseq=True)}",
+                    )
+                else:
+                    builder = builder.query(query)
             if headers:
                 builder = builder.headers(headers)
             if json_body is not None:
@@ -208,6 +223,36 @@ class SolrClient:
 
     def _core_url(self, core: str | None = None) -> str:
         return f"{self.base_server}/{core or self.live_core}"
+
+    @staticmethod
+    def _request_succeeded(result: dict[str, Any]) -> bool:
+        if not result:
+            return True
+
+        response_header = result.get("responseHeader")
+        if isinstance(response_header, dict) and "status" in response_header:
+            return response_header["status"] == 0
+
+        return True
+
+    @staticmethod
+    def _normalize_query_params(query: dict[str, Any]) -> dict[str, Any]:
+        normalized: dict[str, Any] = {}
+        for key, value in dict(query).items():
+            if value is None:
+                continue
+            if isinstance(value, (list, tuple)):
+                filtered = [item for item in value if item is not None and item != ""]
+                if not filtered:
+                    continue
+                normalized[key] = filtered
+                continue
+            normalized[key] = value
+        return normalized
+
+    @staticmethod
+    def _query_requires_manual_encoding(query: dict[str, Any]) -> bool:
+        return any(isinstance(value, (list, tuple)) for value in query.values())
 
     @staticmethod
     def _build_filter_queries(

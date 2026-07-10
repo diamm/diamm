@@ -6,30 +6,29 @@ from django.test import RequestFactory, SimpleTestCase
 from unittest.mock import patch
 
 from diamm.helpers.solr_pagination import PageRangeOutOfBoundsException
-from diamm.search import SearchQueryParams, SearchSolrService
+from diamm.search import build_search_query_params, build_search_solr_request
 from diamm.views.website.search import SearchView
 
 
 class SearchQueryParamsTests(SimpleTestCase):
     def setUp(self) -> None:
         self.factory = RequestFactory()
-        self.service = SearchSolrService()
 
     def test_blank_query_falls_back_to_match_all(self) -> None:
         request = self.factory.get("/search/")
-        params = SearchQueryParams.from_request(request)
+        params = build_search_query_params(request)
         self.assertEqual(params.query, "*:*")
 
     def test_type_all_preserves_all_search_types(self) -> None:
         request = self.factory.get("/search/", {"q": "mass", "type": "all"})
-        params = SearchQueryParams.from_request(request)
-        solr_request = self.service.build(params, is_staff=False)
+        params = build_search_query_params(request)
+        solr_request = build_search_solr_request(params, is_staff=False)
         self.assertIsInstance(solr_request.filters["{!tag=type}type"], list)
 
     def test_sources_with_images_adds_source_and_image_filters(self) -> None:
         request = self.factory.get("/search/", {"type": "sources_with_images"})
-        params = SearchQueryParams.from_request(request)
-        solr_request = self.service.build(params, is_staff=False)
+        params = build_search_query_params(request)
+        solr_request = build_search_solr_request(params, is_staff=False)
         self.assertEqual(solr_request.filters["{!tag=type}type"], "source")
         self.assertTrue(solr_request.filters["{!tag=type}source_with_images_b"])
 
@@ -38,26 +37,26 @@ class SearchQueryParamsTests(SimpleTestCase):
             "/search/",
             {"cities": ["A", "B"], "genre": ["Mass", "Motet"]},
         )
-        params = SearchQueryParams.from_request(request)
+        params = build_search_query_params(request)
         self.assertEqual(params.filters["city_s"], ['"A"', '"B"'])
         self.assertEqual(params.exclusive_filters["genres_ss"], ['"Mass"', '"Motet"'])
 
     def test_date_range_parsing(self) -> None:
         request = self.factory.get("/search/", {"date_range": "1200to1300"})
-        params = SearchQueryParams.from_request(request)
+        params = build_search_query_params(request)
         self.assertEqual(params.filters["facet_date_range_ii"], "[1200 TO 1300]")
 
     def test_staff_visibility_filter_is_conditional(self) -> None:
         request = self.factory.get("/search/")
-        params = SearchQueryParams.from_request(request)
-        staff_request = self.service.build(params, is_staff=True)
-        public_request = self.service.build(params, is_staff=False)
+        params = build_search_query_params(request)
+        staff_request = build_search_solr_request(params, is_staff=True)
+        public_request = build_search_solr_request(params, is_staff=False)
         self.assertNotIn("public_b", staff_request.filters)
         self.assertTrue(public_request.filters["public_b"])
 
     def test_invalid_page_coerces_to_first_page(self) -> None:
         request = self.factory.get("/search/", {"page": "abc"})
-        params = SearchQueryParams.from_request(request)
+        params = build_search_query_params(request)
         self.assertEqual(params.page, 1)
 
 

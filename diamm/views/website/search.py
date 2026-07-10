@@ -7,23 +7,23 @@ from diamm.helpers.solr_pagination import (
     SolrPaginator,
 )
 from diamm.search import (
-    SearchQueryParams,
-    SearchSolrService,
     SolrConnectionError,
     SolrResponseError,
     SolrTimeoutError,
+    build_search_query_params,
+    build_search_solr_request,
 )
 
 
 class SearchView(generics.GenericAPIView):
     template_name = "website/search/search.jinja2"
-    search_service = SearchSolrService()
 
     @method_decorator(never_cache)
     def get(self, request, *args, **kwargs) -> response.Response:
-        params = SearchQueryParams.from_request(request)
-        solr_request = self.search_service.build(
-            params, is_staff=getattr(request.user, "is_staff", False)
+        params = build_search_query_params(request)
+        solr_request = build_search_solr_request(
+            params,
+            is_staff=getattr(request.user, "is_staff", False),
         )
 
         try:
