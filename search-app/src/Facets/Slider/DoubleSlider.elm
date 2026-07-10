@@ -3,8 +3,6 @@ module Facets.Slider.DoubleSlider exposing
     , init
     , view
     , updateHighValue, updateLowValue
-    , withCurrentRangeFormatter, withHighValueFormatter, withLowValueFormatter, withMaxFormatter, withMinFormatter, withOverlapThreshold
-    , fetchLowValue, fetchHighValue
     )
 
 {-| A slider component, with two track thumbs.
@@ -32,12 +30,8 @@ module Facets.Slider.DoubleSlider exposing
 
 # Config
 
-@docs withCurrentRangeFormatter, withHighValueFormatter, withLowValueFormatter, withMaxFormatter, withMinFormatter, withOverlapThreshold
-
 
 # Helper
-
-@docs fetchLowValue, fetchHighValue
 
 -}
 

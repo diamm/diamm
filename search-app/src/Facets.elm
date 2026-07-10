@@ -93,8 +93,10 @@ updateFacetConfigurations currentModel queryArgs facetBlock =
                         { identifier = "sourceType"
                         , available = facetBlock.sourceType
                         , selected =
-                            List.map (\s -> { value = s, count = 0 }) queryArgs.sourceTypes
-                                |> List.head
+                            Maybe.map (\s -> { value = s, count = 0 })
+                                (queryArgs.sourceTypes
+                                    |> List.head
+                                )
                         , bodyHidden = Maybe.map .bodyHidden currentModel.sourceTypes |> Maybe.withDefault True
                         }
                     )
@@ -109,8 +111,10 @@ updateFacetConfigurations currentModel queryArgs facetBlock =
                         { identifier = "has-inventory"
                         , available = facetBlock.hasInventory
                         , selected =
-                            List.map (\s -> { value = s, count = 0 }) queryArgs.hasInventory
-                                |> List.head
+                            Maybe.map (\s -> { value = s, count = 0 })
+                                (queryArgs.hasInventory
+                                    |> List.head
+                                )
                         , bodyHidden = Maybe.map .bodyHidden currentModel.hasInventory |> Maybe.withDefault True
                         }
                     )
@@ -125,8 +129,10 @@ updateFacetConfigurations currentModel queryArgs facetBlock =
                         { identifier = "is-anonymous"
                         , available = facetBlock.anonymous
                         , selected =
-                            List.map (\s -> { value = s, count = 0 }) queryArgs.anonymous
-                                |> List.head
+                            Maybe.map (\s -> { value = s, count = 0 })
+                                (queryArgs.anonymous
+                                    |> List.head
+                                )
                         , bodyHidden = Maybe.map .bodyHidden currentModel.anonymous |> Maybe.withDefault True
                         }
                     )
@@ -141,8 +147,10 @@ updateFacetConfigurations currentModel queryArgs facetBlock =
                         { identifier = "cities"
                         , available = facetBlock.cities
                         , selected =
-                            List.map (\s -> { value = s, count = 0 }) queryArgs.cities
-                                |> List.head
+                            Maybe.map (\s -> { value = s, count = 0 })
+                                (queryArgs.cities
+                                    |> List.head
+                                )
                         , bodyHidden = Maybe.map .bodyHidden currentModel.cities |> Maybe.withDefault True
                         }
                     )
@@ -157,8 +165,10 @@ updateFacetConfigurations currentModel queryArgs facetBlock =
                         { identifier = "original-format"
                         , available = facetBlock.originalFormat
                         , selected =
-                            List.map (\s -> { value = s, count = 0 }) queryArgs.originalFormat
-                                |> List.head
+                            Maybe.map (\s -> { value = s, count = 0 })
+                                (queryArgs.originalFormat
+                                    |> List.head
+                                )
                         , bodyHidden = Maybe.map .bodyHidden currentModel.originalFormat |> Maybe.withDefault True
                         }
                     )
@@ -173,8 +183,10 @@ updateFacetConfigurations currentModel queryArgs facetBlock =
                         { identifier = "current-state"
                         , available = facetBlock.currentState
                         , selected =
-                            List.map (\s -> { value = s, count = 0 }) queryArgs.currentState
-                                |> List.head
+                            Maybe.map (\s -> { value = s, count = 0 })
+                                (queryArgs.currentState
+                                    |> List.head
+                                )
                         , bodyHidden = Maybe.map .bodyHidden currentModel.currentState |> Maybe.withDefault True
                         }
                     )
@@ -203,8 +215,10 @@ updateFacetConfigurations currentModel queryArgs facetBlock =
                         { identifier = "host-contents"
                         , available = facetBlock.hostMainContents
                         , selected =
-                            List.map (\s -> { value = s, count = 0 }) queryArgs.hostMainContents
-                                |> List.head
+                            Maybe.map (\s -> { value = s, count = 0 })
+                                (queryArgs.hostMainContents
+                                    |> List.head
+                                )
                         , bodyHidden = Maybe.map .bodyHidden currentModel.hostMainContents |> Maybe.withDefault True
                         }
                     )
@@ -219,8 +233,10 @@ updateFacetConfigurations currentModel queryArgs facetBlock =
                         { identifier = "organization-type"
                         , available = facetBlock.organizationType
                         , selected =
-                            List.map (\s -> { value = s, count = 0 }) queryArgs.organizationType
-                                |> List.head
+                            Maybe.map (\s -> { value = s, count = 0 })
+                                (queryArgs.organizationType
+                                    |> List.head
+                                )
                         , bodyHidden = Maybe.map .bodyHidden currentModel.organizationType |> Maybe.withDefault True
                         }
                     )

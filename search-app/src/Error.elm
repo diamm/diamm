@@ -1,4 +1,4 @@
-module Error exposing (..)
+module Error exposing (ErrorResponse(..), createErrorMessage, errorMessageString)
 
 import Http.Detailed
 

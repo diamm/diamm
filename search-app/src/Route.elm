@@ -154,8 +154,10 @@ dateRangeParamParser =
 
 dateRangeQueryStringToDateRange : List String -> Maybe ( String, String )
 dateRangeQueryStringToDateRange incoming =
-    List.map convertRangeString incoming
-        |> List.head
+    Maybe.map convertRangeString
+        (incoming
+            |> List.head
+        )
 
 
 convertRangeString : String -> ( String, String )
@@ -177,8 +179,10 @@ convertRangeString inc =
 
 typeQueryStringToResultType : List String -> RecordTypeFilters
 typeQueryStringToResultType typeList =
-    List.map parseStringToResultMode typeList
-        |> List.head
+    Maybe.map parseStringToResultMode
+        (typeList
+            |> List.head
+        )
         |> Maybe.withDefault ShowAllRecords
 
 
