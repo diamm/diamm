@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
+import os
+
 from django_jinja.builtins import DEFAULT_EXTENSIONS
 
 from diamm.settings_local import *  # noqa: F403

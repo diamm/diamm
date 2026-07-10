@@ -10,10 +10,7 @@ from django.urls import reverse
 from model_bakery import baker
 
 
-@override_settings(
-    DIAMM_IMAGE_SERVER="https://images.example.test",
-    SECRET_KEY="test-secret-key",
-)
+@override_settings(SECRET_KEY="test-secret-key")
 class ImageAuthTests(TestCase):
     def setUp(self) -> None:
         Site.objects.update_or_create(
@@ -42,13 +39,13 @@ class ImageAuthTests(TestCase):
 
         self.assertEqual(info_response.status_code, 204)
         self.assertEqual(
-            info_response["X-DIAMM-Backend-URI"],
-            "https://images.example.test/iiif/ms-123/page-1/info.json",
+            info_response["X-DIAMM-Backend-Query"],
+            "IIIF=/iiif/ms-123/page-1/info.json",
         )
         self.assertEqual(tile_response.status_code, 204)
         self.assertEqual(
-            tile_response["X-DIAMM-Backend-URI"],
-            "https://images.example.test/iiif/ms-123/page-1/full/512,/0/default.jpg",
+            tile_response["X-DIAMM-Backend-Query"],
+            "IIIF=/iiif/ms-123/page-1/full/512,/0/default.jpg",
         )
 
     def test_public_cover_backend_returns_low_res_backend_uri(self) -> None:
@@ -59,8 +56,8 @@ class ImageAuthTests(TestCase):
 
         self.assertEqual(response.status_code, 204)
         self.assertEqual(
-            response["X-DIAMM-Backend-URI"],
-            "https://images.example.test/iiif/ms-123/page-1/full/400,/0/default.jpg",
+            response["X-DIAMM-Backend-Query"],
+            "IIIF=/iiif/ms-123/page-1/full/400,/0/default.jpg",
         )
 
     def test_public_cover_route_is_named_and_direct_django_hit_is_not_implemented(self) -> None:
