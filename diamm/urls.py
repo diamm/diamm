@@ -53,9 +53,8 @@ from diamm.views.website.composition import CompositionDetail
 from diamm.views.website.correction import correction_submit
 from diamm.views.website.country import CountryDetail, CountryList
 from diamm.views.website.image import (
-    cover_image_serve,
-    image_serve,
-    image_serve_redirect,
+    protected_image_auth,
+    public_image_auth,
 )
 from diamm.views.website.organization import OrganizationDetail
 from diamm.views.website.person import PersonDetail, legacy_composer_redirect
@@ -126,6 +125,8 @@ urlpatterns = [
     ),
     path("logout/", LogoutView.as_view(next_page="/"), name="logout"),
     path("register/", CreateAccount.as_view(), name="register"),
+    path("auth/images/", protected_image_auth, name="protected-image-auth"),
+    path("auth/covers/", public_image_auth, name="cover-image-backend"),
     path(
         "reset/",
         PasswordResetView.as_view(
@@ -220,14 +221,6 @@ urlpatterns = [
     ),
     path("sets/<int:pk>/", SetDetail.as_view(), name="set-detail"),
     path("authors/<int:pk>/", BibliographyAuthorDetail.as_view(), name="author-detail"),
-    re_path(
-        r"^images/(?P<pk>[0-9]+)/(?P<region>(?:pct:)?[0-9,]+|full|square)/(?P<size>.*)/(?P<rotation>.*)/default\.jpg$",
-        image_serve,
-        name="image-serve",
-    ),
-    path("images/<int:pk>/", image_serve_redirect, name="image-serve-redirect"),
-    path("images/<int:pk>/info.json", image_serve, name="image-serve-info"),
-    path("cover/<int:pk>/", cover_image_serve, name="cover-image"),
     path("commentary/", commentary_submit, name="commentary-submit"),
     # Two views on the same content; see the problem_report model for clarification.
     path("corrections/", correction_submit, name="correction-create"),
