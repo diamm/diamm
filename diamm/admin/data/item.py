@@ -77,7 +77,7 @@ class AttachedToPagesListFilter(admin.SimpleListFilter):
     parameter_name = "page_att"
 
     def lookups(self, request, model_admin):
-        return (("False", _("Not attached to pages")), ("True", _("Attached to pages")))
+        return ("False", _("Not attached to pages")), ("True", _("Attached to pages"))
 
     def queryset(self, request, queryset):
         val = self.value()

@@ -10,7 +10,7 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 
 from diamm.forms.create_account_form import CreateAccountForm
-from diamm.models.diamm_user import CustomUserModel
+from diamm.models import CustomUserModel
 
 REGISTRATION_SALT = getattr(settings, "REGISTRATION_SALT", "registration")
 
@@ -89,6 +89,7 @@ class CreateAccount(FormView):
             "registration_activate",
             request=self.request,
         )
+        # noinspection PyTypeChecker
         send_mail(
             "Registration Confirmation for DIAMM",
             settings.MAIL["CONFIRMATION_MESSAGE"].format(

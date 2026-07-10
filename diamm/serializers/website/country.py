@@ -1,7 +1,7 @@
 import ypres
 from rest_framework.reverse import reverse
 
-from diamm.models.data.geographic_area import GeographicArea, AreaTypeChoices
+from diamm.models.data.geographic_area import AreaTypeChoices
 
 
 class CountryStateSerializer(ypres.Serializer):

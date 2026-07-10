@@ -3,7 +3,7 @@ from django.contrib.contenttypes.prefetch import GenericPrefetch
 from rest_framework.reverse import reverse
 
 from diamm.models import Organization, Person
-from diamm.models.data.geographic_area import GeographicArea, AreaTypeChoices
+from diamm.models.data.geographic_area import AreaTypeChoices
 
 
 class OrganizationLocationSerializer(ypres.Serializer):

@@ -11,4 +11,4 @@ class DiammDataAppConfig(AppConfig):
     verbose_name = "DIAMM Data"
 
     def ready(self):
-        import diamm.signals
+        pass

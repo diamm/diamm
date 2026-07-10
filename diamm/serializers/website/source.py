@@ -1,5 +1,4 @@
 import re
-from functools import cached_property
 
 import ypres
 from django.conf import settings

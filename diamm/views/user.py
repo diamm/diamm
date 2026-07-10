@@ -17,7 +17,7 @@ class ProfileView(views.APIView):
 
     def get(self, request, *args, **kwargs) -> Response:
         user = request.user
-        data = UserSerializer(user, context={"request": request}).data
+        data = UserSerializer(user, context={"request": request}).serialized
         return Response(data)
 
 
