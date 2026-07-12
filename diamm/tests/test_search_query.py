@@ -1,12 +1,19 @@
 from __future__ import annotations
 
 from typing import Any
+from unittest.mock import MagicMock, patch
+
 from django.contrib.auth.models import AnonymousUser
 from django.test import RequestFactory, SimpleTestCase
-from unittest.mock import patch
 
-from diamm.helpers.solr_pagination import PageRangeOutOfBoundsException
-from diamm.search import build_search_query_params, build_search_solr_request
+from diamm.helpers.solr import (
+    PageRangeOutOfBoundsException,
+    SearchSolrRequest,
+    SolrPaginator,
+    SolrSearchResult,
+    build_search_query_params,
+    build_search_solr_request,
+)
 from diamm.views.website.search import SearchView
 
 
@@ -89,3 +96,49 @@ class SearchViewTests(SimpleTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["pagination"]["current_page"], 1)
+
+
+class SolrPaginatorTests(SimpleTestCase):
+    def setUp(self) -> None:
+        self.request = RequestFactory().get("/search/")
+        self.solr_request = SearchSolrRequest(
+            query="mass",
+            filters={"public_b": True},
+            exclusive_filters={},
+            sorts="score desc",
+            request_context={"facet": "true"},
+        )
+
+    @staticmethod
+    def result(*, hits: int) -> SolrSearchResult:
+        return SolrSearchResult(
+            docs=[],
+            hits=hits,
+            facets={},
+            raw_response={},
+            grouped={},
+        )
+
+    def test_requested_page_is_fetched_once(self) -> None:
+        client = MagicMock()
+        client.search.return_value = self.result(hits=50)
+        paginator = SolrPaginator(self.solr_request, self.request, client=client)
+
+        page = paginator.page(2)
+
+        self.assertEqual(page.number, 2)
+        client.search.assert_called_once()
+        self.assertEqual(client.search.call_args.kwargs["start"], paginator.page_size)
+
+    def test_out_of_range_page_can_fall_back_to_first_page(self) -> None:
+        client = MagicMock()
+        client.search.side_effect = [self.result(hits=20), self.result(hits=20)]
+        paginator = SolrPaginator(self.solr_request, self.request, client=client)
+
+        with self.assertRaises(PageRangeOutOfBoundsException):
+            paginator.page(99)
+        page = paginator.page(1)
+
+        self.assertEqual(page.number, 1)
+        self.assertEqual(client.search.call_count, 2)
+        self.assertEqual(client.search.call_args.kwargs["start"], 0)

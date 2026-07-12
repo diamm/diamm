@@ -8,7 +8,7 @@ from django.conf import settings
 from django.test import SimpleTestCase
 from pyreqwest.exceptions import ConnectError, ConnectTimeoutError, StatusError
 
-from diamm.search import (
+from diamm.helpers.solr import (
     SolrClient,
     SolrConnectionError,
     SolrResponseError,
@@ -237,7 +237,9 @@ class SolrClientTests(SimpleTestCase):
         builder.connect_timeout.return_value = builder
         builder.read_timeout.return_value = builder
         builder.build.return_value = MagicMock()
-        with patch("diamm.search.solr_client.SyncClientBuilder", return_value=builder):
+        with patch(
+            "diamm.helpers.solr.client.SyncClientBuilder", return_value=builder
+        ):
             client = SolrClient(
                 connect_timeout=timedelta(seconds=1),
                 read_timeout=timedelta(seconds=2),

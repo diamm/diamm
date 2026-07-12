@@ -318,7 +318,7 @@ class ImageAuthTests(TestCase):
                 side_effect=AssertionError("DiammToken lookup should not occur"),
             ),
             patch(
-                "diamm.helpers.solr_helpers.SolrConnection.search",
+                "diamm.helpers.solr.SolrClient.raw_search",
                 side_effect=AssertionError("Solr lookup should not occur"),
             ),
         ):
