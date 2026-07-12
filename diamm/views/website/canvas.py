@@ -1,7 +1,9 @@
 from rest_framework import generics, response, status
 
-from diamm.helpers.solr_helpers import SolrConnection
+from diamm.helpers.solr import DEFAULT_SOLR_CLIENT
 from diamm.renderers.ujson_renderer import UJSONRenderer
+
+SOLR_CLIENT = DEFAULT_SOLR_CLIENT
 
 
 class CanvasListData(generics.GenericAPIView):
@@ -22,8 +24,7 @@ class CanvasData(generics.GenericAPIView):
             )
 
         page_query = {"fq": ["type:page", f"pk:{page_id}"]}
-        # conn = pysolr.Solr(settings.SOLR['SERVER'])
-        page_res = SolrConnection.search("*:*", **page_query)
+        page_res = SOLR_CLIENT.raw_search("*:*", **page_query)
 
         if not page_res.hits > 0:
             return response.Response([])
@@ -36,7 +37,7 @@ class CanvasData(generics.GenericAPIView):
 
         item_ids = ",".join([str(x) for x in page_items])
         item_query = {"fq": ["type:item", "{!term f=pk}" + item_ids]}
-        item_res = SolrConnection.search("*:*", **item_query)
+        item_res = SOLR_CLIENT.raw_search("*:*", **item_query)
 
         if not item_res.hits > 0:
             return response.Response([])

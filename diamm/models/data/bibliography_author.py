@@ -1,7 +1,6 @@
-from django.conf import settings
 from django.db import models
 
-from diamm.helpers.solr_helpers import SolrManager
+from diamm.helpers.solr import SolrManager
 
 
 class BibliographyAuthor(models.Model):
@@ -23,7 +22,7 @@ class BibliographyAuthor(models.Model):
 
     @property
     def solr_bibliography(self):
-        connection = SolrManager(settings.SOLR["SERVER"])
+        connection = SolrManager()
         fq = ["type:bibliography", f"authors_ii:{self.pk}"]
         sort = "year_ans desc, sort_ans asc"
 

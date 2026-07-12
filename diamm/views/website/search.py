@@ -2,12 +2,10 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
 from rest_framework import generics, response, status
 
-from diamm.helpers.solr_pagination import (
+from diamm.helpers.solr import (
     PageRangeOutOfBoundsException,
-    SolrPaginator,
-)
-from diamm.search import (
     SolrConnectionError,
+    SolrPaginator,
     SolrResponseError,
     SolrTimeoutError,
     build_search_query_params,
@@ -27,14 +25,11 @@ class SearchView(generics.GenericAPIView):
         )
 
         try:
-            paginator = SolrPaginator(
-                solr_request.query,
-                solr_request.filters,
-                solr_request.exclusive_filters,
-                solr_request.sorts,
-                request,
-                request_context=solr_request.request_context,
-            )
+            paginator = SolrPaginator(solr_request, request)
+            try:
+                page = paginator.page(params.page)
+            except PageRangeOutOfBoundsException:
+                page = paginator.page(1)
         except SolrResponseError as exc:
             return response.Response(
                 {"message": str(exc)},
@@ -46,11 +41,5 @@ class SearchView(generics.GenericAPIView):
             return response.Response(
                 {"message": str(exc)}, status=status.HTTP_503_SERVICE_UNAVAILABLE
             )
-
-        try:
-            page = paginator.page(params.page)
-        except PageRangeOutOfBoundsException:
-            # If requesting past the number of pages, punt the user back to page 1.
-            page = paginator.page(1)
 
         return response.Response(page.get_paginated_response())

@@ -1,12 +1,11 @@
 import re
 
 import ypres
-from django.conf import settings
 from django.db.models.expressions import Exists, OuterRef
 from django.template.loader import get_template
 from rest_framework.reverse import reverse
 
-from diamm.helpers.solr_helpers import SolrManager
+from diamm.helpers.solr import SolrManager
 from diamm.models import Image, SourceURL
 
 
@@ -193,7 +192,7 @@ class CompositionDetailSerializer(ypres.Serializer):
         return []
 
     def get_bibliography(self, obj):
-        connection = SolrManager(settings.SOLR["SERVER"])
+        connection = SolrManager()
         fq = ["type:bibliography", f"compositions_ii:{obj.pk}"]
         sort = "year_ans desc, sort_ans asc"
 

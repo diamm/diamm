@@ -297,3 +297,6 @@ class SolrClient:
                 key, value = clause.split(":", 1)
                 target[key] = value
         return filters, exclusive_filters
+
+
+DEFAULT_SOLR_CLIENT = SolrClient()

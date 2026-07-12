@@ -1,8 +1,10 @@
 from django.db import models
 from django.urls import reverse
 
-from diamm.helpers.solr_helpers import SolrConnection
+from diamm.helpers.solr import DEFAULT_SOLR_CLIENT
 from diamm.helpers.storage import OverwriteStorage
+
+SOLR_CLIENT = DEFAULT_SOLR_CLIENT
 
 
 class Archive(models.Model):
@@ -71,7 +73,6 @@ class Archive(models.Model):
         sorted by shelfmark. (Solr can do alphanumeric sort but the database
         cannot.
         """
-        # conn = pysolr.Solr(settings.SOLR['SERVER'])
         q = {
             "fq": ["type:source", f"archive_i:{self.pk}"],
             "fl": [
@@ -87,7 +88,7 @@ class Archive(models.Model):
             "sort": ["shelfmark_ans asc"],
         }
 
-        res = SolrConnection.search("*:*", **q)
+        res = SOLR_CLIENT.raw_search("*:*", **q)
         if res.hits > 0:
             return res.docs
 

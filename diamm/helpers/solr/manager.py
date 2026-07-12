@@ -3,86 +3,7 @@ from collections.abc import Iterator
 
 from django.conf import settings
 
-from diamm.search import SolrClient
-
-DEFAULT_SOLR_CLIENT = SolrClient()
-
-
-class LegacySolrConnection:
-    def __init__(self, client: SolrClient | None = None) -> None:
-        self.client = client or DEFAULT_SOLR_CLIENT
-
-    def search(self, query: str, **kwargs):
-        core = kwargs.pop("core", None)
-        return self.client.raw_search(query, core=core, **kwargs)
-
-    def delete(self, *, id: str | None = None, q: str | None = None):
-        if id is not None:
-            self.client.delete(doc_id=id, core=settings.SOLR["LIVE_CORE"])
-            return
-        if q is not None:
-            self.client.delete(query=q, core=settings.SOLR["LIVE_CORE"])
-            return
-        raise ValueError("Either id or q must be provided.")
-
-    def commit(self):
-        self.client.commit(core=settings.SOLR["LIVE_CORE"])
-
-    def add(self, data: list[dict]):
-        self.client.index(data, core=settings.SOLR["LIVE_CORE"])
-
-
-SolrConnection = LegacySolrConnection()
-
-
-def __solr_prepare(instances) -> None:
-    """
-    Both index and delete require the step of checking
-    to see if the requested documents exist. For indexing, this is so we don't get
-    duplicate records in the index; for deleting, it's rather obvious.
-    This method deletes the documents in question and returns the connection object.
-
-    An array of model instances must be passed to this method. For single instances,
-    the caller should wrap it in an array of length 1 before passing it in.
-    """
-    # connection = pysolr.Solr(settings.SOLR['SERVER'])
-    #
-    for instance in instances:
-        fq = [f"type:{instance.__class__.__name__.lower()}", f"pk:{instance.pk}"]
-        records = SolrConnection.search("*:*", fq=fq, fl="id")
-        if records.docs:
-            for doc in records.docs:
-                SolrConnection.delete(id=doc["id"])
-                SolrConnection.commit()
-    #
-    # return connection
-
-
-def solr_index(serializer, instance):
-    __solr_prepare([instance])
-    serialized = serializer(instance)
-    data = serialized.data
-
-    # pysolr add takes a list of documents, so we wrap the instance in an array.
-    SolrConnection.add([data])
-    SolrConnection.commit()
-
-
-def solr_index_many(serializer, instances):
-    __solr_prepare(instances)
-    serialized = serializer(instances, many=True)
-    data = serialized.data
-    SolrConnection.add(data)
-    SolrConnection.commit()
-
-
-def solr_delete(instance):
-    __solr_prepare([instance])
-
-
-def solr_delete_many(instances: list):
-    __solr_prepare(instances)
-
+from diamm.helpers.solr.client import DEFAULT_SOLR_CLIENT, SolrClient
 
 log = logging.getLogger(__name__)
 
@@ -91,7 +12,7 @@ class SolrManager:
     """
     Manages a Solr connection, allowing seamless iteration through paginated results:
 
-        >>> m = SolrManager("http://localhost/solr/core")
+        >>> m = SolrManager()
         >>> m.search("*:*", fq=["type:something"], sort="some_i asc")
         >>> for r in m.results:
         ...     print(r)
@@ -104,15 +25,18 @@ class SolrManager:
 
     When calling the `.search()` method you should omit two parameters: `cursorMark` and a sort on
     the unique key (controlled using the SORT_STATEMENT parameter above). This will be added into the call prior
-    to sending the query to Solr. Otherwise, the `.search()` method shadows the pysolr.Solr.search method, and the
-    available arguments are the same. Unlike the pysolr.Solr.search method, however, it does not return a Result
-    object -- the result object is managed by this class privately.
+    to sending the query to Solr. The result object is managed by this class privately.
 
     Once `search()` has been called users can iterate through the `results` property and it will transparently
     fire off requests for the next page (technically, the next cursor mark) before yielding a result.
     """
 
-    def __init__(self, url: str, curs_sort_statement: str = "id asc") -> None:
+    def __init__(
+        self,
+        client: SolrClient | None = None,
+        curs_sort_statement: str = "id asc",
+    ) -> None:
+        self.client = client or DEFAULT_SOLR_CLIENT
         self._res = None
         self._curs_sort_statement: str = curs_sort_statement
         self._hits: int = 0
@@ -134,11 +58,10 @@ class SolrManager:
 
     def search(self, q: str, **kwargs) -> None:
         """
-        Shadows pysolr.Solr.search, but with additional housekeeping that manages
-        the results object and stores the query parameters so that they can be used
-        transparently in fetching pages.
+        Searches Solr with additional housekeeping that manages the results object
+        and stores the query parameters for transparently fetching pages.
         :param q: A default query parameter for Solr
-        :param kwargs: Keyword arguments to pass along to pysolr.Solr.search
+        :param kwargs: Keyword arguments to pass along to SolrClient.raw_search
         :return: None
         """
         self._q = q
@@ -153,7 +76,7 @@ class SolrManager:
 
         self._cursorMark = "*"
         self._q_kwargs["cursorMark"] = self._cursorMark
-        self._res = SolrConnection.search(q, **self._q_kwargs)
+        self._res = self.client.raw_search(q, **self._q_kwargs)
         self._hits = self._res.hits
         self.docs = self._res.docs
 
@@ -187,7 +110,7 @@ class SolrManager:
         self._gp_kwargs.update(
             {"group.field": self._group_name, "group.sort": group_sort}
         )
-        self._res = SolrConnection.search(
+        self._res = self.client.raw_search(
             q, start=0, rows=self._group_rows, **self._q_kwargs, **self._gp_kwargs
         )
         self._hits = self._res.hits
@@ -216,9 +139,9 @@ class SolrManager:
                 # round, we'll start at 0, then the next will start at 21, and then
                 # 41, and then 61, etc.
                 pgno += 1
-                start: int = (pgno * self._group_rows) + 1
+                start: int = pgno * self._group_rows
 
-                self._res = SolrConnection.search(
+                self._res = self.client.raw_search(
                     self._q,
                     start=start,
                     rows=self._group_rows,
@@ -238,7 +161,7 @@ class SolrManager:
     @property
     def results(self) -> Iterator[dict]:
         """
-        Provides a generator for pysolr.Results.docs, yielding
+        Provides a generator for Solr result documents, yielding
         the next result on every loop. In the case where the next result
         is on the next page, it will fetch the next page before yielding
         the first result on that page.
@@ -256,7 +179,7 @@ class SolrManager:
                 self._page_idx = 0
                 self._cursorMark = self._res.nextCursorMark
                 self._q_kwargs["cursorMark"] = self._res.nextCursorMark
-                self._res = SolrConnection.search(self._q, **self._q_kwargs)
+                self._res = self.client.raw_search(self._q, **self._q_kwargs)
                 self._hits = self._res.hits
                 if self._res.docs:
                     yield self._res.docs[self._page_idx]

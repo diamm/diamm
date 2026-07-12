@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from diamm.search import SolrClient
+from diamm.helpers.solr import SolrClient
 
 
 class Command(BaseCommand):

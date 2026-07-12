@@ -1,14 +1,14 @@
 import math
 from collections import OrderedDict
 
-import ujson
 import ypres
 from django.conf import settings
 from rest_framework.reverse import reverse
 from rest_framework.utils.urls import replace_query_param
 
-from diamm.helpers.formatters import format_person_name, contents_statement
-from diamm.search import SolrClient, SolrSearchResult
+from diamm.helpers.formatters import contents_statement, format_person_name
+from diamm.helpers.solr.client import DEFAULT_SOLR_CLIENT, SolrClient, SolrSearchResult
+from diamm.helpers.solr.request import SearchSolrRequest
 
 
 class SolrResultObject:
@@ -143,47 +143,19 @@ class SolrPaginator:
 
     def __init__(
         self,
-        query,
-        filters,
-        exclusive_filters,
-        sorts,
+        solr_request: SearchSolrRequest,
         request,
-        *args,
-        request_context=None,
-        client=None,
-        **kwargs,
+        client: SolrClient | None = None,
     ):
-        # The query is the value of the fulltext q-field.
-        self.query = query
+        self.query = solr_request.query
         self.request = request
         self.result: SolrSearchResult | None = None
         self.absolute_uri = request.build_absolute_uri()
-        self.filters = filters or {}
-        self.exclusive_filters = exclusive_filters or {}
-        self.client = client or SolrClient()
-
-        # qopts are the query options passed to solr.
-        self.qopts = request_context or {
-            "q.op": settings.SOLR["DEFAULT_OPERATOR"],
-            "facet": "true",
-            "facet.field": settings.SOLR["FACET_FIELDS"],
-            "facet.mincount": 1,
-            "facet.limit": -1,
-            "json.nl": "arrmap",
-            "json.facet": ujson.dumps(settings.SOLR["JSON_FACETS"]),
-            "facet.pivot": settings.SOLR["FACET_PIVOTS"],
-            "hl": "true",
-            "defType": "edismax",
-            "qf": settings.SOLR["FULLTEXT_QUERYFIELDS"],
-            "bq": ["type:source^10", "type:archive^5", "type:person^1"],
-        }
-        self.qopts.update(settings.SOLR["FACET_SORT"])
-
-        if sorts:
-            self.qopts["sort"] = sorts
-
-        # Fetch the requested page.
-        self._fetch_page()
+        self.filters = solr_request.filters
+        self.exclusive_filters = solr_request.exclusive_filters
+        self.sorts = solr_request.sorts
+        self.request_context = solr_request.request_context
+        self.client = client or DEFAULT_SOLR_CLIENT
 
     @property
     def page_size(self):
@@ -214,10 +186,10 @@ class SolrPaginator:
             self.query,
             filters=self.filters,
             exclusive_filters=self.exclusive_filters,
-            sorts=self.qopts.get("sort"),
+            sorts=self.sorts,
             start=start,
             rows=settings.SOLR["PAGE_SIZE"],
-            request_context=self.qopts,
+            request_context=self.request_context,
         )
 
     def page(self, page_num=1):
@@ -226,11 +198,11 @@ class SolrPaginator:
         """
         # e.g., page 3: ((3 - 1) * 20) + 1, start = 41
         # remainder = 0 if page_num == 1 else 1  # page 1 starts at result 0; page 2 starts at result 11
-        if self.num_pages != 0 and page_num > self.num_pages:
-            raise PageRangeOutOfBoundsException()
-
         start = (page_num - 1) * self.page_size
         self._fetch_page(start=start)
+
+        if self.num_pages != 0 and page_num > self.num_pages:
+            raise PageRangeOutOfBoundsException()
 
         return SolrPage(self.result, page_num, self)
 

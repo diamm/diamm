@@ -9,14 +9,17 @@ from rest_framework.decorators import (
     renderer_classes,
 )
 
-from diamm.helpers.solr_helpers import SolrConnection
+from diamm.helpers.solr import DEFAULT_SOLR_CLIENT
 from diamm.models import Page, Source, SourceURL
 from diamm.models.data.item import Item
-from diamm.renderers.ujson_renderer import UJSONRenderer
+from diamm.renderers.ujson_renderer import UJSONLDRenderer, UJSONRenderer
 from diamm.serializers.iiif.canvas import CanvasSerializer
 from diamm.serializers.iiif.manifest import SourceManifestSerializer
 from diamm.serializers.iiif.service import ServiceSerializer
+from diamm.serializers.iiif.structure import StructureSerializer
 from diamm.serializers.website.source import SourceDetailSerializer
+
+SOLR_CLIENT = DEFAULT_SOLR_CLIENT
 
 
 class SourceDetail(generics.RetrieveAPIView):
@@ -59,13 +62,13 @@ class SourceDetail(generics.RetrieveAPIView):
 @api_view(["GET", "OPTIONS"])
 @authentication_classes([SessionAuthentication])
 @permission_classes([])
-@renderer_classes([UJSONRenderer])
+@renderer_classes([UJSONLDRenderer])
 def manifest_serve(request, pk, *args, **kwargs) -> response.Response:
     fq = ["type:source", f"pk:{pk}"]
     if not request.user.is_staff:
         fq.append("public_b:true")
 
-    res = SolrConnection.search("*:*", fq=fq, rows=1)
+    res = SOLR_CLIENT.raw_search("*:*", fq=fq, rows=1)
 
     if res.hits == 0:
         return response.Response(
@@ -84,26 +87,43 @@ class SourceCanvasDetail(generics.GenericAPIView):
      retrieve pre-indexed results for the contents of a page.
     """
 
-    renderer_classes = (UJSONRenderer,)
+    renderer_classes = (UJSONLDRenderer,)
 
     def get(self, request, source_id, page_id) -> response.Response:
-        # conn = pysolr.Solr(settings.SOLR['SERVER'])
-        res = SolrConnection.search("*:*", fq=["type:image", f"page_i:{page_id}"])
+        res = SOLR_CLIENT.raw_search("*:*", fq=["type:image", f"page_i:{page_id}"])
         canvas = CanvasSerializer(res.docs[0], context={"request": request})
 
         return response.Response(canvas.serialized)
 
 
 class SourceRangeDetail(generics.GenericAPIView):
-    renderer_classes = (UJSONRenderer,)
+    renderer_classes = (UJSONLDRenderer,)
+
+    def get(self, request, source_id, item_id) -> response.Response:
+        structure_query = {
+            "fq": [
+                "type:item",
+                f"pk:{item_id}",
+                f"source_i:{source_id}",
+                "pages_ii:[* TO *]",
+            ],
+            "rows": 1,
+        }
+        structure_res = SOLR_CLIENT.raw_search("*:*", **structure_query)
+        if structure_res.hits == 0:
+            return response.Response(status=status.HTTP_404_NOT_FOUND)
+
+        structure = StructureSerializer(
+            structure_res.docs[0], context={"request": request}
+        ).serialized
+
+        return response.Response(structure)
 
 
 class SourceItemDetail(generics.GenericAPIView):
     renderer_classes = (UJSONRenderer,)
 
     def get(self, request, source_id, item_id) -> response.Response:
-        # conn = pysolr.Solr(settings.SOLR['SERVER'])
-
         # The pages_ii:[* TO *] query ensures we retrieve only
         # those records that have images associated with them.
         structure_query = {
@@ -116,7 +136,7 @@ class SourceItemDetail(generics.GenericAPIView):
             "sort": "folio_start_ans asc",
             "rows": 10000,
         }
-        structure_res = SolrConnection.search("*:*", **structure_query)
+        structure_res = SOLR_CLIENT.raw_search("*:*", **structure_query)
         structures = ServiceSerializer(
             structure_res.docs[0], context={"request": request}
         ).serialized

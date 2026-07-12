@@ -6,10 +6,15 @@ from collections.abc import Callable, Iterable
 from operator import itemgetter
 
 import ujson
-from django.db import connection, close_old_connections
+from django.db import close_old_connections, connection
 
 from diamm.helpers.formatters import format_person_name
-from diamm.search import SolrClient, SolrConnectionError, SolrResponseError, SolrTimeoutError
+from diamm.helpers.solr import (
+    SolrClient,
+    SolrConnectionError,
+    SolrResponseError,
+    SolrTimeoutError,
+)
 
 log = logging.getLogger("diamm")
 

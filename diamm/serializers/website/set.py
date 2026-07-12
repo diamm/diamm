@@ -6,8 +6,7 @@ from django.db.models.functions.text import Concat
 from django.template.loader import get_template
 from rest_framework.reverse import reverse
 
-from diamm import settings
-from diamm.helpers.solr_helpers import SolrManager
+from diamm.helpers.solr import SolrManager
 
 
 class SetBibliographySerializer(ypres.DictSerializer):
@@ -43,7 +42,7 @@ class SetDetailSerializer(ypres.Serializer):
         )
 
     def get_bibliography(self, obj) -> list[dict]:
-        connection = SolrManager(settings.SOLR["SERVER"])
+        connection = SolrManager()
         fq = ["type:bibliography", f"sets_ii:{obj.pk}"]
         connection.search("*:*", fq=fq, sort="year_ans desc, sort_ans asc")
 
@@ -98,7 +97,7 @@ class SetDetailSerializer(ypres.Serializer):
         req = self.context["request"]
         is_staff = req.user.is_staff
 
-        connection = SolrManager(settings.SOLR["SERVER"])
+        connection = SolrManager()
         fq: list = ["type:set", f"pk:{obj.pk}"]
 
         connection.search("*:*", fq=fq)

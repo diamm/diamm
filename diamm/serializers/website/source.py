@@ -1,7 +1,6 @@
 import re
 
 import ypres
-from django.conf import settings
 from django.contrib.contenttypes.prefetch import GenericPrefetch
 from django.db.models import Count, Prefetch
 from django.db.models.functions import Collate
@@ -9,7 +8,7 @@ from django.template.loader import get_template
 from rest_framework.reverse import reverse
 
 from diamm.helpers.formatters import contents_statement
-from diamm.helpers.solr_helpers import SolrManager
+from diamm.helpers.solr import SolrManager
 from diamm.models import (
     CompositionComposer,
     ItemNote,
@@ -494,7 +493,7 @@ class SourceDetailSerializer(ypres.Serializer):
         )
 
     def get_bibliography(self, obj) -> list[dict]:
-        connection = SolrManager(settings.SOLR["SERVER"])
+        connection = SolrManager()
         fq = ["type:bibliography", f"sources_ii:{obj.pk}"]
         connection.search("*:*", fq=fq, sort="year_ans desc, sort_ans asc")
 
@@ -625,7 +624,7 @@ class SourceDetailSerializer(ypres.Serializer):
         ).serialized_many
 
     def get_composer_inventory(self, obj):
-        connection = SolrManager(settings.SOLR["SERVER"])
+        connection = SolrManager()
         fq: list = ["type:composerinventory", f"source_i:{obj.pk}"]
         sort: str = "composer_s asc"
 
@@ -654,7 +653,7 @@ class SourceDetailSerializer(ypres.Serializer):
         ).serialized
 
     def get_sets(self, obj):
-        connection = SolrManager(settings.SOLR["SERVER"])
+        connection = SolrManager()
         fq: list = ["type:set", f"sources_ii:{obj.pk}"]
 
         connection.search("*:*", fq=fq)
@@ -750,7 +749,7 @@ class SourceDetailSerializer(ypres.Serializer):
         return all_comments
 
     def get_contents_statement(self, obj) -> str | None:
-        connection = SolrManager(settings.SOLR["SERVER"])
+        connection = SolrManager()
         fq: list = ["type:source", f"pk:{obj.pk}"]
 
         connection.search(

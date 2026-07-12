@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.db.models import Q
@@ -6,7 +5,7 @@ from django.urls import reverse
 from django.utils.functional import cached_property
 from django_stubs_ext import StrOrPromise
 
-from diamm.helpers.solr_helpers import SolrManager
+from diamm.helpers.solr import SolrManager
 
 
 class NumberingSystemChoices(models.IntegerChoices):
@@ -254,7 +253,7 @@ class Source(models.Model):
     @property
     def solr_bibliography(self) -> list[str]:
         # Grab a list of the ids for this record
-        connection = SolrManager(settings.SOLR["SERVER"])
+        connection = SolrManager()
         fq = ["type:bibliography", f"sources_ii:{self.pk}"]
         connection.search("*:*", fq=fq, sort="year_ans desc, sort_ans asc")
 

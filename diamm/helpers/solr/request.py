@@ -3,7 +3,7 @@ from dataclasses import dataclass
 import ujson
 from django.conf import settings
 
-from diamm.search.query_params import FilterValue, SearchQueryParams
+from diamm.helpers.solr.query import FilterValue, SearchQueryParams
 
 type RequestContextValue = str | int | list[str] | list[object]
 
