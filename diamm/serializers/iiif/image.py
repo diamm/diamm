@@ -1,58 +1,75 @@
 import ypres
-from django.conf import settings
 from rest_framework.reverse import reverse
 
-from diamm.helpers.solr_helpers import SolrManager
+from diamm.helpers.solr import SolrManager
 
 
 class ImageResourceSerializer(ypres.DictSerializer):
-    id = ypres.MethodField(label="@id")
-    type = ypres.StaticField(label="@type", value="dctypes:Image")
+    id = ypres.MethodField()
+    type = ypres.StaticField(value="Image")
     format = ypres.StaticField(value="image/jpeg")
     width = ypres.IntField(attr="width_i")
     height = ypres.IntField(attr="height_i")
-    alabel = ypres.StrField(label="label", attr="image_type_s")
+    label = ypres.MethodField(required=False)
     service = ypres.MethodField()
 
     def get_id(self, obj: dict) -> str:
-        return reverse(
+        service_id = reverse(
             "image-serve-redirect",
             kwargs={"pk": obj["pk"]},
             request=self.context["request"],
         )
+        return f"{service_id}full/full/0/default.jpg"
 
-    def get_service(self, obj: dict) -> dict:
+    def get_label(self, obj: dict) -> dict | None:
+        if "image_type_s" not in obj:
+            return None
+
+        return {"none": [obj["image_type_s"]]}
+
+    def get_service(self, obj: dict) -> list[dict]:
         proxied_image_url = reverse(
             "image-serve-redirect",
             kwargs={"pk": obj["pk"]},
             request=self.context["request"],
         )
-        return {
-            "@context": "http://iiif.io/api/image/2/context.json",
-            "profile": "http://iiif.io/api/image/2/level1.json",
-            "@id": proxied_image_url,
-        }
+        return [
+            {
+                "id": proxied_image_url,
+                "type": "ImageService2",
+                "profile": "level1",
+            }
+        ]
 
 
 class ImageSerializer(ypres.DictSerializer):
-    type = ypres.StaticField(label="@type", value="oa:Annotation")
-    motivation = ypres.StaticField(value="sc:painting")
-    on = ypres.MethodField()
-    resource = ypres.MethodField()
+    id = ypres.MethodField()
+    type = ypres.StaticField(value="Annotation")
+    motivation = ypres.StaticField(value="painting")
+    body = ypres.MethodField()
+    target = ypres.MethodField()
 
-    def get_on(self, obj: dict) -> str:
-        page_id = self.context["page_id"]
-        source_id = self.context["source_id"]
-        request = self.context["request"]
-        return reverse(
+    def _canvas_id(self) -> str:
+        return self.context.get("canvas_id") or reverse(
             "source-canvas-detail",
-            kwargs={"source_id": source_id, "page_id": page_id},
-            request=request,
+            kwargs={
+                "source_id": self.context["source_id"],
+                "page_id": self.context["page_id"],
+            },
+            request=self.context["request"],
         )
 
-    def get_resource(self, obj: dict) -> dict:
+    def get_id(self, obj: dict) -> str:
+        del obj
+        return f"{self._canvas_id()}/annotation/0"
+
+    def get_target(self, obj: dict) -> str:
+        del obj
+        return self._canvas_id()
+
+    def get_body(self, obj: dict) -> dict:
         if alt_ids := obj.get("alt_images_ii", []):
-            conn = SolrManager(settings.SOLR["SERVER"])
+            conn = SolrManager()
 
             # image_type_i:1 in the field list transformer childFilter ensures that
             # only the primary images (type 1) are returned.
@@ -68,29 +85,19 @@ class ImageSerializer(ypres.DictSerializer):
             conn.search("*:*", **canvas_query)
 
             return {
-                "@type": "oa:Choice",
-                "default": ImageResourceSerializer(
-                    obj, context={"request": self.context["request"]}
-                ).serialized,
-                "item": ImageResourceSerializer(
-                    conn.results,
-                    many=True,
-                    context={"request": self.context["request"]},
-                ).serialized_many,
+                "type": "Choice",
+                "items": [
+                    ImageResourceSerializer(
+                        obj, context={"request": self.context["request"]}
+                    ).serialized,
+                    *ImageResourceSerializer(
+                        conn.results,
+                        many=True,
+                        context={"request": self.context["request"]},
+                    ).serialized_many,
+                ],
             }
 
         return ImageResourceSerializer(
             obj, context={"request": self.context["request"]}
         ).serialized
-        # else:
-        #     imgs = obj["_childDocuments_"]
-        #
-        #     return {
-        #         "@type": "oa:Choice",
-        #         "default": ImageResourceSerializer(
-        #             imgs[0], context={"request": self.context["request"]}
-        #         ).data,
-        #         "item": ImageResourceSerializer(
-        #             imgs[1:], many=True, context={"request": self.context["request"]}
-        #         ).data,
-        #     }

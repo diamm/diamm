@@ -12,7 +12,7 @@ def process_composers_list(label: str, value: list) -> dict:
             name = f"{name}?"
 
         composers.append(name)
-    return {"label": label, "value": "; ".join(composers)}
+    return {"label": language_map(label, "en"), "value": language_map("; ".join(composers))}
 
 
 def process_voices_json(label: str, value: list) -> dict:
@@ -23,7 +23,11 @@ def process_voices_json(label: str, value: list) -> dict:
     # strip out multiple spaces
     block = re.sub(r"\s+", " ", block)
     block = block.strip()
-    return {"label": label, "value": block}
+    return {"label": language_map(label, "en"), "value": language_map(block)}
+
+
+def language_map(value: object, language: str = "none") -> dict[str, list[str]]:
+    return {language: [str(value)]}
 
 
 METADATA_MAPPING = [
@@ -55,7 +59,14 @@ def create_metadata_block(obj: dict) -> list[dict]:
         if processor is not None:
             metadata_entries.append(processor(label, field_value))
         elif isinstance(field_value, list):
-            metadata_entries.append({"label": label, "value": "; ".join(field_value)})
+            metadata_entries.append(
+                {
+                    "label": language_map(label, "en"),
+                    "value": language_map("; ".join(field_value)),
+                }
+            )
         else:
-            metadata_entries.append({"label": label, "value": field_value})
+            metadata_entries.append(
+                {"label": language_map(label, "en"), "value": language_map(field_value)}
+            )
     return metadata_entries

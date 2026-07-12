@@ -1,19 +1,22 @@
-import pysolr
 import ypres
 from django.conf import settings
 from rest_framework.reverse import reverse
+
+from diamm.helpers.solr import DEFAULT_SOLR_CLIENT
+
+SOLR_CLIENT = DEFAULT_SOLR_CLIENT
 
 
 class StructureServiceSerializer(ypres.DictSerializer):
     """
     A minimal serializer that returns the context and a resolvable
-    @id for retrieving expanded service information.
+    id for retrieving expanded service information.
     """
 
     service = ypres.StaticField(
         label="@context", value=f"https://{settings.HOSTNAME}/services/item"
     )
-    id = ypres.MethodField(label="@id")
+    id = ypres.MethodField()
 
     def get_id(self, obj: dict) -> str:
         return reverse(
@@ -28,7 +31,7 @@ class ServiceSerializer(ypres.DictSerializer):
         label="@context",
         value=f"https://{settings.HOSTNAME}/services/item",  # custom DIAMM service namespace
     )
-    id = ypres.MethodField(label="@id")
+    id = ypres.MethodField()
     type = ypres.StaticField(value="Item")
     source_attribution = ypres.StrField(attr="source_attribution_s", required=False)
     item_title = ypres.StrField(attr="item_title_s", required=False)
@@ -60,7 +63,7 @@ class ServiceSerializer(ypres.DictSerializer):
                 composer_url = reverse(
                     "person-detail", kwargs={"pk": pk}, request=self.context["request"]
                 )
-                c["@id"] = composer_url
+                c["id"] = composer_url
 
             if uncertain and uncertain == "True":
                 c["uncertain"] = True
@@ -75,10 +78,9 @@ class ServiceSerializer(ypres.DictSerializer):
             return None
 
         id_list = ",".join([str(x) for x in obj["voices_ii"]])
-        connection = pysolr.Solr(settings.SOLR["SERVER"])
         fq = ["type:voice", "{!terms f=pk}" + id_list]
         sort = "sort_order_i asc"
-        voice_list = connection.search("*:*", fq=fq, sort=sort, rows=100)
+        voice_list = SOLR_CLIENT.raw_search("*:*", fq=fq, sort=sort, rows=100)
 
         if voice_list.hits == 0:
             return None
@@ -105,7 +107,7 @@ class ServiceSerializer(ypres.DictSerializer):
         if "folio_start_s" in obj:
             f["start"] = {
                 "label": obj["folio_start_s"],
-                "@id": reverse(
+                "id": reverse(
                     "source-canvas-detail",
                     kwargs={
                         "source_id": obj["source_i"],
@@ -118,7 +120,7 @@ class ServiceSerializer(ypres.DictSerializer):
         if "folio_end_s" in obj:
             f["end"] = {
                 "label": obj["folio_end_s"],
-                "@id": reverse(
+                "id": reverse(
                     "source-canvas-detail",
                     kwargs={
                         "source_id": obj["source_i"],
@@ -137,7 +139,7 @@ class ServiceSerializer(ypres.DictSerializer):
         composition = {
             "title": obj["composition_s"],
             "genres": obj.get("genres_ss"),
-            "@id": reverse(
+            "id": reverse(
                 "composition-detail",
                 kwargs={"pk": obj["composition_i"]},
                 request=self.context["request"],
@@ -156,7 +158,7 @@ class ServiceSerializer(ypres.DictSerializer):
             pages.append(
                 {
                     "label": label,
-                    "@id": reverse(
+                    "id": reverse(
                         "source-canvas-detail",
                         kwargs={"source_id": obj["source_i"], "page_id": pk},
                         request=self.context["request"],
