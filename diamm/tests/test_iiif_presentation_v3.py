@@ -5,7 +5,9 @@ from unittest.mock import patch
 from django.test import TestCase, override_settings
 from rest_framework.test import APIRequestFactory
 
+from diamm.iiif_auth import AUTH_CONTEXT
 from diamm.serializers.iiif.canvas import CanvasSerializer
+from diamm.serializers.iiif.helpers import PRESENTATION_CONTEXT
 from diamm.serializers.iiif.image import ImageSerializer
 from diamm.serializers.iiif.manifest import SourceManifestSerializer
 from diamm.serializers.iiif.structure import StructureSerializer
@@ -66,6 +68,7 @@ class PresentationV3SerializerTests(TestCase):
         ).serialized
 
         self.assertEqual(data["id"], "http://testserver/sources/1/canvas/10/")
+        self.assertNotIn("@context", data)
         self.assertEqual(data["type"], "Canvas")
         self.assertEqual(data["label"], {"none": ["1r"]})
         self.assertEqual(data["width"], 4096)
@@ -95,6 +98,23 @@ class PresentationV3SerializerTests(TestCase):
         )
         self.assertEqual(body["service"][0]["id"], "http://testserver/images/10/")
         self.assertEqual(body["service"][0]["type"], "ImageService2")
+        auth_service = body["service"][1]
+        self.assertEqual(auth_service["type"], "AuthProbeService2")
+        self.assertNotIn("@context", auth_service)
+        self.assertEqual(
+            auth_service["id"],
+            "http://testserver/iiif/auth/probe/"
+            "?uri=http%3A%2F%2Ftestserver%2Fimages%2F10%2Ffull%2Ffull%2F0%2Fdefault.jpg",
+        )
+        self.assertEqual(auth_service["service"][0]["type"], "AuthAccessService2")
+        self.assertEqual(
+            auth_service["service"][0]["service"][0]["type"],
+            "AuthAccessTokenService2",
+        )
+        self.assertEqual(
+            auth_service["service"][0]["service"][1]["type"],
+            "AuthLogoutService2",
+        )
         self.assertEqual(list(collect_v2_keys(data)), [])
 
     def test_image_annotation_preserves_alternates_as_v3_choice(self) -> None:
@@ -121,7 +141,16 @@ class PresentationV3SerializerTests(TestCase):
 
         self.assertEqual(data["body"]["type"], "Choice")
         self.assertEqual(len(data["body"]["items"]), 2)
-        self.assertEqual(data["body"]["items"][1]["id"], "http://testserver/images/11/full/full/0/default.jpg")
+        primary = data["body"]["items"][0]
+        alternate = data["body"]["items"][1]
+        self.assertEqual(
+            alternate["id"],
+            "http://testserver/images/11/full/full/0/default.jpg",
+        )
+        self.assertEqual(primary["service"][1]["type"], "AuthProbeService2")
+        self.assertIn("%2Fimages%2F10%2F", primary["service"][1]["id"])
+        self.assertEqual(alternate["service"][1]["type"], "AuthProbeService2")
+        self.assertIn("%2Fimages%2F11%2F", alternate["service"][1]["id"])
         self.assertEqual(list(collect_v2_keys(data)), [])
 
     def test_manifest_serializes_as_presentation_v3_manifest(self) -> None:
@@ -152,17 +181,25 @@ class PresentationV3SerializerTests(TestCase):
             ).serialized
 
         self.assertEqual(
-            data["@context"], "http://iiif.io/api/presentation/3/context.json"
+            data["@context"], [AUTH_CONTEXT, PRESENTATION_CONTEXT]
         )
         self.assertEqual(data["id"], "http://testserver/sources/1/manifest/")
         self.assertEqual(data["type"], "Manifest")
         self.assertEqual(data["label"], {"none": ["Source A"]})
         self.assertEqual(data["summary"], {"none": ["A concise description."]})
         self.assertEqual(data["items"][0]["type"], "Canvas")
+        self.assertNotIn("@context", data["items"][0])
+        painting_body = data["items"][0]["items"][0]["items"][0]["body"]
+        self.assertEqual(painting_body["service"][0]["type"], "ImageService2")
+        self.assertEqual(painting_body["service"][1]["type"], "AuthProbeService2")
         self.assertEqual(data["structures"][0]["type"], "Range")
         self.assertEqual(data["requiredStatement"]["label"], {"en": ["Attribution"]})
         self.assertEqual(data["provider"][0]["type"], "Agent")
         self.assertEqual(data["thumbnail"][0]["type"], "Image")
+        self.assertEqual(len(data["thumbnail"][0]["service"]), 1)
+        self.assertEqual(
+            data["thumbnail"][0]["service"][0]["type"], "ImageService2"
+        )
         self.assertEqual(list(collect_v2_keys(data)), [])
 
     def test_range_serializes_items_and_rendering_as_presentation_v3(self) -> None:

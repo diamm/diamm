@@ -44,20 +44,22 @@ def absolute_reverse(request, viewname: str) -> str:
 
 
 def build_auth_probe_service(
-    request, resource_uri: str | None = None
+    request, resource_uri: str | None = None, *, include_context: bool = True
 ) -> dict[str, Any]:
     probe_id = absolute_reverse(request, "iiif-auth-probe")
     if resource_uri:
         probe_id = f"{probe_id}?{urlencode({'uri': resource_uri})}"
 
-    return {
-        "@context": AUTH_CONTEXT,
+    service = {
         "id": probe_id,
         "type": "AuthProbeService2",
         "errorHeading": language_map("Login required"),
         "errorNote": language_map("Log in to DIAMM to view this image."),
         "service": [build_auth_access_service(request)],
     }
+    if include_context:
+        service["@context"] = AUTH_CONTEXT
+    return service
 
 
 def build_auth_access_service(request) -> dict[str, Any]:

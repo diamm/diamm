@@ -6,9 +6,6 @@ from diamm.serializers.iiif.image import ImageSerializer
 
 
 class CanvasSerializer(ypres.DictSerializer):
-    ctx = ypres.StaticField(
-        value="http://iiif.io/api/presentation/3/context.json", label="@context"
-    )
     id = ypres.MethodField()
     type = ypres.StaticField(value="Canvas")
     label = ypres.MethodField()

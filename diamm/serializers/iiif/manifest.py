@@ -13,14 +13,19 @@ from django.template.defaultfilters import truncatewords
 from rest_framework.reverse import reverse
 
 from diamm.helpers.solr import SolrManager
+from diamm.iiif_auth import AUTH_CONTEXT
 from diamm.serializers.iiif.canvas import CanvasSerializer
-from diamm.serializers.iiif.helpers import create_metadata_block, language_map
+from diamm.serializers.iiif.helpers import (
+    PRESENTATION_CONTEXT,
+    create_metadata_block,
+    language_map,
+)
 from diamm.serializers.iiif.structure import StructureSerializer
 
 
 class SourceManifestSerializer(ypres.DictSerializer):
     ctx = ypres.StaticField(
-        value="http://iiif.io/api/presentation/3/context.json", label="@context"
+        value=[AUTH_CONTEXT, PRESENTATION_CONTEXT], label="@context"
     )
     id = ypres.MethodField()
     type = ypres.StaticField(value="Manifest")

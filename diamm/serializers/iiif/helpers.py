@@ -2,6 +2,8 @@ import re
 
 from django.template.loader import get_template
 
+PRESENTATION_CONTEXT = "http://iiif.io/api/presentation/3/context.json"
+
 
 def process_composers_list(label: str, value: list) -> dict:
     composers = []

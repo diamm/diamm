@@ -2,6 +2,7 @@ import ypres
 from rest_framework.reverse import reverse
 
 from diamm.helpers.solr import SolrManager
+from diamm.iiif_auth import build_auth_probe_service
 
 
 class ImageResourceSerializer(ypres.DictSerializer):
@@ -33,12 +34,18 @@ class ImageResourceSerializer(ypres.DictSerializer):
             kwargs={"pk": obj["pk"]},
             request=self.context["request"],
         )
+        image_resource_url = f"{proxied_image_url}full/full/0/default.jpg"
         return [
             {
                 "id": proxied_image_url,
                 "type": "ImageService2",
                 "profile": "level1",
-            }
+            },
+            build_auth_probe_service(
+                self.context["request"],
+                image_resource_url,
+                include_context=False,
+            ),
         ]
 
 
