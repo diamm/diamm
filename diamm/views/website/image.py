@@ -51,7 +51,7 @@ def image_serve_redirect(_request: HttpRequest, pk: int) -> HttpResponse:
 
 def image_serve_info(request: HttpRequest, pk: int) -> HttpResponse:
     if request.method == "OPTIONS":
-        return _cors_response(HttpResponse(status=status.HTTP_204_NO_CONTENT), request)
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
     location = _get_image_location(pk)
     if not location:
@@ -66,7 +66,7 @@ def image_serve_info(request: HttpRequest, pk: int) -> HttpResponse:
     )
     add_auth_service(info_json, build_auth_probe_service(request, public_info_uri))
 
-    return _cors_response(JsonResponse(info_json), request)
+    return JsonResponse(info_json)
 
 
 def image_serve(_request: HttpRequest, pk: int, suffix: str) -> HttpResponse:
@@ -134,7 +134,7 @@ window.parent.postMessage({json.dumps(message)}, {json.dumps(target_origin)});
 
 def iiif_auth_probe(request: HttpRequest) -> HttpResponse:
     if request.method == "OPTIONS":
-        return _cors_response(HttpResponse(status=status.HTTP_204_NO_CONTENT), request)
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
     auth_header = request.META.get("HTTP_AUTHORIZATION", "")
     probe_status = status.HTTP_401_UNAUTHORIZED
@@ -157,14 +157,13 @@ def iiif_auth_probe(request: HttpRequest) -> HttpResponse:
                 else status.HTTP_403_FORBIDDEN
             )
 
-    response = JsonResponse(
+    return JsonResponse(
         {
             "@context": AUTH_CONTEXT,
             "type": "AuthProbeResult2",
             "status": probe_status,
         }
     )
-    return _cors_response(response, request)
 
 
 def iiif_auth_logout(request: HttpRequest) -> HttpResponse:
@@ -252,16 +251,6 @@ def _auth_token_error(profile: str, message_id: str) -> dict[str, Any]:
         "heading": {"en": ["Unable to authorize image access"]},
         "note": {"en": ["Log in to DIAMM and try again."]},
     }
-
-
-def _cors_response(response: HttpResponse, request: HttpRequest) -> HttpResponse:
-    origin = request.META.get("HTTP_ORIGIN")
-    if is_valid_origin(origin):
-        response["Access-Control-Allow-Origin"] = origin
-        response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
-        response["Access-Control-Allow-Headers"] = "Authorization,Content-Type,Accept"
-        response["Vary"] = "Origin"
-    return response
 
 
 def _fetch_iip_info_json(

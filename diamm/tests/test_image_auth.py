@@ -129,9 +129,9 @@ class ImageAuthTests(TestCase):
         self.assertEqual(
             mocked_get.call_args.kwargs["headers"]["X-DIAMM"], "test-image-key"
         )
-        self.assertEqual(
-            response["Access-Control-Allow-Origin"], "https://viewer.example"
-        )
+        self.assertNotIn("Access-Control-Allow-Origin", response)
+        self.assertNotIn("Access-Control-Allow-Methods", response)
+        self.assertNotIn("Access-Control-Allow-Headers", response)
 
         data = response.json()
         self.assertEqual(data["@context"], "http://iiif.io/api/image/2/context.json")
@@ -215,9 +215,9 @@ class ImageAuthTests(TestCase):
         )
         self.assertEqual(probe_response.status_code, 200)
         self.assertEqual(probe_response.json()["status"], 200)
-        self.assertEqual(
-            probe_response["Access-Control-Allow-Origin"], "https://viewer.example"
-        )
+        self.assertNotIn("Access-Control-Allow-Origin", probe_response)
+        self.assertNotIn("Access-Control-Allow-Methods", probe_response)
+        self.assertNotIn("Access-Control-Allow-Headers", probe_response)
 
     def test_iiif_auth_token_posts_error_for_anonymous_user(self) -> None:
         response = self.client.get(
