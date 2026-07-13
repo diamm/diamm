@@ -12,6 +12,7 @@ from django.http import HttpResponse, JsonResponse
 from django.http.request import HttpRequest
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.views.decorators.cache import never_cache
 from django.views.decorators.clickjacking import xframe_options_exempt
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication
@@ -74,6 +75,7 @@ def image_serve(_request: HttpRequest, pk: int, suffix: str) -> HttpResponse:
     return HttpResponse(status=status.HTTP_501_NOT_IMPLEMENTED)
 
 
+@never_cache
 def iiif_auth_access(request: HttpRequest) -> HttpResponse:
     if not request.user.is_authenticated:
         next_query = urllib.parse.urlencode({"next": request.get_full_path()})
@@ -92,6 +94,7 @@ def iiif_auth_access(request: HttpRequest) -> HttpResponse:
     )
 
 
+@never_cache
 @xframe_options_exempt
 def iiif_auth_token(request: HttpRequest) -> HttpResponse:
     message_id = request.GET.get("messageId", "")
@@ -152,9 +155,7 @@ def iiif_auth_probe(request: HttpRequest) -> HttpResponse:
             probe_status = status.HTTP_401_UNAUTHORIZED
         else:
             probe_status = (
-                status.HTTP_200_OK
-                if user.is_active
-                else status.HTTP_403_FORBIDDEN
+                status.HTTP_200_OK if user.is_active else status.HTTP_403_FORBIDDEN
             )
 
     return JsonResponse(
@@ -166,6 +167,7 @@ def iiif_auth_probe(request: HttpRequest) -> HttpResponse:
     )
 
 
+@never_cache
 def iiif_auth_logout(request: HttpRequest) -> HttpResponse:
     logout(request)
     return HttpResponse(
@@ -269,7 +271,7 @@ def _fetch_iip_info_json(
         response = requests.get(info_url, headers=headers, timeout=10)
         response.raise_for_status()
         info_json = response.json()
-    except (requests.RequestException, ValueError):
+    except requests.RequestException, ValueError:
         log.exception("Could not fetch IIP info.json for location=%s", location)
         return None
 
