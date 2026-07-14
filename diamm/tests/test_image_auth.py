@@ -129,6 +129,10 @@ class ImageAuthTests(TestCase):
         self.assertEqual(
             mocked_get.call_args.kwargs["headers"]["X-DIAMM"], "test-image-key"
         )
+        self.assertEqual(
+            mocked_get.call_args.kwargs["headers"]["X-IIIF-ID"],
+            f"http://testserver/images/{self.image.pk}",
+        )
         self.assertNotIn("Access-Control-Allow-Origin", response)
         self.assertNotIn("Access-Control-Allow-Methods", response)
         self.assertNotIn("Access-Control-Allow-Headers", response)

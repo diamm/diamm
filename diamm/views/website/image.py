@@ -259,10 +259,12 @@ def _fetch_iip_info_json(
     request: HttpRequest, pk: int, location: str
 ) -> dict[str, Any] | None:
     del pk
-    info_url = f"{settings.DIAMM_IMAGE_SERVER}{location}"
+    info_url = f"{settings.DIAMM_IMAGE_SERVER}{location}/info.json"
     headers = {
         "referer": f"https://{settings.HOSTNAME}",
-        "X-IIIF-ID": request.build_absolute_uri(request.path),
+        "X-IIIF-ID": request.build_absolute_uri(request.path).removesuffix(
+            "/info.json"
+        ),
     }
     if image_key := getattr(settings, "DIAMM_IMAGE_KEY", None):
         headers["X-DIAMM"] = image_key
