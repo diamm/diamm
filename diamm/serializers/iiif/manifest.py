@@ -31,7 +31,7 @@ class SourceManifestSerializer(ypres.DictSerializer):
     type = ypres.StaticField(value="Manifest")
     label = ypres.MethodField()
     metadata = ypres.MethodField()
-    see_also = ypres.MethodField(label="seeAlso")
+    # see_also = ypres.MethodField(label="seeAlso")
     summary = ypres.MethodField()
     homepage = ypres.MethodField()
     items = ypres.MethodField()
