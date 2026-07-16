@@ -61,6 +61,7 @@ class CompositionContributionSerializer(ypres.Serializer):
 class CompositionSourceSerializer(ypres.Serializer):
     url = ypres.MethodField()
     display_name = ypres.StrField(attr="source.display_name")
+    date_statement = ypres.StrField(attr="source.date_statement", required=False)
 
     has_images = ypres.MethodField()
     has_external_manifest = ypres.MethodField()
