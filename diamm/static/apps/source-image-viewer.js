@@ -42,20 +42,10 @@
         await instance.goToPage(pageIndex);
     }
 
-    async function finishInitialization(instance, wrapper, initialPage) {
-        await instance.ready;
-
-        // The pre-release 7.4 build accepts sidebarPanel as a forward-compatible
-        // option but does not act on it yet. Open Contents until the npm build does.
-        const contentsButton = Array.from(
-            wrapper.querySelectorAll("button.sidebar-tab-button")
-        ).find(button => button.textContent.trim() === "Contents");
-        if (contentsButton) {
-            contentsButton.click();
-        }
-
-        await goToTarget(instance, initialPage);
-    }
+    // async function finishInitialization(instance, wrapper, initialPage) {
+    //     await instance.ready;
+    //     await goToTarget(instance, initialPage);
+    // }
 
     function initializeViewer() {
         if (viewer) {
@@ -73,12 +63,13 @@
             objectData: wrapper.dataset.manifestUrl,
             sidebarPanel: "contents",
             showSidebar: true,
+            sidebarWidth: 480,
             showTitle: false,
             initialPage: initialPage
         });
 
         // These remain compatibility fallbacks until the options are in the npm build.
-        void finishInitialization(viewer, wrapper, initialPage);
+        // void finishInitialization(viewer, wrapper, initialPage);
     }
 
     document.addEventListener("initialize-diva", initializeViewer);
