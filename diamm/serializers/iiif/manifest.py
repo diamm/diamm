@@ -49,7 +49,7 @@ class SourceManifestSerializer(ypres.DictSerializer):
         return language_map(obj["display_name_s"])
 
     def get_metadata(self, obj: dict) -> list:  # noqa: UP006
-        return create_metadata_block(obj)
+        return create_metadata_block(obj, self.context["request"])
 
     def get_summary(self, obj: dict) -> dict | None:
         if "notes_txt" in obj:

@@ -1,11 +1,13 @@
 import re
 
 from django.template.loader import get_template
+from django.utils.html import conditional_escape, format_html_join
+from rest_framework.reverse import reverse
 
 PRESENTATION_CONTEXT = "http://iiif.io/api/presentation/3/context.json"
 
 
-def process_composers_list(label: str, value: list) -> dict:
+def process_composers_list(label: str, value: list, request) -> dict:
     composers = []
     for composer in value:
         name, pk, uncertain = composer.split("|")
@@ -13,11 +15,25 @@ def process_composers_list(label: str, value: list) -> dict:
         if uncertain and uncertain == "True":
             name = f"{name}?"
 
+        name = conditional_escape(name)
+
+        if pk:
+            url = reverse("person-detail", kwargs={"pk": pk}, request=request)
+            name = format_html_join("", '<a href="{}">{}</a>', ((url, name),))
+
         composers.append(name)
-    return {"label": language_map(label, "en"), "value": language_map("; ".join(composers))}
+
+    composer_list = format_html_join("; ", "{}", ((name,) for name in composers))
+    return {
+        "label": language_map(label, "en"),
+        "value": language_map(
+            format_html_join("", "<span>{}</span>", ((composer_list,),))
+        ),
+    }
 
 
-def process_voices_json(label: str, value: list) -> dict:
+def process_voices_json(label: str, value: list, request) -> dict:
+    del request
     template = get_template("website/iiif/item_voices.jinja2")
     block = template.template.render(content=value)
     # strip out any newlines from the templating process
@@ -51,7 +67,7 @@ METADATA_MAPPING = [
 ]
 
 
-def create_metadata_block(obj: dict) -> list[dict]:
+def create_metadata_block(obj: dict, request) -> list[dict]:
     metadata_entries = []
     for field, label, processor in METADATA_MAPPING:
         if field not in obj:
@@ -59,7 +75,7 @@ def create_metadata_block(obj: dict) -> list[dict]:
 
         field_value = obj[field]
         if processor is not None:
-            metadata_entries.append(processor(label, field_value))
+            metadata_entries.append(processor(label, field_value, request))
         elif isinstance(field_value, list):
             metadata_entries.append(
                 {

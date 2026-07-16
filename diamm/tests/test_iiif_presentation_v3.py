@@ -16,7 +16,15 @@ from diamm.serializers.iiif.structure import StructureSerializer
 def collect_v2_keys(value):
     if isinstance(value, dict):
         for key, child in value.items():
-            if key in {"@id", "@type", "sequences", "canvases", "images", "resource", "on"}:
+            if key in {
+                "@id",
+                "@type",
+                "sequences",
+                "canvases",
+                "images",
+                "resource",
+                "on",
+            }:
                 yield key
             yield from collect_v2_keys(child)
     elif isinstance(value, list):
@@ -34,7 +42,9 @@ class FakeSolrManager:
 
     def search(self, *_args, **kwargs) -> None:
         filters = kwargs.get("fq", [])
-        if any(str(filter_value).startswith("{!terms f=pk}") for filter_value in filters):
+        if any(
+            str(filter_value).startswith("{!terms f=pk}") for filter_value in filters
+        ):
             self.results = self.alternate_image_results
         elif "type:image" in filters:
             self.results = self.image_results
@@ -180,9 +190,7 @@ class PresentationV3SerializerTests(TestCase):
                 source_doc, context={"request": self.request}
             ).serialized
 
-        self.assertEqual(
-            data["@context"], [AUTH_CONTEXT, PRESENTATION_CONTEXT]
-        )
+        self.assertEqual(data["@context"], [AUTH_CONTEXT, PRESENTATION_CONTEXT])
         self.assertEqual(data["id"], "http://testserver/sources/1/manifest/")
         self.assertEqual(data["type"], "Manifest")
         self.assertEqual(data["label"], {"none": ["Source A"]})
@@ -197,10 +205,40 @@ class PresentationV3SerializerTests(TestCase):
         self.assertEqual(data["provider"][0]["type"], "Agent")
         self.assertEqual(data["thumbnail"][0]["type"], "Image")
         self.assertEqual(len(data["thumbnail"][0]["service"]), 1)
-        self.assertEqual(
-            data["thumbnail"][0]["service"][0]["type"], "ImageService2"
-        )
+        self.assertEqual(data["thumbnail"][0]["service"][0]["type"], "ImageService2")
         self.assertEqual(list(collect_v2_keys(data)), [])
+
+    def test_manifest_metadata_links_and_escapes_composers(self) -> None:
+        source_doc = {
+            "pk": 1,
+            "display_name_s": "Source A",
+            "composers_ssni": [
+                "Josquin <des Prez>|12|True",
+                "Anonymous & unknown||",
+                "Du Fay|34|False",
+            ],
+        }
+
+        with patch("diamm.serializers.iiif.manifest.SolrManager", FakeSolrManager):
+            data = SourceManifestSerializer(
+                source_doc, context={"request": self.request}
+            ).serialized
+
+        composers = next(
+            entry
+            for entry in data["metadata"]
+            if entry["label"] == {"en": ["Composers"]}
+        )
+        self.assertEqual(
+            composers["value"],
+            {
+                "none": [
+                    '<span><a href="http://testserver/people/12/">'
+                    "Josquin &lt;des Prez&gt;?</a>; Anonymous &amp; unknown; "
+                    '<a href="http://testserver/people/34/">Du Fay</a></span>'
+                ]
+            },
+        )
 
     def test_range_serializes_items_and_rendering_as_presentation_v3(self) -> None:
         data = StructureSerializer(
@@ -218,6 +256,34 @@ class PresentationV3SerializerTests(TestCase):
         self.assertEqual(data["id"], "http://testserver/sources/1/range/20/")
         self.assertEqual(data["type"], "Range")
         self.assertEqual(data["label"], {"none": ["Kyrie"]})
-        self.assertEqual(data["items"][0], {"id": "http://testserver/sources/1/canvas/10/", "type": "Canvas"})
+        self.assertEqual(
+            data["items"][0],
+            {"id": "http://testserver/sources/1/canvas/10/", "type": "Canvas"},
+        )
         self.assertEqual(data["rendering"][0]["type"], "Text")
         self.assertEqual(list(collect_v2_keys(data)), [])
+
+    def test_range_metadata_passes_request_to_composer_links(self) -> None:
+        data = StructureSerializer(
+            {
+                "pk": 20,
+                "source_i": 1,
+                "item_title_s": "Kyrie",
+                "composers_ssni": ["Composer|56|False"],
+            },
+            context={"request": self.request},
+        ).serialized
+
+        composers = next(
+            entry
+            for entry in data["metadata"]
+            if entry["label"] == {"en": ["Composers"]}
+        )
+        self.assertEqual(
+            composers["value"],
+            {
+                "none": [
+                    '<span><a href="http://testserver/people/56/">Composer</a></span>'
+                ]
+            },
+        )

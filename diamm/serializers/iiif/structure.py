@@ -5,9 +5,6 @@ from diamm.serializers.iiif.helpers import create_metadata_block, language_map
 
 
 class StructureSerializer(ypres.DictSerializer):
-    ctx = ypres.StaticField(
-        value="http://iiif.io/api/presentation/3/context.json", label="@context"
-    )
     id = ypres.MethodField()
     type = ypres.StaticField(value="Range")
     label = ypres.MethodField(required=False)
@@ -15,11 +12,22 @@ class StructureSerializer(ypres.DictSerializer):
     items = ypres.MethodField()
     metadata = ypres.MethodField()
 
-    def get_label(self, obj: dict) -> dict | None:
-        if "composition_s" not in obj:
-            return None
+    def get_label(self, obj: dict) -> dict:
+        title = obj.get("composition_s") or obj.get("item_title_s") or "[No title]"
+        folio_start = obj.get("folio_start_s")
+        folio_end = obj.get("folio_end_s")
 
-        return language_map(obj["composition_s"])
+        if folio_start and folio_end and folio_start != folio_end:
+            folios = f"{folio_start}–{folio_end}"
+        else:
+            folios = folio_start or folio_end or "[NN]"
+
+        label_parts = [folios, title]
+
+        if composers := obj.get("composers_ss"):
+            label_parts.append(f"({'; '.join(composers)})")
+
+        return language_map(" | ".join(label_parts))
 
     def get_items(self, obj: dict) -> list | None:
         if not obj.get("pages_ii"):
@@ -61,7 +69,7 @@ class StructureSerializer(ypres.DictSerializer):
         )
 
     def get_metadata(self, obj):
-        return create_metadata_block(obj)
+        return create_metadata_block(obj, self.context["request"])
 
     # def get_service(self, obj: dict) -> dict:
     #     return StructureServiceSerializer(
