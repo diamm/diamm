@@ -1,8 +1,8 @@
 import functools
 import logging
 
-import ypres
 import ujson
+import ypres
 
 from diamm.serializers.search.helpers import get_db_records, parallelise, record_indexer
 
@@ -76,7 +76,7 @@ class SetSearchSerializer(ypres.DictSerializer):
     public_b = ypres.StaticField(True)
 
     # allow sorting by alpha-numeric shelfmark.
-    cluster_shelfmark_ans = ypres.StrField(attr="cluster_shelfmark")
+    # cluster_shelfmark_ans = ypres.StrField(attr="cluster_shelfmark")
     display_name_ans = ypres.StrField(attr="cluster_shelfmark")
 
     sources_ii = ypres.Field(attr="sources")
