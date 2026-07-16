@@ -67,6 +67,7 @@ class SolrClient:
         start: int,
         rows: int,
         request_context: dict[str, Any] | None,
+        raw_filters: list[str] | None = None,
     ) -> SolrSearchResult:
         params: dict[str, Any] = dict(request_context or {})
         core = params.pop("__core__", None)
@@ -79,6 +80,7 @@ class SolrClient:
         fq: list[str] = self._build_filter_queries(
             filters or {}, exclusive_filters or {}
         )
+        fq.extend(raw_filters or [])
         if fq:
             params["fq"] = fq
 
@@ -99,7 +101,10 @@ class SolrClient:
         rows = params.pop("rows", settings.SOLR["PAGE_SIZE"])
         start = params.pop("start", 0)
         sorts = params.pop("sort", None)
-        filters, exclusive_filters = self._split_filter_queries(params.pop("fq", None))
+        structured_fq, raw_filters = self._partition_filter_queries(
+            params.pop("fq", None)
+        )
+        filters, exclusive_filters = self._split_filter_queries(structured_fq)
         return self.search(
             query,
             filters=filters,
@@ -108,6 +113,7 @@ class SolrClient:
             start=start,
             rows=rows,
             request_context={**params, "__core__": core} if core else params,
+            raw_filters=raw_filters,
         )
 
     def index(self, records: list[dict[str, Any]], *, core: str) -> bool:
@@ -297,6 +303,23 @@ class SolrClient:
                 key, value = clause.split(":", 1)
                 target[key] = value
         return filters, exclusive_filters
+
+    @staticmethod
+    def _partition_filter_queries(
+        fq: list[str] | tuple[str, ...] | str | None,
+    ) -> tuple[list[str], list[str]]:
+        if fq is None:
+            return [], []
+
+        clauses = [fq] if isinstance(fq, str) else list(fq)
+        structured: list[str] = []
+        raw: list[str] = []
+        for clause in clauses:
+            if clause.startswith("{!") or ":" not in clause:
+                raw.append(clause)
+            else:
+                structured.append(clause)
+        return structured, raw
 
 
 DEFAULT_SOLR_CLIENT = SolrClient()

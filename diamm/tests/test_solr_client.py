@@ -3,6 +3,7 @@ from __future__ import annotations
 from datetime import timedelta
 from typing import Any
 from unittest.mock import MagicMock, patch
+from urllib.parse import parse_qs, urlsplit
 
 from django.conf import settings
 from django.test import SimpleTestCase
@@ -231,6 +232,29 @@ class SolrClientTests(SimpleTestCase):
             client.raw_search("*:*", rows=7)
 
         self.assertEqual(capture["query"]["rows"], 7)
+
+    def test_raw_search_preserves_solr_local_parameter_filters(self) -> None:
+        capture: dict[str, Any] = {}
+        response = FakeResponse({"response": {"docs": [], "numFound": 0}})
+        client = SolrClient(base_server="http://solr.example/solr", live_core="diamm")
+
+        with patch.object(
+            client, "_build_http_client", return_value=FakeClient(response, capture)
+        ):
+            client.raw_search(
+                "*:*",
+                fq=[
+                    "type:image",
+                    "{!terms f=pk}2,5",
+                    "!image_type_i:1",
+                ],
+            )
+
+        query = parse_qs(urlsplit(capture["url"]).query)
+        self.assertCountEqual(
+            query["fq"],
+            ["type:image", "{!terms f=pk}2,5", "!image_type_i:1"],
+        )
 
     def test_tls_verification_remains_enabled_by_default(self) -> None:
         builder = MagicMock()
