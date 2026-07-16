@@ -267,8 +267,18 @@ tr.selected {
   list-style: none;
 }
 
-.diva-tools form {
-  margin-bottom: 0;
+#diva-wrapper {
+  display: flex;
+  width: 100%;
+  height: clamp(32rem, 78vh, 64rem);
+  min-height: 32rem;
+}
+
+@media screen and (max-width: 768px) {
+  #diva-wrapper {
+    height: 72vh;
+    min-height: 24rem;
+  }
 }
 
 #image-item-listing {

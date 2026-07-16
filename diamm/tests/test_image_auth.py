@@ -146,11 +146,17 @@ class ImageAuthTests(TestCase):
         self.assertEqual(auth_service["@context"], "http://iiif.io/api/auth/2/context.json")
         self.assertEqual(auth_service["type"], "AuthProbeService2")
         self.assertIn("/iiif/auth/probe/", auth_service["id"])
-        self.assertEqual(auth_service["service"][0]["type"], "AuthAccessService2")
+        external, active = auth_service["service"]
+        self.assertEqual([external["profile"], active["profile"]], ["external", "active"])
+        self.assertEqual(external["type"], "AuthAccessService2")
+        self.assertNotIn("id", external)
+        for field in ("label", "heading", "note", "confirmLabel"):
+            self.assertNotIn(field, external)
         self.assertEqual(
-            auth_service["service"][0]["service"][0]["type"],
+            external["service"][0]["type"],
             "AuthAccessTokenService2",
         )
+        self.assertEqual(external["service"][1]["type"], "AuthLogoutService2")
 
     def test_image_info_json_uses_service_array_without_duplicate_auth_service(self) -> None:
         response_payload = {
@@ -243,6 +249,22 @@ class ImageAuthTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["status"], 401)
+
+    def test_iiif_auth_probe_returns_embedded_unauthorized_status_for_anonymous_user(
+        self,
+    ) -> None:
+        response = self.client.get(reverse("iiif-auth-probe"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["status"], 401)
+
+    def test_iiif_auth_probe_accepts_authenticated_session(self) -> None:
+        self.client.force_login(self.user)
+
+        response = self.client.get(reverse("iiif-auth-probe"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["status"], 200)
 
     def test_public_cover_backend_rejects_non_cover_paths(self) -> None:
         response = self.client.get(

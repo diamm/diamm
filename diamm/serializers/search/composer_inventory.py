@@ -33,7 +33,11 @@ def _get_inventory(cfg: dict):
                                  'attribution', it.source_attribution,
                                  'uncertain', cc.uncertain,
                                  'fragment', it.fragment,
-                                 'completeness', it.completeness
+                                 'completeness', it.completeness,
+                                 'source_id', it.source_id,
+                                 'page_id', first_page.page_id,
+                                 'page_external', first_page.external,
+                                 'page_canvas_uri', first_page.iiif_canvas_uri
                                  )) ORDER BY c.title) AS compositions,
                        jsonb_agg(DISTINCT jsonb_strip_nulls(jsonb_build_object(
                                         'id', p.id,
@@ -49,6 +53,16 @@ def _get_inventory(cfg: dict):
                 LEFT JOIN diamm_data_compositioncomposer AS cc ON cc.composition_id = it.composition_id
                 LEFT JOIN diamm_data_person AS p ON cc.composer_id = p.id
                 LEFT JOIN diamm_data_composition AS c ON it.composition_id = c.id
+                LEFT JOIN LATERAL (
+                    SELECT page.id AS page_id,
+                           page.external AS external,
+                           page.iiif_canvas_uri AS iiif_canvas_uri
+                      FROM diamm_data_item_pages AS item_page
+                      JOIN diamm_data_page AS page ON page.id = item_page.page_id
+                     WHERE item_page.item_id = it.id
+                     ORDER BY page.sort_order ASC NULLS LAST, page.id ASC
+                     LIMIT 1
+                ) AS first_page ON TRUE
                 GROUP BY it.source_id, p.id"""
 
     return get_db_records(sql_query, cfg)

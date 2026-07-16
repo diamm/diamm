@@ -15,7 +15,7 @@
             </tr>
         </thead>
         <tbody>
-        {% set show_imagelinks = content.manifest_url is defined and request.user.is_authenticated %}
+        {% set show_imagelinks = content.manifest_url and (request.user.is_authenticated or content.has_external_manifest) %}
         {% for entry in content.inventory | selectattr("composition") | sort(attribute="composition") %}
             <tr class="alpha-order">
                 <td class="item-details">
@@ -25,7 +25,7 @@
                     {{ composers(entry) }}
                 </td>
                 <td>
-                    {{ foliation(entry, show_imagelinks and entry.pages) }}
+                    {{ foliation(entry, show_imagelinks) }}
                 </td>
                 <td>
                     {{ entry.source_attribution|default("-") }}
@@ -48,14 +48,14 @@
             </tr>
         </thead>
         <tbody>
-        {% set show_imagelinks = content.manifest_url is defined and request.user.is_authenticated %}
+        {% set show_imagelinks = content.manifest_url and (request.user.is_authenticated or content.has_external_manifest) %}
         {% for entry in content.uninventoried %}
         <tr>
             <td>
                 Works by {{ composers(entry) }}
             </td>
             <td>
-                {{ foliation(entry, show_imagelinks and entry.pages) }}
+                {{ foliation(entry, show_imagelinks) }}
             </td>
             <td>
                 {{ entry.item_title|default("-") }}

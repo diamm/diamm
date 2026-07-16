@@ -140,9 +140,17 @@ def iiif_auth_probe(request: HttpRequest) -> HttpResponse:
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
     auth_header = request.META.get("HTTP_AUTHORIZATION", "")
-    probe_status = status.HTTP_401_UNAUTHORIZED
+    user = request.user
+    if user.is_authenticated:
+        probe_status = (
+            status.HTTP_200_OK if user.is_active else status.HTTP_403_FORBIDDEN
+        )
+    else:
+        probe_status = status.HTTP_401_UNAUTHORIZED
 
-    if auth_header.startswith("Bearer "):
+    if probe_status == status.HTTP_401_UNAUTHORIZED and auth_header.startswith(
+        "Bearer "
+    ):
         token = auth_header.removeprefix("Bearer ").strip()
         try:
             token_data = load_access_token(token)

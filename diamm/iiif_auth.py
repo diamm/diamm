@@ -55,7 +55,10 @@ def build_auth_probe_service(
         "type": "AuthProbeService2",
         "errorHeading": language_map("Login required"),
         "errorNote": language_map("Log in to DIAMM to view this image."),
-        "service": [build_auth_access_service(request)],
+        "service": [
+            build_auth_external_access_service(request),
+            build_auth_access_service(request),
+        ],
     }
     if include_context:
         service["@context"] = AUTH_CONTEXT
@@ -71,20 +74,32 @@ def build_auth_access_service(request) -> dict[str, Any]:
         "heading": language_map("Login required"),
         "note": language_map("DIAMM requires that you log in to view this image."),
         "confirmLabel": language_map("Log in"),
-        "service": [
-            {
-                "id": absolute_reverse(request, "iiif-auth-token"),
-                "type": "AuthAccessTokenService2",
-                "errorHeading": language_map("Unable to authorize image access"),
-                "errorNote": language_map("Log in to DIAMM and try again."),
-            },
-            {
-                "id": absolute_reverse(request, "iiif-auth-logout"),
-                "type": "AuthLogoutService2",
-                "label": language_map("Log out of DIAMM"),
-            },
-        ],
+        "service": build_auth_related_services(request),
     }
+
+
+def build_auth_external_access_service(request) -> dict[str, Any]:
+    return {
+        "type": "AuthAccessService2",
+        "profile": "external",
+        "service": build_auth_related_services(request),
+    }
+
+
+def build_auth_related_services(request) -> list[dict[str, Any]]:
+    return [
+        {
+            "id": absolute_reverse(request, "iiif-auth-token"),
+            "type": "AuthAccessTokenService2",
+            "errorHeading": language_map("Unable to authorize image access"),
+            "errorNote": language_map("Log in to DIAMM and try again."),
+        },
+        {
+            "id": absolute_reverse(request, "iiif-auth-logout"),
+            "type": "AuthLogoutService2",
+            "label": language_map("Log out of DIAMM"),
+        },
+    ]
 
 
 def add_auth_service(info_json: dict[str, Any], auth_service: dict[str, Any]) -> None:

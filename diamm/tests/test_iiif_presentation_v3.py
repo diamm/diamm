@@ -116,13 +116,17 @@ class PresentationV3SerializerTests(TestCase):
             "http://testserver/iiif/auth/probe/"
             "?uri=http%3A%2F%2Ftestserver%2Fimages%2F10%2Ffull%2Ffull%2F0%2Fdefault.jpg",
         )
-        self.assertEqual(auth_service["service"][0]["type"], "AuthAccessService2")
+        external, active = auth_service["service"]
+        self.assertEqual([external["profile"], active["profile"]], ["external", "active"])
+        self.assertNotIn("id", external)
+        for field in ("label", "heading", "note", "confirmLabel"):
+            self.assertNotIn(field, external)
         self.assertEqual(
-            auth_service["service"][0]["service"][0]["type"],
+            external["service"][0]["type"],
             "AuthAccessTokenService2",
         )
         self.assertEqual(
-            auth_service["service"][0]["service"][1]["type"],
+            external["service"][1]["type"],
             "AuthLogoutService2",
         )
         self.assertEqual(list(collect_v2_keys(data)), [])

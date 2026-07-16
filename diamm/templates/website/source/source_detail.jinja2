@@ -263,7 +263,7 @@
             <section id="images-panel"
                      x-show="$store.sourceTabs.isSelected('images-tab')"
                      x-cloak
-                     x-effect="if ($store.sourceTabs.isSelected('images-tab')) $nextTick(() => {$dispatch('initialize-diva'); $dispatch('update-diva');})"
+                     x-effect="if ($store.sourceTabs.isSelected('images-tab')) $nextTick(() => $dispatch('initialize-diva'))"
                      role="tabpanel">
                 {% include "website/source/images.jinja2" %}
             </section>

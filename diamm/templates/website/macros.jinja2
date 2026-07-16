@@ -47,17 +47,14 @@
             &ndash;{{ entry.folio_end }}
         {% endif %}
     {% endif %}
-    {#  Show a link to the pages if:
-        - the user is authenticated
-        - there are images attached to the source
-        - there are pages attached to the item (no pages, no images)
-    #}
-    {% if show_imagelinks %}
-        <button x-on:click="history.pushState({}, '', '#/images?p={{ entry.folio_start }}'); $store.sourceTabs.select('images-tab');">
-            <span class="icon is-small">
+    {% if show_imagelinks and entry.image_viewer_url %}
+        <a href="{{ entry.image_viewer_url }}"
+           x-on:click="$store.sourceTabs.select('images-tab')"
+           aria-label="View images{% if entry.folio_start %} for {{ entry.folio_start }}{% endif %}">
+            <span class="icon is-small" aria-hidden="true">
                 <i class="fa fa-file-text-o fa-border quicklook"></i>
             </span>
-        </button>
+        </a>
     {% endif %}
 {% endmacro %}
 

@@ -9,7 +9,7 @@
         </tr>
         </thead>
         <tbody>
-        {% set show_imagelinks = content.manifest_url is defined %}
+        {% set show_imagelinks = content.manifest_url and (request.user.is_authenticated or content.has_external_manifest) %}
         {% for entry in content.composer_inventory %}
         <tr class="composer-order">
             <td class="composer">
@@ -28,7 +28,7 @@
                         {{ "(?) " if cmp.uncertain else "" }}
                         <a href="{{ cmp.url }}">{{ cmp.composition|default("[No description]") }}</a>
                         {% if cmp.fragment %}<em>(frag.)</em>{% endif %}
-                        &ndash;{{ foliation(cmp, show_imagelinks and entry.pages and request.user.is_authenticated) }}
+                        &ndash;{{ foliation(cmp, show_imagelinks) }}
                         {% if cmp.completeness %}<em>{{ cmp.completeness }}</em>{% endif %}
                     </li>
                     {% endfor %}

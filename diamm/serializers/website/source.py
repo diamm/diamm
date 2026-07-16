@@ -1,4 +1,5 @@
 import re
+from urllib.parse import quote
 
 import ypres
 from django.contrib.contenttypes.prefetch import GenericPrefetch
@@ -13,6 +14,7 @@ from diamm.models import (
     CompositionComposer,
     ItemNote,
     Organization,
+    Page,
     Person,
     SourceURL,
     Voice,
@@ -22,6 +24,43 @@ from diamm.models.data.item_note import ItemNoteTypeChoices
 
 # from diamm.serializers.fields import DateTimeField
 # from diamm.serializers.serializers import ContextDictSerializer, ypres.Serializer
+
+
+def image_viewer_url(
+    request, source_id, page_id, external=False, external_canvas_uri=None
+):
+    """Return the source Images-tab URL for a page's IIIF Canvas."""
+    if external:
+        canvas_id = external_canvas_uri
+    elif source_id is not None and page_id is not None:
+        canvas_id = reverse(
+            "source-canvas-detail",
+            kwargs={"source_id": source_id, "page_id": page_id},
+            request=request,
+        )
+    else:
+        canvas_id = None
+
+    if not canvas_id:
+        return None
+
+    target = quote(f"canvas:{canvas_id}", safe="")
+    return f"#/images?p={target}"
+
+
+def first_page_for_item(obj):
+    """Choose an item's first Page deterministically without bypassing prefetches."""
+    pages = list(obj.pages.all())
+    if not pages:
+        return None
+    return min(
+        pages,
+        key=lambda page: (
+            page.sort_order is None,
+            page.sort_order if page.sort_order is not None else 0,
+            page.pk,
+        ),
+    )
 
 
 class SourceCatalogueEntrySerializer(ypres.Serializer):
@@ -184,6 +223,7 @@ class SourceComposerInventoryCompositionSerializer(ypres.DictSerializer):
     fragment = ypres.BoolField(required=False)
     completeness = ypres.MethodField()
     url = ypres.MethodField()
+    image_viewer_url = ypres.MethodField(required=False)
 
     def get_url(self, obj) -> str | None:
         if "id" not in obj or obj["id"] is None:
@@ -200,6 +240,15 @@ class SourceComposerInventoryCompositionSerializer(ypres.DictSerializer):
             return None
         d = dict(CompletenessOptionsChoices.choices)
         return d[obj["completeness"]]
+
+    def get_image_viewer_url(self, obj) -> str | None:
+        return image_viewer_url(
+            self.context["request"],
+            obj.get("source_id"),
+            obj.get("page_id"),
+            obj.get("page_external", False),
+            obj.get("page_canvas_uri"),
+        )
 
 
 class SourceComposerInventorySerializer(ypres.DictSerializer):
@@ -252,6 +301,19 @@ class SourceInventoryBibliographySerializer(ypres.DictSerializer):
 class SourceUninventoriedSerializer(ypres.Serializer):
     pk = ypres.IntField()
     composers = ypres.MethodField()
+    image_viewer_url = ypres.MethodField(required=False)
+
+    def get_image_viewer_url(self, obj) -> str | None:
+        page = first_page_for_item(obj)
+        if page is None:
+            return None
+        return image_viewer_url(
+            self.context["request"],
+            obj.source_id,
+            page.pk,
+            page.external,
+            page.iiif_canvas_uri,
+        )
 
     def get_composers(self, obj) -> list | None:
         if not obj.unattributed_composers.exists():
@@ -291,9 +353,22 @@ class SourceInventorySerializer(ypres.Serializer):
     notes = ypres.MethodField()
     fragment = ypres.BoolField()
     completeness = ypres.StrField(attr="item_completeness")
+    image_viewer_url = ypres.MethodField(required=False)
 
     def get_pages(self, obj):
         return [p.pk for p in obj.pages.all()]
+
+    def get_image_viewer_url(self, obj) -> str | None:
+        page = first_page_for_item(obj)
+        if page is None:
+            return None
+        return image_viewer_url(
+            self.context["request"],
+            obj.source_id,
+            page.pk,
+            page.external,
+            page.iiif_canvas_uri,
+        )
 
     def get_genres(self, obj):
         if not obj.composition:
@@ -609,7 +684,9 @@ class SourceDetailSerializer(ypres.Serializer):
                 Prefetch(
                     "voices", queryset=voices_qs
                 ),  # replaces all voices__* prefetches
-                "pages",  # single query
+                Prefetch(
+                    "pages", queryset=Page.objects.order_by("sort_order", "pk")
+                ),  # single query, stable viewer-link target
                 "unattributed_composers",  # single query (for display)
                 # If notes is heavy, constrain it:
                 # Prefetch('notes', queryset=Note.objects.select_related('created_by').only('id','item_id','text','created_by_id'))
@@ -641,6 +718,11 @@ class SourceDetailSerializer(ypres.Serializer):
     def get_uninventoried(self, obj):
         return SourceUninventoriedSerializer(
             obj.inventory.filter(unattributed_composers__isnull=False)
+            .prefetch_related(
+                Prefetch(
+                    "pages", queryset=Page.objects.order_by("sort_order", "pk")
+                )
+            )
             .distinct("pk")
             .order_by("pk"),
             many=True,
