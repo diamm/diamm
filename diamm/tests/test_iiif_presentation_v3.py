@@ -199,6 +199,7 @@ class PresentationV3SerializerTests(TestCase):
         self.assertEqual(data["id"], "http://testserver/sources/1/manifest/")
         self.assertEqual(data["type"], "Manifest")
         self.assertEqual(data["label"], {"none": ["Source A"]})
+        self.assertEqual(data["behavior"], ["paged"])
         self.assertEqual(data["summary"], {"none": ["A concise description."]})
         self.assertEqual(data["items"][0]["type"], "Canvas")
         self.assertNotIn("@context", data["items"][0])

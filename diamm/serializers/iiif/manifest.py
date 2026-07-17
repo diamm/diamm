@@ -30,6 +30,7 @@ class SourceManifestSerializer(ypres.DictSerializer):
     id = ypres.MethodField()
     type = ypres.StaticField(value="Manifest")
     label = ypres.MethodField()
+    behavior = ypres.StaticField(value=["paged"])
     metadata = ypres.MethodField()
     # see_also = ypres.MethodField(label="seeAlso")
     summary = ypres.MethodField()
