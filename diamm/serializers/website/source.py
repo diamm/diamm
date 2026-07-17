@@ -515,6 +515,7 @@ class SourceDetailSerializer(ypres.Serializer):
     url = ypres.MethodField()
     name = ypres.StrField(required=False)
     display_name = ypres.StrField(required=False)
+    display_summary = ypres.StrField()
     shelfmark = ypres.StrField()
     surface_type = ypres.StrField(required=False)
     date_statement = ypres.StrField(required=False)

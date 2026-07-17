@@ -4,15 +4,17 @@ from pathlib import Path
 from types import SimpleNamespace
 
 from django.template.loader import get_template
-from django.test import SimpleTestCase, override_settings
+from django.test import SimpleTestCase, TestCase, override_settings
 from jinja2.runtime import new_context
 from rest_framework.test import APIRequestFactory
 
+from diamm.models import Archive, Source, SourceNote
 from diamm.serializers.search.composer_inventory import (
     ComposerInventorySearchSerializer,
 )
 from diamm.serializers.website.source import (
     SourceComposerInventoryCompositionSerializer,
+    SourceDetailSerializer,
     SourceInventorySerializer,
 )
 
@@ -23,6 +25,55 @@ class RelatedObjects:
 
     def all(self):
         return self.objects
+
+
+class SourceSummaryTests(TestCase):
+    def setUp(self):
+        archive = Archive.objects.create(name="British Library", siglum="GB-Lbl")
+        self.source = Source.objects.create(
+            archive=archive,
+            shelfmark="Royal 1 A I",
+            date_statement="c. 1400",
+        )
+        SourceNote.objects.create(
+            source=self.source,
+            type=SourceNote.GENERAL_NOTE,
+            note='A "quoted" description.',
+        )
+        SourceNote.objects.create(
+            source=self.source,
+            type=SourceNote.EXTENT_NOTE,
+            note="This is not part of the summary.",
+        )
+
+    def test_source_detail_serializer_exposes_display_summary(self):
+        self.assertIn("display_summary", SourceDetailSerializer._field_map)
+
+    def test_display_summary_loads_notes_once(self):
+        source = Source.objects.select_related("archive").get(pk=self.source.pk)
+
+        with self.assertNumQueries(1):
+            summary = source.display_summary
+
+        self.assertEqual(
+            summary,
+            'GB-Lbl Royal 1 A I; c. 1400; A "quoted" description.',
+        )
+
+    def test_display_summary_uses_prefetched_notes(self):
+        source = (
+            Source.objects.select_related("archive")
+            .prefetch_related("notes")
+            .get(pk=self.source.pk)
+        )
+
+        with self.assertNumQueries(0):
+            summary = source.display_summary
+
+        self.assertEqual(
+            summary,
+            'GB-Lbl Royal 1 A I; c. 1400; A "quoted" description.',
+        )
 
 
 @override_settings(ROOT_URLCONF="diamm.urls", HOSTNAME="testserver")

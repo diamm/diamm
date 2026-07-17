@@ -190,8 +190,11 @@ class Source(models.Model):
         if date_stmt:
             summary = f"{summary}; {date_stmt}"
 
-        if self.notes.filter(type=1).exists():
-            summary = f"{summary}; {self.notes.filter(type=1).first().note}"
+        general_note = next(
+            (note for note in self.notes.all() if note.type == 1), None
+        )
+        if general_note:
+            summary = f"{summary}; {general_note.note}"
 
         return summary
 
