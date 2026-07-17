@@ -1,0 +1,92 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <script src="{% static 'admin/js/vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'admin/js/jquery.init.js' %}"></script>
+    <script src="{% url 'admin:jsi18n' %}"></script>
+    {{ formset.media }}
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+    &rsaquo; <a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>
+    &rsaquo; <a href="{% url opts|admin_urlname:'change' instance.pk|admin_urlquote %}">{{ instance|truncatewords:'18' }}</a>
+    &rsaquo; Inventory
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <p>
+        Edit up to 50 inventory records at a time. For fields not shown here,
+        follow an item's ID to its complete edit page.
+    </p>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {{ formset.management_form }}
+        {{ formset.non_form_errors }}
+        <div class="results">
+            <table id="result_list">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Composition</th>
+                        <th scope="col">Composers</th>
+                        <th scope="col">Fragment</th>
+                        <th scope="col">Completeness</th>
+                        <th scope="col">Item title</th>
+                        <th scope="col">Folio start</th>
+                        <th scope="col">Folio end</th>
+                        <th scope="col">Order</th>
+                        {% if formset.can_delete %}<th scope="col">Delete</th>{% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for form in formset.forms %}
+                    <tr class="{% cycle 'row1' 'row2' %}">
+                        <td>
+                            {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+                            {% if form.instance.pk %}
+                                <a href="{% url 'admin:diamm_data_item_change' form.instance.pk %}">{{ form.instance.pk }}</a>
+                            {% else %}
+                                New
+                            {% endif %}
+                            {{ form.non_field_errors }}
+                        </td>
+                        <td>{{ form.composition.errors }}{{ form.composition }}</td>
+                        <td>{{ form.composer_display }}</td>
+                        <td>{{ form.fragment.errors }}{{ form.fragment }}</td>
+                        <td>{{ form.completeness.errors }}{{ form.completeness }}</td>
+                        <td>{{ form.item_title.errors }}{{ form.item_title }}</td>
+                        <td>{{ form.folio_start.errors }}{{ form.folio_start }}</td>
+                        <td>{{ form.folio_end.errors }}{{ form.folio_end }}</td>
+                        <td>{{ form.source_order.errors }}{{ form.source_order }}</td>
+                        {% if formset.can_delete %}<td>{{ form.DELETE }}</td>{% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="submit-row">
+            <input type="submit" value="{% translate 'Save' %}" class="default">
+        </div>
+    </form>
+
+    {% if page_obj.paginator.num_pages > 1 %}
+    <p class="paginator">
+        {% for page_number in page_obj.paginator.page_range %}
+            {% if page_number == page_obj.number %}
+                <span class="this-page">{{ page_number }}</span>
+            {% else %}
+                <a href="?page={{ page_number }}">{{ page_number }}</a>
+            {% endif %}
+        {% endfor %}
+        {{ page_obj.paginator.count }} inventory items
+    </p>
+    {% endif %}
+</div>
+{% endblock %}

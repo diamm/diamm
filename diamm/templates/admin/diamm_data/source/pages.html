@@ -1,0 +1,76 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+    &rsaquo; <a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>
+    &rsaquo; <a href="{% url opts|admin_urlname:'change' instance.pk|admin_urlquote %}">{{ instance|truncatewords:'18' }}</a>
+    &rsaquo; Pages
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <p>
+        Edit up to 50 pages at a time. Follow a page's ID to manage its images
+        and other fields. Deleting a page also deletes images attached to it.
+    </p>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {{ formset.management_form }}
+        {{ formset.non_form_errors }}
+        <div class="results">
+            <table id="result_list">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Numeration</th>
+                        <th scope="col">Order</th>
+                        <th scope="col">Page type</th>
+                        <th scope="col">External</th>
+                        {% if formset.can_delete %}<th scope="col">Delete</th>{% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for form in formset.forms %}
+                    <tr class="{% cycle 'row1' 'row2' %}">
+                        <td>
+                            {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+                            {% if form.instance.pk %}
+                                <a href="{% url 'admin:diamm_data_page_change' form.instance.pk %}">{{ form.instance.pk }}</a>
+                            {% else %}
+                                New
+                            {% endif %}
+                            {{ form.non_field_errors }}
+                        </td>
+                        <td>{{ form.numeration.errors }}{{ form.numeration }}</td>
+                        <td>{{ form.sort_order.errors }}{{ form.sort_order }}</td>
+                        <td>{{ form.page_type.errors }}{{ form.page_type }}</td>
+                        <td>{{ form.external.errors }}{{ form.external }}</td>
+                        {% if formset.can_delete %}<td>{{ form.DELETE }}</td>{% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="submit-row">
+            <input type="submit" value="{% translate 'Save' %}" class="default">
+        </div>
+    </form>
+
+    {% if page_obj.paginator.num_pages > 1 %}
+    <p class="paginator">
+        {% for page_number in page_obj.paginator.page_range %}
+            {% if page_number == page_obj.number %}
+                <span class="this-page">{{ page_number }}</span>
+            {% else %}
+                <a href="?page={{ page_number }}">{{ page_number }}</a>
+            {% endif %}
+        {% endfor %}
+        {{ page_obj.paginator.count }} pages
+    </p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,11 +1,13 @@
 from django.contrib import admin, messages
 from django.core.exceptions import PermissionDenied
+from django.core.paginator import Paginator
 from django.db import models, transaction
 from django.db.models import Q
-from django.forms import Textarea, TextInput
+from django.forms import Textarea, TextInput, TypedChoiceField
 from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import path, reverse
+from django.utils.text import capfirst
 from django.utils.translation import gettext_lazy as _
 from pagedown.widgets import AdminPagedownWidget
 from reversion.admin import VersionAdmin
@@ -13,7 +15,7 @@ from reversion.admin import VersionAdmin
 from diamm.admin.filters.input_filter import InputFilter
 from diamm.admin.forms.copy_inventory import CopyInventoryForm
 from diamm.admin.forms.create_pages_and_images import CreatePagesAndImagesForm
-from diamm.admin.helpers.html import admin_change_link, html_join
+from diamm.admin.helpers.html import html_join
 from diamm.admin.helpers.optimized_raw_id import RawIdWidgetAdminMixin
 from diamm.models import Image, ItemBibliography, ItemComposer, ItemNote, Voice
 from diamm.models.data.geographic_area import AreaTypeChoices, GeographicArea
@@ -31,7 +33,47 @@ from diamm.models.data.source_relationship import SourceRelationship
 from diamm.models.data.source_url import SourceURL
 
 
-class SourceCopyistInline(admin.StackedInline):
+class EntityContentTypeChoiceMixin:
+    """Build small repeated inline choice lists once per admin request."""
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name not in {"content_type", "relationship_type"}:
+            return super().formfield_for_foreignkey(
+                db_field, request, **kwargs
+            )
+
+        cache_name = f"_diamm_{db_field.name}_choices"
+        cached = getattr(request, cache_name, None)
+        if cached is None:
+            queryset = db_field.remote_field.model.objects.all()
+            if db_field.name == "content_type":
+                queryset = queryset.filter(
+                    db_field.get_limit_choices_to()
+                ).order_by("app_label", "model")
+            related_objects = list(queryset)
+            choices = [
+                (str(related_object.pk), str(related_object))
+                for related_object in related_objects
+            ]
+            objects = {
+                str(related_object.pk): related_object
+                for related_object in related_objects
+            }
+            cached = (choices, objects)
+            setattr(request, cache_name, cached)
+
+        choices, objects = cached
+        return TypedChoiceField(
+            choices=[("", "---------"), *choices],
+            coerce=lambda value: objects[str(value)],
+            empty_value=None,
+            required=not db_field.blank,
+            label=capfirst(db_field.verbose_name),
+            help_text=db_field.help_text,
+        )
+
+
+class SourceCopyistInline(EntityContentTypeChoiceMixin, admin.StackedInline):
     model = SourceCopyist
     extra = 0
     classes = ("collapse",)
@@ -41,10 +83,11 @@ class SourceCopyistInline(admin.StackedInline):
             super()
             .get_queryset(request)
             .select_related("source__archive__city__parent", "content_type")
+            .prefetch_related("copyist")
         )
 
 
-class SourceRelationshipInline(admin.StackedInline):
+class SourceRelationshipInline(EntityContentTypeChoiceMixin, admin.StackedInline):
     model = SourceRelationship
     extra = 0
     classes = ("collapse",)
@@ -108,6 +151,7 @@ class BibliographyInline(RawIdWidgetAdminMixin, admin.TabularInline):
             super()
             .get_queryset(request)
             .select_related("source__archive__city__parent", "bibliography__type")
+            .prefetch_related("bibliography__authors__bibliography_author")
         )
 
 
@@ -141,49 +185,27 @@ class NotesInline(admin.TabularInline):
         return super().get_queryset(request).select_related("source__archive__city")
 
 
-class PagesInline(admin.TabularInline):
-    model = Page
-    extra = 0
-    classes = ("collapse",)
-    fields = ("link_id_field", "numeration", "sort_order", "page_type")
-    readonly_fields = ("link_id_field",)
-    list_select_related = ("source__archive__city",)
-
-    def link_id_field(self, obj):
-        change_url = reverse("admin:diamm_data_page_change", args=(obj.pk,))
-        return admin_change_link(change_url, obj.pk)
-
-    def get_queryset(self, request):
-        return super().get_queryset(request).select_related("source__archive__city")
-
-
 class URLsInline(admin.TabularInline):
     model = SourceURL
     extra = 0
     classes = ("collapse",)
 
 
-# Uses a custom raw id mixin because of a bug in the built-in mixin
-# See: https://deepintodjango.com/reducing-queries-for-foreignkeys-in-django-admin-inlines
-class ItemInline(RawIdWidgetAdminMixin, admin.TabularInline):
+class SourceInventoryEditorInline(RawIdWidgetAdminMixin, admin.TabularInline):
+    """Formset configuration for the dedicated Source inventory editor."""
+
     model = Item
-    extra = 0
-    classes = ("collapse",)
+    extra = 1
     fields = (
-        "link_id_field",
         "composition",
         "fragment",
         "completeness",
         "item_title",
         "folio_start",
         "folio_end",
-        # "get_composition",
-        "get_composers",
         "source_order",
     )
     raw_id_fields = ("composition",)
-    readonly_fields = ("link_id_field", "get_composers", "get_composition")
-
     formfield_overrides = {
         models.CharField: {"widget": TextInput(attrs={"size": "10"})},
     }
@@ -192,36 +214,26 @@ class ItemInline(RawIdWidgetAdminMixin, admin.TabularInline):
         return (
             super()
             .get_queryset(request)
-            .select_related("source__archive__city__parent__parent", "composition")
+            .select_related("composition")
             .prefetch_related("composition__composers__composer")
         )
 
-    @admin.display(description="Composition")
-    def get_composition(self, obj):
-        if not obj.composition_id:
-            return None
-        change_url = reverse(
-            "admin:diamm_data_composition_change", args=(obj.composition_id,)
-        )
-        return admin_change_link(change_url, obj.composition.title)
+    @staticmethod
+    def composer_display(item):
+        if not item.pk or not item.composition_id:
+            return "-"
+        return html_join(
+            composer.composer.full_name
+            for composer in item.composition.composers.all()
+        ) or "-"
 
-    @admin.display(description="Composers")
-    def get_composers(self, obj) -> str:
-        if obj.composition_id:
-            cnames: list = [
-                c.composer.full_name for c in obj.composition.composers.all()
-            ]
-            return html_join(cnames)
-        elif obj.unattributed_composers:
-            unatt_names: list = [
-                f"[{c.composer.full_name}]" for c in obj.unattributed_composers.all()
-            ]
-            return html_join(unatt_names)
-        return "-"
 
-    def link_id_field(self, obj):
-        change_url = reverse("admin:diamm_data_item_change", args=(obj.pk,))
-        return admin_change_link(change_url, obj.pk)
+class SourcePagesEditorInline(admin.TabularInline):
+    """Formset configuration for the dedicated Source pages editor."""
+
+    model = Page
+    extra = 1
+    fields = ("numeration", "sort_order", "page_type", "external")
 
 
 class InventoryFilter(admin.SimpleListFilter):
@@ -311,8 +323,6 @@ class SourceAdmin(VersionAdmin):
         SourceRelationshipInline,
         SourceCopyistInline,
         SourceProvenanceInline,
-        PagesInline,
-        ItemInline,
     )
     list_filter = (
         "public",
@@ -391,6 +401,148 @@ class SourceAdmin(VersionAdmin):
             },
         )
 
+    def inventory_view(self, request, pk):
+        source = self.get_object(request, str(pk))
+        if source is None:
+            raise Http404
+        if not self.has_change_permission(request, source) or not request.user.has_perm(
+            "diamm_data.change_item"
+        ):
+            raise PermissionDenied
+
+        inventory_inline = SourceInventoryEditorInline(self.model, self.admin_site)
+        queryset = inventory_inline.get_queryset(request).filter(source=source)
+        paginator = Paginator(queryset, 50)
+        page_obj = paginator.get_page(request.GET.get("page"))
+        page_ids = [item.pk for item in page_obj.object_list]
+        page_queryset = queryset.filter(pk__in=page_ids)
+
+        formset_class = inventory_inline.get_formset(
+            request,
+            source,
+            extra=int(request.user.has_perm("diamm_data.add_item")),
+        )
+        formset = formset_class(
+            request.POST or None,
+            instance=source,
+            queryset=page_queryset,
+            prefix="inventory",
+        )
+        for form in formset.forms:
+            form.composer_display = inventory_inline.composer_display(form.instance)
+
+        if request.method == "POST" and formset.is_valid():
+            item_admin = self.admin_site.get_model_admin(Item)
+            deleted_ids = [
+                form.instance.pk
+                for form in formset.deleted_forms
+                if form.instance.pk is not None
+            ]
+            with transaction.atomic():
+                if deleted_ids:
+                    item_admin.log_deletions(
+                        request, Item.objects.filter(pk__in=deleted_ids)
+                    )
+                formset.save()
+                for item in formset.new_objects:
+                    item_admin.log_addition(
+                        request, item, "Added through the Source inventory editor."
+                    )
+                for item, changed_fields in formset.changed_objects:
+                    item_admin.log_change(
+                        request,
+                        item,
+                        [{"changed": {"fields": changed_fields}}],
+                    )
+            messages.success(request, "The source inventory was updated successfully.")
+            url = reverse("admin:source-inventory", args=(source.pk,))
+            if page_obj.number > 1:
+                url += f"?page={page_obj.number}"
+            return redirect(url)
+
+        return render(
+            request,
+            "admin/diamm_data/source/inventory.html",
+            {
+                **self.admin_site.each_context(request),
+                "formset": formset,
+                "instance": source,
+                "opts": self.model._meta,
+                "page_obj": page_obj,
+                "title": f"Edit inventory: {source.display_name}",
+            },
+        )
+
+    def pages_view(self, request, pk):
+        source = self.get_object(request, str(pk))
+        if source is None:
+            raise Http404
+        if not self.has_change_permission(request, source) or not request.user.has_perm(
+            "diamm_data.change_page"
+        ):
+            raise PermissionDenied
+
+        pages_inline = SourcePagesEditorInline(self.model, self.admin_site)
+        queryset = pages_inline.get_queryset(request).filter(source=source)
+        paginator = Paginator(queryset, 50)
+        page_obj = paginator.get_page(request.GET.get("page"))
+        page_ids = [page.pk for page in page_obj.object_list]
+        page_queryset = queryset.filter(pk__in=page_ids)
+
+        formset_class = pages_inline.get_formset(
+            request,
+            source,
+            extra=int(request.user.has_perm("diamm_data.add_page")),
+        )
+        formset = formset_class(
+            request.POST or None,
+            instance=source,
+            queryset=page_queryset,
+            prefix="pages",
+        )
+
+        if request.method == "POST" and formset.is_valid():
+            page_admin = self.admin_site.get_model_admin(Page)
+            deleted_ids = [
+                form.instance.pk
+                for form in formset.deleted_forms
+                if form.instance.pk is not None
+            ]
+            with transaction.atomic():
+                if deleted_ids:
+                    page_admin.log_deletions(
+                        request, Page.objects.filter(pk__in=deleted_ids)
+                    )
+                formset.save()
+                for page in formset.new_objects:
+                    page_admin.log_addition(
+                        request, page, "Added through the Source pages editor."
+                    )
+                for page, changed_fields in formset.changed_objects:
+                    page_admin.log_change(
+                        request,
+                        page,
+                        [{"changed": {"fields": changed_fields}}],
+                    )
+            messages.success(request, "The source pages were updated successfully.")
+            url = reverse("admin:source-pages", args=(source.pk,))
+            if page_obj.number > 1:
+                url += f"?page={page_obj.number}"
+            return redirect(url)
+
+        return render(
+            request,
+            "admin/diamm_data/source/pages.html",
+            {
+                **self.admin_site.each_context(request),
+                "formset": formset,
+                "instance": source,
+                "opts": self.model._meta,
+                "page_obj": page_obj,
+                "title": f"Edit pages: {source.display_name}",
+            },
+        )
+
     def get_urls(self):
         urls = super().get_urls()
         my_urls = [
@@ -398,6 +550,16 @@ class SourceAdmin(VersionAdmin):
                 "<int:pk>/copy_inventory/",
                 self.admin_site.admin_view(self.copy_inventory_view),
                 name="copy-inventory",
+            ),
+            path(
+                "<int:pk>/inventory/",
+                self.admin_site.admin_view(self.inventory_view),
+                name="source-inventory",
+            ),
+            path(
+                "<int:pk>/pages/",
+                self.admin_site.admin_view(self.pages_view),
+                name="source-pages",
             ),
             path(
                 "<int:pk>/import_images/",
