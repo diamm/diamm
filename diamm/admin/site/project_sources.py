@@ -1,12 +1,8 @@
 from django.contrib import admin
 from django.db.models import Count
 
+from diamm.admin.helpers.source_picker import source_picker_label
 from diamm.models import ProjectSources
-
-
-def project_source_label(source) -> str:
-    date = source.date_statement or "undated"
-    return f"{source.archive.siglum} {source.shelfmark} — {date}"
 
 
 @admin.register(ProjectSources)
@@ -31,6 +27,6 @@ class ProjectSourcesAdmin(admin.ModelAdmin):
             if queryset is not None:
                 field.queryset = queryset.select_related("archive")
 
-            field.label_from_instance = project_source_label
+            field.label_from_instance = source_picker_label
 
         return field
