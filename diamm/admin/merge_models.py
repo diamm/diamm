@@ -1,133 +1,281 @@
-from collections.abc import Iterable
+from __future__ import annotations
+
+from collections.abc import Iterable, Iterator
+from dataclasses import dataclass
 
 from django.apps import apps
 from django.contrib.contenttypes.fields import GenericForeignKey
-from django.db import transaction
-from django.db.models import Model
+from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import IntegrityError, transaction
+from django.db.models import Model, UniqueConstraint
 
 
-def flatten(flist, a: list):
-    """Flattens a list.  Just do flatten(l, [])."""
-    for i in flist:
-        if isinstance(i, Iterable) and not isinstance(i, str):
-            flatten(i, a)
-        else:
-            a.append(i)
-    return a
+class MergeConflictError(RuntimeError):
+    """Raised when merging would discard or overwrite related data."""
 
 
-def is_duplicate_in_model(instance):
-    """
-    Check if the unique field values in instance already exist elsewhere in the model.
-    Typically checked prior to saving the instance.
-    :param instance: The instance to check for duplicates of in the instance model.
-    :return: True if the instance is found in the model, and it is not itself.
-    """
-    fields = flatten(instance._meta.unique_together, [])
-    if fields:
-        return (
-            type(instance)
-            .objects.exclude(pk=instance.pk)
-            .filter(**{k: getattr(instance, k) for k in fields})
-            .count()
-            > 0
-        )
+@dataclass(frozen=True)
+class UniqueRule:
+    fields: tuple[str, ...]
+    nulls_distinct: bool | None = True
 
+
+def _generic_foreign_keys() -> Iterator[GenericForeignKey]:
+    for model in apps.get_models():
+        for field in model._meta.private_fields:
+            if isinstance(field, GenericForeignKey):
+                yield field
+
+
+def _unique_rules(model: type[Model]) -> list[UniqueRule]:
+    rules = [
+        UniqueRule((field.name,))
+        for field in model._meta.concrete_fields
+        if field.unique and not field.primary_key
+    ]
+    rules.extend(UniqueRule(tuple(fields)) for fields in model._meta.unique_together)
+    rules.extend(
+        UniqueRule(tuple(constraint.fields), constraint.nulls_distinct)
+        for constraint in model._meta.constraints
+        if isinstance(constraint, UniqueConstraint)
+        and constraint.fields
+        and constraint.condition is None
+        and not constraint.expressions
+    )
+    return rules
+
+
+def _matching_unique_object(
+    instance: Model, relation_field_name: str
+) -> Model | None:
+    model = type(instance)
+    for rule in _unique_rules(model):
+        if relation_field_name not in rule.fields:
+            continue
+
+        values = {
+            model._meta.get_field(name).attname: getattr(
+                instance, model._meta.get_field(name).attname
+            )
+            for name in rule.fields
+        }
+        if rule.nulls_distinct is not False and any(
+            value is None for value in values.values()
+        ):
+            continue
+
+        match = model._default_manager.exclude(pk=instance.pk).filter(**values).first()
+        if match is not None:
+            return match
+    return None
+
+
+def _equivalent_except_relation(
+    first: Model, second: Model, relation_field_name: str
+) -> bool:
+    for field in first._meta.concrete_fields:
+        if field.primary_key or field.name == relation_field_name:
+            continue
+        if getattr(first, field.attname) != getattr(second, field.attname):
+            return False
+    return True
+
+
+def _has_related_data(instance: Model) -> bool:
+    for relation in instance._meta.related_objects:
+        accessor = relation.get_accessor_name()
+        if not accessor:
+            continue
+        try:
+            related = getattr(instance, accessor)
+        except ObjectDoesNotExist:
+            continue
+        if relation.one_to_one:
+            return True
+        if related.exists():
+            return True
+
+    for field in instance._meta.many_to_many:
+        if getattr(instance, field.name).exists():
+            return True
+
+    content_type = ContentType.objects.get_for_model(instance)
+    for field in _generic_foreign_keys():
+        if field.model._default_manager.filter(
+            **{
+                field.ct_field: content_type,
+                field.fk_field: instance.pk,
+            }
+        ).exists():
+            return True
     return False
 
 
-@transaction.atomic()
-def merge(primary_object, alias_objects, keep_old=False):
-    """
-    Use this function to merge model objects (i.e. Users, Organizations, Polls,
-    etc.) and migrate all of the related fields from the alias objects to the
-    primary object.
-
-    Usage:
-    from django.contrib.auth.models import User
-    primary_user = User.objects.get(email='good_email@example.com')
-    duplicate_user = User.objects.get(email='good_email+duplicate@example.com')
-    merge_model_objects(primary_user, duplicate_user)
-    """
-    if alias_objects is None:
-        alias_objects = []
-
-    if not isinstance(alias_objects, list):
-        alias_objects = [alias_objects]
-
-    # check that all aliases are the same class as primary one and that
-    # they are subclass of model
-    primary_class = primary_object.__class__
-
-    if not issubclass(primary_class, Model):
-        raise TypeError("Only django.db.models.Model subclasses can be merged")
-
-    for alias_object in alias_objects:
-        if not isinstance(alias_object, primary_class):
-            raise TypeError("Only models of same class can be merged")
-
-    # Get a list of all GenericForeignKeys in all models
-    # TODO: this is a bit of a hack, since the generics framework should provide a similar
-    # method to the ForeignKey field for accessing the generic related fields.
-    generic_fields = []
-    # Only get the models for the 'diamm_data' app.
-    for model in apps.get_app_config("diamm_data").get_models():
-        for _, field in filter(
-            lambda x: isinstance(x[1], GenericForeignKey), model.__dict__.items()
+def _move_related_object(
+    related: Model, relation_field_name: str, primary: Model
+) -> None:
+    setattr(related, relation_field_name, primary)
+    duplicate = _matching_unique_object(related, relation_field_name)
+    if duplicate is not None:
+        if _equivalent_except_relation(related, duplicate, relation_field_name) and not (
+            _has_related_data(related)
         ):
-            generic_fields.append(field)
+            related.delete()
+            return
+        raise MergeConflictError(
+            f"Cannot merge {type(primary)._meta.verbose_name} records: "
+            f"moving {related._meta.verbose_name} {related.pk} would conflict "
+            f"with {duplicate.pk}. Resolve these related records first."
+        )
 
-    blank_local_fields = {
-        field.attname
-        for field in primary_object._meta.local_fields
-        if getattr(primary_object, field.attname) in [None, ""]
-    }
+    try:
+        with transaction.atomic():
+            related.save(update_fields=(relation_field_name,))
+    except IntegrityError as exc:
+        raise MergeConflictError(
+            f"Cannot merge {type(primary)._meta.verbose_name} records because "
+            f"{related._meta.verbose_name} {related.pk} violates a database constraint."
+        ) from exc
 
-    # Loop through all alias objects and migrate their data to the primary object.
-    for alias_object in alias_objects:
-        # Migrate all foreign key references from alias object to primary object.
-        for related_object in alias_object._meta.related_objects:
-            # The variable name on the alias_object model.
-            related_name = related_object.get_accessor_name()
 
-            if related_object.field.many_to_one:
-                for obj in getattr(alias_object, related_name).all().all():
-                    setattr(obj, related_object.field.name, primary_object)
-                    if not is_duplicate_in_model(obj):
-                        obj.save()
+def _move_reverse_relations(primary: Model, alias: Model) -> None:
+    for relation in primary._meta.related_objects:
+        accessor = relation.get_accessor_name()
+        if not accessor:
+            continue
 
-            elif related_object.field.one_to_one:
-                setattr(alias_object, related_object.field.name, primary_object)
-                alias_object.save()
+        if relation.many_to_many:
+            through = relation.field.remote_field.through
+            if not through._meta.auto_created:
+                continue
+            alias_manager = getattr(alias, accessor)
+            primary_manager = getattr(primary, accessor)
+            related = list(alias_manager.all())
+            primary_manager.add(*related)
+            alias_manager.clear()
+            continue
 
-            elif related_object.field.many_to_many:
-                related_name = related_name or related_object.field.name
-                for obj in getattr(alias_object, related_name).all():
-                    getattr(obj, related_name).remove(alias_object)
-                    getattr(obj, related_name).add(primary_object)
+        relation_field_name = relation.field.name
+        if relation.one_to_one:
+            try:
+                related_objects = [getattr(alias, accessor)]
+            except ObjectDoesNotExist:
+                related_objects = []
+        else:
+            related_objects = list(
+                getattr(alias, accessor).select_for_update().all()
+            )
 
-        # Migrate all generic foreign key references from alias object to primary object.
-        for field in generic_fields:
-            filter_kwargs: dict = {
-                field.fk_field: alias_object._get_pk_val(),
-                field.ct_field: field.get_content_type(alias_object),
+        for related in related_objects:
+            _move_related_object(related, relation_field_name, primary)
+
+
+def _merge_local_many_to_many(primary: Model, alias: Model) -> None:
+    for field in primary._meta.many_to_many:
+        through = field.remote_field.through
+        if not through._meta.auto_created:
+            continue
+        alias_manager = getattr(alias, field.name)
+        primary_manager = getattr(primary, field.name)
+        related = list(alias_manager.all())
+        primary_manager.add(*related)
+        alias_manager.clear()
+
+
+def _move_generic_relations(primary: Model, alias: Model) -> None:
+    alias_content_type = ContentType.objects.get_for_model(alias)
+    primary_content_type = ContentType.objects.get_for_model(primary)
+    for field in _generic_foreign_keys():
+        related_objects = field.model._default_manager.select_for_update().filter(
+            **{
+                field.ct_field: alias_content_type,
+                field.fk_field: alias.pk,
             }
-            for generic_related_object in field.model.objects.filter(**filter_kwargs):
-                setattr(generic_related_object, field.name, primary_object)
-                generic_related_object.save()
+        )
+        for related in related_objects:
+            setattr(related, field.ct_field, primary_content_type)
+            setattr(related, field.fk_field, primary.pk)
+            related.save(update_fields=(field.ct_field, field.fk_field))
 
-        # Try to fill all missing values in primary object by values of duplicates
-        filled_up = set()
-        for field_name in blank_local_fields:
-            val = getattr(alias_object, field_name)
-            if val not in [None, ""]:
-                setattr(primary_object, field_name, val)
-                filled_up.add(field_name)
-        blank_local_fields -= filled_up
 
+def _fill_blank_primary_fields(primary: Model, aliases: Iterable[Model]) -> None:
+    blank_fields = {
+        field.attname
+        for field in primary._meta.concrete_fields
+        if field.editable
+        and not field.primary_key
+        and getattr(primary, field.attname) in (None, "")
+    }
+    for alias in aliases:
+        filled = set()
+        for field_name in blank_fields:
+            value = getattr(alias, field_name)
+            if value not in (None, ""):
+                setattr(primary, field_name, value)
+                filled.add(field_name)
+        blank_fields -= filled
+
+
+@transaction.atomic
+def merge(
+    primary_object: Model,
+    alias_objects: Model | Iterable[Model] | None,
+    keep_old: bool = False,
+) -> Model:
+    """Merge aliases into a primary object without silently losing related data.
+
+    The primary record wins for populated scalar fields. Blank primary fields are
+    filled from aliases in the supplied order. Reverse foreign keys, generic
+    foreign keys, and automatic many-to-many memberships move to the primary.
+    Exact duplicate rows created by an unconditional uniqueness rule are collapsed
+    only when they have no dependent data; differing duplicates raise
+    ``MergeConflictError`` and roll back the complete merge.
+    """
+
+    if not isinstance(primary_object, Model):
+        raise TypeError("Only Django model instances can be merged")
+    if primary_object.pk is None:
+        raise ValueError("The primary object must be saved before it can be merged")
+
+    if alias_objects is None:
+        aliases: list[Model] = []
+    elif isinstance(alias_objects, Model):
+        aliases = [alias_objects]
+    else:
+        aliases = list(alias_objects)
+
+    primary_class = type(primary_object)
+    if any(type(alias) is not primary_class for alias in aliases):
+        raise TypeError("Only instances of the same model can be merged")
+    if any(alias.pk is None for alias in aliases):
+        raise ValueError("Every alias object must be saved before it can be merged")
+    if primary_object.pk in {alias.pk for alias in aliases}:
+        raise ValueError("The primary object cannot also be an alias")
+    if len({alias.pk for alias in aliases}) != len(aliases):
+        raise ValueError("An alias object cannot be merged more than once")
+
+    primary = primary_class._default_manager.select_for_update().get(
+        pk=primary_object.pk
+    )
+    locked_aliases_by_pk = {
+        alias.pk: alias
+        for alias in primary_class._default_manager.select_for_update().filter(
+            pk__in=[alias.pk for alias in aliases]
+        )
+    }
+    if len(locked_aliases_by_pk) != len(aliases):
+        raise ValueError("One or more alias objects no longer exist")
+    locked_aliases = [locked_aliases_by_pk[alias.pk] for alias in aliases]
+
+    _fill_blank_primary_fields(primary, locked_aliases)
+    primary.save()
+
+    for alias in locked_aliases:
+        _move_reverse_relations(primary, alias)
+        _merge_local_many_to_many(primary, alias)
+        _move_generic_relations(primary, alias)
         if not keep_old:
-            alias_object.delete()
+            alias.delete()
 
-    primary_object.save()
-
-    return primary_object
+    return primary

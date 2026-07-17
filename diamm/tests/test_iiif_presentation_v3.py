@@ -259,7 +259,7 @@ class PresentationV3SerializerTests(TestCase):
 
         self.assertEqual(data["id"], "http://testserver/sources/1/range/20/")
         self.assertEqual(data["type"], "Range")
-        self.assertEqual(data["label"], {"none": ["Kyrie"]})
+        self.assertEqual(data["label"], {"none": ["[NN] | Kyrie"]})
         self.assertEqual(
             data["items"][0],
             {"id": "http://testserver/sources/1/canvas/10/", "type": "Canvas"},

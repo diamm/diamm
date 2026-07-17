@@ -6,7 +6,7 @@ from reversion.admin import VersionAdmin
 from diamm.admin.forms.merge_organizations import MergeOrganizationsForm
 from diamm.admin.forms.update_organization_type import UpdateOrganizationTypeForm
 from diamm.admin.helpers.html import admin_change_link
-from diamm.admin.merge_models import merge
+from diamm.admin.merge_models import MergeConflictError, merge
 from diamm.models import OrganizationIdentifier
 from diamm.models.data.organization import Organization
 from diamm.models.data.source_copyist import SourceCopyist
@@ -99,32 +99,37 @@ class OrganizationAdmin(VersionAdmin):
     @admin.action(description="Merge Organizations")
     def merge_organizations_action(self, request, queryset):
         if "do_action" in request.POST:
-            form = MergeOrganizationsForm(request.POST)
+            form = MergeOrganizationsForm(request.POST, queryset=queryset)
 
             if form.is_valid():
                 keep_old = form.cleaned_data["keep_old"]
-                target = queryset.first()
-                remainder = list(queryset[1:])
-                merged = merge(target, remainder, keep_old=keep_old)
+                target = form.cleaned_data["target"]
+                remainder = list(queryset.exclude(pk=target.pk))
+                try:
+                    merged = merge(target, remainder, keep_old=keep_old)
+                except MergeConflictError as exc:
+                    messages.error(request, str(exc))
+                    merged = None
 
                 # Trigger saves for Solr
-                for relationship in merged.sources_related.all():
-                    relationship.source.save()
+                if merged is not None:
+                    for relationship in merged.sources_related.all():
+                        relationship.source.save()
 
-                for provenance in merged.sources_provenance.all():
-                    provenance.source.save()
+                    for provenance in merged.sources_provenance.all():
+                        provenance.source.save()
 
-                for copied in merged.sources_copied.all():
-                    copied.source.save()
+                    for copied in merged.sources_copied.all():
+                        copied.source.save()
 
-                messages.success(request, "Objects successfully merged")
-                return None
+                    messages.success(request, "Objects successfully merged")
+                    return None
             else:
                 messages.error(
                     request, "There was an error merging these organizations"
                 )
         else:
-            form = MergeOrganizationsForm()
+            form = MergeOrganizationsForm(queryset=queryset)
 
         return render(
             request,

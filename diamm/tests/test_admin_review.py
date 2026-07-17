@@ -2,10 +2,12 @@ from __future__ import annotations
 
 from unittest.mock import patch
 
+from django.conf import settings
 from django.contrib import admin
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.db import connection
-from django.test import RequestFactory, TestCase
+from django.test import RequestFactory, TestCase, override_settings
 from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 from model_bakery import baker
@@ -14,13 +16,15 @@ from diamm.admin.data.composition import CompositionAdmin
 from diamm.admin.data.image import IIIFDataListFilter, ImageAdmin, ImageSourceListFilter
 from diamm.admin.data.notation import NotationAdmin
 from diamm.admin.data.person import PersonAdmin, PersonBiography
-from diamm.admin.data.source import SourceAdmin
+from diamm.admin.data.source import SourceAdmin, SourceRelationshipInline
 from diamm.models.data.composition import Composition
 from diamm.models.data.image import Image
 from diamm.models.data.item import Item
 from diamm.models.data.notation import Notation
+from diamm.models.data.page import PageTypeChoices
 from diamm.models.data.person import Person
 from diamm.models.data.source import Source
+from diamm.models.data.source_relationship import SourceRelationship
 
 
 class AdminReviewTests(TestCase):
@@ -44,6 +48,9 @@ class AdminReviewTests(TestCase):
 
     def setUp(self) -> None:
         self.client.force_login(self.superuser)
+
+    def test_request_field_limit_is_enabled(self) -> None:
+        self.assertEqual(settings.DATA_UPLOAD_MAX_NUMBER_FIELDS, 1000)
 
     def test_copy_inventory_preserves_source_and_copies_supported_relations(self) -> None:
         source, first_target, second_target = baker.make(
@@ -116,7 +123,12 @@ class AdminReviewTests(TestCase):
         source = baker.make("diamm_data.Source")
         self.client.force_login(self.staff_user)
 
-        for name in ("admin:copy-inventory", "admin:import-images"):
+        for name in (
+            "admin:copy-inventory",
+            "admin:import-images",
+            "admin:source-inventory",
+            "admin:source-pages",
+        ):
             with self.subTest(name=name):
                 response = self.client.get(reverse(name, args=(source.pk,)))
                 self.assertEqual(response.status_code, 403)
@@ -247,3 +259,254 @@ class AdminReviewTests(TestCase):
             self.assertEqual(response.status_code, 200)
 
         self.assertLessEqual(len(many_row_queries), len(one_row_queries) + 1)
+
+    def test_source_edit_bibliography_author_queries_are_prefetched(self) -> None:
+        source = baker.make("diamm_data.Source")
+        for position in range(10):
+            bibliography = baker.make("diamm_data.Bibliography")
+            baker.make(
+                "diamm_data.BibliographyAuthorRole",
+                bibliography_entry=bibliography,
+                bibliography_author=baker.make("diamm_data.BibliographyAuthor"),
+                position=position,
+            )
+            baker.make(
+                "diamm_data.SourceBibliography",
+                source=source,
+                bibliography=bibliography,
+            )
+
+        url = reverse("admin:diamm_data_source_change", args=(source.pk,))
+        with CaptureQueriesContext(connection) as queries:
+            response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+        bibliography_author_queries = [
+            query["sql"]
+            for query in queries.captured_queries
+            if 'FROM "diamm_data_bibliographyauthor"' in query["sql"]
+            or 'FROM "diamm_data_bibliographyauthorrole"' in query["sql"]
+        ]
+        self.assertLessEqual(len(bibliography_author_queries), 2)
+
+    def test_source_edit_reuses_generic_entity_content_type_choices(self) -> None:
+        source = baker.make("diamm_data.Source")
+        person = baker.make("diamm_data.Person")
+        organization = baker.make(
+            "diamm_data.Organization",
+            type=baker.make("diamm_data.OrganizationType"),
+        )
+        relationship_type = baker.make("diamm_data.SourceRelationshipType")
+        for position in range(10):
+            entity = person if position % 2 else organization
+            baker.make(
+                "diamm_data.SourceCopyist", source=source, copyist=entity
+            )
+            baker.make(
+                "diamm_data.SourceRelationship",
+                source=source,
+                related_entity=entity,
+                relationship_type=relationship_type,
+            )
+
+        url = reverse("admin:diamm_data_source_change", args=(source.pk,))
+        with CaptureQueriesContext(connection) as queries:
+            response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+        choice_queries = [
+            query["sql"]
+            for query in queries.captured_queries
+            if 'FROM "django_content_type"' in query["sql"]
+            and "'person'" in query["sql"]
+            and "'organization'" in query["sql"]
+        ]
+        self.assertLessEqual(len(choice_queries), 2)
+        relationship_type_queries = [
+            query["sql"]
+            for query in queries.captured_queries
+            if 'FROM "diamm_data_sourcerelationshiptype"' in query["sql"]
+        ]
+        self.assertEqual(len(relationship_type_queries), 1)
+
+    def test_cached_relationship_choices_clean_to_model_instances(self) -> None:
+        request = RequestFactory().get("/admin/diamm_data/source/")
+        request.user = self.superuser
+        inline = SourceRelationshipInline(Source, admin.site)
+        person_type = ContentType.objects.get_for_model(Person)
+        relationship_type = baker.make("diamm_data.SourceRelationshipType")
+
+        content_type_field = inline.formfield_for_foreignkey(
+            SourceRelationship._meta.get_field("content_type"), request
+        )
+        relationship_type_field = inline.formfield_for_foreignkey(
+            SourceRelationship._meta.get_field("relationship_type"), request
+        )
+
+        self.assertEqual(content_type_field.clean(str(person_type.pk)), person_type)
+        self.assertEqual(
+            relationship_type_field.clean(str(relationship_type.pk)),
+            relationship_type,
+        )
+
+    def test_source_change_has_top_buttons_for_large_collections(self) -> None:
+        source = baker.make("diamm_data.Source")
+        baker.make("diamm_data.Page", source=source, _quantity=3)
+        baker.make("diamm_data.Item", source=source, _quantity=2)
+
+        response = self.client.get(
+            reverse("admin:diamm_data_source_change", args=(source.pk,))
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response,
+            reverse("admin:source-pages", args=(source.pk,)),
+        )
+        self.assertContains(
+            response,
+            reverse("admin:source-inventory", args=(source.pk,)),
+        )
+        self.assertContains(response, "Edit Pages")
+        self.assertContains(response, "Edit Inventory")
+        self.assertNotContains(response, "Large related collections")
+        self.assertNotContains(response, 'name="pages-TOTAL_FORMS"')
+        self.assertNotContains(response, 'name="inventory-TOTAL_FORMS"')
+
+    def test_source_add_form_does_not_render_object_specific_buttons(self) -> None:
+        response = self.client.get(reverse("admin:diamm_data_source_add"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "Edit Pages")
+        self.assertNotContains(response, "Edit Inventory")
+
+    def test_source_inventory_editor_is_scoped_and_paginated(self) -> None:
+        source, other_source = baker.make("diamm_data.Source", _quantity=2)
+        baker.make(
+            "diamm_data.Item",
+            source=source,
+            item_title="First source item",
+            _quantity=51,
+        )
+        baker.make(
+            "diamm_data.Item", source=other_source, item_title="Other source item"
+        )
+        url = reverse("admin:source-inventory", args=(source.pk,))
+
+        first_page = self.client.get(url)
+        second_page = self.client.get(url + "?page=2")
+
+        self.assertEqual(first_page.status_code, 200)
+        self.assertEqual(len(first_page.context["formset"].initial_forms), 50)
+        self.assertEqual(len(second_page.context["formset"].initial_forms), 1)
+        self.assertContains(first_page, "First source item")
+        self.assertNotContains(first_page, "Other source item")
+
+    def test_source_inventory_editor_updates_an_item(self) -> None:
+        source = baker.make("diamm_data.Source")
+        item = baker.make(
+            "diamm_data.Item", source=source, item_title="Old title"
+        )
+        url = reverse("admin:source-inventory", args=(source.pk,))
+        response = self.client.post(
+            url,
+            {
+                "inventory-TOTAL_FORMS": "2",
+                "inventory-INITIAL_FORMS": "1",
+                "inventory-MIN_NUM_FORMS": "0",
+                "inventory-MAX_NUM_FORMS": "1000",
+                "inventory-0-id": str(item.pk),
+                "inventory-0-source": str(source.pk),
+                "inventory-0-composition": "",
+                "inventory-0-fragment": "",
+                "inventory-0-completeness": "",
+                "inventory-0-item_title": "New title",
+                "inventory-0-folio_start": "1r",
+                "inventory-0-folio_end": "1v",
+                "inventory-0-source_order": "1",
+                "inventory-1-id": "",
+                "inventory-1-source": str(source.pk),
+                "inventory-1-composition": "",
+                "inventory-1-fragment": "",
+                "inventory-1-completeness": "",
+                "inventory-1-item_title": "",
+                "inventory-1-folio_start": "",
+                "inventory-1-folio_end": "",
+                "inventory-1-source_order": "",
+            },
+        )
+
+        self.assertRedirects(response, url)
+        item.refresh_from_db()
+        self.assertEqual(item.item_title, "New title")
+        self.assertEqual(item.folio_start, "1r")
+        self.assertEqual(item.folio_end, "1v")
+
+    def test_source_pages_editor_is_scoped_and_paginated(self) -> None:
+        source, other_source = baker.make("diamm_data.Source", _quantity=2)
+        baker.make(
+            "diamm_data.Page",
+            source=source,
+            numeration="First source page",
+            _quantity=51,
+        )
+        baker.make(
+            "diamm_data.Page", source=other_source, numeration="Other source page"
+        )
+        url = reverse("admin:source-pages", args=(source.pk,))
+
+        first_page = self.client.get(url)
+        second_page = self.client.get(url + "?page=2")
+
+        self.assertEqual(first_page.status_code, 200)
+        self.assertEqual(len(first_page.context["formset"].initial_forms), 50)
+        self.assertEqual(len(second_page.context["formset"].initial_forms), 1)
+        self.assertContains(first_page, "First source page")
+        self.assertNotContains(first_page, "Other source page")
+
+    def test_source_pages_editor_updates_a_page(self) -> None:
+        source = baker.make("diamm_data.Source")
+        page = baker.make(
+            "diamm_data.Page", source=source, numeration="Old numeration"
+        )
+        url = reverse("admin:source-pages", args=(source.pk,))
+        response = self.client.post(
+            url,
+            {
+                "pages-TOTAL_FORMS": "2",
+                "pages-INITIAL_FORMS": "1",
+                "pages-MIN_NUM_FORMS": "0",
+                "pages-MAX_NUM_FORMS": "1000",
+                "pages-0-id": str(page.pk),
+                "pages-0-source": str(source.pk),
+                "pages-0-numeration": "1r",
+                "pages-0-sort_order": "1.5",
+                "pages-0-page_type": str(PageTypeChoices.FLYLEAF),
+                "pages-0-external": "on",
+                "pages-1-id": "",
+                "pages-1-source": str(source.pk),
+                "pages-1-numeration": "",
+                "pages-1-sort_order": "0",
+                "pages-1-page_type": str(PageTypeChoices.PAGE),
+            },
+        )
+
+        self.assertRedirects(response, url)
+        page.refresh_from_db()
+        self.assertEqual(page.numeration, "1r")
+        self.assertEqual(str(page.sort_order), "1.500")
+        self.assertEqual(page.page_type, PageTypeChoices.FLYLEAF)
+        self.assertTrue(page.external)
+
+    @override_settings(DATA_UPLOAD_MAX_NUMBER_FIELDS=1000)
+    def test_source_change_stays_under_safe_upload_field_limit(self) -> None:
+        source = baker.make("diamm_data.Source")
+        baker.make("diamm_data.Page", source=source, _quantity=1100)
+        baker.make("diamm_data.Item", source=source, _quantity=1100)
+
+        response = self.client.get(
+            reverse("admin:diamm_data_source_change", args=(source.pk,))
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertLess(response.content.count(b'name="'), 1000)

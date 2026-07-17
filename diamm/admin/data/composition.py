@@ -10,7 +10,7 @@ from reversion.admin import VersionAdmin
 from diamm.admin.forms.assign_genre import AssignGenreForm
 from diamm.admin.forms.merge_compositions import MergeCompositionsForm
 from diamm.admin.helpers.html import admin_change_link, html_join
-from diamm.admin.merge_models import merge
+from diamm.admin.merge_models import MergeConflictError, merge
 from diamm.models.data.composition import Composition
 from diamm.models.data.composition_bibliography import CompositionBibliography
 from diamm.models.data.composition_composer import CompositionComposer
@@ -118,20 +118,23 @@ class CompositionAdmin(VersionAdmin):
     @admin.action(description="Merge Compositions")
     def merge_compositions_action(self, request, queryset):
         if "do_action" in request.POST:
-            form = MergeCompositionsForm(request.POST)
+            form = MergeCompositionsForm(request.POST, queryset=queryset)
 
             if form.is_valid():
                 keep_old = form.cleaned_data["keep_old"]
-                target = queryset.first()
-                remainder = list(queryset[1:])
-                merge(target, remainder, keep_old=keep_old)
-
-                messages.success(request, "Objects successfully merged")
-                return None
+                target = form.cleaned_data["target"]
+                remainder = list(queryset.exclude(pk=target.pk))
+                try:
+                    merge(target, remainder, keep_old=keep_old)
+                except MergeConflictError as exc:
+                    messages.error(request, str(exc))
+                else:
+                    messages.success(request, "Objects successfully merged")
+                    return None
             else:
                 messages.error(request, "There was an error merging these compositions")
         else:
-            form = MergeCompositionsForm()
+            form = MergeCompositionsForm(queryset=queryset)
 
         return render(
             request,

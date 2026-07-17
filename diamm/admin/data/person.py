@@ -9,7 +9,7 @@ from reversion.admin import VersionAdmin
 from diamm.admin.forms.merge_people import MergePeopleForm
 from diamm.admin.helpers.html import admin_change_link
 from diamm.admin.helpers.optimized_raw_id import RawIdWidgetAdminMixin
-from diamm.admin.merge_models import merge
+from diamm.admin.merge_models import MergeConflictError, merge
 from diamm.models import ItemComposer
 from diamm.models.data.composition_composer import CompositionComposer
 from diamm.models.data.person import Person
@@ -176,33 +176,38 @@ class PersonAdmin(VersionAdmin):
     @admin.action(description="Merge People")
     def merge_people_action(self, request, queryset):
         if "do_action" in request.POST:
-            form = MergePeopleForm(request.POST)
+            form = MergePeopleForm(request.POST, queryset=queryset)
 
             if form.is_valid():
                 keep_old = form.cleaned_data["keep_old"]
-                target = queryset.first()
-                remainder = list(queryset[1:])
-                merged = merge(target, remainder, keep_old=keep_old)
+                target = form.cleaned_data["target"]
+                remainder = list(queryset.exclude(pk=target.pk))
+                try:
+                    merged = merge(target, remainder, keep_old=keep_old)
+                except MergeConflictError as exc:
+                    messages.error(request, str(exc))
+                    merged = None
 
                 # Trigger a save for all the records to update it in solr.
-                for composition in merged.compositions.all():
-                    composition.composition.save()
+                if merged is not None:
+                    for composition in merged.compositions.all():
+                        composition.composition.save()
 
-                for scopied in merged.sources_copied.all():
-                    scopied.save()
+                    for scopied in merged.sources_copied.all():
+                        scopied.save()
 
-                for srelated in merged.sources_related.all():
-                    srelated.save()
+                    for srelated in merged.sources_related.all():
+                        srelated.save()
 
-                for sprovenance in merged.sources_provenance.all():
-                    sprovenance.save()
+                    for sprovenance in merged.sources_provenance.all():
+                        sprovenance.save()
 
-                messages.success(request, "Objects successfully merged.")
-                return
+                    messages.success(request, "Objects successfully merged.")
+                    return None
             else:
                 messages.error(request, "There was an error")
         else:
-            form = MergePeopleForm()
+            form = MergePeopleForm(queryset=queryset)
 
         return render(
             request,

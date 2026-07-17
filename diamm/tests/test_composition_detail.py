@@ -62,7 +62,7 @@ class CompositionDetailDateTests(TestCase):
         response = self.client.get(self.url, HTTP_ACCEPT="text/html")
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "<th>Date</th>", html=True)
+        self.assertContains(response, "<th>Source Date</th>", html=True)
         self.assertContains(response, "c. 1450")
         self.assertContains(response, "Attributed")
         self.assertContains(response, "Anonymous")

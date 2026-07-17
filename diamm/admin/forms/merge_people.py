@@ -1,5 +1,5 @@
-from django import forms
+from diamm.admin.forms.merge import MergeForm
 
 
-class MergePeopleForm(forms.Form):
-    keep_old = forms.BooleanField(initial=True, required=False)
+class MergePeopleForm(MergeForm):
+    pass
