@@ -10,115 +10,109 @@
     <style>
         [x-cloak] { display: none !important; }
     </style>
-    <script type="application/ld+json">
-        {
-            "@context": "http://schema.org",
-            "@type": "Thing",
-            "url": "{{ request.build_absolute_uri }}",
-            "name": "{{ content.display_name }}",
-            "description": "{{ content.display_summary }}"
-        }
-    </script>
+    {% set source_structured_data = {
+        "@context": "http://schema.org",
+        "@type": "Thing",
+        "url": request.build_absolute_uri(),
+        "name": content.display_name,
+        "description": content.display_summary,
+    } %}
+    <script type="application/ld+json">{{ source_structured_data|tojson }}</script>
     <script>
         document.addEventListener('alpine:init', () => {
-            const parsedUrl = new URL(window.location.href);
-            const hashAndQuery = parsedUrl.hash.split("?");
-            let rawHashParams = hashAndQuery[0].replace("#", '').split("/");
-            let hashParams = rawHashParams.filter(item => item);
+            const tabsFromHash = () => {
+                const hashPath = window.location.hash.split("?")[0];
+                const hashParams = hashPath.replace(/^#/, '').split("/").filter(item => item);
+                let selectedSourceTab = "description-tab";
+                let selectedInventoryTab = "primary-inventory-tab";
 
-            let selectedTab = "description-tab";
-            let inventoryTab = "primary-inventory-tab";
-            if (hashParams.length > 0)
-            {
-                let firstHash = hashParams[0]
-                switch (firstHash)
-                {
-                    {% if content.inventory or content.uninventoried %}
-                        case "inventory":
-                            selectedTab = "inventory-tab";
-                            if (hashParams.length > 1)
-                            {
-                                let secondHash = hashParams[1];
-                                switch (secondHash)
+                if (hashParams.length > 0) {
+                    switch (hashParams[0])
+                    {
+                        {% if content.inventory or content.uninventoried %}
+                            case "inventory":
+                                selectedSourceTab = "inventory-tab";
+                                switch (hashParams[1])
                                 {
                                     case "composer":
-                                        inventoryTab = "composer-inventory-tab";
+                                        selectedInventoryTab = "composer-inventory-tab";
                                         break;
                                     case "alphabetical":
-                                        inventoryTab = "composition-inventory-tab";
-                                        break;
-                                    default:
-                                        inventoryTab = "primary-inventory-tab";
+                                        selectedInventoryTab = "composition-inventory-tab";
                                         break;
                                 }
-                            }
+                                break;
+                        {% endif %}
+                        {% if content.manifest_url %}
+                            case "images":
+                                selectedSourceTab = "images-tab";
+                                break;
+                        {% endif %}
+                        {% if content.sets %}
+                            case "sets":
+                                selectedSourceTab = "sets-tab";
+                                break;
+                        {% endif %}
+                        {% if content.bibliography %}
+                        case "bibliography":
+                            selectedSourceTab = "bibliography-tab";
                             break;
-                    {% endif %}
-                    {% if content.manifest_url %}
-                        case "images":
-                            selectedTab = "images-tab";
+                        {% endif %}
+                        case "commentary":
+                            selectedSourceTab = "commentary-tab";
                             break;
-                    {% endif %}
-                    {% if content.sets %}
-                        case "sets":
-                            selectedTab = "sets-tab";
+                        {% if content.contributions %}
+                        case "contributions":
+                            selectedSourceTab = "contributions-tab";
                             break;
-                    {% endif %}
-                    {% if content.bibliography %}
-                    case "bibliography":
-                        selectedTab = "bibliography-tab";
-                        break;
-                    {% endif %}
-                    case "commentary":
-                        selectedTab = "commentary-tab";
-                        break;
-                    {% if content.contributions %}
-                    case "contributions":
-                        selectedTab = "contributions-tab";
-                        break;
-                    {% endif %}
-                    {% if request.user.is_authenticated %}
-                    case "corrections":
-                        selectedTab = "corrections-tab";
-                        break;
-                    {% endif %}
-                    default:
-                        selectedTab = "description-tab";
-                        break;
+                        {% endif %}
+                        {% if request.user.is_authenticated %}
+                        case "corrections":
+                            selectedSourceTab = "corrections-tab";
+                            break;
+                        {% endif %}
+                    }
                 }
-            }
-            else
-            {
-                selectedTab = "description-tab";
-            }
 
-            Alpine.store('sourceTabs', {
-                selectedTab: null,
-                init() { this.selectedTab = selectedTab },
-                select(tabName) {
-                    this.selectedTab = tabName;
-                },
-                isSelected(tabName) {
-                    return this.selectedTab === tabName;
-                },
-            });
+                return { selectedSourceTab, selectedInventoryTab };
+            };
 
-            Alpine.store('inventoryTabs', {
-                selectedTab: null,
-                init() { this.selectedTab = inventoryTab },
-                select(tabName) {
-                    this.selectedTab = tabName;
+            Alpine.data('sourceDetail', () => ({
+                selectedSourceTab: "description-tab",
+                selectedInventoryTab: "primary-inventory-tab",
+                hashChangeHandler: null,
+                init() {
+                    this.syncTabsFromHash();
+                    this.hashChangeHandler = () => this.syncTabsFromHash();
+                    window.addEventListener("hashchange", this.hashChangeHandler);
                 },
-                isSelected(tabName) {
-                    return this.selectedTab === tabName;
+                destroy() {
+                    window.removeEventListener("hashchange", this.hashChangeHandler);
                 },
-            })
+                syncTabsFromHash() {
+                    const tabs = tabsFromHash();
+                    this.selectedSourceTab = tabs.selectedSourceTab;
+                    this.selectedInventoryTab = tabs.selectedInventoryTab;
+                },
+                selectSourceTab(tabName) {
+                    this.selectedSourceTab = tabName;
+                },
+                sourceTabIsSelected(tabName) {
+                    return this.selectedSourceTab === tabName;
+                },
+                selectInventoryTab(tabName) {
+                    this.selectedInventoryTab = tabName;
+                },
+                inventoryTabIsSelected(tabName) {
+                    return this.selectedInventoryTab === tabName;
+                },
+            }));
         })
     </script>
 {% endblock %}
 
 {% block body %}
-<div>
+<div x-data="sourceDetail">
     <div id="source-heading" class="columns">
         <div class="column is-two-thirds">
             <h2 class="title is-3">{{ content.display_name }}</h2>
@@ -137,23 +131,23 @@
     </div>
     <div class="columns">
         <div class="column">
-            <div class="level" x-data>
+            <div class="level">
                 <div class="level-left is-fullwidth">
                     <div class="tabs">
                         <ul class="source-section-selector" x-ref="tablist" role="tablist">
-                            <li :class="$store.sourceTabs.isSelected($el.id) ? 'is-active' : ''"
-                                @click="$store.sourceTabs.select($el.id)"
+                            <li :class="sourceTabIsSelected($el.id) ? 'is-active' : ''"
+                                @click="selectSourceTab($el.id)"
                                 @mousedown.prevent
-                                @focus="$store.sourceTabs.select($el.id)"
+                                @focus="selectSourceTab($el.id)"
                                 id="description-tab">
                                 <a href="#/">Description</a>
                             </li>
                             {% if content.inventory or content.uninventoried %}
                                 <li id="inventory-tab"
-                                    :class="$store.sourceTabs.isSelected($el.id) ? 'is-active' : ''"
-                                    @click="$store.sourceTabs.select($el.id)"
+                                    :class="sourceTabIsSelected($el.id) ? 'is-active' : ''"
+                                    @click="selectSourceTab($el.id)"
                                     @mousedown.prevent
-                                    @focus="$store.sourceTabs.select($el.id)"
+                                    @focus="selectSourceTab($el.id)"
                                 >
                                     <a href="#/inventory">Inventory</a>
                                 </li>
@@ -161,10 +155,10 @@
 
                             {% if content.manifest_url %}
                                 <li id="images-tab"
-                                    :class="$store.sourceTabs.isSelected($el.id) ? 'is-active' : ''"
-                                    @click="$store.sourceTabs.select($el.id);"
+                                    :class="sourceTabIsSelected($el.id) ? 'is-active' : ''"
+                                    @click="selectSourceTab($el.id);"
                                     @mousedown.prevent
-                                    @focus="$store.sourceTabs.select($el.id)"
+                                    @focus="selectSourceTab($el.id)"
                                 >
                                     {% if request.user.is_authenticated or content.has_external_manifest %}
                                         <a href="#/images">Images</a>
@@ -176,10 +170,10 @@
 
                             {% if content.sets %}
                                 <li id="sets-tab"
-                                    :class="$store.sourceTabs.isSelected($el.id) ? 'is-active' : ''"
-                                    @click="$store.sourceTabs.select($el.id)"
+                                    :class="sourceTabIsSelected($el.id) ? 'is-active' : ''"
+                                    @click="selectSourceTab($el.id)"
                                     @mousedown.prevent
-                                    @focus="$store.sourceTabs.select($el.id)"
+                                    @focus="selectSourceTab($el.id)"
                                 >
                                     <a href="#/sets">Sets</a>
                                 </li>
@@ -187,29 +181,29 @@
 
                             {% if content.bibliography %}
                                 <li id="bibliography-tab"
-                                    :class="$store.sourceTabs.isSelected($el.id) ? 'is-active' : ''"
-                                    @click="$store.sourceTabs.select($el.id)"
+                                    :class="sourceTabIsSelected($el.id) ? 'is-active' : ''"
+                                    @click="selectSourceTab($el.id)"
                                     @mousedown.prevent
-                                    @focus="$store.sourceTabs.select($el.id)"
+                                    @focus="selectSourceTab($el.id)"
                                 >
                                     <a href="#/bibliography">Bibliography</a>
                                 </li>
                             {% endif %}
 
                             <li id="commentary-tab"
-                                :class="$store.sourceTabs.isSelected($el.id) ? 'is-active' : ''"
-                                @click="$store.sourceTabs.select($el.id)"
+                                :class="sourceTabIsSelected($el.id) ? 'is-active' : ''"
+                                @click="selectSourceTab($el.id)"
                                 @mousedown.prevent
-                                @focus="$store.sourceTabs.select($el.id)"
+                                @focus="selectSourceTab($el.id)"
                             >
                                 <a href="#/commentary">Commentary</a>
                             </li>
                             {% if content.contributions %}
                             <li id="contributions-tab"
-                                :class="$store.sourceTabs.isSelected($el.id) ? 'is-active' : ''"
-                                @click="$store.sourceTabs.select($el.id)"
+                                :class="sourceTabIsSelected($el.id) ? 'is-active' : ''"
+                                @click="selectSourceTab($el.id)"
                                 @mousedown.prevent
-                                @focus="$store.sourceTabs.select($el.id)"
+                                @focus="selectSourceTab($el.id)"
                             >
                                 <a href="#/contributions">Contributions</a>
                             </li>
@@ -222,10 +216,10 @@
                         <ul>
                             {% if request.user.is_authenticated %}
                             <li id="corrections-tab"
-                                :class="$store.sourceTabs.isSelected($el.id) ? 'is-active' : ''"
-                                @click="$store.sourceTabs.select($el.id)"
+                                :class="sourceTabIsSelected($el.id) ? 'is-active' : ''"
+                                @click="selectSourceTab($el.id)"
                                 @mousedown.prevent
-                                @focus="$store.sourceTabs.select($el.id)"
+                                @focus="selectSourceTab($el.id)"
                             >
                                 <a href="#/corrections">Contribute a Change</a>
                             </li>
@@ -242,9 +236,9 @@
             </div>
         </div>
     </div>
-    <div role="tabpanels" x-data>
+    <div role="tabpanels">
         <section id="description-panel"
-                 x-show="$store.sourceTabs.isSelected('description-tab')"
+                 x-show="sourceTabIsSelected('description-tab')"
                  x-cloak
                  role="tabpanel">
             {% include "website/source/description.jinja2" %}
@@ -252,7 +246,7 @@
 
         {% if content.inventory or content.uninventoried %}
             <section id="inventory-panel"
-                     x-show="$store.sourceTabs.isSelected('inventory-tab')"
+                     x-show="sourceTabIsSelected('inventory-tab')"
                      x-cloak
                      role="tabpanel">
                 {% include "website/source/inventory.jinja2" %}
@@ -261,9 +255,9 @@
 
         {% if content.manifest_url %}
             <section id="images-panel"
-                     x-show="$store.sourceTabs.isSelected('images-tab')"
+                     x-show="sourceTabIsSelected('images-tab')"
                      x-cloak
-                     x-effect="if ($store.sourceTabs.isSelected('images-tab')) $nextTick(() => $dispatch('initialize-diva'))"
+                     x-effect="if (sourceTabIsSelected('images-tab')) $nextTick(() => $dispatch('initialize-diva'))"
                      role="tabpanel">
                 {% include "website/source/images.jinja2" %}
             </section>
@@ -271,7 +265,7 @@
 
         {% if content.sets %}
             <section id="sets-panel"
-                     x-show="$store.sourceTabs.isSelected('sets-tab')"
+                     x-show="sourceTabIsSelected('sets-tab')"
                      x-cloak
                      role="tabpanel">
                 {% include "website/source/sets.jinja2" %}
@@ -280,7 +274,7 @@
 
         {% if content.bibliography %}
             <section id="bibliography"
-                     x-show="$store.sourceTabs.isSelected('bibliography-tab')"
+                     x-show="sourceTabIsSelected('bibliography-tab')"
                      x-cloak
                      role="tabpanel">
                 {% include "website/source/bibliography.jinja2" %}
@@ -288,7 +282,7 @@
         {% endif %}
 
         <section id="commentary"
-                 x-show="$store.sourceTabs.isSelected('commentary-tab')"
+                 x-show="sourceTabIsSelected('commentary-tab')"
                  x-cloak
                  role="tabpanel">
             {% include "website/source/commentary.jinja2" %}
@@ -296,7 +290,7 @@
 
         {% if content.contributions %}
         <section id="contributions"
-                 x-show="$store.sourceTabs.isSelected('contributions-tab')"
+                 x-show="sourceTabIsSelected('contributions-tab')"
                  x-cloak
                  role="tabpanel">
             {% include "website/source/contributions.jinja2" %}
@@ -305,7 +299,7 @@
 
         {% if request.user.is_authenticated %}
         <section id="corrections"
-                 x-show="$store.sourceTabs.isSelected('corrections-tab')"
+                 x-show="sourceTabIsSelected('corrections-tab')"
                  x-cloak
                  role="tabpanel">
             {% include "website/source/corrections.jinja2" %}

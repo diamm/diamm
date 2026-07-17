@@ -1,21 +1,6 @@
-{% if content.has_external_manifest %}
-    <div class="notification">
-        These images are from an external IIIF service and are not hosted by DIAMM.
-    </div>
-{% endif %}
-
-<script src="https://cdn.jsdelivr.net/npm/openseadragon@6.0.2/build/openseadragon/openseadragon.min.js"></script>
-<script src="{{ static('vendor/diva-7.4.0/diva.js') }}"></script>
 <script src="{{ static('apps/source-image-viewer.js') }}"></script>
 
-<div id="diva-wrapper" data-manifest-url="{{ content.manifest_url }}"></div>
-
-{% if content.archive.copyright %}
-<div class="columns">
-    <div class="column is-three-quarters">
-        <p class="is-pulled-right">
-            Images {{ content.archive.copyright }}
-        </p>
-    </div>
-</div>
-{% endif %}
+<div id="diva-wrapper"
+     data-manifest-url="{{ content.manifest_url }}"
+     data-openseadragon-url="https://cdn.jsdelivr.net/npm/openseadragon@6.0.2/build/openseadragon/openseadragon.min.js"
+     data-diva-url="{{ static('vendor/diva-7.4.0/diva.js') }}"></div>

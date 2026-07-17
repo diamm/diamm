@@ -14,6 +14,7 @@ from diamm.helpers.solr import (
     build_search_query_params,
     build_search_solr_request,
 )
+from diamm.helpers.solr.pagination import SolrResultSerializer
 from diamm.views.website.search import SearchView
 
 
@@ -65,6 +66,22 @@ class SearchQueryParamsTests(SimpleTestCase):
         request = self.factory.get("/search/", {"page": "abc"})
         params = build_search_query_params(request)
         self.assertEqual(params.page, 1)
+
+    def test_source_result_exposes_existing_external_manifest_flag(self) -> None:
+        request = self.factory.get("/search/")
+        result = SolrResultSerializer(
+            {
+                "type": "source",
+                "pk": 117,
+                "display_name_s": "Test source",
+                "public_images_b": False,
+                "external_manifest_b": True,
+            },
+            context={"request": request},
+        ).serialized
+
+        self.assertFalse(result["public_images"])
+        self.assertTrue(result["has_external_manifest"])
 
 
 class SearchViewTests(SimpleTestCase):

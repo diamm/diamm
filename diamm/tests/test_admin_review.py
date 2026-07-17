@@ -17,6 +17,8 @@ from diamm.admin.data.image import IIIFDataListFilter, ImageAdmin, ImageSourceLi
 from diamm.admin.data.notation import NotationAdmin
 from diamm.admin.data.person import PersonAdmin, PersonBiography
 from diamm.admin.data.source import SourceAdmin, SourceRelationshipInline
+from diamm.admin.forms.copy_inventory import CopyInventoryForm
+from diamm.admin.helpers.source_picker import source_picker_label
 from diamm.models.data.composition import Composition
 from diamm.models.data.image import Image
 from diamm.models.data.item import Item
@@ -84,6 +86,33 @@ class AdminReviewTests(TestCase):
             self.assertTrue(
                 copied.notes.filter(note=f"Bulk copied from source {source.pk}").exists()
             )
+
+    def test_copy_inventory_uses_project_source_picker_labels(self) -> None:
+        archive = baker.make("diamm_data.Archive", siglum="GB-Lbl")
+        source = baker.make("diamm_data.Source", archive=archive)
+        target = baker.make(
+            "diamm_data.Source",
+            archive=archive,
+            shelfmark="Add. MS 1",
+            date_statement="c. 1450",
+        )
+
+        form = CopyInventoryForm(instance=source)
+        targets = form.fields["targets"]
+        with CaptureQueriesContext(connection) as queries:
+            choices = list(targets.queryset)
+
+        self.assertNotIn(source, choices)
+        self.assertIn(target, choices)
+        self.assertEqual(
+            targets.label_from_instance(target),
+            source_picker_label(target),
+        )
+        self.assertEqual(
+            targets.label_from_instance(target),
+            "GB-Lbl Add. MS 1 — c. 1450",
+        )
+        self.assertEqual(len(queries), 1)
 
     def test_malformed_image_import_does_not_delete_existing_pages(self) -> None:
         source = baker.make("diamm_data.Source")

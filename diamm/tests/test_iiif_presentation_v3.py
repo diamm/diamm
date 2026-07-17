@@ -11,6 +11,7 @@ from diamm.serializers.iiif.helpers import PRESENTATION_CONTEXT
 from diamm.serializers.iiif.image import ImageSerializer
 from diamm.serializers.iiif.manifest import SourceManifestSerializer
 from diamm.serializers.iiif.structure import StructureSerializer
+from diamm.serializers.search.source import SourceSearchSerializer
 
 
 def collect_v2_keys(value):
@@ -206,11 +207,53 @@ class PresentationV3SerializerTests(TestCase):
         self.assertEqual(painting_body["service"][1]["type"], "AuthProbeService2")
         self.assertEqual(data["structures"][0]["type"], "Range")
         self.assertEqual(data["requiredStatement"]["label"], {"en": ["Attribution"]})
+        self.assertEqual(
+            data["requiredStatement"]["value"],
+            {"none": ["Digital Image Archive of Medieval Music"]},
+        )
         self.assertEqual(data["provider"][0]["type"], "Agent")
         self.assertEqual(data["thumbnail"][0]["type"], "Image")
         self.assertEqual(len(data["thumbnail"][0]["service"]), 1)
         self.assertEqual(data["thumbnail"][0]["service"][0]["type"], "ImageService2")
         self.assertEqual(list(collect_v2_keys(data)), [])
+
+    def test_manifest_uses_archive_copyright_as_required_statement(self) -> None:
+        with patch("diamm.serializers.iiif.manifest.SolrManager", FakeSolrManager):
+            data = SourceManifestSerializer(
+                {
+                    "pk": 1,
+                    "display_name_s": "Source A",
+                    "archive_copyright_s": "Images © Example Library",
+                },
+                context={"request": self.request},
+            ).serialized
+
+        self.assertEqual(
+            data["requiredStatement"],
+            {
+                "label": {"en": ["Attribution"]},
+                "value": {"none": ["Images © Example Library"]},
+            },
+        )
+
+    def test_source_index_document_includes_archive_copyright(self) -> None:
+        data = SourceSearchSerializer(
+            {
+                "type": "source",
+                "pk": 1,
+                "archive_copyright": "Images © Example Library",
+                "identifiers": [],
+                "notations": [],
+                "set_identifiers": [],
+                "set_cluster_shelfmarks": [],
+                "notes": [],
+                "bibliography": [],
+            }
+        ).serialized
+
+        self.assertEqual(
+            data["archive_copyright_s"], "Images © Example Library"
+        )
 
     def test_manifest_metadata_links_and_escapes_composers(self) -> None:
         source_doc = {

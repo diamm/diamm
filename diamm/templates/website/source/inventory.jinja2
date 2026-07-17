@@ -1,5 +1,5 @@
 
-<div x-data>
+<div>
     <div class="columns">
         <div class="column">
             <nav class="level">
@@ -8,23 +8,23 @@
                         <div class="tabs">
                             <ul>
                                 <li id="primary-inventory-tab"
-                                    :class="$store.inventoryTabs.isSelected($el.id) ? 'is-active' : ''"
-                                    @click="$store.inventoryTabs.select($el.id)"
+                                    :class="inventoryTabIsSelected($el.id) ? 'is-active' : ''"
+                                    @click="selectInventoryTab($el.id)"
                                 >
                                     <a href="#/inventory">{{ "Uninventoried" if content.uninventoried else "Source Order" }}</a>
                                 </li>
                                 {% if content.inventory %}
                                     <li id="composer-inventory-tab"
-                                        :class="$store.inventoryTabs.isSelected($el.id) ? 'is-active' : ''"
-                                        @click="$store.inventoryTabs.select($el.id)"
+                                        :class="inventoryTabIsSelected($el.id) ? 'is-active' : ''"
+                                        @click="selectInventoryTab($el.id)"
                                     >
                                         <a href="#/inventory/composer">By Composer (A-Z)</a>
                                     </li>
                                 {% endif %}
                                 {% if content.inventory %}
                                     <li id="composition-inventory-tab"
-                                        :class="$store.inventoryTabs.isSelected($el.id) ? 'is-active' : ''"
-                                        @click="$store.inventoryTabs.select($el.id)"
+                                        :class="inventoryTabIsSelected($el.id) ? 'is-active' : ''"
+                                        @click="selectInventoryTab($el.id)"
                                     >
                                         <a href="#/inventory/alphabetical">By Composition (A-Z)</a>
                                     </li>
@@ -38,7 +38,7 @@
     </div>
     <div>
         <section id="primary-inventory-panel"
-                 x-show="$store.inventoryTabs.isSelected('primary-inventory-tab')"
+                 x-show="inventoryTabIsSelected('primary-inventory-tab')"
                  class="columns">
             {% if content.uninventoried %}
                 {% include "website/source/inventory-uninventoried.jinja2" %}
@@ -48,7 +48,7 @@
         </section>
         {% if content.inventory %}
             <section id="composer-inventory-panel"
-                     x-show="$store.inventoryTabs.isSelected('composer-inventory-tab')"
+                     x-show="inventoryTabIsSelected('composer-inventory-tab')"
                      class="columns"
             >
                 {% include "website/source/inventory-composer-order.jinja2" %}
@@ -56,7 +56,7 @@
         {% endif %}
         {% if content.inventory %}
             <section id="composition-inventory-panel"
-                     x-show="$store.inventoryTabs.isSelected('composition-inventory-tab')"
+                     x-show="inventoryTabIsSelected('composition-inventory-tab')"
                      class="columns">
                 {% include "website/source/inventory-composition-order.jinja2" %}
             </section>

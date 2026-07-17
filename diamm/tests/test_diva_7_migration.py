@@ -1,8 +1,11 @@
+import json
+import re
 from pathlib import Path
 from types import SimpleNamespace
 
 from django.template.loader import get_template
 from django.test import SimpleTestCase, override_settings
+from jinja2.runtime import new_context
 from rest_framework.test import APIRequestFactory
 
 from diamm.serializers.search.composer_inventory import (
@@ -145,7 +148,93 @@ class InventoryImageViewerSerializerTests(SimpleTestCase):
 
 
 class DivaTemplateTests(SimpleTestCase):
-    def test_images_template_loads_diva_7_after_openseadragon(self):
+    def test_source_detail_serializes_json_ld_safely(self):
+        template = get_template("website/source/source_detail.jinja2").template
+        name = 'Royal "Choir" </script><script>alert(1)</script> 🎼'
+        summary = 'First line\n"Second" & <third>'
+        absolute_url = 'https://example.org/sources/1/?q="quoted"&x=<tag>'
+        context = new_context(
+            template.environment,
+            template.name,
+            template.blocks,
+            {
+                "content": {
+                    "display_name": name,
+                    "display_summary": summary,
+                    "inventory": [],
+                    "uninventoried": [],
+                    "manifest_url": None,
+                    "sets": [],
+                    "bibliography": [],
+                    "contributions": [],
+                },
+                "request": SimpleNamespace(
+                    build_absolute_uri=lambda: absolute_url,
+                    user=SimpleNamespace(is_authenticated=False),
+                ),
+            },
+        )
+
+        head = "".join(template.blocks["head"](context))
+        match = re.search(
+            r'<script type="application/ld\+json">(.*?)</script>',
+            head,
+            re.DOTALL,
+        )
+
+        self.assertIsNotNone(match)
+        structured_data = json.loads(match.group(1))
+        self.assertEqual(structured_data["url"], absolute_url)
+        self.assertEqual(structured_data["name"], name)
+        self.assertEqual(structured_data["description"], summary)
+        self.assertNotIn("</script><script>", match.group(1))
+
+    def test_source_detail_uses_one_page_scoped_alpine_component(self):
+        source_detail = Path(
+            "diamm/templates/website/source/source_detail.jinja2"
+        ).read_text()
+        related_templates = "\n".join(
+            (
+                source_detail,
+                Path(
+                    "diamm/templates/website/source/inventory.jinja2"
+                ).read_text(),
+                Path("diamm/templates/website/macros.jinja2").read_text(),
+            )
+        )
+
+        self.assertIn("Alpine.data('sourceDetail'", source_detail)
+        self.assertIn('x-data="sourceDetail"', source_detail)
+        self.assertIn("selectSourceTab", source_detail)
+        self.assertIn("selectInventoryTab", source_detail)
+        self.assertNotIn("Alpine.store", related_templates)
+        self.assertNotIn("$store.sourceTabs", related_templates)
+        self.assertNotIn("$store.inventoryTabs", related_templates)
+
+    def test_source_detail_syncs_tabs_with_hash_navigation(self):
+        source_detail = Path(
+            "diamm/templates/website/source/source_detail.jinja2"
+        ).read_text()
+
+        self.assertIn("const tabsFromHash = () =>", source_detail)
+        self.assertIn("this.syncTabsFromHash();", source_detail)
+        self.assertIn(
+            'window.addEventListener("hashchange", this.hashChangeHandler)',
+            source_detail,
+        )
+        self.assertIn(
+            'window.removeEventListener("hashchange", this.hashChangeHandler)',
+            source_detail,
+        )
+        self.assertIn(
+            "this.selectedSourceTab = tabs.selectedSourceTab", source_detail
+        )
+        self.assertIn(
+            "this.selectedInventoryTab = tabs.selectedInventoryTab",
+            source_detail,
+        )
+
+    def test_images_template_defers_viewer_dependencies(self):
         template = get_template("website/source/images.jinja2")
         html = template.template.render(
             content={
@@ -155,9 +244,12 @@ class DivaTemplateTests(SimpleTestCase):
             }
         )
 
-        self.assertLess(html.index("openseadragon@6.0.2"), html.index("diva-7.4.0"))
         self.assertIn("source-image-viewer.js", html)
         self.assertIn('data-manifest-url="https://example.org/manifest"', html)
+        self.assertIn('data-openseadragon-url="https://cdn.jsdelivr.net/', html)
+        self.assertIn('data-diva-url="/static/vendor/diva-7.4.0/diva.js"', html)
+        self.assertNotIn('<script src="https://cdn.jsdelivr.net/npm/openseadragon', html)
+        self.assertNotIn('<script src="/static/vendor/diva-7.4.0/diva.js"', html)
         self.assertNotIn("diva-page-details", html)
         self.assertNotIn("createStructureDataLookup", html)
         self.assertNotIn("diva.css", html)
@@ -170,6 +262,14 @@ class DivaTemplateTests(SimpleTestCase):
         self.assertIn("showTitle: false", script)
         self.assertIn("initialPage: initialPage", script)
         self.assertIn("instance.goToPage(pageIndex)", script)
+        self.assertIn('document.createElement("script")', script)
+        self.assertIn("wrapper.dataset.openseadragonUrl", script)
+        self.assertIn("wrapper.dataset.divaUrl", script)
+        self.assertLess(
+            script.index("wrapper.dataset.openseadragonUrl"),
+            script.index("wrapper.dataset.divaUrl"),
+        )
+        self.assertIn("if (viewerPromise)", script)
         self.assertNotIn("window.fetch =", script)
         self.assertNotIn("__diammProbeFetchInstalled", script)
         self.assertNotIn("Diva.Events", script)

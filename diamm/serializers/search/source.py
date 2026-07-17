@@ -20,6 +20,7 @@ def _get_sources(cfg: dict):
             a.siglum,
             a.name  AS archive_name,
             a.id    AS archive_pk,
+            a.copyright_statement AS archive_copyright,
             ag.name AS archive_city_name,
             ag2.name AS archive_city_parent_name
         FROM diamm_data_source s
@@ -151,6 +152,7 @@ SELECT
    ) AS display_name,
    s.archive_name,
    s.archive_pk,
+   s.archive_copyright,
    s.archive_city_name,
    s.type AS source_type,
    s.archive_city_parent_name,
@@ -290,6 +292,9 @@ class SourceSearchSerializer(ypres.DictSerializer):
     display_name_s = ypres.StrField(attr="display_name", required=False)
     archive_s = ypres.StrField(attr="archive_name", required=False)
     archive_i = ypres.IntField(attr="archive_pk", required=False)
+    archive_copyright_s = ypres.StrField(
+        attr="archive_copyright", required=False
+    )
     source_archive_city_s = ypres.StrField(attr="archive_city_name", required=False)
     source_archive_country_s = ypres.StrField(
         attr="archive_city_parent_name", required=False

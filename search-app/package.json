@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "develop": "chokidar 'src/**/*.elm' -c 'clear && lamdera make --no-wire src/Main.elm --debug --output=dist/search.js'",
+    "develop:build": "lamdera make --no-wire src/Main.elm --debug --output=dist/search.js",
     "production": "./optimize.sh src/Main.elm dist/search.js dist/search.js",
     "deploy": "cp dist/search.js ../diamm/static/apps/search/"
   },

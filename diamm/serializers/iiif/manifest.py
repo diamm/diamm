@@ -79,10 +79,12 @@ class SourceManifestSerializer(ypres.DictSerializer):
         ]
 
     def get_required_statement(self, obj: dict) -> dict:
-        del obj
+        statement = obj.get("archive_copyright_s") or (
+            "Digital Image Archive of Medieval Music"
+        )
         return {
             "label": language_map("Attribution", "en"),
-            "value": language_map("Digital Image Archive of Medieval Music"),
+            "value": language_map(statement),
         }
 
     def get_provider(self, obj: dict) -> list[dict]:
