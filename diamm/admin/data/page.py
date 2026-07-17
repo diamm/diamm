@@ -44,11 +44,10 @@ class PageAdmin(VersionAdmin):
     list_editable = ("numeration", "page_type", "sort_order")
     inlines = [ImageInline]
 
+    @admin.display(description="Source", ordering="source__shelfmark")
     def get_source(self, obj):
         return f"{obj.source.display_name}"
 
-    get_source.short_description = "source"
-
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        return qs.select_related("source__archive__city").prefetch_related("images")
+        return qs.select_related("source__archive__city")

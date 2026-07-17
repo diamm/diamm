@@ -15,18 +15,17 @@ class GeographicAreaAdmin(VersionAdmin):
     actions = ["merge_areas_action"]
     raw_id_fields = ("parent",)
 
+    @admin.display(description="Parent", ordering="parent")
     def get_parent(self, obj):
         if obj.parent:
             return f"{obj.parent.name}"
         return None
 
-    get_parent.short_description = "Parent"
-    get_parent.admin_order_field = "parent"
-
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         return qs.select_related("parent__parent")
 
+    @admin.action(description="Merge Areas")
     def merge_areas_action(self, request, queryset):
         if "do_action" in request.POST:
             form = MergeAreasForm(request.POST)
@@ -64,7 +63,11 @@ class GeographicAreaAdmin(VersionAdmin):
         return render(
             request,
             "admin/geographic_area/merge_areas.html",
-            {"objects": queryset, "form": form},
+            {
+                **self.admin_site.each_context(request),
+                "objects": queryset,
+                "form": form,
+                "opts": self.model._meta,
+                "title": "Merge geographic areas",
+            },
         )
-
-    merge_areas_action.short_description = "Merge Areas"

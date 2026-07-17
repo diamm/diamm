@@ -1,11 +1,11 @@
 from django.contrib import admin
 from django.db import models
 from django.db.models import Q
-from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from pagedown.widgets import AdminPagedownWidget
 from reversion.admin import VersionAdmin
 
+from diamm.admin.helpers.html import admin_change_link
 from diamm.models.data.archive import Archive
 from diamm.models.data.archive_identifier import ArchiveIdentifier
 from diamm.models.data.archive_note import ArchiveNote
@@ -45,9 +45,7 @@ class ArchiveIdentifierInline(admin.TabularInline):
     def get_external_url(self, instance) -> str:
         if not instance.identifier_type:
             return ""
-        return mark_safe(  # noqa: S308
-            f'<a href="{instance.identifier_url}">{instance.identifier_url}</a>'
-        )
+        return admin_change_link(instance.identifier_url, instance.identifier_url)
 
 
 @admin.register(Archive)
@@ -67,17 +65,15 @@ class ArchiveAdmin(VersionAdmin):
     view_on_site = True
     readonly_fields = ("created", "updated")
 
+    @admin.display(description="City", ordering="city__name")
     def get_city(self, obj):
-        return f"{obj.city.name}"
+        return obj.city.name if obj.city else "-"
 
-    get_city.short_description = "City"
-    get_city.admin_order_field = "city__name"
-
+    @admin.display(description="Country", ordering="city__parent__name")
     def get_country(self, obj):
-        return f"{obj.city.parent.name}"
-
-    get_country.short_description = "Country"
-    get_country.admin_order_field = "city__parent__name"
+        if obj.city and obj.city.parent:
+            return obj.city.parent.name
+        return "-"
 
     def get_queryset(self, request):
         qset = super().get_queryset(request)

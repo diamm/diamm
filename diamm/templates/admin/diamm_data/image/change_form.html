@@ -1,9 +1,12 @@
 {% extends "admin/change_form.html" %}
+{% load i18n %}
 
 {% block after_field_sets %}{{ block.super }}
     {% if original.location %}
         <h2>Image Preview</h2>
         {# Route this through the images view so that we get all the auth functionality #}
-        <img src="/images/{{ original.pk }}/full/512,/0/default.jpg" />
+        <img src="{% url 'image-serve' original.pk 'full/512,/0/default.jpg' %}"
+             alt="{% blocktranslate with image=original %}Preview of {{ image }}{% endblocktranslate %}"
+             loading="lazy">
     {% endif %}
 {% endblock %}

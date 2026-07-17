@@ -1,8 +1,8 @@
 from django.contrib import admin
-from django.utils.safestring import mark_safe
-from rest_framework.reverse import reverse
+from django.urls import reverse
 from reversion.admin import VersionAdmin
 
+from diamm.admin.helpers.html import admin_change_link
 from diamm.models.data.composition import Composition
 from diamm.models.data.organization import Organization
 from diamm.models.data.person import Person
@@ -66,14 +66,14 @@ class ProblemReportAdmin(VersionAdmin):
         obj_pk = obj.record.id
         if isinstance(obj.record, Source):
             url = reverse("admin:diamm_data_source_change", args=[obj_pk])
-            return mark_safe(f"<a href='{url}'>{obj.record.display_name} (source)</a>")  # noqa: S308
+            return admin_change_link(url, f"{obj.record.display_name} (source)")
         elif isinstance(obj.record, Organization):
             url = reverse("admin:diamm_data_organization_change", args=[obj_pk])
-            return mark_safe(f"<a href='{url}'>{obj.record.name} (organization)</a>")  # noqa: S308
+            return admin_change_link(url, f"{obj.record.name} (organization)")
         elif isinstance(obj.record, Person):
             url = reverse("admin:diamm_data_person_change", args=[obj_pk])
-            return mark_safe(f"<a href='{url}'>{obj.record.full_name} (person)</a>")  # noqa: S308
+            return admin_change_link(url, f"{obj.record.full_name} (person)")
         elif isinstance(obj.record, Composition):
             url = reverse("admin:diamm_data_composition_change", args=[obj_pk])
-            return mark_safe(f"<a href='{url}'>{obj.record.title} (composition)</a>")  # noqa: S308
+            return admin_change_link(url, f"{obj.record.title} (composition)")
         return None

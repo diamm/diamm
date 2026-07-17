@@ -4,11 +4,12 @@ from django.contrib.admin.helpers import ACTION_CHECKBOX_NAME
 from django.db import transaction
 from django.db.models.query import Prefetch
 from django.shortcuts import render
-from django.utils.safestring import mark_safe
+from django.urls import reverse
 from reversion.admin import VersionAdmin
 
 from diamm.admin.forms.assign_genre import AssignGenreForm
 from diamm.admin.forms.merge_compositions import MergeCompositionsForm
+from diamm.admin.helpers.html import admin_change_link, html_join
 from diamm.admin.merge_models import merge
 from diamm.models.data.composition import Composition
 from diamm.models.data.composition_bibliography import CompositionBibliography
@@ -59,7 +60,7 @@ class CycleInline(admin.StackedInline):
 class CompositionForm(forms.ModelForm):
     class Meta:
         model = Composition
-        fields = "__all__"
+        fields = "__all__"  # noqa: DJ007
         widgets = {
             "title": forms.TextInput(attrs={"size": "100"}),  # wider input
         }
@@ -91,30 +92,28 @@ class CompositionAdmin(VersionAdmin):
             "composers__composer",
         )
 
+    @admin.display(
+        description="Composers", ordering="composers__composer__last_name"
+    )
     def get_composers(self, obj):
-        c = "; ".join([c.composer.full_name for c in obj.composers.all()])
-        return f"{c}"
-
-    get_composers.short_description = "Composers"
-    get_composers.admin_order_field = "composers__composer__last_name"
+        return html_join(c.composer.full_name for c in obj.composers.all())
 
     def get_genres(self, obj):
         g = ", ".join([g.name for g in obj.genres.all()])
         return f"{g}"
 
-    get_genres.short_description = "Genres"
-
+    @admin.display(description="Appears in")
     def appears_in(self, obj) -> str | None:
         if not obj.sources.exists():
             return None
 
-        sources = [
-            f"<a href='/admin/diamm_data/source/{x.source.pk}/change'>{x.source.display_name}</a><br />"
-            for x in obj.sources.all()
-        ]
-        return mark_safe("".join(sources))  # noqa: S308
-
-    appears_in.short_description = "Appears in"
+        return html_join(
+            admin_change_link(
+                reverse("admin:diamm_data_source_change", args=(item.source_id,)),
+                item.source.display_name,
+            )
+            for item in obj.sources.all()
+        )
 
     @admin.action(description="Merge Compositions")
     def merge_compositions_action(self, request, queryset):
@@ -125,7 +124,7 @@ class CompositionAdmin(VersionAdmin):
                 keep_old = form.cleaned_data["keep_old"]
                 target = queryset.first()
                 remainder = list(queryset[1:])
-                merged = merge(target, remainder, keep_old=keep_old)
+                merge(target, remainder, keep_old=keep_old)
 
                 messages.success(request, "Objects successfully merged")
                 return None
@@ -137,7 +136,13 @@ class CompositionAdmin(VersionAdmin):
         return render(
             request,
             "admin/composition/merge_compositions.html",
-            {"objects": queryset, "form": form},
+            {
+                **self.admin_site.each_context(request),
+                "objects": queryset,
+                "form": form,
+                "opts": self.model._meta,
+                "title": "Merge compositions",
+            },
         )
 
     @admin.action(description="Assign Genre to Compositions")
@@ -159,8 +164,11 @@ class CompositionAdmin(VersionAdmin):
             form = AssignGenreForm()
 
         context = {
+            **modeladmin.admin_site.each_context(request),
             "form": form,
             "objects": queryset,
+            "opts": modeladmin.model._meta,
+            "title": "Assign genre",
             # needed so the template can preserve the selection on POST
             "action_checkbox_name": ACTION_CHECKBOX_NAME,
             "action_name": "assign_genre_action",

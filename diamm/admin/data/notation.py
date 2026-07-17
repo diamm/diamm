@@ -1,9 +1,9 @@
 from django.contrib import admin
 from django.db.models import Count
 from django.urls import reverse
-from django.utils.safestring import mark_safe
 from reversion.admin import VersionAdmin
 
+from diamm.admin.helpers.html import admin_change_link
 from diamm.models import Item, Source
 from diamm.models.data.notation import Notation
 
@@ -11,7 +11,7 @@ from diamm.models.data.notation import Notation
 class SourceNotationInline(admin.TabularInline):
     model = Source.notations.through
     extra = 0
-    can_delete = 0
+    can_delete = False
     fields = ("attached_to_source",)
     readonly_fields = ("attached_to_source",)
 
@@ -23,9 +23,7 @@ class SourceNotationInline(admin.TabularInline):
 
     def attached_to_source(self, obj):
         change_url = reverse("admin:diamm_data_source_change", args=(obj.source.id,))
-        return mark_safe(  # noqa: S308
-            f'<a href="{change_url}">{obj.source.display_name}</a>'
-        )
+        return admin_change_link(change_url, obj.source.display_name)
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -43,10 +41,8 @@ class ItemNotationInline(admin.TabularInline):
         return False
 
     def attached_to_item(self, obj):
-        change_url = reverse("admin:diamm_data_item_change", args=(obj.item.id,))
-        return mark_safe(  # noqa: S308
-            f'<a href="{change_url}">{obj.source.display_name}</a>'
-        )
+        change_url = reverse("admin:diamm_data_item_change", args=(obj.id,))
+        return admin_change_link(change_url, obj.source.display_name)
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -69,4 +65,7 @@ class NotationAdmin(VersionAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        return qs.annotate(source_count=Count("sources"), item_count=Count("item"))
+        return qs.annotate(
+            source_count=Count("sources", distinct=True),
+            item_count=Count("item", distinct=True),
+        )

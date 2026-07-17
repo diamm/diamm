@@ -1,20 +1,21 @@
 from django.contrib import admin, messages
+from django.core.exceptions import PermissionDenied
 from django.db import models, transaction
 from django.db.models import Q
 from django.forms import Textarea, TextInput
+from django.http import Http404
 from django.shortcuts import redirect, render
-from django.urls import path
+from django.urls import path, reverse
 from django.utils.translation import gettext_lazy as _
 from pagedown.widgets import AdminPagedownWidget
-from rest_framework.reverse import reverse
 from reversion.admin import VersionAdmin
 
 from diamm.admin.filters.input_filter import InputFilter
-from diamm.admin.helpers.html import admin_change_link, html_join
 from diamm.admin.forms.copy_inventory import CopyInventoryForm
 from diamm.admin.forms.create_pages_and_images import CreatePagesAndImagesForm
+from diamm.admin.helpers.html import admin_change_link, html_join
 from diamm.admin.helpers.optimized_raw_id import RawIdWidgetAdminMixin
-from diamm.models import ItemBibliography, ItemComposer, ItemNote, Voice, Image
+from diamm.models import Image, ItemBibliography, ItemComposer, ItemNote, Voice
 from diamm.models.data.geographic_area import AreaTypeChoices, GeographicArea
 from diamm.models.data.item import Item
 from diamm.models.data.item_note import ItemNoteTypeChoices
@@ -330,42 +331,30 @@ class SourceAdmin(VersionAdmin):
     formfield_overrides = {models.TextField: {"widget": AdminPagedownWidget}}
 
     def get_queryset(self, request):
-        return (
-            super()
-            .get_queryset(request)
-            .prefetch_related(
-                "pages",
-                "copyists",
-                "notations",
-                "links",
-                "bibliographies__bibliography",
-                "sets",
-                "identifiers",
-                "authorities",
-                "notes",
-                "provenance__city",
-                "provenance__country",
-                "provenance__region",
-                "contributions",
-                "commentary",
-            )
-            .select_related(
-                "archive__city__parent__parent",
-                "cover_image__page",
-                "cover_image__type",
-            )
+        return super().get_queryset(request).select_related(
+            "archive__city__parent"
         )
 
     @admin.display(description="City")
     def get_city(self, obj):
-        return f"{obj.archive.city.name} ({obj.archive.city.parent.name})"
+        city = obj.archive.city
+        if city is None:
+            return "-"
+        if city.parent is None:
+            return city.name
+        return f"{city.name} ({city.parent.name})"
 
     @admin.display(description="Archive")
     def get_archive(self, obj):
         return f"{obj.archive.name}"
 
     def copy_inventory_view(self, request, pk):
-        source = Source.objects.get(pk=pk)
+        source = self.get_object(request, str(pk))
+        if source is None:
+            raise Http404
+        if not self.has_change_permission(request, source):
+            raise PermissionDenied
+
         if "do_action" not in request.POST:
             form = CopyInventoryForm(instance=source)
         else:
@@ -375,13 +364,14 @@ class SourceAdmin(VersionAdmin):
             else:
                 targets = form.cleaned_data["targets"]
 
-                for target in targets:
-                    # If the source has accidentally been included in the targets,
-                    # skip it.
-                    if target.pk == source.pk:
-                        continue
+                with transaction.atomic():
+                    for target in targets:
+                        # If the source has accidentally been included in the targets,
+                        # skip it.
+                        if target.pk == source.pk:
+                            continue
 
-                    self.__copy_items_to_source(source, target)
+                        self.__copy_items_to_source(source, target)
 
                 messages.success(
                     request, "Inventories successfully copied. Now go check them!"
@@ -392,7 +382,13 @@ class SourceAdmin(VersionAdmin):
         return render(
             request,
             "admin/diamm_data/source/copy_inventory.html",
-            {"form": form, "instance": source},
+            {
+                **self.admin_site.each_context(request),
+                "form": form,
+                "instance": source,
+                "opts": self.model._meta,
+                "title": "Copy inventory",
+            },
         )
 
     def get_urls(self):
@@ -414,7 +410,6 @@ class SourceAdmin(VersionAdmin):
 
     @transaction.atomic
     def __copy_items_to_source(self, source, target):
-        # Prefetch related data efficiently
         items = list(
             source.inventory.all().prefetch_related(
                 "voices",
@@ -424,59 +419,56 @@ class SourceAdmin(VersionAdmin):
             )
         )
 
-        # Clear existing target inventory
         target.inventory.all().delete()
 
-        # Clone all Items (in memory)
-        new_items = []
-        old_to_new_item_map = {}
-
-        for item in items:
-            old_id = item.pk
-            item.pk = None
-            item.source = target
-            new_items.append(item)
-            # Temporarily store mapping (will update after bulk_create)
-            old_to_new_item_map[old_id] = item
-
-        # Bulk-create all new Items
+        new_items = [
+            Item(
+                source=target,
+                **self._copy_concrete_fields(item, exclude={"id", "source"}),
+            )
+            for item in items
+        ]
         Item.objects.bulk_create(new_items)
+        if any(item.pk is None for item in new_items):
+            raise RuntimeError("The database did not return IDs for copied items")
 
-        # Refresh PKs for the new items
-        # Django doesn't auto-populate PKs unless using PostgreSQL + `return_defaults=True`
-        # So we re-fetch in the same order:
-        new_items = list(target.inventory.all().order_by("pk"))
-        for old_item, new_item in zip(items, new_items, strict=True):
-            old_to_new_item_map[old_item.pk] = new_item
-
-        # Build up related clones (using the old→new mapping)
         new_voices = []
         new_bibs = []
         new_comps = []
         new_item_notes = []
 
-        for old_item in items:
-            new_item = old_to_new_item_map[old_item.pk]
-
+        for old_item, new_item in zip(items, new_items, strict=True):
             for v in old_item.voices.all():
-                v.pk = None
-                v.item = new_item
-                new_voices.append(v)
+                new_voices.append(
+                    Voice(
+                        item=new_item,
+                        **self._copy_concrete_fields(v, exclude={"id", "item"}),
+                    )
+                )
 
             for n in old_item.notes.all():
-                n.pk = None
-                n.item = new_item
-                new_item_notes.append(n)
+                new_item_notes.append(
+                    ItemNote(
+                        item=new_item,
+                        **self._copy_concrete_fields(n, exclude={"id", "item"}),
+                    )
+                )
 
             for b in old_item.itembibliography_set.all():
-                b.pk = None
-                b.item = new_item
-                new_bibs.append(b)
+                new_bibs.append(
+                    ItemBibliography(
+                        item=new_item,
+                        **self._copy_concrete_fields(b, exclude={"id", "item"}),
+                    )
+                )
 
             for c in old_item.unattributed_composers.all():
-                c.pk = None
-                c.item = new_item
-                new_comps.append(c)
+                new_comps.append(
+                    ItemComposer(
+                        item=new_item,
+                        **self._copy_concrete_fields(c, exclude={"id", "item"}),
+                    )
+                )
 
             new_item_notes.append(
                 ItemNote(
@@ -486,14 +478,27 @@ class SourceAdmin(VersionAdmin):
                 )
             )
 
-        # 5️⃣ Bulk-create all related data
         Voice.objects.bulk_create(new_voices)
         ItemBibliography.objects.bulk_create(new_bibs)
         ItemComposer.objects.bulk_create(new_comps)
         ItemNote.objects.bulk_create(new_item_notes)
 
+    @staticmethod
+    def _copy_concrete_fields(instance, *, exclude):
+        return {
+            field.attname: getattr(instance, field.attname)
+            for field in instance._meta.concrete_fields
+            if field.name not in exclude and field.attname not in exclude
+        }
+
+    @transaction.atomic
     def import_images(self, request, pk):
-        source = Source.objects.get(pk=pk)
+        source = self.get_object(request, str(pk))
+        if source is None:
+            raise Http404
+        if not self.has_change_permission(request, source):
+            raise PermissionDenied
+
         if "do_action" not in request.POST:
             form = CreatePagesAndImagesForm()
         else:
@@ -501,11 +506,9 @@ class SourceAdmin(VersionAdmin):
             if not form.is_valid():
                 messages.error(request, "There was an error in the form.")
             else:
-                source.pages.all().delete()
-
                 import_lines_t = form.cleaned_data["imports"]
                 make_public_b = form.cleaned_data["public"]
-                import_lines = import_lines_t.split("\n")
+                import_lines = import_lines_t.splitlines()
 
                 # Check that all lines are well-formatted before importing any
                 processed_lines = []
@@ -521,7 +524,8 @@ class SourceAdmin(VersionAdmin):
                         )
                         return redirect("admin:diamm_data_source_change", pk)
 
-                # If all lines pass, now import them.
+                source.pages.all().delete()
+
                 for i, line in enumerate(processed_lines):
                     p = Page(
                         source=source,
@@ -543,5 +547,11 @@ class SourceAdmin(VersionAdmin):
         return render(
             request,
             "admin/diamm_data/source/import_images.html",
-            context={"form": form, "instance": source},
+            context={
+                **self.admin_site.each_context(request),
+                "form": form,
+                "instance": source,
+                "opts": self.model._meta,
+                "title": "Import images",
+            },
         )

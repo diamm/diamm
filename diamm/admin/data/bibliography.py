@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.urls import reverse
-from django.utils.safestring import mark_safe
 from reversion.admin import VersionAdmin
 
+from diamm.admin.helpers.html import admin_change_link
 from diamm.models import CompositionBibliography
 from diamm.models.data.bibliography import Bibliography
 from diamm.models.data.bibliography_author_role import BibliographyAuthorRole
@@ -44,8 +44,8 @@ class SourceBibliographyInline(admin.TabularInline):
 
     def attached_to_source(self, obj):
         change_url = reverse("admin:diamm_data_source_change", args=(obj.source.id,))
-        return mark_safe(  # noqa: S308
-            f'<a href="{change_url}">{obj.source.archive.siglum} {obj.source.shelfmark}</a>'
+        return admin_change_link(
+            change_url, f"{obj.source.archive.siglum} {obj.source.shelfmark}"
         )
 
     fields = ("attached_to_source",)
@@ -66,9 +66,7 @@ class ItemBibliographyInline(admin.TabularInline):
 
     def attached_to_item(self, obj):
         change_url = reverse("admin:diamm_data_item_change", args=(obj.item.id,))
-        return mark_safe(  # noqa: S308
-            f'<a href="{change_url}">{obj.item}</a>'
-        )
+        return admin_change_link(change_url, obj.item)
 
     fields = ("attached_to_item",)
     readonly_fields = ("attached_to_item",)
@@ -90,9 +88,7 @@ class CompositionBibliographyInline(admin.TabularInline):
         change_url = reverse(
             "admin:diamm_data_composition_change", args=(obj.composition.id,)
         )
-        return mark_safe(  # noqa: S308
-            f'<a href="{change_url}">{obj.composition.title}</a>'
-        )
+        return admin_change_link(change_url, obj.composition.title)
 
     fields = ("attached_to_composition",)
     readonly_fields = ("attached_to_composition",)
@@ -129,6 +125,9 @@ class BibliographyAdmin(VersionAdmin):
             .all()
         )
 
+    @admin.display(
+        description="Authors", ordering="authors__bibliography_author__last_name"
+    )
     def get_authors(self, obj):
         authors = obj.authors.all()
         if not authors:
@@ -140,6 +139,3 @@ class BibliographyAdmin(VersionAdmin):
         else:
             authlist = ", ".join([a.bibliography_author.full_name for a in authors])
             return f"{authlist}"
-
-    get_authors.short_description = "Authors"
-    get_authors.admin_order_field = "authors__bibliography_author__last_name"

@@ -37,9 +37,9 @@ class CycleAdmin(VersionAdmin):
             .select_related("type")
         )
 
+    @admin.display(
+        description="Composers", ordering="composers__composer__last_name"
+    )
     def get_composers(self, obj):
         c = "; ".join([c.full_name for c in obj.composers.all()])
         return f"{c}"
-
-    get_composers.short_description = "Composers"
-    get_composers.admin_order_field = "composers__composer__last_name"

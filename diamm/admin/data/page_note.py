@@ -17,3 +17,8 @@ class PageNoteAdmin(VersionAdmin):
     @admin.display(description="Source")
     def get_source(self, obj):
         return f"{obj.page.source.display_name}"
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related(
+            "page__source__archive"
+        )

@@ -1,11 +1,13 @@
-from gettext import ngettext
 from datetime import timedelta
+from gettext import ngettext
 
 from django import forms
 from django.conf import settings
 from django.contrib import admin, messages
 from django.db import models
+from django.db.models import Q
 from django.forms import TextInput
+from django.http import HttpRequest
 from django.utils.translation import gettext_lazy as _
 from pyreqwest.client import SyncClient, SyncClientBuilder
 from pyreqwest.exceptions import PyreqwestError, StatusError
@@ -56,7 +58,9 @@ class ImageSourceListFilter(admin.SimpleListFilter):
 
     def queryset(self, request: HttpRequest, queryset):
         val = self.value()
-        if not val or val == "False":
+        if not val:
+            return queryset
+        if val == "False":
             return queryset.filter(page__isnull=False)
         elif val == "True":
             return queryset.filter(page__isnull=True)
@@ -85,8 +89,8 @@ class IIIFDataListFilter(admin.SimpleListFilter):
                 location__isnull=False, width__isnull=False, height__isnull=False
             )
         elif val == "False":
-            return queryset.filter(
-                location__isnull=False, width__isnull=True, height__isnull=True
+            return queryset.filter(location__isnull=False).filter(
+                Q(width__isnull=True) | Q(height__isnull=True)
             )
         return queryset
 
@@ -195,6 +199,7 @@ class ImageAdmin(VersionAdmin):
     def refetch_iiif_info(self, request: HttpRequest, queryset) -> None:
         failed_urls: list[str] = []
         success_urls: list[str] = []
+        updated_images: list[Image] = []
         for img in queryset:
             location = img.location
             if not location:
@@ -209,20 +214,27 @@ class ImageAdmin(VersionAdmin):
 
             img.width = wh["width"]
             img.height = wh["height"]
+            updated_images.append(img)
 
-        Image.objects.bulk_update(queryset, ["width", "height"])
+        if updated_images:
+            Image.objects.bulk_update(updated_images, ["width", "height"])
 
         if failed_urls:
             self.message_user(
                 request,
                 ngettext("%d url failed", "%d urls failed", len(failed_urls))
-                % failed_urls,
+                % len(failed_urls),
                 messages.WARNING,
             )
         else:
             self.message_user(
                 request,
-                "%d sources were updated successfully" % len(success_urls),  # noqa: UP031
+                ngettext(
+                    "%d image was updated successfully",
+                    "%d images were updated successfully",
+                    len(success_urls),
+                )
+                % len(success_urls),
                 messages.SUCCESS,
             )
 

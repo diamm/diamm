@@ -3,11 +3,11 @@ from django.db import models
 from django.forms import ModelForm
 from django.forms.widgets import TextInput
 from django.template.defaultfilters import truncatewords
-from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from reversion.admin import VersionAdmin
 
 from diamm.admin.filters.input_filter import InputFilter
+from diamm.admin.helpers.html import html_join
 from diamm.models import Voice
 from diamm.models.data.external_page import ExternalPage
 from diamm.models.data.item import Item
@@ -169,7 +169,7 @@ class ItemAdmin(VersionAdmin):
             return None
 
         cnames: list = [c.composer.full_name for c in obj.composition.composers.all()]
-        return mark_safe("; <br />".join(cnames))  # noqa: S308
+        return html_join(cnames)
 
     @admin.display(description="Composition", ordering="composition__title")
     def get_composition(self, obj):
@@ -179,5 +179,5 @@ class ItemAdmin(VersionAdmin):
     def get_queryset(self, request):
         qset = super().get_queryset(request)
         return qset.select_related("source__archive", "composition").prefetch_related(
-            "pages", "composition__composers__composer", "voices"
+            "pages", "composition__composers__composer"
         )

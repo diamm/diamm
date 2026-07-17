@@ -2,17 +2,16 @@ from django.contrib import admin, messages
 from django.contrib.contenttypes.admin import GenericTabularInline
 from django.db import models
 from django.shortcuts import render
-from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from pagedown.widgets import AdminPagedownWidget
 from reversion.admin import VersionAdmin
 
 from diamm.admin.forms.merge_people import MergePeopleForm
+from diamm.admin.helpers.html import admin_change_link
 from diamm.admin.helpers.optimized_raw_id import RawIdWidgetAdminMixin
 from diamm.admin.merge_models import merge
 from diamm.models import ItemComposer
 from diamm.models.data.composition_composer import CompositionComposer
-from diamm.models.data.organization import Organization
 from diamm.models.data.person import Person
 from diamm.models.data.person_identifier import PersonIdentifier
 from diamm.models.data.person_note import PersonNote
@@ -56,9 +55,7 @@ class PersonIdentifierInline(admin.TabularInline):
     def get_external_url(self, instance) -> str:
         if not instance.identifier_type:
             return ""
-        return mark_safe(  # noqa: S308
-            f'<a href="{instance.identifier_url}">{instance.identifier_url}</a>'
-        )
+        return admin_change_link(instance.identifier_url, instance.identifier_url)
 
 
 class PersonRoleInline(admin.TabularInline):
@@ -113,40 +110,6 @@ class ProvenanceSourcesInline(GenericTabularInline):
         )
 
 
-def migrate_to_organization(modeladmin, request, queryset):
-    """
-    Migrates a person to an organzation. Also migrates any relationships
-    that may point to that person.
-    """
-    for entity in queryset:
-        d = {"legacy_id": entity.legacy_id, "name": entity.last_name}
-
-        o = Organization(**d)
-        o.save()
-
-        # Check the original entry's relationships and migrate them.
-        source_relationships = entity.sources_related.all()
-        for rel in source_relationships:
-            rel.related_entity = o
-            rel.save()
-
-        source_copyist = entity.sources_copied.all()
-        for rel in source_copyist:
-            rel.copyist = o
-            rel.save()
-
-        source_provenance = entity.sources_provenance.all()
-        for rel in source_provenance:
-            rel.entity = o
-            rel.save()
-
-        # delete the original entity.
-        entity.delete()
-
-
-migrate_to_organization.short_description = "Migrate Person to Organization"
-
-
 class PersonBiography(admin.SimpleListFilter):
     title = _("Has Biography")
     parameter_name = "biography"
@@ -159,7 +122,9 @@ class PersonBiography(admin.SimpleListFilter):
             return queryset
 
         if self.value() == "yes":
-            return queryset.filter(notes__type=1)
+            return queryset.filter(notes__type=1).distinct()
+        if self.value() == "no":
+            return queryset.exclude(notes__type=1)
         return queryset
 
 
@@ -206,12 +171,7 @@ class PersonAdmin(VersionAdmin):
     formfield_overrides = {models.TextField: {"widget": AdminPagedownWidget}}
 
     def get_queryset(self, request):
-        qset = (
-            super()
-            .get_queryset(request)
-            .prefetch_related("compositions", "unattributed_works__item__source")
-        )
-        return qset
+        return super().get_queryset(request)
 
     @admin.action(description="Merge People")
     def merge_people_action(self, request, queryset):
@@ -247,5 +207,11 @@ class PersonAdmin(VersionAdmin):
         return render(
             request,
             "admin/person/merge_people.html",
-            {"objects": queryset, "form": form},
+            {
+                **self.admin_site.each_context(request),
+                "objects": queryset,
+                "form": form,
+                "opts": self.model._meta,
+                "title": "Merge people",
+            },
         )

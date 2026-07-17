@@ -1,7 +1,7 @@
 from django.contrib import admin
-from django.utils.safestring import mark_safe
 from reversion.admin import VersionAdmin
 
+from diamm.admin.helpers.html import admin_change_link
 from diamm.models.data.source_authority import SourceAuthority
 
 
@@ -17,9 +17,7 @@ class SourceAuthorityAdmin(VersionAdmin):
     def get_external_url(self, instance) -> str:
         if not instance.identifier_type:
             return ""
-        return mark_safe(  # noqa: S308
-            f'<a href="{instance.identifier_url}">{instance.identifier_url}</a>'
-        )
+        return admin_change_link(instance.identifier_url, instance.identifier_url)
 
     @admin.display(description="Name", ordering="source__shelfmark")
     def get_shelfmark(self, obj):

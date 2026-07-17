@@ -8,4 +8,4 @@ serverHost =
 
 serverUrl : String
 serverUrl =
-    "http://" ++ serverHost
+    "https://" ++ serverHost

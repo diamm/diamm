@@ -8,3 +8,6 @@ class PersonRoleAdmin(admin.ModelAdmin):
     list_display = ("person", "role", "earliest_year", "latest_year")
     search_fields = ("person__last_name", "person__first_name", "role__name")
     raw_id_fields = ("person", "role")
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("person", "role")

@@ -1,11 +1,11 @@
 from django.contrib import admin, messages
 from django.contrib.contenttypes.admin import GenericTabularInline
 from django.shortcuts import render
-from django.utils.safestring import mark_safe
 from reversion.admin import VersionAdmin
 
 from diamm.admin.forms.merge_organizations import MergeOrganizationsForm
 from diamm.admin.forms.update_organization_type import UpdateOrganizationTypeForm
+from diamm.admin.helpers.html import admin_change_link
 from diamm.admin.merge_models import merge
 from diamm.models import OrganizationIdentifier
 from diamm.models.data.organization import Organization
@@ -44,9 +44,7 @@ class OrganizationIdentifierInline(admin.TabularInline):
     def get_external_url(self, instance) -> str:
         if not instance.identifier_type:
             return ""
-        return mark_safe(  # noqa: S308
-            f'<a href="{instance.identifier_url}">{instance.identifier_url}</a>'
-        )
+        return admin_change_link(instance.identifier_url, instance.identifier_url)
 
 
 @admin.register(Organization)
@@ -89,7 +87,13 @@ class OrganizationAdmin(VersionAdmin):
         return render(
             request,
             "admin/organization/update_organization_type.html",
-            {"objects": queryset, "form": form},
+            {
+                **self.admin_site.each_context(request),
+                "objects": queryset,
+                "form": form,
+                "opts": self.model._meta,
+                "title": "Update organization type",
+            },
         )
 
     @admin.action(description="Merge Organizations")
@@ -125,5 +129,11 @@ class OrganizationAdmin(VersionAdmin):
         return render(
             request,
             "admin/organization/merge_organization.html",
-            {"objects": queryset, "form": form},
+            {
+                **self.admin_site.each_context(request),
+                "objects": queryset,
+                "form": form,
+                "opts": self.model._meta,
+                "title": "Merge organizations",
+            },
         )
