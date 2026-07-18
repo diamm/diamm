@@ -3,9 +3,8 @@
         <h4>
             <a href="{{ item.url }}">{{ item.title }}</a>
         </h4>
-        {% set children = item.get_children().live().in_menu() %}
-        {% if children %}
-            {% for child in children %}
+        {% if item.children %}
+            {% for child in item.children %}
                 <div>
                     <a href="{{ child.url }}">{{ child.title }}</a>
                 </div>

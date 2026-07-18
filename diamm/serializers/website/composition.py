@@ -1,12 +1,10 @@
 import re
 
 import ypres
-from django.db.models.expressions import Exists, OuterRef
 from django.template.loader import get_template
 from rest_framework.reverse import reverse
 
 from diamm.helpers.solr import SolrManager
-from diamm.models import Image, SourceURL
 
 
 class CompositionBibliographySerializer(ypres.DictSerializer):
@@ -142,55 +140,42 @@ class CompositionDetailSerializer(ypres.Serializer):
         return obj.__class__.__name__.lower()
 
     def get_sources(self, obj) -> list:
-        req = self.context["request"]
-        public_filter = {} if req.user.is_staff else {"source__public": True}
-        if obj.sources:
-            return CompositionSourceSerializer(
-                obj.sources.select_related("source__archive__city")
-                .prefetch_related("voices__type", "voices__clef")
-                .filter(**public_filter)
-                .annotate(
-                    images_are_public=Exists(
-                        Image.objects.filter(
-                            page__source=OuterRef("source_id"), public=True
-                        )
-                    ),
-                    has_manifest_link=Exists(
-                        SourceURL.objects.filter(
-                            source=OuterRef("source_id"), type=SourceURL.IIIF_MANIFEST
-                        )
-                    ),
-                )
-                .order_by("source__sort_order"),
-                context={"request": self.context["request"]},
-                many=True,
-            ).serialized_many  # type: ignore
-        else:
+        # CompositionDetail prefetches the request-filtered sources and their
+        # nested source, archive, voice, and image-access data.
+        sources = list(obj.sources.all())
+        if not sources:
             return []
+
+        return CompositionSourceSerializer(
+            sources,
+            context={"request": self.context["request"]},
+            many=True,
+        ).serialized_many  # type: ignore
 
     def get_composers(self, obj) -> list:
-        if obj.composers:
-            return CompositionComposerSerializer(
-                obj.composers.all(),
-                context={"request": self.context["request"]},
-                many=True,
-            ).serialized_many  # type: ignore
-        else:
+        # Composer rows and their Person records are already prefetched.
+        composers = list(obj.composers.all())
+        if not composers:
             return []
 
+        return CompositionComposerSerializer(
+            composers,
+            context={"request": self.context["request"]},
+            many=True,
+        ).serialized_many  # type: ignore
+
     def get_cycles(self, obj):
-        if obj.cycles.exists():
-            return CompositionCycleSerializer(
-                obj.cycles.all(),
-                context={"request": self.context["request"]},
-                many=True,
-            ).serialized_many
-        return []
+        # Cycles, cycle types, and their composition memberships are prefetched.
+        cycles = list(obj.cycles.all())
+        return CompositionCycleSerializer(
+            cycles,
+            context={"request": self.context["request"]},
+            many=True,
+        ).serialized_many
 
     def get_genres(self, obj) -> list:
-        if obj.genres.exists():
-            return [g.name for g in obj.genres.all()]
-        return []
+        # Genres are already prefetched by CompositionDetail.
+        return [genre.name for genre in obj.genres.all()]
 
     def get_bibliography(self, obj):
         connection = SolrManager()
@@ -218,7 +203,5 @@ class CompositionDetailSerializer(ypres.Serializer):
         return reslist
 
     def get_notes(self, obj) -> list:
-        if not obj.notes.exists():
-            return []
-
+        # Notes are already prefetched by CompositionDetail.
         return CompositionNoteSerializer(obj.notes.all(), many=True).serialized_many

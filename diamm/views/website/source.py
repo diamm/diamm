@@ -1,3 +1,5 @@
+from django.contrib.contenttypes.prefetch import GenericPrefetch
+from django.db.models import Prefetch
 from django.db.models.expressions import Exists, OuterRef
 from django.shortcuts import get_object_or_404, redirect
 from rest_framework import generics, response, status
@@ -10,14 +12,29 @@ from rest_framework.decorators import (
 )
 
 from diamm.helpers.solr import DEFAULT_SOLR_CLIENT
-from diamm.models import Page, Source, SourceURL
+from diamm.models import (
+    Commentary,
+    Organization,
+    Page,
+    Person,
+    ProblemReport,
+    Source,
+    SourceCopyist,
+    SourceNote,
+    SourceProvenance,
+    SourceRelationship,
+    SourceURL,
+)
 from diamm.models.data.item import Item
 from diamm.renderers.ujson_renderer import UJSONLDRenderer, UJSONRenderer
 from diamm.serializers.iiif.canvas import CanvasSerializer
 from diamm.serializers.iiif.manifest import SourceManifestSerializer
 from diamm.serializers.iiif.service import ServiceSerializer
 from diamm.serializers.iiif.structure import StructureSerializer
-from diamm.serializers.website.source import SourceDetailSerializer
+from diamm.serializers.website.source import (
+    SourceDetailSerializer,
+    SourceInventoryPanelSerializer,
+)
 
 SOLR_CLIENT = DEFAULT_SOLR_CLIENT
 
@@ -30,22 +47,88 @@ class SourceDetail(generics.RetrieveAPIView):
         public_filter = {} if self.request.user.is_staff else {"public": True}
         return (
             Source.objects.filter(**public_filter)
-            .select_related("archive__city__parent", "cover_image")
+            .select_related("archive__city__parent", "cover_image__page")
             .prefetch_related(
-                "copyists",
+                Prefetch(
+                    "copyists",
+                    queryset=SourceCopyist.objects.prefetch_related(
+                        GenericPrefetch(
+                            "copyist",
+                            [Person.objects.all(), Organization.objects.all()],
+                        )
+                    ),
+                ),
                 "notations",
                 "links",
-                "bibliographies",
-                "sets",
                 "identifiers",
                 "authorities",
-                "notes",
-                "provenance__city",
-                "provenance__country",
-                "provenance__region",
-                "contributions",
-                "commentary",
+                Prefetch(
+                    "notes",
+                    queryset=SourceNote.objects.exclude(type=99).order_by(
+                        "type", "sort"
+                    ),
+                ),
+                Prefetch(
+                    "provenance",
+                    queryset=SourceProvenance.objects.select_related(
+                        "city", "country", "region", "protectorate"
+                    ).prefetch_related(
+                        GenericPrefetch(
+                            "entity",
+                            [Person.objects.all(), Organization.objects.all()],
+                        )
+                    ),
+                ),
+                Prefetch(
+                    "relationships",
+                    queryset=SourceRelationship.objects.select_related(
+                        "relationship_type"
+                    ).prefetch_related(
+                        GenericPrefetch(
+                            "related_entity",
+                            [Person.objects.all(), Organization.objects.all()],
+                        )
+                    ),
+                ),
+                Prefetch(
+                    "contributions",
+                    queryset=ProblemReport.objects.filter(accepted=True)
+                    .select_related("contributor")
+                    .order_by("-updated"),
+                    to_attr="accepted_contributions",
+                ),
+                Prefetch(
+                    "commentary",
+                    queryset=Commentary.objects.select_related("author").order_by(
+                        "-updated"
+                    ),
+                    to_attr="source_commentary",
+                ),
+                "catalogue_entries",
             )
+            .annotate(
+                images_are_public=Exists(
+                    Page.objects.filter(source=OuterRef("pk"), images__public=True)
+                ),
+                has_manifest_link=Exists(
+                    SourceURL.objects.filter(
+                        source=OuterRef("pk"), type=SourceURL.IIIF_MANIFEST
+                    )
+                ),
+                has_inventory=Exists(Item.objects.filter(source=OuterRef("pk"))),
+            )
+        )
+
+
+class SourceInventoryPanel(generics.RetrieveAPIView):
+    template_name = "website/source/inventory.jinja2"
+    serializer_class = SourceInventoryPanelSerializer
+
+    def get_queryset(self):
+        public_filter = {} if self.request.user.is_staff else {"public": True}
+        return (
+            Source.objects.filter(**public_filter)
+            .prefetch_related("links")
             .annotate(
                 images_are_public=Exists(
                     Page.objects.filter(source=OuterRef("pk"), images__public=True)

@@ -2,13 +2,15 @@ import json
 import re
 from pathlib import Path
 from types import SimpleNamespace
+from unittest.mock import patch
 
+from django.contrib.sites.models import Site
 from django.template.loader import get_template
 from django.test import SimpleTestCase, TestCase, override_settings
 from jinja2.runtime import new_context
 from rest_framework.test import APIRequestFactory
 
-from diamm.models import Archive, Source, SourceNote
+from diamm.models import Archive, CustomUserModel, Source, SourceNote
 from diamm.serializers.search.composer_inventory import (
     ComposerInventorySearchSerializer,
 )
@@ -25,6 +27,16 @@ class RelatedObjects:
 
     def all(self):
         return self.objects
+
+
+class EmptySolrManager:
+    def __init__(self):
+        self.docs = []
+        self.hits = 0
+        self.results = []
+
+    def search(self, *args, **kwargs):
+        return None
 
 
 class SourceSummaryTests(TestCase):
@@ -48,6 +60,12 @@ class SourceSummaryTests(TestCase):
 
     def test_source_detail_serializer_exposes_display_summary(self):
         self.assertIn("display_summary", SourceDetailSerializer._field_map)
+
+    def test_source_detail_defers_inventory_serialization(self):
+        self.assertIn("has_inventory", SourceDetailSerializer._field_map)
+        self.assertNotIn("inventory", SourceDetailSerializer._field_map)
+        self.assertNotIn("composer_inventory", SourceDetailSerializer._field_map)
+        self.assertNotIn("uninventoried", SourceDetailSerializer._field_map)
 
     def test_display_summary_loads_notes_once(self):
         source = Source.objects.select_related("archive").get(pk=self.source.pk)
@@ -74,6 +92,63 @@ class SourceSummaryTests(TestCase):
             summary,
             'GB-Lbl Royal 1 A I; c. 1400; A "quoted" description.',
         )
+
+
+@override_settings(ROOT_URLCONF="diamm.urls", HOSTNAME="testserver")
+class SourceInventoryPanelTests(TestCase):
+    def setUp(self):
+        Site.objects.create(domain="testserver", name="Test site")
+        archive = Archive.objects.create(name="British Library", siglum="GB-Lbl")
+        self.public_source = Source.objects.create(
+            archive=archive,
+            shelfmark="Royal 1 A I",
+            public=True,
+        )
+        self.private_source = Source.objects.create(
+            archive=archive,
+            shelfmark="Private source",
+            public=False,
+        )
+
+    @patch(
+        "diamm.serializers.website.source.SolrManager",
+        EmptySolrManager,
+    )
+    def test_public_inventory_fragment_is_available_anonymously(self):
+        response = self.client.get(
+            f"/sources/{self.public_source.pk}/inventory/",
+            HTTP_ACCEPT="text/html",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "<html")
+
+    def test_private_inventory_fragment_is_hidden_anonymously(self):
+        response = self.client.get(
+            f"/sources/{self.private_source.pk}/inventory/",
+            HTTP_ACCEPT="text/html",
+        )
+
+        self.assertEqual(response.status_code, 404)
+
+    @patch(
+        "diamm.serializers.website.source.SolrManager",
+        EmptySolrManager,
+    )
+    def test_private_inventory_fragment_is_available_to_staff(self):
+        user = CustomUserModel.objects.create_user(
+            email="editor@example.org",
+            password=None,
+            is_staff=True,
+        )
+        self.client.force_login(user)
+
+        response = self.client.get(
+            f"/sources/{self.private_source.pk}/inventory/",
+            HTTP_ACCEPT="text/html",
+        )
+
+        self.assertEqual(response.status_code, 200)
 
 
 @override_settings(ROOT_URLCONF="diamm.urls", HOSTNAME="testserver")
@@ -152,9 +227,7 @@ class InventoryImageViewerSerializerTests(SimpleTestCase):
 
     def test_missing_page_or_external_canvas_omits_link(self):
         self.assertNotIn("image_viewer_url", self.serialize(self.item()))
-        page = SimpleNamespace(
-            pk=11, sort_order=1, external=True, iiif_canvas_uri=None
-        )
+        page = SimpleNamespace(pk=11, sort_order=1, external=True, iiif_canvas_uri=None)
         self.assertNotIn("image_viewer_url", self.serialize(self.item(page)))
 
     def test_composer_inventory_page_data_produces_external_target(self):
@@ -247,9 +320,7 @@ class DivaTemplateTests(SimpleTestCase):
         related_templates = "\n".join(
             (
                 source_detail,
-                Path(
-                    "diamm/templates/website/source/inventory.jinja2"
-                ).read_text(),
+                Path("diamm/templates/website/source/inventory.jinja2").read_text(),
                 Path("diamm/templates/website/macros.jinja2").read_text(),
             )
         )
@@ -277,13 +348,25 @@ class DivaTemplateTests(SimpleTestCase):
             'window.removeEventListener("hashchange", this.hashChangeHandler)',
             source_detail,
         )
-        self.assertIn(
-            "this.selectedSourceTab = tabs.selectedSourceTab", source_detail
-        )
+        self.assertIn("this.selectedSourceTab = tabs.selectedSourceTab", source_detail)
         self.assertIn(
             "this.selectedInventoryTab = tabs.selectedInventoryTab",
             source_detail,
         )
+
+    def test_source_detail_loads_inventory_fragment_once(self):
+        source_detail = Path(
+            "diamm/templates/website/source/source_detail.jinja2"
+        ).read_text()
+
+        self.assertIn("data-inventory-url=\"{{ url('source-inventory'", source_detail)
+        self.assertIn(
+            "if (this.inventoryLoaded || this.inventoryLoading)", source_detail
+        )
+        self.assertIn("this.inventoryHtml = await response.text()", source_detail)
+        self.assertIn('x-html="inventoryHtml"', source_detail)
+        self.assertIn("inventoryError", source_detail)
+        self.assertIn("loadInventory()", source_detail)
 
     def test_images_template_defers_viewer_dependencies(self):
         template = get_template("website/source/images.jinja2")
@@ -299,7 +382,9 @@ class DivaTemplateTests(SimpleTestCase):
         self.assertIn('data-manifest-url="https://example.org/manifest"', html)
         self.assertIn('data-openseadragon-url="https://cdn.jsdelivr.net/', html)
         self.assertIn('data-diva-url="/static/vendor/diva-7.4.0/diva.js"', html)
-        self.assertNotIn('<script src="https://cdn.jsdelivr.net/npm/openseadragon', html)
+        self.assertNotIn(
+            '<script src="https://cdn.jsdelivr.net/npm/openseadragon', html
+        )
         self.assertNotIn('<script src="/static/vendor/diva-7.4.0/diva.js"', html)
         self.assertNotIn("diva-page-details", html)
         self.assertNotIn("createStructureDataLookup", html)
@@ -331,9 +416,7 @@ class DivaTemplateTests(SimpleTestCase):
         self.assertNotIn("gotoPageByLabel", script)
 
     def render_inventory(self, authenticated, external):
-        template = get_template(
-            "website/source/inventory-composition-order.jinja2"
-        )
+        template = get_template("website/source/inventory-composition-order.jinja2")
         entry = {
             "composition": "Kyrie",
             "url": "/compositions/7/",

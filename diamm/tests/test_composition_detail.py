@@ -1,9 +1,14 @@
 from unittest.mock import patch
 
+from django.contrib.auth.models import AnonymousUser
 from django.contrib.sites.models import Site
 from django.test import TestCase
 from django.urls import reverse
 from model_bakery import baker
+from rest_framework.test import APIRequestFactory
+
+from diamm.serializers.website.composition import CompositionDetailSerializer
+from diamm.views.website.composition import CompositionDetail
 
 
 class EmptySolrManager:
@@ -67,3 +72,19 @@ class CompositionDetailDateTests(TestCase):
         self.assertContains(response, "Attributed")
         self.assertContains(response, "Anonymous")
         self.assertContains(response, "<td>-</td>", html=True)
+
+    @patch("diamm.serializers.website.composition.SolrManager", EmptySolrManager)
+    def test_serializer_reuses_view_prefetches(self) -> None:
+        request = APIRequestFactory().get(self.url)
+        request.user = AnonymousUser()
+        view = CompositionDetail()
+        view.request = request
+        composition = view.get_queryset().get(pk=self.composition.pk)
+
+        with self.assertNumQueries(0):
+            content = CompositionDetailSerializer(
+                composition,
+                context={"request": request},
+            ).serialized
+
+        self.assertEqual(len(content["sources"]), 2)

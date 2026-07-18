@@ -29,7 +29,7 @@
                 if (hashParams.length > 0) {
                     switch (hashParams[0])
                     {
-                        {% if content.inventory or content.uninventoried %}
+                        {% if content.has_inventory %}
                             case "inventory":
                                 selectedSourceTab = "inventory-tab";
                                 switch (hashParams[1])
@@ -81,7 +81,13 @@
                 selectedSourceTab: "description-tab",
                 selectedInventoryTab: "primary-inventory-tab",
                 hashChangeHandler: null,
+                inventoryUrl: "",
+                inventoryHtml: "",
+                inventoryLoaded: false,
+                inventoryLoading: false,
+                inventoryError: false,
                 init() {
+                    this.inventoryUrl = this.$root.dataset.inventoryUrl;
                     this.syncTabsFromHash();
                     this.hashChangeHandler = () => this.syncTabsFromHash();
                     window.addEventListener("hashchange", this.hashChangeHandler);
@@ -93,9 +99,15 @@
                     const tabs = tabsFromHash();
                     this.selectedSourceTab = tabs.selectedSourceTab;
                     this.selectedInventoryTab = tabs.selectedInventoryTab;
+                    if (this.selectedSourceTab === "inventory-tab") {
+                        this.loadInventory();
+                    }
                 },
                 selectSourceTab(tabName) {
                     this.selectedSourceTab = tabName;
+                    if (tabName === "inventory-tab") {
+                        this.loadInventory();
+                    }
                 },
                 sourceTabIsSelected(tabName) {
                     return this.selectedSourceTab === tabName;
@@ -106,13 +118,36 @@
                 inventoryTabIsSelected(tabName) {
                     return this.selectedInventoryTab === tabName;
                 },
+                async loadInventory() {
+                    if (this.inventoryLoaded || this.inventoryLoading) {
+                        return;
+                    }
+                    this.inventoryLoading = true;
+                    this.inventoryError = false;
+                    try {
+                        const response = await fetch(this.inventoryUrl, {
+                            headers: {"Accept": "text/html"},
+                        });
+                        if (!response.ok) {
+                            throw new Error(`Inventory request failed with ${response.status}`);
+                        }
+                        this.inventoryHtml = await response.text();
+                        this.inventoryLoaded = true;
+                    } catch (error) {
+                        this.inventoryError = true;
+                        console.error("Could not load the source inventory.", error);
+                    } finally {
+                        this.inventoryLoading = false;
+                    }
+                },
             }));
         })
     </script>
 {% endblock %}
 
 {% block body %}
-<div x-data="sourceDetail">
+<div x-data="sourceDetail"
+     data-inventory-url="{{ url('source-inventory', pk=content.pk) }}">
     <div id="source-heading" class="columns">
         <div class="column is-two-thirds">
             <h2 class="title is-3">{{ content.display_name }}</h2>
@@ -142,7 +177,7 @@
                                 id="description-tab">
                                 <a href="#/">Description</a>
                             </li>
-                            {% if content.inventory or content.uninventoried %}
+                            {% if content.has_inventory %}
                                 <li id="inventory-tab"
                                     :class="sourceTabIsSelected($el.id) ? 'is-active' : ''"
                                     @click="selectSourceTab($el.id)"
@@ -244,12 +279,21 @@
             {% include "website/source/description.jinja2" %}
         </section>
 
-        {% if content.inventory or content.uninventoried %}
+        {% if content.has_inventory %}
             <section id="inventory-panel"
                      x-show="sourceTabIsSelected('inventory-tab')"
                      x-cloak
                      role="tabpanel">
-                {% include "website/source/inventory.jinja2" %}
+                <div x-show="inventoryLoading" class="notification is-light">
+                    Loading inventory…
+                </div>
+                <div x-show="inventoryError" class="notification is-danger">
+                    <p>The inventory could not be loaded.</p>
+                    <button type="button" class="button" @click="loadInventory()">
+                        Try again
+                    </button>
+                </div>
+                <div x-html="inventoryHtml"></div>
             </section>
         {% endif %}
 

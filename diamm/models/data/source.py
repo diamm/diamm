@@ -6,6 +6,7 @@ from django.utils.functional import cached_property
 from django_stubs_ext import StrOrPromise
 
 from diamm.helpers.solr import SolrManager
+from diamm.models.data.image import Image
 
 
 class NumberingSystemChoices(models.IntegerChoices):
@@ -190,9 +191,7 @@ class Source(models.Model):
         if date_stmt:
             summary = f"{summary}; {date_stmt}"
 
-        general_note = next(
-            (note for note in self.notes.all() if note.type == 1), None
-        )
+        general_note = next((note for note in self.notes.all() if note.type == 1), None)
         if general_note:
             summary = f"{summary}; {general_note.note}"
 
@@ -221,23 +220,25 @@ class Source(models.Model):
         if not self.public_images:
             return None
 
-        if not self.pages.exists():
-            return None
-
-        cover_obj = {}
         if self.cover_image:
-            cover_obj["id"] = self.cover_image.id
-            cover_obj["label"] = self.cover_image.page.numeration
-            return cover_obj
+            return {
+                "id": self.cover_image.id,
+                "label": self.cover_image.page.numeration,
+            }
 
         cover = (
-            self.pages.filter(images__type=1, images__location__isnull=False)
+            Image.objects.select_related("page")
+            .filter(
+                page__source=self,
+                type=1,
+                location__isnull=False,
+            )
             .order_by("?")
             .first()
         )
 
         if cover:
-            return {"id": cover.images.first().pk, "label": cover.numeration}
+            return {"id": cover.pk, "label": cover.page.numeration}
         return None
 
     @property

@@ -2,7 +2,6 @@ import re
 from urllib.parse import quote
 
 import ypres
-from django.contrib.contenttypes.prefetch import GenericPrefetch
 from django.db.models import Count, Prefetch
 from django.db.models.functions import Collate
 from django.template.loader import get_template
@@ -13,9 +12,7 @@ from diamm.helpers.solr import SolrManager
 from diamm.models import (
     CompositionComposer,
     ItemNote,
-    Organization,
     Page,
-    Person,
     SourceURL,
     Voice,
 )
@@ -530,13 +527,11 @@ class SourceDetailSerializer(ypres.Serializer):
     open_images = ypres.BoolField()
     has_external_images = ypres.MethodField()
     has_external_manifest = ypres.MethodField()
+    has_inventory = ypres.BoolField()
     numbering_system_type = ypres.StrField(attr="numbering_system_type")
 
     diamm_has_images = ypres.BoolField()
     has_images = ypres.MethodField(required=False)
-    inventory = ypres.MethodField(required=False)
-    composer_inventory = ypres.MethodField(required=False)
-    uninventoried = ypres.MethodField(required=False)
     archive = ypres.MethodField(required=False)
     sets = ypres.MethodField(required=False)
     provenance = ypres.MethodField(required=False)
@@ -596,9 +591,10 @@ class SourceDetailSerializer(ypres.Serializer):
         return reslist
 
     def get_notes(self, obj):
-        # exclude private notes
+        # SourceDetail prefetches the public notes in display order, so this
+        # reads the related manager's prefetch cache without another query.
         return SourceNoteSerializer(
-            obj.notes.exclude(type=99).order_by("type", "sort"),
+            obj.notes.all(),
             many=True,
             context={"request": self.context["request"]},
         ).serialized_many
@@ -626,7 +622,9 @@ class SourceDetailSerializer(ypres.Serializer):
         return obj.images_are_public
 
     def get_has_external_images(self, obj):
-        return obj.links.filter(type=4).exists()
+        # All source links are already prefetched for the serialized `links`
+        # field, so inspect that cache rather than issuing an exists() query.
+        return any(link.type == SourceURL.EXTERNAL_IMAGES for link in obj.links.all())
 
     def get_has_external_manifest(self, obj) -> bool:
         return obj.images_are_public is False and obj.has_manifest_link is True
@@ -636,7 +634,16 @@ class SourceDetailSerializer(ypres.Serializer):
         # it is public.
         # Return None if the document has no public images
         if not obj.images_are_public:
-            if iiif_link := obj.links.filter(type=SourceURL.IIIF_MANIFEST).first():
+            # Reuse the links prefetched for the serialized `links` field.
+            iiif_link = next(
+                (
+                    link
+                    for link in obj.links.all()
+                    if link.type == SourceURL.IIIF_MANIFEST
+                ),
+                None,
+            )
+            if iiif_link:
                 return iiif_link.link
             return None
 
@@ -720,9 +727,7 @@ class SourceDetailSerializer(ypres.Serializer):
         return SourceUninventoriedSerializer(
             obj.inventory.filter(unattributed_composers__isnull=False)
             .prefetch_related(
-                Prefetch(
-                    "pages", queryset=Page.objects.order_by("sort_order", "pk")
-                )
+                Prefetch("pages", queryset=Page.objects.order_by("sort_order", "pk"))
             )
             .distinct("pk")
             .order_by("pk"),
@@ -749,22 +754,14 @@ class SourceDetailSerializer(ypres.Serializer):
 
     def get_provenance(self, obj):
         return SourceProvenanceSerializer(
-            obj.provenance.select_related(
-                "city", "country", "region", "protectorate"
-            ).all(),
+            obj.provenance.all(),
             many=True,
             context={"request": self.context["request"]},
         ).serialized_many
 
     def get_relationships(self, obj):
         return SourceRelationshipSerializer(
-            obj.relationships.select_related("relationship_type")
-            .prefetch_related(
-                GenericPrefetch(
-                    "related_entity", [Person.objects.all(), Organization.objects.all()]
-                )
-            )
-            .all(),
+            obj.relationships.all(),
             many=True,
             context={"request": self.context["request"]},
         ).serialized_many
@@ -775,48 +772,60 @@ class SourceDetailSerializer(ypres.Serializer):
         ).serialized_many
 
     def get_catalogue_entries(self, obj):
-        if not obj.catalogue_entries.count() > 0:
+        entries = list(obj.catalogue_entries.all())
+        if not entries:
             return []
 
         return SourceCatalogueEntrySerializer(
-            obj.catalogue_entries.all(),
+            entries,
             context={"request": self.context["request"]},
             many=True,
         ).serialized_many
 
     def get_contributions(self, obj):
-        if not obj.contributions.exists():
+        contributions = getattr(obj, "accepted_contributions", None)
+        if contributions is None:
+            contributions = list(
+                obj.contributions.select_related("contributor")
+                .filter(accepted=True)
+                .order_by("-updated")
+            )
+        if not contributions:
             return None
 
         return SourceContributionSerializer(
-            obj.contributions.select_related("contributor")
-            .filter(accepted=True)
-            .order_by("-updated"),
+            contributions,
             context={"request": self.context["request"]},
             many=True,
         ).serialized_many
 
     def get_commentary(self, obj):
-        if not obj.commentary.exists():
+        comments = getattr(obj, "source_commentary", None)
+        if comments is None:
+            comments = list(
+                obj.commentary.select_related("author").order_by("-updated")
+            )
+        if not comments:
             return None
 
-        public_comments = obj.commentary.filter(comment_type=1).exists()
-
-        private_comments = None
+        public_comments = [comment for comment in comments if comment.comment_type == 1]
         req = self.context["request"]
-        if req.user.is_authenticated:
-            private_comments = obj.commentary.filter(
-                comment_type=0, author=req.user
-            ).order_by("-updated")
+        private_comments = (
+            [
+                comment
+                for comment in comments
+                if comment.comment_type == 0 and comment.author_id == req.user.pk
+            ]
+            if req.user.is_authenticated
+            else []
+        )
 
         if not public_comments and not private_comments:
             return None
 
         all_comments = {
             "public": SourceCommentarySerializer(
-                obj.commentary.select_related("author")
-                .filter(comment_type=1)
-                .order_by("-updated"),
+                public_comments,
                 context={"request": self.context["request"]},
                 many=True,
             ).serialized_many,
@@ -853,3 +862,27 @@ class SourceDetailSerializer(ypres.Serializer):
         doc: dict = connection.docs[0]
 
         return contents_statement(doc)
+
+
+class SourceInventoryPanelSerializer(ypres.Serializer):
+    pk = ypres.IntField()
+    manifest_url = ypres.MethodField(required=False)
+    has_external_manifest = ypres.MethodField()
+    inventory = ypres.MethodField(required=False)
+    composer_inventory = ypres.MethodField(required=False)
+    uninventoried = ypres.MethodField(required=False)
+
+    def get_manifest_url(self, obj):
+        return SourceDetailSerializer.get_manifest_url(self, obj)
+
+    def get_has_external_manifest(self, obj):
+        return SourceDetailSerializer.get_has_external_manifest(self, obj)
+
+    def get_inventory(self, obj):
+        return SourceDetailSerializer.get_inventory(self, obj)
+
+    def get_composer_inventory(self, obj):
+        return SourceDetailSerializer.get_composer_inventory(self, obj)
+
+    def get_uninventoried(self, obj):
+        return SourceDetailSerializer.get_uninventoried(self, obj)
