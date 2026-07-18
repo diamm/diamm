@@ -54,6 +54,19 @@
         return new URLSearchParams(window.location.hash.slice(queryStart + 1)).get("p");
     }
 
+    function initialPageForTarget(target) {
+        if (!target) {
+            return undefined;
+        }
+
+        if (target.startsWith("canvas:")) {
+            const canvasId = target.slice("canvas:".length);
+            return canvasId ? { by: "canvasId", value: canvasId } : undefined;
+        }
+
+        return { by: "label", value: target };
+    }
+
     function pageIndexForTarget(instance, target) {
         if (!target) {
             return null;
@@ -85,11 +98,6 @@
         await instance.goToPage(pageIndex);
     }
 
-    // async function finishInitialization(instance, wrapper, initialPage) {
-    //     await instance.ready;
-    //     await goToTarget(instance, initialPage);
-    // }
-
     function initializeViewer() {
         if (viewer) {
             void goToTarget(viewer, pageTargetFromHash());
@@ -106,23 +114,22 @@
         }
 
         viewerPromise = loadViewerDependencies(wrapper).then(function () {
-            const initialPage = pageTargetFromHash();
+            const initialTarget = pageTargetFromHash();
             viewer = new Diva("diva-wrapper", {
                 objectData: wrapper.dataset.manifestUrl,
                 sidebarPanel: "contents",
                 showSidebar: true,
                 sidebarWidth: 480,
                 showTitle: false,
-                initialPage: initialPage
+                initialPage: initialPageForTarget(initialTarget)
             });
-            return viewer;
+            return goToTarget(viewer, initialTarget).then(function () {
+                return viewer;
+            });
         }).catch(function (error) {
             viewerPromise = null;
             console.error("Could not initialize the image viewer.", error);
         });
-
-        // These remain compatibility fallbacks until the options are in the npm build.
-        // void finishInitialization(viewer, wrapper, initialPage);
     }
 
     document.addEventListener("initialize-diva", initializeViewer);
