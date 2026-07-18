@@ -6,6 +6,7 @@ from django.urls import reverse
 from model_bakery import baker
 
 from diamm.admin.merge_models import MergeConflictError, merge
+from diamm.models.data.bibliography import Bibliography
 from diamm.models.data.composition import Composition
 from diamm.models.data.cycle_composer import CycleComposer
 from diamm.models.data.geographic_area import GeographicArea
@@ -14,7 +15,7 @@ from diamm.models.data.person import Person
 from diamm.models.data.source_copyist import SourceCopyist
 from diamm.models.data.source_provenance import SourceProvenance
 from diamm.models.data.source_relationship import SourceRelationship
-from diamm.models.site.problem_report import ProblemReport
+from diamm.services.bibliography import merge_bibliographies
 
 
 class MergeModelTests(TestCase):
@@ -92,7 +93,10 @@ class MergeModelTests(TestCase):
         self.assertFalse(Person.objects.filter(pk=alias.pk).exists())
         for obj in normal_relations:
             obj.refresh_from_db()
-            self.assertEqual(obj.composer_id if hasattr(obj, "composer_id") else obj.person_id, primary.pk)
+            self.assertEqual(
+                obj.composer_id if hasattr(obj, "composer_id") else obj.person_id,
+                primary.pk,
+            )
         for obj, field_name in (
             (copyist, "copyist"),
             (relationship, "related_entity"),
@@ -156,16 +160,16 @@ class MergeModelTests(TestCase):
         self.assertEqual(primary_relation.composer_id, primary.pk)
         self.assertEqual(alias_relation.composer_id, alias.pk)
 
-    def test_organization_merge_moves_subtypes_identifiers_and_generic_relations(self) -> None:
+    def test_organization_merge_moves_subtypes_identifiers_and_generic_relations(
+        self,
+    ) -> None:
         primary, alias = baker.make("diamm_data.Organization", _quantity=2)
         primary_subtype, alias_subtype = baker.make(
             "diamm_data.OrganizationSubtype", _quantity=2
         )
         primary.subtypes.add(primary_subtype)
         alias.subtypes.add(alias_subtype)
-        identifier = baker.make(
-            "diamm_data.OrganizationIdentifier", organization=alias
-        )
+        identifier = baker.make("diamm_data.OrganizationIdentifier", organization=alias)
         source = baker.make("diamm_data.Source")
         copyist = SourceCopyist(source=source, copyist=alias)
         copyist.save()
@@ -235,6 +239,77 @@ class MergeModelTests(TestCase):
         self.assertFalse(alias.genres.filter(pk=genre.pk).exists())
         note.refresh_from_db()
         self.assertEqual(note.composition_id, primary.pk)
+
+    def test_bibliography_merge_moves_all_relations_and_collapses_duplicates(
+        self,
+    ) -> None:
+        primary, alias = baker.make("diamm_data.Bibliography", _quantity=2)
+        author = baker.make("diamm_data.BibliographyAuthor")
+        for bibliography in (primary, alias):
+            baker.make(
+                "diamm_data.BibliographyAuthorRole",
+                bibliography_entry=bibliography,
+                bibliography_author=author,
+                role=1,
+                position=1,
+            )
+            baker.make(
+                "diamm_data.BibliographyPublication",
+                bibliography=bibliography,
+                type=1,
+                entry="Volume 1",
+            )
+
+        source = baker.make("diamm_data.Source")
+        for bibliography in (primary, alias):
+            baker.make(
+                "diamm_data.SourceBibliography",
+                bibliography=bibliography,
+                source=source,
+                pages="10",
+                notes="Same",
+            )
+        item_link = baker.make("diamm_data.ItemBibliography", bibliography=alias)
+        composition_link = baker.make(
+            "diamm_data.CompositionBibliography", bibliography=alias
+        )
+        set_link = baker.make("diamm_data.SetBibliography", bibliography=alias)
+
+        merged = merge_bibliographies(primary, [alias])
+
+        self.assertEqual(merged.pk, primary.pk)
+        self.assertFalse(Bibliography.objects.filter(pk=alias.pk).exists())
+        self.assertEqual(primary.authors.count(), 1)
+        self.assertEqual(primary.publication_info.count(), 1)
+        self.assertEqual(primary.sources.filter(source=source).count(), 1)
+        for related in (item_link, composition_link, set_link):
+            related.refresh_from_db()
+            self.assertEqual(related.bibliography_id, primary.pk)
+
+    def test_bibliography_merge_rolls_back_conflicting_attachment_metadata(
+        self,
+    ) -> None:
+        primary, alias = baker.make("diamm_data.Bibliography", _quantity=2)
+        source = baker.make("diamm_data.Source")
+        baker.make(
+            "diamm_data.SourceBibliography",
+            bibliography=primary,
+            source=source,
+            pages="10",
+        )
+        baker.make(
+            "diamm_data.SourceBibliography",
+            bibliography=alias,
+            source=source,
+            pages="20",
+        )
+
+        with self.assertRaisesMessage(MergeConflictError, "different metadata"):
+            merge_bibliographies(primary, [alias])
+
+        self.assertTrue(Bibliography.objects.filter(pk=alias.pk).exists())
+        self.assertEqual(primary.sources.count(), 1)
+        self.assertEqual(alias.sources.count(), 1)
 
 
 class MergeAdminActionTests(TestCase):
@@ -316,3 +391,37 @@ class MergeAdminActionTests(TestCase):
         self.assertContains(response, "Resolve these related records first")
         self.assertTrue(Person.objects.filter(pk=primary.pk).exists())
         self.assertTrue(Person.objects.filter(pk=alias.pk).exists())
+
+    def test_bibliography_action_uses_explicit_target(self) -> None:
+        alias = baker.make("diamm_data.Bibliography", title="Duplicate")
+        target = baker.make("diamm_data.Bibliography", title="Keep this")
+        source_link = baker.make("diamm_data.SourceBibliography", bibliography=alias)
+        url = reverse("admin:diamm_data_bibliography_changelist")
+        selection = [str(alias.pk), str(target.pk)]
+
+        preview = self.client.post(
+            url,
+            {
+                "action": "merge_bibliographies_action",
+                "_selected_action": selection,
+                "index": "0",
+            },
+        )
+        self.assertEqual(preview.status_code, 200)
+        self.assertContains(preview, f'<option value="{target.pk}">')
+
+        response = self.client.post(
+            url,
+            {
+                "action": "merge_bibliographies_action",
+                "_selected_action": selection,
+                "do_action": "yes",
+                "target": str(target.pk),
+                "index": "0",
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Bibliography.objects.filter(pk=alias.pk).exists())
+        source_link.refresh_from_db()
+        self.assertEqual(source_link.bibliography_id, target.pk)

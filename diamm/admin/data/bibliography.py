@@ -1,14 +1,19 @@
-from django.contrib import admin
+from django.contrib import admin, messages
+from django.shortcuts import render
 from django.urls import reverse
 from reversion.admin import VersionAdmin
 
+from diamm.admin.forms.merge_bibliographies import MergeBibliographiesForm
 from diamm.admin.helpers.html import admin_change_link
+from diamm.admin.merge_models import MergeConflictError
 from diamm.models import CompositionBibliography
 from diamm.models.data.bibliography import Bibliography
 from diamm.models.data.bibliography_author_role import BibliographyAuthorRole
 from diamm.models.data.bibliography_publication import BibliographyPublication
 from diamm.models.data.item_bibliography import ItemBibliography
+from diamm.models.data.set_bibliography import SetBibliography
 from diamm.models.data.source_bibliography import SourceBibliography
+from diamm.services.bibliography import merge_bibliographies
 
 
 class SourceInline(admin.TabularInline):
@@ -98,6 +103,26 @@ class CompositionBibliographyInline(admin.TabularInline):
         return qs.select_related("composition", "bibliography").all()
 
 
+class SetBibliographyInline(admin.TabularInline):
+    model = SetBibliography
+    extra = 0
+    can_delete = False
+
+    def has_add_permission(self, request, obj):
+        return False
+
+    @admin.display(description="Set")
+    def attached_to_set(self, obj):
+        change_url = reverse("admin:diamm_data_set_change", args=(obj.set_id,))
+        return admin_change_link(change_url, str(obj.set))
+
+    fields = ("attached_to_set",)
+    readonly_fields = ("attached_to_set",)
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("set", "bibliography")
+
+
 @admin.register(Bibliography)
 class BibliographyAdmin(VersionAdmin):
     list_display = ("get_authors", "title", "year", "abbreviation", "created", "id")
@@ -115,7 +140,47 @@ class BibliographyAdmin(VersionAdmin):
         SourceBibliographyInline,
         ItemBibliographyInline,
         CompositionBibliographyInline,
+        SetBibliographyInline,
     )
+    actions = ("merge_bibliographies_action",)
+
+    @admin.action(description="Merge bibliography entries")
+    def merge_bibliographies_action(self, request, queryset):
+        if "do_action" in request.POST:
+            form = MergeBibliographiesForm(request.POST, queryset=queryset)
+            if form.is_valid():
+                target = form.cleaned_data["target"]
+                aliases = list(queryset.exclude(pk=target.pk))
+                try:
+                    merge_bibliographies(
+                        target,
+                        aliases,
+                        keep_old=form.cleaned_data["keep_old"],
+                    )
+                except MergeConflictError as exc:
+                    messages.error(request, str(exc))
+                else:
+                    messages.success(
+                        request,
+                        "Bibliography entries successfully merged. Reindex to publish the updated citations.",
+                    )
+                    return None
+            else:
+                messages.error(request, "There was an error merging these entries.")
+        else:
+            form = MergeBibliographiesForm(queryset=queryset)
+
+        return render(
+            request,
+            "admin/bibliography/merge_bibliographies.html",
+            {
+                **self.admin_site.each_context(request),
+                "objects": queryset,
+                "form": form,
+                "opts": self.model._meta,
+                "title": "Merge bibliography entries",
+            },
+        )
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
