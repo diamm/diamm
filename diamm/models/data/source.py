@@ -1,4 +1,5 @@
 from django.contrib.contenttypes.fields import GenericRelation
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
 from django.urls import reverse
@@ -85,6 +86,10 @@ class Source(models.Model):
         null=True,
         help_text="""A brief description of the source, e.g, 'chant book with added polyphony'""",
     )
+    is_virtual = models.BooleanField(
+        default=False,
+        help_text="This source is a virtual reconstruction assembled from other sources.",
+    )
     surface = models.IntegerField(
         choices=SurfaceOptionChoices.choices, blank=True, null=True
     )
@@ -164,6 +169,14 @@ class Source(models.Model):
     notations = models.ManyToManyField(
         "diamm_data.Notation", blank=True, related_name="sources"
     )
+    related_sources = models.ManyToManyField(
+        "self",
+        through="diamm_data.SourceToSourceRelationship",
+        through_fields=("from_source", "to_source"),
+        symmetrical=False,
+        related_name="related_to_sources",
+        blank=True,
+    )
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -171,6 +184,33 @@ class Source(models.Model):
     sort_order = models.IntegerField(blank=True, null=True)
     contributions = GenericRelation("diamm_site.ProblemReport")
     commentary = GenericRelation("diamm_site.Commentary")
+
+    def clean(self):
+        super().clean()
+        if (
+            self.pk
+            and not self.is_virtual
+            and self.pages.filter(copied_from__isnull=False).exists()
+        ):
+            raise ValidationError(
+                {"is_virtual": "A source with copied pages must remain virtual."}
+            )
+
+        if not self.is_virtual or not self.pk:
+            return
+
+        donors = Source.objects.filter(pages__copied_pages__source=self).distinct()
+        errors = {}
+        if self.public_images and donors.filter(public_images=False).exists():
+            errors["public_images"] = (
+                "Copied content includes a source that does not allow authenticated image access."
+            )
+        if self.open_images and donors.filter(open_images=False).exists():
+            errors["open_images"] = (
+                "Copied content includes a source that does not allow open image access."
+            )
+        if errors:
+            raise ValidationError(errors)
 
     def __str__(self) -> str:
         name: str = f" ({self.name})" if self.name else ""

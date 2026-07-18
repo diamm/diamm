@@ -4,7 +4,7 @@ from django.core.paginator import Paginator
 from django.db import models, transaction
 from django.db.models import Q
 from django.forms import Textarea, TextInput, TypedChoiceField
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import path, reverse
 from django.utils.text import capfirst
@@ -15,8 +15,10 @@ from reversion.admin import VersionAdmin
 from diamm.admin.filters.input_filter import InputFilter
 from diamm.admin.forms.copy_inventory import CopyInventoryForm
 from diamm.admin.forms.create_pages_and_images import CreatePagesAndImagesForm
+from diamm.admin.forms.virtual_source import DonorSourceForm, VirtualSourcePagesForm
 from diamm.admin.helpers.html import html_join
 from diamm.admin.helpers.optimized_raw_id import RawIdWidgetAdminMixin
+from diamm.admin.helpers.source_picker import source_picker_label
 from diamm.models import Image, ItemBibliography, ItemComposer, ItemNote, Voice
 from diamm.models.data.geographic_area import AreaTypeChoices, GeographicArea
 from diamm.models.data.item import Item
@@ -30,7 +32,9 @@ from diamm.models.data.source_identifier import SourceIdentifier
 from diamm.models.data.source_note import SourceNote
 from diamm.models.data.source_provenance import SourceProvenance
 from diamm.models.data.source_relationship import SourceRelationship
+from diamm.models.data.source_to_source_relationship import SourceToSourceRelationship
 from diamm.models.data.source_url import SourceURL
+from diamm.services.virtual_sources import copy_pages_to_virtual_source
 
 
 class EntityContentTypeChoiceMixin:
@@ -38,18 +42,16 @@ class EntityContentTypeChoiceMixin:
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name not in {"content_type", "relationship_type"}:
-            return super().formfield_for_foreignkey(
-                db_field, request, **kwargs
-            )
+            return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
         cache_name = f"_diamm_{db_field.name}_choices"
         cached = getattr(request, cache_name, None)
         if cached is None:
             queryset = db_field.remote_field.model.objects.all()
             if db_field.name == "content_type":
-                queryset = queryset.filter(
-                    db_field.get_limit_choices_to()
-                ).order_by("app_label", "model")
+                queryset = queryset.filter(db_field.get_limit_choices_to()).order_by(
+                    "app_label", "model"
+                )
             related_objects = list(queryset)
             choices = [
                 (str(related_object.pk), str(related_object))
@@ -101,6 +103,14 @@ class SourceRelationshipInline(EntityContentTypeChoiceMixin, admin.StackedInline
             )
             .prefetch_related("related_entity")
         )
+
+
+class OutgoingSourceRelationshipInline(admin.TabularInline):
+    model = SourceToSourceRelationship
+    fk_name = "from_source"
+    extra = 0
+    autocomplete_fields = ("to_source",)
+    classes = ("collapse",)
 
 
 class SourceProvenanceInline(RawIdWidgetAdminMixin, admin.StackedInline):
@@ -222,10 +232,13 @@ class SourceInventoryEditorInline(RawIdWidgetAdminMixin, admin.TabularInline):
     def composer_display(item):
         if not item.pk or not item.composition_id:
             return "-"
-        return html_join(
-            composer.composer.full_name
-            for composer in item.composition.composers.all()
-        ) or "-"
+        return (
+            html_join(
+                composer.composer.full_name
+                for composer in item.composition.composers.all()
+            )
+            or "-"
+        )
 
 
 class SourcePagesEditorInline(admin.TabularInline):
@@ -300,6 +313,7 @@ class SourceAdmin(VersionAdmin):
         "get_archive",
         "public",
         "public_images",
+        "is_virtual",
         "inventory_provided",
         "sort_order",
         "updated",
@@ -321,11 +335,13 @@ class SourceAdmin(VersionAdmin):
         AuthoritiesInline,
         BibliographyInline,
         SourceRelationshipInline,
+        OutgoingSourceRelationshipInline,
         SourceCopyistInline,
         SourceProvenanceInline,
     )
     list_filter = (
         "public",
+        "is_virtual",
         SourceKeyFilter,
         ArchiveKeyFilter,
         CountryListFilter,
@@ -341,9 +357,7 @@ class SourceAdmin(VersionAdmin):
     formfield_overrides = {models.TextField: {"widget": AdminPagedownWidget}}
 
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related(
-            "archive__city__parent"
-        )
+        return super().get_queryset(request).select_related("archive__city__parent")
 
     @admin.display(description="City")
     def get_city(self, obj):
@@ -398,6 +412,103 @@ class SourceAdmin(VersionAdmin):
                 "instance": source,
                 "opts": self.model._meta,
                 "title": "Copy inventory",
+            },
+        )
+
+    def add_virtual_pages_view(self, request, pk):
+        target = self.get_object(request, str(pk))
+        if target is None or not target.is_virtual:
+            raise Http404
+        required_permissions = (
+            self.has_change_permission(request, target),
+            request.user.has_perm("diamm_data.add_page"),
+            request.user.has_perm("diamm_data.add_image"),
+            request.user.has_perm("diamm_data.add_item"),
+        )
+        if not all(required_permissions):
+            raise PermissionDenied
+
+        donor_id = request.POST.get("donor") or request.GET.get("donor")
+        donor = Source.objects.filter(pk=donor_id, is_virtual=False).first()
+        donor_form = DonorSourceForm(
+            request.POST or None, target=target, admin_site=self.admin_site
+        )
+        page_form = None
+        preview = None
+
+        if donor is not None:
+            page_form = VirtualSourcePagesForm(
+                request.POST or None, target=target, donor=donor
+            )
+            if request.method == "POST" and (
+                "preview" in request.POST or "do_action" in request.POST
+            ):
+                if page_form.is_valid():
+                    preview = page_form.preview_counts
+                    if "do_action" in request.POST:
+                        result = copy_pages_to_virtual_source(
+                            target=target,
+                            donor=donor,
+                            pages=page_form.cleaned_data["pages"],
+                            relationship_type=page_form.cleaned_data[
+                                "relationship_type"
+                            ],
+                        )
+                        page_admin = self.admin_site.get_model_admin(Page)
+                        image_admin = self.admin_site.get_model_admin(Image)
+                        item_admin = self.admin_site.get_model_admin(Item)
+                        for page in result.pages:
+                            page_admin.log_addition(
+                                request, page, "Copied into a virtual source."
+                            )
+                        for image in result.images:
+                            image_admin.log_addition(
+                                request, image, "Copied into a virtual source."
+                            )
+                        for item in result.items:
+                            item_admin.log_addition(
+                                request, item, "Copied into a virtual source."
+                            )
+                        if result.relationship_created:
+                            relationship = SourceToSourceRelationship.objects.get(
+                                from_source=target,
+                                to_source=donor,
+                                relationship_type=page_form.cleaned_data[
+                                    "relationship_type"
+                                ],
+                            )
+                            self.admin_site.get_model_admin(
+                                SourceToSourceRelationship
+                            ).log_addition(
+                                request,
+                                relationship,
+                                "Created while copying pages into a virtual source.",
+                            )
+                        messages.success(
+                            request,
+                            f"Copied {len(result.pages)} page(s), {len(result.images)} image(s), "
+                            f"and created {len(result.items)} item(s). Reindex the source to publish the changes.",
+                        )
+                        return redirect("admin:diamm_data_source_change", target.pk)
+            elif request.method == "POST":
+                messages.error(request, "There was an error in the form.")
+        elif request.method == "POST" and donor_form.is_valid():
+            return redirect(
+                f"{reverse('admin:add-virtual-pages', args=(target.pk,))}?donor={donor_form.cleaned_data['donor'].pk}"
+            )
+
+        return render(
+            request,
+            "admin/diamm_data/source/add_virtual_pages.html",
+            {
+                **self.admin_site.each_context(request),
+                "instance": target,
+                "opts": self.model._meta,
+                "title": f"Add pages to {target.display_name}",
+                "donor": donor,
+                "donor_form": donor_form,
+                "page_form": page_form,
+                "preview": preview,
             },
         )
 
@@ -510,6 +621,13 @@ class SourceAdmin(VersionAdmin):
             ]
             with transaction.atomic():
                 if deleted_ids:
+                    orphaned_copies = Item.objects.filter(
+                        copied_from__isnull=False,
+                        pages__pk__in=deleted_ids,
+                    ).exclude(pages__pk__in=Page.objects.exclude(pk__in=deleted_ids))
+                    self.admin_site.get_model_admin(Item).log_deletions(
+                        request, orphaned_copies.distinct()
+                    )
                     page_admin.log_deletions(
                         request, Page.objects.filter(pk__in=deleted_ids)
                     )
@@ -547,6 +665,16 @@ class SourceAdmin(VersionAdmin):
         urls = super().get_urls()
         my_urls = [
             path(
+                "virtual-source-donor-autocomplete/",
+                self.admin_site.admin_view(self.virtual_source_donor_autocomplete_view),
+                name="virtual-source-donor-autocomplete",
+            ),
+            path(
+                "<int:pk>/add_virtual_pages/",
+                self.admin_site.admin_view(self.add_virtual_pages_view),
+                name="add-virtual-pages",
+            ),
+            path(
                 "<int:pk>/copy_inventory/",
                 self.admin_site.admin_view(self.copy_inventory_view),
                 name="copy-inventory",
@@ -569,6 +697,41 @@ class SourceAdmin(VersionAdmin):
         ]
 
         return my_urls + urls
+
+    def virtual_source_donor_autocomplete_view(self, request):
+        if not self.has_change_permission(request):
+            raise PermissionDenied
+
+        term = request.GET.get("q", "").strip()
+        sources = (
+            Source.objects.filter(is_virtual=False, pages__isnull=False)
+            .select_related("archive")
+            .distinct()
+        )
+        if term:
+            search = (
+                Q(archive__siglum__icontains=term)
+                | Q(shelfmark__icontains=term)
+                | Q(name__icontains=term)
+                | Q(date_statement__icontains=term)
+            )
+            if term.isdigit():
+                search |= Q(pk=int(term))
+            sources = sources.filter(search)
+
+        paginator = Paginator(
+            sources.order_by("archive__siglum", "shelfmark", "pk"), 20
+        )
+        page = paginator.get_page(request.GET.get("page", 1))
+        return JsonResponse(
+            {
+                "results": [
+                    {"id": str(source.pk), "text": source_picker_label(source)}
+                    for source in page.object_list
+                ],
+                "pagination": {"more": page.has_next()},
+            }
+        )
 
     @transaction.atomic
     def __copy_items_to_source(self, source, target):

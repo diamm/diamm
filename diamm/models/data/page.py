@@ -25,9 +25,24 @@ class Page(models.Model):
     class Meta:
         app_label = "diamm_data"
         ordering = ["source__shelfmark", "sort_order"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=("source", "copied_from"),
+                condition=models.Q(copied_from__isnull=False),
+                name="unique_copied_page_per_source",
+            )
+        ]
 
     source = models.ForeignKey(
         "diamm_data.Source", related_name="pages", on_delete=models.CASCADE
+    )
+    copied_from = models.ForeignKey(
+        "self",
+        related_name="copied_pages",
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT,
+        editable=False,
     )
 
     numeration = models.CharField(

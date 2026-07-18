@@ -26,9 +26,24 @@ class Item(models.Model):
     class Meta:
         app_label = "diamm_data"
         ordering = ("source_order", "folio_start")
+        constraints = [
+            models.UniqueConstraint(
+                fields=("source", "copied_from"),
+                condition=models.Q(copied_from__isnull=False),
+                name="unique_copied_item_per_source",
+            )
+        ]
 
     source = models.ForeignKey(
         "diamm_data.Source", related_name="inventory", on_delete=models.CASCADE
+    )
+    copied_from = models.ForeignKey(
+        "self",
+        related_name="copied_items",
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT,
+        editable=False,
     )
 
     pages = models.ManyToManyField("diamm_data.Page", related_name="items", blank=True)

@@ -1,0 +1,34 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls %}
+
+{% block content %}
+<div id="content-main">
+    {% if not donor %}
+        <p>Select a physical source whose internal pages will be copied.</p>
+        {{ donor_form.media }}
+        <form method="post">
+            {% csrf_token %}
+            {{ donor_form.as_p }}
+            <input type="submit" value="Continue" class="default">
+        </form>
+    {% else %}
+        <p>Copying from <strong>{{ donor.display_name }}</strong>. Existing copies and external pages are omitted.</p>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="donor" value="{{ donor.pk }}">
+            {{ page_form.as_p }}
+            {% if preview %}
+                <div class="messagelist">
+                    <div class="success">
+                        This will add {{ preview.pages }} page(s) and include {{ preview.items }} matching item(s).
+                        Items already copied to this virtual source will be reused.
+                    </div>
+                </div>
+                <input type="submit" name="do_action" value="Confirm copy" class="default">
+            {% else %}
+                <input type="submit" name="preview" value="Review selection" class="default">
+            {% endif %}
+        </form>
+    {% endif %}
+</div>
+{% endblock %}

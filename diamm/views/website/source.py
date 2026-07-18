@@ -90,6 +90,10 @@ class SourceDetail(generics.RetrieveAPIView):
                         )
                     ),
                 ),
+                "outgoing_source_relationships__relationship_type",
+                "outgoing_source_relationships__to_source__archive",
+                "incoming_source_relationships__relationship_type",
+                "incoming_source_relationships__from_source__archive",
                 Prefetch(
                     "contributions",
                     queryset=ProblemReport.objects.filter(accepted=True)

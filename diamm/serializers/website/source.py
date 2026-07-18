@@ -118,6 +118,28 @@ class SourceRelationshipSerializer(ypres.Serializer):
             return {"name": str(obj.related_entity)}
 
 
+class SourceToSourceRelationshipSerializer(ypres.Serializer):
+    related_entity = ypres.MethodField()
+    relationship_type = ypres.MethodField()
+
+    def get_related_entity(self, obj):
+        incoming = self.context["incoming"]
+        related = obj.from_source if incoming else obj.to_source
+        return {
+            "name": related.display_name,
+            "url": reverse(
+                "source-detail",
+                kwargs={"pk": related.pk},
+                request=self.context["request"],
+            ),
+        }
+
+    def get_relationship_type(self, obj):
+        if self.context["incoming"]:
+            return obj.relationship_type.inverse_label
+        return obj.relationship_type.forward_label
+
+
 class SourceProvenanceSerializer(ypres.Serializer):
     city = ypres.StrField(attr="city.name", required=False)
     country = ypres.StrField(attr="country.name", required=False)
@@ -523,6 +545,7 @@ class SourceDetailSerializer(ypres.Serializer):
     cover_image_info = ypres.MethodField(required=False)
     manifest_url = ypres.MethodField(required=False)
     inventory_provided = ypres.BoolField()
+    is_virtual = ypres.BoolField()
     public_images = ypres.BoolField()
     open_images = ypres.BoolField()
     has_external_images = ypres.MethodField()
@@ -760,11 +783,26 @@ class SourceDetailSerializer(ypres.Serializer):
         ).serialized_many
 
     def get_relationships(self, obj):
-        return SourceRelationshipSerializer(
+        relationships = SourceRelationshipSerializer(
             obj.relationships.all(),
             many=True,
             context={"request": self.context["request"]},
         ).serialized_many
+        relationships.extend(
+            SourceToSourceRelationshipSerializer(
+                obj.outgoing_source_relationships.all(),
+                many=True,
+                context={"request": self.context["request"], "incoming": False},
+            ).serialized_many
+        )
+        relationships.extend(
+            SourceToSourceRelationshipSerializer(
+                obj.incoming_source_relationships.all(),
+                many=True,
+                context={"request": self.context["request"], "incoming": True},
+            ).serialized_many
+        )
+        return relationships
 
     def get_copyists(self, obj):
         return SourceCopyistSerializer(

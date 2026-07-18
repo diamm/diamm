@@ -164,6 +164,12 @@
             </a>
         </div>
     </div>
+    {% if content.is_virtual %}
+        <div class="notification is-info virtual-source-notice">
+            This is a virtual reconstruction assembled from selected pages of other physical sources.
+            Its pages and inventory are independent snapshots with retained provenance links.
+        </div>
+    {% endif %}
     <div class="columns">
         <div class="column">
             <div class="level">

@@ -42,6 +42,12 @@ from diamm.admin.data.source_note import SourceNoteAdmin
 from diamm.admin.data.source_provenance import SourceProvenanceAdmin
 from diamm.admin.data.source_relationship import SourceRelationshipAdmin
 from diamm.admin.data.source_relationship_type import SourceRelationshipTypeAdmin
+from diamm.admin.data.source_to_source_relationship import (
+    SourceToSourceRelationshipAdmin,
+)
+from diamm.admin.data.source_to_source_relationship_type import (
+    SourceToSourceRelationshipTypeAdmin,
+)
 from diamm.admin.data.text import TextAdmin
 from diamm.admin.data.voice import VoiceAdmin
 from diamm.admin.data.voice_type import VoiceTypeAdmin

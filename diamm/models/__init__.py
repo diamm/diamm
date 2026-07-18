@@ -57,6 +57,10 @@ from diamm.models.data.source_note import SourceNote
 from diamm.models.data.source_provenance import SourceProvenance
 from diamm.models.data.source_relationship import SourceRelationship
 from diamm.models.data.source_relationship_type import SourceRelationshipType
+from diamm.models.data.source_to_source_relationship import SourceToSourceRelationship
+from diamm.models.data.source_to_source_relationship_type import (
+    SourceToSourceRelationshipType,
+)
 from diamm.models.data.source_url import SourceURL
 from diamm.models.data.text import Text
 from diamm.models.data.voice import Voice
