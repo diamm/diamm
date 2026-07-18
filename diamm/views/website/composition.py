@@ -53,9 +53,7 @@ class CompositionDetail(generics.RetrieveAPIView):
         ).order_by("order")
         cycles = CompositionCycle.objects.select_related(
             "cycle__type"
-        ).prefetch_related(
-            Prefetch("cycle__compositions", queryset=cycle_compositions)
-        )
+        ).prefetch_related(Prefetch("cycle__compositions", queryset=cycle_compositions))
 
         return Composition.objects.prefetch_related(
             Prefetch("sources", queryset=sources),
@@ -66,4 +64,5 @@ class CompositionDetail(generics.RetrieveAPIView):
             Prefetch("cycles", queryset=cycles),
             "genres",
             "notes",
+            "links",
         )

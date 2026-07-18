@@ -14,6 +14,7 @@ from diamm.models.data.composition_bibliography import CompositionBibliography
 from diamm.models.data.composition_composer import CompositionComposer
 from diamm.models.data.composition_cycle import CompositionCycle
 from diamm.models.data.composition_note import CompositionNote
+from diamm.models.data.composition_url import CompositionURL, CompositionURLTypeChoices
 from diamm.models.data.cycle import Cycle
 from diamm.models.data.cycle_composer import CycleComposer
 from diamm.models.data.cycle_type import CycleType

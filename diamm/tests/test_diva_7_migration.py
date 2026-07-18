@@ -10,7 +10,15 @@ from django.test import SimpleTestCase, TestCase, override_settings
 from jinja2.runtime import new_context
 from rest_framework.test import APIRequestFactory
 
-from diamm.models import Archive, CustomUserModel, Source, SourceNote
+from diamm.models import (
+    Archive,
+    Composition,
+    CompositionURL,
+    CustomUserModel,
+    Item,
+    Source,
+    SourceNote,
+)
 from diamm.serializers.search.composer_inventory import (
     ComposerInventorySearchSerializer,
 )
@@ -122,6 +130,30 @@ class SourceInventoryPanelTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, "<html")
+
+    @patch(
+        "diamm.serializers.website.source.SolrManager",
+        EmptySolrManager,
+    )
+    def test_inventory_item_displays_composition_external_links(self):
+        composition = Composition.objects.create(title="Kyrie")
+        Item.objects.create(source=self.public_source, composition=composition)
+        CompositionURL.objects.create(
+            composition=composition,
+            type=1,
+            link="https://example.test/edition/kyrie",
+            link_text="Modern edition of the Kyrie",
+        )
+
+        response = self.client.get(
+            f"/sources/{self.public_source.pk}/inventory/",
+            HTTP_ACCEPT="text/html",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "External editions and scores")
+        self.assertContains(response, "Modern edition of the Kyrie")
+        self.assertContains(response, "https://example.test/edition/kyrie")
 
     def test_private_inventory_fragment_is_hidden_anonymously(self):
         response = self.client.get(

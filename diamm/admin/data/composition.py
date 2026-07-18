@@ -16,6 +16,7 @@ from diamm.models.data.composition_bibliography import CompositionBibliography
 from diamm.models.data.composition_composer import CompositionComposer
 from diamm.models.data.composition_cycle import CompositionCycle
 from diamm.models.data.composition_note import CompositionNote
+from diamm.models.data.composition_url import CompositionURL
 from diamm.models.data.item import Item
 
 
@@ -49,6 +50,13 @@ class NoteInline(admin.TabularInline):
     extra = 0
 
 
+class URLInline(admin.TabularInline):
+    model = CompositionURL
+    extra = 0
+    verbose_name = "External edition or score"
+    verbose_name_plural = "External editions and scores"
+
+
 class CycleInline(admin.StackedInline):
     verbose_name = "Cycle"
     verbose_name_plural = "Cycles"
@@ -74,7 +82,14 @@ class CompositionAdmin(VersionAdmin):
     view_on_site = True
     list_display = ("id", "title", "get_composers", "appears_in", "updated")
     search_fields = ("=id", "title", "composers__composer__last_name")
-    inlines = (ComposerInline, NoteInline, CycleInline, BibliographyInline, ItemInline)
+    inlines = (
+        ComposerInline,
+        NoteInline,
+        URLInline,
+        CycleInline,
+        BibliographyInline,
+        ItemInline,
+    )
     list_filter = ("anonymous", "genres")
     list_editable = ("title",)
     actions = ["merge_compositions_action", "assign_genre_action"]
@@ -92,9 +107,7 @@ class CompositionAdmin(VersionAdmin):
             "composers__composer",
         )
 
-    @admin.display(
-        description="Composers", ordering="composers__composer__last_name"
-    )
+    @admin.display(description="Composers", ordering="composers__composer__last_name")
     def get_composers(self, obj):
         return html_join(c.composer.full_name for c in obj.composers.all())
 

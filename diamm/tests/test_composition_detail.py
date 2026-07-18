@@ -74,6 +74,35 @@ class CompositionDetailDateTests(TestCase):
         self.assertContains(response, "<td>-</td>", html=True)
 
     @patch("diamm.serializers.website.composition.SolrManager", EmptySolrManager)
+    def test_external_edition_links_appear_in_json_and_html(self) -> None:
+        baker.make(
+            "diamm_data.CompositionURL",
+            composition=self.composition,
+            type=1,
+            link="https://1520s-project.example/work/Any1001a",
+            link_text="Kyrie from the Missa Vulnerasti cor meum",
+        )
+
+        json_response = self.client.get(self.url, HTTP_ACCEPT="application/json")
+        self.assertEqual(
+            json_response.json()["links"],
+            [
+                {
+                    "type": "Edition",
+                    "link_text": "Kyrie from the Missa Vulnerasti cor meum",
+                    "link": "https://1520s-project.example/work/Any1001a",
+                }
+            ],
+        )
+
+        html_response = self.client.get(self.url, HTTP_ACCEPT="text/html")
+        self.assertContains(html_response, "External editions and scores")
+        self.assertContains(html_response, "Kyrie from the Missa Vulnerasti cor meum")
+        self.assertContains(
+            html_response, "https://1520s-project.example/work/Any1001a"
+        )
+
+    @patch("diamm.serializers.website.composition.SolrManager", EmptySolrManager)
     def test_serializer_reuses_view_prefetches(self) -> None:
         request = APIRequestFactory().get(self.url)
         request.user = AnonymousUser()

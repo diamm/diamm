@@ -118,6 +118,12 @@ class CompositionNoteSerializer(ypres.Serializer):
     atype = ypres.IntField(label="type", attr="type")
 
 
+class CompositionURLSerializer(ypres.Serializer):
+    type = ypres.StrField(attr="url_type")
+    link_text = ypres.StrField(required=False)
+    link = ypres.StrField()
+
+
 class CompositionDetailSerializer(ypres.Serializer):
     anonymous = ypres.BoolField(attr="anonymous", required=False)
     composers = ypres.MethodField()
@@ -130,6 +136,7 @@ class CompositionDetailSerializer(ypres.Serializer):
     genres = ypres.MethodField()
     bibliography = ypres.MethodField()
     notes = ypres.MethodField()
+    links = CompositionURLSerializer(attr="links.all", call=True, many=True)
 
     def get_url(self, obj):
         return reverse(

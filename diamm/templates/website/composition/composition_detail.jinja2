@@ -48,6 +48,23 @@
                         </td>
                     </tr>
                     {% endif %}
+                    {% if content.links %}
+                    <tr>
+                        <th>External editions and scores</th>
+                        <td>
+                            <ul>
+                            {% for link in content.links %}
+                                <li>
+                                    <a href="{{ link.link }}" target="_blank" rel="noopener noreferrer">
+                                        {{ link.link_text|default(link.type, true) }}
+                                    </a>
+                                    <span>({{ link.type }})</span>
+                                </li>
+                            {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                    {% endif %}
                 </tbody>
             </table>
         </div>

@@ -18,6 +18,7 @@ from diamm.models import (
 )
 from diamm.models.data.item import CompletenessOptionsChoices
 from diamm.models.data.item_note import ItemNoteTypeChoices
+from diamm.serializers.website.composition import CompositionURLSerializer
 
 # from diamm.serializers.fields import DateTimeField
 # from diamm.serializers.serializers import ContextDictSerializer, ypres.Serializer
@@ -373,9 +374,17 @@ class SourceInventorySerializer(ypres.Serializer):
     fragment = ypres.BoolField()
     completeness = ypres.StrField(attr="item_completeness")
     image_viewer_url = ypres.MethodField(required=False)
+    external_links = ypres.MethodField(required=False)
 
     def get_pages(self, obj):
         return [p.pk for p in obj.pages.all()]
+
+    def get_external_links(self, obj):
+        if not obj.composition:
+            return None
+        return CompositionURLSerializer(
+            obj.composition.links.all(), many=True
+        ).serialized_many
 
     def get_image_viewer_url(self, obj) -> str | None:
         page = first_page_for_item(obj)
@@ -712,6 +721,7 @@ class SourceDetailSerializer(ypres.Serializer):
                 ),
                 Prefetch("notes", queryset=notes_qs),
                 "composition__genres",  # single query
+                "composition__links",
                 Prefetch(
                     "voices", queryset=voices_qs
                 ),  # replaces all voices__* prefetches

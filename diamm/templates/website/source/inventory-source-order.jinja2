@@ -96,6 +96,21 @@
                                     {{ entry.genres|join(', ') }}
                                 </div>
                             {% endif %}
+                            {% if entry.external_links %}
+                                <div>
+                                    <strong>External editions and scores:</strong>
+                                    <ul>
+                                    {% for link in entry.external_links %}
+                                        <li>
+                                            <a href="{{ link.link }}" target="_blank" rel="noopener noreferrer">
+                                                {{ link.link_text|default(link.type, true) }}
+                                            </a>
+                                            ({{ link.type }})
+                                        </li>
+                                    {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
                             {% if entry.source_attribution %}
                                 <div>
                                     <strong>Source Attribution: </strong>
