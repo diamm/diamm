@@ -22,10 +22,12 @@ from diamm.models import (
 from diamm.serializers.search.composer_inventory import (
     ComposerInventorySearchSerializer,
 )
+from diamm.serializers.search.set import _get_sets
 from diamm.serializers.website.source import (
     SourceComposerInventoryCompositionSerializer,
     SourceDetailSerializer,
     SourceInventorySerializer,
+    SourceSetSerializer,
 )
 
 
@@ -303,6 +305,66 @@ class InventoryImageViewerSerializerTests(SimpleTestCase):
         self.assertFalse(data["compositions_json"][0]["page_external"])
 
 
+@override_settings(ROOT_URLCONF="diamm.urls", HOSTNAME="testserver")
+class SourceSetSerializerTests(SimpleTestCase):
+    def set_data(self):
+        return {
+            "pk": 12,
+            "cluster_shelfmark_s": "Example partbooks",
+            "set_type_s": "Partbooks",
+            "sources_json": [
+                {
+                    "pk": 20,
+                    "public": True,
+                    "display_name": "GB-Lbl Add. MS 20 (Discantus)",
+                    "cover_image": 200,
+                },
+                {
+                    "pk": 21,
+                    "public": False,
+                    "display_name": "GB-Lbl Add. MS 21 (Tenor)",
+                    "cover_image": None,
+                },
+            ],
+        }
+
+    def serialize(self, *, is_staff=False):
+        request = APIRequestFactory().get("/sources/20/")
+        request.user = SimpleNamespace(is_staff=is_staff)
+        return SourceSetSerializer(
+            self.set_data(),
+            context={"request": request, "source_id": 20},
+        ).serialized
+
+    def test_anonymous_users_see_only_public_sources(self):
+        content = self.serialize()
+
+        self.assertEqual(content["source_count"], 1)
+        self.assertEqual(len(content["sources"]), 1)
+        source = content["sources"][0]
+        self.assertEqual(source["pk"], 20)
+        self.assertTrue(source["is_current"])
+        self.assertEqual(source["cover_image"], "http://testserver/cover/200/")
+
+    def test_staff_users_see_private_sources(self):
+        content = self.serialize(is_staff=True)
+
+        self.assertEqual(content["source_count"], 2)
+        self.assertEqual([source["pk"] for source in content["sources"]], [20, 21])
+        self.assertIsNone(content["sources"][1]["cover_image"])
+
+
+class SetIndexQueryTests(SimpleTestCase):
+    @patch("diamm.serializers.search.set.get_db_records")
+    def test_set_thumbnails_are_selected_deterministically(self, get_db_records):
+        _get_sets({"connection": "unused"})
+
+        sql = get_db_records.call_args.args[0]
+        self.assertNotIn("ORDER BY random()", sql)
+        self.assertIn("explicit_cover.id = so.cover_image_id", sql)
+        self.assertIn("ORDER BY pg.sort_order NULLS LAST, pg.id, i.id", sql)
+
+
 class DivaTemplateTests(SimpleTestCase):
     def test_source_detail_serializes_json_ld_safely(self):
         template = get_template("website/source/source_detail.jinja2").template
@@ -364,6 +426,47 @@ class DivaTemplateTests(SimpleTestCase):
         self.assertNotIn("Alpine.store", related_templates)
         self.assertNotIn("$store.sourceTabs", related_templates)
         self.assertNotIn("$store.inventoryTabs", related_templates)
+
+    def test_source_sets_use_an_unselected_lazy_two_column_view(self):
+        template = get_template("website/source/sets.jinja2").template
+        rendered = template.render(
+            content={
+                "sets": [
+                    {
+                        "pk": 12,
+                        "url": "/sets/12/",
+                        "cluster_shelfmark": "Example partbooks",
+                        "set_type": "Partbooks",
+                        "source_count": 2,
+                        "sources": [
+                            {
+                                "pk": 20,
+                                "display_name": "GB-Lbl Add. MS 20",
+                                "url": "/sources/20/",
+                                "cover_image": "/cover/200/",
+                                "is_current": True,
+                            },
+                            {
+                                "pk": 21,
+                                "display_name": "GB-Lbl Add. MS 21",
+                                "url": "/sources/21/",
+                                "cover_image": None,
+                                "is_current": False,
+                            },
+                        ],
+                    }
+                ]
+            }
+        )
+
+        self.assertIn('x-data="{ selectedSet: null }"', rendered)
+        self.assertIn("Select a set to see its sources.", rendered)
+        self.assertIn('<template x-if="selectedSet === 12">', rendered)
+        self.assertIn('class="column is-one-third source-sets-selector"', rendered)
+        self.assertIn('loading="lazy"', rendered)
+        self.assertIn("Current source", rendered)
+        self.assertNotIn("No images available", rendered)
+        self.assertNotIn("fa-eye-slash", rendered)
 
     def test_source_detail_syncs_tabs_with_hash_navigation(self):
         source_detail = Path(

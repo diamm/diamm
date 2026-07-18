@@ -178,14 +178,28 @@ class SourceSetSerializer(ypres.DictSerializer):
     cluster_shelfmark = ypres.StrField(attr="cluster_shelfmark_s")
     set_type = ypres.StrField(attr="set_type_s")
     sources = ypres.MethodField()
+    source_count = ypres.MethodField()
 
     def get_url(self, obj):
         return reverse(
             "set-detail", kwargs={"pk": obj["pk"]}, request=self.context["request"]
         )
 
+    def _visible_sources(self, obj) -> list:
+        request = self.context["request"]
+        is_staff = getattr(request.user, "is_staff", False)
+        return [
+            source
+            for source in obj.get("sources_json", [])
+            if source.get("public", False) or is_staff
+        ]
+
+    def get_source_count(self, obj) -> int:
+        return len(self._visible_sources(obj))
+
     def get_sources(self, obj) -> list:
-        sources = obj["sources_json"]
+        sources = self._visible_sources(obj)
+        current_source_id = self.context.get("source_id")
         ret = []
         for source in sources:
             url = reverse(
@@ -206,9 +220,11 @@ class SourceSetSerializer(ypres.DictSerializer):
 
             ret.append(
                 {
+                    "pk": source["pk"],
                     "display_name": source["display_name"],
                     "url": url,
                     "cover_image": cover,
+                    "is_current": source["pk"] == current_source_id,
                 }
             )
 
@@ -777,7 +793,7 @@ class SourceDetailSerializer(ypres.Serializer):
         connection = SolrManager()
         fq: list = ["type:set", f"sources_ii:{obj.pk}"]
 
-        connection.search("*:*", fq=fq)
+        connection.search("*:*", fq=fq, sort="display_name_ans asc")
 
         return SourceSetSerializer(
             connection.results,

@@ -1,37 +1,92 @@
-<div class="columns">
-    <div class="column">
-        {% for source_set in content.sets %}
-            <div class="source-set">
-                <h3 class="title is-4">Set: <a href="{{ source_set.url }}">{{ source_set.cluster_shelfmark }}</a></h3>
-                <h4 class="subtitle is-5">
-                    <strong>Type: </strong>{{ source_set.set_type }}
-                </h4>
-                <div class="set-sources">
-                    {% for a_source in source_set.sources %}
-                    <div class="box">
-                        {% if a_source.cover_image %}
-                            <a href={{ a_source.url }}>
-                                <figure class="image" style="width: 100px; margin: auto;">
-                                    <img loading="lazy" src="{{ a_source.cover_image }}"/>
-                                </figure>
-                            </a>
+<div class="source-sets-view" x-data="{ selectedSet: null }">
+    <div class="columns">
+        <div class="column is-one-third source-sets-selector">
+            <h3 class="title is-5">Sets</h3>
+            <div class="source-sets-list" aria-label="Sets containing this source">
+                {% for source_set in content.sets %}
+                    <button
+                        type="button"
+                        class="source-set-choice"
+                        :class="selectedSet === {{ source_set.pk }} ? 'is-selected' : ''"
+                        :aria-pressed="selectedSet === {{ source_set.pk }}"
+                        aria-controls="source-set-panel-{{ source_set.pk }}"
+                        @click="selectedSet = {{ source_set.pk }}"
+                    >
+                        <span class="source-set-choice-name">
+                            {{ source_set.cluster_shelfmark|default("[Unnamed set]", true) }}
+                        </span>
+                        <span class="source-set-choice-meta">
+                            {{ source_set.set_type }} · {{ source_set.source_count }}
+                            source{{ "s" if source_set.source_count != 1 else "" }}
+                        </span>
+                    </button>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="column source-set-selection">
+            <div class="notification is-light" x-show="selectedSet === null">
+                Select a set to see its sources.
+            </div>
+
+            {% for source_set in content.sets %}
+                <template x-if="selectedSet === {{ source_set.pk }}">
+                    <section
+                        id="source-set-panel-{{ source_set.pk }}"
+                        aria-labelledby="source-set-heading-{{ source_set.pk }}"
+                    >
+                        <header class="source-set-heading">
+                            <div>
+                                <h3 id="source-set-heading-{{ source_set.pk }}" class="title is-4">
+                                    <a href="{{ source_set.url }}">
+                                        {{ source_set.cluster_shelfmark|default("[Unnamed set]", true) }}
+                                    </a>
+                                </h3>
+                                <p class="subtitle is-6">
+                                    {{ source_set.set_type }} · {{ source_set.source_count }}
+                                    source{{ "s" if source_set.source_count != 1 else "" }}
+                                </p>
+                            </div>
+                        </header>
+
+                        {% if source_set.sources %}
+                            <div class="source-set-source-list" role="list">
+                                {% for a_source in source_set.sources %}
+                                    <div
+                                        class="source-set-source-row{{ " is-current-source" if a_source.is_current else "" }}"
+                                        role="listitem"
+                                    >
+                                        <div class="source-set-thumbnail">
+                                            {% if a_source.cover_image %}
+                                                <a href="{{ a_source.url }}" tabindex="-1" aria-hidden="true">
+                                                    <img
+                                                        loading="lazy"
+                                                        decoding="async"
+                                                        src="{{ a_source.cover_image }}"
+                                                        alt=""
+                                                        width="56"
+                                                        height="72"
+                                                    >
+                                                </a>
+                                            {% endif %}
+                                        </div>
+                                        <div class="source-set-source-name">
+                                            <a href="{{ a_source.url }}">{{ a_source.display_name }}</a>
+                                            {% if a_source.is_current %}
+                                                <span class="tag is-light">Current source</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
                         {% else %}
-                            <div class="no-image">
-                                <div>
-                                    <i class="fa fa-eye-slash"></i>
-                                </div>
-                                <div>
-                                    <small>No images available</small>
-                                </div>
+                            <div class="notification is-light">
+                                No sources in this set are available to view.
                             </div>
                         {% endif %}
-                        <p>
-                            <a href={{ a_source.url }}>{{ a_source.display_name }}</a>
-                        </p>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-        {% endfor %}
+                    </section>
+                </template>
+            {% endfor %}
+        </div>
     </div>
 </div>

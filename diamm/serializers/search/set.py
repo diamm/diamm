@@ -26,13 +26,21 @@ def _get_sets(cfg):
                            'pk', ss.source_id,
                            'public', so.public,
                            'display_name', concat(a.siglum, ' ', so.shelfmark, coalesce(' (' || so.name || ')', '')),
-                           'cover_image', (SELECT i.id
-                                           FROM diamm_data_page AS pg
-                                           LEFT JOIN diamm_data_image AS i ON i.page_id = pg.id
-                                           WHERE pg.source_id = so.id AND i.type_id = 1 AND i.location IS NOT NULL
-                                           ORDER BY random()
-                                           LIMIT 1)
-                            ) ORDER BY a.siglum, so.shelfmark COLLATE "natsort")
+                           'cover_image', COALESCE(
+                               (SELECT explicit_cover.id
+                                FROM diamm_data_image AS explicit_cover
+                                WHERE explicit_cover.id = so.cover_image_id
+                                  AND explicit_cover.location IS NOT NULL),
+                               (SELECT i.id
+                                FROM diamm_data_page AS pg
+                                JOIN diamm_data_image AS i ON i.page_id = pg.id
+                                WHERE pg.source_id = so.id
+                                  AND i.type_id = 1
+                                  AND i.location IS NOT NULL
+                                ORDER BY pg.sort_order NULLS LAST, pg.id, i.id
+                                LIMIT 1)
+                           )
+                            ) ORDER BY a.siglum, so.shelfmark COLLATE "natsort", so.id)
                             FROM diamm_data_set_sources AS ss
                              LEFT JOIN diamm_data_source AS so ON ss.source_id = so.id
                              LEFT JOIN diamm_data_archive AS a ON so.archive_id = a.id

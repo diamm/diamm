@@ -306,18 +306,126 @@ tr.selected {
   }
 }
 
-.source-set {
-  .set-sources {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
+.source-sets-view {
+  .source-sets-selector {
+    border-right: 1px solid $diamm-light-grey;
+  }
 
-    .box {
-      flex: 0 0 auto;
-      margin: 8px;
-      text-align: center;
-      width: 180px;
-      height: 280px;
+  .source-sets-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .source-set-choice {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    border-radius: 3px;
+    color: $diamm-black;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 0.65rem 0.8rem;
+    text-align: left;
+    width: 100%;
+
+    &:hover,
+    &:focus {
+      background: $diamm-light-grey;
+    }
+
+    &.is-selected {
+      background: $diamm-dk-blue;
+      color: $diamm-white;
+
+      .source-set-choice-meta {
+        color: $diamm-white;
+      }
+    }
+  }
+
+  .source-set-choice-name,
+  .source-set-choice-meta {
+    display: block;
+  }
+
+  .source-set-choice-name {
+    font-weight: $weight-semibold;
+  }
+
+  .source-set-choice-meta {
+    color: $diamm-grey;
+    font-size: 0.85rem;
+    margin-top: 0.2rem;
+  }
+
+  .source-set-heading {
+    margin-bottom: 0.75rem;
+
+    .title {
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      margin-bottom: 0;
+      margin-top: 0;
+    }
+  }
+
+  .source-set-source-list {
+    border: 1px solid $diamm-light-grey;
+    max-height: 60vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .source-set-source-row {
+    align-items: center;
+    border-bottom: 1px solid $diamm-light-grey;
+    display: flex;
+    min-height: 82px;
+    padding: 0.3rem 0.65rem;
+
+    &:last-child {
+      border-bottom: 0;
+    }
+
+    &.is-current-source {
+      background: lighten($diamm-lt-blue, 52%);
+    }
+  }
+
+  .source-set-thumbnail {
+    flex: 0 0 56px;
+    height: 72px;
+    margin-right: 0.8rem;
+
+    a {
+      border-bottom: 0;
+    }
+
+    img {
+      height: 72px;
+      object-fit: cover;
+      width: 56px;
+    }
+  }
+
+  .source-set-source-name {
+    align-items: center;
+    display: flex;
+    font-size: 1.1rem;
+    font-weight: $weight-semibold;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  @media screen and (max-width: $tablet) {
+    .source-sets-selector {
+      border-bottom: 1px solid $diamm-light-grey;
+      border-right: 0;
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
     }
   }
 }
