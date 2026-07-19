@@ -309,6 +309,10 @@ tr.selected {
 .source-sets-view {
   .source-sets-selector {
     border-right: 1px solid $diamm-light-grey;
+
+    > .title {
+      margin-bottom: 0.5rem;
+    }
   }
 
   .source-sets-list {
@@ -418,6 +422,10 @@ tr.selected {
     font-weight: $weight-semibold;
     flex-wrap: wrap;
     gap: 0.5rem;
+
+    a > * {
+      font-size: 0.9em;
+    }
   }
 
   @media screen and (max-width: $tablet) {

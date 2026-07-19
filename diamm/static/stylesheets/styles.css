@@ -8713,6 +8713,9 @@ tr.selected {
 .source-sets-view .source-sets-selector {
   border-right: 1px solid rgb(220.7209302326, 222.2790697674, 221.5);
 }
+.source-sets-view .source-sets-selector > .title {
+  margin-bottom: 0.5rem;
+}
 .source-sets-view .source-sets-list {
   display: flex;
   flex-direction: column;
@@ -8801,6 +8804,9 @@ tr.selected {
   font-weight: 500;
   flex-wrap: wrap;
   gap: 0.5rem;
+}
+.source-sets-view .source-set-source-name a > * {
+  font-size: 0.9em;
 }
 @media screen and (max-width: 769px) {
   .source-sets-view .source-sets-selector {
