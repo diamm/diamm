@@ -272,6 +272,18 @@ tr.selected {
   width: 100%;
   height: clamp(32rem, 78vh, 64rem);
   min-height: 32rem;
+
+  // Diva uses `.modal` for its dialog panel, which collides with Bulma's
+  // full-viewport modal container. Restore Diva's intended flex layout here.
+  .modal {
+    align-items: stretch;
+    display: flex;
+    inset: auto;
+    justify-content: flex-start;
+    overflow: visible;
+    position: static;
+    z-index: auto;
+  }
 }
 
 @media screen and (max-width: 768px) {

@@ -525,6 +525,23 @@ class DivaTemplateTests(SimpleTestCase):
         self.assertNotIn("createStructureDataLookup", html)
         self.assertNotIn("diva.css", html)
 
+    def test_diamm_resets_bulma_modal_layout_inside_diva(self):
+        stylesheet = Path("diamm/static/stylesheets/styles.css").read_text()
+        match = re.search(r"#diva-wrapper \.modal \{([^}]+)\}", stylesheet)
+
+        self.assertIsNotNone(match)
+        modal_rule = match.group(1)
+        for declaration in (
+            "align-items: stretch",
+            "display: flex",
+            "inset: auto",
+            "justify-content: flex-start",
+            "overflow: visible",
+            "position: static",
+            "z-index: auto",
+        ):
+            self.assertIn(declaration, modal_rule)
+
     def test_integration_uses_diva_7_configuration_and_navigation(self):
         script = Path("diamm/static/apps/source-image-viewer.js").read_text()
 

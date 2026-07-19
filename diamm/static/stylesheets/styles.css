@@ -8678,6 +8678,15 @@ tr.selected {
   height: clamp(32rem, 78vh, 64rem);
   min-height: 32rem;
 }
+#diva-wrapper .modal {
+  align-items: stretch;
+  display: flex;
+  inset: auto;
+  justify-content: flex-start;
+  overflow: visible;
+  position: static;
+  z-index: auto;
+}
 
 @media screen and (max-width: 768px) {
   #diva-wrapper {
