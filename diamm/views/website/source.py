@@ -177,7 +177,19 @@ class SourceCanvasDetail(generics.GenericAPIView):
     renderer_classes = (UJSONLDRenderer,)
 
     def get(self, request, source_id, page_id) -> response.Response:
-        res = SOLR_CLIENT.raw_search("*:*", fq=["type:image", f"page_i:{page_id}"])
+        res = SOLR_CLIENT.raw_search(
+            "*:*",
+            fq=[
+                "type:image",
+                f"source_i:{source_id}",
+                f"page_i:{page_id}",
+                "image_type_i:1",
+            ],
+            rows=1,
+        )
+        if res.hits == 0:
+            return response.Response(status=status.HTTP_404_NOT_FOUND)
+
         canvas = CanvasSerializer(res.docs[0], context={"request": request})
 
         return response.Response(canvas.serialized)

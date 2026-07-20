@@ -16,18 +16,18 @@ class CanvasSerializer(ypres.DictSerializer):
     def get_id(self, obj: dict) -> str:
         return reverse(
             "source-canvas-detail",
-            kwargs={"source_id": obj["source_i"], "page_id": obj["pk"]},
+            kwargs={"source_id": obj["source_i"], "page_id": obj["page_i"]},
             request=self.context["request"],
         )
 
     def get_label(self, obj: dict) -> dict:
-        return language_map(obj.get("numeration_s", f"Page {obj['pk']}"))
+        return language_map(obj.get("numeration_s", f"Page {obj['page_i']}"))
 
     def get_items(self, obj: dict) -> list:
         canvas_id = self.get_id(obj)
         context = {
             "source_id": obj["source_i"],
-            "page_id": obj["pk"],
+            "page_id": obj["page_i"],
             "request": self.context["request"],
             "canvas_id": canvas_id,
         }

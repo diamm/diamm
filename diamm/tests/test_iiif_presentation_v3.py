@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+from types import SimpleNamespace
 from unittest.mock import patch
 
+from django.contrib.sites.models import Site
 from django.test import TestCase, override_settings
 from rest_framework.test import APIRequestFactory
 
@@ -60,12 +62,14 @@ class FakeSolrManager:
 )
 class PresentationV3SerializerTests(TestCase):
     def setUp(self) -> None:
+        Site.objects.create(domain="testserver", name="Test site")
         self.request = APIRequestFactory().get("/sources/1/manifest/")
         FakeSolrManager.image_results = []
         FakeSolrManager.structure_results = []
         FakeSolrManager.alternate_image_results = []
         self.image_doc = {
             "pk": 10,
+            "page_i": 100,
             "source_i": 1,
             "numeration_s": "1r",
             "width_i": 4096,
@@ -78,7 +82,7 @@ class PresentationV3SerializerTests(TestCase):
             self.image_doc, context={"request": self.request}
         ).serialized
 
-        self.assertEqual(data["id"], "http://testserver/sources/1/canvas/10/")
+        self.assertEqual(data["id"], "http://testserver/sources/1/canvas/100/")
         self.assertNotIn("@context", data)
         self.assertEqual(data["type"], "Canvas")
         self.assertEqual(data["label"], {"none": ["1r"]})
@@ -90,14 +94,50 @@ class PresentationV3SerializerTests(TestCase):
         self.assertEqual(data["items"][0]["items"][0]["target"], data["id"])
         self.assertEqual(list(collect_v2_keys(data)), [])
 
+    @patch("diamm.views.website.source.SOLR_CLIENT.raw_search")
+    def test_canvas_endpoint_resolves_primary_image_by_source_and_page(
+        self, raw_search
+    ) -> None:
+        raw_search.return_value = SimpleNamespace(hits=1, docs=[self.image_doc])
+
+        response = self.client.get("/sources/1/canvas/100/")
+
+        self.assertEqual(response.status_code, 200)
+        raw_search.assert_called_once_with(
+            "*:*",
+            fq=[
+                "type:image",
+                "source_i:1",
+                "page_i:100",
+                "image_type_i:1",
+            ],
+            rows=1,
+        )
+        data = response.json()
+        self.assertEqual(data["id"], "http://testserver/sources/1/canvas/100/")
+        self.assertEqual(
+            data["items"][0]["items"][0]["body"]["id"],
+            "http://testserver/images/10/full/full/0/default.jpg",
+        )
+
+    @patch("diamm.views.website.source.SOLR_CLIENT.raw_search")
+    def test_canvas_endpoint_returns_404_when_page_has_no_primary_image(
+        self, raw_search
+    ) -> None:
+        raw_search.return_value = SimpleNamespace(hits=0, docs=[])
+
+        response = self.client.get("/sources/1/canvas/100/")
+
+        self.assertEqual(response.status_code, 404)
+
     def test_image_annotation_body_references_image_api_2_service(self) -> None:
         data = ImageSerializer(
             self.image_doc,
             context={
                 "request": self.request,
                 "source_id": 1,
-                "page_id": 10,
-                "canvas_id": "http://testserver/sources/1/canvas/10/",
+                "page_id": 100,
+                "canvas_id": "http://testserver/sources/1/canvas/100/",
             },
         ).serialized
 
@@ -118,7 +158,9 @@ class PresentationV3SerializerTests(TestCase):
             "?uri=http%3A%2F%2Ftestserver%2Fimages%2F10%2Ffull%2Ffull%2F0%2Fdefault.jpg",
         )
         external, active = auth_service["service"]
-        self.assertEqual([external["profile"], active["profile"]], ["external", "active"])
+        self.assertEqual(
+            [external["profile"], active["profile"]], ["external", "active"]
+        )
         self.assertNotIn("id", external)
         for field in ("label", "heading", "note", "confirmLabel"):
             self.assertNotIn(field, external)
@@ -149,8 +191,8 @@ class PresentationV3SerializerTests(TestCase):
                 context={
                     "request": self.request,
                     "source_id": 1,
-                    "page_id": 10,
-                    "canvas_id": "http://testserver/sources/1/canvas/10/",
+                    "page_id": 100,
+                    "canvas_id": "http://testserver/sources/1/canvas/100/",
                 },
             ).serialized
 
@@ -176,7 +218,7 @@ class PresentationV3SerializerTests(TestCase):
                 "source_i": 1,
                 "composition_i": 30,
                 "composition_s": "Kyrie",
-                "pages_ii": [10],
+                "pages_ii": [100],
                 "item_title_s": "Kyrie",
             }
         ]
@@ -207,6 +249,9 @@ class PresentationV3SerializerTests(TestCase):
         self.assertEqual(painting_body["service"][0]["type"], "ImageService2")
         self.assertEqual(painting_body["service"][1]["type"], "AuthProbeService2")
         self.assertEqual(data["structures"][0]["type"], "Range")
+        self.assertEqual(
+            data["structures"][0]["items"][0]["id"], data["items"][0]["id"]
+        )
         self.assertEqual(data["requiredStatement"]["label"], {"en": ["Attribution"]})
         self.assertEqual(
             data["requiredStatement"]["value"],
@@ -252,9 +297,7 @@ class PresentationV3SerializerTests(TestCase):
             }
         ).serialized
 
-        self.assertEqual(
-            data["archive_copyright_s"], "Images © Example Library"
-        )
+        self.assertEqual(data["archive_copyright_s"], "Images © Example Library")
 
     def test_manifest_metadata_links_and_escapes_composers(self) -> None:
         source_doc = {
