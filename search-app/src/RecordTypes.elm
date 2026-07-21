@@ -102,6 +102,7 @@ type alias SetResultBody =
     { pk : String
     , url : String
     , heading : String
+    , numBooks : Int
     }
 
 
@@ -327,6 +328,7 @@ setResultBodyDecoder =
         |> required "pk" string
         |> required "url" string
         |> required "heading" string
+        |> required "sources" int
 
 
 compositionResultBodyDecoder : Decoder CompositionResultBody

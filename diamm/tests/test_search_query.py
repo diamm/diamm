@@ -83,6 +83,33 @@ class SearchQueryParamsTests(SimpleTestCase):
         self.assertFalse(result["public_images"])
         self.assertTrue(result["has_external_manifest"])
 
+    def test_set_result_exposes_total_book_count(self) -> None:
+        request = self.factory.get("/search/")
+        result = SolrResultSerializer(
+            {
+                "type": "set",
+                "pk": 12,
+                "cluster_shelfmark_s": "Example partbooks",
+                "sources_ii": [20, 21, 22],
+            },
+            context={"request": request},
+        ).serialized
+
+        self.assertEqual(result["sources"], 3)
+
+    def test_empty_set_result_exposes_zero_book_count(self) -> None:
+        request = self.factory.get("/search/")
+        result = SolrResultSerializer(
+            {
+                "type": "set",
+                "pk": 12,
+                "cluster_shelfmark_s": "Empty set",
+            },
+            context={"request": request},
+        ).serialized
+
+        self.assertEqual(result["sources"], 0)
+
 
 class SearchViewTests(SimpleTestCase):
     def setUp(self) -> None:

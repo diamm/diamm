@@ -101,6 +101,9 @@ class SolrResultSerializer(ypres.DictSerializer):
             return None
 
     def get_sources(self, obj: dict) -> int | None:
+        if obj.get("type") == "set":
+            return len(obj.get("sources_ii", []))
+
         if "sources_ii" in obj:
             return len(obj["sources_ii"])
         return None

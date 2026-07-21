@@ -171,6 +171,16 @@ viewArchiveResult archive =
 
 viewSetResult : SetResultBody -> Element msg
 viewSetResult set =
+    let
+        bookLabel =
+            String.fromInt set.numBooks
+                ++ (if set.numBooks == 1 then
+                        " book"
+
+                    else
+                        " books"
+                   )
+    in
     resultTemplate
         { url = set.url
         , heading = set.heading
@@ -178,7 +188,10 @@ viewSetResult set =
         , publicImages = False
         , externalManifest = False
         }
-        []
+        [ row
+            [ width fill ]
+            [ text bookLabel ]
+        ]
 
 
 viewPersonResult : PersonResultBody -> Element msg
