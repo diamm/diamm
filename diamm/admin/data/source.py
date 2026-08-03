@@ -18,7 +18,11 @@ from diamm.admin.forms.create_pages_and_images import CreatePagesAndImagesForm
 from diamm.admin.forms.virtual_source import DonorSourceForm, VirtualSourcePagesForm
 from diamm.admin.helpers.html import html_join
 from diamm.admin.helpers.optimized_raw_id import RawIdWidgetAdminMixin
-from diamm.admin.helpers.source_picker import source_picker_label
+from diamm.admin.helpers.source_picker import (
+    SourceRelationshipAutocompleteSelect,
+    source_picker_label,
+    source_relationship_picker_label,
+)
 from diamm.models import Image, ItemBibliography, ItemComposer, ItemNote, Voice
 from diamm.models.data.geographic_area import AreaTypeChoices, GeographicArea
 from diamm.models.data.item import Item
@@ -111,6 +115,20 @@ class OutgoingSourceRelationshipInline(admin.TabularInline):
     extra = 0
     autocomplete_fields = ("to_source",)
     classes = ("collapse",)
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        field = super().formfield_for_foreignkey(db_field, request, **kwargs)
+        if db_field.name != "to_source":
+            return field
+
+        field.queryset = field.queryset.select_related("archive")
+        field.label_from_instance = source_relationship_picker_label
+        field.widget = SourceRelationshipAutocompleteSelect(
+            db_field.remote_field, self.admin_site, using=kwargs.get("using")
+        )
+        field.widget.is_required = field.required
+        field.widget.choices = field.choices
+        return field
 
 
 class SourceProvenanceInline(RawIdWidgetAdminMixin, admin.StackedInline):
@@ -670,6 +688,13 @@ class SourceAdmin(VersionAdmin):
                 name="virtual-source-donor-autocomplete",
             ),
             path(
+                "source-relationship-autocomplete/",
+                self.admin_site.admin_view(
+                    self.source_relationship_autocomplete_view
+                ),
+                name="source-relationship-autocomplete",
+            ),
+            path(
                 "<int:pk>/add_virtual_pages/",
                 self.admin_site.admin_view(self.add_virtual_pages_view),
                 name="add-virtual-pages",
@@ -698,11 +723,39 @@ class SourceAdmin(VersionAdmin):
 
         return my_urls + urls
 
+    def source_relationship_autocomplete_view(self, request):
+        if not self.has_view_permission(request):
+            raise PermissionDenied
+
+        term = (request.GET.get("term") or request.GET.get("q") or "").strip()
+        sources = Source.objects.select_related("archive")
+        if term:
+            sources, _may_have_duplicates = self.get_search_results(
+                request, sources, term
+            )
+
+        paginator = Paginator(
+            sources.order_by("archive__siglum", "shelfmark", "pk").distinct(), 20
+        )
+        page = paginator.get_page(request.GET.get("page", 1))
+        return JsonResponse(
+            {
+                "results": [
+                    {
+                        "id": str(source.pk),
+                        "text": source_relationship_picker_label(source),
+                    }
+                    for source in page.object_list
+                ],
+                "pagination": {"more": page.has_next()},
+            }
+        )
+
     def virtual_source_donor_autocomplete_view(self, request):
         if not self.has_change_permission(request):
             raise PermissionDenied
 
-        term = request.GET.get("q", "").strip()
+        term = (request.GET.get("term") or request.GET.get("q") or "").strip()
         sources = (
             Source.objects.filter(is_virtual=False, pages__isnull=False)
             .select_related("archive")

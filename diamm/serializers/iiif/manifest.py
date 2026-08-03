@@ -18,6 +18,7 @@ from diamm.serializers.iiif.canvas import CanvasSerializer
 from diamm.serializers.iiif.helpers import (
     PRESENTATION_CONTEXT,
     create_metadata_block,
+    diamm_provider,
     language_map,
 )
 from diamm.serializers.iiif.structure import StructureSerializer
@@ -90,30 +91,7 @@ class SourceManifestSerializer(ypres.DictSerializer):
 
     def get_provider(self, obj: dict) -> list[dict]:
         del obj
-        return [
-            {
-                "id": f"https://{settings.HOSTNAME}/",
-                "type": "Agent",
-                "label": language_map("Digital Image Archive of Medieval Music", "en"),
-                "homepage": [
-                    {
-                        "id": f"https://{settings.HOSTNAME}/",
-                        "type": "Text",
-                        "format": "text/html",
-                        "label": language_map(
-                            "Digital Image Archive of Medieval Music", "en"
-                        ),
-                    }
-                ],
-                "logo": [
-                    {
-                        "id": f"https://{settings.HOSTNAME}/static/images/diammlogo.png",
-                        "type": "Image",
-                        "format": "image/png",
-                    }
-                ],
-            }
-        ]
+        return diamm_provider()
 
     def get_items(self, obj: dict) -> list:
         conn = SolrManager()

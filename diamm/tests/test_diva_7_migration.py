@@ -468,6 +468,72 @@ class DivaTemplateTests(SimpleTestCase):
         self.assertNotIn("No images available", rendered)
         self.assertNotIn("fa-eye-slash", rendered)
 
+    def test_set_detail_uses_shared_source_rows_without_internal_scrolling(self):
+        template = get_template("website/set/set_detail.jinja2").template
+        context = new_context(
+            template.environment,
+            template.name,
+            template.blocks,
+            {
+                "content": {
+                    "cluster_shelfmark": "Example partbooks",
+                    "type": "Partbooks",
+                    "holding_archives": [],
+                    "description": None,
+                    "bibliography": [],
+                    "sources": [
+                        {
+                            "display_name": "GB-Lbl Add. MS 20",
+                            "url": "/sources/20/",
+                            "cover_image": "/cover/200/",
+                        },
+                        {
+                            "display_name": "GB-Lbl Add. MS 21",
+                            "url": "/sources/21/",
+                            "cover_image": None,
+                        },
+                    ],
+                },
+                "request": SimpleNamespace(user=SimpleNamespace(is_staff=False)),
+            },
+        )
+
+        rendered = "".join(template.blocks["body"](context))
+
+        self.assertIn('class="source-set-source-list" role="list"', rendered)
+        self.assertEqual(rendered.count('class="source-set-source-row"'), 2)
+        self.assertEqual(rendered.count('class="source-set-thumbnail"'), 2)
+        self.assertIn('loading="lazy"', rendered)
+        self.assertIn('decoding="async"', rendered)
+        self.assertIn('width="56"', rendered)
+        self.assertIn('height="72"', rendered)
+        self.assertIn('href="/sources/20/"', rendered)
+        self.assertIn('href="/sources/21/"', rendered)
+        self.assertNotIn("source-sets-view", rendered)
+        self.assertNotIn("No images available", rendered)
+        self.assertNotIn("fa-eye-slash", rendered)
+
+    def test_shared_source_rows_only_scroll_inside_source_sets_panel(self):
+        stylesheet = Path("diamm/static/stylesheets/_source.scss").read_text()
+
+        panel_scroll_rule = re.search(
+            r"\.source-sets-view\s*\{.*?\.source-set-source-list\s*\{(.*?)\}",
+            stylesheet,
+            re.DOTALL,
+        )
+        shared_list_rule = re.search(
+            r"^\.source-set-source-list\s*\{(.*?)\}",
+            stylesheet,
+            re.DOTALL | re.MULTILINE,
+        )
+
+        self.assertIsNotNone(panel_scroll_rule)
+        self.assertIn("max-height: 60vh", panel_scroll_rule.group(1))
+        self.assertIn("overflow-y: auto", panel_scroll_rule.group(1))
+        self.assertIsNotNone(shared_list_rule)
+        self.assertNotIn("max-height", shared_list_rule.group(1))
+        self.assertNotIn("overflow", shared_list_rule.group(1))
+
     def test_source_detail_syncs_tabs_with_hash_navigation(self):
         source_detail = Path(
             "diamm/templates/website/source/source_detail.jinja2"

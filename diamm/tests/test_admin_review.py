@@ -16,7 +16,11 @@ from diamm.admin.data.composition import CompositionAdmin
 from diamm.admin.data.image import IIIFDataListFilter, ImageAdmin, ImageSourceListFilter
 from diamm.admin.data.notation import NotationAdmin
 from diamm.admin.data.person import PersonAdmin, PersonBiography
-from diamm.admin.data.source import SourceAdmin, SourceRelationshipInline
+from diamm.admin.data.source import (
+    OutgoingSourceRelationshipInline,
+    SourceAdmin,
+    SourceRelationshipInline,
+)
 from diamm.admin.forms.copy_inventory import CopyInventoryForm
 from diamm.admin.helpers.source_picker import source_picker_label
 from diamm.models.data.composition import Composition
@@ -27,6 +31,7 @@ from diamm.models.data.page import PageTypeChoices
 from diamm.models.data.person import Person
 from diamm.models.data.source import Source
 from diamm.models.data.source_relationship import SourceRelationship
+from diamm.models.data.source_to_source_relationship import SourceToSourceRelationship
 
 
 class AdminReviewTests(TestCase):
@@ -113,6 +118,48 @@ class AdminReviewTests(TestCase):
             "GB-Lbl Add. MS 1 — c. 1450",
         )
         self.assertEqual(len(queries), 1)
+
+    def test_source_relationship_picker_labels_include_archive_siglum(self) -> None:
+        archive = baker.make("diamm_data.Archive", siglum="GB-Lbl")
+        source = baker.make(
+            "diamm_data.Source",
+            archive=archive,
+            shelfmark="Add. MS 1",
+            name="Discantus",
+        )
+        request = RequestFactory().get("/admin/diamm_data/source/")
+        request.user = self.superuser
+        inline = OutgoingSourceRelationshipInline(Source, admin.site)
+
+        field = inline.formfield_for_foreignkey(
+            SourceToSourceRelationship._meta.get_field("to_source"), request
+        )
+
+        self.assertEqual(
+            field.label_from_instance(source),
+            "GB-Lbl Add. MS 1 (Discantus)",
+        )
+        self.assertEqual(
+            field.widget.get_url(),
+            reverse("admin:source-relationship-autocomplete"),
+        )
+
+        for term in (str(source.pk), "GB-Lbl Add. MS 1"):
+            response = self.client.get(
+                reverse("admin:source-relationship-autocomplete"),
+                {
+                    "term": term,
+                    "app_label": "diamm_data",
+                    "model_name": "source",
+                    "field_name": "incoming_source_relationships",
+                },
+            )
+
+            self.assertEqual(response.status_code, 200)
+            self.assertIn(
+                {"id": str(source.pk), "text": "GB-Lbl Add. MS 1 (Discantus)"},
+                response.json()["results"],
+            )
 
     def test_malformed_image_import_does_not_delete_existing_pages(self) -> None:
         source = baker.make("diamm_data.Source")

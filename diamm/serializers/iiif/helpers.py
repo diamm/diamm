@@ -1,10 +1,41 @@
 import re
 
+from django.conf import settings
 from django.template.loader import get_template
 from django.utils.html import conditional_escape, format_html_join
 from rest_framework.reverse import reverse
 
 PRESENTATION_CONTEXT = "http://iiif.io/api/presentation/3/context.json"
+
+
+def diamm_provider() -> list[dict]:
+    homepage = f"https://{settings.HOSTNAME}/"
+    return [
+        {
+            "id": homepage,
+            "type": "Agent",
+            "label": language_map(
+                "Digital Image Archive of Medieval Music", "en"
+            ),
+            "homepage": [
+                {
+                    "id": homepage,
+                    "type": "Text",
+                    "format": "text/html",
+                    "label": language_map(
+                        "Digital Image Archive of Medieval Music", "en"
+                    ),
+                }
+            ],
+            "logo": [
+                {
+                    "id": f"{homepage}static/images/diammlogo.png",
+                    "type": "Image",
+                    "format": "image/png",
+                }
+            ],
+        }
+    ]
 
 
 def process_composers_list(label: str, value: list, request) -> dict:

@@ -102,7 +102,7 @@ type alias SetResultBody =
     { pk : String
     , url : String
     , heading : String
-    , numBooks : Int
+    , numSources : Int
     }
 
 

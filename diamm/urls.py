@@ -68,7 +68,7 @@ from diamm.views.website.organization import OrganizationDetail
 from diamm.views.website.person import PersonDetail, legacy_composer_redirect
 from diamm.views.website.region import RegionDetail
 from diamm.views.website.search import SearchView
-from diamm.views.website.set import SetDetail
+from diamm.views.website.set import SetCollectionDetail, SetDetail, SetSyncDetail
 from diamm.views.website.source import (
     SourceCanvasDetail,
     SourceDetail,
@@ -242,6 +242,12 @@ urlpatterns = [
         "compositions/<int:pk>/", CompositionDetail.as_view(), name="composition-detail"
     ),
     path("sets/<int:pk>/", SetDetail.as_view(), name="set-detail"),
+    path(
+        "sets/<int:pk>/collection/",
+        SetCollectionDetail.as_view(),
+        name="set-collection",
+    ),
+    path("sets/<int:pk>/sync/", SetSyncDetail.as_view(), name="set-sync"),
     path("authors/<int:pk>/", BibliographyAuthorDetail.as_view(), name="author-detail"),
     path("commentary/", commentary_submit, name="commentary-submit"),
     # Two views on the same content; see the problem_report model for clarification.

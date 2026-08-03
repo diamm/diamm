@@ -20,9 +20,6 @@ from diamm.models.data.item import CompletenessOptionsChoices
 from diamm.models.data.item_note import ItemNoteTypeChoices
 from diamm.serializers.website.composition import CompositionURLSerializer
 
-# from diamm.serializers.fields import DateTimeField
-# from diamm.serializers.serializers import ContextDictSerializer, ypres.Serializer
-
 
 def image_viewer_url(
     request, source_id, page_id, external=False, external_canvas_uri=None

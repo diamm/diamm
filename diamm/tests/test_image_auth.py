@@ -1,14 +1,18 @@
 from __future__ import annotations
 
+import json
 import re
 from unittest.mock import patch
 
+from django.contrib.auth.models import AnonymousUser
 from django.contrib.sites.models import Site
 from django.db import connection
-from django.test import TestCase, override_settings
+from django.test import RequestFactory, TestCase, override_settings
 from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 from model_bakery import baker
+
+from diamm.views.website.image import iiif_auth_probe, protected_image_auth
 
 
 class FakeIIPResponse:
@@ -239,6 +243,7 @@ class ImageAuthTests(TestCase):
         self.assertContains(response, "AuthAccessTokenError2")
         self.assertContains(response, "missingAspect")
 
+    @override_settings(DEBUG=False)
     def test_iiif_auth_probe_returns_embedded_unauthorized_status_for_invalid_token(
         self,
     ) -> None:
@@ -250,6 +255,7 @@ class ImageAuthTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["status"], 401)
 
+    @override_settings(DEBUG=False)
     def test_iiif_auth_probe_returns_embedded_unauthorized_status_for_anonymous_user(
         self,
     ) -> None:
@@ -257,6 +263,19 @@ class ImageAuthTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["status"], 401)
+
+    @override_settings(DEBUG=True)
+    def test_iiif_auth_probe_reports_authorized_for_anonymous_user_in_debug_mode(
+        self,
+    ) -> None:
+        request = RequestFactory().get("/iiif/auth/probe/")
+        request.user = AnonymousUser()
+
+        response = iiif_auth_probe(request)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.content)["status"], 200)
+        self.assertIn("no-cache", response["Cache-Control"])
 
     def test_iiif_auth_probe_accepts_authenticated_session(self) -> None:
         self.client.force_login(self.user)
@@ -274,7 +293,8 @@ class ImageAuthTests(TestCase):
 
         self.assertEqual(response.status_code, 403)
 
-    def test_anonymous_request_is_rejected(self) -> None:
+    @override_settings(DEBUG=False)
+    def test_anonymous_request_is_rejected_outside_debug_mode(self) -> None:
         response = self.client.get(
             reverse("protected-image-auth"),
             HTTP_X_ORIGINAL_URI=f"/images/{self.image.pk}/info.json",
@@ -282,6 +302,23 @@ class ImageAuthTests(TestCase):
 
         self.assertEqual(response.status_code, 401)
 
+    @override_settings(DEBUG=True)
+    def test_anonymous_request_is_authorized_in_debug_mode(self) -> None:
+        request = RequestFactory().get(
+            "/auth/images/",
+            HTTP_X_ORIGINAL_URI=f"/images/{self.image.pk}/info.json",
+        )
+        request.user = AnonymousUser()
+
+        response = protected_image_auth(request)
+
+        self.assertEqual(response.status_code, 204)
+        self.assertEqual(
+            response["X-DIAMM-Backend-Query"],
+            "IIIF=/iiif/ms-123/page-1/info.json",
+        )
+
+    @override_settings(DEBUG=False)
     def test_inactive_user_is_rejected(self) -> None:
         self.user.is_active = False
         self.user.save(update_fields=["is_active"])

@@ -172,13 +172,13 @@ viewArchiveResult archive =
 viewSetResult : SetResultBody -> Element msg
 viewSetResult set =
     let
-        bookLabel =
-            String.fromInt set.numBooks
-                ++ (if set.numBooks == 1 then
-                        " book"
+        sourceLabel =
+            String.fromInt set.numSources
+                ++ (if set.numSources == 1 then
+                        " Source"
 
                     else
-                        " books"
+                        " Sources"
                    )
     in
     resultTemplate
@@ -190,7 +190,7 @@ viewSetResult set =
         }
         [ row
             [ width fill ]
-            [ text bookLabel ]
+            [ text sourceLabel ]
         ]
 
 

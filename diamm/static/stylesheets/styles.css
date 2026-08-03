@@ -8775,47 +8775,9 @@ tr.selected {
   margin-top: 0;
 }
 .source-sets-view .source-set-source-list {
-  border: 1px solid rgb(220.7209302326, 222.2790697674, 221.5);
   max-height: 60vh;
   overflow-y: auto;
   overscroll-behavior: contain;
-}
-.source-sets-view .source-set-source-row {
-  align-items: center;
-  border-bottom: 1px solid rgb(220.7209302326, 222.2790697674, 221.5);
-  display: flex;
-  min-height: 82px;
-  padding: 0.3rem 0.65rem;
-}
-.source-sets-view .source-set-source-row:last-child {
-  border-bottom: 0;
-}
-.source-sets-view .source-set-source-row.is-current-source {
-  background: rgb(236.0571428571, 246.55, 253.1428571429);
-}
-.source-sets-view .source-set-thumbnail {
-  flex: 0 0 56px;
-  height: 72px;
-  margin-right: 0.8rem;
-}
-.source-sets-view .source-set-thumbnail a {
-  border-bottom: 0;
-}
-.source-sets-view .source-set-thumbnail img {
-  height: 72px;
-  object-fit: cover;
-  width: 56px;
-}
-.source-sets-view .source-set-source-name {
-  align-items: center;
-  display: flex;
-  font-size: 1.1rem;
-  font-weight: 500;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-.source-sets-view .source-set-source-name a > * {
-  font-size: 0.9em;
 }
 @media screen and (max-width: 769px) {
   .source-sets-view .source-sets-selector {
@@ -8824,6 +8786,48 @@ tr.selected {
     margin-bottom: 1rem;
     padding-bottom: 1rem;
   }
+}
+
+.source-set-source-list {
+  border: 1px solid rgb(220.7209302326, 222.2790697674, 221.5);
+}
+
+.source-set-source-row {
+  align-items: center;
+  border-bottom: 1px solid rgb(220.7209302326, 222.2790697674, 221.5);
+  display: flex;
+  min-height: 82px;
+  padding: 0.3rem 0.65rem;
+}
+.source-set-source-row:last-child {
+  border-bottom: 0;
+}
+.source-set-source-row.is-current-source {
+  background: rgb(236.0571428571, 246.55, 253.1428571429);
+}
+.source-set-thumbnail {
+  flex: 0 0 56px;
+  height: 72px;
+  margin-right: 0.8rem;
+}
+.source-set-thumbnail a {
+  border-bottom: 0;
+}
+.source-set-thumbnail img {
+  height: 72px;
+  object-fit: cover;
+  width: 56px;
+}
+.source-set-source-name {
+  align-items: center;
+  display: flex;
+  font-size: 1.1rem;
+  font-weight: 500;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.source-set-source-name a > * {
+  font-size: 0.9em;
 }
 
 .problem-report footer {

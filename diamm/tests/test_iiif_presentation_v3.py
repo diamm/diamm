@@ -3,12 +3,16 @@ from __future__ import annotations
 from types import SimpleNamespace
 from unittest.mock import patch
 
+import ujson
+from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
 from django.test import TestCase, override_settings
 from rest_framework.test import APIRequestFactory
 
 from diamm.iiif_auth import AUTH_CONTEXT
+from diamm.models.data.set import Set
 from diamm.serializers.iiif.canvas import CanvasSerializer
+from diamm.serializers.iiif.collection import SetCollectionSerializer
 from diamm.serializers.iiif.helpers import PRESENTATION_CONTEXT
 from diamm.serializers.iiif.image import ImageSerializer
 from diamm.serializers.iiif.manifest import SourceManifestSerializer
@@ -55,6 +59,22 @@ class FakeSolrManager:
             self.results = self.structure_results
 
 
+class FakeSetSolrManager:
+    result: dict | None = None
+    filters: list[str] = []
+
+    def search(self, *_args, **kwargs) -> None:
+        type(self).filters = kwargs.get("fq", [])
+
+    @property
+    def hits(self) -> int:
+        return int(self.result is not None)
+
+    @property
+    def first(self) -> dict | None:
+        return self.result
+
+
 @override_settings(
     ROOT_URLCONF="diamm.urls",
     HOSTNAME="testserver",
@@ -67,6 +87,8 @@ class PresentationV3SerializerTests(TestCase):
         FakeSolrManager.image_results = []
         FakeSolrManager.structure_results = []
         FakeSolrManager.alternate_image_results = []
+        FakeSetSolrManager.result = None
+        FakeSetSolrManager.filters = []
         self.image_doc = {
             "pk": 10,
             "page_i": 100,
@@ -76,6 +98,162 @@ class PresentationV3SerializerTests(TestCase):
             "height_i": 3072,
             "image_type_s": "Primary",
         }
+
+    @patch("diamm.serializers.iiif.collection.SolrManager", FakeSetSolrManager)
+    def test_set_collection_serializes_as_presentation_v3_collection(self) -> None:
+        source_set = Set.objects.create(
+            type=Set.PARTBOOKS,
+            cluster_shelfmark="MS 1 (a-b)",
+            description="A reconstructed group of partbooks.",
+        )
+        FakeSetSolrManager.result = {
+            "sources_json": [
+                {
+                    "pk": 11,
+                    "public": True,
+                    "display_name": "GB-Lbl MS 1 (a)",
+                },
+                {
+                    "pk": 12,
+                    "public": False,
+                    "display_name": "GB-Lbl MS 1 (private)",
+                },
+                {
+                    "pk": 13,
+                    "public": True,
+                    "display_name": "GB-Lbl MS 1 (b)",
+                },
+            ]
+        }
+        request = APIRequestFactory().get(f"/sets/{source_set.pk}/collection/")
+
+        data = SetCollectionSerializer(
+            source_set, context={"request": request}
+        ).serialized
+
+        self.assertEqual(data["@context"], PRESENTATION_CONTEXT)
+        self.assertEqual(
+            data["id"], f"http://testserver/sets/{source_set.pk}/collection/"
+        )
+        self.assertEqual(data["type"], "Collection")
+        self.assertEqual(data["label"], {"none": ["MS 1 (a-b)"]})
+        self.assertEqual(
+            data["summary"], {"none": ["A reconstructed group of partbooks."]}
+        )
+        self.assertEqual(
+            data["metadata"],
+            [
+                {
+                    "label": {"en": ["Set type"]},
+                    "value": {"none": ["Partbooks"]},
+                }
+            ],
+        )
+        self.assertEqual(
+            data["homepage"][0]["id"],
+            f"http://testserver/sets/{source_set.pk}/",
+        )
+        self.assertEqual(data["provider"][0]["type"], "Agent")
+        self.assertEqual(
+            [item["id"] for item in data["items"]],
+            [
+                "http://testserver/sources/11/manifest/",
+                "http://testserver/sources/13/manifest/",
+            ],
+        )
+        self.assertEqual(
+            [item["label"] for item in data["items"]],
+            [
+                {"none": ["GB-Lbl MS 1 (a)"]},
+                {"none": ["GB-Lbl MS 1 (b)"]},
+            ],
+        )
+        self.assertEqual(
+            FakeSetSolrManager.filters, ["type:set", f"pk:{source_set.pk}"]
+        )
+        self.assertEqual(list(collect_v2_keys(data)), [])
+
+    @patch("diamm.serializers.iiif.collection.SolrManager", FakeSetSolrManager)
+    def test_partbook_collection_advertises_synchronization_service(self) -> None:
+        source_set = Set.objects.create(
+            type=Set.PARTBOOKS, cluster_shelfmark="Synchronized partbooks"
+        )
+        FakeSetSolrManager.result = {"sources_json": []}
+
+        response = self.client.get(f"/sets/{source_set.pk}/collection/")
+        payload = ujson.loads(response.content)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            payload["service"],
+            [
+                {
+                    "id": f"http://testserver/sets/{source_set.pk}/sync/",
+                    "type": "SynchronizationService1",
+                    "profile": "https://www.diamm.ac.uk/profiles/synchronization/1",
+                    "format": "application/json",
+                }
+            ],
+        )
+
+    @patch("diamm.serializers.iiif.collection.SolrManager", FakeSetSolrManager)
+    def test_set_collection_endpoint_is_json_ld_and_always_excludes_private_sources(
+        self,
+    ) -> None:
+        source_set = Set.objects.create(type=Set.FRAGMENTS, cluster_shelfmark="MS 2")
+        FakeSetSolrManager.result = {
+            "sources_json": [
+                {"pk": 21, "public": True, "display_name": "Public source"},
+                {"pk": 22, "public": False, "display_name": "Private source"},
+            ]
+        }
+
+        anonymous_response = self.client.get(f"/sets/{source_set.pk}/collection/")
+        staff = get_user_model().objects.create_user(
+            email="collection-staff@example.com",
+            password=None,
+        )
+        staff.is_staff = True
+        staff.save(update_fields=["is_staff"])
+        self.client.force_login(staff)
+        staff_response = self.client.get(f"/sets/{source_set.pk}/collection/")
+
+        for endpoint_response in (anonymous_response, staff_response):
+            self.assertEqual(endpoint_response.status_code, 200)
+            self.assertEqual(
+                endpoint_response["Content-Type"], "application/ld+json"
+            )
+            payload = ujson.loads(endpoint_response.content)
+            self.assertNotIn("service", payload)
+            self.assertEqual(
+                payload["items"],
+                [
+                    {
+                        "id": "http://testserver/sources/21/manifest/",
+                        "type": "Manifest",
+                        "label": {"none": ["Public source"]},
+                    }
+                ],
+            )
+
+    @patch("diamm.serializers.iiif.collection.SolrManager", FakeSetSolrManager)
+    def test_set_collection_can_be_empty_and_uses_fallback_label(self) -> None:
+        source_set = Set.objects.create(type=Set.PROJECT, cluster_shelfmark=None)
+        FakeSetSolrManager.result = {"sources_json": []}
+
+        response = self.client.get(f"/sets/{source_set.pk}/collection/")
+        payload = ujson.loads(response.content)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(payload["label"], {"none": [f"Set {source_set.pk}"]})
+        self.assertNotIn("summary", payload)
+        self.assertEqual(payload["items"], [])
+        self.assertNotIn("service", payload)
+
+    def test_unknown_set_collection_returns_not_found(self) -> None:
+        response = self.client.get("/sets/999999/collection/")
+
+        self.assertEqual(response.status_code, 404)
 
     def test_canvas_serializes_as_presentation_v3_canvas(self) -> None:
         data = CanvasSerializer(

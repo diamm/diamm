@@ -54,28 +54,26 @@
     <div class="columns">
         <div class="column">
             <h3 class="title is-4">Sources</h3>
-            <div class="archive-sources">
+            <div class="source-set-source-list" role="list">
                 {% for source in content.sources %}
-                    <div class="box">
-                        {% if source.cover_image %}
-                            <a href={{ source.url }}>
-                                <figure class="image" style="width: 100px; margin: auto;">
-                                    <img loading="lazy" src="{{ source.cover_image }}"/>
-                                </figure>
-                            </a>
-                        {% else %}
-                            <div class="no-image">
-                                <div>
-                                    <i class="fa fa-eye-slash"></i>
-                                </div>
-                                <div>
-                                    <small>No images available</small>
-                                </div>
-                            </div>
-                        {% endif %}
-                        <p>
-                            <a href={{ source.url }}>{{ source.display_name }}</a>
-                        </p>
+                    <div class="source-set-source-row" role="listitem">
+                        <div class="source-set-thumbnail">
+                            {% if source.cover_image %}
+                                <a href="{{ source.url }}" tabindex="-1" aria-hidden="true">
+                                    <img
+                                        loading="lazy"
+                                        decoding="async"
+                                        src="{{ source.cover_image }}"
+                                        alt=""
+                                        width="56"
+                                        height="72"
+                                    >
+                                </a>
+                            {% endif %}
+                        </div>
+                        <div class="source-set-source-name">
+                            <a href="{{ source.url }}">{{ source.display_name }}</a>
+                        </div>
                     </div>
                 {% endfor %}
             </div>
