@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from django.contrib import admin, messages
 from django.shortcuts import render
 from django.urls import reverse
@@ -14,6 +16,37 @@ from diamm.models.data.item_bibliography import ItemBibliography
 from diamm.models.data.set_bibliography import SetBibliography
 from diamm.models.data.source_bibliography import SourceBibliography
 from diamm.services.bibliography import merge_bibliographies
+
+
+class LikelyDuplicatesFilter(admin.SimpleListFilter):
+    title = "Likely duplicates"
+    parameter_name = "likely_duplicates"
+
+    def lookups(self, request, model_admin):
+        return (("yes", "Likely duplicates"),)
+
+    def queryset(self, request, queryset):
+        if self.value() != "yes":
+            return queryset
+
+        entries = queryset.prefetch_related(
+            "authors__bibliography_author"
+        ).order_by("pk")
+        grouped_entries = defaultdict(list)
+        for entry in entries:
+            authors = tuple(
+                (
+                    author.bibliography_author.last_name,
+                    author.bibliography_author.first_name,
+                )
+                for author in entry.authors.all()
+            )
+            grouped_entries[(authors, entry.title, entry.year)].append(entry.pk)
+
+        duplicate_ids = [
+            pk for entries in grouped_entries.values() if len(entries) > 1 for pk in entries
+        ]
+        return queryset.filter(pk__in=duplicate_ids)
 
 
 class SourceInline(admin.TabularInline):
@@ -126,7 +159,7 @@ class SetBibliographyInline(admin.TabularInline):
 @admin.register(Bibliography)
 class BibliographyAdmin(VersionAdmin):
     list_display = ("get_authors", "title", "year", "abbreviation", "created", "id")
-    list_filter = ("type__name",)
+    list_filter = ("type__name", LikelyDuplicatesFilter)
     search_fields = (
         "=id",
         "title",
