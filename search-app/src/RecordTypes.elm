@@ -95,6 +95,7 @@ type alias PersonResultBody =
     { pk : String
     , url : String
     , heading : String
+    , variantNames : Maybe (List String)
     }
 
 
@@ -311,6 +312,7 @@ personResultBodyDecoder =
         |> required "pk" string
         |> required "url" string
         |> required "heading" string
+        |> optional "variant_names" (maybe (list string)) Nothing
 
 
 organizationResultBodyDecoder : Decoder OrganizationResultBody

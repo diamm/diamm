@@ -110,6 +110,20 @@ class SearchQueryParamsTests(SimpleTestCase):
 
         self.assertEqual(result["sources"], 0)
 
+    def test_person_result_exposes_variant_names(self) -> None:
+        request = self.factory.get("/search/")
+        result = SolrResultSerializer(
+            {
+                "type": "person",
+                "pk": 12,
+                "display_name_s": "John Doe",
+                "variant_names_ss": ["Johannes Doe", "Jean Doe"],
+            },
+            context={"request": request},
+        ).serialized
+
+        self.assertEqual(result["variant_names"], ["Johannes Doe", "Jean Doe"])
+
 
 class SearchViewTests(SimpleTestCase):
     def setUp(self) -> None:

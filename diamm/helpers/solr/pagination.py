@@ -42,6 +42,7 @@ class SolrResultSerializer(ypres.DictSerializer):
         attr="external_manifest_b", required=False
     )
     name = ypres.StrField(attr="name_s", required=False)
+    variant_names = ypres.Field(attr="variant_names_ss", required=False)
     location = ypres.StrField(attr="location_s", required=False)
     title = ypres.StrField(attr="title_s", required=False)
     composers = ypres.MethodField()

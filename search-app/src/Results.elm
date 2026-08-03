@@ -1,6 +1,6 @@
 module Results exposing (resultView)
 
-import Element exposing (Element, column, el, fill, height, image, link, maximum, none, paragraph, px, row, spacing, text, width)
+import Element exposing (Element, column, el, fill, height, image, link, maximum, minimum, none, paragraph, px, row, spacing, text, width)
 import Element.Font as Font
 import Helpers exposing (viewMaybe)
 import Html
@@ -55,17 +55,19 @@ resultTemplate { url, heading, resultType, publicImages, externalManifest } body
 
                   else
                     none
-                , link
-                    [ Font.color colourScheme.lightBlue
-                    , Font.medium
-                    , width fill
+                , paragraph []
+                    [ link
+                        [ Font.color colourScheme.lightBlue
+                        , Font.medium
+                        , width fill
+                        ]
+                        { url = url
+                        , label =
+                            el
+                                [ width fill ]
+                                (text (heading |> SE.ellipsis 140))
+                        }
                     ]
-                    { url = url
-                    , label =
-                        paragraph
-                            [ width fill ]
-                            [ text (heading |> SE.ellipsis 140) ]
-                    }
                 ]
             , row
                 [ width fill, Font.size 18, Font.color colourScheme.midGrey ]
@@ -196,6 +198,16 @@ viewSetResult set =
 
 viewPersonResult : PersonResultBody -> Element msg
 viewPersonResult person =
+    let
+        variantNames =
+            viewMaybe
+                (\names ->
+                    el
+                        []
+                        (text ("Variant names: " ++ String.join "; " names))
+                )
+                person.variantNames
+    in
     resultTemplate
         { url = person.url
         , heading = person.heading
@@ -203,7 +215,7 @@ viewPersonResult person =
         , publicImages = False
         , externalManifest = False
         }
-        []
+        [ variantNames ]
 
 
 viewCompositionResult : CompositionResultBody -> Element msg

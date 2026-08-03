@@ -1,6 +1,6 @@
 module Views exposing (view)
 
-import Element exposing (Element, alignBottom, alignLeft, alignRight, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, layout, maximum, none, padding, paddingXY, paragraph, pointer, px, row, spacing, text, width)
+import Element exposing (Element, alignBottom, alignLeft, alignRight, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, layout, maximum, minimum, none, padding, paddingXY, paragraph, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events as Events exposing (onClick)
@@ -98,11 +98,11 @@ loadingView model maybeBody =
 searchView : Model -> SearchBody -> Element Msg
 searchView model body =
     row
-        [ width fill
+        [ width (minimum 0 fill)
         , height fill
         ]
         [ column
-            [ width fill
+            [ width (minimum 0 fill)
             , height fill
             ]
             [ row
@@ -147,7 +147,7 @@ searchView model body =
                 ]
                 (mainFilterList (.resultType model.currentQueryArgs) body.types)
             , row
-                [ width fill
+                [ width (minimum 0 fill)
                 , height fill
                 ]
                 [ column
@@ -162,7 +162,7 @@ searchView model body =
                     [ viewFacets model
                     ]
                 , column
-                    [ width (fill |> maximum 900)
+                    [ width (fill |> minimum 0 |> maximum 900)
                     , height fill
                     , alignTop
                     , padding 20
@@ -170,9 +170,9 @@ searchView model body =
                     , htmlAttribute (HA.id "search-results-list")
                     ]
                     [ row
-                        [ width fill ]
+                        [ width (minimum 0 fill) ]
                         [ column
-                            [ width fill
+                            [ width (minimum 0 fill)
                             , spacing 20
                             ]
                             (List.map resultView body.results)
