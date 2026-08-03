@@ -176,6 +176,7 @@ SELECT
    s.start_date,
    s.end_date,
    s.public,
+   s.is_virtual,
 
    COALESCE(
            CASE s.original_format
@@ -203,7 +204,7 @@ SELECT
    ) AS current_host,
 
    COALESCE(
-           CASE s.host_main_contents
+           CASE s.original_main_contents
                WHEN 1 THEN 'Liturgical book'
                WHEN 2 THEN 'Miscellany'
                WHEN 3 THEN 'Accounts'
@@ -211,7 +212,7 @@ SELECT
                WHEN 5 THEN 'Songbook'
                WHEN 6 THEN 'Other'
                END, ''
-   ) AS host_main_contents,
+   ) AS original_main_contents,
 
    ai.num_compositions,
    ai.num_composers,
@@ -292,9 +293,7 @@ class SourceSearchSerializer(ypres.DictSerializer):
     display_name_s = ypres.StrField(attr="display_name", required=False)
     archive_s = ypres.StrField(attr="archive_name", required=False)
     archive_i = ypres.IntField(attr="archive_pk", required=False)
-    archive_copyright_s = ypres.StrField(
-        attr="archive_copyright", required=False
-    )
+    archive_copyright_s = ypres.StrField(attr="archive_copyright", required=False)
     source_archive_city_s = ypres.StrField(attr="archive_city_name", required=False)
     source_archive_country_s = ypres.StrField(
         attr="archive_city_parent_name", required=False
@@ -329,6 +328,7 @@ class SourceSearchSerializer(ypres.DictSerializer):
     cover_image_i = ypres.IntField(attr="cover_image", required=False)
     public_images_b = ypres.BoolField(attr="public_images", required=False)
     public_b = ypres.BoolField(attr="public", required=False)
+    is_virtual_b = ypres.BoolField(attr="is_virtual", required=False)
     open_images_b = ypres.BoolField(attr="open_images", required=False)
     external_images_b = ypres.BoolField(attr="has_external_images", required=False)
     external_manifest_b = ypres.BoolField(attr="has_external_manifest", required=False)
@@ -339,7 +339,9 @@ class SourceSearchSerializer(ypres.DictSerializer):
     original_format_s = ypres.StrField(attr="original_format", required=False)
     current_state_s = ypres.StrField(attr="current_state", required=False)
     current_host_s = ypres.StrField(attr="current_host", required=False)
-    host_main_contents_s = ypres.StrField(attr="host_main_contents", required=False)
+    original_main_contents_s = ypres.StrField(
+        attr="original_main_contents", required=False
+    )
 
     def get_source_composers_ss(self, obj) -> list | None:
         if obj.get("composers"):

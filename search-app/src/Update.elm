@@ -2,7 +2,7 @@ module Update exposing (update)
 
 import Cmd.Extra as CE
 import Error exposing (createErrorMessage)
-import Facets exposing (FacetModel, setAnonymous, setCities, setComposers, setCurrentState, setDateRange, setGenres, setHasInventory, setHostMainContents, setNotations, setOrganizationType, setOriginalFormat, setSourceComposers, setSourceTypes, updateFacetConfigurations)
+import Facets exposing (FacetModel, setAnonymous, setCities, setComposers, setCurrentState, setDateRange, setGenres, setHasInventory, setNotations, setOrganizationType, setOriginalFormat, setOriginalMainContents, setSourceComposers, setSourceTypes, setVirtualSources, updateFacetConfigurations)
 import Facets.CheckboxFacet as CheckboxFacet exposing (CheckBoxFacetModel, CheckBoxFacetMsg)
 import Facets.OneChoiceFacet as OneChoice exposing (OneChoiceFacetModel, OneChoiceFacetMsg)
 import Facets.RangeFacet as RangeFacet exposing (RangeFacetModel, RangeFacetMsg)
@@ -13,7 +13,7 @@ import Msg exposing (Msg(..))
 import Ports exposing (pushUrl)
 import RecordTypes exposing (CheckboxFacetTypes(..), FacetItem, OneChoiceFacetTypes(..), RangeFacetTypes(..), searchBodyDecoder)
 import Request exposing (Response(..), createRequest, serverUrl)
-import Route exposing (QueryArgs, Route(..), buildQueryParameters, defaultQueryArgs, setCurrentPage, setKeywordQuery, setQueryAnonymous, setQueryCities, setQueryComposers, setQueryCurrentState, setQueryDateRange, setQueryGenres, setQueryHasInventory, setQueryHostMainContents, setQueryNotations, setQueryOrganizationType, setQueryOriginalFormat, setQuerySourceComposers, setQuerySourceTypes, setQueryType)
+import Route exposing (QueryArgs, Route(..), buildQueryParameters, defaultQueryArgs, setCurrentPage, setKeywordQuery, setQueryAnonymous, setQueryCities, setQueryComposers, setQueryCurrentState, setQueryDateRange, setQueryGenres, setQueryHasInventory, setQueryNotations, setQueryOrganizationType, setQueryOriginalFormat, setQueryOriginalMainContents, setQuerySourceComposers, setQuerySourceTypes, setQueryType, setQueryVirtualSources)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -402,12 +402,13 @@ clearAllOneChoiceFacetsHelper =
             CE.perform (UserInteractedWithOneChoiceFacet f OneChoice.OnClear)
         )
         [ HasInventory
+        , VirtualSources
         , AnonymousComposer
         , Cities
         , SourceTypes
         , OriginalFormat
         , CurrentState
-        , HostMainContents
+        , OriginalMainContents
         , OrganizationType
         ]
         |> Cmd.batch
@@ -521,6 +522,21 @@ oneChoiceFacetHelper model facet subMsg =
                     , queryArgs = qargs
                     }
 
+                VirtualSources ->
+                    let
+                        upd =
+                            updatePartialHelper setVirtualSources .virtualSources
+
+                        fb =
+                            Maybe.map Tuple.first upd
+
+                        qargs =
+                            updateQueryHelper fb setQueryVirtualSources .virtualSources
+                    in
+                    { facet = upd
+                    , queryArgs = qargs
+                    }
+
                 AnonymousComposer ->
                     let
                         upd =
@@ -596,16 +612,16 @@ oneChoiceFacetHelper model facet subMsg =
                     , queryArgs = qargs
                     }
 
-                HostMainContents ->
+                OriginalMainContents ->
                     let
                         upd =
-                            updatePartialHelper setHostMainContents .hostMainContents
+                            updatePartialHelper setOriginalMainContents .originalMainContents
 
                         fb =
                             Maybe.map Tuple.first upd
 
                         qargs =
-                            updateQueryHelper fb setQueryHostMainContents .hostMainContents
+                            updateQueryHelper fb setQueryOriginalMainContents .originalMainContents
                     in
                     { facet = upd
                     , queryArgs = qargs

@@ -1,4 +1,4 @@
-module Facets exposing (FacetModel, setAnonymous, setCities, setComposers, setCurrentState, setDateRange, setGenres, setHasInventory, setHostMainContents, setNotations, setOrganizationType, setOriginalFormat, setSourceComposers, setSourceTypes, updateFacetConfigurations, viewFacets)
+module Facets exposing (FacetModel, setAnonymous, setCities, setComposers, setCurrentState, setDateRange, setGenres, setHasInventory, setNotations, setOrganizationType, setOriginalFormat, setOriginalMainContents, setSourceComposers, setSourceTypes, setVirtualSources, updateFacetConfigurations, viewFacets)
 
 import Element exposing (Element, alignLeft, alignRight, column, el, fill, htmlAttribute, maximum, none, padding, paddingXY, pointer, row, spacing, text, width)
 import Element.Background as Background
@@ -25,12 +25,13 @@ type alias FacetModel =
     , sourceComposers : Maybe CheckBoxFacetModel
     , sourceTypes : Maybe OneChoiceFacetModel
     , hasInventory : Maybe OneChoiceFacetModel
+    , virtualSources : Maybe OneChoiceFacetModel
     , organizationType : Maybe OneChoiceFacetModel
     , location : Maybe Never
     , anonymous : Maybe OneChoiceFacetModel
     , originalFormat : Maybe OneChoiceFacetModel
     , currentState : Maybe OneChoiceFacetModel
-    , hostMainContents : Maybe OneChoiceFacetModel
+    , originalMainContents : Maybe OneChoiceFacetModel
     , dateRange : Maybe RangeFacetModel
     }
 
@@ -116,6 +117,24 @@ updateFacetConfigurations currentModel queryArgs facetBlock =
                                     |> List.head
                                 )
                         , bodyHidden = Maybe.map .bodyHidden currentModel.hasInventory |> Maybe.withDefault True
+                        }
+                    )
+
+            else
+                Nothing
+
+        virtualSourcesFacet =
+            if not (List.isEmpty facetBlock.virtualSources) then
+                Just
+                    (updateOneChoiceModel
+                        { identifier = "virtual-sources"
+                        , available = facetBlock.virtualSources
+                        , selected =
+                            Maybe.map (\s -> { value = s, count = 0 })
+                                (queryArgs.virtualSources
+                                    |> List.head
+                                )
+                        , bodyHidden = Maybe.map .bodyHidden currentModel.virtualSources |> Maybe.withDefault True
                         }
                     )
 
@@ -208,7 +227,7 @@ updateFacetConfigurations currentModel queryArgs facetBlock =
             else
                 Nothing
 
-        hostMainContentsFacet =
+        originalMainContentsFacet =
             if not (List.isEmpty facetBlock.hostMainContents) then
                 Just
                     (updateOneChoiceModel
@@ -216,10 +235,10 @@ updateFacetConfigurations currentModel queryArgs facetBlock =
                         , available = facetBlock.hostMainContents
                         , selected =
                             Maybe.map (\s -> { value = s, count = 0 })
-                                (queryArgs.hostMainContents
+                                (queryArgs.originalMainContents
                                     |> List.head
                                 )
-                        , bodyHidden = Maybe.map .bodyHidden currentModel.hostMainContents |> Maybe.withDefault True
+                        , bodyHidden = Maybe.map .bodyHidden currentModel.originalMainContents |> Maybe.withDefault True
                         }
                     )
 
@@ -262,12 +281,13 @@ updateFacetConfigurations currentModel queryArgs facetBlock =
     , sourceComposers = sourceComposersFacet
     , sourceTypes = sourceTypesFacet
     , hasInventory = hasInventoryFacet
+    , virtualSources = virtualSourcesFacet
     , organizationType = organizationTypeFacet
     , location = Nothing
     , anonymous = isAnonymous
     , originalFormat = originalFormatFacet
     , currentState = currentStateFacet
-    , hostMainContents = hostMainContentsFacet
+    , originalMainContents = originalMainContentsFacet
     , dateRange = dateRangeFacet
     }
 
@@ -310,6 +330,19 @@ viewFacets { needsUpdating, facets } =
                 facets.hasInventory
                 |> Element.map (UserInteractedWithOneChoiceFacet HasInventory)
 
+        virtualSources =
+            viewMaybe
+                (viewOneChoiceFacet
+                    { title = "Virtual Sources"
+                    , optionTitleMap =
+                        [ ( "true", "Only" )
+                        , ( "false", "None" )
+                        ]
+                    }
+                )
+                facets.virtualSources
+                |> Element.map (UserInteractedWithOneChoiceFacet VirtualSources)
+
         anonymous =
             viewMaybe
                 (viewOneChoiceFacet
@@ -340,15 +373,15 @@ viewFacets { needsUpdating, facets } =
                 |> Element.map (UserInteractedWithOneChoiceFacet CurrentState)
 
         hostMainContentsFacet =
-            viewMaybe (viewOneChoiceFacet { title = "Host main contents", optionTitleMap = [] }) facets.hostMainContents
-                |> Element.map (UserInteractedWithOneChoiceFacet HostMainContents)
+            viewMaybe (viewOneChoiceFacet { title = "Original main contents", optionTitleMap = [] }) facets.originalMainContents
+                |> Element.map (UserInteractedWithOneChoiceFacet OriginalMainContents)
 
         organizationTypeFacet =
             viewMaybe (viewOneChoiceFacet { title = "Organization type", optionTitleMap = [] }) facets.organizationType
                 |> Element.map (UserInteractedWithOneChoiceFacet OrganizationType)
 
         sourceSectionIsVisible =
-            List.map ME.isJust [ facets.sourceTypes, facets.hasInventory, facets.originalFormat, facets.currentState ]
+            List.map ME.isJust [ facets.sourceTypes, facets.hasInventory, facets.virtualSources, facets.originalFormat, facets.currentState ]
                 |> List.append (List.map ME.isJust [ facets.sourceComposers, facets.notations ])
                 |> List.any identity
 
@@ -427,6 +460,7 @@ viewFacets { needsUpdating, facets } =
                     , sourceComposers
                     , notationsFacet
                     , hasInventory
+                    , virtualSources
                     , originalFormatFacet
                     , currentStateFacet
                     , hostMainContentsFacet
@@ -512,6 +546,11 @@ setHasInventory newValue oldRecord =
     { oldRecord | hasInventory = newValue }
 
 
+setVirtualSources : Maybe OneChoiceFacetModel -> { a | virtualSources : Maybe OneChoiceFacetModel } -> { a | virtualSources : Maybe OneChoiceFacetModel }
+setVirtualSources newValue oldRecord =
+    { oldRecord | virtualSources = newValue }
+
+
 setAnonymous : Maybe OneChoiceFacetModel -> { a | anonymous : Maybe OneChoiceFacetModel } -> { a | anonymous : Maybe OneChoiceFacetModel }
 setAnonymous newValue oldRecord =
     { oldRecord | anonymous = newValue }
@@ -532,9 +571,9 @@ setCurrentState newValue oldRecord =
     { oldRecord | currentState = newValue }
 
 
-setHostMainContents : Maybe OneChoiceFacetModel -> { a | hostMainContents : Maybe OneChoiceFacetModel } -> { a | hostMainContents : Maybe OneChoiceFacetModel }
-setHostMainContents newValue oldRecord =
-    { oldRecord | hostMainContents = newValue }
+setOriginalMainContents : Maybe OneChoiceFacetModel -> { a | originalMainContents : Maybe OneChoiceFacetModel } -> { a | originalMainContents : Maybe OneChoiceFacetModel }
+setOriginalMainContents newValue oldRecord =
+    { oldRecord | originalMainContents = newValue }
 
 
 setOrganizationType : Maybe OneChoiceFacetModel -> { a | organizationType : Maybe OneChoiceFacetModel } -> { a | organizationType : Maybe OneChoiceFacetModel }

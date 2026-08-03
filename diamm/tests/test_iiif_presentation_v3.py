@@ -477,6 +477,25 @@ class PresentationV3SerializerTests(TestCase):
 
         self.assertEqual(data["archive_copyright_s"], "Images © Example Library")
 
+    def test_source_index_document_includes_virtual_status(self) -> None:
+        for is_virtual in (True, False):
+            with self.subTest(is_virtual=is_virtual):
+                data = SourceSearchSerializer(
+                    {
+                        "type": "source",
+                        "pk": 1,
+                        "is_virtual": is_virtual,
+                        "identifiers": [],
+                        "notations": [],
+                        "set_identifiers": [],
+                        "set_cluster_shelfmarks": [],
+                        "notes": [],
+                        "bibliography": [],
+                    }
+                ).serialized
+
+                self.assertEqual(data["is_virtual_b"], is_virtual)
+
     def test_manifest_metadata_links_and_escapes_composers(self) -> None:
         source_doc = {
             "pk": 1,

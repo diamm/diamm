@@ -308,14 +308,17 @@ viewSelectedResults model =
         hasInventory =
             selectedResultsTemplate "Has inventory" cqa.hasInventory
 
+        virtualSources =
+            selectedResultsTemplate "Virtual sources" cqa.virtualSources
+
         originalFormat =
             selectedResultsTemplate "Original format" cqa.originalFormat
 
         currentState =
             selectedResultsTemplate "Current state" cqa.currentState
 
-        hostMainContents =
-            selectedResultsTemplate "Host main contents" cqa.hostMainContents
+        originalMainContents =
+            selectedResultsTemplate "Original main contents" cqa.originalMainContents
 
         compGenres =
             selectedResultsTemplate "Genres" cqa.genres
@@ -352,9 +355,10 @@ viewSelectedResults model =
             , sourceComposers
             , notations
             , hasInventory
+            , virtualSources
             , originalFormat
             , currentState
-            , hostMainContents
+            , originalMainContents
             , compGenres
             , compComposers
             , compAnon

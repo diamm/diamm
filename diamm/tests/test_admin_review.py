@@ -12,6 +12,7 @@ from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 from model_bakery import baker
 
+from diamm.admin.data.bibliography import BibliographyAdmin, LikelyDuplicatesFilter
 from diamm.admin.data.composition import CompositionAdmin
 from diamm.admin.data.image import IIIFDataListFilter, ImageAdmin, ImageSourceListFilter
 from diamm.admin.data.notation import NotationAdmin
@@ -23,6 +24,7 @@ from diamm.admin.data.source import (
 )
 from diamm.admin.forms.copy_inventory import CopyInventoryForm
 from diamm.admin.helpers.source_picker import source_picker_label
+from diamm.models.data.bibliography import Bibliography
 from diamm.models.data.composition import Composition
 from diamm.models.data.image import Image
 from diamm.models.data.item import Item
@@ -244,6 +246,41 @@ class AdminReviewTests(TestCase):
                 result_ids = set(result.values_list("pk", flat=True))
                 self.assertIn(included, result_ids)
                 self.assertNotIn(excluded, result_ids)
+
+    def test_bibliography_likely_duplicates_filter_matches_author_title_and_year(self) -> None:
+        duplicate_one, duplicate_two, different_year, different_author = baker.make(
+            "diamm_data.Bibliography",
+            title="A duplicated title",
+            year="1999",
+            _quantity=4,
+        )
+        different_year.year = "2000"
+        different_year.save()
+        author_one = baker.make("diamm_data.BibliographyAuthor", last_name="Smith")
+        author_two = baker.make("diamm_data.BibliographyAuthor", last_name="Smith")
+        other_author = baker.make("diamm_data.BibliographyAuthor", last_name="Jones")
+        for entry, author in (
+            (duplicate_one, author_one),
+            (duplicate_two, author_two),
+            (different_year, author_one),
+            (different_author, other_author),
+        ):
+            baker.make(
+                "diamm_data.BibliographyAuthorRole",
+                bibliography_entry=entry,
+                bibliography_author=author,
+            )
+
+        request = RequestFactory().get("/admin/", {"likely_duplicates": "yes"})
+        model_admin = BibliographyAdmin(Bibliography, admin.site)
+        result = LikelyDuplicatesFilter(
+            request,
+            {"likely_duplicates": ["yes"]},
+            Bibliography,
+            model_admin,
+        ).queryset(request, Bibliography.objects.all())
+
+        self.assertEqual(set(result.values_list("pk", flat=True)), {duplicate_one.pk, duplicate_two.pk})
 
     def test_image_filters_do_not_hide_records_by_default_and_find_partial_info(self) -> None:
         attached = baker.make("diamm_data.Image", page=baker.make("diamm_data.Page"))

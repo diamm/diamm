@@ -40,6 +40,8 @@ def build_search_query_params(request: HttpRequest) -> SearchQueryParams:
         ]
     if "has_inventory" in request.GET:
         filters["inventory_provided_b"] = request.GET.get("has_inventory")
+    if "virtual_sources" in request.GET:
+        filters["is_virtual_b"] = request.GET.get("virtual_sources")
     if "date_range" in request.GET:
         bounds = request.GET.get("date_range", "").split("to")
         if len(bounds) == 2:

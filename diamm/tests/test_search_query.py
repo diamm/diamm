@@ -54,6 +54,19 @@ class SearchQueryParamsTests(SimpleTestCase):
         params = build_search_query_params(request)
         self.assertEqual(params.filters["facet_date_range_ii"], "[1200 TO 1300]")
 
+    def test_virtual_sources_filter_accepts_each_boolean_value(self) -> None:
+        for value in ("true", "false"):
+            with self.subTest(value=value):
+                request = self.factory.get("/search/", {"virtual_sources": value})
+                params = build_search_query_params(request)
+
+                self.assertEqual(params.filters["is_virtual_b"], value)
+
+    def test_virtual_sources_filter_is_omitted_by_default(self) -> None:
+        params = build_search_query_params(self.factory.get("/search/"))
+
+        self.assertNotIn("is_virtual_b", params.filters)
+
     def test_staff_visibility_filter_is_conditional(self) -> None:
         request = self.factory.get("/search/")
         params = build_search_query_params(request)

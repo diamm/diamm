@@ -1,4 +1,4 @@
-module Route exposing (QueryArgs, Route(..), buildQueryParameters, defaultQueryArgs, defaultSearchUrl, extractPageNumberFromUrl, locationHrefToRoute, parseUrl, setCurrentPage, setKeywordQuery, setQueryAnonymous, setQueryCities, setQueryComposers, setQueryCurrentState, setQueryDateRange, setQueryGenres, setQueryHasInventory, setQueryHostMainContents, setQueryNotations, setQueryOrganizationType, setQueryOriginalFormat, setQuerySourceComposers, setQuerySourceTypes, setQueryType)
+module Route exposing (QueryArgs, Route(..), buildQueryParameters, defaultQueryArgs, defaultSearchUrl, extractPageNumberFromUrl, locationHrefToRoute, parseUrl, setCurrentPage, setKeywordQuery, setQueryAnonymous, setQueryCities, setQueryComposers, setQueryCurrentState, setQueryDateRange, setQueryGenres, setQueryHasInventory, setQueryNotations, setQueryOrganizationType, setQueryOriginalFormat, setQueryOriginalMainContents, setQuerySourceComposers, setQuerySourceTypes, setQueryType, setQueryVirtualSources)
 
 import Config as C
 import Dict
@@ -26,10 +26,11 @@ type alias QueryArgs =
     , sourceTypes : List String
     , cities : List String
     , hasInventory : List String
+    , virtualSources : List String
     , anonymous : List String
     , originalFormat : List String
     , currentState : List String
-    , hostMainContents : List String
+    , originalMainContents : List String
     , organizationType : List String
     , dateRange : Maybe ( String, String )
     , currentPage : Int
@@ -87,6 +88,7 @@ queryParamsParser =
         |> apply sourceTypesParser
         |> apply cityParamParser
         |> apply hasInventoryParamParser
+        |> apply virtualSourcesParamParser
         |> apply anonymousParamParser
         |> apply (Q.custom "original_format" identity)
         |> apply (Q.custom "current_state" identity)
@@ -140,6 +142,11 @@ sourceTypesParser =
 hasInventoryParamParser : Q.Parser (List String)
 hasInventoryParamParser =
     Q.custom "has_inventory" identity
+
+
+virtualSourcesParamParser : Q.Parser (List String)
+virtualSourcesParamParser =
+    Q.custom "virtual_sources" identity
 
 
 anonymousParamParser : Q.Parser (List String)
@@ -204,10 +211,11 @@ defaultQueryArgs =
     , sourceTypes = []
     , cities = []
     , hasInventory = []
+    , virtualSources = []
     , anonymous = []
     , originalFormat = []
     , currentState = []
-    , hostMainContents = []
+    , originalMainContents = []
     , organizationType = []
     , dateRange = Nothing
     , currentPage = 1
@@ -260,6 +268,9 @@ buildQueryParameters queryArgs =
         hasInventoryParam =
             List.map (Url.Builder.string "has_inventory") queryArgs.hasInventory
 
+        virtualSourcesParam =
+            List.map (Url.Builder.string "virtual_sources") queryArgs.virtualSources
+
         anonymousParam =
             List.map (Url.Builder.string "anonymous") queryArgs.anonymous
 
@@ -273,7 +284,7 @@ buildQueryParameters queryArgs =
             List.map (Url.Builder.string "current_state") queryArgs.currentState
 
         hostContents =
-            List.map (Url.Builder.string "host_contents") queryArgs.hostMainContents
+            List.map (Url.Builder.string "host_contents") queryArgs.originalMainContents
 
         organizationType =
             List.map (Url.Builder.string "orgtype") queryArgs.organizationType
@@ -302,6 +313,7 @@ buildQueryParameters queryArgs =
         , notationsParam
         , sourceTypeParam
         , hasInventoryParam
+        , virtualSourcesParam
         , anonymousParam
         , sourceComposers
         , originalFormat
@@ -369,6 +381,11 @@ setQueryHasInventory newValues oldRecord =
     { oldRecord | hasInventory = newValues }
 
 
+setQueryVirtualSources : List String -> { a | virtualSources : List String } -> { a | virtualSources : List String }
+setQueryVirtualSources newValues oldRecord =
+    { oldRecord | virtualSources = newValues }
+
+
 setQueryAnonymous : List String -> { a | anonymous : List String } -> { a | anonymous : List String }
 setQueryAnonymous newValues oldRecord =
     { oldRecord | anonymous = newValues }
@@ -384,9 +401,9 @@ setQueryCurrentState newValues oldRecord =
     { oldRecord | currentState = newValues }
 
 
-setQueryHostMainContents : List String -> { a | hostMainContents : List String } -> { a | hostMainContents : List String }
-setQueryHostMainContents newValues oldRecord =
-    { oldRecord | hostMainContents = newValues }
+setQueryOriginalMainContents : List String -> { a | originalMainContents : List String } -> { a | originalMainContents : List String }
+setQueryOriginalMainContents newValues oldRecord =
+    { oldRecord | originalMainContents = newValues }
 
 
 setQueryOrganizationType : List String -> { a | organizationType : List String } -> { a | organizationType : List String }

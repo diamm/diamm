@@ -144,11 +144,11 @@ class Source(models.Model):
         help_text="The present host of the manuscript",
     )
 
-    host_main_contents = models.IntegerField(
+    original_main_contents = models.IntegerField(
         choices=OriginalMainContents.choices,
         blank=True,
         null=True,
-        help_text="Indicate the main contents of the host manuscript, particularly if only a few pages of the whole volume contain music.",
+        help_text="Please use this field to capture what the main contents of the source are: if the source is music fragment bound with another volume, please use this field to describe the contents of fragment, not the host volume.",
     )
 
     public = models.BooleanField(

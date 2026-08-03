@@ -26,13 +26,14 @@ init initalQueryArgs =
         , composers = Nothing
         , sourceTypes = Nothing
         , hasInventory = Nothing
+        , virtualSources = Nothing
         , organizationType = Nothing
         , location = Nothing
         , anonymous = Nothing
         , sourceComposers = Nothing
         , originalFormat = Nothing
         , currentState = Nothing
-        , hostMainContents = Nothing
+        , originalMainContents = Nothing
         , dateRange = Nothing
         }
     , gotoPageValue = ""

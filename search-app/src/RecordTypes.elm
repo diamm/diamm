@@ -18,8 +18,9 @@ type OneChoiceFacetTypes
     | SourceTypes
     | OriginalFormat
     | CurrentState
-    | HostMainContents
+    | OriginalMainContents
     | OrganizationType
+    | VirtualSources
 
 
 type RangeFacetTypes
@@ -166,6 +167,7 @@ type alias FacetBlock =
     , composers : List FacetItem
     , sourceType : List FacetItem
     , hasInventory : List FacetItem
+    , virtualSources : List FacetItem
     , organizationType : List FacetItem
     , location : List FacetItem
     , anonymous : List FacetItem
@@ -188,6 +190,7 @@ facetBlockDecoder =
         |> optional "composers" (list facetItemDecoder) []
         |> optional "source_type" (list facetItemDecoder) []
         |> optional "has_inventory" (list facetItemDecoder) []
+        |> optional "virtual_sources" (list facetItemDecoder) []
         |> optional "organization_type" (list facetItemDecoder) []
         |> optional "location" (list facetItemDecoder) []
         |> optional "anonymous" (list facetItemDecoder) []
