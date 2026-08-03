@@ -1,3 +1,7 @@
 User-agent: *
+{% if debug is True %}
+Disallow: *
+{% else %}
 Disallow: /admin/
 Disallow: /cms/
+{% endif %}
