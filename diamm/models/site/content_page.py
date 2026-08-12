@@ -32,8 +32,11 @@ class ContentPage(Page):
 
     def get_template(self, request, *args, **kwargs):
         if self.tmpl:
-            return os.path.relpath(
-                self.tmpl, os.path.join(settings.BASE_DIR, "diamm", "templates")
+            # ``tmpl`` is a FilePathField, so historic records contain the
+            # absolute path from the deployment where they were edited. Only
+            # the selected filename is portable between deployments.
+            return os.path.join(
+                "website", "cms", "content_page", os.path.basename(self.tmpl)
             )
         return "website/cms/content_page.jinja2"
 
