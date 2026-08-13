@@ -660,6 +660,9 @@ class SourceDetailSerializer(ypres.Serializer):
                 request=self.context["request"],
             ),
             "label": cover_obj["label"],
+            "image_viewer_url": image_viewer_url(
+                self.context["request"], obj.pk, cover_obj.get("page_id")
+            ),
         }
         return obj
 

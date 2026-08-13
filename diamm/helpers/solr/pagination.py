@@ -38,6 +38,7 @@ class SolrResultSerializer(ypres.DictSerializer):
     start_date = ypres.IntField(attr="start_date_i", required=False)
     end_date = ypres.IntField(attr="end_date_i", required=False)
     public_images = ypres.BoolField(attr="public_images_b", required=False)
+    is_virtual = ypres.BoolField(attr="is_virtual_b", required=False)
     has_external_manifest = ypres.BoolField(
         attr="external_manifest_b", required=False
     )

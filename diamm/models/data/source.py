@@ -264,6 +264,7 @@ class Source(models.Model):
             return {
                 "id": self.cover_image.id,
                 "label": self.cover_image.page.numeration,
+                "page_id": self.cover_image.page_id,
             }
 
         cover = (
@@ -278,7 +279,11 @@ class Source(models.Model):
         )
 
         if cover:
-            return {"id": cover.pk, "label": cover.page.numeration}
+            return {
+                "id": cover.pk,
+                "label": cover.page.numeration,
+                "page_id": cover.page_id,
+            }
         return None
 
     @property

@@ -1,6 +1,24 @@
 {% extends "admin/base_site.html" %}
 {% load i18n admin_urls static %}
 
+{% block extrastyle %}
+    {{ block.super }}
+    <style>
+        #id_targets_add_all {
+            display: none;
+        }
+
+        #content .submit-row input.inventory-copy-confirm {
+            background: var(--delete-button-bg);
+        }
+
+        #content .submit-row input.inventory-copy-confirm:focus,
+        #content .submit-row input.inventory-copy-confirm:hover {
+            background: var(--delete-button-hover-bg);
+        }
+    </style>
+{% endblock %}
+
 {% block extrahead %}
     {{ block.super }}
     <script src="{% static 'admin/js/vendor/jquery/jquery.min.js' %}"></script>
@@ -9,11 +27,57 @@
     {{ form.media }}
 {% endblock %}
 
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+    &rsaquo; <a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>
+    &rsaquo; <a href="{% url opts|admin_urlname:'change' instance.pk|admin_urlquote %}">{{ instance|truncatewords:'18' }}</a>
+    &rsaquo; Copy inventory
+</div>
+{% endblock %}
+
 {% block content %}
+    {% if confirmation %}
+        <form action="" method="post">
+            {% csrf_token %}
+            {% for target in targets %}
+                <input type="hidden" name="targets" value="{{ target.pk }}">
+            {% endfor %}
+            <input type="hidden" name="confirm" value="yes">
+            <h2>Confirm inventory copy</h2>
+            <p>
+                The inventory from <strong>{{ instance.display_name }}</strong> will be copied to the following sources:
+            </p>
+            <ul>
+                {% for target in targets %}
+                    <li>{{ target.display_name }}</li>
+                {% endfor %}
+            </ul>
+            <ul class="messagelist">
+                <li class="warning">
+                    <strong>WARNING:</strong>
+                    {% if targets_with_existing_inventory %}
+                        The existing inventory in these target sources will be replaced:
+                        <ul>
+                            {% for target in targets_with_existing_inventory %}
+                                <li>{{ target.display_name }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        The selected targets do not have an inventory that will be replaced.
+                    {% endif %}
+                    Each target will receive a copy of the source inventory. This process is not reversible.
+                </li>
+            </ul>
+            <div class="submit-row">
+                <a href="{% url opts|admin_urlname:'change' instance.pk|admin_urlquote %}" class="closelink">Cancel</a>
+                <input type="submit" class="inventory-copy-confirm" value="Confirm copy">
+            </div>
+        </form>
+    {% else %}
     <form action="" method="post">
         {% csrf_token %}
-        <input type="hidden" name="action" value="copy_inventory_form">
-        <input type="hidden" name="do_action" value="yes">
         <h2>Copy Inventory</h2>
         <h3>
             Source: {{ instance.display_name }}
@@ -31,7 +95,8 @@
             </div>
         </fieldset>
         <div class="submit-row">
-            <input type="submit" class="default" value="Copy">
+            <input type="submit" class="default" value="Review copy">
         </div>
     </form>
+    {% endif %}
 {% endblock %}

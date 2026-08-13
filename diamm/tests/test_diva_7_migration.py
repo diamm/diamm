@@ -229,6 +229,21 @@ class InventoryImageViewerSerializerTests(SimpleTestCase):
             "#/images?p=canvas%3Ahttp%3A%2F%2Ftestserver%2Fsources%2F1%2Fcanvas%2F11%2F",
         )
 
+    def test_cover_image_links_to_its_page_canvas(self):
+        serializer = SourceDetailSerializer(context={"request": self.request})
+
+        data = serializer.get_cover_image_info(
+            SimpleNamespace(
+                pk=1,
+                cover={"id": 20, "label": "2r", "page_id": 11},
+            )
+        )
+
+        self.assertEqual(
+            data["image_viewer_url"],
+            "#/images?p=canvas%3Ahttp%3A%2F%2Ftestserver%2Fsources%2F1%2Fcanvas%2F11%2F",
+        )
+
     def test_first_page_is_selected_by_sort_order_then_id(self):
         later = SimpleNamespace(
             pk=30, sort_order=5, external=False, iiif_canvas_uri=None
@@ -411,6 +426,10 @@ class DivaTemplateTests(SimpleTestCase):
         source_detail = Path(
             "diamm/templates/website/source/source_detail.jinja2"
         ).read_text()
+        self.assertIn(
+            '{% if content.is_virtual %}<span class="tag is-info">Virtual</span>{% endif %}',
+            source_detail,
+        )
         related_templates = "\n".join(
             (
                 source_detail,
@@ -538,6 +557,9 @@ class DivaTemplateTests(SimpleTestCase):
         source_detail = Path(
             "diamm/templates/website/source/source_detail.jinja2"
         ).read_text()
+        source_description = Path(
+            "diamm/templates/website/source/description.jinja2"
+        ).read_text()
 
         self.assertIn("const tabsFromHash = () =>", source_detail)
         self.assertIn("this.syncTabsFromHash();", source_detail)
@@ -550,6 +572,10 @@ class DivaTemplateTests(SimpleTestCase):
             source_detail,
         )
         self.assertIn("this.selectedSourceTab = tabs.selectedSourceTab", source_detail)
+        self.assertIn(
+            'href="{{ content.cover_image_info.image_viewer_url or \'#/images\' }}"',
+            source_description,
+        )
         self.assertIn(
             "this.selectedInventoryTab = tabs.selectedInventoryTab",
             source_detail,
@@ -582,11 +608,11 @@ class DivaTemplateTests(SimpleTestCase):
         self.assertIn("source-image-viewer.js", html)
         self.assertIn('data-manifest-url="https://example.org/manifest"', html)
         self.assertIn('data-openseadragon-url="https://cdn.jsdelivr.net/', html)
-        self.assertIn('data-diva-url="/static/vendor/diva-7.4.0/diva.js"', html)
+        self.assertIn('data-diva-url="/static/vendor/diva-7.4.1/diva.js"', html)
         self.assertNotIn(
             '<script src="https://cdn.jsdelivr.net/npm/openseadragon', html
         )
-        self.assertNotIn('<script src="/static/vendor/diva-7.4.0/diva.js"', html)
+        self.assertNotIn('<script src="/static/vendor/diva-7.4.1/diva.js"', html)
         self.assertNotIn("diva-page-details", html)
         self.assertNotIn("createStructureDataLookup", html)
         self.assertNotIn("diva.css", html)

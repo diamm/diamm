@@ -150,7 +150,10 @@
      data-inventory-url="{{ url('source-inventory', pk=content.pk) }}">
     <div id="source-heading" class="columns">
         <div class="column is-two-thirds">
-            <h2 class="title is-3">{{ content.display_name }}</h2>
+            <h2 class="title is-3">
+                {{ content.display_name }}
+                {% if content.is_virtual %}<span class="tag is-info is-large">Virtual</span>{% endif %}
+            </h2>
             <h3 class="subtitle is-5" style="margin-bottom:0.5rem">
                 <a href={{ content.archive.url }}>{{ content.archive.name }}</a>,
                 <span>{{ content.archive.city }}, {{ content.archive.country }}</span>
@@ -164,12 +167,6 @@
             </a>
         </div>
     </div>
-    {% if content.is_virtual %}
-        <div class="notification is-info virtual-source-notice">
-            This is a virtual reconstruction assembled from selected pages of other physical sources.
-            Its pages and inventory are independent snapshots with retained provenance links.
-        </div>
-    {% endif %}
     <div class="columns">
         <div class="column">
             <div class="level">

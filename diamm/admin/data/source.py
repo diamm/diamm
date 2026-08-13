@@ -397,13 +397,11 @@ class SourceAdmin(VersionAdmin):
         if not self.has_change_permission(request, source):
             raise PermissionDenied
 
-        if "do_action" not in request.POST:
-            form = CopyInventoryForm(instance=source)
-        else:
+        if request.method == "POST":
             form = CopyInventoryForm(request.POST, instance=source)
             if not form.is_valid():
                 messages.error(request, "There was an error in the form")
-            else:
+            elif request.POST.get("confirm") == "yes":
                 targets = form.cleaned_data["targets"]
 
                 with transaction.atomic():
@@ -420,6 +418,33 @@ class SourceAdmin(VersionAdmin):
                 )
 
                 return redirect("admin:diamm_data_source_change", pk)
+            else:
+                targets = list(form.cleaned_data["targets"])
+                target_ids_with_inventory = set(
+                    Item.objects.filter(source_id__in=[target.pk for target in targets])
+                    .values_list("source_id", flat=True)
+                    .distinct()
+                )
+                return render(
+                    request,
+                    "admin/diamm_data/source/copy_inventory.html",
+                    {
+                        **self.admin_site.each_context(request),
+                        "form": form,
+                        "instance": source,
+                        "opts": self.model._meta,
+                        "targets": targets,
+                        "targets_with_existing_inventory": [
+                            target
+                            for target in targets
+                            if target.pk in target_ids_with_inventory
+                        ],
+                        "confirmation": True,
+                        "title": "Confirm inventory copy",
+                    },
+                )
+        else:
+            form = CopyInventoryForm(instance=source)
 
         return render(
             request,

@@ -1,6 +1,8 @@
 module Results exposing (resultView)
 
-import Element exposing (Element, column, el, fill, height, image, link, maximum, minimum, none, paragraph, px, row, spacing, text, width)
+import Element exposing (Element, alignLeft, alignRight, centerY, column, el, fill, height, image, link, maximum, minimum, moveUp, none, paddingXY, paragraph, px, row, spacing, text, width, wrappedRow)
+import Element.Background as Background
+import Element.Border as Border
 import Element.Font as Font
 import Helpers exposing (viewMaybe)
 import Html
@@ -32,18 +34,19 @@ resultView result =
             viewSetResult setBody
 
 
-resultTemplate : { url : String, heading : String, resultType : String, publicImages : Bool, externalManifest : Bool } -> List (Element msg) -> Element msg
-resultTemplate { url, heading, resultType, publicImages, externalManifest } body =
+resultTemplate : { url : String, heading : String, resultType : String, publicImages : Bool, isVirtual : Bool, externalManifest : Bool } -> List (Element msg) -> Element msg
+resultTemplate { url, heading, resultType, publicImages, isVirtual, externalManifest } body =
     row
         [ width fill ]
         [ column
             [ width (fill |> maximum 900)
             , spacing 8
             ]
-            [ row
+            [ wrappedRow
                 [ width fill
                 , spacing 8
                 , Font.size 21
+                , width fill
                 ]
                 [ if publicImages then
                     publicImageIcon
@@ -55,17 +58,20 @@ resultTemplate { url, heading, resultType, publicImages, externalManifest } body
 
                   else
                     none
-                , paragraph []
+                , if isVirtual then
+                    virtualSourceBadge
+
+                  else
+                    none
+                , paragraph
+                    [ alignLeft ]
                     [ link
                         [ Font.color colourScheme.lightBlue
                         , Font.medium
-                        , width fill
                         ]
                         { url = url
                         , label =
-                            el
-                                [ width fill ]
-                                (text (heading |> SE.ellipsis 140))
+                            text (heading |> SE.ellipsis 140)
                         }
                     ]
                 ]
@@ -99,6 +105,20 @@ externalManifestIcon =
         { src = "/static/images/iiif.png"
         , description = "Linked IIIF manifest available"
         }
+
+
+virtualSourceBadge : Element msg
+virtualSourceBadge =
+    el
+        [ Background.color colourScheme.lightBlue
+        , Border.rounded 3
+        , Font.color colourScheme.white
+        , Font.medium
+        , Font.size 12
+        , paddingXY 6 2
+        , alignLeft
+        ]
+        (text "Virtual")
 
 
 statusIcon : String -> String -> Element msg
@@ -139,6 +159,7 @@ viewSourceResult source =
         , heading = source.heading
         , resultType = "Source"
         , publicImages = source.publicImages
+        , isVirtual = source.isVirtual
         , externalManifest = source.externalManifest
         }
         [ row
@@ -163,6 +184,7 @@ viewArchiveResult archive =
         , heading = archiveHeading
         , resultType = "Archive"
         , publicImages = False
+        , isVirtual = False
         , externalManifest = False
         }
         [ row
@@ -188,6 +210,7 @@ viewSetResult set =
         , heading = set.heading
         , resultType = "Set"
         , publicImages = False
+        , isVirtual = False
         , externalManifest = False
         }
         [ row
@@ -213,6 +236,7 @@ viewPersonResult person =
         , heading = person.heading
         , resultType = "Person"
         , publicImages = False
+        , isVirtual = False
         , externalManifest = False
         }
         [ variantNames ]
@@ -230,6 +254,7 @@ viewCompositionResult composition =
         , heading = composition.heading
         , resultType = "Composition"
         , publicImages = False
+        , isVirtual = False
         , externalManifest = False
         }
         [ row
@@ -245,6 +270,7 @@ viewOrganizationResult organization =
         , heading = organization.heading
         , resultType = "Organization"
         , publicImages = False
+        , isVirtual = False
         , externalManifest = False
         }
         [ row

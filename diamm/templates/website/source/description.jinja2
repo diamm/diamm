@@ -1,5 +1,11 @@
 <div class="columns">
     <div class="column is-three-quarters">
+        {% if content.is_virtual %}
+            <div class="notification is-info virtual-source-notice">
+                This is a virtual reconstruction assembled from selected pages of other physical sources.
+                Its pages and inventory are independent snapshots with retained provenance links.
+            </div>
+        {% endif %}
         <table class="source-details">
             <tbody>
             <tr>
@@ -250,7 +256,9 @@
             <figure class="card is-center" style="width: 400px; margin: auto;">
                 <div class="card-image">
                     <figure class="image" style="max-height: 400px; overflow: hidden">
-                        <img src="{{ content.cover_image_info.url }}" style="object-fit: cover"/>
+                        <a href="{{ content.cover_image_info.image_viewer_url or '#/images' }}" aria-label="View image {{ content.cover_image_info.label }}">
+                            <img src="{{ content.cover_image_info.url }}" style="object-fit: cover"/>
+                        </a>
                     </figure>
                 </div>
                 <div class="card-content">

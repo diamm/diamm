@@ -211,6 +211,51 @@ class AdminReviewTests(TestCase):
                 response = self.client.get(reverse(name, args=(source.pk,)))
                 self.assertEqual(response.status_code, 403)
 
+    def test_copy_inventory_breadcrumb_links_back_to_the_source(self) -> None:
+        source = baker.make("diamm_data.Source")
+        self.client.force_login(self.superuser)
+
+        response = self.client.get(reverse("admin:copy-inventory", args=(source.pk,)))
+
+        self.assertContains(
+            response,
+            reverse("admin:diamm_data_source_change", args=(source.pk,)),
+        )
+        self.assertContains(response, "Copy inventory")
+        self.assertContains(response, "#id_targets_add_all")
+
+    def test_copy_inventory_requires_confirmation_before_copying(self) -> None:
+        source = baker.make("diamm_data.Source")
+        target = baker.make("diamm_data.Source")
+        baker.make("diamm_data.Item", source=source, item_title="To copy")
+        baker.make("diamm_data.Item", source=target, item_title="To replace")
+
+        preview = self.client.post(
+            reverse("admin:copy-inventory", args=(source.pk,)),
+            {"targets": [target.pk]},
+        )
+
+        self.assertEqual(preview.status_code, 200)
+        self.assertContains(preview, "Confirm inventory copy")
+        self.assertContains(preview, source.display_name)
+        self.assertContains(preview, target.display_name)
+        self.assertContains(preview, "Existing inventory will be deleted from:")
+        self.assertContains(preview, 'class="closelink"')
+        self.assertContains(preview, 'class="inventory-copy-confirm"')
+        self.assertEqual(target.inventory.get().item_title, "To replace")
+
+        confirmed = self.client.post(
+            reverse("admin:copy-inventory", args=(source.pk,)),
+            {"targets": [target.pk], "confirm": "yes"},
+        )
+
+        self.assertRedirects(
+            confirmed,
+            reverse("admin:diamm_data_source_change", args=(source.pk,)),
+        )
+        self.assertEqual(target.inventory.count(), 1)
+        self.assertEqual(target.inventory.get().item_title, "To copy")
+
     def test_notation_counts_are_not_multiplied_by_parallel_joins(self) -> None:
         notation = baker.make("diamm_data.Notation")
         sources = baker.make("diamm_data.Source", _quantity=2)

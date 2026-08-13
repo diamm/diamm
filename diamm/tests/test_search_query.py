@@ -88,12 +88,14 @@ class SearchQueryParamsTests(SimpleTestCase):
                 "pk": 117,
                 "display_name_s": "Test source",
                 "public_images_b": False,
+                "is_virtual_b": True,
                 "external_manifest_b": True,
             },
             context={"request": request},
         ).serialized
 
         self.assertFalse(result["public_images"])
+        self.assertTrue(result["is_virtual"])
         self.assertTrue(result["has_external_manifest"])
 
     def test_set_result_exposes_total_book_count(self) -> None:

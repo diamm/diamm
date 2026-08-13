@@ -60,6 +60,7 @@ type alias SourceResultBody =
     , measurements : Maybe String
     , numberOfCompositions : Maybe Int
     , publicImages : Bool
+    , isVirtual : Bool
     , externalManifest : Bool
     , contentsStatement : Maybe String
     }
@@ -305,6 +306,7 @@ sourceResultBodyDecoder =
         |> optional "measurements" (maybe string) Nothing
         |> optional "number_of_compositions" (maybe int) Nothing
         |> required "public_images" bool
+        |> optional "is_virtual" bool False
         |> optional "has_external_manifest" bool False
         |> optional "contents_statement" (maybe string) Nothing
 
