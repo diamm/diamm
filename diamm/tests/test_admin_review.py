@@ -570,6 +570,12 @@ class AdminReviewTests(TestCase):
         self.assertContains(response, 'id="add-inventory-entry"')
         self.assertContains(response, 'id="inventory-empty-form"')
         self.assertContains(response, 'id="inventory-formset"')
+        self.assertContains(response, "admin/css/forms.css")
+        self.assertContains(response, "admin/js/admin/RelatedObjectLookups.js")
+        self.assertContains(
+            response,
+            'id="lookup_id_inventory-__prefix__-composition"',
+        )
         self.assertContains(response, 'replaceAll("__prefix__", index)')
 
     def test_source_inventory_editor_updates_an_item(self) -> None:
