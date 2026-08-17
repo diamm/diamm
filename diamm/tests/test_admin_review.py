@@ -560,6 +560,18 @@ class AdminReviewTests(TestCase):
         self.assertContains(first_page, "First source item")
         self.assertNotContains(first_page, "Other source item")
 
+    def test_source_inventory_editor_can_add_multiple_unsaved_items(self) -> None:
+        source = baker.make("diamm_data.Source")
+
+        response = self.client.get(
+            reverse("admin:source-inventory", args=(source.pk,))
+        )
+
+        self.assertContains(response, 'id="add-inventory-entry"')
+        self.assertContains(response, 'id="inventory-empty-form"')
+        self.assertContains(response, 'id="inventory-formset"')
+        self.assertContains(response, 'replaceAll("__prefix__", index)')
+
     def test_source_inventory_editor_updates_an_item(self) -> None:
         source = baker.make("diamm_data.Source")
         item = baker.make(
@@ -621,6 +633,16 @@ class AdminReviewTests(TestCase):
         self.assertEqual(len(second_page.context["formset"].initial_forms), 1)
         self.assertContains(first_page, "First source page")
         self.assertNotContains(first_page, "Other source page")
+
+    def test_source_pages_editor_can_add_multiple_unsaved_pages(self) -> None:
+        source = baker.make("diamm_data.Source")
+
+        response = self.client.get(reverse("admin:source-pages", args=(source.pk,)))
+
+        self.assertContains(response, 'id="add-page-entry"')
+        self.assertContains(response, 'id="pages-empty-form"')
+        self.assertContains(response, 'id="pages-formset"')
+        self.assertContains(response, 'replaceAll("__prefix__", index)')
 
     def test_source_pages_editor_updates_a_page(self) -> None:
         source = baker.make("diamm_data.Source")

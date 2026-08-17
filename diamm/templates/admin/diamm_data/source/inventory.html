@@ -45,7 +45,7 @@
                         {% if formset.can_delete %}<th scope="col">Delete</th>{% endif %}
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="inventory-formset">
                     {% for form in formset.forms %}
                     <tr class="{% cycle 'row1' 'row2' %}">
                         <td>
@@ -71,6 +71,34 @@
                 </tbody>
             </table>
         </div>
+        {% if perms.diamm_data.add_item %}
+            <template id="inventory-empty-form">
+                <tr class="row1">
+                    <td>
+                        {% for hidden in formset.empty_form.hidden_fields %}{{ hidden }}{% endfor %}
+                        New
+                        {{ formset.empty_form.non_field_errors }}
+                    </td>
+                    <td>{{ formset.empty_form.composition.errors }}{{ formset.empty_form.composition }}</td>
+                    <td>-</td>
+                    <td>{{ formset.empty_form.fragment.errors }}{{ formset.empty_form.fragment }}</td>
+                    <td>{{ formset.empty_form.completeness.errors }}{{ formset.empty_form.completeness }}</td>
+                    <td>{{ formset.empty_form.item_title.errors }}{{ formset.empty_form.item_title }}</td>
+                    <td>{{ formset.empty_form.folio_start.errors }}{{ formset.empty_form.folio_start }}</td>
+                    <td>{{ formset.empty_form.folio_end.errors }}{{ formset.empty_form.folio_end }}</td>
+                    <td>{{ formset.empty_form.source_order.errors }}{{ formset.empty_form.source_order }}</td>
+                    {% if formset.can_delete %}<td>{{ formset.empty_form.DELETE }}</td>{% endif %}
+                </tr>
+            </template>
+            <div class="submit-row">
+                <input
+                    type="button"
+                    id="add-inventory-entry"
+                    class="default"
+                    value="Add another inventory entry"
+                >
+            </div>
+        {% endif %}
         <div class="submit-row">
             <input type="submit" value="{% translate 'Save' %}" class="default">
         </div>
@@ -89,4 +117,29 @@
     </p>
     {% endif %}
 </div>
+{% endblock %}
+
+{% block footer %}
+    {{ block.super }}
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const addButton = document.getElementById("add-inventory-entry");
+            const formTemplate = document.getElementById("inventory-empty-form");
+            const formset = document.getElementById("inventory-formset");
+            const totalForms = document.getElementById("id_{{ formset.prefix }}-TOTAL_FORMS");
+
+            if (!addButton || !formTemplate || !formset || !totalForms) {
+                return;
+            }
+
+            addButton.addEventListener("click", function () {
+                const index = totalForms.value;
+                formset.insertAdjacentHTML(
+                    "beforeend",
+                    formTemplate.innerHTML.replaceAll("__prefix__", index)
+                );
+                totalForms.value = Number(index) + 1;
+            });
+        });
+    </script>
 {% endblock %}
