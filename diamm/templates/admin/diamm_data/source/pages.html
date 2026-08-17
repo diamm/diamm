@@ -1,5 +1,34 @@
 {% extends "admin/base_site.html" %}
-{% load i18n admin_urls %}
+{% load i18n admin_urls static %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'admin/css/forms.css' %}">
+    <style>
+        #content {
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        #content-main .results {
+            overflow-x: auto;
+        }
+
+        #content-main #result_list {
+            width: 100%;
+        }
+    </style>
+{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <script src="{% static 'admin/js/vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'admin/js/jquery.init.js' %}"></script>
+    <script src="{% static 'admin/js/core.js' %}"></script>
+    <script src="{% static 'admin/js/admin/RelatedObjectLookups.js' %}"></script>
+    <script src="{% url 'admin:jsi18n' %}"></script>
+    {{ formset.media }}
+{% endblock %}
 
 {% block breadcrumbs %}
 <div class="breadcrumbs">
@@ -26,10 +55,11 @@
                 <thead>
                     <tr>
                         <th scope="col">ID</th>
-                        <th scope="col">Numeration</th>
-                        <th scope="col">Order</th>
-                        <th scope="col">Page type</th>
-                        <th scope="col">External</th>
+                        <th scope="col">{{ formset.empty_form.numeration.label }}</th>
+                        <th scope="col">{{ formset.empty_form.sort_order.label }}</th>
+                        <th scope="col">{{ formset.empty_form.page_type.label }}</th>
+                        <th scope="col">{{ formset.empty_form.external.label }}</th>
+                        {% if can_attach_images %}<th scope="col">Images</th>{% endif %}
                         {% if formset.can_delete %}<th scope="col">Delete</th>{% endif %}
                     </tr>
                 </thead>
@@ -49,6 +79,20 @@
                         <td>{{ form.sort_order.errors }}{{ form.sort_order }}</td>
                         <td>{{ form.page_type.errors }}{{ form.page_type }}</td>
                         <td>{{ form.external.errors }}{{ form.external }}</td>
+                        {% if can_attach_images %}
+                            <td>
+                                {% if form.instance.pk %}
+                                    {% for image in form.instance.images.all %}
+                                        <a href="{% url 'admin:diamm_data_image_change' image.pk %}">{{ image.pk }}</a>{% if not forloop.last %}, {% endif %}
+                                    {% empty %}
+                                        -
+                                    {% endfor %}
+                                {% else %}
+                                    -
+                                {% endif %}
+                                {{ form.image.errors }}{{ form.image }}
+                            </td>
+                        {% endif %}
                         {% if formset.can_delete %}<td>{{ form.DELETE }}</td>{% endif %}
                     </tr>
                     {% endfor %}
@@ -67,6 +111,9 @@
                     <td>{{ formset.empty_form.sort_order.errors }}{{ formset.empty_form.sort_order }}</td>
                     <td>{{ formset.empty_form.page_type.errors }}{{ formset.empty_form.page_type }}</td>
                     <td>{{ formset.empty_form.external.errors }}{{ formset.empty_form.external }}</td>
+                    {% if can_attach_images %}
+                        <td>{{ formset.empty_form.image.errors }}{{ formset.empty_form.image }}</td>
+                    {% endif %}
                     {% if formset.can_delete %}<td>{{ formset.empty_form.DELETE }}</td>{% endif %}
                 </tr>
             </template>

@@ -648,6 +648,7 @@ class AdminReviewTests(TestCase):
         self.assertContains(response, 'id="add-page-entry"')
         self.assertContains(response, 'id="pages-empty-form"')
         self.assertContains(response, 'id="pages-formset"')
+        self.assertContains(response, "Sort order")
         self.assertContains(response, 'replaceAll("__prefix__", index)')
 
     def test_source_pages_editor_updates_a_page(self) -> None:
@@ -683,6 +684,38 @@ class AdminReviewTests(TestCase):
         self.assertEqual(str(page.sort_order), "1.500")
         self.assertEqual(page.page_type, PageTypeChoices.FLYLEAF)
         self.assertTrue(page.external)
+
+    def test_source_pages_editor_attaches_an_unattached_image(self) -> None:
+        source = baker.make("diamm_data.Source")
+        page = baker.make("diamm_data.Page", source=source)
+        image = baker.make("diamm_data.Image", page=None)
+        url = reverse("admin:source-pages", args=(source.pk,))
+
+        response = self.client.post(
+            url,
+            {
+                "pages-TOTAL_FORMS": "2",
+                "pages-INITIAL_FORMS": "1",
+                "pages-MIN_NUM_FORMS": "0",
+                "pages-MAX_NUM_FORMS": "1000",
+                "pages-0-id": str(page.pk),
+                "pages-0-source": str(source.pk),
+                "pages-0-numeration": page.numeration,
+                "pages-0-sort_order": str(page.sort_order),
+                "pages-0-page_type": str(page.page_type),
+                "pages-0-image": str(image.pk),
+                "pages-1-id": "",
+                "pages-1-source": str(source.pk),
+                "pages-1-numeration": "",
+                "pages-1-sort_order": "0",
+                "pages-1-page_type": str(PageTypeChoices.PAGE),
+                "pages-1-image": "",
+            },
+        )
+
+        self.assertRedirects(response, url)
+        image.refresh_from_db()
+        self.assertEqual(image.page_id, page.pk)
 
     @override_settings(DATA_UPLOAD_MAX_NUMBER_FIELDS=1000)
     def test_source_change_stays_under_safe_upload_field_limit(self) -> None:

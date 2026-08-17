@@ -1,3 +1,4 @@
+from django import forms
 from django.contrib import admin, messages
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
@@ -259,12 +260,47 @@ class SourceInventoryEditorInline(RawIdWidgetAdminMixin, admin.TabularInline):
         )
 
 
+class UnattachedImageRawIdWidget(forms.TextInput):
+    """A raw-ID picker that only offers image records not yet on a page."""
+
+    template_name = "admin/widgets/foreign_key_raw_id.html"
+
+    def get_context(self, name, value, attrs):
+        context = super().get_context(name, value, attrs)
+        context["related_url"] = (
+            f"{reverse('admin:diamm_data_image_changelist')}?source_attach=True&_to_field=id"
+        )
+        context["link_title"] = _("Lookup")
+        context["link_label"] = None
+        context["widget"]["attrs"].setdefault(
+            "class", "vForeignKeyRawIdAdminField"
+        )
+        return context
+
+
+class SourcePagesEditorForm(forms.ModelForm):
+    image = forms.ModelChoiceField(
+        queryset=Image.objects.filter(page__isnull=True),
+        required=False,
+        widget=UnattachedImageRawIdWidget(),
+        help_text="Attach an existing, unattached image record.",
+    )
+
+    class Meta:
+        model = Page
+        fields = "__all__"
+
+
 class SourcePagesEditorInline(admin.TabularInline):
     """Formset configuration for the dedicated Source pages editor."""
 
     model = Page
+    form = SourcePagesEditorForm
     extra = 1
     fields = ("numeration", "sort_order", "page_type", "external")
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).prefetch_related("images")
 
 
 class InventoryFilter(admin.SimpleListFilter):
@@ -635,6 +671,7 @@ class SourceAdmin(VersionAdmin):
             "diamm_data.change_page"
         ):
             raise PermissionDenied
+        can_attach_images = request.user.has_perm("diamm_data.change_image")
 
         pages_inline = SourcePagesEditorInline(self.model, self.admin_site)
         queryset = pages_inline.get_queryset(request).filter(source=source)
@@ -655,8 +692,18 @@ class SourceAdmin(VersionAdmin):
             prefix="pages",
         )
 
-        if request.method == "POST" and formset.is_valid():
+        formset_is_valid = request.method != "POST" or formset.is_valid()
+        if request.method == "POST" and formset_is_valid and not can_attach_images:
+            for form in formset.forms:
+                if form.cleaned_data.get("image"):
+                    form.add_error(
+                        "image", "You do not have permission to attach image records."
+                    )
+                    formset_is_valid = False
+
+        if request.method == "POST" and formset_is_valid:
             page_admin = self.admin_site.get_model_admin(Page)
+            image_admin = self.admin_site.get_model_admin(Image)
             deleted_ids = [
                 form.instance.pk
                 for form in formset.deleted_forms
@@ -675,6 +722,18 @@ class SourceAdmin(VersionAdmin):
                         request, Page.objects.filter(pk__in=deleted_ids)
                     )
                 formset.save()
+                for form in formset.forms:
+                    if form in formset.deleted_forms:
+                        continue
+                    image = form.cleaned_data.get("image")
+                    if image:
+                        image.page = form.instance
+                        image.save(update_fields=["page", "updated"])
+                        image_admin.log_change(
+                            request,
+                            image,
+                            [{"changed": {"fields": ["page"]}}],
+                        )
                 for page in formset.new_objects:
                     page_admin.log_addition(
                         request, page, "Added through the Source pages editor."
@@ -700,6 +759,7 @@ class SourceAdmin(VersionAdmin):
                 "instance": source,
                 "opts": self.model._meta,
                 "page_obj": page_obj,
+                "can_attach_images": can_attach_images,
                 "title": f"Edit pages: {source.display_name}",
             },
         )
