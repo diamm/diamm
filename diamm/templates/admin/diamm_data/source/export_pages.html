@@ -1,0 +1,71 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'admin/css/forms.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    {{ form.media }}
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+    &rsaquo; <a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>
+    &rsaquo; <a href="{% url opts|admin_urlname:'change' instance.pk|admin_urlquote %}">{{ instance|truncatewords:'18' }}</a>
+    &rsaquo; Export pages
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    {% if confirmation %}
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="target" value="{{ target.pk }}">
+            {% for page in pages %}<input type="hidden" name="pages" value="{{ page.pk }}">{% endfor %}
+            <input type="hidden" name="confirm" value="yes">
+            <h2>Confirm page export</h2>
+            <p>
+                Copy {{ pages|length }} page(s) and {{ image_count }} image(s) from
+                <strong>{{ instance.display_name }}</strong> to <strong>{{ target.display_name }}</strong>.
+            </p>
+            <p>New pages will be appended to the target source and can be relabelled or reordered afterwards.</p>
+            <p>After confirming, you will be taken to the target source’s edit page.</p>
+            <div class="submit-row">
+                <a href="{% url 'admin:export-pages' instance.pk %}" class="closelink">Cancel</a>
+                <input type="submit" value="Confirm export" class="default">
+            </div>
+        </form>
+    {% else %}
+        <h2>Export pages</h2>
+        <p>
+            This tool creates new copies of the selected pages and their images in another source.
+            It does not move or change the pages in <strong>{{ instance.display_name }}</strong>.
+        </p>
+        <p>
+            Search for and select the target source, then select one or more pages to copy.
+            The new pages will be added after the target source’s existing pages, where they can be
+            relabelled or reordered. You will review the selection before anything is created.
+        </p>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <fieldset class="module aligned">
+                {% for field in form %}
+                    <div class="form-row">
+                        {{ field.errors }}
+                        <div>{{ field.label_tag }} {{ field }}</div>
+                        {% if field.help_text %}<div class="help">{{ field.help_text }}</div>{% endif %}
+                    </div>
+                {% endfor %}
+            </fieldset>
+            <div class="submit-row"><input type="submit" value="Review export" class="default"></div>
+        </form>
+    {% endif %}
+</div>
+{% endblock %}

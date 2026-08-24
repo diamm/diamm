@@ -7,6 +7,7 @@
             <li><a href="{% url 'admin:add-virtual-pages' original.pk %}">Add pages from source</a></li>
         {% endif %}
         <li><a href="{% url 'admin:source-pages' original.pk %}">Edit Pages</a></li>
+        <li><a href="{% url 'admin:export-pages' original.pk %}">Export pages to...</a></li>
         <li><a href="{% url 'admin:source-inventory' original.pk %}">Edit Inventory</a></li>
         <li><a href="{% url 'admin:copy-inventory' original.pk %}">Copy Inventory</a></li>
         <li><a href="{% url 'admin:import-images' original.pk %}">Import Images</a></li>

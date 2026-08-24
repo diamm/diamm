@@ -16,6 +16,7 @@ from reversion.admin import VersionAdmin
 from diamm.admin.filters.input_filter import InputFilter
 from diamm.admin.forms.copy_inventory import CopyInventoryForm
 from diamm.admin.forms.create_pages_and_images import CreatePagesAndImagesForm
+from diamm.admin.forms.export_pages import ExportPagesForm
 from diamm.admin.forms.virtual_source import DonorSourceForm, VirtualSourcePagesForm
 from diamm.admin.helpers.html import html_join
 from diamm.admin.helpers.optimized_raw_id import RawIdWidgetAdminMixin
@@ -39,6 +40,7 @@ from diamm.models.data.source_provenance import SourceProvenance
 from diamm.models.data.source_relationship import SourceRelationship
 from diamm.models.data.source_to_source_relationship import SourceToSourceRelationship
 from diamm.models.data.source_url import SourceURL
+from diamm.services.page_exports import export_pages_to_source
 from diamm.services.virtual_sources import copy_pages_to_virtual_source
 
 
@@ -494,6 +496,68 @@ class SourceAdmin(VersionAdmin):
             },
         )
 
+    def export_pages_view(self, request, pk):
+        source = self.get_object(request, str(pk))
+        if source is None:
+            raise Http404
+        if not self.has_change_permission(request, source):
+            raise PermissionDenied
+        if not request.user.has_perms(("diamm_data.add_page", "diamm_data.add_image")):
+            raise PermissionDenied
+
+        form = ExportPagesForm(
+            request.POST or None, source=source, admin_site=self.admin_site
+        )
+        if request.method == "POST" and form.is_valid():
+            target = form.cleaned_data["target"]
+            if not self.has_change_permission(request, target):
+                raise PermissionDenied
+            if request.POST.get("confirm") == "yes":
+                result = export_pages_to_source(
+                    source=source, target=target, pages=form.cleaned_data["pages"]
+                )
+                page_admin = self.admin_site.get_model_admin(Page)
+                image_admin = self.admin_site.get_model_admin(Image)
+                for page in result.pages:
+                    page_admin.log_addition(request, page, "Exported from another source.")
+                for image in result.images:
+                    image_admin.log_addition(request, image, "Copied while exporting pages.")
+                messages.success(
+                    request,
+                    f"Exported {len(result.pages)} page(s) and {len(result.images)} image(s).",
+                )
+                return redirect("admin:diamm_data_source_change", target.pk)
+
+            pages = list(form.cleaned_data["pages"].prefetch_related("images"))
+            return render(
+                request,
+                "admin/diamm_data/source/export_pages.html",
+                {
+                    **self.admin_site.each_context(request),
+                    "instance": source,
+                    "opts": self.model._meta,
+                    "title": "Confirm page export",
+                    "confirmation": True,
+                    "target": target,
+                    "pages": pages,
+                    "image_count": sum(page.images.count() for page in pages),
+                },
+            )
+        if request.method == "POST":
+            messages.error(request, "There was an error in the form.")
+
+        return render(
+            request,
+            "admin/diamm_data/source/export_pages.html",
+            {
+                **self.admin_site.each_context(request),
+                "form": form,
+                "instance": source,
+                "opts": self.model._meta,
+                "title": "Export pages",
+            },
+        )
+
     def add_virtual_pages_view(self, request, pk):
         target = self.get_object(request, str(pk))
         if target is None or not target.is_virtual:
@@ -788,6 +852,11 @@ class SourceAdmin(VersionAdmin):
                 "<int:pk>/copy_inventory/",
                 self.admin_site.admin_view(self.copy_inventory_view),
                 name="copy-inventory",
+            ),
+            path(
+                "<int:pk>/export_pages/",
+                self.admin_site.admin_view(self.export_pages_view),
+                name="export-pages",
             ),
             path(
                 "<int:pk>/inventory/",
