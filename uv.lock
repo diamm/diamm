@@ -220,7 +220,7 @@ requires-dist = [
     { name = "sentry-sdk", extras = ["django"], specifier = ">=2.41.0" },
     { name = "tablib", specifier = ">=3.5.0,<4.0.0" },
     { name = "traitlets", specifier = ">=5.14.3,<6.0.0" },
-    { name = "ujson", specifier = ">=5.0,<6.0" },
+    { name = "ujson", specifier = ">=5.13.0,<6.0" },
     { name = "wagtail", specifier = ">=7.0,<8.0" },
     { name = "werkzeug", specifier = ">=3.0.3,<4.0.0" },
     { name = "ypres", specifier = ">=1.1.3" },
