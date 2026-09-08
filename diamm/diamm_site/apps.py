@@ -11,4 +11,5 @@ class DiammSiteAppConfig(AppConfig):
     verbose_name = "DIAMM Site"
 
     def ready(self):
-        pass
+        # Don't remove this or e-mails won't work anymore!
+        from diamm.signals import problem_report_signals  # noqa: F401
