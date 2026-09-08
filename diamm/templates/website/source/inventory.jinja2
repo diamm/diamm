@@ -8,24 +8,18 @@
                         <div class="tabs">
                             <ul>
                                 <li id="primary-inventory-tab"
-                                    :class="inventoryTabIsSelected($el.id) ? 'is-active' : ''"
-                                    @click="selectInventoryTab($el.id)"
-                                >
+                                    :class="inventoryTabIsSelected($el.id) ? 'is-active' : ''">
                                     <a href="#/inventory">{{ "Uninventoried" if content.uninventoried else "Source Order" }}</a>
                                 </li>
                                 {% if content.inventory %}
                                     <li id="composer-inventory-tab"
-                                        :class="inventoryTabIsSelected($el.id) ? 'is-active' : ''"
-                                        @click="selectInventoryTab($el.id)"
-                                    >
+                                        :class="inventoryTabIsSelected($el.id) ? 'is-active' : ''">
                                         <a href="#/inventory/composer">By Composer (A-Z)</a>
                                     </li>
                                 {% endif %}
                                 {% if content.inventory %}
                                     <li id="composition-inventory-tab"
-                                        :class="inventoryTabIsSelected($el.id) ? 'is-active' : ''"
-                                        @click="selectInventoryTab($el.id)"
-                                    >
+                                        :class="inventoryTabIsSelected($el.id) ? 'is-active' : ''">
                                         <a href="#/inventory/alphabetical">By Composition (A-Z)</a>
                                     </li>
                                 {% endif %}

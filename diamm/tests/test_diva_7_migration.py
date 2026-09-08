@@ -427,7 +427,7 @@ class DivaTemplateTests(SimpleTestCase):
             "diamm/templates/website/source/source_detail.jinja2"
         ).read_text()
         self.assertIn(
-            '{% if content.is_virtual %}<span class="tag is-info">Virtual</span>{% endif %}',
+            '{% if content.is_virtual %}<span class="tag is-info is-large">Virtual</span>{% endif %}',
             source_detail,
         )
         related_templates = "\n".join(
@@ -440,8 +440,12 @@ class DivaTemplateTests(SimpleTestCase):
 
         self.assertIn("Alpine.data('sourceDetail'", source_detail)
         self.assertIn('x-data="sourceDetail"', source_detail)
-        self.assertIn("selectSourceTab", source_detail)
-        self.assertIn("selectInventoryTab", source_detail)
+        self.assertIn("syncTabsFromHash", source_detail)
+        self.assertNotIn("selectSourceTab", source_detail)
+        self.assertNotIn("selectInventoryTab", source_detail)
+        self.assertNotIn('@click="select', related_templates)
+        self.assertNotIn("@mousedown.prevent", source_detail)
+        self.assertNotIn('@focus="select', source_detail)
         self.assertNotIn("Alpine.store", related_templates)
         self.assertNotIn("$store.sourceTabs", related_templates)
         self.assertNotIn("$store.inventoryTabs", related_templates)

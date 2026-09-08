@@ -103,17 +103,8 @@
                         this.loadInventory();
                     }
                 },
-                selectSourceTab(tabName) {
-                    this.selectedSourceTab = tabName;
-                    if (tabName === "inventory-tab") {
-                        this.loadInventory();
-                    }
-                },
                 sourceTabIsSelected(tabName) {
                     return this.selectedSourceTab === tabName;
-                },
-                selectInventoryTab(tabName) {
-                    this.selectedInventoryTab = tabName;
                 },
                 inventoryTabIsSelected(tabName) {
                     return this.selectedInventoryTab === tabName;
@@ -172,32 +163,21 @@
             <div class="level">
                 <div class="level-left is-fullwidth">
                     <div class="tabs">
-                        <ul class="source-section-selector" x-ref="tablist" role="tablist">
+                        <ul class="source-section-selector" role="tablist">
                             <li :class="sourceTabIsSelected($el.id) ? 'is-active' : ''"
-                                @click="selectSourceTab($el.id)"
-                                @mousedown.prevent
-                                @focus="selectSourceTab($el.id)"
                                 id="description-tab">
                                 <a href="#/">Description</a>
                             </li>
                             {% if content.has_inventory %}
                                 <li id="inventory-tab"
-                                    :class="sourceTabIsSelected($el.id) ? 'is-active' : ''"
-                                    @click="selectSourceTab($el.id)"
-                                    @mousedown.prevent
-                                    @focus="selectSourceTab($el.id)"
-                                >
+                                    :class="sourceTabIsSelected($el.id) ? 'is-active' : ''">
                                     <a href="#/inventory">Inventory</a>
                                 </li>
                             {% endif %}
 
                             {% if content.manifest_url %}
                                 <li id="images-tab"
-                                    :class="sourceTabIsSelected($el.id) ? 'is-active' : ''"
-                                    @click="selectSourceTab($el.id);"
-                                    @mousedown.prevent
-                                    @focus="selectSourceTab($el.id)"
-                                >
+                                    :class="sourceTabIsSelected($el.id) ? 'is-active' : ''">
                                     {% if request.user.is_authenticated or content.has_external_manifest %}
                                         <a href="#/images">Images</a>
                                     {% else %}
@@ -208,41 +188,25 @@
 
                             {% if content.sets %}
                                 <li id="sets-tab"
-                                    :class="sourceTabIsSelected($el.id) ? 'is-active' : ''"
-                                    @click="selectSourceTab($el.id)"
-                                    @mousedown.prevent
-                                    @focus="selectSourceTab($el.id)"
-                                >
+                                    :class="sourceTabIsSelected($el.id) ? 'is-active' : ''">
                                     <a href="#/sets">Sets</a>
                                 </li>
                             {% endif %}
 
                             {% if content.bibliography %}
                                 <li id="bibliography-tab"
-                                    :class="sourceTabIsSelected($el.id) ? 'is-active' : ''"
-                                    @click="selectSourceTab($el.id)"
-                                    @mousedown.prevent
-                                    @focus="selectSourceTab($el.id)"
-                                >
+                                    :class="sourceTabIsSelected($el.id) ? 'is-active' : ''">
                                     <a href="#/bibliography">Bibliography</a>
                                 </li>
                             {% endif %}
 
                             <li id="commentary-tab"
-                                :class="sourceTabIsSelected($el.id) ? 'is-active' : ''"
-                                @click="selectSourceTab($el.id)"
-                                @mousedown.prevent
-                                @focus="selectSourceTab($el.id)"
-                            >
+                                :class="sourceTabIsSelected($el.id) ? 'is-active' : ''">
                                 <a href="#/commentary">Commentary</a>
                             </li>
                             {% if content.contributions %}
                             <li id="contributions-tab"
-                                :class="sourceTabIsSelected($el.id) ? 'is-active' : ''"
-                                @click="selectSourceTab($el.id)"
-                                @mousedown.prevent
-                                @focus="selectSourceTab($el.id)"
-                            >
+                                :class="sourceTabIsSelected($el.id) ? 'is-active' : ''">
                                 <a href="#/contributions">Contributions</a>
                             </li>
                             {% endif %}
@@ -254,11 +218,7 @@
                         <ul>
                             {% if request.user.is_authenticated %}
                             <li id="corrections-tab"
-                                :class="sourceTabIsSelected($el.id) ? 'is-active' : ''"
-                                @click="selectSourceTab($el.id)"
-                                @mousedown.prevent
-                                @focus="selectSourceTab($el.id)"
-                            >
+                                :class="sourceTabIsSelected($el.id) ? 'is-active' : ''">
                                 <a href="#/corrections">Contribute a Change</a>
                             </li>
                             {% endif %}
