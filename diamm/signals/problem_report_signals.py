@@ -11,6 +11,10 @@ FRIENDLY_FROM = (
 )
 
 
+def _record_url(record) -> str:
+    return f"https://{settings.HOSTNAME}{record.get_absolute_url()}"
+
+
 @receiver(post_save, sender=ProblemReport)
 def send_thank_you_email(sender, instance, created, **kwargs):
     if not created:
@@ -24,7 +28,7 @@ def send_thank_you_email(sender, instance, created, **kwargs):
 
     email_address = instance.contributor.get_username()
     name = reporter.full_name
-    record = reported_entity.display_name
+    record = str(reported_entity)
 
     email_message = settings.MAIL["CORRECTION_THANK_YOU"].format(
         name=name,
@@ -53,7 +57,7 @@ def send_admin_notification_email(sender, instance, created, **kwargs):
     reporter = instance.contributor
     report: str = instance.note
     name: str = reporter.full_name if reporter else "[No contributor set]"
-    record: str = reported_entity.display_name
+    record = str(reported_entity)
 
     if settings.DEBUG:
         recipients = [settings.ADMIN_EMAIL]
@@ -68,7 +72,7 @@ def send_admin_notification_email(sender, instance, created, **kwargs):
         record=record,
         report=report,
         review_url=f"https://{settings.HOSTNAME}/admin/diamm_site/problemreport/{instance.pk}/",
-        record_url=f"https://{settings.HOSTNAME}/sources/{reported_entity.pk}/",
+        record_url=_record_url(reported_entity),
     )
 
     send_mail(
@@ -99,7 +103,7 @@ def send_issue_resolved_message(sender, instance, created, **kwargs):
     email_address = instance.contributor.get_username()
 
     name = reporter.full_name
-    record = reported_entity.display_name
+    record = str(reported_entity)
 
     recipient = [settings.ADMIN_EMAIL] if settings.DEBUG else [email_address]
 

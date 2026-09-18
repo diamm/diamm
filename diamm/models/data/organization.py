@@ -1,5 +1,6 @@
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
+from django.urls import reverse
 
 
 class Organization(models.Model):
@@ -44,3 +45,6 @@ class Organization(models.Model):
 
     def __str__(self):
         return f"{self.name}"
+
+    def get_absolute_url(self) -> str:
+        return reverse("organization-detail", kwargs={"pk": self.pk})
