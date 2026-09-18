@@ -9,6 +9,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError, transaction
 from django.db.models import Model, UniqueConstraint
+from reversion.models import Version
 
 
 class MergeConflictError(RuntimeError):
@@ -23,6 +24,11 @@ class UniqueRule:
 
 def _generic_foreign_keys() -> Iterator[GenericForeignKey]:
     for model in apps.get_models():
+        # Versions are immutable audit snapshots, rather than live generic
+        # relations. Moving them would rewrite history and can collide when a
+        # revision contains versions for both records being merged.
+        if model is Version:
+            continue
         for field in model._meta.private_fields:
             if isinstance(field, GenericForeignKey):
                 yield field

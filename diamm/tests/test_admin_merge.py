@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+import reversion
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.test import TestCase
 from django.urls import reverse
 from model_bakery import baker
+from reversion.models import Version
 
 from diamm.admin.merge_models import MergeConflictError, merge
 from diamm.models.data.bibliography import Bibliography
@@ -60,6 +63,38 @@ class MergeModelTests(TestCase):
             self.assertEqual(obj.composition_id, primary.pk)
         report.refresh_from_db()
         self.assertEqual(report.record, primary)
+
+    def test_composition_merge_preserves_reversion_history(self) -> None:
+        if not reversion.is_registered(Composition):
+            reversion.register(Composition)
+
+        primary, alias = baker.make("diamm_data.Composition", _quantity=2)
+        with reversion.create_revision():
+            primary.save()
+            alias.save()
+
+        content_type = ContentType.objects.get_for_model(Composition)
+        primary_version = Version.objects.get(
+            content_type=content_type, object_id=str(primary.pk)
+        )
+        alias_version = Version.objects.get(
+            content_type=content_type, object_id=str(alias.pk)
+        )
+        self.assertEqual(primary_version.revision_id, alias_version.revision_id)
+
+        merge(primary, alias)
+
+        self.assertFalse(Composition.objects.filter(pk=alias.pk).exists())
+        self.assertTrue(Version.objects.filter(pk=primary_version.pk).exists())
+        self.assertTrue(Version.objects.filter(pk=alias_version.pk).exists())
+        self.assertEqual(
+            Version.objects.filter(
+                content_type=content_type,
+                object_id=str(primary.pk),
+                revision_id=primary_version.revision_id,
+            ).count(),
+            1,
+        )
 
     def test_person_merge_moves_normal_and_generic_relations(self) -> None:
         primary = baker.make("diamm_data.Person", last_name="Primary", title=None)
