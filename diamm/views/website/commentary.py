@@ -13,6 +13,11 @@ def commentary_submit(request):
     record_pk = data.get("record_pk")
     user = request.user
 
+    comment = data.get("comment", "")
+    if not comment.strip():
+        messages.add_message(request, messages.ERROR, "Please enter a comment")
+        return redirect("source-detail", pk=record_pk)
+
     attachment_type = ContentType.objects.get(
         app_label="diamm_data", model=record_type
     ).model_class()
@@ -21,7 +26,6 @@ def commentary_submit(request):
     comment_type = data.get("comment_type")
     ctype = 1 if comment_type == "public" else 0
 
-    comment = data.get("comment")
     d = {
         "comment_type": ctype,
         "attachment": attachment,
