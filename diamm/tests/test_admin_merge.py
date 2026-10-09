@@ -1,9 +1,14 @@
 from __future__ import annotations
 
+from unittest.mock import patch
+
+import reversion
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from model_bakery import baker
+from reversion.models import Version
 
 from diamm.admin.merge_models import MergeConflictError, merge
 from diamm.models.data.bibliography import Bibliography
@@ -60,6 +65,68 @@ class MergeModelTests(TestCase):
             self.assertEqual(obj.composition_id, primary.pk)
         report.refresh_from_db()
         self.assertEqual(report.record, primary)
+
+    def test_composition_merge_preserves_reversion_history(self) -> None:
+        if not reversion.is_registered(Composition):
+            reversion.register(Composition)
+
+        primary, alias = baker.make("diamm_data.Composition", _quantity=2)
+        with reversion.create_revision():
+            primary.save()
+            alias.save()
+
+        content_type = ContentType.objects.get_for_model(Composition)
+        primary_version = Version.objects.get(
+            content_type=content_type, object_id=str(primary.pk)
+        )
+        alias_version = Version.objects.get(
+            content_type=content_type, object_id=str(alias.pk)
+        )
+        self.assertEqual(primary_version.revision_id, alias_version.revision_id)
+
+        merge(primary, alias)
+
+        self.assertFalse(Composition.objects.filter(pk=alias.pk).exists())
+        self.assertTrue(Version.objects.filter(pk=primary_version.pk).exists())
+        self.assertTrue(Version.objects.filter(pk=alias_version.pk).exists())
+        self.assertEqual(
+            Version.objects.filter(
+                content_type=content_type,
+                object_id=str(primary.pk),
+                revision_id=primary_version.revision_id,
+            ).count(),
+            1,
+        )
+
+    @override_settings(
+        HOSTNAME="testserver",
+    )
+    def test_problem_report_emails_support_all_permitted_record_types(self) -> None:
+        archive = baker.make("diamm_data.Archive", siglum="GB-Lbl")
+        source = baker.make(
+            "diamm_data.Source", archive=archive, shelfmark="MS 1"
+        )
+        composition = baker.make("diamm_data.Composition", title="Kyrie")
+        person = baker.make("diamm_data.Person", last_name="Machaut")
+        organization = baker.make(
+            "diamm_data.Organization", name="Bodleian Library"
+        )
+
+        for record, label, path in (
+            (source, "MS 1", f"/sources/{source.pk}/"),
+            (composition, "Kyrie", f"/compositions/{composition.pk}/"),
+            (person, "Machaut", f"/people/{person.pk}/"),
+            (organization, "Bodleian Library", f"/organizations/{organization.pk}/"),
+        ):
+            with self.subTest(record=type(record).__name__):
+                with patch(
+                    "diamm.signals.problem_report_signals.send_mail"
+                ) as send_mail:
+                    baker.make("diamm_site.ProblemReport", record=record, note="Fix")
+                self.assertIn(label, send_mail.call_args.args[1])
+                self.assertIn(
+                    f"https://testserver{path}", send_mail.call_args.args[1]
+                )
 
     def test_person_merge_moves_normal_and_generic_relations(self) -> None:
         primary = baker.make("diamm_data.Person", last_name="Primary", title=None)

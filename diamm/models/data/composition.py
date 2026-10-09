@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from django.utils.functional import cached_property
 
 
@@ -21,6 +22,9 @@ class Composition(models.Model):
 
     def __str__(self):
         return f"{self.title}"
+
+    def get_absolute_url(self) -> str:
+        return reverse("composition-detail", kwargs={"pk": self.pk})
 
     @cached_property
     def composer_names(self) -> list:
