@@ -121,6 +121,7 @@
                 showSidebar: true,
                 sidebarWidth: 480,
                 showTitle: false,
+                showLogoutButton: false,
                 initialPage: initialPageForTarget(initialTarget)
             });
             return goToTarget(viewer, initialTarget).then(function () {

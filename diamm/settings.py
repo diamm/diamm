@@ -26,7 +26,7 @@ UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTOCOL", "https")
 
 if DEBUG:  # noqa: F405
-    CSRF_TRUSTED_ORIGINS.append("http://dev.diamm.ac.uk")
+    CSRF_TRUSTED_ORIGINS.append("https://dev.diamm.ac.uk")
     ALLOWED_HOSTS.append("dev.diamm.ac.uk")
 
 INTERNAL_IPS = "127.0.0.1"
@@ -414,7 +414,7 @@ LOGGING = {
             "class": "django.utils.log.AdminEmailHandler",
         },
         "console": {
-            "level": "WARNING",
+            "level": "DEBUG",
             "class": "logging.StreamHandler",
             "formatter": "verbose",
         },
