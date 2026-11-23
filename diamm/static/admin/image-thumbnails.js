@@ -26,6 +26,20 @@ function positionImageListPreview() {
     imageListPreview.style.top = top + "px";
 }
 
+function loadImageListPreview(event) {
+    if (!imageListPreviewLink || event.currentTarget !== imageListPreview.firstElementChild) {
+        return;
+    }
+    imageListPreview.hidden = false;
+    positionImageListPreview();
+}
+
+function failImageListPreview(event) {
+    if (imageListPreview && event.currentTarget === imageListPreview.firstElementChild) {
+        hideImageListPreview();
+    }
+}
+
 function showImageListPreview(event) {
     const link = event.target.closest(".image-list-thumbnail");
     if (!link || link === imageListPreviewLink) {
@@ -35,17 +49,16 @@ function showImageListPreview(event) {
         imageListPreview = document.createElement("div");
         imageListPreview.className = "image-list-preview";
         imageListPreview.setAttribute("aria-hidden", "true");
-        const image = document.createElement("img");
-        image.alt = "";
-        image.addEventListener("load", positionImageListPreview);
-        image.addEventListener("error", hideImageListPreview);
-        imageListPreview.appendChild(image);
         document.body.appendChild(imageListPreview);
     }
+    imageListPreview.hidden = true;
     imageListPreviewLink = link;
-    imageListPreview.hidden = false;
-    imageListPreview.firstElementChild.src = link.dataset.previewUrl;
-    positionImageListPreview();
+    const image = document.createElement("img");
+    image.alt = "";
+    image.addEventListener("load", loadImageListPreview);
+    image.addEventListener("error", failImageListPreview);
+    imageListPreview.replaceChildren(image);
+    image.src = link.dataset.previewUrl;
 }
 
 function leaveImageListPreview(event) {

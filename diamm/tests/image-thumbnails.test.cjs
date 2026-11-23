@@ -27,7 +27,7 @@ function setup() {
                 listeners: {},
                 setAttribute(name, value) { this[name] = value; },
                 addEventListener(name, callback) { this.listeners[name] = callback; },
-                appendChild(child) { this.firstElementChild = child; }
+                replaceChildren(child) { this.firstElementChild = child; }
             };
             elements.push(element);
             return element;
@@ -47,6 +47,11 @@ function thumbnail(url = "/admin/image/1/preview/large/") {
     return link;
 }
 
+function loadPreview(app) {
+    const image = app.body[0].firstElementChild;
+    image.listeners.load({ currentTarget: image });
+}
+
 test("large preview is created and loaded only on hover", () => {
     const app = setup();
     const link = thumbnail();
@@ -54,6 +59,8 @@ test("large preview is created and loaded only on hover", () => {
     app.listeners.mouseover({ target: link.image });
     assert.equal(app.body.length, 1);
     assert.equal(app.body[0].firstElementChild.src, link.dataset.previewUrl);
+    assert.equal(app.body[0].hidden, true);
+    loadPreview(app);
     assert.equal(app.body[0].hidden, false);
     assert.equal(app.body[0].style.left, "176px");
     app.listeners.mouseover({ target: link.image });
@@ -64,6 +71,7 @@ test("moving inside the thumbnail keeps it open and leaving hides it", () => {
     const app = setup();
     const link = thumbnail();
     app.listeners.mouseover({ target: link.image });
+    loadPreview(app);
     app.listeners.mouseout({ relatedTarget: link.image });
     assert.equal(app.body[0].hidden, false);
     app.listeners.mouseout({ relatedTarget: null });
@@ -74,6 +82,7 @@ test("keyboard focus shows the preview and Escape dismisses it", () => {
     const app = setup();
     const link = thumbnail();
     app.listeners.focusin({ target: link.image });
+    loadPreview(app);
     assert.equal(app.body[0].hidden, false);
     app.listeners.keydown({ key: "Escape" });
     assert.equal(app.body[0].hidden, true);
@@ -89,11 +98,13 @@ test("preview switches images and stays within the viewport", () => {
     second.getBoundingClientRect = () => ({ top: 750, left: 900, right: 964 });
     app.listeners.mouseover({ target: first.image });
     app.listeners.mouseover({ target: second.image });
+    loadPreview(app);
     assert.equal(app.body.length, 1);
     assert.equal(app.body[0].firstElementChild.src, second.dataset.previewUrl);
     assert.equal(app.body[0].style.left, "528px");
     assert.equal(app.body[0].style.top, "308px");
-    app.body[0].firstElementChild.listeners.error();
+    const image = app.body[0].firstElementChild;
+    image.listeners.error({ currentTarget: image });
     assert.equal(app.body[0].hidden, true);
 });
 
@@ -101,10 +112,40 @@ test("scroll and resize hide a stale preview", () => {
     const app = setup();
     const link = thumbnail();
     app.listeners.mouseover({ target: link.image });
+    loadPreview(app);
     app.listeners.scroll();
     assert.equal(app.body[0].hidden, true);
     app.listeners.mouseover({ target: link.image });
+    loadPreview(app);
     app.listeners.resize();
+    assert.equal(app.body[0].hidden, true);
+});
+
+test("switching images hides old pixels until the new image has loaded", () => {
+    const app = setup();
+    app.listeners.mouseover({ target: thumbnail().image });
+    loadPreview(app);
+    const oldImage = app.body[0].firstElementChild;
+    assert.equal(app.body[0].hidden, false);
+    const second = thumbnail("/admin/image/2/preview/large/");
+    app.listeners.mouseover({ target: second.image });
+    const newImage = app.body[0].firstElementChild;
+    assert.notEqual(oldImage, newImage);
+    assert.equal(newImage.src, second.dataset.previewUrl);
+    assert.equal(app.body[0].hidden, true);
+    oldImage.listeners.load({ currentTarget: oldImage });
+    assert.equal(app.body[0].hidden, true);
+    loadPreview(app);
+    assert.equal(app.body[0].hidden, false);
+    oldImage.listeners.error({ currentTarget: oldImage });
+    assert.equal(app.body[0].hidden, false);
+});
+
+test("an image finishing after the pointer leaves cannot reopen the preview", () => {
+    const app = setup();
+    app.listeners.mouseover({ target: thumbnail().image });
+    app.listeners.mouseout({ relatedTarget: null });
+    loadPreview(app);
     assert.equal(app.body[0].hidden, true);
 });
 
