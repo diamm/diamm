@@ -16,6 +16,16 @@ from django_jinja.builtins import DEFAULT_EXTENSIONS
 
 from diamm.settings_local import *  # noqa: F403
 
+TASKS = globals().get(
+    "TASKS",
+    {
+        "default": {
+            "BACKEND": "django_ox.backend.OxBackend",
+            "QUEUES": ["default", "image_rotation"],
+        },
+    },
+)
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
@@ -36,6 +46,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 # Application definition
 
 INSTALLED_APPS = [
+    "django_ox",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",

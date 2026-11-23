@@ -1,19 +1,38 @@
+from dataclasses import asdict, replace
 from datetime import timedelta
 from gettext import ngettext
+from urllib.parse import quote, urlencode
 
+import requests
 from django import forms
 from django.conf import settings
 from django.contrib import admin, messages
+from django.contrib.admin.helpers import ACTION_CHECKBOX_NAME
+from django.core import signing
+from django.core.exceptions import PermissionDenied
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 from django.forms import TextInput
-from django.http import HttpRequest
+from django.http import (
+    HttpRequest,
+    HttpResponse,
+    HttpResponseBadRequest,
+    HttpResponseBase,
+    HttpResponseNotAllowed,
+)
+from django.shortcuts import get_object_or_404, redirect
+from django.tasks import TaskResultStatus, task_backends
+from django.tasks.exceptions import TaskResultDoesNotExist
+from django.template.response import TemplateResponse
+from django.urls import URLPattern, path, reverse
 from django.utils.translation import gettext_lazy as _
 from pyreqwest.client import SyncClient, SyncClientBuilder
 from pyreqwest.exceptions import PyreqwestError, StatusError
 from reversion.admin import VersionAdmin
 
 from diamm.admin.filters.input_filter import InputFilter
+from diamm.admin.forms.rotate_images import RotationForm
+from diamm.imageops.jobs import QueuedRotation, enqueue_rotations, selection_for
 from diamm.models.data.image import Image
 from diamm.models.data.image_note import ImageNote
 from diamm.models.data.page import Page
@@ -124,10 +143,139 @@ def make_selected_images_private(
     queryset.update(public=False)
 
 
+STATUS_SALT = "diamm.imageops.status"
+
+
+class ImageRotationAdminMixin(admin.ModelAdmin):
+    """Image rotation routes, confirmation, progress and authenticated previews."""
+
+    rotation_form_class: type[forms.Form]
+
+    def get_urls(self) -> list[URLPattern]:
+        return [
+            path(
+                "rotation/status/",
+                self.admin_site.admin_view(self.rotation_status),
+                name="diamm_data_image_rotation_status",
+            ),
+            path(
+                "<int:image_id>/rotation-preview/",
+                self.admin_site.admin_view(self.rotation_preview),
+                name="diamm_data_image_rotation_preview",
+            ),
+        ] + super().get_urls()
+
+    @admin.action(description="Rotate images", permissions=["change"])
+    def rotate_images(
+        self, request: HttpRequest, queryset: QuerySet[Image]
+    ) -> HttpResponseBase:
+        if not self.has_change_permission(request):
+            raise PermissionDenied
+        selected = [selection_for(image) for image in queryset.order_by("pk")]
+        form = self.rotation_form_class(
+            request.POST if "apply_rotation" in request.POST else None,
+        )
+        if "apply_rotation" in request.POST and form.is_valid():
+            submitted = enqueue_rotations(queryset, form.cleaned_data["rotation"])
+            self.message_user(request, "Rotation request recorded. Missing or unavailable files were not queued.", messages.INFO)
+            token = signing.dumps([asdict(row) for row in submitted], salt=STATUS_SALT, compress=True)
+            return redirect(
+                f"{reverse('admin:diamm_data_image_rotation_status')}?{urlencode({'tasks': token})}"
+            )
+        context = {
+            **self.admin_site.each_context(request),
+            "opts": self.model._meta,
+            "title": "Rotate images",
+            "form": form,
+            "selected": selected,
+            "action_checkbox_name": ACTION_CHECKBOX_NAME,
+        }
+        return TemplateResponse(request, "admin/diamm_data/image/rotate.html", context)
+
+    def rotation_status(self, request: HttpRequest) -> HttpResponseBase:
+        if not self.has_change_permission(request):
+            raise PermissionDenied
+        if request.method != "GET":
+            return HttpResponseNotAllowed(["GET"])
+        try:
+            submitted = signing.loads(request.GET.get("tasks", ""), salt=STATUS_SALT)
+        except signing.BadSignature:
+            return HttpResponseBadRequest("Invalid rotation status link.")
+        operations: list[QueuedRotation] = []
+        pending = False
+        for values in submitted:
+            operation = QueuedRotation(**values)
+            if not operation.task_id:
+                operations.append(operation)
+                continue
+            try:
+                result = task_backends["default"].get_result(operation.task_id)
+            except TaskResultDoesNotExist:
+                operation = replace(operation, status="Unavailable", message="Task result has been removed.")
+            else:
+                pending |= not result.is_finished
+                status = {
+                    TaskResultStatus.READY: "Waiting",
+                    TaskResultStatus.RUNNING: "Working",
+                    TaskResultStatus.SUCCESSFUL: "Done",
+                    TaskResultStatus.FAILED: "Error",
+                }[result.status]
+                message = ""
+                if result.status == TaskResultStatus.SUCCESSFUL:
+                    message = result.return_value["message"]
+                elif result.errors:
+                    message = result.errors[-1].traceback.strip().splitlines()[-1]
+                operation = replace(operation, status=status, message=message)
+            operations.append(operation)
+        return TemplateResponse(
+            request, "admin/diamm_data/image/rotation_status.html",
+            {
+                **self.admin_site.each_context(request),
+                "opts": self.model._meta,
+                "title": "Image rotation status",
+                "operations": operations, "pending": pending,
+            },
+        )
+
+    def rotation_preview(self, request: HttpRequest, image_id: int) -> HttpResponse:
+        if not self.has_change_permission(request):
+            raise PermissionDenied
+        if request.method != "GET":
+            return HttpResponseNotAllowed(["GET"])
+        image = get_object_or_404(self.get_queryset(request), pk=image_id)
+        if image.external or not image.location:
+            return HttpResponse("No local image preview.", status=404)
+        # Fetch a fixed-size JPEG from the trusted internal IIP server rather
+        # than exposing a server-only address to the browser.
+        location = quote(image.location, safe="/")
+        url = f"{settings.DIAMM_IMAGE_SERVER}{location}/full/!240,240/0/default.jpg"
+        headers = {"referer": f"https://{settings.HOSTNAME}"}
+        if image_key := getattr(settings, "DIAMM_IMAGE_KEY", None):
+            headers["X-DIAMM"] = image_key
+        try:
+            with requests.get(
+                url, headers=headers, timeout=(3, 15), stream=True, allow_redirects=False
+            ) as response:
+                response.raise_for_status()
+                if response.status_code != 200 or response.headers.get("Content-Type", "").split(";")[0] != "image/jpeg":
+                    return HttpResponse("Preview server did not return a JPEG.", status=502)
+                chunks: list[bytes] = []
+                size = 0
+                for chunk in response.iter_content(65536):
+                    size += len(chunk)
+                    if size > 5_000_000:
+                        return HttpResponse("Preview is too large.", status=502)
+                    chunks.append(chunk)
+        except requests.RequestException:
+            return HttpResponse("Image preview is unavailable.", status=502)
+        return HttpResponse(b"".join(chunks), content_type="image/jpeg")
+
+
 @admin.register(Image)
-class ImageAdmin(VersionAdmin):
+class ImageAdmin(ImageRotationAdminMixin, VersionAdmin):
     save_on_top = True
     form = ImageAdminForm
+    rotation_form_class = RotationForm
     list_display = ("pk", "public", "location", "get_type", "created", "updated")
     readonly_fields = ("width", "height")
     list_filter = (
@@ -152,6 +300,7 @@ class ImageAdmin(VersionAdmin):
     inlines = (ImageNoteInline,)
 
     actions = (
+        "rotate_images",
         "refetch_iiif_info",
         make_selected_images_public,
         make_selected_images_private,

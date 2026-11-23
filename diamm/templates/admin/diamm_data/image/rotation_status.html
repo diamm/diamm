@@ -1,0 +1,19 @@
+{% extends "admin/base_site.html" %}
+{% block extrahead %}{{ block.super }}{% if pending %}<meta http-equiv="refresh" content="3">{% endif %}{% endblock %}
+{% block breadcrumbs %}
+<div class="breadcrumbs"><a href="{% url 'admin:index' %}">Home</a> &rsaquo;
+<a href="{% url 'admin:diamm_data_image_changelist' %}">Images</a> &rsaquo; Rotation status</div>
+{% endblock %}
+{% block content %}
+<p>{% if pending %}This page refreshes every three seconds. Tasks continue if you leave this page.{% endif %}
+Tasks can also be found in the <a href="{% url 'admin:django_ox_oxtask_changelist' %}?queue_name=image_rotation">Ox task admin</a> (task-view permission required).</p>
+<table>
+<thead><tr><th>Image</th><th>Status</th><th>Details</th></tr></thead>
+<tbody>
+{% for operation in operations %}
+<tr><td>{{ operation.image_id|default:"Deleted" }}: {{ operation.location }}</td>
+<td>{{ operation.status }}</td><td>{{ operation.message }}</td></tr>
+{% endfor %}
+</tbody></table>
+<p><a href="{% url 'admin:diamm_data_image_changelist' %}">Return to images</a></p>
+{% endblock %}

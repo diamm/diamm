@@ -1,0 +1,31 @@
+{% extends "admin/base_site.html" %}
+{% block breadcrumbs %}
+<div class="breadcrumbs"><a href="{% url 'admin:index' %}">Home</a> &rsaquo;
+<a href="{% url 'admin:diamm_data_image_changelist' %}">Images</a> &rsaquo; Rotate images</div>
+{% endblock %}
+{% block content %}
+<p>Rotate the available images clockwise. Originals are replaced only after validation.
+Unavailable files are shown below and will not be queued. An individual failure will not stop the other images.</p>
+<p>Permission checks use this web process's account and do not modify files.
+The rotation worker checks again using its own account; permissions or filesystem restrictions may still cause an operation to fail.</p>
+<form method="post">{% csrf_token %}
+{{ form.as_p }}
+<input type="hidden" name="action" value="rotate_images">
+<table>
+<thead><tr><th>Image</th><th>Current preview</th><th>Availability</th></tr></thead>
+<tbody>
+{% for row in selected %}
+<tr>
+<td><input type="hidden" name="{{ action_checkbox_name }}" value="{{ row.image.pk }}">
+{{ row.image.pk }}: {{ row.image.location }}</td>
+<td>{% if not row.image.external and row.image.location %}
+<img src="{% url 'admin:diamm_data_image_rotation_preview' row.image.pk %}" alt="Current image {{ row.image.pk }}" width="160" loading="lazy">
+{% endif %}</td>
+<td>{% if row.issue %}<strong>{{ row.issue }}</strong>{% else %}Ready{% endif %}</td>
+</tr>
+{% endfor %}
+</tbody></table>
+<div class="submit-row"><input type="submit" name="apply_rotation" value="Rotate images" class="default">
+<a href="{% url 'admin:diamm_data_image_changelist' %}">Cancel</a></div>
+</form>
+{% endblock %}

@@ -1,5 +1,8 @@
 # The Digital Image Archive of Medieval Music
 
+For the JPEG 2000 rotation command, Image-admin workflow and background-worker
+deployment, see [Image rotation](docs/image-rotation.md).
+
 This project is the website of the [Digital Image Archive of Medieval Music](https://www.diamm.ac.uk). While just having the source code is likely not directly useful to others, publishing the code behind the website as open source is one component of our efforts to sustain this project in the long term.
 
 Our [Issues](https://github.com/diamm/diamm/issues) page tracks all known problems and feature requests for the site, along with any discussions around that issue. When an issue has been resolved it is 'closed,' but still available for review. Issues that require changes to the code of the site will usually be linked together, so a person reporting the issue can be apprised of changes arising from their report. See [this report](https://github.com/diamm/diamm/issues/188) for an example.
