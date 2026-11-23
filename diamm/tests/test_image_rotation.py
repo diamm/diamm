@@ -360,6 +360,59 @@ class ImageRotationTests(TestCase):
         self.assertEqual(response.status_code, 502)
         upstream.iter_content.assert_not_called()
 
+    def test_image_list_includes_lazy_thumbnail_and_hover_preview_assets(self):
+        with patch("diamm.admin.data.image.requests.get") as get:
+            response = self.client.get(reverse("admin:diamm_data_image_changelist"))
+        self.assertContains(response, 'class="image-list-thumbnail"')
+        self.assertContains(response, reverse("admin:diamm_data_image_preview", args=[self.a.pk]))
+        self.assertContains(response, f'data-preview-url="{reverse("admin:diamm_data_image_preview_large", args=[self.a.pk])}"')
+        self.assertContains(response, 'loading="lazy"')
+        self.assertContains(response, "admin/image-thumbnails.css")
+        self.assertContains(response, "admin/image-thumbnails.js")
+        get.assert_not_called()
+
+    def test_thumbnail_omits_external_and_missing_locations(self):
+        self.a.external = True
+        self.a.save(update_fields=["external"])
+        self.b.location = None
+        self.b.save(update_fields=["location"])
+        response = self.client.get(reverse("admin:diamm_data_image_changelist"))
+        self.assertNotContains(response, 'class="image-list-thumbnail"')
+
+    def test_list_preview_sizes_are_fixed_and_view_permission_is_sufficient(self):
+        self.staff.user_permissions.add(Permission.objects.get(
+            codename="view_image", content_type__app_label="diamm_data",
+        ))
+        self.client.force_login(self.staff)
+        upstream = MagicMock(status_code=200)
+        upstream.headers = {"Content-Type": "image/jpeg"}
+        upstream.iter_content.return_value = [b"jpeg"]
+        for route, size in (
+            ("admin:diamm_data_image_preview", "!80,80"),
+            ("admin:diamm_data_image_preview_large", "400,"),
+        ):
+            with self.subTest(route=route), patch("diamm.admin.data.image.requests.get") as get:
+                get.return_value.__enter__.return_value = upstream
+                response = self.client.get(reverse(route, args=[self.a.pk]))
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.content, b"jpeg")
+            self.assertEqual(
+                get.call_args.args[0],
+                f"http://127.0.0.1/iipsrv.fcgi?IIIF=a.jpx/full/{size}/0/default.jpg",
+            )
+            self.assertIn("no-store", response["Cache-Control"])
+        # Viewing thumbnails does not grant access to rotation.
+        self.assertEqual(self.client.get(reverse(
+            "admin:diamm_data_image_rotation_preview", args=[self.a.pk],
+        )).status_code, 403)
+
+    def test_list_preview_requires_permission_and_login(self):
+        url = reverse("admin:diamm_data_image_preview_large", args=[self.a.pk])
+        self.client.force_login(self.staff)
+        self.assertEqual(self.client.get(url).status_code, 403)
+        self.client.logout()
+        self.assertEqual(self.client.get(url).status_code, 302)
+
     def test_management_command_directory_and_dry_run(self):
         output = StringIO()
         with patch("diamm.management.commands.rotate.rotate_image") as rotate:

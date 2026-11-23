@@ -25,6 +25,8 @@ from django.tasks import TaskResultStatus, task_backends
 from django.tasks.exceptions import TaskResultDoesNotExist
 from django.template.response import TemplateResponse
 from django.urls import URLPattern, path, reverse
+from django.utils.html import format_html
+from django.utils.safestring import SafeString
 from django.utils.translation import gettext_lazy as _
 from pyreqwest.client import SyncClient, SyncClientBuilder
 from pyreqwest.exceptions import PyreqwestError, StatusError
@@ -163,6 +165,18 @@ class ImageRotationAdminMixin(admin.ModelAdmin):
                 self.admin_site.admin_view(self.rotation_preview),
                 name="diamm_data_image_rotation_preview",
             ),
+            path(
+                "<int:image_id>/preview/",
+                self.admin_site.admin_view(self.image_preview),
+                {"size": "!80,80"},
+                name="diamm_data_image_preview",
+            ),
+            path(
+                "<int:image_id>/preview/large/",
+                self.admin_site.admin_view(self.image_preview),
+                {"size": "400,"},
+                name="diamm_data_image_preview_large",
+            ),
         ] + super().get_urls()
 
     @admin.action(description="Rotate images", permissions=["change"])
@@ -243,15 +257,24 @@ class ImageRotationAdminMixin(admin.ModelAdmin):
     def rotation_preview(self, request: HttpRequest, image_id: int) -> HttpResponse:
         if not self.has_change_permission(request):
             raise PermissionDenied
+        return self.image_preview(request, image_id, size="!240,240")
+
+    def image_preview(
+        self, request: HttpRequest, image_id: int, *, size: str
+    ) -> HttpResponse:
+        if not self.has_view_or_change_permission(request):
+            raise PermissionDenied
         if request.method != "GET":
             return HttpResponseNotAllowed(["GET"])
         image = get_object_or_404(self.get_queryset(request), pk=image_id)
+        if not self.has_view_or_change_permission(request, image):
+            raise PermissionDenied
         if image.external or not image.location:
             return HttpResponse("No local image preview.", status=404)
         # Fetch a fixed-size JPEG from the trusted internal IIP server rather
         # than exposing a server-only address to the browser.
         location = quote(image.location, safe="/")
-        url = f"{settings.DIAMM_IMAGE_SERVER}{location}/full/!240,240/0/default.jpg"
+        url = f"{settings.DIAMM_IMAGE_SERVER}{location}/full/{size}/0/default.jpg"
         headers = {"referer": f"https://{settings.HOSTNAME}"}
         if image_key := getattr(settings, "DIAMM_IMAGE_KEY", None):
             headers["X-DIAMM"] = image_key
@@ -279,7 +302,7 @@ class ImageAdmin(ImageRotationAdminMixin, VersionAdmin):
     save_on_top = True
     form = ImageAdminForm
     rotation_form_class = RotationForm
-    list_display = ("pk", "public", "location", "get_type", "created", "updated")
+    list_display = ("pk", "thumbnail", "public", "location", "get_type", "created", "updated")
     readonly_fields = ("width", "height")
     list_filter = (
         SourceKeyFilter,
@@ -313,6 +336,26 @@ class ImageAdmin(ImageRotationAdminMixin, VersionAdmin):
         models.CharField: {"widget": TextInput(attrs={"size": "80"})},
         models.URLField: {"widget": TextInput(attrs={"size": "160"})},
     }
+
+    class Media:
+        css = {"all": ("admin/image-thumbnails.css",)}
+        js = ("admin/image-thumbnails.js",)
+
+    @admin.display(description="Preview")
+    def thumbnail(self, obj: Image) -> SafeString | str:
+        if obj.external or not obj.location:
+            return "—"
+        return format_html(
+            '<a class="image-list-thumbnail" href="{}" data-preview-url="{}" '
+            'aria-label="Preview image {}" target="_blank" rel="noopener">'
+            '<img src="{}" alt="Image {}" width="64" height="80" '
+            'loading="lazy" decoding="async"></a>',
+            reverse("admin:diamm_data_image_preview_large", args=[obj.pk]),
+            reverse("admin:diamm_data_image_preview_large", args=[obj.pk]),
+            obj.pk,
+            reverse("admin:diamm_data_image_preview", args=[obj.pk]),
+            obj.pk,
+        )
 
     @admin.display(description="Type")
     def get_type(self, obj: Image) -> str:
