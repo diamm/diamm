@@ -59,7 +59,7 @@ class SourceDetail(generics.RetrieveAPIView):
                     ),
                 ),
                 "notations",
-                "links",
+                Prefetch("links", queryset=SourceURL.objects.order_by("pk")),
                 "identifiers",
                 "authorities",
                 Prefetch(
@@ -132,7 +132,9 @@ class SourceInventoryPanel(generics.RetrieveAPIView):
         public_filter = {} if self.request.user.is_staff else {"public": True}
         return (
             Source.objects.filter(**public_filter)
-            .prefetch_related("links")
+            .prefetch_related(
+                Prefetch("links", queryset=SourceURL.objects.order_by("pk"))
+            )
             .annotate(
                 images_are_public=Exists(
                     Page.objects.filter(source=OuterRef("pk"), images__public=True)

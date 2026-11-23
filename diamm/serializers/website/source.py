@@ -566,6 +566,7 @@ class SourceDetailSerializer(ypres.Serializer):
     type = ypres.MethodField()
     cover_image_info = ypres.MethodField(required=False)
     manifest_url = ypres.MethodField(required=False)
+    manifests = ypres.MethodField()
     inventory_provided = ypres.BoolField()
     is_virtual = ypres.BoolField()
     public_images = ypres.BoolField()
@@ -677,27 +678,32 @@ class SourceDetailSerializer(ypres.Serializer):
     def get_has_external_manifest(self, obj) -> bool:
         return obj.images_are_public is False and obj.has_manifest_link is True
 
-    def get_manifest_url(self, obj):
-        # The assumption here is that if we have an external manifest,
-        # it is public.
-        # Return None if the document has no public images
-        if not obj.images_are_public:
-            # Reuse the links prefetched for the serialized `links` field.
-            iiif_link = next(
-                (
-                    link
-                    for link in obj.links.all()
-                    if link.type == SourceURL.IIIF_MANIFEST
-                ),
-                None,
-            )
-            if iiif_link:
-                return iiif_link.link
-            return None
+    def get_manifests(self, obj):
+        if obj.images_are_public:
+            return []
 
-        return reverse(
-            "source-manifest", kwargs={"pk": obj.pk}, request=self.context["request"]
+        return [
+            {"url": link.link, "label": link.link_text or link.link}
+            for link in obj.links.all()
+            if link.type == SourceURL.IIIF_MANIFEST
+        ]
+
+    def get_manifest_url(self, obj):
+        # Our own public images take precedence over linked manifests.
+        if obj.images_are_public:
+            return reverse(
+                "source-manifest", kwargs={"pk": obj.pk}, request=self.context["request"]
+            )
+
+        # Reuse the prefetched links in the source's URL order.
+        iiif_link = next(
+            (link for link in obj.links.all() if link.type == SourceURL.IIIF_MANIFEST),
+            None,
         )
+        if iiif_link:
+            return iiif_link.link
+
+        return None
 
     def get_inventory(self, obj):
         # source_order_f asc, folio_start_ans asc

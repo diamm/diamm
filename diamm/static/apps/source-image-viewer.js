@@ -4,6 +4,7 @@
     let viewer = null;
     let viewerPromise = null;
     let dependencyPromise = null;
+    let viewerGeneration = 0;
 
     function loadScript(url, isReady) {
         if (isReady()) {
@@ -98,7 +99,7 @@
         await instance.goToPage(pageIndex);
     }
 
-    function initializeViewer() {
+    function initializeViewer(useHashTarget = true) {
         if (viewer) {
             void goToTarget(viewer, pageTargetFromHash());
             return;
@@ -113,8 +114,12 @@
             return;
         }
 
+        const generation = viewerGeneration;
         viewerPromise = loadViewerDependencies(wrapper).then(function () {
-            const initialTarget = pageTargetFromHash();
+            if (generation !== viewerGeneration) {
+                return;
+            }
+            const initialTarget = useHashTarget ? pageTargetFromHash() : null;
             viewer = new Diva("diva-wrapper", {
                 objectData: wrapper.dataset.manifestUrl,
                 sidebarPanel: "contents",
@@ -128,12 +133,40 @@
                 return viewer;
             });
         }).catch(function (error) {
+            if (generation !== viewerGeneration) {
+                return;
+            }
             viewerPromise = null;
             console.error("Could not initialize the image viewer.", error);
         });
     }
 
-    document.addEventListener("initialize-diva", initializeViewer);
+    document.addEventListener("initialize-diva", function () {
+        initializeViewer();
+    });
+    document.addEventListener("change", function (event) {
+        if (event.target.id !== "manifest-selector") {
+            return;
+        }
+
+        const wrapper = document.getElementById("diva-wrapper");
+        if (!wrapper || wrapper.dataset.manifestUrl === event.target.value) {
+            return;
+        }
+
+        viewerGeneration += 1;
+        if (viewer) {
+            viewer.destroy();
+            viewer = null;
+        }
+        viewerPromise = null;
+        wrapper.replaceChildren();
+        wrapper.dataset.manifestUrl = event.target.value;
+
+        // A page bookmark from the old manifest does not apply to the new one.
+        window.history.replaceState(null, "", "#/images");
+        initializeViewer(false);
+    });
     window.addEventListener("hashchange", function () {
         if (viewer) {
             void goToTarget(viewer, pageTargetFromHash());

@@ -1,5 +1,22 @@
 <script src="{{ static('apps/source-image-viewer.js') }}"></script>
 
+{% if content.manifests|length > 1 %}
+<div class="field">
+    <label class="label" for="manifest-selector">
+        Use this selector to choose one of the possible IIIF Manifests for this source.
+    </label>
+    <div class="control">
+        <div class="select">
+            <select id="manifest-selector">
+                {% for manifest in content.manifests %}
+                <option value="{{ manifest.url }}"{% if loop.first %} selected{% endif %}>{{ manifest.label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+</div>
+{% endif %}
+
 <div id="diva-wrapper"
      data-manifest-url="{{ content.manifest_url }}"
      data-openseadragon-url="https://cdn.jsdelivr.net/npm/openseadragon@6.1.0/build/openseadragon/openseadragon.min.js"
