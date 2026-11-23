@@ -388,7 +388,7 @@ class ImageRotationTests(TestCase):
         upstream.headers = {"Content-Type": "image/jpeg"}
         upstream.iter_content.return_value = [b"jpeg"]
         for route, size in (
-            ("admin:diamm_data_image_preview", "!80,80"),
+            ("admin:diamm_data_image_preview", "400,"),
             ("admin:diamm_data_image_preview_large", "400,"),
         ):
             with self.subTest(route=route), patch("diamm.admin.data.image.requests.get") as get:

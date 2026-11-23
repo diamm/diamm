@@ -168,7 +168,8 @@ class ImageRotationAdminMixin(admin.ModelAdmin):
             path(
                 "<int:image_id>/preview/",
                 self.admin_site.admin_view(self.image_preview),
-                {"size": "!80,80"},
+                # Use the working preview size; IIP's tiny output can be distorted.
+                {"size": "400,"},
                 name="diamm_data_image_preview",
             ),
             path(
