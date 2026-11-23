@@ -171,9 +171,12 @@ class ImageRotationAdminMixin(admin.ModelAdmin):
     ) -> HttpResponseBase:
         if not self.has_change_permission(request):
             raise PermissionDenied
+        remove_image = request.POST.get("remove_image", "")
+        if remove_image.isdecimal():
+            queryset = queryset.exclude(pk=remove_image)
         selected = [selection_for(image) for image in queryset.order_by("pk")]
         form = self.rotation_form_class(
-            request.POST if "apply_rotation" in request.POST else None,
+            request.POST if "apply_rotation" in request.POST or "remove_image" in request.POST else None,
         )
         if "apply_rotation" in request.POST and form.is_valid():
             submitted = enqueue_rotations(queryset, form.cleaned_data["rotation"])

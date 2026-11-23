@@ -247,6 +247,36 @@ class ImageRotationTests(TestCase):
         self.assertContains(page, 'http-equiv="refresh"')
         self.assertContains(page, reverse("admin:django_ox_oxtask_changelist"))
 
+    def test_remove_image_from_confirmation_preserves_angle_without_queueing(self):
+        response = self.client.post(reverse("admin:diamm_data_image_changelist"), {
+            "action": "rotate_images", ACTION_CHECKBOX_NAME: [self.a.pk, self.b.pk],
+            "rotation": "270", "remove_image": str(self.a.pk),
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, f'name="{ACTION_CHECKBOX_NAME}" value="{self.a.pk}"')
+        self.assertContains(response, f'name="{ACTION_CHECKBOX_NAME}" value="{self.b.pk}"')
+        self.assertContains(response, '<option value="270" selected>')
+        self.assertContains(response, 'width="192"')
+        self.assertFalse(OxTask.objects.exists())
+        self.assertTrue(Image.objects.filter(pk=self.a.pk).exists())
+        self.assertEqual((self.root / "a.jpx").read_bytes(), b"original")
+        self.client.post(reverse("admin:diamm_data_image_changelist"), {
+            "action": "rotate_images", ACTION_CHECKBOX_NAME: [self.b.pk],
+            "rotation": "270", "apply_rotation": "Rotate images",
+        })
+        task = OxTask.objects.get()
+        result = task_backends["default"].get_result(str(task.pk))
+        self.assertEqual(result.args, [self.b.pk, self.b.location, 270])
+
+    def test_removing_last_image_disables_rotation(self):
+        response = self.client.post(reverse("admin:diamm_data_image_changelist"), {
+            "action": "rotate_images", ACTION_CHECKBOX_NAME: [self.a.pk],
+            "rotation": "180", "remove_image": str(self.a.pk),
+        })
+        self.assertContains(response, "No images remain")
+        self.assertContains(response, 'value="Rotate images" class="default" disabled')
+        self.assertFalse(OxTask.objects.exists())
+
     def test_done_status_comes_from_task_result(self):
         submitted = self.enqueue()
         with patch("diamm.imageops.tasks.rotate_image", return_value=self.result()):
