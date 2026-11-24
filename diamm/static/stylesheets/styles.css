@@ -8293,6 +8293,8 @@ ul.list li {
   box-shadow: 0 1px 10px rgba(10, 10, 10, 0.6), 0 0 0 0px rgba(10, 10, 10, 0.5);
   padding: 15px;
   text-align: left;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 .nav .dropdown-menu .dropdown-menu-section {
   break-inside: avoid;
